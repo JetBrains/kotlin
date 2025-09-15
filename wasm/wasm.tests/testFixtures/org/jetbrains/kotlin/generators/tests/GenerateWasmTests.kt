@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLTest
+import org.jetbrains.kotlin.js.test.fir.AbstractFirLoadK2CompiledJsKotlinTest
 import org.jetbrains.kotlin.wasm.test.*
 import org.jetbrains.kotlin.wasm.test.diagnostics.*
 
@@ -171,6 +172,11 @@ fun main(args: Array<String>) {
                 )
             }
         }
-
+        testGroup(testsRoot, "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
+            testClass<AbstractWasmJsLoadCompiledKotlinTest> {
+                model("compiledKotlin", extension = "kt")
+                model("compiledKotlinWithStdlib", extension = "kt")
+            }
+        }
     }
 }
