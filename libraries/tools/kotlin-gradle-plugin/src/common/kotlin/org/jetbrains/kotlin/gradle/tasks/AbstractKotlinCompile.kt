@@ -208,12 +208,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             }
         )
 
-    @get:Internal
-    internal abstract val preciseCompilationResultsBackup: Property<Boolean>
-
-    @get:Internal
-    internal abstract val keepIncrementalCompilationCachesInMemory: Property<Boolean>
-
     /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableUnsafeIncrementalCompilationForMultiplatform] */
     @get:Internal
     internal abstract val enableUnsafeIncrementalCompilationForMultiplatform: Property<Boolean>
@@ -298,8 +292,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     protected open fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return IncrementalCompilationFeatures(
             usePreciseJavaTracking = false, // not generally applicable
-            preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
-            keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
+            preciseCompilationResultsBackup = true,
+            keepIncrementalCompilationCachesInMemory = true,
             enableUnsafeIncrementalCompilationForMultiplatform = enableUnsafeIncrementalCompilationForMultiplatform.get(),
             enableMonotonousIncrementalCompileSetExpansion = enableMonotonousIncrementalCompileSetExpansion.get(),
         )

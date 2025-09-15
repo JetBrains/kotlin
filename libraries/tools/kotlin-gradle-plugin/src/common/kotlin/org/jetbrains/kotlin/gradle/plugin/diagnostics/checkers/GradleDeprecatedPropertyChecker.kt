@@ -44,6 +44,14 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             details = "History based incremental compilation approach for JVM platform is removed." +
                     " Kotlin Gradle plugin is now using a more efficient approach based on ABI snapshots."
         ),
+        DeprecatedProperty(
+            propertyName = "kotlin.compiler.preciseCompilationResultsBackup",
+            details = "Backups of compilation outputs using the non-precise method have been deprecated and phased out. Only the precise backup method is now used, which is more efficient."
+        ), // since 2.3.0
+        DeprecatedProperty(
+            propertyName = "kotlin.compiler.keepIncrementalCompilationCachesInMemory",
+            details = "Backups of compilation outputs using the non-precise method have been deprecated and phased out. Incremental cache changes are now kept in memory until a successful compilation result, which is more efficient."
+        ), // since 2.3.0
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(

@@ -8,9 +8,4 @@ package org.jetbrains.kotlin.gradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("K2Kapt incremental tests with isolating apt")
-open class Kapt4IncrementalWithIsolatingApt : Kapt4IncrementalIT()
-
-@DisplayName("K2Kapt incremental tests with isolating apt with disabled precise compilation outputs backup")
-class Kapt4IncrementalWithIsolatingAptAndWithoutPreciseBackup : Kapt4IncrementalWithIsolatingApt() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
-}
+class Kapt4IncrementalWithIsolatingApt : Kapt4IncrementalIT()

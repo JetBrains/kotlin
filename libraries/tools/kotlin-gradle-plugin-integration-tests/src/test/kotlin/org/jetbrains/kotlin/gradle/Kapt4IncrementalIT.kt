@@ -68,9 +68,3 @@ open class Kapt4IncrementalIT : KaptIncrementalIT() {
         }
     }
 }
-
-@DisplayName("K2Kapt incremental compilation with disabled precise compilation outputs backup")
-class Kapt4IncrementalWithoutPreciseBackupIT : Kapt4IncrementalIT() {
-    override val defaultBuildOptions =
-        super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
-}

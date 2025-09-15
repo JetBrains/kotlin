@@ -180,11 +180,6 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
     }
 }
 
-@DisplayName("Android incremental compilation with disabled precise compilation outputs backup")
-class KotlinAndroidIncrementalWithoutPreciseBackupIT : KotlinAndroidIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
-}
-
 class KotlinAndroidIncrementalBuildToolsApiDaemonIT : KotlinAndroidIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
 }
