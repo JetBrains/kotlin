@@ -12,7 +12,7 @@ import kotlin.internal.LowPriorityInOverloadResolution
  */
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")
-public expect class Promise<out T : JsAny?>(executor: (resolve: (T) -> Unit, reject: (JsPromiseError) -> Unit) -> Unit): JsAny {
+public expect class Promise<out T : JsAny?>(executor: (resolve: (T) -> Unit, reject: (JsPromiseError) -> Unit) -> Unit): JsUnshareableAny {
     @LowPriorityInOverloadResolution
     public fun <S : JsAny?> then(onFulfilled: ((T) -> S)?): Promise<S>
 
