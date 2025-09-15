@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest
 import org.jetbrains.kotlin.resolve.calls.AbstractEnhancedSignaturesResolvedCallsTest
 
 fun main(args: Array<String>) {
-    System.setProperty("java.awt.headless", "true")
+    val testsRoot = args[0]
 
     generateTestGroupSuiteWithJUnit4(args) {
-        testGroup("compiler/tests-java8/tests-gen", "compiler/testData") {
+        testGroup(testsRoot, "compiler/testData") {
             testClass<AbstractLoadJava8Test> {
                 model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
                 model("loadJava8/compiledKotlinWithStdlib", testMethod = "doTestCompiledKotlinWithStdlib")

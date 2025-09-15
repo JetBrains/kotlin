@@ -25,10 +25,7 @@ dependencies {
 
 sourceSets {
     "main" {}
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -53,7 +50,7 @@ projectTests {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt", generateTestsInBuildDirectory = true)
 }
 
 
