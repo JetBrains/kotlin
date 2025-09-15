@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.SessionWithSources
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJsSessions
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
+import org.jetbrains.kotlin.cli.common.prepareWasmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -32,9 +33,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
@@ -47,12 +51,15 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
+import org.jetbrains.kotlin.test.frontend.fir.getAllWasmDependenciesPaths
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import java.io.File
 
 class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedMetadataDumpHandler<BinaryArtifacts.Jvm>(
@@ -123,6 +130,44 @@ class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoad
         )
 
         return prepareJsSessions(
+            files = emptyList(),
+            configuration,
+            moduleName,
+            klibs.all,
+            libraryList,
+            extensionRegistrars = emptyList(),
+            isCommonSource = { false },
+            fileBelongsToModule = { _, _ -> false },
+            icData = null
+        )
+    }
+}
+
+class KlibWasmJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedMetadataDumpHandler<BinaryArtifacts.KLib>(
+    testServices,
+    ArtifactKinds.KLib
+) {
+    override val targetPlatform: TargetPlatform
+        get() = WasmPlatforms.wasmJs
+    override val platformAnalyzerServices: PlatformDependentAnalyzerServices
+        get() = WasmPlatformAnalyzerServices
+    override val dependencyKind: DependencyKind
+        get() = DependencyKind.Binary
+
+    override fun prepareSessions(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+        environment: VfsBasedProjectEnvironment,
+        moduleName: Name,
+        libraryList: DependencyListForCliModule,
+    ): List<SessionWithSources<KtFile>> {
+        val klibs = loadWebKlibsInTestPipeline(
+            configuration = configuration,
+            libraryPaths = getAllWasmDependenciesPaths(module, testServices, configuration.wasmTarget),
+            platformChecker = KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
+        )
+
+        return prepareWasmSessions(
             files = emptyList(),
             configuration,
             moduleName,
@@ -269,6 +314,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         get() = when {
             isJvm() -> ".jvm"
             isJs() -> ".klib"
+            isWasm() -> ".klib"
             else -> error("Unsupported platform: $this")
         }
 
@@ -276,6 +322,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         get() = when {
             isJvm() -> ".klib"
             isJs() -> ".jvm"
+            isWasm() -> ".jvm"
             else -> error("Unsupported platform: $this")
         }
 
