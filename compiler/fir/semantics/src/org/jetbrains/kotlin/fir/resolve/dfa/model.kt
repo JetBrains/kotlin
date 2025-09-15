@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.refinedTypeForDataFlowOrSelf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -56,7 +57,7 @@ infix fun RealVariable.valueNotEq(boolean: Boolean): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = linkedSetOf(DfaType.BooleanLiteral(boolean)))
 
 infix fun DataFlowVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
-    MutableTypeStatement(this, if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type))
+    MutableTypeStatement(this, if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type.refinedTypeForDataFlowOrSelf))
 
 infix fun DataFlowVariable.typeNotEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = if (type is ConeErrorType) linkedSetOf() else linkedSetOf(DfaType.Cone(type)))
