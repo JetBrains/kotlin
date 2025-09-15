@@ -41,7 +41,10 @@ internal constructor(
 ) : KotlinTest(execOps),
     RequiresNpmDependencies {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated(
+        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     @Suppress("DEPRECATION")
     constructor(
         compilation: KotlinJsIrCompilation,

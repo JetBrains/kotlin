@@ -50,7 +50,10 @@ internal constructor(
     private val execOps: ExecOperations,
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated(
+        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     @Suppress("DEPRECATION")
     constructor(
         compilation: KotlinJsIrCompilation,
@@ -75,6 +78,7 @@ internal constructor(
     @Deprecated(
         "ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property. Scheduled for removal in Kotlin 2.4.",
         ReplaceWith("TODO(\"ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
+        level = DeprecationLevel.ERROR
     )
     @Suppress("unused")
     open val execHandleFactory: Nothing

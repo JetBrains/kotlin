@@ -64,7 +64,10 @@ class KotlinKarma internal constructor(
     private val providers: ProviderFactory,
 ) : KotlinJsTestFramework {
 
-    @Deprecated("Manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated(
+        "Manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     constructor(
         compilation: KotlinJsIrCompilation,
         @Suppress("UNUSED_PARAMETER")
@@ -185,7 +188,7 @@ class KotlinKarma internal constructor(
         val propValue = project.kotlinPropertiesProvider.jsKarmaBrowsers(compilation.target)
         val propBrowsers = propValue?.split(",")
         propBrowsers?.map(String::trim)?.forEach {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             when (it.toLowerCaseAsciiOnly()) {
                 "chrome" -> useChrome()
                 "chrome-canary" -> useChromeCanary()
@@ -296,7 +299,10 @@ class KotlinKarma internal constructor(
         useChromeLike(debuggableChrome)
     }
 
-    @Deprecated("It is not supported anymore. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated(
+        "It is not supported anymore. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     fun usePhantomJS() {
         project.logger.warn("PhantomJS is not supported anymore. Use other browsers instead.")
     }

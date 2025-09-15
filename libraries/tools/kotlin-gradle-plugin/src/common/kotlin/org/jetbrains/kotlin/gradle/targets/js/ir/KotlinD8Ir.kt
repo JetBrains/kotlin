@@ -28,7 +28,10 @@ internal constructor(
     KotlinJsIrSubTarget(target, "d8"),
     KotlinWasmD8Dsl {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated(
+        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     constructor(
         target: KotlinJsIrTarget,
     ) : this(

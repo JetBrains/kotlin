@@ -30,7 +30,10 @@ internal constructor(
     KotlinJsIrNpmBasedSubTarget(target, "node"),
     KotlinJsNodeDsl {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated(
+        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     constructor(
         target: KotlinJsIrTarget,
     ) : this(
