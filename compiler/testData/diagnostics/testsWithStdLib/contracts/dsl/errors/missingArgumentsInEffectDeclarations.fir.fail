@@ -1,6 +1,0 @@
-java.lang.IndexOutOfBoundsException: Empty list doesn't contain element at index 0.
-	at kotlin.collections.EmptyList.get(Collections.kt:37)
-	at kotlin.collections.EmptyList.get(Collections.kt:25)
-	at org.jetbrains.kotlin.fir.resolve.transformers.contracts.ConeEffectExtractor.visitFunctionCall(ConeEffectExtractor.kt:83)
-	at org.jetbrains.kotlin.fir.resolve.transformers.contracts.ConeEffectExtractor.visitFunctionCall(ConeEffectExtractor.kt:34)
-	at org.jetbrains.kotlin.fir.expressions.FirFunctionCall.accept(FirFunctionCall.kt:41)

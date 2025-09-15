@@ -192,7 +192,7 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
             get() = "no argument for call '$name' found"
     }
 
-    class NotAConstant(val element: Any) : ConeContractDescriptionError() {
+    class NotAConstant(val element: Any?) : ConeContractDescriptionError() {
         override val reason: String
             get() = "'$element' is not a constant reference"
     }
