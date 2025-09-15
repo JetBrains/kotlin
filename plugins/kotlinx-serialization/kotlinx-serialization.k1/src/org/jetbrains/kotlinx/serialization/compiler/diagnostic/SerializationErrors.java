@@ -27,7 +27,7 @@ public interface SerializationErrors {
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory1<PsiElement, ClassDescriptor> COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, ClassDescriptor> COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<PsiElement> EXPLICIT_SERIALIZABLE_IS_REQUIRED = DiagnosticFactory0.create(WARNING);
 

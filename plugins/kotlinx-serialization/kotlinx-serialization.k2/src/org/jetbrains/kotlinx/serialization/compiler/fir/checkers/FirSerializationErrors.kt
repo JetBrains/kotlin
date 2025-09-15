@@ -27,7 +27,7 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
     val COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS by error2<KtElement, ConeKotlinType, ConeKotlinType>()
     val COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
 
-    val COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS by warning1<KtElement, FirRegularClassSymbol>()
+    val COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS by error1<KtElement, FirRegularClassSymbol>()
 
     val SERIALIZABLE_ANNOTATION_IGNORED by error0<KtAnnotationEntry>()
     val NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR by error0<KtAnnotationEntry>()
