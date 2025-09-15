@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.js.parser.antlr
 
 import com.google.gwt.dev.js.ScopeContext
+import com.google.gwt.dev.js.parserExceptions.JsParserException
+import com.google.gwt.dev.js.rhino.CodePosition
 import com.intellij.util.containers.addIfNotNull
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
@@ -41,67 +43,67 @@ class JsAstMapperVisitor(
     }
 
     override fun visitImportStatement(ctx: JavaScriptParser.ImportStatementContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitImportFromBlock(ctx: JavaScriptParser.ImportFromBlockContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitImportModuleItems(ctx: JavaScriptParser.ImportModuleItemsContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitImportAliasName(ctx: JavaScriptParser.ImportAliasNameContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitModuleExportName(ctx: JavaScriptParser.ModuleExportNameContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitImportedBinding(ctx: JavaScriptParser.ImportedBindingContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitImportDefault(ctx: JavaScriptParser.ImportDefaultContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitImportNamespace(ctx: JavaScriptParser.ImportNamespaceContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitImportFrom(ctx: JavaScriptParser.ImportFromContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitAliasName(ctx: JavaScriptParser.AliasNameContext): JsNode? {
-        TODO("Import statemements not supported yet")
+        raiseParserException("Import statemements not supported yet", ctx)
     }
 
     override fun visitExportDeclaration(ctx: JavaScriptParser.ExportDeclarationContext): JsNode? {
-        TODO("Export statemements not supported yet")
+        raiseParserException("Export statemements not supported yet", ctx)
     }
 
     override fun visitExportDefaultDeclaration(ctx: JavaScriptParser.ExportDefaultDeclarationContext): JsNode? {
-        TODO("Export statemements not supported yet")
+        raiseParserException("Export statemements not supported yet", ctx)
     }
 
     override fun visitExportFromBlock(ctx: JavaScriptParser.ExportFromBlockContext): JsNode? {
-        TODO("Export statemements not supported yet")
+        raiseParserException("Export statemements not supported yet", ctx)
     }
 
     override fun visitExportModuleItems(ctx: JavaScriptParser.ExportModuleItemsContext): JsNode? {
-        TODO("Export statemements not supported yet")
+        raiseParserException("Export statemements not supported yet", ctx)
     }
 
     override fun visitExportAliasName(ctx: JavaScriptParser.ExportAliasNameContext): JsNode? {
-        TODO("Export statemements not supported yet")
+        raiseParserException("Export statemements not supported yet", ctx)
     }
 
     override fun visitDeclaration(ctx: JavaScriptParser.DeclarationContext): JsNode? {
-        TODO("Export statemements not supported yet")
+        raiseParserException("Export statemements not supported yet", ctx)
     }
 
     override fun visitVariableStatement(ctx: JavaScriptParser.VariableStatementContext): JsVars {
@@ -122,7 +124,7 @@ class JsAstMapperVisitor(
 
     override fun visitVariableDeclaration(ctx: JavaScriptParser.VariableDeclarationContext): JsVars.JsVar {
         val originalId = ctx.assignable().identifier()?.text
-            ?: TODO("Only identifier parameters are supported yet")
+            ?: raiseParserException("Only identifier parameters are supported yet", ctx)
         val id = scopeContext.localNameFor(originalId)
         val initialization = ctx.singleExpression()?.let { visitNode<JsExpression>(it) }
 
@@ -174,7 +176,7 @@ class JsAstMapperVisitor(
         return when {
             initSequence != null -> JsFor(initSequence, condition, increment, body)
             initDeclaration != null -> JsFor(initDeclaration, condition, increment, body)
-            else -> TODO("Invalid 'for' statement: ${ctx.text}")
+            else -> raiseParserException("Invalid 'for' statement: ${ctx.text}", ctx)
         }
     }
 
@@ -195,12 +197,12 @@ class JsAstMapperVisitor(
                 iterExpression = namedDeclaration.initExpression
                 body = bodyStatement
             }
-            else -> TODO("Invalid 'for .. in' statement: ${ctx.text}")
+            else -> raiseParserException("Invalid 'for .. in' statement: ${ctx.text}", ctx)
         }
     }
 
     override fun visitForOfStatement(ctx: JavaScriptParser.ForOfStatementContext): JsNode? {
-        TODO("'for .. of' is not supported yet")
+        raiseParserException("'for .. of' is not supported yet", ctx)
     }
 
     override fun visitVarModifier(ctx: JavaScriptParser.VarModifierContext): JsNode? {
@@ -225,7 +227,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitYieldStatement(ctx: JavaScriptParser.YieldStatementContext): JsNode? {
-        TODO("yield statement is not supported yet")
+        raiseParserException("yield statement is not supported yet", ctx)
     }
 
     override fun visitWithStatement(ctx: JavaScriptParser.WithStatementContext): JsNode? {
@@ -317,7 +319,7 @@ class JsAstMapperVisitor(
 
     override fun visitCatchProduction(ctx: JavaScriptParser.CatchProductionContext): JsCatch {
         val jsCatchIdentifier = ctx.assignable().identifier()?.text
-            ?: TODO("Only identifier catch variables are supported yet")
+            ?: raiseParserException("Only identifier catch variables are supported yet", ctx)
 
         return scopeContext.enterCatch(jsCatchIdentifier).apply {
             body = visitNode<JsBlock>(ctx.block())
@@ -346,31 +348,31 @@ class JsAstMapperVisitor(
     }
 
     override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsNode? {
-        TODO("Classes are not supported yet")
+        raiseParserException("Classes are not supported yet", ctx)
     }
 
     override fun visitClassTail(ctx: JavaScriptParser.ClassTailContext): JsNode? {
-        TODO("Classes are not supported yet")
+        raiseParserException("Classes are not supported yet", ctx)
     }
 
     override fun visitClassElement(ctx: JavaScriptParser.ClassElementContext): JsNode? {
-        TODO("Classes are not supported yet")
+        raiseParserException("Classes are not supported yet", ctx)
     }
 
     override fun visitMethodDefinition(ctx: JavaScriptParser.MethodDefinitionContext): JsNode? {
-        TODO("Classes are not supported yet")
+        raiseParserException("Classes are not supported yet", ctx)
     }
 
     override fun visitFieldDefinition(ctx: JavaScriptParser.FieldDefinitionContext): JsNode? {
-        TODO("Classes are not supported yet")
+        raiseParserException("Classes are not supported yet", ctx)
     }
 
     override fun visitClassElementName(ctx: JavaScriptParser.ClassElementNameContext): JsNode? {
-        TODO("Classes are not supported yet")
+        raiseParserException("Classes are not supported yet", ctx)
     }
 
     override fun visitPrivateIdentifier(ctx: JavaScriptParser.PrivateIdentifierContext): JsNode? {
-        TODO("Private fields are not supported yet")
+        raiseParserException("Private fields are not supported yet", ctx)
     }
 
     override fun visitFormalParameterList(ctx: JavaScriptParser.FormalParameterListContext): JsNode? {
@@ -380,14 +382,14 @@ class JsAstMapperVisitor(
 
     override fun visitFormalParameterArg(ctx: JavaScriptParser.FormalParameterArgContext): JsParameter {
         val identifier = ctx.assignable().identifier()
-            ?: TODO("Only identifier parameters are supported yet")
+            ?: raiseParserException("Only identifier parameters are supported yet", ctx)
         val paramName = scopeContext.localNameFor(identifier.text)
 
         return JsParameter(paramName)
     }
 
     override fun visitRestParameterArg(ctx: JavaScriptParser.RestParameterArgContext?): JsNode? {
-        TODO("Rest parameters are not supported yet")
+        raiseParserException("Rest parameters are not supported yet", ctx)
     }
 
     override fun visitFunctionBody(ctx: JavaScriptParser.FunctionBodyContext): JsBlock {
@@ -424,23 +426,23 @@ class JsAstMapperVisitor(
     }
 
     override fun visitComputedPropertyExpressionAssignment(ctx: JavaScriptParser.ComputedPropertyExpressionAssignmentContext): JsNode? {
-        TODO("Computed property names are not supported yet")
+        raiseParserException("Computed property names are not supported yet", ctx)
     }
 
     override fun visitFunctionProperty(ctx: JavaScriptParser.FunctionPropertyContext): JsNode? {
-        TODO("Function properties are not supported yet")
+        raiseParserException("Function properties are not supported yet", ctx)
     }
 
     override fun visitPropertyGetter(ctx: JavaScriptParser.PropertyGetterContext): JsNode? {
-        TODO("Property getters are not supported yet")
+        raiseParserException("Property getters are not supported yet", ctx)
     }
 
     override fun visitPropertySetter(ctx: JavaScriptParser.PropertySetterContext): JsNode? {
-        TODO("Property setters are not supported yet")
+        raiseParserException("Property setters are not supported yet", ctx)
     }
 
     override fun visitPropertyShorthand(ctx: JavaScriptParser.PropertyShorthandContext): JsNode? {
-        TODO("Property shorthands are not supported yet")
+        raiseParserException("Property shorthands are not supported yet", ctx)
     }
 
     override fun visitPropertyName(ctx: JavaScriptParser.PropertyNameContext): JsExpression {
@@ -457,10 +459,10 @@ class JsAstMapperVisitor(
         }
 
         ctx.singleExpression()?.let {
-            TODO("Computed property names are not supported yet")
+            raiseParserException("Computed property names are not supported yet", ctx)
         }
 
-        TODO("Invalid property name: ${ctx.text}")
+        raiseParserException("Invalid property name: ${ctx.text}", ctx)
     }
 
     override fun visitArguments(ctx: JavaScriptParser.ArgumentsContext): JsNode? {
@@ -479,7 +481,7 @@ class JsAstMapperVisitor(
             return makeRefNode(it.text)
         }
 
-        TODO("Invalid argument: ${ctx.text}")
+        raiseParserException("Invalid argument: ${ctx.text}", ctx)
     }
 
     override fun visitExpressionSequence(ctx: JavaScriptParser.ExpressionSequenceContext): JsExpression {
@@ -496,7 +498,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitTemplateStringExpression(ctx: JavaScriptParser.TemplateStringExpressionContext): JsNode? {
-        TODO("Template string literals are not supported yet")
+        raiseParserException("Template string literals are not supported yet", ctx)
     }
 
     override fun visitTernaryExpression(ctx: JavaScriptParser.TernaryExpressionContext): JsConditional {
@@ -515,7 +517,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitPowerExpression(ctx: JavaScriptParser.PowerExpressionContext): JsNode? {
-        TODO("Power expressions are not supported yet")
+        raiseParserException("Power expressions are not supported yet", ctx)
     }
 
     override fun visitPreIncrementExpression(ctx: JavaScriptParser.PreIncrementExpressionContext): JsPrefixOperation {
@@ -528,7 +530,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitMetaExpression(ctx: JavaScriptParser.MetaExpressionContext): JsNode? {
-        TODO("Meta expressions are not supported yet")
+        raiseParserException("Meta expressions are not supported yet")
     }
 
     override fun visitInExpression(ctx: JavaScriptParser.InExpressionContext): JsBinaryOperation {
@@ -546,7 +548,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitOptionalChainExpression(ctx: JavaScriptParser.OptionalChainExpressionContext): JsNode? {
-        TODO("Optional chain expressions are not supported yet")
+        raiseParserException("Optional chain expressions are not supported yet", ctx)
     }
 
     override fun visitNotExpression(ctx: JavaScriptParser.NotExpressionContext): JsNode? {
@@ -560,11 +562,11 @@ class JsAstMapperVisitor(
     }
 
     override fun visitArgumentsExpression(ctx: JavaScriptParser.ArgumentsExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        raiseParserException("Not yet implemented", ctx)
     }
 
     override fun visitAwaitExpression(ctx: JavaScriptParser.AwaitExpressionContext): JsNode? {
-        TODO("async/await statements are not supported yet")
+        raiseParserException("async/await statements are not supported yet", ctx)
     }
 
     override fun visitThisExpression(ctx: JavaScriptParser.ThisExpressionContext): JsThisRef {
@@ -617,7 +619,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitImportExpression(ctx: JavaScriptParser.ImportExpressionContext): JsNode? {
-        TODO("Import expressions are not supported yet")
+        raiseParserException("Import expressions are not supported yet")
     }
 
     override fun visitEqualityExpression(ctx: JavaScriptParser.EqualityExpressionContext): JsBinaryOperation {
@@ -630,7 +632,7 @@ class JsAstMapperVisitor(
                 NotEquals() != null -> JsBinaryOperator.NEQ
                 IdentityEquals() != null -> JsBinaryOperator.REF_EQ
                 IdentityNotEquals() != null -> JsBinaryOperator.REF_NEQ
-                else -> TODO("Invalid binary operation: ${ctx.text}")
+                else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
 
             JsBinaryOperation(operator, left, right)
@@ -645,7 +647,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitSuperExpression(ctx: JavaScriptParser.SuperExpressionContext): JsNode? {
-        TODO("Super calls are not supported yet")
+        raiseParserException("Super calls are not supported yet", ctx)
     }
 
     override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext): JsBinaryOperation {
@@ -657,7 +659,7 @@ class JsAstMapperVisitor(
                 Multiply() != null -> JsBinaryOperator.MUL
                 Divide() != null -> JsBinaryOperator.DIV
                 Modulus() != null -> JsBinaryOperator.MOD
-                else -> TODO("Invalid binary operation: ${ctx.text}")
+                else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
             JsBinaryOperation(operator, left, right)
         }
@@ -672,7 +674,7 @@ class JsAstMapperVisitor(
                 RightShiftArithmetic() != null -> JsBinaryOperator.SHR
                 LeftShiftArithmetic() != null -> JsBinaryOperator.SHL
                 RightShiftLogical() != null -> JsBinaryOperator.SHRU
-                else -> TODO("Invalid binary operation: ${ctx.text}")
+                else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
             JsBinaryOperation(operator, left, right)
         }
@@ -690,7 +692,7 @@ class JsAstMapperVisitor(
             val operator = when {
                 Plus() != null -> JsBinaryOperator.ADD
                 Minus() != null -> JsBinaryOperator.SUB
-                else -> TODO("Invalid binary operation: ${ctx.text}")
+                else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
             JsBinaryOperation(operator, left, right)
         }
@@ -706,7 +708,7 @@ class JsAstMapperVisitor(
                 MoreThan() != null -> JsBinaryOperator.GT
                 LessThanEquals() != null -> JsBinaryOperator.LTE
                 GreaterThanEquals() != null -> JsBinaryOperator.GTE
-                else -> TODO("Invalid binary operation: ${ctx.text}")
+                else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
             JsBinaryOperation(operator, left, right)
         }
@@ -718,7 +720,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext): JsNode? {
-        TODO("Yield expressions are not supported yet")
+        raiseParserException("Yield expressions are not supported yet", ctx)
     }
 
     override fun visitBitNotExpression(ctx: JavaScriptParser.BitNotExpressionContext): JsPrefixOperation {
@@ -761,7 +763,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitClassExpression(ctx: JavaScriptParser.ClassExpressionContext): JsNode? {
-        TODO("Classes are not supported yet")
+        raiseParserException("Classes are not supported yet", ctx)
     }
 
     override fun visitMemberIndexExpression(ctx: JavaScriptParser.MemberIndexExpressionContext): JsArrayAccess {
@@ -807,9 +809,9 @@ class JsAstMapperVisitor(
                 BitAndAssign() != null -> JsBinaryOperator.ASG_BIT_AND
                 BitXorAssign() != null -> JsBinaryOperator.ASG_BIT_XOR
                 BitOrAssign() != null -> JsBinaryOperator.ASG_BIT_OR
-                PowerAssign() != null -> TODO("Power assignment expressions are not supported yet")
-                NullishCoalescingAssign() != null -> TODO("Null-coalescing assignment expressions are not supported yet")
-                else -> TODO("Invalid binary operation: ${ctx.text}")
+                PowerAssign() != null -> raiseParserException("Power assignment expressions are not supported yet", ctx)
+                NullishCoalescingAssign() != null -> raiseParserException("Null-coalescing assignment expressions are not supported yet", ctx)
+                else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
 
             JsBinaryOperation(jsOperator, left, right)
@@ -822,15 +824,15 @@ class JsAstMapperVisitor(
     }
 
     override fun visitCoalesceExpression(ctx: JavaScriptParser.CoalesceExpressionContext): JsNode? {
-        TODO("Null-coalescing expressions are not supported yet")
+        raiseParserException("Null-coalescing expressions are not supported yet", ctx)
     }
 
     override fun visitInitializer(ctx: JavaScriptParser.InitializerContext): JsNode? {
-        TODO("Classes are not supported yet")
+        raiseParserException("Classes are not supported yet", ctx)
     }
 
     override fun visitAssignable(ctx: JavaScriptParser.AssignableContext): JsNode? {
-        TODO("Not yet implemented")
+        raiseParserException("Not yet implemented", ctx)
     }
 
     override fun visitObjectLiteral(ctx: JavaScriptParser.ObjectLiteralContext): JsObjectLiteral {
@@ -884,7 +886,7 @@ class JsAstMapperVisitor(
             return JsBlock(returnNode)
         }
 
-        TODO("Invalid arrow function body: ${ctx.text}")
+        raiseParserException("Invalid arrow function body: ${ctx.text}", ctx)
     }
 
     override fun visitAssignmentOperator(ctx: JavaScriptParser.AssignmentOperatorContext): JsNode? {
@@ -901,7 +903,7 @@ class JsAstMapperVisitor(
             return when (bool.text) {
                 "true" -> JsBooleanLiteral(true)
                 "false" -> JsBooleanLiteral(false)
-                else -> TODO("Invalid boolean literal: ${bool.text}")
+                else -> raiseParserException("Invalid boolean literal: ${bool.text}", ctx)
             }
         }
 
@@ -929,24 +931,24 @@ class JsAstMapperVisitor(
     }
 
     override fun visitTemplateStringLiteral(ctx: JavaScriptParser.TemplateStringLiteralContext): JsNode? {
-        TODO("Template string literals are not supported yet")
+        raiseParserException("Template string literals are not supported yet", ctx)
     }
 
     override fun visitTemplateStringAtom(ctx: JavaScriptParser.TemplateStringAtomContext): JsNode? {
-        TODO("Template string literals are not supported yet")
+        raiseParserException("Template string literals are not supported yet", ctx)
     }
 
     override fun visitNumericLiteral(ctx: JavaScriptParser.NumericLiteralContext): JsNumberLiteral {
         ctx.BinaryIntegerLiteral()?.run {
-            TODO("Binary integer literals are not supported yet")
+            raiseParserException("Binary integer literals are not supported yet", ctx)
         }
 
         ctx.OctalIntegerLiteral()?.run {
-            TODO("Octal integer literals are not supported yet")
+            raiseParserException("Octal integer literals are not supported yet", ctx)
         }
 
         ctx.OctalIntegerLiteral2()?.run {
-            TODO("Octal integer literals are not supported yet")
+            raiseParserException("Octal integer literals are not supported yet", ctx)
         }
 
         ctx.DecimalLiteral()?.let { decimalTerminal ->
@@ -957,19 +959,19 @@ class JsAstMapperVisitor(
             return hexTerminal.toDecimalLiteral()
         }
 
-        TODO("Invalid numeric literal '${ctx.text}'")
+        raiseParserException("Invalid numeric literal '${ctx.text}'", ctx)
     }
 
     override fun visitBigintLiteral(ctx: JavaScriptParser.BigintLiteralContext): JsNode? {
-        TODO("Big integers are not supported yet")
+        raiseParserException("Big integers are not supported yet", ctx)
     }
 
     override fun visitGetter(ctx: JavaScriptParser.GetterContext): JsNode? {
-        TODO("Property getters are not supported yet")
+        raiseParserException("Property getters are not supported yet", ctx)
     }
 
     override fun visitSetter(ctx: JavaScriptParser.SetterContext): JsNode? {
-        TODO("Property setters are not supported yet")
+        raiseParserException("Property setters are not supported yet", ctx)
     }
 
     override fun visitIdentifierName(ctx: JavaScriptParser.IdentifierNameContext): JsNode? {
@@ -992,7 +994,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitLet_(ctx: JavaScriptParser.Let_Context): JsNode? {
-        TODO("Let assignments are not supported yet")
+        raiseParserException("Let assignments are not supported yet", ctx)
     }
 
     override fun visitEos(ctx: JavaScriptParser.EosContext): JsNode? {
@@ -1015,7 +1017,7 @@ class JsAstMapperVisitor(
         }
 
         if (sequence.size < 2)
-            TODO("Sequence should contain at least 2 expressions to be used in comma mapping")
+            raiseParserException("Sequence should contain at least 2 expressions to be used in comma mapping")
 
         return reduce(0, sequence)
     }
@@ -1063,7 +1065,7 @@ class JsAstMapperVisitor(
                 statementWithLabel.identifier()
             statementWithLabel is JavaScriptParser.BreakStatementContext ->
                 statementWithLabel.identifier()
-            else -> TODO("Unexpected node type: ${statementWithLabel.javaClass.name}")
+            else -> raiseParserException("Unexpected node type: ${statementWithLabel.javaClass.name}", statementWithLabel)
         }
 
         val labelName = scopeContext.localNameFor(identifier.text)
@@ -1109,5 +1111,9 @@ class JsAstMapperVisitor(
     private inline fun <reified T> JsNode?.expect(): T {
         if (this !is T) throw AssertionError("Expected ${T::class}, got ${this?.javaClass}")
         return this
+    }
+
+    private fun raiseParserException(message: String, rule: ParserRuleContext? = null): Nothing {
+        throw JsParserException("Parser encountered internal error: $message", rule?.startPosition ?: CodePosition(0, 0))
     }
 }
