@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.test.runners.ir
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.backend.handlers.JvmNewKotlinReflectCompatibilityCheck
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTextTest
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
@@ -30,6 +32,11 @@ abstract class AbstractFirJvmIrTextTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.additionalK2ConfigurationForIrTextTest(parser)
+        with(builder) {
+            configureJvmArtifactsHandlersStep {
+                useHandlers(::JvmNewKotlinReflectCompatibilityCheck)
+            }
+        }
     }
 }
 
