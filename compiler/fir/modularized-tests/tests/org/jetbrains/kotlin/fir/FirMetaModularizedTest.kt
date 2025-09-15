@@ -10,9 +10,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.junit.Test
 import java.io.File
 import java.lang.management.ManagementFactory
-import java.nio.file.Files
 import java.util.jar.Attributes
-import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.test.assertEquals
@@ -38,7 +36,7 @@ class FirMetaModularizedTest {
         file.deleteOnExit()
         val manifest = Manifest()
         manifest.mainAttributes.putValue(Attributes.Name.MANIFEST_VERSION.toString(), "1.0")
-        manifest.mainAttributes.putValue(Attributes.Name.MAIN_CLASS.toString(), StandaloneModularizedTestRunner::class.java.canonicalName)
+        manifest.mainAttributes.putValue(Attributes.Name.MAIN_CLASS.toString(), StandaloneModularizedTestJUnitRunner::class.java.canonicalName)
         manifest.mainAttributes.putValue(
             Attributes.Name.CLASS_PATH.toString(),
             runtimeBean.classPath.split(File.pathSeparator).joinToString(" ") {

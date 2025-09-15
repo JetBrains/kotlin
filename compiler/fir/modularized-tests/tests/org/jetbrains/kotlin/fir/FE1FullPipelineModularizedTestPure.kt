@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.config.LanguageVersion
  */
 internal val LANGUAGE_VERSION_K1: String = System.getProperty("fir.bench.language.version.k1", "1.8")
 
-class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
+class FE1FullPipelineModularizedTestPure(config: ModularizedTestConfig) : AbstractFullPipelineModularizedTest(config) {
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
         args.languageVersion = LANGUAGE_VERSION_K1
-        args.debugLevelCompilerChecks = ENABLE_SLOW_ASSERTIONS
+        args.debugLevelCompilerChecks = enableSlowAssertions
 
         // TODO: Remove when support for old modularized tests is removed
         if (moduleData.arguments == null) {
