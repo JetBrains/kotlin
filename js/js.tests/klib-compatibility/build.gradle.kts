@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 plugins {
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
+    id("java-test-fixtures")
     id("d8-configuration")
     id("project-tests-convention")
 }
@@ -19,22 +20,20 @@ node {
 }
 
 dependencies {
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
-    testImplementation(testFixtures(project(":js:js.tests")))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
 }
 
 optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "testFixtures" { projectDefault() }
+    "test" { generatedTestDir() }
 }
 
 testsJar {}
@@ -135,5 +134,7 @@ tasks.test {
     enabled = false
 }
 
-@Suppress("unused")
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt")
+projectTests {
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt")
+}
+
