@@ -51181,6 +51181,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         }
 
         @Test
+        @TestMetadata("contractWithNonNullAssertion.kt")
+        public void testContractWithNonNullAssertion() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/contractWithNonNullAssertion.kt");
+        }
+
+        @Test
         @TestMetadata("contractsOnMembers.kt")
         public void testContractsOnMembers() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/contractsOnMembers.kt");
