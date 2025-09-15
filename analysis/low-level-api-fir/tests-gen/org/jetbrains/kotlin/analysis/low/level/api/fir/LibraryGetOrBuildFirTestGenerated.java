@@ -421,6 +421,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("typeParameterNameClash.kt")
+  public void testTypeParameterNameClash() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/typeParameterNameClash.kt");
+  }
+
+  @Test
   @TestMetadata("typealiasUnsignedConst.kt")
   public void testTypealiasUnsignedConst() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/typealiasUnsignedConst.kt");
