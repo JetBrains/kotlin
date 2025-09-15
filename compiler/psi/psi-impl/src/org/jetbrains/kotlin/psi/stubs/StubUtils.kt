@@ -115,4 +115,31 @@ object StubUtils {
             }
         }
     }
+
+    @JvmStatic
+    internal inline fun <E : Any> StubOutputStream.writeNullableCollection(
+        collection: Collection<E>?,
+        elementWriter: StubOutputStream.(E) -> Unit,
+    ) {
+        val nullableSize = collection?.size?.plus(1) ?: 0 // +1 since 0 is reserved for null value
+        writeVarInt(nullableSize)
+
+        collection?.forEach { elementWriter(it) }
+    }
+
+    @JvmStatic
+    internal fun <E : Any> StubInputStream.readNullableCollection(
+        elementReader: StubInputStream.() -> E,
+    ): List<E>? = when (val nullableSize = readVarInt()) {
+        0 -> null
+        else -> when (val size = nullableSize - 1) { // -1 since 0 is reserved for null value
+            0 -> emptyList()
+            1 -> listOf(elementReader())
+            else -> buildList(size) {
+                repeat(size) {
+                    add(elementReader())
+                }
+            }
+        }
+    }
 }
