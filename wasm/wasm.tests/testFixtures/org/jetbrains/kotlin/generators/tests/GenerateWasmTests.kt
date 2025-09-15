@@ -32,29 +32,26 @@ fun main(args: Array<String>) {
 
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
+        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
             testClass<AbstractWasmPartialLinkageNoICTestCase> {
-                model("klib/partial-linkage/", pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = "^([^_](.+))$", recursive = false)
             }
-        }
-
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
             testClass<AbstractWasmPartialLinkageWithICTestCase> {
-                model("klib/partial-linkage/", pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = "^([^_](.+))$", recursive = false)
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData") {
+        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData/incremental") {
             testClass<AbstractFirWasmInvalidationTest> {
                 model(
-                    "incremental/invalidation/",
+                    "invalidation/",
                     pattern = "^([^_](.+))$",
                     recursive = false,
                 )
             }
             testClass<AbstractFirWasmInvalidationWithPLTest> {
                 model(
-                    "incremental/invalidationWithPL/",
+                    "invalidationWithPL/",
                     pattern = "^([^_](.+))$",
                     recursive = false,
                 )
@@ -63,36 +60,36 @@ fun main(args: Array<String>) {
     }
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
+        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/diagnostics") {
             testClass<AbstractDiagnosticsWasmTest> {
-                model("diagnostics/wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
             testClass<AbstractDiagnosticsFirWasmTest> {
-                model("diagnostics/wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
             testClass<AbstractDiagnosticsWasmWasiTest> {
-                model("diagnostics/wasmWasiTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("wasmWasiTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
             testClass<AbstractDiagnosticsFirWasmWasiTest> {
-                model("diagnostics/wasmWasiTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("wasmWasiTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
             testClass<AbstractDiagnosticsFirWasmKlibTest> {
-                model("diagnostics/wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
+        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsTranslatorTest> {
-                model("box/main", pattern = jsTranslatorTestPattern)
-                model("box/native/", pattern = jsTranslatorTestPattern)
-                model("box/esModules/", pattern = jsTranslatorTestPattern, excludeDirs = jsTranslatorEsModulesExcludedDirs)
-                model("box/jsQualifier/", pattern = jsTranslatorTestPattern)
-                model("box/reflection/", pattern = jsTranslatorReflectionPattern)
-                model("box/kotlin.test/", pattern = jsTranslatorTestPattern)
+                model("main", pattern = jsTranslatorTestPattern)
+                model("native/", pattern = jsTranslatorTestPattern)
+                model("esModules/", pattern = jsTranslatorTestPattern, excludeDirs = jsTranslatorEsModulesExcludedDirs)
+                model("jsQualifier/", pattern = jsTranslatorTestPattern)
+                model("reflection/", pattern = jsTranslatorReflectionPattern)
+                model("kotlin.test/", pattern = jsTranslatorTestPattern)
             }
         }
 
