@@ -442,7 +442,7 @@ public class FirJsTypeScriptExportWithInlinedFunInKlibTestGenerated extends Abst
   public class Js_export_default {
     @Test
     public void testAllFilesPresentInJs_export_default() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js_export_default"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js_export_default"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
