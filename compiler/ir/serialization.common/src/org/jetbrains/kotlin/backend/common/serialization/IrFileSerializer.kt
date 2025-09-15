@@ -119,6 +119,8 @@ open class IrFileSerializer(
     private var currentLoopIndex = 0
     private var fileBeingSerialized: IrFile? = null
 
+    private val allowNegativeDeltaInCoordinates = settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_3)
+
     /**
      * The abstraction that represents all [ProtoType]s to be serialized in the current [IrFile].
      *
@@ -228,8 +230,27 @@ open class IrFileSerializer(
         saveOriginIndex(originIndex)
     }
 
-    private fun serializeCoordinates(start: Int, end: Int): Long =
-        if (settings.publicAbiOnly && !isInsideInline) 0 else BinaryCoordinates.encode(start, end)
+    private fun serializeCoordinates(start: Int, end: Int): Long {
+        if (settings.publicAbiOnly && !isInsideInline) {
+            return 0
+        }
+
+        return if (start > end && !allowNegativeDeltaInCoordinates) {
+            // Kotlin < 2.3 does not support deserializing coordinates where start < end. Such coordinates are generally invalid, but
+            // so far we don't have a mechanism to ensure they are not created. So they might occur (especially in the case of
+            // compiler plugins) and we need to "fix" them somehow. See also KT-80910.
+            if (end >= 0) {
+                // We simply flip start with end, which still encompasses the same span, and is likely what was intended by the creator
+                // of this IR element.
+                BinaryCoordinates.encode(end, start)
+            } else {
+                // Here, endOffset is one of the special invalid offset values. It is quite fair to assign it to both offsets.
+                BinaryCoordinates.encode(end, end)
+            }
+        } else {
+            BinaryCoordinates.encode(start, end)
+        }
+    }
 
     /* ------- Strings ---------------------------------------------------------- */
 
