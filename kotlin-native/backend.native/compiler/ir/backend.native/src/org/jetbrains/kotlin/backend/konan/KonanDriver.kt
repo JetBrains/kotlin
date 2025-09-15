@@ -75,9 +75,10 @@ class KonanDriver(
                 !filesToCache.isNullOrEmpty() -> filesToCache
                 configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true -> {
                     val lib = createKonanLibrary(File(libPath), "default", null, true)
-                    (0 until lib.fileCount()).map { fileIndex ->
-                        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(lib, fileIndex))
-                        val proto = IrFile.parseFrom(lib.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
+                    val mainIr = lib.mainIr
+                    (0 until mainIr.fileCount()).map { fileIndex ->
+                        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, fileIndex))
+                        val proto = IrFile.parseFrom(mainIr.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
                         val fileEntry = fileReader.fileEntry(proto)
                         fileReader.deserializeFileEntryName(fileEntry)
                     }
