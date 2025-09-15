@@ -283,6 +283,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("delegatedConstructorCallWithFalseTypeParameterRecursion.kt")
+  public void testDelegatedConstructorCallWithFalseTypeParameterRecursion() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedConstructorCallWithFalseTypeParameterRecursion.kt");
+  }
+
+  @Test
   @TestMetadata("delegatedField.kt")
   public void testDelegatedField() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedField.kt");

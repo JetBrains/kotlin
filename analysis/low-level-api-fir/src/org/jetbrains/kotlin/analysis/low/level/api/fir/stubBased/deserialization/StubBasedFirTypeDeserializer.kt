@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -334,7 +335,10 @@ internal class StubBasedFirTypeDeserializer(
         }
         val type = typeElement as KtUserType
         val referencedName = type.referencedName
-        return typeParameterSymbol(referencedName!!) ?: type.classId().toLookupTag()
+        return runIf(type.qualifier == null) {
+            // Things like Foo.T can never be resolved to type parameter T
+            typeParameterSymbol(referencedName!!)
+        } ?: type.classId().toLookupTag()
     }
 
     private fun getComposableFunctionClassId(arity: Int): ClassId {
