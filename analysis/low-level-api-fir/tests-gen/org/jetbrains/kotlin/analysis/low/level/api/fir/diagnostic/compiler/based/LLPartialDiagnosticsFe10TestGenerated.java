@@ -53148,6 +53148,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("implementationWithBoundedTypeParameters.kt")
+      public void testImplementationWithBoundedTypeParameters() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/java/implementationWithBoundedTypeParameters.kt");
+      }
+
+      @Test
       @TestMetadata("inheritedFunctionN.kt")
       public void testInheritedFunctionN() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/java/inheritedFunctionN.kt");

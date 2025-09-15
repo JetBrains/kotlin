@@ -53148,6 +53148,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("implementationWithBoundedTypeParameters.kt")
+      public void testImplementationWithBoundedTypeParameters() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/java/implementationWithBoundedTypeParameters.kt");
+      }
+
+      @Test
       @TestMetadata("inheritedFunctionN.kt")
       public void testInheritedFunctionN() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/java/inheritedFunctionN.kt");
