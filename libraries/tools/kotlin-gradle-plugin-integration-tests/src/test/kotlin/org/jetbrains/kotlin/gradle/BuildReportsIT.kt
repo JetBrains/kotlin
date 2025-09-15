@@ -948,12 +948,12 @@ class BuildReportsIT : KGPBaseTest() {
                 val jsonReport = readJsonReport(jsonReportFile)
                 assertContains(jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys, NATIVE_IN_PROCESS)
 
-                val compilerMetrics = allBuildTimeMetricsMap[COMPILER_PERFORMANCE] ?: emptyList()
+                val compilerMetrics = allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!!
                 val reportedCompilerMetrics =
                     jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                val expected = COMPILER_PERFORMANCE.children().flatMap { it.children() }.map { it.name }
+                val expected = allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!!.flatMap { allBuildTimeMetricsMap[it]!! }.map { it.name }
                 assertEquals(
                     expected,
                     reportedCompilerMetrics.map { it.name }.sorted()
@@ -1003,11 +1003,11 @@ class BuildReportsIT : KGPBaseTest() {
                 val bulidTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
                 assertContains(bulidTimesKeys, NATIVE_IN_PROCESS)
 
-                val compilerMetrics = COMPILER_PERFORMANCE.children()
+                val compilerMetrics = allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!!
                 val reportedCompilerMetrics = bulidTimesKeys.filter { it in compilerMetrics }.map { it.name }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                val expected = COMPILER_PERFORMANCE.children() + COMPILER_PERFORMANCE.children().flatMap { it.children()}
+                val expected = allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!! + allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!!.flatMap { allBuildTimeMetricsMap[it]!!}
                 assertEquals(
                     expected.map { it.name }.sorted(),
                     reportedCompilerMetrics.sorted()
