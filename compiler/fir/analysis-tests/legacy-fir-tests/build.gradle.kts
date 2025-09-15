@@ -34,7 +34,6 @@ optInToK1Deprecation()
 
 sourceSets {
     "main" { none() }
-    "test" { generatedTestDir() }
     "testFixtures" { projectDefault() }
 }
 
@@ -43,7 +42,7 @@ projectTests {
         dependsOn(":dist")
     }
 
-    testGenerator("org.jetbrains.kotlin.fir.TestGeneratorForLegacyFirTestsKt")
+    testGenerator("org.jetbrains.kotlin.fir.TestGeneratorForLegacyFirTestsKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
     withScriptRuntime()
