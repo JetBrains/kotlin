@@ -57,11 +57,12 @@ fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
 }
 
 abstract class AbstractFirWasmTest(
+    targetBackend: TargetBackend,
     targetPlatform: TargetPlatform,
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
 ) : AbstractWasmBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
-    FrontendKinds.FIR, TargetBackend.WASM, targetPlatform, pathToTestDir, testGroupOutputDirPrefix
+    FrontendKinds.FIR, targetBackend, targetPlatform, pathToTestDir, testGroupOutputDirPrefix
 ) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
@@ -105,7 +106,7 @@ abstract class AbstractFirWasmTest(
 open class AbstractFirWasmJsTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractFirWasmTest(WasmPlatforms.wasmJs, pathToTestDir, testGroupOutputDirPrefix) {
+) : AbstractFirWasmTest(TargetBackend.WASM_JS, WasmPlatforms.wasmJs, pathToTestDir, testGroupOutputDirPrefix) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmBoxRunner
 
@@ -264,7 +265,7 @@ open class AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest : AbstractFirW
 open class AbstractFirWasmWasiTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractFirWasmTest(WasmPlatforms.wasmWasi, pathToTestDir, testGroupOutputDirPrefix) {
+) : AbstractFirWasmTest(TargetBackend.WASM_WASI, WasmPlatforms.wasmWasi, pathToTestDir, testGroupOutputDirPrefix) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasiBoxRunner
 
