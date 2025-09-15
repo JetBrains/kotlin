@@ -13,18 +13,27 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir as a
 import org.jetbrains.kotlin.gradle.targets.js.internal.calculateDirHash as calculateDirHashInternal
 import org.jetbrains.kotlin.gradle.targets.js.internal.toHex as toHexInternal
 
-@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+@Deprecated(
+    "Internal KGP utility. Scheduled for removal in Kotlin 2.4.",
+    level = DeprecationLevel.ERROR
+)
 @Suppress("DeprecatedCallableAddReplaceWith")
 fun Appendable.appendConfigsFromDir(confDir: File) {
     appendConfigsFromDirInternal(confDir)
 }
 
-@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+@Deprecated(
+    "Internal KGP utility. Scheduled for removal in Kotlin 2.4.",
+    level = DeprecationLevel.ERROR
+)
 @Suppress("DeprecatedCallableAddReplaceWith")
 fun ByteArray.toHex(): String =
     toHexInternal()
 
-@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+@Deprecated(
+    "Internal KGP utility. Scheduled for removal in Kotlin 2.4.",
+    level = DeprecationLevel.ERROR
+)
 @Suppress("DeprecatedCallableAddReplaceWith")
 fun FileHasher.calculateDirHash(
     dir: File,

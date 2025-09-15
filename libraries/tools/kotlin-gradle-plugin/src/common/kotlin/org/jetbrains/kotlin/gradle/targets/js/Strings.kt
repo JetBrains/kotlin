@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted as jsQuotedInternal
 
 @Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+@Deprecated(
+    "Internal KGP utility. Scheduled for removal in Kotlin 2.4.",
+    level = DeprecationLevel.ERROR
+)
 fun String.jsQuoted(): String =
     jsQuotedInternal()
