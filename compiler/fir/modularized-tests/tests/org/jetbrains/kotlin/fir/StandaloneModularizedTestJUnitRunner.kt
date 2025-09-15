@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import org.junit.runner.notification.RunListener
 import org.junit.runner.notification.RunNotifier
 import kotlin.system.exitProcess
 
-object StandaloneModularizedTestRunner {
+object StandaloneModularizedTestJUnitRunner {
     @JvmStatic
     fun main(args: Array<String>) {
         val runner = JUnit38ClassRunner(FirResolveModularizedTotalKotlinTest::class.java)

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractFrontendModularizedTest : AbstractModularizedTest() {
+abstract class AbstractFrontendModularizedTest(config: ModularizedTestConfig) : AbstractModularizedTest(config) {
 
     fun configureLanguageVersionSettings(
         configuration: CompilerConfiguration,
@@ -71,13 +71,13 @@ abstract class AbstractFrontendModularizedTest : AbstractModularizedTest() {
         val jdkHome =
             moduleData.modularJdkRoot
                 ?: moduleData.jdkHome?.absoluteFile
-                ?: originalArguments?.jdkHome?.fixPath()?.absoluteFile
+                ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absoluteFile
 
         if (originalArguments != null) {
             configuration.put(JVMConfigurationKeys.NO_JDK, originalArguments.noJdk)
 
             for (modularRoot in originalArguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
-                configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(modularRoot.fixPath()))
+                configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(modularRoot.fixPath(config.rootPathPrefix)))
             }
 
             configuration.put(

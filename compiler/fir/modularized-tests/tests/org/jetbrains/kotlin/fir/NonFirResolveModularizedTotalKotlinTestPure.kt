@@ -25,7 +25,7 @@ import kotlin.system.measureNanoTime
 
 private val USE_NI = System.getProperty("fir.bench.oldfe.ni", "true") == "true"
 
-class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
+class NonFirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : AbstractFrontendModularizedTest(config) {
     private var totalTime = 0L
     private var files = 0
     private var lines = 0
@@ -128,7 +128,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val disposable = Disposer.newDisposable("Disposable for ${NonFirResolveModularizedTotalKotlinTest::class.simpleName}.processModule")
+        val disposable = Disposer.newDisposable("Disposable for ${NonFirResolveModularizedTotalKotlinTestPure::class.simpleName}.processModule")
         try {
             val environment = configureAndSetupEnvironment(moduleData, disposable)
             runAnalysis(environment)
