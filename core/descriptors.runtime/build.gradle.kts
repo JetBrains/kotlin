@@ -24,10 +24,6 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "testFixtures" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
 }
 
 projectTests {
@@ -41,7 +37,7 @@ projectTests {
     withAnnotations()
 
     testTask(jUnitMode = JUnitMode.JUnit4)
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
 
 testsJar()
