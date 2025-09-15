@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.fir.dataframe
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 
 fun main(args: Array<String>) {
+    val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("plugins/kotlin-dataframe/tests-gen", "plugins/kotlin-dataframe/testData") {
+        testGroup(testsRoot, "plugins/kotlin-dataframe/testData") {
             testClass<AbstractDataFrameDiagnosticTest> {
                 model("diagnostics")
             }

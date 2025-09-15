@@ -33,7 +33,6 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { generatedTestDir() }
     "testFixtures" { projectDefault() }
 }
 
@@ -50,7 +49,7 @@ projectTests {
         jvmArgumentProviders.add(classpathProvider)
     }
 
-    testGenerator("org.jetbrains.kotlin.fir.dataframe.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.fir.dataframe.TestGeneratorKt", generateTestsInBuildDirectory = true)
 }
 
 abstract class DataFramePluginClasspathProvider : CommandLineArgumentProvider {
