@@ -59,8 +59,6 @@ projectTests {
 
 optInToK1Deprecation()
 
-val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
-
 tasks.register<Exec>("downloadJspecifyTests") {
     val tmpDirPath = createTempDirectory().toAbsolutePath().toString()
     doFirst {
@@ -73,14 +71,6 @@ tasks.register<Exec>("downloadJspecifyTests") {
             into("${project.rootDir}/compiler/testData/foreignAnnotationsJava8/tests/jspecify/java")
         }
     }
-}
-
-tasks.test {
-    exclude("**/*JspecifyAnnotationsTestGenerated*")
-}
-tasks.register<Test>("jspecifyTests") {
-    workingDir(project.rootDir)
-    include("**/*JspecifyAnnotationsTestGenerated*")
 }
 
 testsJar()
