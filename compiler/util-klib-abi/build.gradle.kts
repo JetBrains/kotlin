@@ -25,10 +25,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -43,7 +40,7 @@ projectTests {
         useJUnitPlatform()
     }
 
-    testGenerator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt")
+    testGenerator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt", generateTestsInBuildDirectory = true)
 }
 
 testsJar()
