@@ -179,7 +179,8 @@ constructor(
 
         @Deprecated(
             "Use register instead. Scheduled for removal in Kotlin 2.4.",
-            ReplaceWith("register(compilation, name, configuration)")
+            ReplaceWith("register(compilation, name, configuration)"),
+            level = DeprecationLevel.ERROR
         )
         fun create(
             compilation: KotlinJsIrCompilation,
