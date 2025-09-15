@@ -40,7 +40,7 @@ import java.util.*
 import javax.inject.Inject
 
 internal abstract class KotlinNativeToolRunner @Inject constructor(
-    private val metricsReporterProvider: Provider<BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>>,
+    private val metricsReporterProvider: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>,
     private val classLoadersCachingBuildServiceProvider: Provider<ClassLoadersCachingBuildService>,
     private val toolSpec: ToolSpec,
     private val fusMetricsConsumer: Provider<out BuildFusService<out BuildFusService.Parameters>>,
@@ -290,7 +290,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     )
 
 
-    internal fun BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>.parseCompilerMetricsFromFile(
+    internal fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.parseCompilerMetricsFromFile(
         jsonFile: File,
     ) {
         if (!jsonFile.isFile()) return
@@ -304,7 +304,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             }
 
             unitStats.dynamicStats?.forEach { (parentPhaseType, name, time) ->
-                addTimeMetricNs(DynamicCompilerMetrics(parentPhaseType.toGradleBuildTime(), name), time.nanos)
+                addTimeMetricNs(CustomBuildTimeMetric.createIfDoesNotExistAndReturn(parentPhaseType.toGradleBuildTime(), name), time.nanos)
             }
         } catch (e: Exception) {
             errorMessageCollector.report(FusMetricRetrievalException("Failed to parse metrics from file ${jsonFile.absolutePath}", e), location = null)

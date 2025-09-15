@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.incremental.dirtyFiles
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_CHANGES_IN_DEPENDENCIES
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -30,7 +30,7 @@ internal class HistoryFilesBasedImpactDeterminer(
     private val buildHistoryFile: File?,
     private val lastBuildInfoFile: File,
     private val icFeatures: IncrementalCompilationFeatures,
-    private val reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+    private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     private val messageCollector: MessageCollector,
 ) : ImpactedFilesDeterminer {
 

@@ -111,19 +111,19 @@ fun collectCompilerArguments(buildOperationRecord: BuildOperationRecord?): List<
     } else emptyList()
 }
 
-private fun <E : BuildTime<*>> filterMetrics(
+private fun <E : BuildMetric<*>> filterMetrics(
     expectedMetrics: Set<String>?,
     buildTimesMetrics: Map<E, Long>
 ): Map<E, Long> = expectedMetrics?.let { buildTimesMetrics.filterKeys { metric -> it.contains(metric.name) } } ?: buildTimesMetrics
 
-private fun collectBuildAttributes(buildMetrics: BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>?): Set<BuildAttribute> {
+private fun collectBuildAttributes(buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>?): Set<BuildAttribute> {
     return buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys ?: emptySet()
 }
 
 
 private fun collectBuildPerformanceMetrics(
-    buildMetrics: BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>?
-): Map<GradleBuildPerformanceMetric, Long> {
+    buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>?
+): Map<BuildPerformanceMetric, Long> {
     return buildMetrics?.buildPerformanceMetrics?.asMap()
         ?.filterValues { value -> value != 0L }
         ?.filterKeys { key ->
@@ -137,11 +137,11 @@ private fun collectBuildPerformanceMetrics(
         ?: emptyMap()
 }
 private fun collectBuildMetrics(
-    buildMetrics: BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>?,
+    buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>?,
     gradleTaskStartTime: Long? = null,
     taskFinishEventTime: Long? = null,
-): Map<GradleBuildTimeMetric, Long> {
-    val taskBuildMetrics = HashMap<GradleBuildTimeMetric, Long>(buildMetrics?.buildTimes?.buildTimesMapMs())
+): Map<BuildTimeMetric, Long> {
+    val taskBuildMetrics = HashMap<BuildTimeMetric, Long>(buildMetrics?.buildTimes?.buildTimesMapMs())
     val performanceMetrics = buildMetrics?.buildPerformanceMetrics?.asMap() ?: emptyMap()
     gradleTaskStartTime?.let { startTime ->
         performanceMetrics[START_TASK_ACTION_EXECUTION]?.let { actionStartTime ->

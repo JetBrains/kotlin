@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -348,7 +348,7 @@ internal class JvmCompilationOperationImpl(
 
     private fun JvmCompilationOperationImpl.getNonFirRunner(
         workingDirectory: Path,
-        buildReporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+        buildReporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
         aggregatedIcConfigurationOptions: JvmSnapshotBasedIncrementalCompilationOptionsImpl,
         classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
         kotlinFilenameExtensions: Set<String>,
@@ -377,7 +377,7 @@ internal class JvmCompilationOperationImpl(
 
     private fun JvmCompilationOperationImpl.getFirRunner(
         workingDirectory: Path,
-        buildReporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+        buildReporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
         aggregatedIcConfigurationOptions: JvmSnapshotBasedIncrementalCompilationOptionsImpl,
         classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
         kotlinFilenameExtensions: Set<String>,

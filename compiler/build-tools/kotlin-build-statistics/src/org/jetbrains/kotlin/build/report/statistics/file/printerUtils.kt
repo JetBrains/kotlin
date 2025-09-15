@@ -129,7 +129,7 @@ private fun Printer.printBuildTimes(buildTimes: Map<out BuildTimeMetric, Long>, 
             }
         }
 
-        for (buildTime in getAllMetricsByType(BuildTimeMetric::class)) {
+        for (buildTime in allBuildTimeMetrics) {
             if (buildTime.parent != null) continue
 
             printBuildTime(buildTime)
@@ -141,7 +141,7 @@ private fun Printer.printBuildPerformanceMetrics(buildMetrics: Map<out BuildPerf
     if (buildMetrics.isEmpty()) return
 
     withIndent("Size metrics:") {
-        for (metric in getAllMetricsByType(BuildPerformanceMetric::class)) {
+        for (metric in allBuildPerformanceMetrics) {
             buildMetrics[metric]?.let { printSizeMetric(metric, it) }
         }
     }

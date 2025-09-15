@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.HashSet
 
 internal class TaskExecutionResult(
-    val buildMetrics: BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+    val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
     val taskInfo: TaskExecutionInfo = TaskExecutionInfo(),
     val icLogLines: List<String> = emptyList()
 )

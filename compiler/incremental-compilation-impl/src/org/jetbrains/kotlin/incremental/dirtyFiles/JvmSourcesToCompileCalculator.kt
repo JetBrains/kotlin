@@ -31,7 +31,7 @@ internal class JvmSourcesToCompileCalculator(
     private val kotlinSourceFilesExtensions: Set<String>,
     private val javaInteropCoordinator: JavaInteropCoordinator,
     private val dirtyFilesProvider: DirtyFilesProvider,
-    private val reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+    private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
 ) {
 
     private fun calculateSourcesToCompileImpl(

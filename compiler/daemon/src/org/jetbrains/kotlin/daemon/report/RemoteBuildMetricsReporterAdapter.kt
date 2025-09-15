@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.daemon.report
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.RemoteBuildMetricsReporter
 import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 
 class RemoteBuildMetricsReporterAdapter(
-    private val delegate: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+    private val delegate: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     private val shouldReport: Boolean,
     private val compilationResults: CompilationResults
 ) :
-    BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric> by delegate,
-    RemoteBuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric> {
+    BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> by delegate,
+    RemoteBuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> {
 
     override fun flush() {
         if (shouldReport) {

@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.incremental.utils
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 
 class TestBuildReporter(
     val testICReporter: TestICReporter,
-    buildMetricsReporter: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>
-) : BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>(testICReporter, buildMetricsReporter) {
+    buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
+) : BuildReporter<BuildTimeMetric, BuildPerformanceMetric>(testICReporter, buildMetricsReporter) {
     fun reportCachesDump(cachesDump: String) {
         testICReporter.cachesDump = cachesDump
     }

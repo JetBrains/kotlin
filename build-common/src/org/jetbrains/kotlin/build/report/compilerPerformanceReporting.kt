@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.build.report
 
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.util.*
 
-fun BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>.reportPerformanceData(moduleStats: UnitStats) {
+fun BuildReporter<BuildTimeMetric, BuildPerformanceMetric>.reportPerformanceData(moduleStats: UnitStats) {
     if (moduleStats.linesCount > 0) {
         addMetric(SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong())
     }
 
-    fun reportLps(lpsMetrics: GradleBuildPerformanceMetric, time: Time) {
+    fun reportLps(lpsMetrics: BuildPerformanceMetric, time: Time) {
         if (time != Time.ZERO) {
             addMetric(lpsMetrics, moduleStats.getLinesPerSecond(time).toLong())
         }
@@ -46,7 +44,7 @@ fun BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>.reportPer
         addTimeMetricNs(gradleBuildTime, time.nanos)
 
         moduleStats.dynamicStats?.filter { it.parentPhaseType == phaseType }?.forEach { (_, name, time) ->
-            addTimeMetricNs(DynamicCompilerMetrics(gradleBuildTime, name), time.nanos)
+            addTimeMetricNs(CustomBuildTimeMetric.createIfDoesNotExistAndReturn(gradleBuildTime, name), time.nanos)
         }
 
         if (phaseType == PhaseType.Analysis) {

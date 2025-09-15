@@ -37,7 +37,7 @@ object ClasspathEntrySnapshotter {
     fun snapshot(
         classpathEntry: File,
         settings: Settings,
-        metrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
+        metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> = DoNothingBuildMetricsReporter
     ): ClasspathEntrySnapshot {
         DirectoryOrJarReader.create(classpathEntry).use { directoryOrJarReader ->
             val classes = metrics.measure(LOAD_CLASSES_PATHS_ONLY) {

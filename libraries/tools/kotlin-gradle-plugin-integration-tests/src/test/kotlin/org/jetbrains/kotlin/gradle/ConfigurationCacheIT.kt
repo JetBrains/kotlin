@@ -369,24 +369,13 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         nativeProject(
             "native-simple-project", gradleVersion, buildOptions = defaultBuildOptions.copy(
                 nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
-                    version = TestVersions.Kotlin.CURRENT,
+                    version = TestVersions.Kotlin.STABLE_RELEASE,
                     distributionDownloadFromMaven = true,
                 ),
                 konanDataDir = konanDirTemp,
             ),
         ) {
-
-            build("assemble") {
-                assertConfigurationCacheStored()
-            }
-
-            build("clean")
-            konanDirTemp.toFile().deleteRecursively()
-
-            // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-            build("assemble") {
-                assertConfigurationCacheReused()
-            }
+            testConfigurationCacheOf(":assemble")
         }
     }
 
