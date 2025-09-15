@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.openapi.application.Application
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
@@ -60,7 +59,7 @@ private val DUMP_MEMORY = System.getProperty("fir.bench.dump.memory", "false").t
 
 
 
-class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
+class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : AbstractFrontendModularizedTest(config) {
 
     private lateinit var dump: MultiModuleHtmlFirDump
     private lateinit var bench: FirResolveBench
@@ -158,7 +157,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val disposable = Disposer.newDisposable("Disposable for ${FirResolveModularizedTotalKotlinTest::class.simpleName}.processModule")
+        val disposable = Disposer.newDisposable("Disposable for ${FirResolveModularizedTotalKotlinTestPure::class.simpleName}.processModule")
 
         val configuration = createDefaultConfiguration(moduleData)
         configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)

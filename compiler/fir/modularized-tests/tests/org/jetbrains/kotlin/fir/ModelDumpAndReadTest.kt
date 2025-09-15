@@ -32,7 +32,7 @@ class ModelDumpAndReadTest : TestCaseWithTmpdir() {
         assertEquals(ExitCode.OK, res.second)
 
         val modelDumpFile = tmpdir.resolve("model-testmain.xml")
-        val moduleData = loadModuleDumpFile(modelDumpFile).single()
+        val moduleData = loadModuleDumpFile(modelDumpFile, ModularizedTestConfig()).single()
 
         val arguments = moduleData.arguments as K2JVMCompilerArguments
         assertEquals(jarFile.absolutePath, arguments.destination)
@@ -91,7 +91,7 @@ class ModelDumpAndReadTest : TestCaseWithTmpdir() {
             </modules>
         """.trimIndent()
         val xmlFile = tmpdir.resolve("model-oldformat-simple.xml").apply { writeText(xml) }
-        val modules = loadModuleDumpFile(xmlFile)
+        val modules = loadModuleDumpFile(xmlFile, ModularizedTestConfig())
         assertEquals(1, modules.size)
         val m = modules.single()
         assertEquals("m1", m.name)

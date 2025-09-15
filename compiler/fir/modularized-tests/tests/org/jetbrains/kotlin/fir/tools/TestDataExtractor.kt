@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tools
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.fir.ModularizedTestConfig
 import org.jetbrains.kotlin.fir.loadModuleDumpFile
 import java.io.BufferedOutputStream
 import java.io.File
@@ -28,7 +29,7 @@ object TestDataExtractor {
         // TODO: Implement XML processing here using javax.xml.stream if/when needed.
         // This script was simplified to avoid dependencies on com.intellij.openapi.util.JDOMUtil and com.intellij.util.xmlb.
         for (model in models) {
-            val moduleData = loadModuleDumpFile(model)
+            val moduleData = loadModuleDumpFile(model, ModularizedTestConfig())
             moduleData.forEach {
                 pathsToAdd.addAll(it.rawClasspath)
                 pathsToAdd.addAll(it.rawSources)
