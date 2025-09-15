@@ -1,11 +1,9 @@
 @file:OptIn(ExperimentalWasmDsl::class)
-// TODO: remove this when KT-75086 is completed
-@file:Suppress("DEPRECATION")
 
 import org.jetbrains.kotlin.build.d8.D8Extension
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 
 project.plugins.apply(D8Plugin::class.java)
 rootProject.plugins.apply(D8Plugin::class.java)
