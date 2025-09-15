@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import java.io.File
 
 internal object KotlinMessageRenderer : MessageRenderer {
+    // This is a temporary solution specifically for the Kotlin Playground and should not be used by anyone else.
+    // It should be deleted after KT-80963 is implemented and the Kotlin Playground migrates to this new API.
     private val extendedLocations: Boolean by lazy(LazyThreadSafetyMode.NONE) {
         java.lang.Boolean.getBoolean("org.jetbrains.kotlin.buildtools.logger.extendedLocation")
     }
