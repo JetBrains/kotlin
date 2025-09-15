@@ -62,7 +62,7 @@ abstract class Assertions {
         return collection.joinToString("\n")
     }
 
-    abstract fun failAll(exceptions: List<Throwable>)
+    abstract fun failAll(exceptions: List<Throwable>, heading: String = "")
     abstract fun assertAll(conditions: List<() -> Unit>)
 
     fun assertAll(vararg conditions: () -> Unit) {
