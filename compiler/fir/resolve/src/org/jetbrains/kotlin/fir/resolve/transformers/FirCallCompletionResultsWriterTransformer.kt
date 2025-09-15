@@ -613,7 +613,7 @@ class FirCallCompletionResultsWriterTransformer(
             val varargParameterTypeRef = varargParameter.returnTypeRef
             val resolvedArrayType = varargParameterTypeRef.substitute(this)
             val argumentMappingWithAllArgs =
-                remapArgumentsWithVararg(varargParameter, resolvedArrayType, argumentMapping, argumentList)
+                remapArgumentsWithVararg(session, varargParameter, resolvedArrayType, argumentMapping, argumentList)
             ResultingArgumentsMapping(
                 argumentMappingWithAllArgs.filterValuesNotNull(),
                 argumentMappingWithAllArgs

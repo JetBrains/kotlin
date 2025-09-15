@@ -212,6 +212,10 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
     } as T
 }
 
+fun <T : ConeKotlinType> T.removeAnnotations(): T {
+    return withAttributes(attributes.remove(CustomAnnotationTypeAttribute::class))
+}
+
 /**
  * Adds or replaces an `AbbreviatedTypeAttribute`.
  */
