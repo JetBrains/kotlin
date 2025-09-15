@@ -8,6 +8,7 @@ plugins {
     id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -40,12 +41,21 @@ sourceSets {
 projectTests {
     testTask(parallel = true, maxHeapSizeMb = 3072, jUnitMode = JUnitMode.JUnit4) {
         dependsOn(":dist")
-        workingDir = rootDir
     }
 
     testGenerator("org.jetbrains.kotlin.fir.TestGeneratorForLegacyFirTestsKt")
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withAnnotations()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
+
+    testData(project(":compiler").isolated, "testData/loadJava/compiledJava")
+    testData(project(":compiler:fir:analysis-tests").isolated, "testData/enhancement")
+    testData(project(":compiler:fir:analysis-tests").isolated, "testData/lightClasses")
 }
 
 testsJar()

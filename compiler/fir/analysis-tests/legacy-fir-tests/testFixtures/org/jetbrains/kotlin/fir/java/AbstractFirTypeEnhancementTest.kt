@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -62,11 +63,11 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
     private fun createJarWithForeignAnnotations(): List<File> {
         val jsr305Jar =
-            MockLibraryUtilExt.compileJavaFilesLibraryToJar(JSR_305_SOURCES_PATH, "jsr305")
+            MockLibraryUtilExt.compileJavaFilesLibraryToJar(JavaForeignAnnotationType.Jsr305.path, "jsr305")
 
         return listOf(
             MockLibraryUtilExt.compileJavaFilesLibraryToJar(
-                FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations",
+                JavaForeignAnnotationType.Annotations.path, "foreign-annotations",
                 extraClasspath = listOf(jsr305Jar.absolutePath),
             ),
             jsr305Jar,
@@ -190,11 +191,6 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val packageName = packageStatement?.packageName
         val fqName = parentFqName.child(Name.identifier(this.name!!))
         return ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, isLocal = false)
-    }
-
-    companion object {
-        private const val FOREIGN_ANNOTATIONS_SOURCES_PATH = "third-party/annotations"
-        private const val JSR_305_SOURCES_PATH = "third-party/jsr305"
     }
 }
 
