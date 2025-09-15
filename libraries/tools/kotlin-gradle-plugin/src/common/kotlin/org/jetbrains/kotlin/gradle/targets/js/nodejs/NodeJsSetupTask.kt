@@ -81,7 +81,8 @@ abstract class NodeJsSetupTask @Inject constructor(
     companion object {
         @Deprecated(
             "Use nodeJsSetupTaskProvider from corresponding NodeJsEnvSpec or WasmNodeJsEnvSpec instead. " +
-                    "Scheduled for removal in Kotlin 2.4."
+                    "Scheduled for removal in Kotlin 2.4.",
+            level = DeprecationLevel.ERROR
         )
         const val NAME: String = "kotlinNodeJsSetup"
 
