@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -38,7 +39,24 @@ fun loadAnnotationsFromMetadataGuarded(
     languageFeature: LanguageFeature,
     useSiteTarget: AnnotationUseSiteTarget? = null,
 ): List<FirAnnotation>? =
-    runIf(session.languageVersionSettings.supportsFeature(languageFeature) && annotations.isNotEmpty()) {
+    runIf(session.languageVersionSettings.supportsFeature(languageFeature)) {
+        loadAnnotationsFromMetadataIfNotEmpty(session, flags, annotations, nameResolver, useSiteTarget)
+    }
+
+/**
+ * Loads annotations from metadata only when the given metadata [annotations] list is not empty.
+ * Otherwise, returns null instead of an empty list to signal that the fallback annotation loading function should be called.
+ *
+ * Implemented for handling migration to the new approach of storing annotations both for klib and JVM backends.
+ */
+fun loadAnnotationsFromMetadataIfNotEmpty(
+    session: FirSession,
+    flags: Int?,
+    annotations: List<ProtoBuf.Annotation>,
+    nameResolver: NameResolver,
+    useSiteTarget: AnnotationUseSiteTarget? = null,
+): List<FirAnnotation>? =
+    annotations.ifNotEmpty {
         loadAnnotationsFromMetadata(session, flags, annotations, nameResolver, useSiteTarget)
     }
 
