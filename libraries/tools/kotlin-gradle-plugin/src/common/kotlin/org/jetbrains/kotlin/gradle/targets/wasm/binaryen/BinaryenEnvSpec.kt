@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 /**
  * Specification for executing Binaryen, an optimization tool for wasm files.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalWasmDsl
 abstract class BinaryenEnvSpec : org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnvSpec() {
 

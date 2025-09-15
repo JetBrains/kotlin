@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.gradle.utils.getFile
     ReplaceWith(
         "BinaryenEnvSpec",
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec"
-    )
+    ),
+    level = DeprecationLevel.ERROR
 )
 @ExperimentalWasmDsl
 abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
