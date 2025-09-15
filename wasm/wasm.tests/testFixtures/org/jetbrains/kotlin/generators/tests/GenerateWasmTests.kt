@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.wasm.test.*
 import org.jetbrains.kotlin.wasm.test.diagnostics.*
 
 fun main(args: Array<String>) {
+    val testsRoot = args[0]
     System.setProperty("java.awt.headless", "true")
 
     // Common configuration shared between K1 and K2 tests:
@@ -32,7 +33,7 @@ fun main(args: Array<String>) {
 
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
+        testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
             testClass<AbstractWasmPartialLinkageNoICTestCase> {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -41,7 +42,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData/incremental") {
+        testGroup(testsRoot, "js/js.translator/testData/incremental") {
             testClass<AbstractFirWasmInvalidationTest> {
                 model(
                     "invalidation/",
@@ -60,7 +61,7 @@ fun main(args: Array<String>) {
     }
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/diagnostics") {
+        testGroup(testsRoot, "compiler/testData/diagnostics") {
             testClass<AbstractDiagnosticsWasmTest> {
                 model("wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
@@ -82,7 +83,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsTranslatorTest> {
                 model("main", pattern = jsTranslatorTestPattern)
                 model("native/", pattern = jsTranslatorTestPattern)
@@ -93,7 +94,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsCodegenBoxTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
@@ -137,13 +138,13 @@ fun main(args: Array<String>) {
                 model("debug/stepping")
             }
         }
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmTypeScriptExportTest> {
                 model("typescript-export/wasm/")
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/klib/syntheticAccessors", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/klib/syntheticAccessors", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest>(
                 suiteTestClassName = "WasmJsSynthAccBoxTestGenerated"
             ) {

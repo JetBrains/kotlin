@@ -129,10 +129,7 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -266,7 +263,16 @@ fun Test.setupWasmEdge() {
 testsJar {}
 
 projectTests {
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt")
+    testData(project(":compiler").isolated, "testData/debug")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":js:js.translator").isolated, "testData/box")
+    testData(project(":js:js.translator").isolated, "testData/incremental")
+    testData(project(":js:js.translator").isolated, "testData/typescript-export")
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt", generateTestsInBuildDirectory = true)
 
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
         testTask(
@@ -306,4 +312,9 @@ projectTests {
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
         include("**/Diagnostics*.class")
     }
+}
+
+// Ensure TypeScript test generation for tasks like 'generate-ts-for-nullableJsPrimitives' happens before collecting test data
+tasks.named("collectTestData") {
+    dependsOn(generateTypeScriptTests)
 }
