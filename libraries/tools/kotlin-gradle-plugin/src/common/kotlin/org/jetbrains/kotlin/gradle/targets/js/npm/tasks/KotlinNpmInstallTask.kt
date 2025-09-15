@@ -73,7 +73,8 @@ abstract class KotlinNpmInstallTask :
     companion object {
         @Deprecated(
             "Use npmInstallTaskProvider from corresponding NodeJsRootExtension or WasmNodeJsRootExtension instead. " +
-                    "Scheduled for removal in Kotlin 2.4."
+                    "Scheduled for removal in Kotlin 2.4.",
+            level = DeprecationLevel.ERROR
         )
         const val NAME = "kotlinNpmInstall"
 

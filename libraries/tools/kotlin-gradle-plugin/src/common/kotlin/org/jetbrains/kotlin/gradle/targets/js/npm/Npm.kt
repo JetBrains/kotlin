@@ -120,6 +120,7 @@ class Npm internal constructor(
     @Deprecated(
         "Updated to remove ServiceRegistry. Scheduled for removal in Kotlin 2.4.",
         ReplaceWith("packageManagerExec(logger, nodeJs, environment, dir, description, args)"),
+        level = DeprecationLevel.ERROR
     )
     @Suppress("unused")
     fun npmExec(

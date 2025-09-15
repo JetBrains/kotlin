@@ -88,11 +88,11 @@ data class FileExternalGradleDependency(
  * @see KotlinCompilationNpmResolver
  */
 data class CompositeDependency(
-    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
     val dependencyName: String,
-    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
     val dependencyVersion: String,
-    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
     val includedBuildDir: File,
     @Transient
     val includedBuild: IncludedBuild?,

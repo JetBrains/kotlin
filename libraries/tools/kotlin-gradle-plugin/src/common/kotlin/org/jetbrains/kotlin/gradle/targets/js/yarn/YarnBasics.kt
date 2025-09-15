@@ -39,7 +39,8 @@ abstract class YarnBasics internal constructor(
 
     @Deprecated(
         "Updated to remove ServiceRegistry. Scheduled for removal in Kotlin 2.4.",
-        ReplaceWith("packageManagerExec(logger, nodeJs, yarn, dir, description, args)")
+        ReplaceWith("packageManagerExec(logger, nodeJs, yarn, dir, description, args)"),
+        level = DeprecationLevel.ERROR
     )
     @Suppress("unused")
     fun yarnExec(
