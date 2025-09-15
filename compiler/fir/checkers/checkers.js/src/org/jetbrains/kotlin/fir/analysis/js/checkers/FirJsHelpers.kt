@@ -62,23 +62,6 @@ fun sanitizeName(name: String): String {
     return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
 }
 
-fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
-    if (hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsNative, session) || isEffectivelyExternal(session)) {
-        return true
-    }
-
-    if (this is FirPropertyAccessorSymbol) {
-        val property = propertySymbol
-        return property.hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsNative, session)
-    }
-
-    return false
-}
-
-fun FirBasedSymbol<*>.isNativeInterface(session: FirSession): Boolean {
-    return isNativeObject(session) && (fir as? FirClass)?.isInterface == true
-}
-
 fun FirBasedSymbol<*>.isLibraryObject(session: FirSession): Boolean {
     return hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsLibrary, session)
 }

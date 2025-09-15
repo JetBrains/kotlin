@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
-import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
+import org.jetbrains.kotlin.fir.declarations.utils.isNativeObject
 
 abstract class FirWebCommonAbstractNativeAnnotationChecker(
     private val requiredAnnotation: ClassId
@@ -38,7 +38,7 @@ abstract class FirWebCommonAbstractNativeAnnotationChecker(
         val isMember = !context.isTopLevel && declaration.visibility != Visibilities.Local
         val isExtension = declaration.isExtension
 
-        if (isMember && (isExtension || !declaration.symbol.isEffectivelyExternal(context.session)) || !isMember && !isExtension) {
+        if (isMember && (isExtension || !declaration.symbol.isNativeObject(context.session)) || !isMember && !isExtension) {
             reporter.reportOn(
                 declaration.source,
                 FirWebCommonErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN,
