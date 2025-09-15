@@ -3,6 +3,9 @@
 // FULL_JDK
 // WITH_STDLIB
 
+// KT-49472
+// SKIP_KOTLIN_REFLECT_K1_VS_K2_CHECK
+
 // FILE: Java1.java
 public interface Java1 {
     boolean remove(Object o);
