@@ -1,10 +1,13 @@
-// TODO: remove this when KT-75086 is completed
-@file:Suppress("DEPRECATION")
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootEnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.spdx.sbom.gradle.SpdxSbomExtension
 import java.net.URI
 
@@ -80,7 +83,7 @@ val resolveJsTools by tasks.registering {
                 }
             }
 
-            extensions.findByType<BinaryenRootEnvSpec>()?.run {
+            extensions.findByType<BinaryenEnvSpec>()?.run {
                 val versionValue = version.get()
 
                 project.resolveDependencies(
@@ -101,7 +104,7 @@ val resolveJsTools by tasks.registering {
                 }
             }
 
-            extensions.findByType<NodeJsEnvSpec>()?.run {
+            val nodeJsEnvSpecAction: EnvSpec<NodeJsEnv>.() -> Unit = {
                 val versionValue = version.get()
 
                 project.resolveDependencies(
@@ -122,7 +125,10 @@ val resolveJsTools by tasks.registering {
                 }
             }
 
-            extensions.findByType<YarnRootEnvSpec>()?.run {
+            extensions.findByType<NodeJsEnvSpec>()?.run(nodeJsEnvSpecAction)
+            extensions.findByType<WasmNodeJsEnvSpec>()?.run(nodeJsEnvSpecAction)
+
+            val yarnRootEnvSpecAction: EnvSpec<YarnEnv>.() -> Unit = {
                 project.resolveDependencies("com.yarnpkg:yarn:${version.get()}@tar.gz") {
                     ivy {
                         name = "Yarn-ResolveDependencies"
@@ -135,6 +141,9 @@ val resolveJsTools by tasks.registering {
                     }
                 }
             }
+
+            extensions.findByType<YarnRootEnvSpec>()?.run(yarnRootEnvSpecAction)
+            extensions.findByType<WasmYarnRootEnvSpec>()?.run(yarnRootEnvSpecAction)
         }
     }
 }
