@@ -91,7 +91,6 @@ projectTests {
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
-        dependsOn(":compiler:generateTestData")
     }
 }
 

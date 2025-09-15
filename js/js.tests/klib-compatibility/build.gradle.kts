@@ -136,6 +136,4 @@ tasks.test {
 }
 
 @Suppress("unused")
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt") {
-    dependsOn(":compiler:generateTestData")
-}
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt")

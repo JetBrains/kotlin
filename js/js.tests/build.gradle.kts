@@ -266,9 +266,7 @@ projectTests {
         forwardProperties()
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
-        dependsOn(":compiler:generateTestData")
-    }
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 }
 
 testsJar {}

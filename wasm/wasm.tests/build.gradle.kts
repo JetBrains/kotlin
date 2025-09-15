@@ -266,9 +266,7 @@ fun Test.setupWasmEdge() {
 testsJar {}
 
 projectTests {
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt") {
-        dependsOn(":compiler:generateTestData")
-    }
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt")
 
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
         testTask(
