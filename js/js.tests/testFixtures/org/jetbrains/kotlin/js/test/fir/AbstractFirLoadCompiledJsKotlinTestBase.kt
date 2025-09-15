@@ -35,7 +35,7 @@ abstract class AbstractFirLoadCompiledJsKotlinTestBase<F : ResultingArtifact.Fro
         )
 
         configureKlibArtifactsHandlersStep {
-            useHandlers(::KlibLoadedMetadataDumpHandler)
+            useHandlers(::KlibJsLoadedMetadataDumpHandler)
         }
 
         useAfterAnalysisCheckers(
