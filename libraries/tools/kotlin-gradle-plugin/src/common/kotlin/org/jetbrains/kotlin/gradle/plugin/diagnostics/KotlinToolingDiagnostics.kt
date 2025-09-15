@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
@@ -23,8 +22,10 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
@@ -148,12 +149,20 @@ internal object KotlinToolingDiagnostics {
                 appendLine("Dependency '${unresolvedDependency.displayName}':")
                 appendLine("Unresolved platforms:".prependIndent(" ".repeat(2)))
                 unresolvedDependency.unresolvedComponents.forEach {
-                    appendLine("Compilation ${it.compilationName} resolved configuration '${it.configurationName}' with resolution failure: ${it.failureDescription}".prependIndent(" ".repeat(4)))
+                    appendLine(
+                        "Compilation ${it.compilationName} resolved configuration '${it.configurationName}' with resolution failure: ${it.failureDescription}".prependIndent(
+                            " ".repeat(4)
+                        )
+                    )
                 }
                 if (unresolvedDependency.resolvedVariants.isNotEmpty()) {
                     appendLine("Resolved platforms:".prependIndent(" ".repeat(2)))
                     unresolvedDependency.resolvedVariants.forEach {
-                        appendLine("Compilation ${it.compilationName} resolved configuration '${it.configurationName}' with variant: ${it.variant}".prependIndent(" ".repeat(4)))
+                        appendLine(
+                            "Compilation ${it.compilationName} resolved configuration '${it.configurationName}' with variant: ${it.variant}".prependIndent(
+                                " ".repeat(4)
+                            )
+                        )
                     }
                 }
             } else if (emitAdditionalInformationInEachFailure) {
@@ -164,7 +173,7 @@ internal object KotlinToolingDiagnostics {
 
         operator fun invoke(
             sourceSetName: String,
-            unresolvedDependencies: List<UnresolvedKmpDependency>
+            unresolvedDependencies: List<UnresolvedKmpDependency>,
         ) =
             build {
                 title("KMP Dependencies Resolution Failure")
@@ -207,7 +216,11 @@ internal object KotlinToolingDiagnostics {
                 title("Cross Compilation with Cinterop Not Supported in Project '$projectName'")
                     .description {
                         """
-                    In project '$projectName', cross compilation to target '$target' has been disabled because it contains cinterops: '${interops.joinToString("', '")}' which cannot be processed on host '$hostname'.
+                    In project '$projectName', cross compilation to target '$target' has been disabled because it contains cinterops: '${
+                            interops.joinToString(
+                                "', '"
+                            )
+                        }' which cannot be processed on host '$hostname'.
                     Cinterop libraries require platform-specific native toolchains that aren't available on the current host system.
                     """.trimIndent()
                     }
@@ -1211,12 +1224,12 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object IncorrectCompileOnlyDependencyWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    data class CompilationDependenciesPair(
+        val compilation: KotlinCompilation<*>,
+        val dependencyCoords: List<String>,
+    )
 
-        data class CompilationDependenciesPair(
-            val compilation: KotlinCompilation<*>,
-            val dependencyCoords: List<String>,
-        )
+    object IncorrectCompileOnlyDependencyWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
 
         operator fun invoke(
             compilationsWithCompileOnlyDependencies: List<CompilationDependenciesPair>,
@@ -1275,6 +1288,45 @@ internal object KotlinToolingDiagnostics {
                     }
                     .solution {
                         "Please expose compileOnly dependencies as api dependencies."
+                    }
+            }
+        }
+    }
+
+    object TestApiDependencyWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+
+        operator fun invoke(
+            testCompilationsWithApiDependencies: List<CompilationDependenciesPair>,
+        ): ToolingDiagnostic {
+
+            val formattedDeps = testCompilationsWithApiDependencies
+                .flatGroupBy(
+                    keySelector = { it.dependencyCoords },
+                    keyTransformer = { it },
+                    valueTransformer = { it.compilation.defaultSourceSet.name },
+                )
+                .map { (dependency, sourceSetNames) ->
+                    "$dependency (source sets: ${sourceSetNames.joinToString()})"
+                }
+                .distinct()
+                .sorted()
+                .joinToString("\n") { "    - $it" }
+
+            return build {
+                title("Unsupported `testApi` Dependencies")
+                    .description {
+                        """
+                        |`testApi` dependencies are not valid.
+                        |Dependencies:
+                        |$formattedDeps
+                        """.trimMargin()
+                    }
+                    .solution {
+                        "Replace testApi dependencies with testImplementation dependencies. " +
+                                "If necessary, split test utilities into a separate subproject."
+                    }
+                    .documentationLink(URI("https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures")) {
+                        "For Kotlin/JVM projects, consider using Test Fixtures."
                     }
             }
         }
@@ -1654,7 +1706,8 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion :
+        ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
             currentGradleVersion: GradleVersion,
             minimumSupportedGradleVersion: GradleVersion,
