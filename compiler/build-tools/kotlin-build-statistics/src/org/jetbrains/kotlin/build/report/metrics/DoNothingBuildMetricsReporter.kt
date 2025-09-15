@@ -15,9 +15,6 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter<GradleBuildTimeMetri
     override fun addTimeMetricNs(time: GradleBuildTimeMetric, durationNs: Long) {
     }
 
-    override fun addDynamicTimeMetricNs(time: String, parent: GradleBuildTimeMetric, durationNs: Long) {
-    }
-
     override fun addMetric(metric: GradleBuildPerformanceMetric, value: Long) {
     }
 
