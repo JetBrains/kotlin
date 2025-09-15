@@ -11,14 +11,15 @@ import java.util.concurrent.CopyOnWriteArrayList
 class CustomBuildTimeMetric private constructor(parent: BuildTimeMetric?, name: String) : BuildTimeMetric(parent, name, name) {
     companion object {
         fun createIfDoesNotExistAndReturn(parent: BuildTimeMetric? = null, name: String): BuildTimeMetric {
-            allCustomBuildTimeMetrics.addIfAbsent(CustomBuildTimeMetric(parent, name))
-            return getAllCustomBuildTimeMetrics()[name]!!
+            val newCustomBuildTimeMetric = CustomBuildTimeMetric(parent, name)
+            allCustomBuildTimeMetrics.addIfAbsent(newCustomBuildTimeMetric)
+            return getAllCustomBuildTimeMetrics().find { it.name == name } ?: newCustomBuildTimeMetric
         }
     }
 }
 
 private val allCustomBuildTimeMetrics = CopyOnWriteArrayList<CustomBuildTimeMetric>()
 
-fun getAllCustomBuildTimeMetrics() = allCustomBuildTimeMetrics.associateBy { it.name }
+fun getAllCustomBuildTimeMetrics() = allCustomBuildTimeMetrics
 
 
