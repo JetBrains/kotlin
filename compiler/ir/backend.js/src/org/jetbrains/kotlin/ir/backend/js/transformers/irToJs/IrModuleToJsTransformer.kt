@@ -359,7 +359,7 @@ class IrModuleToJsTransformer(
                 override fun List<JsIrModules>.merge() =
                     JsIrModules(map { it.mainModule }.merge(), mapNotNull { it.exportModule }.ifNotEmpty { merge() })
 
-                override fun IrAndExportedDeclarations.generateArtifact(
+                override fun IrAndExportedDeclarations.generateProxyArtifact(
                     mainFunctionTag: String?,
                     suiteFunctionTag: String?,
                     testFunctions: CachedTestFunctionsWithTheirPackage,

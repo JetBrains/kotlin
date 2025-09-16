@@ -63,7 +63,7 @@ interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
      * Generates a special _proxy_ artifact for this module, which re-exports the declarations from all the artifacts generated from
      * files in this module.
      */
-    fun Module.generateArtifact(
+    fun Module.generateProxyArtifact(
         mainFunctionTag: String?,
         suiteFunctionTag: String?,
         testFunctions: CachedTestFunctionsWithTheirPackage,
@@ -122,7 +122,7 @@ interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
                 // Here we make use of the fact that the main module is always the last one in the list, so the last condition is
                 // well-formed.
                 if (mainFunctionTag != null || hasFileWithExportedDeclaration || hasModuleLevelEffect || suiteFunctionTag != null || (module.isMain && someModuleHasEffect)) {
-                    val proxyArtifact = module.generateArtifact(
+                    val proxyArtifact = module.generateProxyArtifact(
                         mainFunctionTag,
                         suiteFunctionTag,
                         testFunctions,

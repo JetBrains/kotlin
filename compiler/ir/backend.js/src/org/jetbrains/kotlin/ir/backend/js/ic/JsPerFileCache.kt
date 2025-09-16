@@ -462,7 +462,7 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
                 else -> CachedFileInfo.MainFileCachedInfo.Merged(map { it as CachedFileInfo.MainFileCachedInfo })
             }
 
-            override fun JsModuleArtifact.generateArtifact(
+            override fun JsModuleArtifact.generateProxyArtifact(
                 mainFunctionTag: String?,
                 suiteFunctionTag: String?,
                 testFunctions: CachedTestFunctionsWithTheirPackage,
