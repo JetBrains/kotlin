@@ -9,10 +9,11 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.interpreter.DESTINATION
 import org.jetbrains.kotlin.generators.interpreter.generateMap
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 
 class GenerateInterpreterMapTest : TestCase() {
     fun testGeneratedDataIsUpToDate() {
         val text = generateMap()
-        KotlinTestUtils.assertEqualsToFile(DESTINATION, text)
+        text.assertEqualsToFile(DESTINATION)
     }
 }

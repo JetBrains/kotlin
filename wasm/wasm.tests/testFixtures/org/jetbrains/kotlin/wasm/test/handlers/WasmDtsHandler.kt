@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.backend.handlers.WasmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
@@ -28,6 +29,6 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
         val generatedDts = info.compilerResult.dts
             ?: error("Can't find generated .d.ts file")
 
-        KotlinTestUtils.assertEqualsToFile(referenceDtsFile, generatedDts)
+        generatedDts.assertEqualsToFile(referenceDtsFile)
     }
 }

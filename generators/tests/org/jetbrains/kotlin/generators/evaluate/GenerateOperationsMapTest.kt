@@ -9,10 +9,11 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.evaluate.DEST_FILE
 import org.jetbrains.kotlin.generators.evaluate.generate
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 
 class GenerateOperationsMapTest : TestCase() {
     fun testGeneratedDataIsUpToDate(): Unit {
         val text = generate()
-        KotlinTestUtils.assertEqualsToFile(DEST_FILE, text)
+        text.assertEqualsToFile(DEST_FILE)
     }
 }

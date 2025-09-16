@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.wasm.ir
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmBinaryToIR
@@ -219,11 +219,11 @@ fun testWasmFile(wasmFile: File, dirName: String) {
     val wabtWatFile = newFile("wabt.wat")
     Wabt.wasm2wat(wasmFile, wabtWatFile)
 
-    assertEqualsToFile("Kwt text format", wabtWatFile, kotlinTextCanonicalFile.readText())
+    kotlinTextCanonicalFile.readText().assertEqualsToFile(wabtWatFile, message = "Kwt text format")
 
     val kotlinBinaryCanonicalFile = newFile("kwt.bin.canonical.wat")
     Wabt.wasm2wat(kotlinBinaryFile, kotlinBinaryCanonicalFile)
-    assertEqualsToFile("Kwt binary format", wabtWatFile, kotlinBinaryCanonicalFile.readText())
+    kotlinBinaryCanonicalFile.readText().assertEqualsToFile(wabtWatFile, message = "Kwt binary format")
 }
 
 fun WasmModule.toBinaryFormat(): ByteArray {

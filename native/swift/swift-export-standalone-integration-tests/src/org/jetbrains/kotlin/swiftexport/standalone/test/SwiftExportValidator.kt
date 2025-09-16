@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.junit.jupiter.api.assertAll
 import java.io.File
 import kotlin.collections.plus
@@ -36,10 +37,10 @@ interface SwiftExportValidator {
                     val expectedKotlinBridge = expectedFiles / it.name / "${it.name}.kt"
 
                     buildList {
-                        add { KotlinTestUtils.assertEqualsToFile(expectedSwift, files.swiftApi.readText()) }
-                        add { KotlinTestUtils.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText()) }
+                        add { files.swiftApi.readText().assertEqualsToFile(expectedSwift) }
+                        add { files.cHeaderBridges.readText().assertEqualsToFile(expectedCHeader) }
                         if (validateKotlinBridge) {
-                            add { KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText()) }
+                            add { files.kotlinBridges.readText().assertEqualsToFile(expectedKotlinBridge) }
                         }
                     }
                 }
@@ -49,7 +50,7 @@ interface SwiftExportValidator {
                             val expectedFiles = goldenData.toPath() / "golden_result/"
                             val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
 
-                            listOf { KotlinTestUtils.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }
+                            listOf { it.swiftApi.readText().assertEqualsToFile(expectedSwift) }
                         }
                         SwiftExportModule.SwiftOnly.Kind.KotlinRuntimeSupport -> {
                             // No need to verify predefined files.

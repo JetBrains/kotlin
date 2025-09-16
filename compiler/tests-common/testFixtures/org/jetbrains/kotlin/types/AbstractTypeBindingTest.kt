@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.resolve.typeBinding.TypeArgumentBinding
 import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
 import org.jetbrains.kotlin.test.KotlinTestUtils.loadKtFile
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
@@ -45,17 +45,16 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
 
         val typeBinding = testDeclaration.createTypeBindingForReturnType(analyzeResult.bindingContext)
 
-        assertEqualsToFile(
-            testFile,
-            buildString {
-                append(removeLastComment(testKtFile))
-                append("/*\n")
+        val actual = buildString {
+            append(removeLastComment(testKtFile))
+            append("/*\n")
 
-                MyPrinter(this).print(typeBinding)
+            MyPrinter(this).print(typeBinding)
 
-                append("*/")
-            }
-        )
+            append("*/")
+        }
+
+        actual.assertEqualsToFile(testFile)
     }
 
     private fun removeLastComment(file: KtFile): String {

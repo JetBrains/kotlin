@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import java.io.File
 
 abstract class AbstractRawFirBuilderSourceElementMappingTestCase : AbstractRawFirBuilderTestCase() {
@@ -49,7 +50,7 @@ abstract class AbstractRawFirBuilderSourceElementMappingTestCase : AbstractRawFi
         }
 
         val expectedPath = filePath.replace(".kt", ".txt")
-        KotlinTestUtils.assertEqualsToFile(File(expectedPath), foundElement.render())
+        foundElement.render().assertEqualsToFile(File(expectedPath))
     }
 
     companion object {

@@ -31,6 +31,7 @@ import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
+import org.jetbrains.kotlin.test.FileTestDataAssertionsKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
@@ -107,7 +108,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         File expectedFile = new File(testDataDir, baseName + ".expected");
         String normalizedContent = normalizeOutput(new File(testDataDir), content);
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
+        FileTestDataAssertionsKt.assertEqualsToFile(normalizedContent, expectedFile);
     }
 
     protected static int runProcess(GeneralCommandLine commandLine, StringBuilder executionLog) throws ExecutionException {

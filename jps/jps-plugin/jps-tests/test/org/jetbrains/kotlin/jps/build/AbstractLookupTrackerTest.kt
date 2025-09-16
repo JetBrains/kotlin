@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil
@@ -386,6 +387,6 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         }
 
         val actual = lines.joinToString("\n")
-        KotlinTestUtils.assertEqualsToFile("Lookups do not match after $step", expectedFile, actual)
+        actual.assertEqualsToFile(expectedFile, message = "Lookups do not match after $step")
     }
 }

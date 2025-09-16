@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProje
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.render
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.testDataDir
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import kotlin.test.Test
 import kotlin.test.fail
 
@@ -18,6 +19,6 @@ class ReadKlibDeclarationAddressesBlackBoxTest {
     @Test
     fun `test - testProject`() {
         val addresses = readKlibDeclarationAddresses(providedTestProjectKlib) ?: fail("Failed loading klib: $providedTestProjectKlib")
-        KotlinTestUtils.assertEqualsToFile(testDataDir.resolve("!testProject.addresses"), addresses.render())
+        addresses.render().assertEqualsToFile(testDataDir.resolve("!testProject.addresses"))
     }
 }
