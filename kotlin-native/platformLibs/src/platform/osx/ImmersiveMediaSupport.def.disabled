@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.ImmersiveMediaSupport
+
+modules = ImmersiveMediaSupport
+compilerOpts = -framework ImmersiveMediaSupport
+linkerOpts = -framework ImmersiveMediaSupport
+#Disabled: Swift-only framework

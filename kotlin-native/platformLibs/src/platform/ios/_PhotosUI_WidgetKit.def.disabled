@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._PhotosUI_WidgetKit
+
+modules = _PhotosUI_WidgetKit
+compilerOpts = -framework _PhotosUI_WidgetKit
+linkerOpts = -framework _PhotosUI_WidgetKit
+#Disabled: Unavailable

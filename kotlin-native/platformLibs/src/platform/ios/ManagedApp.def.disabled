@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.ManagedApp
+
+modules = ManagedApp
+compilerOpts = -framework ManagedApp
+linkerOpts = -framework ManagedApp
+#Disabled: Swift-only framework
