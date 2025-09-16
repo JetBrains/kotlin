@@ -8,6 +8,8 @@
  */
 package org.jetbrains.kotlin.fir
 
+import java.io.File
+
 data class ModularizedTestConfig(
     val rootPathPrefix: String = "/",
     val outputDirRegexFilter: String = ".*",
@@ -20,6 +22,10 @@ data class ModularizedTestConfig(
     val jvmTarget: String = "1.8",
     val kotlinHome: String? = null,
     val composePluginClasspath: String? = null,
+)
+
+fun modularizedTestConfigFromSingleModelFile(modelFile: File): ModularizedTestConfig = ModularizedTestConfig(
+    rootPathPrefix = modelFile.absoluteFile.parentFile.parentFile.path + "/",
 )
 
 fun modularizedTestConfigFromSystemProperties(): ModularizedTestConfig = ModularizedTestConfig(

@@ -22,16 +22,15 @@ dependencies {
     testRuntimeOnly(libs.xerces)
     testRuntimeOnly(commonDependency("org.apache.commons:commons-lang3"))
 
-    testImplementation(libs.junit4)
-    testCompileOnly(kotlinTest("junit"))
     testApi(testFixtures(project(":compiler:tests-common")))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
-    testApi(project(":compiler:fir:resolve"))
-    testApi(project(":compiler:fir:providers"))
-    testApi(project(":compiler:fir:semantics"))
-    testApi(project(":compiler:fir:dump"))
+    testFixturesApi(project(":compiler:fir:resolve"))
+    testFixturesApi(project(":compiler:fir:providers"))
+    testFixturesApi(project(":compiler:fir:semantics"))
+    testFixturesApi(project(":compiler:fir:dump"))
+    testApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
@@ -56,13 +55,16 @@ sourceSets {
 optInToK1Deprecation()
 
 projectTests {
-    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit4) {
+    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
         systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
         workingDir = rootDir
         val composePluginClasspath = composeCompilerPlugin.asPath
 
         run {
+            systemProperties["junit.jupiter.execution.parallel.enabled"] = true
+            systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
+            maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
             systemProperty("fir.bench.compose.plugin.classpath", composePluginClasspath)
             val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
             if (argsExt != null) {
@@ -74,3 +76,8 @@ projectTests {
 }
 
 testsJar()
+
+val generateIntellijTestData by generator("org.jetbrains.kotlin.fir.generators.tests.GenerateModularizedTests") {
+    systemProperty("fir.modularized.test.model.path",kotlinBuildProperties.pathToIntellijModularizedTestData?.let { "$it/test-project-model-dump" } ?: "")
+    systemProperty("fir.modularized.test.project.name", "IntelliJ")
+}

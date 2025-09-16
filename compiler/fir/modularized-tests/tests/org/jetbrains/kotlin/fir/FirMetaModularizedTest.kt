@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.util.jar.Attributes
@@ -36,7 +36,7 @@ class FirMetaModularizedTest {
         file.deleteOnExit()
         val manifest = Manifest()
         manifest.mainAttributes.putValue(Attributes.Name.MANIFEST_VERSION.toString(), "1.0")
-        manifest.mainAttributes.putValue(Attributes.Name.MAIN_CLASS.toString(), StandaloneModularizedTestJUnitRunner::class.java.canonicalName)
+        manifest.mainAttributes.putValue(Attributes.Name.MAIN_CLASS.toString(), StandaloneFulPipelineTestCliRunner::class.java.canonicalName)
         manifest.mainAttributes.putValue(
             Attributes.Name.CLASS_PATH.toString(),
             runtimeBean.classPath.split(File.pathSeparator).joinToString(" ") {

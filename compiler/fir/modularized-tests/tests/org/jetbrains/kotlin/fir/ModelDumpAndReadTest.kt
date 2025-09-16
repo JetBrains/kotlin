@@ -9,10 +9,18 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 
-class ModelDumpAndReadTest : TestCaseWithTmpdir() {
+class ModelDumpAndReadTest {
 
+    @TempDir
+    lateinit var tmpdir: File
+
+    @Test
     fun testModelDump() {
         val mainKt = tmpdir.resolve("main.kt").apply {
             writeText("fun main() {}")
@@ -44,6 +52,7 @@ class ModelDumpAndReadTest : TestCaseWithTmpdir() {
         assertTrue(moduleData.classpath.any { it.name == "kotlin-stdlib.jar" })
     }
 
+    @Test
     fun testOldModelFormatDeserialization() {
         val src1 = tmpdir.resolve("A.kt").apply { writeText("fun a() {}") }
         val src2 = tmpdir.resolve("A2.kt").apply { writeText("fun a2() {}") }
