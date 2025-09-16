@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.build.report.statistics
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
-import org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,7 +35,6 @@ interface CompileStatisticsData<B : BuildTimeMetric, P : BuildPerformanceMetric>
 
     //TODO think about it,time in milliseconds
     fun getBuildTimesMetrics(): Map<B, Long>
-    fun getDynamicBuildTimeMetrics(): Map<DynamicBuildTimeKey, Long>
     fun getPerformanceMetrics(): Map<P, Long>
     fun getGcTimeMetrics(): Map<String, Long>?
     fun getGcCountMetrics(): Map<String, Long>?

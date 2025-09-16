@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
-import java.io.File
 import java.lang.reflect.Type
 import java.nio.file.Path
 import kotlin.io.path.bufferedReader
@@ -58,32 +57,10 @@ internal fun readJsonReport(jsonReport: Path): BuildExecutionData {
             ): SourcesChanges? {
                 return null //ignore source changes right now
             }
-        }).registerTypeAdapter(File::class.java, object : JsonDeserializer<File> {
-            override fun deserialize(
-                json: JsonElement?,
-                typeOfT: Type?,
-                context: JsonDeserializationContext?,
-            ): File? {
-                val path: String? = context?.deserialize(/* json = */ json, /* typeOfT = */ String::class.java)
-                return path?.let { File(it) }//ignore source changes right now
-            }
-        })
-        .registerTypeAdapter(DynamicBuildTimeKey::class.java, object : JsonDeserializer<DynamicBuildTimeKey> {
-            override fun deserialize(
-                json: JsonElement?,
-                typeOfT: Type?,
-                context: JsonDeserializationContext?,
-            ): DynamicBuildTimeKey? = json?.asString?.let { keyStr ->
-                val regex = "name=(.+), parent=([^,)]+)".toRegex()
-                val (_, name, parentStr) = regex.find(keyStr)?.groupValues
-                    ?: error("Could not deserialize org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey")
-                val parent = allBuildTimeMetrics.find { it.name == parentStr } ?: return null
-                DynamicBuildTimeKey(name, parent)
-            }
-        })
+        }).create()
 
     val buildExecutionData = jsonReport.bufferedReader().use {
-        gsonBuilder.create().fromJson(JsonReader(it), BuildExecutionData::class.java) as BuildExecutionData
+        gsonBuilder.fromJson(JsonReader(it), BuildExecutionData::class.java) as BuildExecutionData
     }
     return buildExecutionData
 }

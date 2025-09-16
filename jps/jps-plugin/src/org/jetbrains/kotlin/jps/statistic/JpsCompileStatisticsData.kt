@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.jps.statistic
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey
 import org.jetbrains.kotlin.build.report.metrics.JpsBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.JpsBuildTimeMetric
 import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
@@ -29,7 +28,6 @@ class JpsCompileStatisticsData(
     private val compilerArguments: List<String>,
     private val nonIncrementalAttributes: Set<BuildAttribute>,
     private val buildTimesMetrics: Map<JpsBuildTimeMetric, Long>,
-    private val dynamicBuildTimesMetrics: Map<DynamicBuildTimeKey, Long>,
     private val performanceMetrics: Map<JpsBuildPerformanceMetric, Long>,
     private val gcTimeMetrics: Map<String, Long>?,
     private val gcCountMetrics: Map<String, Long>?,
@@ -65,8 +63,6 @@ class JpsCompileStatisticsData(
     override fun getNonIncrementalAttributes(): Set<BuildAttribute> = nonIncrementalAttributes
 
     override fun getBuildTimesMetrics(): Map<JpsBuildTimeMetric, Long> = buildTimesMetrics
-
-    override fun getDynamicBuildTimeMetrics(): Map<DynamicBuildTimeKey, Long> = dynamicBuildTimesMetrics
 
     override fun getPerformanceMetrics(): Map<JpsBuildPerformanceMetric, Long> = performanceMetrics
 
