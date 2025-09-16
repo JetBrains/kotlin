@@ -50330,6 +50330,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
           }
 
           @Test
+          @TestMetadata("contractWithWrongBody.kt")
+          public void testContractWithWrongBody() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/contractWithWrongBody.kt");
+          }
+
+          @Test
           @TestMetadata("emptyContract.kt")
           public void testEmptyContract() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/emptyContract.kt");
