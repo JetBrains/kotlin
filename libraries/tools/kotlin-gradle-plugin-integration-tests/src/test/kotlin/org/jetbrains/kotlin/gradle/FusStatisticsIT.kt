@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.version
 import org.gradle.testkit.runner.BuildResult
@@ -510,16 +511,13 @@ class FusStatisticsIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @GradleTest
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1, TestVersions.Gradle.G_8_2])
-    @Disabled("KT-78390: Requires an updated AtomicFU that would use a newer kotlin-metadata-jvm")
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_8_2,
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
     fun testKotlinxPlugins(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_8_2,
-                gradleVersion,
-                "Kover produces Gradle deprecation"
-            )
         ) {
             buildGradle.replaceText(
                 "plugins {",
