@@ -654,7 +654,7 @@ Caused by: java.lang.AssertionError: assert
 
     fun testKaptVersion() {
         val info = $$"info: kotlinc-jvm $VERSION$ (JRE $JVM_VERSION$)\n"
-        val k1 = "warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin\n"
+        val k1 = "warning: language version 1.9 is deprecated in JVM and its support will be removed in a future version of Kotlin\n"
 
         runProcess("kapt", "-version", expectedStderr = info)
         runProcess("kapt", "-language-version", "1.9", "-version", expectedStderr = info + k1)
