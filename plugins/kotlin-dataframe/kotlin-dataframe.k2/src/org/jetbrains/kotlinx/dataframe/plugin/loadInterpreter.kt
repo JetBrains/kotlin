@@ -274,6 +274,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateAt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColLambda
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColMap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColRow
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols1
@@ -367,6 +368,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "UpdatePerCol" -> UpdatePerColLambda()
         "UpdatePerColRow" -> UpdatePerColRow()
         "UpdatePerColMap" -> UpdatePerColMap()
+        "UpdatePerRowCol" -> UpdatePerRowCol()
         "Explode0" -> Explode0()
         "Implode" -> Implode()
         "ImplodeDefault" -> ImplodeDefault()

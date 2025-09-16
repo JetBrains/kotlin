@@ -65,6 +65,7 @@ abstract class UpdatePerCol(name: String) : AbstractSchemaModificationInterprete
 class UpdatePerColRow : UpdatePerCol("values")
 class UpdatePerColMap : UpdatePerCol("values")
 class UpdatePerColLambda : UpdatePerCol("valueSelector")
+class UpdatePerRowCol : UpdatePerCol("expression")
 
 class UpdateWith0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: UpdateApproximation by arg()
