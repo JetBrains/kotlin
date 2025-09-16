@@ -282,6 +282,7 @@ internal class KaFe10Resolver(
                     partiallyAppliedSymbol,
                     resolvedCall.toTypeArgumentsMapping(partiallyAppliedSymbol),
                     KaBaseSimpleVariableWriteAccess(right),
+                    isContextSensitive = false,
                 )
             }
             in KtTokens.AUGMENTED_ASSIGNMENTS -> {
@@ -391,6 +392,7 @@ internal class KaFe10Resolver(
             partiallyAppliedSymbol,
             toTypeArgumentsMapping(partiallyAppliedSymbol),
             KaBaseSimpleVariableReadAccess,
+            isContextSensitive = false,
         )
     }
 

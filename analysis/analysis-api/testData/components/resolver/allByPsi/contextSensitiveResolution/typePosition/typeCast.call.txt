@@ -648,6 +648,7 @@ KtBinaryExpressionWithTypeRHS(792,813): 'i as SealedInheritor1'
 KtNameReferenceExpression(792,793): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -698,6 +699,7 @@ KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
 KtDotQualifiedExpression(818,825): 'i.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -720,6 +722,7 @@ KtDotQualifiedExpression(818,825): 'i.prop1'
 KtNameReferenceExpression(818,819): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -737,6 +740,7 @@ KtNameReferenceExpression(818,819): 'i'
 KtNameReferenceExpression(820,825): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -807,6 +811,7 @@ KtBinaryExpressionWithTypeRHS(842,863): 'i as SealedInheritor2'
 KtNameReferenceExpression(842,843): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -857,6 +862,7 @@ KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
 KtDotQualifiedExpression(868,875): 'i.prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -879,6 +885,7 @@ KtDotQualifiedExpression(868,875): 'i.prop2'
 KtNameReferenceExpression(868,869): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -896,6 +903,7 @@ KtNameReferenceExpression(868,869): 'i'
 KtNameReferenceExpression(870,875): 'prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -966,6 +974,7 @@ KtBinaryExpressionWithTypeRHS(887,908): 'i as SealedInheritor1'
 KtNameReferenceExpression(887,888): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1018,6 +1027,7 @@ KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
 KtDotQualifiedExpression(913,920): 'i.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1040,6 +1050,7 @@ KtDotQualifiedExpression(913,920): 'i.prop1'
 KtNameReferenceExpression(913,914): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1057,6 +1068,7 @@ KtNameReferenceExpression(913,914): 'i'
 KtNameReferenceExpression(915,920): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1166,6 +1178,7 @@ KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
 KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1192,6 +1205,7 @@ KtBinaryExpressionWithTypeRHS(981,1002): 'i as SealedInheritor1'
 KtNameReferenceExpression(981,982): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1221,6 +1235,7 @@ KtNameReferenceExpression(986,1002): 'SealedInheritor1'
 KtNameReferenceExpression(1004,1009): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1289,6 +1304,7 @@ KtBinaryExpressionWithTypeRHS(1026,1047): 'i as SealedInheritor2'
 KtNameReferenceExpression(1026,1027): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1339,6 +1355,7 @@ KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
 KtDotQualifiedExpression(1052,1059): 'i.prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1361,6 +1378,7 @@ KtDotQualifiedExpression(1052,1059): 'i.prop2'
 KtNameReferenceExpression(1052,1053): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1378,6 +1396,7 @@ KtNameReferenceExpression(1052,1053): 'i'
 KtNameReferenceExpression(1054,1059): 'prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1451,6 +1470,7 @@ KtBinaryExpressionWithTypeRHS(1079,1100): 'i as SealedInheritor1'
 KtNameReferenceExpression(1079,1080): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1492,6 +1512,7 @@ KtDotQualifiedExpression(1105,1112): 'v.prop1'
 KtNameReferenceExpression(1105,1106): 'v'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1542,6 +1563,7 @@ KtBinaryExpressionWithTypeRHS(1151,1172): 'i as SealedInheritor1'
 KtNameReferenceExpression(1151,1152): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1583,6 +1605,7 @@ KtDotQualifiedExpression(1177,1185): 'v2.prop1'
 KtNameReferenceExpression(1177,1179): 'v2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1635,6 +1658,7 @@ KtBinaryExpressionWithTypeRHS(1229,1250): 'i as SealedInheritor1'
 KtNameReferenceExpression(1229,1230): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1676,6 +1700,7 @@ KtDotQualifiedExpression(1255,1263): 'v3.prop1'
 KtNameReferenceExpression(1255,1257): 'v3'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1813,6 +1838,7 @@ KtBinaryExpressionWithTypeRHS(1301,1322): 'i as SealedInheritor1'
 KtNameReferenceExpression(1301,1302): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1952,6 +1978,7 @@ KtBinaryExpressionWithTypeRHS(1366,1387): 'i as SealedInheritor1'
 KtNameReferenceExpression(1366,1367): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2025,6 +2052,7 @@ KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode
 KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2051,6 +2079,7 @@ KtBinaryExpressionWithTypeRHS(1437,1459): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1437,1438): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2080,6 +2109,7 @@ KtNameReferenceExpression(1443,1459): 'SealedInheritor1'
 KtNameReferenceExpression(1462,1467): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2148,6 +2178,7 @@ KtBinaryExpressionWithTypeRHS(1485,1507): 'i as? SealedInheritor2'
 KtNameReferenceExpression(1485,1486): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2187,6 +2218,7 @@ KtSafeQualifiedExpression(1512,1520): 'i?.prop2'
 KtNameReferenceExpression(1512,1513): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2228,6 +2260,7 @@ KtBinaryExpressionWithTypeRHS(1541,1563): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1541,1542): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2278,6 +2311,7 @@ KtSafeQualifiedExpression(1568,1588): 'v?.prop1?.hashCode()'
 KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2298,6 +2332,7 @@ KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
 KtNameReferenceExpression(1568,1569): 'v'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2315,6 +2350,7 @@ KtNameReferenceExpression(1568,1569): 'v'
 KtNameReferenceExpression(1571,1576): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2398,6 +2434,7 @@ KtBinaryExpressionWithTypeRHS(1617,1639): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1617,1618): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2437,6 +2474,7 @@ KtSafeQualifiedExpression(1644,1653): 'v2?.prop1'
 KtNameReferenceExpression(1644,1646): 'v2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2492,6 +2530,7 @@ KtBinaryExpressionWithTypeRHS(1699,1721): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1699,1700): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2531,6 +2570,7 @@ KtSafeQualifiedExpression(1726,1735): 'v3?.prop1'
 KtNameReferenceExpression(1726,1728): 'v3'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2665,6 +2705,7 @@ KtBinaryExpressionWithTypeRHS(1775,1797): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1775,1776): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2799,6 +2840,7 @@ KtBinaryExpressionWithTypeRHS(1842,1864): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1842,1843): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2933,6 +2975,7 @@ KtBinaryExpressionWithTypeRHS(1909,1931): 'i as? SealedInheritor2'
 KtNameReferenceExpression(1909,1910): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

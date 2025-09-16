@@ -1,6 +1,7 @@
 KtNameReferenceExpression(50,51): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:

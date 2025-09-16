@@ -686,6 +686,7 @@ KtOperationReferenceExpression(167,168): '+'
 KtNameReferenceExpression(169,177): 'constant'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1266,6 +1267,7 @@ KtOperationReferenceExpression(192,193): '+'
 KtNameReferenceExpression(194,202): 'constant'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1846,6 +1848,7 @@ KtOperationReferenceExpression(217,218): '+'
 KtNameReferenceExpression(219,227): 'constant'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1873,6 +1876,7 @@ KtDestructuringDeclarationEntry(236,241): 'right'
 KtNameReferenceExpression(245,249): 'pair'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

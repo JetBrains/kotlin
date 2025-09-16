@@ -631,6 +631,7 @@ KtContainerNode(388,389): 'b'
 KtNameReferenceExpression(388,389): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -795,6 +796,7 @@ KtContainerNode(471,472): 'b'
 KtNameReferenceExpression(471,472): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1138,6 +1140,7 @@ KtContainerNode(560,561): 'b'
 KtNameReferenceExpression(560,561): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1388,6 +1391,7 @@ KtContainerNode(635,636): 'b'
 KtNameReferenceExpression(635,636): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1568,6 +1572,7 @@ KtContainerNode(726,727): 'b'
 KtNameReferenceExpression(726,727): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1738,6 +1743,7 @@ KtContainerNode(785,786): 'b'
 KtNameReferenceExpression(785,786): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1874,6 +1880,7 @@ KtContainerNode(843,844): 'b'
 KtNameReferenceExpression(843,844): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

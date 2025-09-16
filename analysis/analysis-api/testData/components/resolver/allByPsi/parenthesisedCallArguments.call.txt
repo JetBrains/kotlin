@@ -712,6 +712,7 @@ KtParenthesizedExpression(314,321): '(value)'
 KtNameReferenceExpression(315,320): 'value'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -897,6 +898,7 @@ KtOperationReferenceExpression(382,384): '++'
 KtNameReferenceExpression(384,389): 'value'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

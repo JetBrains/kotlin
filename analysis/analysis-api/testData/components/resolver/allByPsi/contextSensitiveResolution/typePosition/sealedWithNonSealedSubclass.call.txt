@@ -151,6 +151,7 @@ KtNameReferenceExpression(281,285): 'Left'
 KtNameReferenceExpression(289,290): 'x'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -206,6 +207,7 @@ KtNameReferenceExpression(298,303): 'Right'
 KtNameReferenceExpression(307,308): 'y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:

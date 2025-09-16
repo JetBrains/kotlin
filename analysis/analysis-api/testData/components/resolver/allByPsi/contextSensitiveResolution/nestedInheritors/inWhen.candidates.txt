@@ -220,6 +220,7 @@ KtWhenConditionWithExpression(269,270): 'b'
 KtNameReferenceExpression(269,270): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -238,6 +239,7 @@ KtNameReferenceExpression(269,270): 'b'
 KtNameReferenceExpression(274,281): 'myClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -409,6 +411,7 @@ KtWhenConditionWithExpression(445,446): 'b'
 KtNameReferenceExpression(445,446): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -427,6 +430,7 @@ KtNameReferenceExpression(445,446): 'b'
 KtNameReferenceExpression(450,458): 'subClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -612,6 +616,7 @@ KtWhenConditionWithExpression(636,638): 'b1'
 KtNameReferenceExpression(636,638): 'b1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -630,6 +635,7 @@ KtNameReferenceExpression(636,638): 'b1'
 KtNameReferenceExpression(642,650): 'subClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -654,6 +660,7 @@ KtWhenConditionWithExpression(663,665): 'b2'
 KtNameReferenceExpression(663,665): 'b2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1117,6 +1124,7 @@ KtWhenConditionWithExpression(1058,1060): 'b1'
 KtNameReferenceExpression(1058,1060): 'b1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1135,6 +1143,7 @@ KtNameReferenceExpression(1058,1060): 'b1'
 KtNameReferenceExpression(1064,1073): 'subClass1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1159,6 +1168,7 @@ KtWhenConditionWithExpression(1086,1088): 'b2'
 KtNameReferenceExpression(1086,1088): 'b2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1177,6 +1187,7 @@ KtNameReferenceExpression(1086,1088): 'b2'
 KtNameReferenceExpression(1092,1101): 'subClass2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1428,6 +1439,7 @@ KtWhenConditionWithExpression(1355,1356): 'b'
 KtNameReferenceExpression(1355,1356): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1446,6 +1458,7 @@ KtNameReferenceExpression(1355,1356): 'b'
 KtNameReferenceExpression(1360,1369): 'openClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1617,6 +1630,7 @@ KtWhenConditionWithExpression(1557,1558): 'b'
 KtNameReferenceExpression(1557,1558): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1635,6 +1649,7 @@ KtNameReferenceExpression(1557,1558): 'b'
 KtNameReferenceExpression(1562,1570): 'subClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

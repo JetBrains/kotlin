@@ -547,6 +547,7 @@ KtIsExpression(533,561): 'instance is SealedInheritor1'
 KtNameReferenceExpression(533,541): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -580,6 +581,7 @@ KtDotQualifiedExpression(565,579): 'instance.prop1'
 KtNameReferenceExpression(565,573): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -610,6 +612,7 @@ KtIsExpression(588,605): 'instance is Inner'
 KtNameReferenceExpression(588,596): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -643,6 +646,7 @@ KtDotQualifiedExpression(609,627): 'instance.innerProp'
 KtNameReferenceExpression(609,617): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -673,6 +677,7 @@ KtIsExpression(636,671): 'instance is IndirectSealedInheritor'
 KtNameReferenceExpression(636,644): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -706,6 +711,7 @@ KtDotQualifiedExpression(675,689): 'instance.prop1'
 KtNameReferenceExpression(675,683): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -736,6 +742,7 @@ KtIsExpression(698,727): 'instance !is SealedInheritor2'
 KtNameReferenceExpression(698,706): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -781,6 +788,7 @@ KtIsExpression(745,780): 'instance !is SealedSealedInheritor1'
 KtNameReferenceExpression(745,753): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -862,6 +870,7 @@ KtWhenExpression(893,1158): 'when (instance) {'
 KtNameReferenceExpression(899,907): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -898,6 +907,7 @@ KtDotQualifiedExpression(942,956): 'instance.prop1'
 KtNameReferenceExpression(942,950): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -937,6 +947,7 @@ KtDotQualifiedExpression(977,995): 'instance.innerProp'
 KtNameReferenceExpression(977,985): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -976,6 +987,7 @@ KtDotQualifiedExpression(1034,1048): 'instance.prop1'
 KtNameReferenceExpression(1034,1042): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1084,6 +1096,7 @@ KtWhenExpression(1228,1621): 'when (instance) {'
 KtNameReferenceExpression(1234,1242): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1141,6 +1154,7 @@ KtDotQualifiedExpression(1316,1330): 'instance.prop1'
 KtNameReferenceExpression(1316,1324): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1201,6 +1215,7 @@ KtDotQualifiedExpression(1415,1429): 'instance.prop2'
 KtNameReferenceExpression(1415,1423): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1261,6 +1276,7 @@ KtDotQualifiedExpression(1494,1508): 'instance.prop1'
 KtNameReferenceExpression(1494,1502): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1321,6 +1337,7 @@ KtDotQualifiedExpression(1579,1593): 'instance.prop3'
 KtNameReferenceExpression(1579,1587): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

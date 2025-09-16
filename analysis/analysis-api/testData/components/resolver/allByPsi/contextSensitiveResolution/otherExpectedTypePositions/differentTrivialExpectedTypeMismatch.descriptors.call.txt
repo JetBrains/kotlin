@@ -310,6 +310,7 @@ KtConstantExpression(489,493): 'null'
 KtBinaryExpression(498,503): 'm = Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -328,6 +329,7 @@ KtBinaryExpression(498,503): 'm = Y'
 KtNameReferenceExpression(498,499): 'm'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -346,6 +348,7 @@ KtNameReferenceExpression(498,499): 'm'
 KtOperationReferenceExpression(500,501): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -369,6 +372,7 @@ KtNameReferenceExpression(502,503): 'Y'
 KtBinaryExpression(508,513): 'm = X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -387,6 +391,7 @@ KtBinaryExpression(508,513): 'm = X'
 KtNameReferenceExpression(508,509): 'm'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -405,6 +410,7 @@ KtNameReferenceExpression(508,509): 'm'
 KtOperationReferenceExpression(510,511): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -464,6 +470,7 @@ KtContainerNode(556,557): 'b'
 KtNameReferenceExpression(556,557): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

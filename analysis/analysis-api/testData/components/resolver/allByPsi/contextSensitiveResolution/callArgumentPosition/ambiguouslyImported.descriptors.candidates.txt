@@ -149,6 +149,7 @@ KtValueArgument(144,145): 'X'
 KtNameReferenceExpression(144,145): 'X'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -169,6 +170,7 @@ KtNameReferenceExpression(144,145): 'X'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -266,6 +268,7 @@ KtValueArgument(155,156): 'Y'
 KtNameReferenceExpression(155,156): 'Y'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -286,6 +289,7 @@ KtNameReferenceExpression(155,156): 'Y'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

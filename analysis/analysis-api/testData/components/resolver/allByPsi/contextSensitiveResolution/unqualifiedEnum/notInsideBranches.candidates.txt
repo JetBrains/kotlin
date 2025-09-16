@@ -46,6 +46,7 @@ KtWhenExpression(121,173): 'when (s) {'
 KtNameReferenceExpression(127,128): 's'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -70,6 +71,7 @@ KtWhenConditionWithExpression(136,141): 'FIRST'
 KtNameReferenceExpression(136,141): 'FIRST'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -100,6 +102,7 @@ KtWhenConditionWithExpression(156,162): 'SECOND'
 KtNameReferenceExpression(156,162): 'SECOND'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

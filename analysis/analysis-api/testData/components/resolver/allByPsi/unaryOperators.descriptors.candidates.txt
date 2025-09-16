@@ -72,6 +72,7 @@ KtOperationReferenceExpression(49,50): '-'
 KtNameReferenceExpression(50,53): 'one'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -137,6 +138,7 @@ KtOperationReferenceExpression(73,74): '+'
 KtNameReferenceExpression(74,77): 'one'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

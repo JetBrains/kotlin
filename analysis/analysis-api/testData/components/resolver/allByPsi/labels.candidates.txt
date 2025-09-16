@@ -62,6 +62,7 @@ KtCallExpression(34,42): 'action()'
 KtNameReferenceExpression(34,40): 'action'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

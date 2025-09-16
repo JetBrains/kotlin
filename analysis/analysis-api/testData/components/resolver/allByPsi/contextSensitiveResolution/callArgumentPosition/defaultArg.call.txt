@@ -166,6 +166,7 @@ KtNameReferenceExpression(282,288): 'MyEnum'
 KtNameReferenceExpression(291,301): 'EnumValue1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

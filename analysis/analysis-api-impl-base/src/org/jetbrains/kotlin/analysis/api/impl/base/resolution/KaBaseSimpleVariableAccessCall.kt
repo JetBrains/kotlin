@@ -21,12 +21,15 @@ class KaBaseSimpleVariableAccessCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     simpleAccess: KaSimpleVariableAccess,
+    isContextSensitive: Boolean,
 ) : KaSimpleVariableAccessCall {
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> = typeArgumentsMapping
     private val backingSimpleAccess: KaSimpleVariableAccess = simpleAccess
+    private val backingIsContextSensitive: Boolean = isContextSensitive
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     override val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingTypeArgumentsMapping }
     override val simpleAccess: KaSimpleVariableAccess get() = withValidityAssertion { backingSimpleAccess }
+    override val isContextSensitive: Boolean get() = withValidityAssertion { backingIsContextSensitive }
 }

@@ -1074,6 +1074,7 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1180,6 +1181,7 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1286,6 +1288,7 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1392,6 +1395,7 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1498,6 +1502,7 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1604,6 +1609,7 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1710,6 +1716,7 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1816,6 +1823,7 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1922,6 +1930,7 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2034,6 +2043,7 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2146,6 +2156,7 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

@@ -55,6 +55,7 @@ KtNameReferenceExpression(150,151): 'T'
 KtNameReferenceExpression(155,158): 'arg'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -353,6 +354,7 @@ KtBinaryExpression(331,350): 'value == EnumValue1'
 KtNameReferenceExpression(331,336): 'value'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -486,6 +488,7 @@ KtBinaryExpression(399,418): 'value == EnumValue1'
 KtNameReferenceExpression(399,404): 'value'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

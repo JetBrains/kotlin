@@ -208,6 +208,7 @@ KtDotQualifiedExpression(232,243): 'MyClass.bar'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = null
@@ -235,6 +236,7 @@ KtNameReferenceExpression(240,243): 'bar'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = null
@@ -525,6 +527,7 @@ KtValueArgument(408,420): 'MyClass2.bar'
 KtDotQualifiedExpression(408,420): 'MyClass2.bar'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -548,6 +551,7 @@ KtNameReferenceExpression(408,416): 'MyClass2'
 KtNameReferenceExpression(417,420): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -642,6 +646,7 @@ KtValueArgument(431,434): 'bar'
 KtNameReferenceExpression(431,434): 'bar'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

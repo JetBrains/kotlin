@@ -135,6 +135,7 @@ KtCallExpression(276,293): 'lEnum(EnumValue1)'
 KtNameReferenceExpression(276,281): 'lEnum'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -200,6 +201,7 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
 KtNameReferenceExpression(298,303): 'lEnum'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

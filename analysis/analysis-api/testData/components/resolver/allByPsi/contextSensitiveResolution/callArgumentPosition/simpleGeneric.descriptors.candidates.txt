@@ -512,6 +512,7 @@ KtValueArgument(225,226): 'L'
 KtNameReferenceExpression(225,226): 'L'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

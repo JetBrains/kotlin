@@ -49,6 +49,7 @@ KtReturnExpression(51,59): 'return a'
 KtNameReferenceExpression(58,59): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -401,6 +402,7 @@ KtValueArgumentList(358,360): '()'
 KtNameReferenceExpression(369,383): 'propertyMember'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -853,6 +855,7 @@ KtValueArgumentList(497,499): '()'
 KtNameReferenceExpression(512,526): 'propertyMember'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:

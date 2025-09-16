@@ -2,6 +2,7 @@
   KtNameReferenceExpression(107,116): 'something'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
@@ -23,6 +24,7 @@
   KtNameReferenceExpression(124,133): 'something'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
@@ -45,6 +47,7 @@
   KtNameReferenceExpression(144,153): 'something'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
@@ -66,6 +69,7 @@
   KtNameReferenceExpression(165,174): 'something'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
@@ -87,6 +91,7 @@
   KtNameReferenceExpression(185,194): 'something'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
@@ -108,6 +113,7 @@
   KtNameReferenceExpression(200,209): 'something'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaImplicitReceiverValue:
@@ -147,6 +153,7 @@
   KtNameReferenceExpression(220,229): 'something'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:

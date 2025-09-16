@@ -577,6 +577,7 @@ KtNameReferenceExpression(705,706): 'T'
 KtNameReferenceExpression(709,712): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -910,6 +911,7 @@ KtValueArgument(801,812): 'propMyClass'
 KtNameReferenceExpression(801,812): 'propMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1082,6 +1084,7 @@ KtValueArgument(839,857): 'propInheritorClass'
 KtNameReferenceExpression(839,857): 'propInheritorClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1254,6 +1257,7 @@ KtValueArgument(884,903): 'propInheritorObject'
 KtNameReferenceExpression(884,903): 'propInheritorObject'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1593,6 +1597,7 @@ KtValueArgument(970,974): 'prop'
 KtNameReferenceExpression(970,974): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1771,6 +1776,7 @@ KtValueArgument(1001,1010): 'superProp'
 KtNameReferenceExpression(1001,1010): 'superProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1949,6 +1955,7 @@ KtValueArgument(1037,1045): 'lazyProp'
 KtNameReferenceExpression(1037,1045): 'lazyProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2127,6 +2134,7 @@ KtValueArgument(1072,1082): 'lambdaProp'
 KtNameReferenceExpression(1072,1082): 'lambdaProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

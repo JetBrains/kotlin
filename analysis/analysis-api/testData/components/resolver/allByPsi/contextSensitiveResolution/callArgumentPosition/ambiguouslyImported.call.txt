@@ -148,6 +148,7 @@ KtNameReferenceExpression(144,145): 'X'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = null
@@ -162,6 +163,7 @@ KtNameReferenceExpression(144,145): 'X'
         simpleAccess = Read
         typeArgumentsMapping = {},
       KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = null
@@ -258,6 +260,7 @@ KtNameReferenceExpression(155,156): 'Y'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = null
@@ -272,6 +275,7 @@ KtNameReferenceExpression(155,156): 'Y'
         simpleAccess = Read
         typeArgumentsMapping = {},
       KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = null
@@ -367,6 +371,7 @@ KtValueArgument(166,167): 'Z'
 KtNameReferenceExpression(166,167): 'Z'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

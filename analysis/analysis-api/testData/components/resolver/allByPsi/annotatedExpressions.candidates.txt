@@ -108,6 +108,7 @@ KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
 KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -149,6 +150,7 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
 KtNameReferenceExpression(63,73): 'EXPRESSION'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -253,6 +255,7 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
 KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -294,6 +297,7 @@ KtNameReferenceExpression(86,105): 'AnnotationRetention'
 KtNameReferenceExpression(106,112): 'SOURCE'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -887,6 +891,7 @@ KtOperationReferenceExpression(180,181): '+'
 KtNameReferenceExpression(182,189): 'integer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1037,6 +1042,7 @@ KtValueArgument(198,205): 'integer'
 KtNameReferenceExpression(198,205): 'integer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

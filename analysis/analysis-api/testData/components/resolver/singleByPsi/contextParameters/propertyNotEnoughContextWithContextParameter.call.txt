@@ -2,6 +2,7 @@ KtNameReferenceExpression(100,103): 'foo'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleVariableAccessCall:
+        isContextSensitive = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = null

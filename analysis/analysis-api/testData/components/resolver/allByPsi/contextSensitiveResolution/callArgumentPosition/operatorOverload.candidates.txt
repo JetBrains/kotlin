@@ -209,6 +209,7 @@ KtBinaryExpression(339,353): 'i + EnumValue1'
 KtNameReferenceExpression(339,340): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -265,6 +266,7 @@ KtOperationReferenceExpression(341,342): '+'
 KtNameReferenceExpression(343,353): 'EnumValue1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -324,6 +326,7 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
 KtNameReferenceExpression(358,359): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -421,6 +424,7 @@ KtBinaryExpression(382,401): 'i - InheritorObject'
 KtNameReferenceExpression(382,383): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

@@ -184,6 +184,7 @@ KtValueArgument(44,69): 'AnnotationTarget.PROPERTY'
 KtDotQualifiedExpression(44,69): 'AnnotationTarget.PROPERTY'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -207,6 +208,7 @@ KtNameReferenceExpression(44,60): 'AnnotationTarget'
 KtNameReferenceExpression(61,69): 'PROPERTY'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -230,6 +232,7 @@ KtValueArgument(75,106): 'AnnotationTarget.TYPE_PARAMETER'
 KtDotQualifiedExpression(75,106): 'AnnotationTarget.TYPE_PARAMETER'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -253,6 +256,7 @@ KtNameReferenceExpression(75,91): 'AnnotationTarget'
 KtNameReferenceExpression(92,106): 'TYPE_PARAMETER'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -276,6 +280,7 @@ KtValueArgument(112,137): 'AnnotationTarget.FUNCTION'
 KtDotQualifiedExpression(112,137): 'AnnotationTarget.FUNCTION'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -299,6 +304,7 @@ KtNameReferenceExpression(112,128): 'AnnotationTarget'
 KtNameReferenceExpression(129,137): 'FUNCTION'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -322,6 +328,7 @@ KtValueArgument(143,175): 'AnnotationTarget.VALUE_PARAMETER'
 KtDotQualifiedExpression(143,175): 'AnnotationTarget.VALUE_PARAMETER'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -345,6 +352,7 @@ KtNameReferenceExpression(143,159): 'AnnotationTarget'
 KtNameReferenceExpression(160,175): 'VALUE_PARAMETER'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -368,6 +376,7 @@ KtValueArgument(181,213): 'AnnotationTarget.PROPERTY_GETTER'
 KtDotQualifiedExpression(181,213): 'AnnotationTarget.PROPERTY_GETTER'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -391,6 +400,7 @@ KtNameReferenceExpression(181,197): 'AnnotationTarget'
 KtNameReferenceExpression(198,213): 'PROPERTY_GETTER'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -414,6 +424,7 @@ KtValueArgument(219,251): 'AnnotationTarget.PROPERTY_SETTER'
 KtDotQualifiedExpression(219,251): 'AnnotationTarget.PROPERTY_SETTER'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -437,6 +448,7 @@ KtNameReferenceExpression(219,235): 'AnnotationTarget'
 KtNameReferenceExpression(236,251): 'PROPERTY_SETTER'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -460,6 +472,7 @@ KtValueArgument(257,278): 'AnnotationTarget.TYPE'
 KtDotQualifiedExpression(257,278): 'AnnotationTarget.TYPE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -483,6 +496,7 @@ KtNameReferenceExpression(257,273): 'AnnotationTarget'
 KtNameReferenceExpression(274,278): 'TYPE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -629,6 +643,7 @@ KtSimpleNameStringTemplateEntry(366,371): '$prop'
 KtNameReferenceExpression(367,371): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -745,6 +760,7 @@ KtSimpleNameStringTemplateEntry(401,406): '$prop'
 KtNameReferenceExpression(402,406): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -858,6 +874,7 @@ KtSimpleNameStringTemplateEntry(426,431): '$prop'
 KtNameReferenceExpression(427,431): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -983,6 +1000,7 @@ KtSimpleNameStringTemplateEntry(459,464): '$prop'
 KtNameReferenceExpression(460,464): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1105,6 +1123,7 @@ KtSimpleNameStringTemplateEntry(501,506): '$prop'
 KtNameReferenceExpression(502,506): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1212,6 +1231,7 @@ KtSimpleNameStringTemplateEntry(530,535): '$prop'
 KtNameReferenceExpression(531,535): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1337,6 +1357,7 @@ KtSimpleNameStringTemplateEntry(571,576): '$prop'
 KtNameReferenceExpression(572,576): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1456,6 +1477,7 @@ KtSimpleNameStringTemplateEntry(620,625): '$prop'
 KtNameReferenceExpression(621,625): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1584,6 +1606,7 @@ KtSimpleNameStringTemplateEntry(665,670): '$prop'
 KtNameReferenceExpression(666,670): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1709,6 +1732,7 @@ KtSimpleNameStringTemplateEntry(711,716): '$prop'
 KtNameReferenceExpression(712,716): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1828,6 +1852,7 @@ KtSimpleNameStringTemplateEntry(744,749): '$prop'
 KtNameReferenceExpression(745,749): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1947,6 +1972,7 @@ KtSimpleNameStringTemplateEntry(787,792): '$prop'
 KtNameReferenceExpression(788,792): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2063,6 +2089,7 @@ KtSimpleNameStringTemplateEntry(827,832): '$prop'
 KtNameReferenceExpression(828,832): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

@@ -94,6 +94,7 @@ KtNameReferenceExpression(204,210): 'MyEnum'
 KtNameReferenceExpression(213,214): 'L'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

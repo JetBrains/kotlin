@@ -142,6 +142,7 @@ KtNameReferenceExpression(212,216): 'Left'
 KtNameReferenceExpression(220,221): 'x'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -197,6 +198,7 @@ KtNameReferenceExpression(229,234): 'Right'
 KtNameReferenceExpression(238,239): 'y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -274,10 +276,10 @@ KtNameReferenceExpression(287,291): 'Left'
   KaErrorCallInfo:
     candidateCalls = []
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
+    
     class Left : Any:
       Cannot access 'class Left : Any': it is private in file.
-
+    
     class Left : Any:
       Cannot access 'class Left : Any': it is private in file.>
 

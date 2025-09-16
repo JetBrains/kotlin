@@ -88,6 +88,7 @@ KtWhenExpression(186,307): 'when (o) {'
 KtNameReferenceExpression(192,193): 'o'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -133,6 +134,7 @@ KtWhenExpression(234,301): 'when (i) {'
 KtNameReferenceExpression(240,241): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -226,6 +228,7 @@ KtWhenExpression(357,598): 'when (o) {'
 KtNameReferenceExpression(363,364): 'o'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -295,6 +298,7 @@ KtWhenExpression(459,550): 'when (i) {'
 KtNameReferenceExpression(465,466): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

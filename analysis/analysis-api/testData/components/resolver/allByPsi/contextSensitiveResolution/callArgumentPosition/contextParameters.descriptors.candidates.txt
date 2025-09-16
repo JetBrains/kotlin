@@ -854,6 +854,7 @@ KtBlockExpression(548,552): '"".a'
 KtDotQualifiedExpression(548,552): '"".a'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -878,6 +879,7 @@ KtStringTemplateExpression(548,550): '""'
 KtNameReferenceExpression(551,552): 'a'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

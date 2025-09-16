@@ -58,6 +58,7 @@ KtProperty(180,208): 'val arg1 = MyEnum.EnumValue1'
 KtDotQualifiedExpression(191,208): 'MyEnum.EnumValue1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -99,6 +100,7 @@ KtNameReferenceExpression(191,197): 'MyEnum'
 KtNameReferenceExpression(198,208): 'EnumValue1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -202,6 +204,7 @@ KtValueArgument(252,262): 'EnumValue2'
 KtNameReferenceExpression(252,262): 'EnumValue2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -299,6 +302,7 @@ KtValueArgument(280,284): 'arg1'
 KtNameReferenceExpression(280,284): 'arg1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -393,6 +397,7 @@ KtValueArgument(302,306): 'arg2'
 KtNameReferenceExpression(302,306): 'arg2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

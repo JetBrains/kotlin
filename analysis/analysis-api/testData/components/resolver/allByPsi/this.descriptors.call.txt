@@ -2280,6 +2280,7 @@ KtCallExpression(1272,1282): 'body(this)'
 KtNameReferenceExpression(1272,1276): 'body'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

@@ -211,6 +211,7 @@ KtValueArgumentList(189,191): '()'
 KtNameReferenceExpression(196,199): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -300,6 +301,7 @@ KtParenthesizedExpression(206,211): '(foo)'
 KtNameReferenceExpression(207,210): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -389,6 +391,7 @@ KtDotQualifiedExpression(231,243): 'foo.invoke()'
 KtNameReferenceExpression(231,234): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -472,6 +475,7 @@ KtCallExpression(248,258): 'property()'
 KtNameReferenceExpression(248,256): 'property'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

@@ -142,6 +142,7 @@ KtContainerNode(399,402): 'arg'
 KtNameReferenceExpression(399,402): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -254,6 +255,7 @@ KtContainerNode(484,487): 'arg'
 KtNameReferenceExpression(484,487): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -355,6 +357,7 @@ KtContainerNode(594,597): 'arg'
 KtNameReferenceExpression(594,597): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -453,6 +456,7 @@ KtContainerNode(716,719): 'arg'
 KtNameReferenceExpression(716,719): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -584,6 +588,7 @@ KtContainerNode(889,892): 'arg'
 KtNameReferenceExpression(889,892): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

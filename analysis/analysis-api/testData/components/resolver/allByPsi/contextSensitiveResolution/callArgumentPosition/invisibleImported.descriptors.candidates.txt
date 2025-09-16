@@ -143,6 +143,7 @@ KtValueArgument(126,127): 'X'
 KtNameReferenceExpression(126,127): 'X'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -240,6 +241,7 @@ KtValueArgument(137,138): 'Y'
 KtNameReferenceExpression(137,138): 'Y'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

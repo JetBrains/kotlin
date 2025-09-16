@@ -530,6 +530,7 @@ KtValueArgumentList(535,537): '()'
 KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -550,6 +551,7 @@ KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
 KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -573,6 +575,7 @@ KtNameReferenceExpression(552,566): 'memberProperty'
 KtNameReferenceExpression(567,571): 'name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -773,6 +776,7 @@ KtValueArgumentList(611,613): '()'
 KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -793,6 +797,7 @@ KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
 KtCallableReferenceExpression(619,640): 'Child::memberProperty'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -816,6 +821,7 @@ KtNameReferenceExpression(626,640): 'memberProperty'
 KtNameReferenceExpression(641,645): 'name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -872,6 +878,7 @@ KtProperty(695,729): 'val p = MyClass::extensionProperty'
 KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -925,6 +932,7 @@ KtProperty(773,811): 'val cP = pack.Child::extensionProperty'
 KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -954,6 +962,7 @@ KtNameReferenceExpression(794,811): 'extensionProperty'
 KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -998,6 +1007,7 @@ KtNameReferenceExpression(832,848): 'functionWithType'
 KtNameReferenceExpression(849,853): 'name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1055,6 +1065,7 @@ KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(Child
 KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1226,6 +1237,7 @@ KtNameReferenceExpression(921,937): 'topLevelFunction'
 KtCallableReferenceExpression(942,960): '::topLevelVariable'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1251,6 +1263,7 @@ KtDotQualifiedExpression(966,993): '::lateinitVar.isInitialized'
 KtCallableReferenceExpression(966,979): '::lateinitVar'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1348,6 +1361,7 @@ KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
 KtNameReferenceExpression(1063,1076): 'classWithType'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1368,6 +1382,7 @@ KtNameReferenceExpression(1078,1094): 'functionWithType'
 KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1388,6 +1403,7 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
 KtNameReferenceExpression(1099,1112): 'classWithType'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1465,6 +1481,7 @@ KtPostfixExpression(1174,1177): 't!!'
 KtNameReferenceExpression(1174,1175): 't'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1488,6 +1505,7 @@ KtNameReferenceExpression(1179,1195): 'functionWithType'
 KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1511,6 +1529,7 @@ KtPostfixExpression(1200,1203): 't!!'
 KtNameReferenceExpression(1200,1201): 't'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

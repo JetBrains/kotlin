@@ -415,6 +415,7 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
 KtNameReferenceExpression(422,424): 'c1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

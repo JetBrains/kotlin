@@ -470,6 +470,7 @@ KtBinaryExpression(113,130): 'myClass >= number'
 KtNameReferenceExpression(113,120): 'myClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -524,6 +525,7 @@ KtOperationReferenceExpression(121,123): '>='
 KtNameReferenceExpression(124,130): 'number'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -578,6 +580,7 @@ KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
 KtNameReferenceExpression(135,142): 'myClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -675,6 +678,7 @@ KtValueArgument(153,159): 'number'
 KtNameReferenceExpression(153,159): 'number'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -728,6 +732,7 @@ KtNameReferenceExpression(216,219): 'Int'
 KtNameReferenceExpression(222,223): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

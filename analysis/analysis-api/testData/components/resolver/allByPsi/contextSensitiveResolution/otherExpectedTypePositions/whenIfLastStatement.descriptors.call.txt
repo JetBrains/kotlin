@@ -274,6 +274,7 @@ KtCallExpression(404,407): 'b()'
 KtNameReferenceExpression(404,405): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -370,6 +371,7 @@ KtBinaryExpression(467,473): 'i == 0'
 KtNameReferenceExpression(467,468): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -489,6 +491,7 @@ KtBinaryExpression(560,566): 'i == 1'
 KtNameReferenceExpression(560,561): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -565,6 +568,7 @@ KtContainerNodeForControlStructureBody(641,657): 'ClassMemberAlias'
 KtNameReferenceExpression(641,657): 'ClassMemberAlias'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -637,6 +641,7 @@ KtBinaryExpression(693,699): 'i == 2'
 KtNameReferenceExpression(693,694): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -713,6 +718,7 @@ KtContainerNodeForControlStructureBody(772,788): 'ClassMemberAlias'
 KtNameReferenceExpression(772,788): 'ClassMemberAlias'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -904,6 +910,7 @@ KtBinaryExpression(824,830): 'i == 0'
 KtNameReferenceExpression(824,825): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1023,6 +1030,7 @@ KtBinaryExpression(941,947): 'i == 1'
 KtNameReferenceExpression(941,942): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1142,6 +1150,7 @@ KtBinaryExpression(1050,1056): 'i == 2'
 KtNameReferenceExpression(1050,1051): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1277,6 +1286,7 @@ KtBinaryExpression(1153,1159): 'i == 3'
 KtNameReferenceExpression(1153,1154): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1353,6 +1363,7 @@ KtContainerNodeForControlStructureBody(1256,1272): 'ClassMemberAlias'
 KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1536,6 +1547,7 @@ KtBinaryExpression(1311,1317): 'i == 0'
 KtNameReferenceExpression(1311,1312): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1655,6 +1667,7 @@ KtBinaryExpression(1428,1434): 'i == 1'
 KtNameReferenceExpression(1428,1429): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1731,6 +1744,7 @@ KtContainerNodeForControlStructureBody(1533,1549): 'ClassMemberAlias'
 KtNameReferenceExpression(1533,1549): 'ClassMemberAlias'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

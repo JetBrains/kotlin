@@ -624,6 +624,7 @@ KtBinaryExpressionWithTypeRHS(862,890): 'instance as SealedInheritor1'
 KtNameReferenceExpression(862,870): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -659,6 +660,7 @@ KtBinaryExpressionWithTypeRHS(918,946): 'instance as SealedInheritor2'
 KtNameReferenceExpression(918,926): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -723,6 +725,7 @@ KtNameReferenceExpression(1007,1023): 'SealedInheritor1'
 KtNameReferenceExpression(1026,1029): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

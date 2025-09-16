@@ -162,6 +162,7 @@ KtValueArgumentList(183,185): '()'
 KtDotQualifiedExpression(190,206): 'MyAlias.property'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -203,6 +204,7 @@ KtNameReferenceExpression(190,197): 'MyAlias'
 KtNameReferenceExpression(198,206): 'property'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -269,6 +271,7 @@ KtNameReferenceExpression(221,229): 'function'
 KtCallableReferenceExpression(234,251): 'MyAlias::property'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

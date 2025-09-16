@@ -530,6 +530,7 @@ KtIsExpression(307,319): 'x is A<*>.B1'
 KtNameReferenceExpression(307,308): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -584,6 +585,7 @@ KtIsExpression(334,348): 'x is A<Int>.B2'
 KtNameReferenceExpression(334,335): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -647,6 +649,7 @@ KtIsExpression(363,371): 'x is A.C'
 KtNameReferenceExpression(363,364): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -698,6 +701,7 @@ KtIsExpression(404,411): 'x is B1'
 KtNameReferenceExpression(404,405): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -740,6 +744,7 @@ KtIsExpression(426,433): 'x is B2'
 KtNameReferenceExpression(426,427): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -782,6 +787,7 @@ KtIsExpression(448,454): 'x is C'
 KtNameReferenceExpression(448,449): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

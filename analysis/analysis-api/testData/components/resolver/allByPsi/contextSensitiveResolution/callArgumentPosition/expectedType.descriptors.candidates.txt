@@ -187,6 +187,7 @@ KtNameReferenceExpression(300,301): 'X'
 KtNameReferenceExpression(304,305): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

@@ -348,6 +348,7 @@ KtValueArgument(331,340): 'MAX_VALUE'
 KtNameReferenceExpression(331,340): 'MAX_VALUE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -442,6 +443,7 @@ KtValueArgument(361,364): 'FOO'
 KtNameReferenceExpression(361,364): 'FOO'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -614,6 +616,7 @@ KtValueArgument(387,390): 'FOO'
 KtNameReferenceExpression(387,390): 'FOO'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -714,6 +717,7 @@ KtValueArgument(412,429): 'FOR_TYPE_MISMATCH'
 KtNameReferenceExpression(412,429): 'FOR_TYPE_MISMATCH'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -892,6 +896,7 @@ KtValueArgument(452,469): 'FOR_TYPE_MISMATCH'
 KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1508,6 +1513,7 @@ KtValueArgument(629,637): 'INSTANCE'
 KtNameReferenceExpression(629,637): 'INSTANCE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

@@ -61,6 +61,7 @@ KtProperty(228,255): 'val EnumValue3 = EnumValue1'
 KtNameReferenceExpression(245,255): 'EnumValue1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1105,6 +1106,7 @@ KtNameReferenceExpression(975,982): 'enumArg'
 KtNameReferenceExpression(985,995): 'EnumValue1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1236,6 +1238,7 @@ KtNameReferenceExpression(1036,1043): 'enumArg'
 KtNameReferenceExpression(1046,1056): 'EnumValue3'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1266,6 +1269,7 @@ KtNameReferenceExpression(1066,1069): 'arg'
 KtNameReferenceExpression(1072,1081): 'propClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1371,6 +1375,7 @@ KtNameReferenceExpression(1112,1115): 'arg'
 KtNameReferenceExpression(1118,1122): 'prop'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1476,6 +1481,7 @@ KtNameReferenceExpression(1148,1151): 'arg'
 KtNameReferenceExpression(1154,1163): 'superProp'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1763,6 +1769,7 @@ KtNameReferenceExpression(1270,1273): 'arg'
 KtNameReferenceExpression(1276,1284): 'lazyProp'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

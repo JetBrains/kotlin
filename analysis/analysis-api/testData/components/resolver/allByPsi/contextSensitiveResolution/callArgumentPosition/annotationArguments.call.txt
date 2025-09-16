@@ -136,6 +136,7 @@ KtValueArgument(161,162): 'X'
 KtNameReferenceExpression(161,162): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -290,6 +291,7 @@ KtValueArgument(237,238): 'X'
 KtNameReferenceExpression(237,238): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -313,6 +315,7 @@ KtValueArgument(240,241): 'Y'
 KtNameReferenceExpression(240,241): 'Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -469,6 +472,7 @@ KtCollectionLiteralExpression(264,270): '[X, Y]'
 KtNameReferenceExpression(265,266): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -489,6 +493,7 @@ KtNameReferenceExpression(265,266): 'X'
 KtNameReferenceExpression(268,269): 'Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -677,6 +682,7 @@ KtCollectionLiteralExpression(346,349): '[X]'
 KtNameReferenceExpression(347,348): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -868,6 +874,7 @@ KtValueArgument(379,380): 'X'
 KtNameReferenceExpression(379,380): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1005,6 +1012,7 @@ KtValueArgument(447,456): 'MAX_VALUE'
 KtNameReferenceExpression(447,456): 'MAX_VALUE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1118,6 +1126,7 @@ KtValueArgument(484,491): 'RUNTIME'
 KtNameReferenceExpression(484,491): 'RUNTIME'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1233,6 +1242,7 @@ KtValueArgument(501,506): 'CLASS'
 KtNameReferenceExpression(501,506): 'CLASS'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1256,6 +1266,7 @@ KtValueArgument(508,516): 'PROPERTY'
 KtNameReferenceExpression(508,516): 'PROPERTY'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

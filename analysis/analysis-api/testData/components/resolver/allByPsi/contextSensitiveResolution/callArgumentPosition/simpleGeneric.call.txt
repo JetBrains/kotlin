@@ -130,6 +130,7 @@ KtProperty(181,197): 'val L = MyEnum.X'
 KtDotQualifiedExpression(189,197): 'MyEnum.X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -153,6 +154,7 @@ KtNameReferenceExpression(189,195): 'MyEnum'
 KtNameReferenceExpression(196,197): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -325,6 +327,7 @@ KtValueArgument(210,211): 'X'
 KtNameReferenceExpression(210,211): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -497,6 +500,7 @@ KtValueArgument(225,226): 'L'
 KtNameReferenceExpression(225,226): 'L'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
