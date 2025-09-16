@@ -27,7 +27,7 @@ interface SwiftExportValidator {
 
         assertAll(flattenModules.flatMap {
             when (it) {
-                is SwiftExportModule.BridgesToKotlin -> {
+                is SwiftExportModule.BridgesToKotlin if it.name != "KotlinRuntimeSupport" -> {
                     val files = it.files
 
                     val expectedFiles = goldenData.toPath() / "golden_result/"

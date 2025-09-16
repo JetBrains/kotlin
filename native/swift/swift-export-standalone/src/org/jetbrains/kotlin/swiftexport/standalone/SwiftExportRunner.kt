@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
 import org.jetbrains.kotlin.swiftexport.standalone.translation.translateCrossReferencingModulesTransitively
 import org.jetbrains.kotlin.swiftexport.standalone.translation.translateModulePublicApi
 import org.jetbrains.kotlin.swiftexport.standalone.utils.logConfigIssues
+import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtFile
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
 import org.jetbrains.sir.printer.SirPrinter
@@ -192,17 +193,39 @@ private fun writeKotlinPackagesModule(
 private fun writeRuntimeSupportModule(
     config: SwiftExportConfig,
     outputPath: Path,
-): SwiftExportModule.SwiftOnly {
-
+): SwiftExportModule.BridgesToKotlin {
     val runtimeSupportContent = config.javaClass.getResource("/swift/KotlinRuntimeSupport.swift")?.readText()
-        ?: error("Can't find runtime support module")
-    // arrayOf() used as workaround to target method from older kotlin-stlib due to https://github.com/gradle/gradle/issues/34442
-    dumpTextAtFile(sequenceOf(*arrayOf(runtimeSupportContent)), outputPath.toFile())
+        ?: error("Can not find runtime support swift source")
 
-    return SwiftExportModule.SwiftOnly(
-        swiftApi = outputPath,
+    val kotlinBridgeContent = config.javaClass.getResource("/swift/KotlinRuntimeSupport.kt")?.readText()
+        ?: error("Can not find runtime support kotlin source")
+
+    val cHeaderBridgeContent = config.javaClass.getResource("/swift/KotlinRuntimeSupport.h")?.readText()
+        ?: error("Can not find runtime support c header")
+
+    val modulePath = outputPath.parent / config.runtimeSupportModuleName
+    val outputFiles = SwiftExportFiles(
+        swiftApi = (modulePath / "${config.runtimeSupportModuleName}.swift"),
+        kotlinBridges = (modulePath / "${config.runtimeSupportModuleName}.kt"),
+        cHeaderBridges = (modulePath / "${config.runtimeSupportModuleName}.h")
+    )
+
+    // arrayOf() used as workaround to target method from older kotlin-stlib due to https://github.com/gradle/gradle/issues/34442
+
+    dumpTextAtPath(
+        sequenceOf(runtimeSupportContent),
+        BridgeSources(
+            sequenceOf(*arrayOf(kotlinBridgeContent)),
+            sequenceOf(*arrayOf(cHeaderBridgeContent)),
+        ),
+        outputFiles
+    )
+
+    return SwiftExportModule.BridgesToKotlin(
         name = config.runtimeSupportModuleName,
-        kind = SwiftExportModule.SwiftOnly.Kind.KotlinRuntimeSupport,
+        dependencies = emptyList(), // or add dependencies if needed
+        bridgeName = "${config.runtimeSupportModuleName}Bridge", // or another bridge name
+        files = outputFiles
     )
 }
 
