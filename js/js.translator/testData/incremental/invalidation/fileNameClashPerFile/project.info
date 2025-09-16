@@ -1,5 +1,7 @@
 TARGET_BACKEND: JS_IR, JS_IR_ES6
+IGNORE_PER_MODULE: true
 MODULES: lib, main
+TYPESCRIPT_DEFINITIONS: true
 
 STEP 0:
     libs: lib, main

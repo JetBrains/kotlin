@@ -362,9 +362,15 @@ public class JsES6InvalidationPerModuleTestGenerated extends AbstractJsES6Invali
   }
 
   @Test
-  @TestMetadata("fileNameClash")
-  public void testFileNameClash() {
-    runTest("js/js.translator/testData/incremental/invalidation/fileNameClash/");
+  @TestMetadata("fileNameClashPerFile")
+  public void testFileNameClashPerFile() {
+    runTest("js/js.translator/testData/incremental/invalidation/fileNameClashPerFile/");
+  }
+
+  @Test
+  @TestMetadata("fileNameClashPerModule")
+  public void testFileNameClashPerModule() {
+    runTest("js/js.translator/testData/incremental/invalidation/fileNameClashPerModule/");
   }
 
   @Test
