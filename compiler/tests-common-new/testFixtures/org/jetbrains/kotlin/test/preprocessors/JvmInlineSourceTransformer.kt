@@ -28,14 +28,11 @@ class JvmInlineSourceTransformer(testServices: TestServices) : ReversibleSourceF
     companion object {
         fun computeModifier(targetBackend: TargetBackend): ReplacingSourceTransformer {
             return when {
-                targetBackend.isRecursivelyCompatibleWith(TargetBackend.JVM) -> TransformersFunctions.replaceOptionalJvmInlineAnnotationWithReal
+                targetBackend.isTransitivelyCompatibleWith(TargetBackend.JVM) -> TransformersFunctions.replaceOptionalJvmInlineAnnotationWithReal
                 targetBackend == TargetBackend.ANY -> TransformersFunctions.replaceOptionalJvmInlineAnnotationWithUniversal
                 else -> TransformersFunctions.removeOptionalJvmInlineAnnotation
             }
         }
-
-        private fun TargetBackend.isRecursivelyCompatibleWith(targetBackend: TargetBackend): Boolean =
-            this == targetBackend || this != TargetBackend.ANY && this.compatibleWith.isRecursivelyCompatibleWith(targetBackend)
     }
 
     override fun process(file: TestFile, content: String): String {
