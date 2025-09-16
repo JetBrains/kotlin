@@ -5,11 +5,7 @@ plugins {
     id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
-    /*
-     * It's not possible to enable security manager here, as real lombok tries to read `/lombok.config` file
-     * during compilation of java files, and there is no option to disable this behavior.
-    */
-//    id("test-inputs-check")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -67,6 +63,14 @@ projectTests {
         jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_17_0)
     ) {
+        /*
+         * Real lombok tries to read `<root dir>/lombok.config` file during compilation of java files, so
+         * we should consider it as an input.
+         */
+        inputs.files(layout.files("/lombok.config"))
+            .withPathSensitivity(PathSensitivity.NONE)
+            .withPropertyName("nonExitingRootLombokConfig")
+
         val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
         doFirst {
             testRuntimeClasspathFiles
