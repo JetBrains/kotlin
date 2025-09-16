@@ -1,0 +1,3 @@
+/expansionToCompilerRequiredAnnotation.kt:(854,870): error: 'public' typealias exposes 'internal' in expanded type 'JvmPackageName'.
+
+/expansionToCompilerRequiredAnnotation.kt:(884,898): error: Cannot access 'annotation class JvmPackageName : Annotation': it is internal in file.

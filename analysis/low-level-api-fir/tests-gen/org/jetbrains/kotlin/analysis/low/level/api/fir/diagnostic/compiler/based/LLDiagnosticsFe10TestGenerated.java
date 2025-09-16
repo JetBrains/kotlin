@@ -45948,6 +45948,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("expansionToCompilerRequiredAnnotation.kt")
+      public void testExpansionToCompilerRequiredAnnotation() {
+        runTest("compiler/testData/diagnostics/tests/typealias/expansionToCompilerRequiredAnnotation.kt");
+      }
+
+      @Test
       @TestMetadata("expansionWithinElvis.kt")
       public void testExpansionWithinElvis() {
         runTest("compiler/testData/diagnostics/tests/typealias/expansionWithinElvis.kt");
