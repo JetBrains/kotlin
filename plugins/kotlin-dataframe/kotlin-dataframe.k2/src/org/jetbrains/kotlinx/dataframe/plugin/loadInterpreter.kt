@@ -117,6 +117,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropLast0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropLast1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropLast2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNa0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNa1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNulls1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoinWith
@@ -399,6 +400,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "DropNulls0" -> DropNulls0()
         "DropNulls1" -> DropNulls1()
         "DropNa0" -> DropNa0()
+        "DropNa1" -> DropNa1()
         "Properties0" -> Properties0()
         "Preserve0" -> Preserve0()
         "Preserve1" -> Preserve1()

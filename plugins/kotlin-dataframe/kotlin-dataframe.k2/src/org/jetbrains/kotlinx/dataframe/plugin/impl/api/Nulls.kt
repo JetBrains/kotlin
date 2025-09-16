@@ -58,6 +58,22 @@ class DropNa0 : AbstractSchemaModificationInterpreter() {
     }
 }
 
+class DropNa1 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.whereAllNA: Boolean by arg(defaultValue = Present(false))
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        if (whereAllNA) return receiver
+        return PluginDataFrameSchema(
+            fillNullsImpl(
+                receiver.columns(),
+                receiver.columns().mapToSetOrEmpty { listOf(it.name) },
+                emptyList()
+            )
+        )
+    }
+}
+
 fun KotlinTypeFacade.fillNullsImpl(
     columns: List<SimpleCol>,
     paths: Set<List<String>>,
