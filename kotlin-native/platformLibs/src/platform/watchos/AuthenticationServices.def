@@ -1,4 +1,4 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText Foundation Security UIKit darwin posix
+depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText CoreVideo Foundation QuartzCore Security Symbols UIKit UIUtilities UserNotifications darwin posix
 language = Objective-C
 package = platform.AuthenticationServices
 modules = AuthenticationServices
