@@ -406,9 +406,7 @@ object KotlinToJVMBytecodeCompiler {
     ): GenerationState {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
-            codegenFactory.invokeCodegen(codegenInput)
-        }
+        codegenFactory.invokeCodegen(codegenInput)
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 

@@ -152,9 +152,10 @@ fun generateCodeFromIr(
         codegenFactory.invokeLowerings(generationState, backendInput)
     }
 
-    performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
-        codegenFactory.invokeCodegen(codegenInput)
+    codegenFactory.invokeCodegen(codegenInput)
 
+    // It's allowed to call `tryMeasurePhaseTime` multiple times on the same phase (`Backend`)
+    performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
         if (input.configuration.outputDirectory != null) {
             writeOutputsIfNeeded(
                 environment.projectEnvironment.project,

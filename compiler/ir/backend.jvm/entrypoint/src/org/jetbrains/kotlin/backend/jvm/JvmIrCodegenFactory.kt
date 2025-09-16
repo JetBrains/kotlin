@@ -66,12 +66,16 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.util.PerformanceManagerImpl
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.UnitStats
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class JvmIrCodegenFactory(
-    configuration: CompilerConfiguration,
+    private val configuration: CompilerConfiguration,
     private val externalMangler: JvmDescriptorMangler? = null,
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
@@ -394,23 +398,40 @@ class JvmIrCodegenFactory(
         val nThreads = context.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
         val executor = if (nThreads > 1) Executors.newFixedThreadPool(nThreads) else null
 
+        val perfManager = configuration.perfManager
+
         // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
         // when serializing metadata in the multifile parts.
         // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
         for (generateMultifileFacades in listOf(true, false)) {
             if (executor != null) {
-                val taskPerFile = module.files.map { irFile ->
-                    CompletableFuture.runAsync(
-                        {
-                            generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
-                        },
-                        executor
+                val tasks = mutableListOf<CompletableFuture<Void>>()
+                val childrenStats = mutableListOf<UnitStats>()
+
+                for (irFile in module.files) {
+                    tasks.add(
+                        CompletableFuture.runAsync(
+                            {
+                                val childPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = false)
+                                childPerfManager.tryMeasurePhaseTime(PhaseType.Backend) {
+                                    generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
+                                }
+                                childPerfManager?.let { childrenStats.add(it.unitStats) }
+                            },
+                            executor
+                        )
                     )
                 }
-                CompletableFuture.allOf(*taskPerFile.toTypedArray()).get()
+                CompletableFuture.allOf(*tasks.toTypedArray()).get()
+
+                if (perfManager != null) {
+                    childrenStats.forEach { perfManager.addOtherUnitStats(it) }
+                }
             } else {
-                for (irFile in module.files) {
-                    generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
+                perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
+                    for (irFile in module.files) {
+                        generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
+                    }
                 }
             }
         }
