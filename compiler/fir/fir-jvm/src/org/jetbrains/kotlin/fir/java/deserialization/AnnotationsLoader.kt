@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -92,11 +94,10 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
                 override fun visitEnd() {
                     visitExpression(name, buildArrayLiteral {
-                        @OptIn(UnresolvedExpressionTypeAccess::class)
-                        // For the array literal type, we use Array<Any> as an approximation; later FIR2IR will calculate more precise type
-                        // See KT-62598
-                        // FIR provides no guarantees on having exact type of deserialized array literals in annotations,
-                        // including non-empty ones.
+                        // For the array literal type, we use `Array<Any>` as an approximation. Later FIR2IR will calculate a more precise
+                        // type. See KT-62598.
+                        // FIR provides no guarantees on having the exact type of deserialized array literals in annotations, including
+                        // non-empty ones.
                         coneTypeOrNull = StandardClassIds.Any.constructClassLikeType().createOutArrayType()
                         argumentList = buildArgumentList {
                             arguments += elements

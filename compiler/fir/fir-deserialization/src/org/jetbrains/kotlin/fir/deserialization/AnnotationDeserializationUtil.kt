@@ -8,17 +8,9 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -26,8 +18,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage
@@ -91,7 +81,7 @@ private fun deserializeAnnotation(
             coneType = classId.toLookupTag().constructClassType()
         }
         session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
-            this.argumentMapping = createArgumentMapping(session, proto, classId, nameResolver)
+            this.argumentMapping = createArgumentMapping(session, proto, nameResolver)
         }
         useSiteTarget?.let {
             this.useSiteTarget = it
@@ -100,49 +90,19 @@ private fun deserializeAnnotation(
 }
 
 private fun createArgumentMapping(
-    session: FirSession,
-    proto: ProtoBuf.Annotation,
-    classId: ClassId,
-    nameResolver: NameResolver
+    session: FirSession, proto: ProtoBuf.Annotation, nameResolver: NameResolver,
 ): FirAnnotationArgumentMapping {
     return buildAnnotationArgumentMapping build@{
         if (proto.argumentCount == 0) return@build
-        // Used only for annotation parameters of array types
-        // Avoid triggering it in other cases, since it's quite expensive
-        val parameterByName: Map<Name, FirValueParameter>? by lazy(LazyThreadSafetyMode.NONE) {
-            val lookupTag = classId.toLookupTag()
-            val symbol = lookupTag.toSymbol(session)
-            val firAnnotationClass = (symbol as? FirRegularClassSymbol)?.fir ?: return@lazy null
-
-            val classScope = firAnnotationClass.defaultType().scope(
-                useSiteSession = session,
-                scopeSession = ScopeSession(),
-                callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
-                requiredMembersPhase = null,
-            ) ?: error("Null scope for $classId")
-
-            val constructor = classScope.getDeclaredConstructors()
-                .singleOrNull()
-                ?.fir
-                ?: error("No single constructor found for $classId")
-
-            constructor.valueParameters.associateBy { it.name }
-        }
-
         proto.argumentList.mapNotNull {
             val name = nameResolver.getName(it.nameId)
-            val value = resolveValue(session, it.value, nameResolver) { parameterByName?.get(name)?.returnTypeRef?.coneType }
+            val value = resolveValue(session, it.value, nameResolver)
             name to value
         }.toMap(mapping)
     }
 }
 
-private fun resolveValue(
-    session: FirSession,
-    value: ProtoBuf.Annotation.Argument.Value,
-    nameResolver: NameResolver,
-    expectedType: () -> ConeKotlinType?,
-): FirExpression {
+private fun resolveValue(session: FirSession, value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver): FirExpression {
     val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
 
     return when (value.type) {
@@ -189,17 +149,17 @@ private fun resolveValue(
             enumClassId = nameResolver.getClassId(value.classId)
             enumEntryName = nameResolver.getName(value.enumValueId)
         }
-        ProtoBuf.Annotation.Argument.Value.Type.ARRAY -> {
-            val expectedArrayElementType = expectedType()?.arrayElementType() ?: session.builtinTypes.anyType.coneType
-            buildArrayLiteral {
-                argumentList = buildArgumentList {
-                    value.arrayElementList.mapTo(arguments) { resolveValue(session, it, nameResolver) { expectedArrayElementType } }
-                }
-                coneTypeOrNull = expectedArrayElementType.createArrayType()
+        ARRAY -> buildArrayLiteral {
+            // For the array literal type, we use `Array<Any>` as an approximation. Later FIR2IR will calculate a more precise
+            // type. See KT-62598.
+            // FIR provides no guarantees on having the exact type of deserialized array literals in annotations, including
+            // non-empty ones.
+            coneTypeOrNull = StandardClassIds.Any.constructClassLikeType().createOutArrayType()
+            argumentList = buildArgumentList {
+                value.arrayElementList.mapTo(arguments) { resolveValue(session, it, nameResolver) }
             }
         }
-
-        else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
+        else -> error("Unsupported annotation argument type: ${value.type}")
     }
 }
 

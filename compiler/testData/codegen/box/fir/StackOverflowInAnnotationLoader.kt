@@ -49,11 +49,25 @@ interface HolderWithEmpty {
     )
 }
 
+interface HolderWithTypeAnnotation {
+    interface Entry {
+        fun f(): @Annotation(value = [""]) Unit
+    }
+
+    @Target(AnnotationTarget.TYPE)
+    annotation class Annotation(
+        val value: Array<String>,
+    )
+}
+
 // MODULE: m2(m1)
 // FILE: m2.kt
-import Holder
-import ByteHolder
-import HolderWithDefault
-import HolderWithEmpty
 
-fun box() = "OK"
+fun box(): String {
+    object : Holder {}
+    object : ByteHolder {}
+    object : HolderWithDefault {}
+    object : HolderWithEmpty {}
+    object : HolderWithTypeAnnotation {}
+    return "OK"
+}
