@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("project-tests-convention")
+    id("java-test-fixtures")
 }
 
 repositories {
@@ -31,6 +32,8 @@ dependencies {
     testApi(project(":compiler:fir:providers"))
     testApi(project(":compiler:fir:semantics"))
     testApi(project(":compiler:fir:dump"))
+    testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
@@ -44,7 +47,10 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 optInToK1Deprecation()

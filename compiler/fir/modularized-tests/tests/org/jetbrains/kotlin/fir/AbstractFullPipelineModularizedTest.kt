@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -13,25 +12,15 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.Time
-import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
-import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.nio.file.Files
-import java.nio.file.Path
 
-private val JVM_TARGET: String = System.getProperty("fir.bench.jvm.target", "1.8")
 
 abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig) : AbstractModularizedTest(config) {
 
@@ -47,6 +36,8 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
     private val okModules = mutableListOf<ModuleStatus>()
     private val errorModules = mutableListOf<ModuleStatus>()
     private val crashedModules = mutableListOf<ModuleStatus>()
+
+    private val isolated = AbstractIsolatedFullPipelineModularizedTest(config)
 
     protected data class CumulativeTime(
         val gcInfo: Map<String, GCInfo>,
@@ -134,89 +125,6 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
             phase("Total", total.totalTime(), total.files, total.lines)
         }
 
-    }
-
-    private val composePluginClasspath: List<String>? = config.composePluginClasspath?.split(File.pathSeparator)
-    private val kotlinHome = config.kotlinHome?.let { KotlinPathsFromHomeDir(File(it)) } ?: PathUtil.kotlinPathsForDistDirectoryForTests
-
-    private fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
-        val file = File(path)
-        return when {
-            file.name.startsWith("kotlinx-serialization") || file.name.startsWith("kotlin-serialization") ->
-                kotlinHome.jar(KotlinPaths.Jar.SerializationPlugin)
-            file.name.startsWith("kotlin-sam-with-receiver") -> kotlinHome.jar(KotlinPaths.Jar.SamWithReceiver)
-            file.name.startsWith("kotlin-allopen") -> kotlinHome.jar(KotlinPaths.Jar.AllOpenPlugin)
-            file.name.startsWith("kotlin-noarg") -> kotlinHome.jar(KotlinPaths.Jar.NoArgPlugin)
-            file.name.startsWith("kotlin-lombok") -> kotlinHome.jar(KotlinPaths.Jar.LombokPlugin)
-            file.name.startsWith("kotlin-compose-compiler-plugin") -> {
-                // compose plugin is not a part of the dist yet, so we have to go an extra mile to get it
-                composePluginClasspath?.firstOrNull()?.let(::File)
-            }
-            // Assuming that the rest is the custom compiler plugins, that cannot be kept stable with the new compiler, so we're skipping them
-            // If the module is compillable without it - fine, otherwise at least it will hopefully be a stable failure.
-            else -> null
-        }
-    }
-
-    private fun configureBaseArguments(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
-        val originalArguments = moduleData.arguments as? K2JVMCompilerArguments
-        if (originalArguments != null) {
-            args.apiVersion = originalArguments.apiVersion
-            args.noJdk = originalArguments.noJdk
-            args.noStdlib = originalArguments.noStdlib
-            args.noReflect = originalArguments.noReflect
-            args.jvmTarget = originalArguments.jvmTargetIfSupported()?.description
-            args.jsr305 = originalArguments.jsr305
-            args.nullabilityAnnotations = originalArguments.nullabilityAnnotations
-            args.jspecifyAnnotations = originalArguments.jspecifyAnnotations
-            @Suppress("DEPRECATION")
-            args.jvmDefault = originalArguments.jvmDefault
-            args.jvmDefaultStable = originalArguments.jvmDefaultStable
-            args.jdkRelease = originalArguments.jdkRelease
-            args.progressiveMode = originalArguments.progressiveMode
-            args.optIn = (moduleData.optInAnnotations + (originalArguments.optIn ?: emptyArray())).toTypedArray()
-            args.allowKotlinPackage = originalArguments.allowKotlinPackage
-
-            args.pluginOptions = originalArguments.pluginOptions
-            args.pluginClasspaths = originalArguments.pluginClasspaths?.mapNotNull {
-                substituteCompilerPluginPathForKnownPlugins(it)?.absolutePath
-            }?.toTypedArray()
-            args.contextReceivers = originalArguments.contextReceivers
-            args.contextParameters = originalArguments.contextParameters
-            args.multiDollarInterpolation = originalArguments.multiDollarInterpolation
-            args.skipPrereleaseCheck = originalArguments.skipPrereleaseCheck
-            args.whenGuards = originalArguments.whenGuards
-            args.nestedTypeAliases = originalArguments.nestedTypeAliases
-
-        } else {
-            args.jvmTarget = JVM_TARGET
-            args.allowKotlinPackage = true
-        }
-        args.reportPerf = true
-        args.jdkHome = moduleData.jdkHome?.absolutePath ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absolutePath
-        args.renderInternalDiagnosticNames = true
-        configureArgsUsingBuildFile(args, moduleData, tmp)
-    }
-
-    private fun configureArgsUsingBuildFile(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
-        val builder = KotlinModuleXmlBuilder()
-        builder.addModule(
-            moduleData.name,
-            tmp.toAbsolutePath().toFile().toString(),
-            sourceFiles = moduleData.sources,
-            javaSourceRoots = moduleData.javaSourceRoots.map { JvmSourceRoot(it.path, it.packagePrefix) },
-            classpathRoots = moduleData.classpath,
-            commonSourceFiles = emptyList(),
-            modularJdkRoot = moduleData.modularJdkRoot,
-            "java-production",
-            isTests = false,
-            emptySet(),
-            friendDirs = moduleData.friendDirs,
-            isIncrementalCompilation = true
-        )
-        val modulesFile = tmp.toFile().resolve("modules.xml")
-        modulesFile.writeText(builder.asText().toString())
-        args.buildFile = modulesFile.absolutePath
     }
 
     abstract fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData)
@@ -309,30 +217,22 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val compiler = K2JVMCompiler()
-        val args = compiler.createArguments()
-        val tmp = Files.createTempDirectory("compile-output")
-        configureBaseArguments(args, moduleData, tmp)
-        configureArguments(args, moduleData)
-
-        val manager = CompilerPerformanceManager().apply { detailedPerf = args.detailedPerf }
-        val services = Services.Builder().register(PerformanceManager::class.java, manager).build()
+        val outputDir = Files.createTempDirectory("compile-output").toFile()
+        val manager = CompilerPerformanceManager()
         val collector = TestMessageCollector()
-        val result = try {
-            CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
-            compiler.exec(collector, services, args)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ExitCode.INTERNAL_ERROR
+
+        CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
+        val result = isolated.processModule(moduleData, outputDir, collector, manager) { arguments ->
+            configureArguments(arguments, moduleData)
+            manager.detailedPerf = arguments.detailedPerf
         }
         val resultTime = manager.reportCumulativeTime()
         PerformanceCounter.resetAllCounters()
 
-        tmp.toFile().deleteRecursively()
+        outputDir.deleteRecursively()
         if (result == ExitCode.OK) {
-            totalPassResult += resultTime
+            totalPassResult = totalPassResult + resultTime
         }
-
         return handleResult(result, moduleData, collector, manager.getTargetInfo())
     }
 
@@ -352,7 +252,7 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
     }
 
 
-    private inner class CompilerPerformanceManager : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "Modularized test performance manager") {
+    private class CompilerPerformanceManager : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "Modularized test performance manager") {
 
         fun reportCumulativeTime(): CumulativeTime {
             val gcInfo = unitStats.gcStats.associate { it.kind to GCInfo(it.kind, it.millis, it.count) }
