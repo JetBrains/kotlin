@@ -264,6 +264,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         taskName: String = "generateTests",
         doNotSetFixturesSourceSetDependency: Boolean = false,
         generateTestsInBuildDirectory: Boolean = false,
+        skipCollectDataTask: Boolean = false,
         configure: JavaExec.() -> Unit = {}
     ) {
         val fixturesSourceSet = if (doNotSetFixturesSourceSetDependency) {
@@ -292,7 +293,7 @@ abstract class ProjectTestsExtension(val project: Project) {
             }
             configure()
         }
-        if (generateTestsInBuildDirectory) {
+        if (generateTestsInBuildDirectory && !skipCollectDataTask) {
             project.sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
                 generatedDir(project, generatorTask.map { generationPath })
             }
