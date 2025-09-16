@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlinx.dataframe.api.asColumn
 import org.jetbrains.kotlinx.dataframe.api.convert
 import org.jetbrains.kotlinx.dataframe.api.toPath
@@ -29,10 +30,10 @@ internal class Convert0 : AbstractInterpreter<ConvertApproximation>() {
 
 class Convert2 : AbstractInterpreter<ConvertApproximation>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.columns: List<String> by arg(defaultValue = Absent)
+    val Arguments.columns: List<String> by arg(defaultValue = Present(emptyList()))
 
     override fun Arguments.interpret(): ConvertApproximation {
-        return ConvertApproximation(receiver, columns.map { listOf(it) })
+        return ConvertApproximation(receiver.createImpliedColumns(columns), columns.map { listOf(it) })
     }
 }
 
@@ -47,8 +48,13 @@ internal class Convert6 : AbstractInterpreter<PluginDataFrameSchema>() {
     override val Arguments.startingSchema get() = receiver
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val columns = (listOf(firstCol) + cols).map { listOf(it) }
-        return convertImpl(receiver, columns, expression)
+        val columns = (listOf(firstCol) + cols)
+        val topLevelNames = receiver.columns().mapToSetOrEmpty { it.name }
+        val assumedColumns = columns
+            .filter { it !in topLevelNames }
+            .map { simpleColumnOf(it, expression.type) }
+        val df = PluginDataFrameSchema(receiver.columns() + assumedColumns)
+        return convertImpl(df, columns.map { listOf(it) }, expression)
     }
 }
 

@@ -238,6 +238,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Reorder
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReorderColumnsByName
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RightJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RightJoinWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SelectString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single2
@@ -397,6 +398,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "Rename" -> Rename()
         "RenameMapping" -> RenameMapping()
         "Select0" -> Select0()
+        "SelectString" -> SelectString()
         "Distinct0" -> Select0()
         "NestedSelect" -> NestedSelect()
         "Expr0" -> Expr0()

@@ -6,6 +6,8 @@ import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlinx.dataframe.api.asColumnGroup
+import org.jetbrains.kotlinx.dataframe.api.select
+import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnsList
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
@@ -21,6 +23,16 @@ internal class Select0 : AbstractInterpreter<PluginDataFrameSchema>() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return PluginDataFrameSchema(columns.resolve(receiver).map { it.column })
+    }
+}
+
+internal class SelectString : AbstractInterpreter<PluginDataFrameSchema>() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.columns: List<String> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val df = receiver.createImpliedColumns(columns)
+        return df.asDataFrame().select { columns.toColumnSet() }.toPluginDataFrameSchema()
     }
 }
 
