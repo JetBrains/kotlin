@@ -42,7 +42,7 @@ Prerequisites:
 *   configure Kotlin build as [specified in main readme](../ReadMe.md#build-environment-requirements)
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
-*   macOS: Xcode 16.0 or newer
+*   macOS: Xcode 26.0 or newer
     * if you're seeing a build error like this
       
             > Failed to apply plugin class 'org.jetbrains.kotlin.xcode.XcodeOverridePlugin'.
