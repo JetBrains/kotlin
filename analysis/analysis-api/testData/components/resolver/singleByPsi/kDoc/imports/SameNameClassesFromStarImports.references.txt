@@ -2,6 +2,7 @@
   KDocName(68,71): 'Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in dep2) class Foo
         1: (in dep1) class Foo
@@ -10,6 +11,7 @@
   KDocName(80,88): 'dep1.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dep1) class Foo
 
@@ -17,5 +19,6 @@
   KDocName(94,102): 'dep2.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dep2) class Foo

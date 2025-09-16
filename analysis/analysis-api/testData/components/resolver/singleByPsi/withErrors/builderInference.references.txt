@@ -1,5 +1,6 @@
 KtNameReferenceExpression(248,251): 'add'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test.Target) fun add(t: T)

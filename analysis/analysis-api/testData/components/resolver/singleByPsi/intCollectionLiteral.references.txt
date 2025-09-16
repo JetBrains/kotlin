@@ -1,11 +1,13 @@
 KtCollectionLiteralExpression(91,100): '[1, 2, 3]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtValueArgument(91,100): '[1, 2, 3]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       arr: kotlin.IntArray

@@ -2,6 +2,7 @@
   KtNameReferenceExpression(192,195): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var foo: Foo<kotlin.String!>
 
@@ -9,6 +10,7 @@
   KtNameReferenceExpression(211,214): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var foo: Foo<kotlin.String!>
 
@@ -16,5 +18,6 @@
   KtNameReferenceExpression(329,332): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) override var foo: Foo<kotlin.String!>

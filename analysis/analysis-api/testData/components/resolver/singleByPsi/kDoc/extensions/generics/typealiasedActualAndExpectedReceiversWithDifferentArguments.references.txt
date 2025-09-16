@@ -1,5 +1,6 @@
 KDocName(102,110): 'AInt.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

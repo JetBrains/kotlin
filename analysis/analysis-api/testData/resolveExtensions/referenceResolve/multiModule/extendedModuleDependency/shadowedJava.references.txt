@@ -1,5 +1,6 @@
 KtNameReferenceExpression(118,127): 'TestClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

@@ -1,5 +1,6 @@
 KtArrayAccessExpression(119,123): 'a[2]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

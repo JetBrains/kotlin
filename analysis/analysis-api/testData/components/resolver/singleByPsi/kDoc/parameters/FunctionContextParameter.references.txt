@@ -2,6 +2,7 @@
   KDocName(53,55): 'xx'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         xx: kotlin.String
 
@@ -9,6 +10,7 @@
   KDocName(109,111): 'xx'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         xx: kotlin.String
 
@@ -16,6 +18,7 @@
   KDocName(154,156): 'xx'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: xx: kotlin.String
         1: (in <local>: A.foo) xx
@@ -24,6 +27,7 @@
   KDocName(206,208): 'xx'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: xx: kotlin.String
         1: (in <local>: A.foo) xx
@@ -32,6 +36,7 @@
   KDocName(263,265): 'xx'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: xx: kotlin.String
         1: (in <local>: A.foo) xx

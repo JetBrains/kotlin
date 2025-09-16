@@ -2,6 +2,7 @@
   KDocName(78,91): 'Foo.nonExtFun'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -9,6 +10,7 @@
   KDocName(97,115): 'test.Foo.nonExtFun'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -16,6 +18,7 @@
   KDocName(124,138): 'Foo.nonExtProp'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -23,5 +26,6 @@
   KDocName(144,163): 'test.Foo.nonExtProp'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)

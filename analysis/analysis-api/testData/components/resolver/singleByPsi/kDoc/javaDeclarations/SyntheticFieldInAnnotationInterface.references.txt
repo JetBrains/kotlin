@@ -2,6 +2,7 @@
   KDocName(25,38): 'Storage.value'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in Storage) val value: kotlin.String
 
@@ -9,5 +10,6 @@
   KDocName(44,59): 'Storage2.value2'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in Storage2) val value2: kotlin.String

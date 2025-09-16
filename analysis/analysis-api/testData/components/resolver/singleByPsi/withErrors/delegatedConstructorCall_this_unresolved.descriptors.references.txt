@@ -1,6 +1,7 @@
 KtConstructorDelegationReferenceExpression(115,119): 'this'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       0: (in Sub) constructor(i: kotlin.Int, j: kotlin.Int)
       1: (in Sub) constructor(p: kotlin.Int)

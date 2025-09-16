@@ -2,6 +2,7 @@
   KtArrayAccessExpression(62,69): 'list[0]'
     KtArrayAccessReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -9,6 +10,7 @@
   KtArrayAccessExpression(89,96): 'list[0]'
     KtArrayAccessReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
 
@@ -16,5 +18,6 @@
   KtArrayAccessExpression(121,128): 'list[0]'
     KtArrayAccessReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(42,49): 'Generic'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class Generic<T>

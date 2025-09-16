@@ -2,11 +2,13 @@
   KtNameReferenceExpression(268,277): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
@@ -14,11 +16,13 @@
   KtNameReferenceExpression(295,304): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
@@ -26,16 +30,19 @@
   KtNameReferenceExpression(325,334): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
@@ -43,16 +50,19 @@
   KtNameReferenceExpression(356,365): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
@@ -60,16 +70,19 @@
   KtNameReferenceExpression(386,395): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
@@ -77,16 +90,19 @@
   KtNameReferenceExpression(400,409): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
@@ -94,11 +110,13 @@
   KtNameReferenceExpression(507,516): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
@@ -106,11 +124,13 @@
   KtNameReferenceExpression(536,545): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
@@ -118,16 +138,19 @@
   KtNameReferenceExpression(568,577): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
@@ -135,16 +158,19 @@
   KtNameReferenceExpression(601,610): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)
 
@@ -152,15 +178,18 @@
   KtNameReferenceExpression(633,642): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getSomething(): kotlin.Int
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setSomething(value: kotlin.Int)

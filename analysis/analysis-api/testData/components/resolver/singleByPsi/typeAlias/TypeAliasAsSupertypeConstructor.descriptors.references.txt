@@ -1,5 +1,6 @@
 KtNameReferenceExpression(56,58): 'CA'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test.C) constructor()

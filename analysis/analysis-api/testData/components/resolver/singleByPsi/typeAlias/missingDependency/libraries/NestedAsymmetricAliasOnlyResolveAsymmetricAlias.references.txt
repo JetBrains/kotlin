@@ -1,5 +1,6 @@
 KtNameReferenceExpression(166,171): 'check'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in library4.MyInterface) fun check(list: kotlin.collections.List<library2.AsymmetricAlias<kotlin.Boolean, kotlin.Int> /* = kotlin.String */>)

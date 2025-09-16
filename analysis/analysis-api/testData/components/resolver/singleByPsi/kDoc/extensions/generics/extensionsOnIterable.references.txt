@@ -2,6 +2,7 @@
   KDocName(52,64): 'Iterable.map'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.map(transform: (T) -> R): kotlin.collections.List<R>
 
@@ -9,6 +10,7 @@
   KDocName(72,88): 'Iterable.flatMap'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
         1: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.sequences.Sequence<R>): kotlin.collections.List<R>
@@ -17,6 +19,7 @@
   KDocName(96,112): 'Iterable.flatten'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections) fun <T> kotlin.collections.Iterable<kotlin.collections.Iterable<T>>.flatten(): kotlin.collections.List<T>
 
@@ -24,6 +27,7 @@
   KDocName(120,132): 'Iterable.min'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Double>.min(): kotlin.Double?
         1: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Float>.min(): kotlin.Float?
@@ -36,6 +40,7 @@
   KDocName(140,148): 'List.map'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.map(transform: (T) -> R): kotlin.collections.List<R>
 
@@ -43,6 +48,7 @@
   KDocName(156,168): 'List.flatMap'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
         1: (in kotlin.collections) inline fun <T, R> kotlin.collections.Iterable<T>.flatMap(transform: (T) -> kotlin.sequences.Sequence<R>): kotlin.collections.List<R>
@@ -51,6 +57,7 @@
   KDocName(176,188): 'List.flatten'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections) fun <T> kotlin.collections.Iterable<kotlin.collections.Iterable<T>>.flatten(): kotlin.collections.List<T>
 
@@ -58,6 +65,7 @@
   KDocName(196,204): 'List.min'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Double>.min(): kotlin.Double?
         1: (in kotlin.collections) fun kotlin.collections.Iterable<kotlin.Float>.min(): kotlin.Float?

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(29,33): 'text'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package kotlin.text

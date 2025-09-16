@@ -1,5 +1,6 @@
 KtNameReferenceExpression(55,61): 'values'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test.E) fun values(): kotlin.Array<test.E>

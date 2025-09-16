@@ -2,6 +2,7 @@
   KtNameReferenceExpression(71,80): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
@@ -9,6 +10,7 @@
   KtNameReferenceExpression(88,97): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
@@ -16,11 +18,13 @@
   KtNameReferenceExpression(108,117): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
@@ -28,11 +32,13 @@
   KtNameReferenceExpression(129,138): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
@@ -40,11 +46,13 @@
   KtNameReferenceExpression(149,158): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
@@ -52,10 +60,12 @@
   KtNameReferenceExpression(164,173): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int

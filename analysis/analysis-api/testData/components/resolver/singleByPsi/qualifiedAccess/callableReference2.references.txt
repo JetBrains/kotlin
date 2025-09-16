@@ -1,5 +1,6 @@
 KtNameReferenceExpression(117,119): 'AA'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
+    usesContextSensitiveResolution: false
     symbols:
       (in foo.bar.baz.AA) companion object

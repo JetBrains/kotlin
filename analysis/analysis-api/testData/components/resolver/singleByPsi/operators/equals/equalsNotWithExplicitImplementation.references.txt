@@ -1,5 +1,6 @@
 KtOperationReferenceExpression(119,121): '!='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyClass) override operator fun equals(other: kotlin.Any?): kotlin.Boolean

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
@@ -45,6 +46,26 @@ public interface KaResolver : KaSessionComponent {
      * Given a call `A.foo()`, `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`.
      */
     public fun KtReference.isImplicitReferenceToCompanion(): Boolean
+
+    /**
+     * Whether the [KtReference] uses [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature under the hood.
+     *
+     * #### Example
+     *
+     * ```
+     * enum class MyEnum {
+     *     X, Y
+     * }
+     *
+     * fun foo(a: MyEnum) {}
+     *
+     * fun main() {
+     *     foo(X) // An implicit reference to MyEnum.X
+     * }
+     * ```
+     */
+    @KaExperimentalApi
+    public val KtReference.usesContextSensitiveResolution: Boolean
 
     /**
      * Resolves the given [KtElement] to a [KaCallInfo] object. [KaCallInfo] either contains a successfully resolved call or an error with
@@ -90,6 +111,15 @@ context(context: KaResolver)
 public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
     return with(context) { isImplicitReferenceToCompanion() }
 }
+
+/**
+ * @see KaResolver.usesContextSensitiveResolution
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaResolver)
+public val KtReference.usesContextSensitiveResolution: Boolean
+    get() = with(context) { usesContextSensitiveResolution }
 
 /**
  * @see KaResolver.resolveToCall

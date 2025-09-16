@@ -77,6 +77,9 @@ internal class KaFe10Resolver(
         return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element] != null
     }
 
+    override val KtReference.usesContextSensitiveResolution: Boolean
+        get() = withPsiValidityAssertion(element) { false }
+
     override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
         return doResolveToSymbols(this)
     }

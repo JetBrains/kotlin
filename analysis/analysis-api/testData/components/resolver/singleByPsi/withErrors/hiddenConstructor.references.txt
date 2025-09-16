@@ -1,5 +1,6 @@
 KtNameReferenceExpression(17,20): 'Obj'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

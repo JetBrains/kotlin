@@ -1,5 +1,6 @@
 KDocName(65,87): 'ClassWithCompanion.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in bar.ClassWithCompanion.Companion) fun foo()

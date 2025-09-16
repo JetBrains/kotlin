@@ -1,5 +1,6 @@
 KtNameReferenceExpression(117,125): 'thisProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage.<no name>) var thisProp: A

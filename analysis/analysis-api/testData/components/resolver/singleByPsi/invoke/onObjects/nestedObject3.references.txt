@@ -1,5 +1,6 @@
 KtNameReferenceExpression(125,128): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in foo.bar.baz) object Foo

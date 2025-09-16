@@ -1,11 +1,13 @@
 KtNameReferenceExpression(8,11): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(37,41): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.Anno) constructor()

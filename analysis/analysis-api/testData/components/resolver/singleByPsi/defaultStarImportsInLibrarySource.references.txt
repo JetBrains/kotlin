@@ -1,5 +1,6 @@
 KtNameReferenceExpression(68,76): 'Sequence'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.sequences) interface Sequence<FAKE>

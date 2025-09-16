@@ -1,257 +1,300 @@
 KtNameReferenceExpression(46,50): 'main'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package main
 
 KtNameReferenceExpression(59,62): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(63,66): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(67,76): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) abstract class BaseClass
 
 KtNameReferenceExpression(77,88): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass) class NestedClass
 
 KtNameReferenceExpression(96,99): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(100,103): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(104,113): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) abstract class BaseClass
 
 KtNameReferenceExpression(114,126): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass) object NestedObject
 
 KtNameReferenceExpression(135,138): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(139,142): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(143,152): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) abstract class BaseClass
 
 KtNameReferenceExpression(153,165): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass) object NestedObject
 
 KtNameReferenceExpression(166,177): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass.NestedObject) class NestedClass
 
 KtNameReferenceExpression(185,188): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(189,192): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(193,202): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) abstract class BaseClass
 
 KtNameReferenceExpression(203,215): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass) object NestedObject
 
 KtNameReferenceExpression(216,219): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass.NestedObject) fun foo()
 
 KtNameReferenceExpression(227,230): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(231,234): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(235,244): 'BaseClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) abstract class BaseClass
 
 KtNameReferenceExpression(245,257): 'NestedObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass) object NestedObject
 
 KtNameReferenceExpression(258,261): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass.NestedObject) val bar: kotlin.String
 
 KtNameReferenceExpression(270,273): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(274,277): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(278,292): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) object TopLevelObject : one.two.BaseClass()
 
 KtNameReferenceExpression(300,303): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(304,307): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(308,322): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) object TopLevelObject : one.two.BaseClass()
 
 KtNameReferenceExpression(323,330): 'baseFoo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass) fun baseFoo()
 
 KtNameReferenceExpression(338,341): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(342,345): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(346,360): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) object TopLevelObject : one.two.BaseClass()
 
 KtNameReferenceExpression(361,368): 'baseBar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.BaseClass) val baseBar: kotlin.String
 
 KtNameReferenceExpression(376,379): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(380,383): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(384,398): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) object TopLevelObject : one.two.BaseClass()
 
 KtNameReferenceExpression(399,402): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.TopLevelObject) fun foo()
 
 KtNameReferenceExpression(410,413): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(414,417): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(418,432): 'TopLevelObject'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) object TopLevelObject : one.two.BaseClass()
 
 KtNameReferenceExpression(433,436): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.TopLevelObject) val bar: kotlin.String

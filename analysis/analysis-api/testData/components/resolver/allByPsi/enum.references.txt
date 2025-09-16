@@ -1,155 +1,181 @@
 KtNameReferenceExpression(38,41): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithConstructor) constructor(i: kotlin.Int)
 
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithConstructor) constructor(i: kotlin.Int)
 
 KtNameReferenceExpression(114,115): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithConstructor) val i: kotlin.Int
 
 KtNameReferenceExpression(234,238): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: EnumWithoutConstructor.EntryWithBody) object : EnumWithoutConstructor()
 
 KtCallExpression(239,244): 'baz()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(239,242): 'baz'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: EnumWithoutConstructor.EntryWithBody.<no name>) fun baz()
 
 KtNameReferenceExpression(280,299): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
 KtNameReferenceExpression(307,311): 'with'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       with: EnumWithConstructor
 
 KtNameReferenceExpression(312,319): 'ordinal'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Enum) val ordinal: kotlin.Int
 
 KtNameReferenceExpression(325,344): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
 KtNameReferenceExpression(345,350): 'Entry'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithConstructor) Entry
 
 KtNameReferenceExpression(355,374): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
 KtNameReferenceExpression(375,380): 'Entry'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithConstructor) Entry
 
 KtNameReferenceExpression(381,385): 'name'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Enum) val name: kotlin.String
 
 KtNameReferenceExpression(390,409): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
 KtNameReferenceExpression(410,423): 'EntryWithBody'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithConstructor) EntryWithBody
 
 KtNameReferenceExpression(428,447): 'EnumWithConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class EnumWithConstructor(i: kotlin.Int)
 
 KtNameReferenceExpression(448,461): 'EntryWithBody'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithConstructor) EntryWithBody
 
 KtNameReferenceExpression(462,463): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithConstructor) val i: kotlin.Int
 
 KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class EnumWithoutConstructor
 
 KtNameReferenceExpression(492,499): 'entries'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithoutConstructor) val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
 
 KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class EnumWithoutConstructor
 
 KtNameReferenceExpression(527,532): 'Entry'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithoutConstructor) Entry
 
 KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class EnumWithoutConstructor
 
 KtNameReferenceExpression(560,573): 'EntryWithBody'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in EnumWithoutConstructor) EntryWithBody

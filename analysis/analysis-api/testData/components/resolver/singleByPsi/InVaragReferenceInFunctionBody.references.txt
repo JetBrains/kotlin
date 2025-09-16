@@ -1,5 +1,6 @@
 KtNameReferenceExpression(64,65): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       vararg a: test.A

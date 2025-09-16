@@ -1,5 +1,6 @@
 KDocName(8,10): 'AA'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: C) AA

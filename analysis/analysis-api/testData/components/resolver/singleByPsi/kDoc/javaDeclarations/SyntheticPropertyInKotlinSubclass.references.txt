@@ -2,6 +2,7 @@
   KDocName(53,57): 'prop'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dependency.JavaBase) open fun getProp(): kotlin.String!
 
@@ -9,5 +10,6 @@
   KDocName(63,79): 'KotlinChild.prop'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dependency.JavaBase) open fun getProp(): kotlin.String!

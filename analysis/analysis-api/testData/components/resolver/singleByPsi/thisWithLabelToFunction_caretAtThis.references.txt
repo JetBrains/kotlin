@@ -1,5 +1,6 @@
 KtNameReferenceExpression(43,47): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       extension receiver with type kotlin.String

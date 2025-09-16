@@ -2,6 +2,7 @@
   KDocName(150,159): 'Child.foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T : R, R : I, I : Recursive<T>> Base.foo(x: T, y: R, z: I): T
 
@@ -9,5 +10,6 @@
   KDocName(165,173): 'Base.foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T : R, R : I, I : Recursive<T>> Base.foo(x: T, y: R, z: I): T

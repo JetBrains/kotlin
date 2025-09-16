@@ -1,5 +1,6 @@
 KtNameReferenceExpression(43,47): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Foo) fun kotlin.String.foo()

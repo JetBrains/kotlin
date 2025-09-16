@@ -2,6 +2,7 @@
   KDocName(731,756): 'ChildGenericAliasInt.ext1'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T> Base<T>.ext1()
 
@@ -9,6 +10,7 @@
   KDocName(762,787): 'ChildGenericAliasInt.ext2'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <I : kotlin.Int, T : BaseAlias<Base<I>> /* = Base<Base<I>> */> Base<T>.ext2()
 
@@ -16,6 +18,7 @@
   KDocName(793,818): 'ChildGenericAliasInt.ext3'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -23,6 +26,7 @@
   KDocName(824,849): 'ChildGenericAliasInt.ext4'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -30,6 +34,7 @@
   KDocName(855,880): 'ChildGenericAliasInt.ext5'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -37,6 +42,7 @@
   KDocName(886,911): 'ChildGenericAliasInt.ext6'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -44,6 +50,7 @@
   KDocName(917,942): 'ChildGenericAliasAny.ext1'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -51,6 +58,7 @@
   KDocName(948,973): 'ChildGenericAliasAny.ext2'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -58,6 +66,7 @@
   KDocName(979,1004): 'ChildGenericAliasAny.ext3'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -65,6 +74,7 @@
   KDocName(1010,1035): 'ChildGenericAliasAny.ext4'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T> BaseIn<T>.ext4()
 
@@ -72,6 +82,7 @@
   KDocName(1041,1066): 'ChildGenericAliasAny.ext5'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <I : kotlin.Int, T : BaseIn<BaseIn<I>>> BaseIn<T>.ext5()
 
@@ -79,6 +90,7 @@
   KDocName(1072,1097): 'ChildGenericAliasAny.ext6'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <I : kotlin.String, T : BaseIn<BaseIn<I>>> BaseIn<T>.ext6()
 
@@ -86,6 +98,7 @@
   KDocName(1103,1143): 'ChildGenericAliasIntWithOneArgument.ext1'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T> Base<T>.ext1()
 
@@ -93,6 +106,7 @@
   KDocName(1149,1189): 'ChildGenericAliasIntWithOneArgument.ext2'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <I : kotlin.Int, T : BaseAlias<Base<I>> /* = Base<Base<I>> */> Base<T>.ext2()
 
@@ -100,6 +114,7 @@
   KDocName(1195,1235): 'ChildGenericAliasIntWithOneArgument.ext3'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -107,6 +122,7 @@
   KDocName(1241,1281): 'ChildGenericAliasIntWithOneArgument.ext4'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -114,6 +130,7 @@
   KDocName(1287,1327): 'ChildGenericAliasIntWithOneArgument.ext5'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -121,5 +138,6 @@
   KDocName(1333,1373): 'ChildGenericAliasIntWithOneArgument.ext6'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(71,74): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) fun <R> foo(r: R)

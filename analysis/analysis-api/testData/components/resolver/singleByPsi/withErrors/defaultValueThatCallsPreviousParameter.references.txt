@@ -1,5 +1,6 @@
 KtNameReferenceExpression(270,279): 'getString'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test.pkg.Context) open fun getString(id: kotlin.Int): kotlin.String!

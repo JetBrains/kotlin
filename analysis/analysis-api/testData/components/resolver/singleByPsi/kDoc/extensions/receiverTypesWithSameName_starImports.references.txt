@@ -2,6 +2,7 @@
   KDocName(86,93): 'Foo.ext'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) fun kotlin.Any.ext()
 
@@ -9,6 +10,7 @@
   KDocName(99,102): 'Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in dep2) class Foo
         1: (in dep1) class Foo
@@ -17,6 +19,7 @@
   KDocName(115,131): 'Foo.depExtShared'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in dep2) fun dep2.Foo.depExtShared()
         1: (in dep1) fun dep1.Foo.depExtShared()
@@ -25,6 +28,7 @@
   KDocName(137,140): 'Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in dep2) class Foo
         1: (in dep1) class Foo
@@ -33,6 +37,7 @@
   KDocName(162,173): 'Foo.depExt1'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dep1) fun dep1.Foo.depExt1()
 
@@ -40,6 +45,7 @@
   KDocName(179,182): 'Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dep1) class Foo
 
@@ -47,6 +53,7 @@
   KDocName(199,210): 'Foo.depExt2'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dep2) fun dep2.Foo.depExt2()
 
@@ -54,6 +61,7 @@
   KDocName(216,219): 'Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dep2) class Foo
 
@@ -61,6 +69,7 @@
   KDocName(236,244): 'dep1.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dep1) class Foo
 
@@ -68,5 +77,6 @@
   KDocName(254,262): 'dep2.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in dep2) class Foo

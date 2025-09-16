@@ -1,5 +1,6 @@
 KtOperationReferenceExpression(191,192): '-'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyClass) operator fun unaryMinus(): MyClass

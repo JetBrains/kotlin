@@ -1,5 +1,6 @@
 KtNameReferenceExpression(15,23): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

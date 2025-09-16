@@ -2,6 +2,7 @@
   KDocName(30,38): 'I.length'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -9,5 +10,6 @@
   KDocName(58,71): 'String.length'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.String) override val length: kotlin.Int

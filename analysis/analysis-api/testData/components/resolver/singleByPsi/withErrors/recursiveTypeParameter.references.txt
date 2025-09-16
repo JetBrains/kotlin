@@ -1,5 +1,6 @@
 KtNameReferenceExpression(96,103): 'install'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in AbstractModule) open fun install(builder: AbstractModule.Builder<*>!)

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(152,157): 'Local'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: Local) constructor()

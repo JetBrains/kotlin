@@ -2,6 +2,7 @@
   KDocName(8,33): '`With Space`.`with space`'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in With Space) fun `with space`()
 
@@ -9,6 +10,7 @@
   KDocName(43,68): '`With Space`.`with space`'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in With Space) fun `with space`()
 
@@ -22,6 +24,7 @@
   KDocName(128,142): 'O.`with space`'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in O) fun `with space`()
 
@@ -29,5 +32,6 @@
   KDocName(152,166): 'O.`with space`'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in O) fun `with space`()

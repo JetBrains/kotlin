@@ -1,5 +1,6 @@
 KDocName(37,39): 'pp'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package pp

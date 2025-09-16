@@ -1,5 +1,6 @@
 KtNameReferenceExpression(112,114): 'BB'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in foo.bar.baz.AA) class BB

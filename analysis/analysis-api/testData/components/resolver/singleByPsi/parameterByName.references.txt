@@ -1,5 +1,6 @@
 KtNameReferenceExpression(66,68): 'bb'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       bb: kotlin.Int

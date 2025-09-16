@@ -1,5 +1,6 @@
 KDocName(152,173): 'Derived.someExtension'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) fun Base<DerivedBound>.someExtension()

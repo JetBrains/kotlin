@@ -2,6 +2,7 @@
   KDocName(30,51): 'ReferredContainerJava'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) open class ReferredContainerJava
 
@@ -9,6 +10,7 @@
   KDocName(60,81): 'ReferredContainerJava'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) open class ReferredContainerJava
 
@@ -16,6 +18,7 @@
   KDocName(109,130): 'ReferredContainerJava'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) open class ReferredContainerJava
 
@@ -23,5 +26,6 @@
   KDocName(154,175): 'ReferredContainerJava'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) open class ReferredContainerJava

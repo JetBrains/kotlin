@@ -1,6 +1,7 @@
 KtNameReferenceExpression(208,213): 'sumOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       0: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.Int): kotlin.Int
       1: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.UInt): kotlin.UInt

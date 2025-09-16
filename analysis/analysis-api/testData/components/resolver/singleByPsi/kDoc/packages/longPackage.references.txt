@@ -2,6 +2,7 @@
   KDocName(31,34): 'one'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package one
 
@@ -9,6 +10,7 @@
   KDocName(43,46): 'one'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package one
 
@@ -16,6 +18,7 @@
   KDocName(56,63): 'one.two'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package one.two
 
@@ -23,6 +26,7 @@
   KDocName(72,75): 'one'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package one
 
@@ -30,6 +34,7 @@
   KDocName(91,98): 'one.two'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package one.two
 
@@ -37,6 +42,7 @@
   KDocName(110,123): 'one.two.three'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package one.two.three
 
@@ -44,6 +50,7 @@
   KDocName(132,135): 'one'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package one
 
@@ -51,6 +58,7 @@
   KDocName(161,168): 'one.two'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package one.two
 
@@ -58,5 +66,6 @@
   KDocName(190,203): 'one.two.three'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package one.two.three

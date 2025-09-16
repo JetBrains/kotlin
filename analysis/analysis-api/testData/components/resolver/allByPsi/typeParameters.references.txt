@@ -1,185 +1,216 @@
 KtNameReferenceExpression(8,11): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(12,15): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(24,27): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(28,31): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(32,36): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) open class Base<B : one.two.Base.NestedClass>
 
 KtNameReferenceExpression(37,48): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base) open class NestedClass
 
 KtNameReferenceExpression(70,74): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) open class Base<B : one.two.Base.NestedClass>
 
 KtNameReferenceExpression(75,86): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base) open class NestedClass
 
 KtNameReferenceExpression(158,161): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(162,165): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(166,170): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) open class Base<B : one.two.Base.NestedClass>
 
 KtNameReferenceExpression(171,182): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base) open class NestedClass
 
 KtNameReferenceExpression(186,190): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base) constructor <B : one.two.Base.NestedClass>()
 
 KtNameReferenceExpression(191,192): 'C'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: Child) C
 
 KtNameReferenceExpression(218,229): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base) open class NestedClass
 
 KtNameReferenceExpression(268,269): 'C'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: Child) C
 
 KtNameReferenceExpression(295,300): 'Child'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) class Child<C : one.two.Base.NestedClass> : one.two.Base<C>()
 
 KtNameReferenceExpression(301,312): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base) open class NestedClass
 
 KtNameReferenceExpression(319,322): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(323,326): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(327,332): 'Child'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) class Child<C : one.two.Base.NestedClass> : one.two.Base<C>()
 
 KtNameReferenceExpression(333,336): 'one'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one
 
 KtNameReferenceExpression(337,340): 'two'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package one.two
 
 KtNameReferenceExpression(341,345): 'Base'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two) open class Base<B : one.two.Base.NestedClass>
 
 KtNameReferenceExpression(346,357): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base) open class NestedClass
 
 KtNameReferenceExpression(378,389): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base) open class NestedClass
 
 KtCallExpression(392,405): 'NestedClass()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(392,403): 'NestedClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base.NestedClass) constructor()
 
 KtNameReferenceExpression(422,424): 'c1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       c1: one.two.Child<one.two.Base.NestedClass>
 
 KtCallExpression(425,432): 'Inner()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(425,430): 'Inner'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.Base.Inner) constructor()

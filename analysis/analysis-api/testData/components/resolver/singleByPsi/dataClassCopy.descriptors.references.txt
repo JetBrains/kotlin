@@ -1,10 +1,12 @@
 KtNameReferenceExpression(82,86): 'copy'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Data) {psi: KtClass} fun copy({psi: KtParameter} aaa: kotlin.Int): Data
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

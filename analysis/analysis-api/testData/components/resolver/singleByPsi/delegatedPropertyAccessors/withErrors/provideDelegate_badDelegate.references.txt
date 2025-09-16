@@ -1,5 +1,6 @@
 KtPropertyDelegate(127,135): 'by Bar()'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) operator fun Bar.provideDelegate(_this: kotlin.Any?, p: kotlin.Any?): NoDelegate

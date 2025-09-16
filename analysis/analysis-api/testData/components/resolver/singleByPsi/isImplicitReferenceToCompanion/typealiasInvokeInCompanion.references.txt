@@ -1,5 +1,6 @@
 KtNameReferenceExpression(116,118): 'TA'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) typealias TA = AA

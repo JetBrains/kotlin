@@ -1,5 +1,6 @@
 KDocName(79,87): 'Base.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Base.Companion) fun foo()

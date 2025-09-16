@@ -1,5 +1,6 @@
 KtNameReferenceExpression(327,331): 'Test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class Test<T>

@@ -1,5 +1,6 @@
 KDocName(94,103): 'staticFun'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

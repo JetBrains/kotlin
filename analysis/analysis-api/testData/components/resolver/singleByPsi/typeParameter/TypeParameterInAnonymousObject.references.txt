@@ -1,5 +1,6 @@
 KtNameReferenceExpression(47,48): 'K'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: prop.<no name>.foo) K

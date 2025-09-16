@@ -1,5 +1,6 @@
 KtNameReferenceExpression(67,70): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in main) fun foo(t: main.T /* = ERROR_TYPE(Symbol not found for A) */)

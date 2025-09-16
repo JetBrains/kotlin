@@ -1,6 +1,7 @@
 KtNameReferenceExpression(120,121): 'c'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(Container@Container)
       fun c()

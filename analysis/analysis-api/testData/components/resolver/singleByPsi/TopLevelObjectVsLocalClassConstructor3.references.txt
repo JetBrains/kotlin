@@ -1,5 +1,6 @@
 KtNameReferenceExpression(109,117): 'Conflict'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test) object Conflict

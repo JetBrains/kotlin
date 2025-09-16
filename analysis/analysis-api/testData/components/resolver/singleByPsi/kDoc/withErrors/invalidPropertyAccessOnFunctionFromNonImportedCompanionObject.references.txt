@@ -1,5 +1,6 @@
 KDocName(47,59): 'bar.A.toName'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in bar.A.Companion) fun toName(): kotlin.String

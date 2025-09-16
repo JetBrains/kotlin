@@ -1,6 +1,7 @@
 KDocName(125,132): 'Foo.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       0: (in Foo) fun foo(string: kotlin.String)
       1: (in Foo) fun foo(number: kotlin.Int)

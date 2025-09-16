@@ -1,149 +1,174 @@
 KtNameReferenceExpression(35,41): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(91,97): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(140,146): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package kotlin
 
 KtNameReferenceExpression(147,154): 'reflect'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package kotlin.reflect
 
 KtNameReferenceExpression(155,161): 'KClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.reflect) expect interface KClass<T : kotlin.Any> : kotlin.reflect.KClassifier
 
 KtNameReferenceExpression(168,174): 'MyAnno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyAnno) constructor(value: kotlin.String)
 
 KtValueArgument(175,182): '(("A"))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       value: kotlin.String
 
 KtNameReferenceExpression(200,206): 'MyAnno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyAnno) constructor(value: kotlin.String)
 
 KtNameReferenceExpression(207,212): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       value: kotlin.String
 
 KtNameReferenceExpression(240,246): 'MyAnno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyAnno) constructor(value: kotlin.String)
 
 KtValueArgument(247,268): '(((("A")) as String))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       value: kotlin.String
 
 KtOperationReferenceExpression(257,259): 'as'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(260,266): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(286,298): 'MyAnnoVararg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyAnnoVararg) constructor(vararg value: kotlin.String)
 
 KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(316,323): 'arrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(358,370): 'MyAnnoVararg'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyAnnoVararg) constructor(vararg value: kotlin.String)
 
 KtNameReferenceExpression(371,376): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       vararg value: kotlin.String
 
 KtCallExpression(381,400): 'arrayOf(("A"), "B")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(381,388): 'arrayOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtValueArgument(389,394): '("A")'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       vararg value: kotlin.String
 
 KtValueArgument(396,399): '"B"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       vararg value: kotlin.String
 
 KtNameReferenceExpression(420,432): 'MyAnnoKClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyAnnoKClass) constructor(value: kotlin.reflect.KClass<*>)
 
 KtValueArgument(433,452): '(((String::class)))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       value: kotlin.reflect.KClass<*>
 
 KtNameReferenceExpression(436,442): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable

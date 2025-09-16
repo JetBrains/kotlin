@@ -1,11 +1,13 @@
 KtNameReferenceExpression(89,92): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       0: (in Foo) constructor(len: kotlin.Int)
       1: (in Foo) constructor(s: kotlin.String)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

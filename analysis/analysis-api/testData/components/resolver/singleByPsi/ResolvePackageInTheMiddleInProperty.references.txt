@@ -1,5 +1,6 @@
 KtNameReferenceExpression(58,63): 'test2'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package test1.test2

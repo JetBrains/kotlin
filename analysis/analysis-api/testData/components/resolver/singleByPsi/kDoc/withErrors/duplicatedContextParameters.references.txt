@@ -2,6 +2,7 @@
   KDocName(53,55): 'xx'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: xx: kotlin.String
         1: xx: kotlin.Int
@@ -10,6 +11,7 @@
   KDocName(118,120): 'xx'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: xx: kotlin.String
         1: xx: kotlin.Int
@@ -18,6 +20,7 @@
   KDocName(141,143): 'xx'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: xx: kotlin.Int
         1: xx: kotlin.String
@@ -26,6 +29,7 @@
   KDocName(214,216): 'xx'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: xx: kotlin.Int
         1: xx: kotlin.String

@@ -1,5 +1,6 @@
 KtCallExpression(76,80): 'f(1)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Foo) operator fun invoke(vararg a: kotlin.Any)

@@ -1,5 +1,6 @@
 KDocName(52,59): 'Foo.foo'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Foo) private val foo: kotlin.Int

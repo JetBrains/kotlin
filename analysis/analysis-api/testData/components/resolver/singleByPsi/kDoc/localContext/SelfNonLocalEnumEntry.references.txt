@@ -1,5 +1,6 @@
 KDocName(31,33): 'AA'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in E) AA

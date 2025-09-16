@@ -2,6 +2,7 @@
   KDocName(8,16): 'T.foxAny'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -9,6 +10,7 @@
   KDocName(22,38): 'T.foxAnyNullable'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -16,6 +18,7 @@
   KDocName(44,52): 'T.foxInt'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -23,6 +26,7 @@
   KDocName(58,66): 'T.foxSeq'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -30,6 +34,7 @@
   KDocName(72,88): 'T.foxSeqNullable'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -37,6 +42,7 @@
   KDocName(337,345): 'T.foxAny'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -44,6 +50,7 @@
   KDocName(351,367): 'T.foxAnyNullable'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -51,6 +58,7 @@
   KDocName(373,381): 'T.foxInt'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -58,6 +66,7 @@
   KDocName(387,395): 'T.foxSeq'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -65,6 +74,7 @@
   KDocName(401,417): 'T.foxSeqNullable'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -72,5 +82,6 @@
   KDocName(723,737): 'T.foxRecursive'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)

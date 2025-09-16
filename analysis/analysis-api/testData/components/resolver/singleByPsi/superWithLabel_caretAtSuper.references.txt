@@ -1,5 +1,6 @@
 KtNameReferenceExpression(71,76): 'super'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) interface A

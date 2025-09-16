@@ -1,5 +1,6 @@
 KtNameReferenceExpression(54,56): 'CC'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in foo) class CC<T>

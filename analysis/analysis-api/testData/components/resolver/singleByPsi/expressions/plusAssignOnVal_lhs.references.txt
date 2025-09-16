@@ -1,5 +1,6 @@
 KtNameReferenceExpression(73,74): 'l'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       l: A

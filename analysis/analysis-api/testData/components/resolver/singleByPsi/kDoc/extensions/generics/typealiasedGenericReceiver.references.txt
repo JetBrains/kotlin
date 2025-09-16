@@ -2,6 +2,7 @@
   KDocName(104,112): 'AInt.foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun A<kotlin.Number>.foo()
 
@@ -9,5 +10,6 @@
   KDocName(118,129): 'AString.foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)

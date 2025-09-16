@@ -1,5 +1,6 @@
 KtNameReferenceExpression(65,69): 'From'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: copyNotNull) From

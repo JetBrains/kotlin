@@ -1,5 +1,6 @@
 KtNameReferenceExpression(388,408): 'serializeFirstTarget'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

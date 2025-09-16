@@ -1,5 +1,6 @@
 KtNameReferenceExpression(183,194): 'suspendHere'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Controller) suspend fun suspendHere(x: ERROR_TYPE(Symbol not found for Continuation))

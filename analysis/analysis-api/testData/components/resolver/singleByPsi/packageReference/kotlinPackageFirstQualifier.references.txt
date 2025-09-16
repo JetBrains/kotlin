@@ -1,5 +1,6 @@
 KtNameReferenceExpression(22,28): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package kotlin

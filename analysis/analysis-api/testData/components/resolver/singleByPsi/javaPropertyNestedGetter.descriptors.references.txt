@@ -1,10 +1,12 @@
 KtNameReferenceExpression(76,79): 'sub'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in JavaClass) val JavaClass.sub: JavaSubClass!
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in JavaClass) open fun getSub(): JavaSubClass!

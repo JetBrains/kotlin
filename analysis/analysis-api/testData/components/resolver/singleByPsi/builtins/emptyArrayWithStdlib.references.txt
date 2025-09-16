@@ -1,5 +1,6 @@
 KtNameReferenceExpression(46,56): 'emptyArray'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) inline fun <reified T> emptyArray(): kotlin.Array<T>

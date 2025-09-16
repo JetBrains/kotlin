@@ -1,5 +1,6 @@
 KtNameReferenceExpression(80,83): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in BaseClass) var bar: kotlin.Int

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(66,74): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) fun function(a: kotlin.Int, b: (kotlin.String) -> kotlin.Boolean)

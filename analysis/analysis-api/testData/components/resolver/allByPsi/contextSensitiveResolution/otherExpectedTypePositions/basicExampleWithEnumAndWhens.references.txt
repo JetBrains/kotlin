@@ -1,83 +1,97 @@
 KtNameReferenceExpression(173,180): 'Problem'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class Problem
 
 KtNameReferenceExpression(183,189): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(198,205): 'problem'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       problem: Problem
 
 KtNameReferenceExpression(213,223): 'CONNECTION'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Problem) CONNECTION
 
 KtNameReferenceExpression(244,258): 'AUTHENTICATION'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Problem) AUTHENTICATION
 
 KtNameReferenceExpression(283,291): 'DATABASE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Problem) DATABASE
 
 KtNameReferenceExpression(310,317): 'UNKNOWN'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Problem) UNKNOWN
 
 KtNameReferenceExpression(353,359): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(362,369): 'Problem'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class Problem
 
 KtNameReferenceExpression(378,379): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       x: kotlin.String
 
 KtNameReferenceExpression(403,413): 'CONNECTION'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Problem) CONNECTION
 
 KtNameReferenceExpression(438,452): 'AUTHENTICATION'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Problem) AUTHENTICATION
 
 KtNameReferenceExpression(471,479): 'DATABASE'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Problem) DATABASE
 
 KtNameReferenceExpression(492,499): 'UNKNOWN'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Problem) UNKNOWN

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(96,97): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) interface X

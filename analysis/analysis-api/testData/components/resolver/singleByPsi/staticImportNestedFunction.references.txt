@@ -1,5 +1,6 @@
 KtNameReferenceExpression(104,107): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in one.two.TopLevelObject.Nested) fun foo()

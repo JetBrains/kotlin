@@ -2,6 +2,7 @@
   KDocName(70,82): 'PARAM.anyExt'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -9,6 +10,7 @@
   KDocName(88,104): 'PARAM.genericExt'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -16,6 +18,7 @@
   KDocName(175,193): 'CLASS_PARAM.anyExt'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -23,5 +26,6 @@
   KDocName(203,225): 'CLASS_PARAM.genericExt'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)

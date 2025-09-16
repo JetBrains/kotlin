@@ -1,5 +1,6 @@
 KtNameReferenceExpression(49,57): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) fun function(vararg a: kotlin.Int)

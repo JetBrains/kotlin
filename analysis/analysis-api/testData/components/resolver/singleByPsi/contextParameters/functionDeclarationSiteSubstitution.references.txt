@@ -1,5 +1,6 @@
 KtNameReferenceExpression(203,210): 'another'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       another: Another

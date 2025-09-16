@@ -1,5 +1,6 @@
 KtNameReferenceExpression(70,74): 'Some'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test1.test2.test3) class Some

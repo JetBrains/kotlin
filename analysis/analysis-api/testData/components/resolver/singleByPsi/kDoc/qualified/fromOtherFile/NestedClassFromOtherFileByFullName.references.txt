@@ -1,5 +1,6 @@
 KDocName(22,28): 'b.B.XX'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in b.B) class XX

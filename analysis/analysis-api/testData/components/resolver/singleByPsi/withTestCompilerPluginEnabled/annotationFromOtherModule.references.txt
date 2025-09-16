@@ -1,5 +1,6 @@
 KtNameReferenceExpression(140,151): 'materialize'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test.MyClass) fun materialize(): test.MyClass

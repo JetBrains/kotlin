@@ -1,5 +1,6 @@
 KtNameReferenceExpression(32,37): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       value: java.lang.annotation.RetentionPolicy

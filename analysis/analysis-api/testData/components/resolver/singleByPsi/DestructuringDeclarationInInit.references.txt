@@ -1,5 +1,6 @@
 KtNameReferenceExpression(141,142): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) var x: kotlin.Any

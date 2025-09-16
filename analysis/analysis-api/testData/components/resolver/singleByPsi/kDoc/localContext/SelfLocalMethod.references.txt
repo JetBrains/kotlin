@@ -1,5 +1,6 @@
 KDocName(48,50): 'aa'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: f.C) fun aa()

@@ -2,6 +2,7 @@
   KDocName(85,97): 'Receiver.ext'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.Base) fun test.Receiver.ext()
 
@@ -9,5 +10,6 @@
   KDocName(142,154): 'Receiver.ext'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.Base) fun test.Receiver.ext()

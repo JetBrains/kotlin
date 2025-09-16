@@ -1,5 +1,6 @@
 KtCallExpression(67,74): 'f f@ {}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Foo) fun invoke(vararg a: kotlin.Any)

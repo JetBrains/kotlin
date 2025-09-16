@@ -1,5 +1,6 @@
 KtNameReferenceExpression(52,55): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlinx.pckg) fun bar()

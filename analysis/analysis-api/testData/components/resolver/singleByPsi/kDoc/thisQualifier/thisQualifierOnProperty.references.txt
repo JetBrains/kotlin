@@ -1,5 +1,6 @@
 KDocName(8,12): 'this'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       extension receiver with type AAA
