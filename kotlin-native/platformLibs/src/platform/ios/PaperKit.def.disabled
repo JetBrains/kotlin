@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.PaperKit
+
+modules = PaperKit
+compilerOpts = -framework PaperKit
+linkerOpts = -framework PaperKit
+#Disabled: Swift-only framework

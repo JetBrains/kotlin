@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.BrowserKit
+
+modules = BrowserKit
+compilerOpts = -framework BrowserKit
+linkerOpts = -framework BrowserKit

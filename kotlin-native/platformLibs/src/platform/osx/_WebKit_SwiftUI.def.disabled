@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._WebKit_SwiftUI
+
+modules = _WebKit_SwiftUI
+compilerOpts = -framework _WebKit_SwiftUI
+linkerOpts = -framework _WebKit_SwiftUI
+#Disabled: Unavailable

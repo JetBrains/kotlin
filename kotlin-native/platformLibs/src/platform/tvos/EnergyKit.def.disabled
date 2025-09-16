@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.EnergyKit
+
+modules = EnergyKit
+compilerOpts = -framework EnergyKit
+linkerOpts = -framework EnergyKit
+#Disabled: Not officially available for tvos

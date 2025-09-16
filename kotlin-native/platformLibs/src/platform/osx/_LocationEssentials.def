@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._LocationEssentials
+
+modules = _LocationEssentials
+compilerOpts = -framework _LocationEssentials
+linkerOpts = -framework _LocationEssentials
+#Disabled: Unavailable

@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.AVRouting
+
+modules = AVRouting
+compilerOpts = -framework AVRouting
+linkerOpts = -framework AVRouting
