@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.resolveMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
+import org.jetbrains.kotlin.gradle.testing.assertDoesNotThrow
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.util.assertDoesNotThrow
 import kotlin.test.Test
 import kotlin.test.fail
 

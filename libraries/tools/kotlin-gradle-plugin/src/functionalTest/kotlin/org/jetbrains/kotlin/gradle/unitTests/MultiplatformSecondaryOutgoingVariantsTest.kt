@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableNonPackedKlibsUsage
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
-import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
 import kotlin.test.*
 
 class MultiplatformSecondaryOutgoingVariantsTest {

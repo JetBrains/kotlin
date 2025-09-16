@@ -16,8 +16,8 @@ standardPublicJars()
 dependencies {
     // remove stdlib dependency from api artifact in order not to affect the dependencies of the user project
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+    compileOnly(kotlin("stdlib", coreDepsVersion))
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlin("test-junit", coreDepsVersion))
     testImplementation(libs.junit4)
 }

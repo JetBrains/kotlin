@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import kotlin.test.Test
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.util.assertThrows
+import org.jetbrains.kotlin.gradle.testing.assertThrows
 
 class KT79528StdlibDowngradeHangs {
 

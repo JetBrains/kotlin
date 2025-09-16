@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-    api("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+    api(kotlin("stdlib", coreDepsVersion))
     compileOnly(project(":daemon-common")) { exclude("org.jetbrains.kotlin", "kotlin-stdlib") }
     compileOnly(project(":js:js.config")) { exclude("org.jetbrains.kotlin", "kotlin-stdlib") }
 
@@ -16,6 +16,7 @@ dependencies {
     testCompileOnly(project(":daemon-common"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(kotlin("stdlib", coreDepsVersion))
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 

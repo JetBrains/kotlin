@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.jetbrains.kotlin.util.assertThrows
+import org.jetbrains.kotlin.gradle.testing.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail

@@ -612,7 +612,6 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
  * Configures the JVM compile task to produce binaries compatible with [GradlePluginVariant.GRADLE_MIN].
  */
 fun KotlinCompile.configureGradleCompatibility() {
-    configureRunViaKotlinBuildToolsApi()
     compilerOptions {
         if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
             val variant = GradlePluginVariant.GRADLE_MIN
@@ -640,31 +639,16 @@ fun KotlinCompile.configureGradleCompatibility() {
  * If you need to configure it for specific tasks, please use [configureGradleCompatibility] and [configureBuildToolsApiVersionForGradleCompatibility].
  */
 fun Project.configureKotlinCompileTasksGradleCompatibility() {
+    configureBuildToolsApiVersionForGradleCompatibility()
     tasks.named("compileKotlin", KotlinCompile::class.java) {
         configureGradleCompatibility()
     }
-    configureBuildToolsApiVersionForGradleCompatibility()
-}
-
-/**
- * Configures the task to execute the Kotlin compiler via the Kotlin Build Tools API.
- *
- * This way, we use an older bootstrap compiler controlled by the `kotlin-for-gradle-plugins-compilation`
- * version catalog entry to ensure compatibility with older language versions
- *
- * It's using reflection to access internal property instead of the `kotlin.compiler.runViaBuildToolsApi` property to avoid using it for test source sets.
- * This way, we can the latest AV/LV in test code as well as dependencies built with them.
- */
-private fun KotlinCompile.configureRunViaKotlinBuildToolsApi() {
-    val runViaBuildToolsMethod = this::class.java.getMethod("getRunViaBuildToolsApi\$kotlin_gradle_plugin_common")
-    @Suppress("UNCHECKED_CAST") val runViaBuildTools = runViaBuildToolsMethod.invoke(this) as Property<Boolean>
-    runViaBuildTools.set(true)
-    compilerExecutionStrategy.set(KotlinCompilerExecutionStrategy.IN_PROCESS)
 }
 
 /**
  * Configures the build tools API version for the project to use Kotlin compiler of the version
  * that can produce binaries of [GradlePluginVariant.bundledKotlinVersion] for [GradlePluginVariant.GRADLE_MIN]
+ * Reconfigures API and language versions to the defaults for this compiler version.
  */
 @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
 fun Project.configureBuildToolsApiVersionForGradleCompatibility() {
@@ -673,6 +657,15 @@ fun Project.configureBuildToolsApiVersionForGradleCompatibility() {
     val libsCatalog = catalogs.named("libs")
     val kgpCompilerVersion = libsCatalog.findVersion("kotlin.for.gradle.plugins.compilation").get().requiredVersion
     (extensions.getByName("kotlin") as KotlinBaseExtension).compilerVersion.set(kgpCompilerVersion)
+    tasks.withType<KotlinCompile>().configureEach {
+        compilerExecutionStrategy.set(KotlinCompilerExecutionStrategy.IN_PROCESS) // avoid spawning multiple Kotlin daemons for different bootstrap versions
+        compilerOptions {
+            val kgpCompilerMajorVersion = kgpCompilerVersion.substringBeforeLast(".").let { KotlinVersion.fromVersion(it) }
+            languageVersion.set(kgpCompilerMajorVersion)
+            apiVersion.set(kgpCompilerMajorVersion)
+        }
+    }
+    project.extra["kotlin.compiler.runViaBuildToolsApi"] = true
 }
 
 // Will allow combining outputs of multiple SourceSets
