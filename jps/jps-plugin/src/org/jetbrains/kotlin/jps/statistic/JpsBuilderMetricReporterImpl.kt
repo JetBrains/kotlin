@@ -86,7 +86,6 @@ class JpsBuilderMetricReporterImpl(
             hostName = hostName,
             finishTime = finishTime,
             buildTimesMetrics = buildMetrics.buildTimes.buildTimesMapMs(),
-            dynamicBuildTimesMetrics = buildMetrics.buildTimes.dynamicBuildTimesMapMs(),
             performanceMetrics = buildMetrics.buildPerformanceMetrics.asMap(),
             compilerArguments = compilerArguments,
             nonIncrementalAttributes = emptySet(),

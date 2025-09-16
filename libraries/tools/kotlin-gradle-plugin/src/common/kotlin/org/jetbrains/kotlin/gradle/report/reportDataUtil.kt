@@ -83,7 +83,6 @@ internal fun prepareData(
         taskResult = taskResult?.name,
         label = label,
         buildTimesMetrics = filterMetrics(metricsToShow, buildTimesMetrics),
-        dynamicBuildTimesMetrics = buildMetrics.buildTimes.dynamicBuildTimesMapMs(),
         performanceMetrics = filterMetrics(metricsToShow, performanceMetrics),
         projectName = projectName,
         taskName = taskPath,

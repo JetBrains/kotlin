@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey
 import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
@@ -298,7 +297,11 @@ class BuildReportsIT : KGPBaseTest() {
         "Kotlin language version: $kotlinLanguageVersion",
     )
 
-    private fun TestProject.validateBuildReportFile(expectedReportLines: List<String>, additionalReportLines: List<String>, doValidateSizeMetrics: Boolean = true) {
+    private fun TestProject.validateBuildReportFile(
+        expectedReportLines: List<String>,
+        additionalReportLines: List<String>,
+        doValidateSizeMetrics: Boolean = true,
+    ) {
         val fileContents = assertFileContains(
             reportFile,
             *expectedReportLines.toTypedArray(),
@@ -906,10 +909,10 @@ class BuildReportsIT : KGPBaseTest() {
                 val jsonReportFile = projectPath.getSingleFileInDir("report")
                 assertTrue { jsonReportFile.exists() }
                 val jsonReport = readJsonReport(jsonReportFile)
-                val bulidTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
-                assertContains(bulidTimesKeys, NATIVE_IN_PROCESS)
+                val buildTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
+                assertContains(buildTimesKeys, NATIVE_IN_PROCESS)
 
-                val dynamicBuildTimesKeys = jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys
+                val dynamicBuildTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
                     .filter { it.parent == IR_LOWERING }
                     .map { it.name }
                 val expectedDynamicBuildTimesNames = listOf(
@@ -920,9 +923,8 @@ class BuildReportsIT : KGPBaseTest() {
                     "ConstructorsLowering",
                     "ValidateIrAfterLowering",
                 )
-                expectedDynamicBuildTimesNames.forEach {
-                    assertContains(dynamicBuildTimesKeys, it)
-                }
+                val missedKeys = expectedDynamicBuildTimesNames.filter { it !in dynamicBuildTimesKeys }
+                assertTrue(missedKeys.isEmpty(), "Compiler build time metrics are missed: ${missedKeys.joinToString()}")
             }
         }
     }
@@ -948,28 +950,25 @@ class BuildReportsIT : KGPBaseTest() {
                 val jsonReport = readJsonReport(jsonReportFile)
                 assertContains(jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys, NATIVE_IN_PROCESS)
 
-                val compilerMetrics = allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!!
+                val compilerMetrics = allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
                 val reportedCompilerMetrics =
                     jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                val expected = allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!!.flatMap { allBuildTimeMetricsMap[it]!! }.map { it.name }
+                val expected =
+                    allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!.flatMap { allBuildTimeMetricsByParentMap[it]!! }.map { it.name }
                 assertEquals(
                     expected,
                     reportedCompilerMetrics.map { it.name }.sorted()
                 )
 
-                assertTrue {
-                    jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys.contains(
-                        DynamicBuildTimeKey("AvoidLocalFOsInInlineFunctionsLowering", IR_PRE_LOWERING)
-                    )
-                }
-                assertTrue {
+                assertNotNull(
+                    jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.find { it.name == "AvoidLocalFOsInInlineFunctionsLowering" && it.parent == IR_PRE_LOWERING }
+                )
+                assertNotNull(
                     // LLVM passes must have been reported
-                    jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys.contains(
-                        DynamicBuildTimeKey("llvm-default.AlwaysInlinerPass", BACKEND)
-                    )
-                }
+                    jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.find { it.name == "llvm-default.AlwaysInlinerPass" && it.parent == BACKEND }
+                )
             }
         }
     }
@@ -1003,11 +1002,12 @@ class BuildReportsIT : KGPBaseTest() {
                 val bulidTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
                 assertContains(bulidTimesKeys, NATIVE_IN_PROCESS)
 
-                val compilerMetrics = allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!!
+                val compilerMetrics = allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
                 val reportedCompilerMetrics = bulidTimesKeys.filter { it in compilerMetrics }.map { it.name }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                val expected = allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!! + allBuildTimeMetricsMap[COMPILER_PERFORMANCE]!!.flatMap { allBuildTimeMetricsMap[it]!!}
+                val expected =
+                    allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!! + allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!.flatMap { allBuildTimeMetricsByParentMap[it]!! }
                 assertEquals(
                     expected.map { it.name }.sorted(),
                     reportedCompilerMetrics.sorted()
@@ -1020,7 +1020,7 @@ class BuildReportsIT : KGPBaseTest() {
                         "AvoidLocalFOsInInlineFunctionsLowering",
                         "LateinitLowering", // first lowering in K/N 1st phase lowerings, specific for `+IrIntraModuleInlinerBeforeKlibSerialization` and `+IrCrossModuleInlinerBeforeKlibSerialization` features
                     ),
-                    jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys
+                    jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
                         .filter { it.parent == IR_PRE_LOWERING }
                         .map { it.name }
                         .take(4)

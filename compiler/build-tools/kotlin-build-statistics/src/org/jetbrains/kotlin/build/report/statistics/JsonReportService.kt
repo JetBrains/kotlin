@@ -5,13 +5,8 @@
 
 package org.jetbrains.kotlin.build.report.statistics
 
-import com.google.gson.*
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTimes
 import org.jetbrains.kotlin.build.report.statistics.json.buildExecutionDataGson
 import java.io.File
-import java.lang.reflect.Type
 
 class JsonReportService(
     buildReportDir: File,
