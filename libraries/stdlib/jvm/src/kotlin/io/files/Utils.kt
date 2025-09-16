@@ -36,6 +36,7 @@ import java.io.IOException
  * @throws IOException in case of input/output error.
  * @throws IllegalArgumentException if [prefix] is shorter than three symbols.
  */
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "2.3")
 @Deprecated(
     "Avoid creating temporary directories in the default temp location with this function " +
     "due to too wide permissions on the newly created directory. " +
@@ -76,6 +77,7 @@ public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directo
  * @throws IOException in case of input/output error.
  * @throws IllegalArgumentException if [prefix] is shorter than three symbols.
  */
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "2.3")
 @Deprecated(
     "Avoid creating temporary files in the default temp location with this function " +
     "due to too wide permissions on the newly created file. " +
