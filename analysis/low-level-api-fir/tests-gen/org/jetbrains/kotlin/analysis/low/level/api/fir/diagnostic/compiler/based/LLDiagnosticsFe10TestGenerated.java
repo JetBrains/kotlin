@@ -24554,6 +24554,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("publishedApiSpecialCases.kt")
+      public void testPublishedApiSpecialCases() {
+        runTest("compiler/testData/diagnostics/tests/inline/publishedApiSpecialCases.kt");
+      }
+
+      @Test
       @TestMetadata("publishedApiSubstitutionOverride.kt")
       public void testPublishedApiSubstitutionOverride() {
         runTest("compiler/testData/diagnostics/tests/inline/publishedApiSubstitutionOverride.kt");
