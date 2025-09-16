@@ -31,7 +31,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         // setup phase config for the second compilation stage (Wasm codegen)
         if (arguments.includes != null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                it.list(getWasmLowerings(configuration, isIncremental = false))
+                if (arguments.listPhases) it.list(getWasmLowerings(configuration, isIncremental = false))
             }
         }
     }

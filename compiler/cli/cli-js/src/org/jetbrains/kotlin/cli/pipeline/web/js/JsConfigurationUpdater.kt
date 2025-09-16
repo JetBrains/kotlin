@@ -38,7 +38,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         // setup phase config for the second compilation stage (JS codegen)
         if (arguments.includes != null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                it.list(getJsLowerings(configuration))
+                if (arguments.listPhases) it.list(getJsLowerings(configuration))
             }
         }
     }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.Ir2JsTransformer
@@ -61,7 +61,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         outputDir: File,
         outputName: String,
         granularity: JsGenerationGranularity,
-        tsStrategy: TsCompilationStrategy
+        tsStrategy: TsCompilationStrategy,
     ): CompilationOutputs {
         val messageCollector = configuration.messageCollector
         val beforeIc2Js = System.currentTimeMillis()
@@ -77,13 +77,13 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(granularity, outJsProgram = false)
         outputs.writeAll(outputDir, outputName, tsStrategy, moduleName, moduleKind)
 
-        messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
+        messageCollector.report(LOGGING, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
         for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
-            messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+            messageCollector.report(LOGGING, "  $event: ${(duration / 1e6).toInt()}ms")
         }
 
         for (module in rebuiltModules) {
-            messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
+            messageCollector.report(LOGGING, "IC module builder rebuilt JS for module [${File(module).name}]")
         }
         return outputs
     }
@@ -117,12 +117,12 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         moduleName: String,
         outputDir: File,
         outputName: String,
-        tsStrategy: TsCompilationStrategy
+        tsStrategy: TsCompilationStrategy,
     ): CompilationOutputs? {
         val start = System.currentTimeMillis()
         try {
             val outputs = ir2JsTransformer.compileAndTransformIrNew()
-            messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
+            messageCollector.report(LOGGING, "Executable production duration: ${System.currentTimeMillis() - start}ms")
             outputs.writeAll(outputDir, outputName, tsStrategy, moduleName, moduleKind)
             return outputs
         } catch (e: CompilationException) {

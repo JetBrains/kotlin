@@ -224,7 +224,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun testCacheGuardInvalidation(gradleVersion: GradleVersion) {
         project("kotlin2JsIrICProject", gradleVersion) {
-            build("nodeDevelopmentRun") {
+            build("nodeDevelopmentRun", "--debug") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains("module [main] was built clean")
                 assertOutputContains(">>> TEST OUT: Hello, Gradle.")
@@ -237,7 +237,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             srcFile.writeText(srcFile.readText().replace("greeting(\"Gradle\")", "greeting(\"Kotlin\")"))
 
             cacheGuard.createNewFile()
-            build("nodeDevelopmentRun") {
+            build("nodeDevelopmentRun", "--debug") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains(Regex("Cache guard file detected, cache directory '.+' cleared"))
                 assertOutputContains("module [main] was built clean")

@@ -154,8 +154,8 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        messageCollector.report(INFO, "Produce executable: $outputDirPath")
-        messageCollector.report(INFO, "Cache directory: $cacheDirectory")
+        messageCollector.report(LOGGING, "Produce executable: $outputDirPath")
+        messageCollector.report(LOGGING, "Cache directory: $cacheDirectory")
 
         if (cacheDirectory != null) {
             val icCacheReadOnly = arguments.wasm && arguments.icCacheReadonly
