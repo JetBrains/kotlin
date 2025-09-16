@@ -67,7 +67,6 @@ import kotlin.coroutines.intrinsics.*
  * @param block the function body.
  */
 @SinceKotlin("1.7")
-@WasExperimental(ExperimentalStdlibApi::class)
 public class DeepRecursiveFunction<T, R>(
     internal val block: suspend DeepRecursiveScope<T, R>.(T) -> R
 )
@@ -80,7 +79,6 @@ public class DeepRecursiveFunction<T, R>(
  * [callRecursive][DeepRecursiveScope.callRecursive].
  */
 @SinceKotlin("1.7")
-@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun <T, R> DeepRecursiveFunction<T, R>.invoke(value: T): R =
     DeepRecursiveScopeImpl<T, R>(block, value).runCallLoop()
 

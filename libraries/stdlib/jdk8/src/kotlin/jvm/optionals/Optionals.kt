@@ -14,7 +14,6 @@ import kotlin.contracts.*
  * @sample samples.optionals.Optionals.getOrNull
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T : Any> Optional<T>.getOrNull(): T? = orElse(null)
 
 /**
@@ -23,7 +22,6 @@ public fun <T : Any> Optional<T>.getOrNull(): T? = orElse(null)
  * @sample samples.optionals.Optionals.getOrDefault
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T> Optional<out T & Any>.getOrDefault(defaultValue: T): T = if (isPresent) get() else defaultValue
 
 /**
@@ -32,7 +30,6 @@ public fun <T> Optional<out T & Any>.getOrDefault(defaultValue: T): T = if (isPr
  * @sample samples.optionals.Optionals.getOrElse
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <T> Optional<out T & Any>.getOrElse(defaultValue: () -> T): T {
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
@@ -46,7 +43,6 @@ public inline fun <T> Optional<out T & Any>.getOrElse(defaultValue: () -> T): T 
  * @sample samples.optionals.Optionals.toCollection
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T : Any, C : MutableCollection<in T>> Optional<T>.toCollection(destination: C): C {
     if (isPresent) {
         destination.add(get())
@@ -61,7 +57,6 @@ public fun <T : Any, C : MutableCollection<in T>> Optional<T>.toCollection(desti
  * @sample samples.optionals.Optionals.toList
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T : Any> Optional<out T>.toList(): List<T> =
     if (isPresent) listOf(get()) else emptyList()
 
@@ -72,7 +67,6 @@ public fun <T : Any> Optional<out T>.toList(): List<T> =
  * @sample samples.optionals.Optionals.toSet
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T : Any> Optional<out T>.toSet(): Set<T> =
     if (isPresent) setOf(get()) else emptySet()
 
@@ -82,6 +76,5 @@ public fun <T : Any> Optional<out T>.toSet(): Set<T> =
  * @sample samples.optionals.Optionals.asSequence
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T : Any> Optional<out T>.asSequence(): Sequence<T> =
     if (isPresent) sequenceOf(get()) else emptySequence()

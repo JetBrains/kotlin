@@ -48,7 +48,6 @@ public expect class Regex {
      * @sample samples.text.Regexps.matchAt
      */
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public fun matchAt(input: CharSequence, index: Int): MatchResult?
 
     /**

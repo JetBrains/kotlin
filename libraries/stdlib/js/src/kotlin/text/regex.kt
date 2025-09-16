@@ -105,7 +105,6 @@ public actual class Regex public actual constructor(pattern: String, options: Se
     }
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchesAt(input: CharSequence, index: Int): Boolean {
         if (index < 0 || index > input.length) {
             throw IndexOutOfBoundsException("index out of bounds: $index, input length: ${input.length}")
@@ -155,7 +154,6 @@ public actual class Regex public actual constructor(pattern: String, options: Se
         initMatchesEntirePattern().findNext(input.toString(), 0, nativePattern)
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchAt(input: CharSequence, index: Int): MatchResult? {
         if (index < 0 || index > input.length) {
             throw IndexOutOfBoundsException("index out of bounds: $index, input length: ${input.length}")

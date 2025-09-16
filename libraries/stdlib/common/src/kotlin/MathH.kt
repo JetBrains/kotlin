@@ -391,7 +391,6 @@ public expect fun max(a: Double, b: Double): Double
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun cbrt(x: Double): Double
 
 

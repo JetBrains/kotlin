@@ -24,7 +24,6 @@ inline fun <reified T : Annotation> KAnnotatedElement.findAnnotation(): T? =
  */
 @SinceKotlin("1.4")
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-@WasExperimental(ExperimentalStdlibApi::class)
 inline fun <reified T : Annotation> KAnnotatedElement.hasAnnotation(): Boolean =
     findAnnotation<T>() != null
 
@@ -38,7 +37,6 @@ inline fun <reified T : Annotation> KAnnotatedElement.hasAnnotation(): Boolean =
  */
 @SinceKotlin("1.7")
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@WasExperimental(ExperimentalStdlibApi::class)
 inline fun <reified T : Annotation> KAnnotatedElement.findAnnotations(): List<T> =
     findAnnotations(T::class)
 
