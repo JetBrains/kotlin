@@ -2,6 +2,7 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
 
+// FILE: lib.kt
 import kotlin.reflect.typeOf
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -26,6 +27,7 @@ inline fun <reified Q> typeOfValue(q: Q): KType {
     return typeOf<Q>()
 }
 
+// FILE: main.kt
 fun box(): String {
     val q: A<*> = object : A<CharSequence> {
         override val t: CharSequence

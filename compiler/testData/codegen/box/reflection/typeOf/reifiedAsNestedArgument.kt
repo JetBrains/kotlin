@@ -1,6 +1,7 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // WITH_REFLECT
 
+// FILE: lib.kt
 import kotlin.reflect.typeOf
 import kotlin.reflect.KType
 import kotlin.test.assertEquals
@@ -13,6 +14,10 @@ inline fun <reified T> bar(expected: KType) {
     assertEquals(expected, object { val x = typeOf<List<T>>() }.x)
     assertEquals(expected, typeOf<List<T>>())
 }
+
+// FILE: main.kt
+import kotlin.reflect.typeOf
+import kotlin.test.assertEquals
 
 fun box(): String {
     bar<Int>(typeOf<List<Int>>())

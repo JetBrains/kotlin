@@ -1,9 +1,12 @@
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR, WASM
+// ^^^ KT-81070: IrClassSymbolImpl is unbound. Signature: kotlin/Any|null[0]
 // WITH_REFLECT
 // WITH_STDLIB
+
+// FILE: lib.kt
 package test
 
 import kotlin.reflect.*
-import kotlin.test.assertEquals
 
 class Container<T>
 
@@ -14,6 +17,11 @@ class C<INV, in IN, out OUT> {
 }
 
 inline fun <reified X, Y : X> getY() = typeOf<Container<Y>>().arguments.single().type!!.classifier as KTypeParameter
+
+// FILE: main.kt
+package test
+import kotlin.reflect.*
+import kotlin.test.assertEquals
 
 fun box(): String {
     val c = C<Any, Any, Any>()

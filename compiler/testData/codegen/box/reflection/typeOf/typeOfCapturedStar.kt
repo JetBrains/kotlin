@@ -3,7 +3,9 @@
 // KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // Should be unmuted for JS when KT-79471 is fixed
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
 package test
 
 import kotlin.reflect.typeOf
@@ -27,6 +29,9 @@ inline fun <reified T : KFunction<E>, E : Any> bar(w: A<E>): Pair<KType, KFuncti
 inline fun <reified Q> typeOfValue(q: Q): KType {
     return typeOf<Q>()
 }
+
+// FILE: main.kt
+package test
 
 fun box(): String {
     val q: A<*> = object : A<CharSequence> {

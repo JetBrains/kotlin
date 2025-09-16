@@ -2,7 +2,7 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
 
-
+// FILE: lib.kt
 import kotlin.reflect.*
 inline fun <reified T> typeOfX(x: T) = typeOf<T>()
 
@@ -13,7 +13,7 @@ inline fun typeOfLocal(crossinline f: () -> Unit): Pair<Any, KType> {
     return x to typeOfX(x)
 }
 
-
+// FILE: main.kt
 fun box() : String {
     val [a1, t1] = typeOfLocal { 123 }
     val [a2, t2] = typeOfLocal { 1234 }

@@ -1,9 +1,11 @@
+// FILE: main.kt
 fun box(): String =
     g(arrayOf("O"))
 
 fun g(x: Array<String>?): String =
     x.orEmpty0().f { it + "K" }
 
+// FILE: lib.kt
 inline fun <T> Array<out T>.f(lambda: (T) -> T): T =
     lambda(this[0])
 

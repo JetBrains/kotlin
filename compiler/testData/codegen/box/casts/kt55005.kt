@@ -4,9 +4,11 @@
 // IGNORE_BACKEND_K1: JVM_IR
 // ^ K1 does not support coercing assigment to Any?
 
-import kotlin.test.*
-
+// FILE: lib.kt
 inline fun <reified T> foo(x: Any) = arrayOf<T>(x as T)
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun box(): String {
     val a: Array<String> = arrayOf("")

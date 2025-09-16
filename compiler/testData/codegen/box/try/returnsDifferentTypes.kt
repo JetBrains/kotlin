@@ -4,8 +4,7 @@
  */
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 val sb = StringBuilder()
 
 class ReceiveChannel<out E>
@@ -25,6 +24,9 @@ inline fun <E> ReceiveChannel<E>.elementAtOrElse(index: Int, defaultValue: (Int)
                 return defaultValue(index)
             return 42 as E
         }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun <E> ReceiveChannel<E>.elementAt(index: Int): E =
         elementAtOrElse(index) { throw IndexOutOfBoundsException("qxx") }
