@@ -5629,12 +5629,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.TOPLEVEL_TYPEALIASES_ONLY) { firDiagnostic ->
-        ToplevelTypealiasesOnlyImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.RECURSIVE_TYPEALIAS_EXPANSION) { firDiagnostic ->
         RecursiveTypealiasExpansionImpl(
             firDiagnostic as KtPsiDiagnostic,

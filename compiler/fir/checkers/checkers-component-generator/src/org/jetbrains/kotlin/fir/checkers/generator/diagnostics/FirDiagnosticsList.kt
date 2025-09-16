@@ -1967,7 +1967,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {
-        val TOPLEVEL_TYPEALIASES_ONLY by error<KtTypeAlias>()
         val RECURSIVE_TYPEALIAS_EXPANSION by error<KtElement>()
         val TYPEALIAS_SHOULD_EXPAND_TO_CLASS by error<KtElement> {
             parameter<ConeKotlinType>("expandedType")

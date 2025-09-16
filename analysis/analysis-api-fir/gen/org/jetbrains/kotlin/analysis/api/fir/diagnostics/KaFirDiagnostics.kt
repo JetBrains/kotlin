@@ -3947,10 +3947,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val contextParameterSymbols: List<KaSymbol>
     }
 
-    interface ToplevelTypealiasesOnly : KaFirDiagnostic<KtTypeAlias> {
-        override val diagnosticClass get() = ToplevelTypealiasesOnly::class
-    }
-
     interface RecursiveTypealiasExpansion : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = RecursiveTypealiasExpansion::class
     }
