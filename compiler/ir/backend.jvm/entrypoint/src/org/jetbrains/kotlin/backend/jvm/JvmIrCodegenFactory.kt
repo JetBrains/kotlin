@@ -396,7 +396,7 @@ class JvmIrCodegenFactory(
         if (hasErrors()) return
 
         val nThreads = context.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
-        val executor = if (nThreads > 1) Executors.newFixedThreadPool(nThreads) else null
+        val executor = if (nThreads > 1 && module.files.size > 1) Executors.newFixedThreadPool(nThreads) else null
 
         val perfManager = configuration.perfManager
 
