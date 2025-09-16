@@ -25,6 +25,7 @@ public:
     }
 
     void leave() {
+        CallsCheckerIgnoreGuard recursiveGuard;
         mutex_.unlock();
     }
 
@@ -40,10 +41,12 @@ public:
     }
 
     void notify() noexcept {
+        CallsCheckerIgnoreGuard recursiveGuard;
         conditionVariable_.notify_one();
     }
 
     void notifyAll() noexcept {
+        CallsCheckerIgnoreGuard recursiveGuard;
         conditionVariable_.notify_all();
     }
 
