@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.util.cartesianProductOf
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.x
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
@@ -212,7 +213,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
                     .map { it.replace(TestVersions.Kotlin.CURRENT, "SNAPSHOT") }
                     .joinToString("\n")
 
-                assertEqualsToFile(expectedReportFile.toFile(), actualReportSanitized, withTrailingEOF = false)
+                actualReportSanitized.assertEqualsToFile(expectedReportFile.toFile())
             }
             assertAll(consumer.resolvedConfigurationsNames.map { configurationName -> { assertResolvedDependencies(configurationName) } })
         }

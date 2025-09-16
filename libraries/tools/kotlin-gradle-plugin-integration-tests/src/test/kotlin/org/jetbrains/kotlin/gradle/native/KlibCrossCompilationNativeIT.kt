@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -37,10 +38,7 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
             }
             embedDirectoryFromTestData("klibCrossCompilationWithGradlePropertyDisabled", "data")
             build(":compileKotlinIosArm64") {
-                assertEqualsToFile(
-                    projectPath.resolve("data/diagnostics.txt").toFile(),
-                    extractProjectsAndTheirDiagnostics()
-                )
+                extractProjectsAndTheirDiagnostics().assertEqualsToFile(projectPath.resolve("data/diagnostics.txt").toFile())
                 assertTasksSkipped(":compileKotlinIosArm64")
             }
         }
@@ -82,12 +80,12 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
             val expectedDiagnostics = projectPath.resolve("data/diagnostics.txt")
 
             build(":compileKotlinIosArm64") {
-                assertEqualsToFile(expectedDiagnostics.toFile(), extractProjectsAndTheirDiagnostics())
+                extractProjectsAndTheirDiagnostics().assertEqualsToFile(expectedDiagnostics.toFile())
                 assertTasksExecuted(":compileKotlinIosArm64")
             }
 
             build(":linkIosArm64") {
-                assertEqualsToFile(expectedDiagnostics.toFile(), extractProjectsAndTheirDiagnostics())
+                extractProjectsAndTheirDiagnostics().assertEqualsToFile(expectedDiagnostics.toFile())
                 // Do not assert :linkIosArm64, because it's a plain umbrella-like `org.gradle.DefaultTask` instance,
                 // and it doesn't get disabled even on linuxes (see [KotlinNativeConfigureBinariesSideEffect])
                 assertTasksSkipped(":linkDebugTestIosArm64")
