@@ -165,13 +165,28 @@ public interface KaTypeCreator : KaLifetimeOwner {
     public fun flexibleType(init: KaFlexibleTypeBuilder.() -> Unit = {}): KaType?
 
     /**
+     * Builds a [KaFlexibleType] with [lowerBound] and [upperBound] as bounds.
+     *
+     * If either of the bounds is [KaFlexibleType] itself, then the corresponding bound of this type is considered instead.
+     * I.e., if the upper bound is a [KaFlexibleType], then it's upper bound is taken as the resulting upper bound.
+     *
+     * If the lower bound is not a subtype of the upper bound, `null` is returned.
+     *
+     * If both bounds are equal, the bound type is returned,
+     * as it's unnecessary to create a flexible type in this case.
+     */
+    @KaExperimentalApi
+    public fun flexibleType(lowerBound: KaType, upperBound: KaType): KaType?
+
+    /**
      * Builds an [KaIntersectionType].
      *
      * The builder returns a normalized version of the intersection,
      * i.e., all duplicated types are removed, nested intersection types are unwrapped, etc.
      *
-     * If there is a [KaFlexibleType] among conjuncts, the intersector might return another [KaFlexibleType]
-     * with [KaIntersectionType]s as bounds.
+     * This normalized version isn't always [KaIntersectionType].
+     * For example, if there is a [KaFlexibleType] among conjuncts,
+     * the intersector might return another [KaFlexibleType] with [KaIntersectionType]s as bounds.
      * That's due to the distributive property of intersection as a mathematical operation: `(A..B) & C = (A & C)..(B & C)`.
      *
      * If there are no conjuncts, returns [Any?][org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes.nullableAny]

@@ -157,7 +157,7 @@ class KaBaseCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCaptured
 }
 
 @KaImplementationDetail
-sealed class KaBaseFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCreatorDelegate: KaTypeCreator) : KaFlexibleTypeBuilder,
+class KaBaseFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCreatorDelegate: KaTypeCreator) : KaFlexibleTypeBuilder,
     KaTypeCreator by typeCreatorDelegate {
     override var lowerBound: KaType = lowerBound
         get() = withValidityAssertion { field }
@@ -170,16 +170,6 @@ sealed class KaBaseFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, t
         set(value) {
             withValidityAssertion { field = value }
         }
-
-    class ByFlexibleType(type: KaFlexibleType, typeCreatorDelegate: KaTypeCreator) :
-        KaBaseFlexibleTypeBuilder(type.lowerBound, type.upperBound, typeCreatorDelegate)
-
-    class WithDefaults(session: KaSession, typeCreatorDelegate: KaTypeCreator) :
-        KaBaseFlexibleTypeBuilder(
-            session.builtinTypes.nothing,
-            session.builtinTypes.nullableAny,
-            typeCreatorDelegate
-        )
 }
 
 @KaImplementationDetail

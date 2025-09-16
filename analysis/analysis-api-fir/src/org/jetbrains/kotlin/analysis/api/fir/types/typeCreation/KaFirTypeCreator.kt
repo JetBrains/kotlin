@@ -134,7 +134,11 @@ internal class KaFirTypeCreator(
         init: KaFlexibleTypeBuilder.() -> Unit,
     ): KaType? {
         withValidityAssertion {
-            val builder = KaBaseFlexibleTypeBuilder.ByFlexibleType(type, this).apply(init)
+            val builder = KaBaseFlexibleTypeBuilder(
+                type.lowerBound,
+                type.upperBound,
+                this
+            ).apply(init)
             return buildFlexibleType(builder)
         }
     }
@@ -143,7 +147,27 @@ internal class KaFirTypeCreator(
         init: KaFlexibleTypeBuilder.() -> Unit,
     ): KaType? {
         withValidityAssertion {
-            val builder = KaBaseFlexibleTypeBuilder.WithDefaults(analysisSession, this).apply(init)
+            with(analysisSession) {
+                val builder = KaBaseFlexibleTypeBuilder(
+                    lowerBound = builtinTypes.nothing,
+                    upperBound = builtinTypes.nullableAny,
+                    this@KaFirTypeCreator
+                ).apply(init)
+                return buildFlexibleType(builder)
+            }
+        }
+    }
+
+    override fun flexibleType(
+        lowerBound: KaType,
+        upperBound: KaType,
+    ): KaType? {
+        withValidityAssertion {
+            val builder = KaBaseFlexibleTypeBuilder(
+                lowerBound,
+                upperBound,
+                this
+            )
             return buildFlexibleType(builder)
         }
     }
