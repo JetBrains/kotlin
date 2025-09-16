@@ -960,8 +960,8 @@ tasks {
         dependsOn("compilerPluginTest")
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn(":compiler:arguments:test")
-        dependsOn(":compiler:fir:modularized-tests:modelDumpTest")
         dependsOn(":compiler:multiplatform-parsing:jvmTest")
+        dependsOn(":compiler:fir:modularized-tests:test")
     }
 
     register("miscTest") {

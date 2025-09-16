@@ -23,7 +23,6 @@ class FullPipelineModularizedTestPure(config: ModularizedTestConfig) : AbstractF
 
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
         args.languageVersion = LANGUAGE_VERSION_K2
-        args.debugLevelCompilerChecks = enableSlowAssertions
 
         // TODO: Remove when support for old modularized tests is removed
         if (moduleData.arguments == null) {

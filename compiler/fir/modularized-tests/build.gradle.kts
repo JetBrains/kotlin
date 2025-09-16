@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("project-tests-convention")
+    id("java-test-fixtures")
 }
 
 repositories {
@@ -21,16 +22,17 @@ dependencies {
     testRuntimeOnly(libs.xerces)
     testRuntimeOnly(commonDependency("org.apache.commons:commons-lang3"))
 
-    testImplementation(libs.junit4)
-    testCompileOnly(kotlinTest("junit"))
-    testImplementation(testFixtures(project(":compiler:tests-common")))
+    testApi(testFixtures(project(":compiler:tests-common")))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
-    testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
-    testImplementation(project(":compiler:fir:resolve"))
-    testImplementation(project(":compiler:fir:providers"))
-    testImplementation(project(":compiler:fir:semantics"))
-    testImplementation(project(":compiler:fir:dump"))
+    testApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(project(":compiler:fir:resolve"))
+    testFixturesApi(project(":compiler:fir:providers"))
+    testFixturesApi(project(":compiler:fir:semantics"))
+    testFixturesApi(project(":compiler:fir:dump"))
+    testApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
@@ -44,39 +46,67 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 optInToK1Deprecation()
 
 projectTests {
-    val modelDumpAndReadTest = "org.jetbrains.kotlin.fir.ModelDumpAndReadTest"
+    val modularizedTests = "org.jetbrains.kotlin.fir.*ModularizedTest"
+    val generatedMtIsolatedTests = "org.jetbrains.kotlin.fir.*FullPipelineTestsGenerated"
 
-    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit4) {
+    fun Test.setUpModularizedTests() {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
         systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
         workingDir = rootDir
-        val composePluginClasspath = composeCompilerPlugin.asPath
-
-        filter {
-            excludeTestsMatching(modelDumpAndReadTest)
-        }
-        run {
-            systemProperty("fir.bench.compose.plugin.classpath", composePluginClasspath)
-            val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
-            if (argsExt != null) {
-                val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
-                jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
-            }
+        systemProperty("fir.bench.compose.plugin.classpath", composeCompilerPlugin.asPath)
+        val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
+        if (argsExt != null) {
+            val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
+            jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
         }
     }
 
-    testTask("modelDumpTest", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
+    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
+        setUpModularizedTests()
+        filter {
+            excludeTestsMatching(modularizedTests)
+            excludeTestsMatching(generatedMtIsolatedTests)
+        }
+    }
+
+    testTask(taskName = "parallelMtIsolatedTests", minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+        setUpModularizedTests()
+
+        filter {
+            includeTestsMatching(generatedMtIsolatedTests)
+        }
+        systemProperties["junit.jupiter.execution.parallel.enabled"] = true
+        systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
+        maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
+    }
+
+    testTask("modularizedTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
         dependsOn(":dist")
         workingDir = rootDir
         filter {
-            includeTestsMatching(modelDumpAndReadTest)
+            includeTestsMatching(modularizedTests)
         }
+    }
+
+    testGenerator(
+        "org.jetbrains.kotlin.fir.generators.tests.GenerateModularizedIsolatedTests",
+        doNotSetFixturesSourceSetDependency = true, generateTestsInBuildDirectory = true, skipCollectDataTask = true
+    ) {
+        fun String?.withModelDumpOrEmpty() = this?.let { "$it/test-project-model-dump" }.orEmpty()
+        args = args!! + "--" +
+                "Kotlin" + kotlinBuildProperties.pathToKotlinModularizedTestData.withModelDumpOrEmpty() +
+                "IntelliJ" + kotlinBuildProperties.pathToIntellijModularizedTestData.withModelDumpOrEmpty() +
+                "YouTrack" + kotlinBuildProperties.pathToYoutrackModularizedTestData.withModelDumpOrEmpty() +
+                "Space" + kotlinBuildProperties.pathToSpaceModularizedTestData.withModelDumpOrEmpty()
     }
 }
 

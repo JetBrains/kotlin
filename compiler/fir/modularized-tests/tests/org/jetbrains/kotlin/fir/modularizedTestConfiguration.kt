@@ -8,6 +8,8 @@
  */
 package org.jetbrains.kotlin.fir
 
+import java.io.File
+
 data class ModularizedTestConfig(
     val rootPathPrefix: String = "/",
     val outputDirRegexFilter: String = ".*",
@@ -17,8 +19,14 @@ data class ModularizedTestConfig(
     val enableSlowAssertions: Boolean = false,
     val reportTimestamp: Long? = null,
     val jpsDir: String? = null,
+    val jvmTarget: String = "1.8",
     val kotlinHome: String? = null,
     val composePluginClasspath: String? = null,
+)
+
+fun modularizedTestConfigFromSingleModelFile(modelFile: File): ModularizedTestConfig = ModularizedTestConfig(
+    rootPathPrefix = modelFile.absoluteFile.parentFile.parentFile.path + "/",
+    composePluginClasspath = System.getProperty("fir.bench.compose.plugin.classpath"),
 )
 
 fun modularizedTestConfigFromSystemProperties(): ModularizedTestConfig = ModularizedTestConfig(
@@ -30,6 +38,7 @@ fun modularizedTestConfigFromSystemProperties(): ModularizedTestConfig = Modular
     enableSlowAssertions = System.getProperty("fir.bench.enable.slow.assertions") == "true",
     reportTimestamp = System.getProperty("fir.bench.report.timestamp")?.toLongOrNull(),
     jpsDir = System.getProperty("fir.bench.jps.dir"),
+    jvmTarget = System.getProperty("fir.bench.jvm.target", "1.8"),
     kotlinHome = null,
     composePluginClasspath = System.getProperty("fir.bench.compose.plugin.classpath"),
 )
@@ -86,6 +95,7 @@ fun modularizedTestConfigFromArgs(args: Array<String>): ModularizedTestConfig {
         enableSlowAssertions = bool("fir.bench.enable.slow.assertions", false),
         reportTimestamp = long("fir.bench.report.timestamp"),
         jpsDir = str("fir.bench.jps.dir", null),
+        jvmTarget = strNonNull("fir.bench.jvm.target", "1.8"),
         kotlinHome = str("fir.bench.kotlin.home", null),
         composePluginClasspath = str("fir.bench.compose.plugin.classpath", null),
     )

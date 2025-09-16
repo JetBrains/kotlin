@@ -16,7 +16,7 @@ internal val LANGUAGE_VERSION_K1: String = System.getProperty("fir.bench.languag
 class FE1FullPipelineModularizedTestPure(config: ModularizedTestConfig) : AbstractFullPipelineModularizedTest(config) {
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
         args.languageVersion = LANGUAGE_VERSION_K1
-        args.debugLevelCompilerChecks = enableSlowAssertions
+        args.debugLevelCompilerChecks = config.enableSlowAssertions
 
         // TODO: Remove when support for old modularized tests is removed
         if (moduleData.arguments == null) {
