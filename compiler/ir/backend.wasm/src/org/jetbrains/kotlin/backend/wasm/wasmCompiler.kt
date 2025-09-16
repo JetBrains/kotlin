@@ -396,21 +396,21 @@ $imports
         const url = require('url');
         const filepath = import.meta.resolve(wasmFilePath);
         const wasmBuffer = fs.readFileSync(url.fileURLToPath(filepath));
-        const wasmModule = new WebAssembly.Module(wasmBuffer);
-        wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
+        const wasmModule = new WebAssembly.Module(wasmBuffer, $options);
+        wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
       }
       
       if (isDeno) {
         const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
         const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve(wasmFilePath)));
-        const module = await WebAssembly.compile(binary);
-        wasmInstance = await WebAssembly.instantiate(module, importObject, $options);
+        const module = await WebAssembly.compile(binary, $options);
+        wasmInstance = await WebAssembly.instantiate(module, importObject);
       }
       
       if (isStandaloneJsVM) {
         const wasmBuffer = read(wasmFilePath, 'binary');
-        const wasmModule = new WebAssembly.Module(wasmBuffer);
-        wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
+        const wasmModule = new WebAssembly.Module(wasmBuffer, $options);
+        wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
       }
       
       if (isBrowser) {

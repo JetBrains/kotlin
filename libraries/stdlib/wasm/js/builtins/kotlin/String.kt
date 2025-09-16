@@ -40,6 +40,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         return jsCharCodeAt(this.internalStr, index).reinterpretAsChar()
     }
 
+    @Suppress("RETURN_VALUE_NOT_USED")
     @kotlin.internal.IntrinsicConstEvaluation
     internal val chars: WasmCharArray
         get() {
