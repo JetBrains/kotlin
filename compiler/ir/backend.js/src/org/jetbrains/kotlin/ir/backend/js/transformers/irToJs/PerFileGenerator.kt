@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
+import org.jetbrains.kotlin.utils.MainFunctionCandidate
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.pickMainFunctionFromCandidates
 import org.jetbrains.kotlin.utils.putToMultiMap
 
 typealias CachedTestFunctionsWithTheirPackage = Map<String, List<String>>
@@ -70,8 +71,8 @@ interface PerFileGenerator<Module, File, Artifact> {
                 }
 
                 val mainFunctionTag = runIf(module.isMain) {
-                    JsMainFunctionDetector.pickMainFunctionFromCandidates(artifacts) {
-                        JsMainFunctionDetector.MainFunctionCandidate(
+                    pickMainFunctionFromCandidates(artifacts) {
+                        MainFunctionCandidate(
                             it.packageFqn,
                             it.mainFunction
                         )

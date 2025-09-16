@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.MainFunctionCandidate
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
+import org.jetbrains.kotlin.utils.pickMainFunctionFromCandidates
 
 class Merger(
     private val moduleName: String,
@@ -235,8 +236,8 @@ class Merger(
             moduleBody.endRegion()
         }
 
-        val fragmentWithMainFunction = JsMainFunctionDetector.pickMainFunctionFromCandidates(fragments) {
-            JsMainFunctionDetector.MainFunctionCandidate(it.packageFqn, it.mainFunctionTag)
+        val fragmentWithMainFunction = pickMainFunctionFromCandidates(fragments) {
+            MainFunctionCandidate(it.packageFqn, it.mainFunctionTag)
         }
 
         val exportStatements = declareAndCallJsExporter() + additionalExports + transitiveJsExport()
