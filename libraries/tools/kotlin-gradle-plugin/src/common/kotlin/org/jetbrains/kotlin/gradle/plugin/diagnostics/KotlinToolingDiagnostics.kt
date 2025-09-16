@@ -1313,16 +1313,20 @@ internal object KotlinToolingDiagnostics {
                 .joinToString("\n") { "    - $it" }
 
             return build {
-                title("Unsupported `testApi` Dependencies")
+                title("Unsupported API dependencies in test source sets")
                     .description {
                         """
-                        |`testApi` dependencies are not valid.
+                        |API dependencies are used in test source sets
                         |Dependencies:
                         |$formattedDeps
+                        |
+                        |Using `api()` to add API dependencies to test source sets is not supported. API dependencies are transitively exposed to consumers, but test source sets should not be consumable.
+                        |
+                        |Adding API dependencies to test source sets will removed in a future version of Kotlin.
                         """.trimMargin()
                     }
                     .solution {
-                        "Replace testApi dependencies with testImplementation dependencies. " +
+                        "Replace api() dependencies in test source sets with implementation dependencies. " +
                                 "If necessary, split test utilities into a separate subproject."
                     }
                     .documentationLink(URI("https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures")) {
@@ -1904,7 +1908,7 @@ internal object KotlinToolingDiagnostics {
             val version: KotlinVersion,
             val type: String,
             val accessor: String,
-            val languageVersionUnsupportedLevel: ToolingDiagnostic.Severity
+            val languageVersionUnsupportedLevel: ToolingDiagnostic.Severity,
         )
 
         operator fun invoke(versionMetadata: List<VersionMetadata>, nonDeprecatedVersion: KotlinVersion): ToolingDiagnostic {
