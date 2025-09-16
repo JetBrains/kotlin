@@ -329,43 +329,50 @@ class IrModuleToJsTransformer(
     private fun generateJsIrProgramPerFile(exportData: List<IrAndExportedDeclarations>, mode: TranslationMode): JsIrProgram {
         val mainModuleWithExportedData = exportData.last()
 
-        val perFileGenerator = object : PerFileGenerator<IrAndExportedDeclarations, IrFileExports, JsIrModules> {
-            override val mainModuleName = mainModuleWithExportedData.fragment.safeName
-            private val JsIrModules.mainFragment get() = mainModule.fragments.first()
+        val perFileGenerator =
+            object : PerFileGenerator<IrAndExportedDeclarations, IrFileExports, JsIrModules, JsIrProgramTestEnvironment> {
+                override val mainModuleName = mainModuleWithExportedData.fragment.safeName
+                private val JsIrModules.mainFragment get() = mainModule.fragments.first()
 
-            override val IrAndExportedDeclarations.isMain get() = this === mainModuleWithExportedData
-            override val IrAndExportedDeclarations.fileList get() = files
+                override val IrAndExportedDeclarations.isMain get() = this === mainModuleWithExportedData
+                override val IrAndExportedDeclarations.fileList get() = files
 
-            override val JsIrModules.artifactName get() = mainModule.externalModuleName
-            override val JsIrModules.hasEffect get() = mainModule.importedWithEffectInModuleWithName != null
-            override val JsIrModules.hasExport get() = exportModule != null
-            override val JsIrModules.packageFqn get() = mainFragment.packageFqn
-            override val JsIrModules.mainFunction get() = mainFragment.mainFunctionTag
+                override val JsIrModules.artifactName get() = mainModule.externalModuleName
+                override val JsIrModules.hasEffect get() = mainModule.importedWithEffectInModuleWithName != null
+                override val JsIrModules.hasExport get() = exportModule != null
+                override val JsIrModules.packageFqn get() = mainFragment.packageFqn
+                override val JsIrModules.mainFunction get() = mainFragment.mainFunctionTag
 
-            override fun JsIrModules.takeTestEnvironmentOwnership(): JsIrProgramTestEnvironment? {
-                val fragment = mainFragment
-                return fragment.testEnvironment.also { fragment.testEnvironment = null }
-            }
-
-            override fun List<JsIrModules>.merge() =
-                JsIrModules(map { it.mainModule }.merge(), mapNotNull { it.exportModule }.ifNotEmpty { merge() })
-
-            override fun IrAndExportedDeclarations.generateArtifact(
-                mainFunctionTag: String?,
-                suiteFunctionTag: String?,
-                testFunctions: CachedTestFunctionsWithTheirPackage,
-                moduleNameForEffects: String?
-            ) = JsIrModules(toJsIrProxyModule(mainFunctionTag, suiteFunctionTag, testFunctions, moduleNameForEffects))
-
-            override fun IrFileExports.generateArtifact(module: IrAndExportedDeclarations) = takeIf { !file.couldBeSkipped() }
-                ?.let { generateProgramFragment(it, mode) }
-                ?.let {
-                    JsIrModules(
-                        toJsIrModule(module, it.mainFragment),
-                        it.exportFragment?.run { toJsIrModuleForExport(module, this) }
-                    )
+                override fun JsIrModules.takeTestEnvironmentOwnership(): JsIrProgramTestEnvironment? {
+                    val fragment = mainFragment
+                    return fragment.testEnvironment.also { fragment.testEnvironment = null }
                 }
-        }
+
+                override val JsIrProgramTestEnvironment.testFunctionTag: String
+                    get() = testFunctionTag
+
+                override val JsIrProgramTestEnvironment.suiteFunctionTag: String
+                    get() = suiteFunctionTag
+
+                override fun List<JsIrModules>.merge() =
+                    JsIrModules(map { it.mainModule }.merge(), mapNotNull { it.exportModule }.ifNotEmpty { merge() })
+
+                override fun IrAndExportedDeclarations.generateArtifact(
+                    mainFunctionTag: String?,
+                    suiteFunctionTag: String?,
+                    testFunctions: CachedTestFunctionsWithTheirPackage,
+                    moduleNameForEffects: String?,
+                ) = JsIrModules(toJsIrProxyModule(mainFunctionTag, suiteFunctionTag, testFunctions, moduleNameForEffects))
+
+                override fun IrFileExports.generateArtifact(module: IrAndExportedDeclarations) = takeIf { !file.couldBeSkipped() }
+                    ?.let { generateProgramFragment(it, mode) }
+                    ?.let {
+                        JsIrModules(
+                            toJsIrModule(module, it.mainFragment),
+                            it.exportFragment?.run { toJsIrModuleForExport(module, this) }
+                        )
+                    }
+            }
 
         return JsIrProgram(perFileGenerator.generatePerFileArtifacts(exportData).flatMap {
             listOfNotNull(it.mainModule, it.exportModule)

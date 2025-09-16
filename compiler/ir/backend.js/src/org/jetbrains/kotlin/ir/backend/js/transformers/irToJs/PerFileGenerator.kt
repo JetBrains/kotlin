@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.utils.putToMultiMap
 
 typealias CachedTestFunctionsWithTheirPackage = Map<String, List<String>>
 
-interface PerFileGenerator<Module, File, Artifact> {
+interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
     val mainModuleName: String
 
     val Module.isMain: Boolean
@@ -24,7 +24,9 @@ interface PerFileGenerator<Module, File, Artifact> {
     val Artifact.packageFqn: String
     val Artifact.mainFunction: String?
 
-    fun Artifact.takeTestEnvironmentOwnership(): JsIrProgramTestEnvironment?
+    fun Artifact.takeTestEnvironmentOwnership(): TestEnvironment?
+    val TestEnvironment.testFunctionTag: String
+    val TestEnvironment.suiteFunctionTag: String
 
     fun List<Artifact>.merge(): Artifact
     fun File.generateArtifact(module: Module): Artifact?
@@ -56,9 +58,9 @@ interface PerFileGenerator<Module, File, Artifact> {
                         hasModuleLevelEffect = true
                     }
 
-                    generatedArtifact.takeTestEnvironmentOwnership()?.let { (testFunction, suiteFunction) ->
-                        testFunctions.putToMultiMap(generatedArtifact.packageFqn, testFunction)
-                        suiteFunctionTag = suiteFunction
+                    generatedArtifact.takeTestEnvironmentOwnership()?.let { testEnvironment ->
+                        testFunctions.putToMultiMap(generatedArtifact.packageFqn, testEnvironment.testFunctionTag)
+                        suiteFunctionTag = testEnvironment.suiteFunctionTag
                     }
 
                     putToMultiMap(generatedArtifact.artifactName, generatedArtifact)

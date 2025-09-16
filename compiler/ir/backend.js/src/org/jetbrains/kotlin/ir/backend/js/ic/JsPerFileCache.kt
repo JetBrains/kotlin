@@ -423,7 +423,7 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
     override fun loadProgramHeadersFromCache(): List<CachedFileInfo> {
         val mainModuleArtifact = moduleArtifacts.last()
 
-        val perFileGenerator = object : PerFileGenerator<JsModuleArtifact, JsSrcFileArtifact, CachedFileInfo> {
+        val perFileGenerator = object : PerFileGenerator<JsModuleArtifact, JsSrcFileArtifact, CachedFileInfo, JsIrProgramTestEnvironment> {
             override val mainModuleName get() = mainModuleArtifact.moduleExternalName
 
             override val JsModuleArtifact.isMain get() = this === mainModuleArtifact
@@ -442,6 +442,12 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
 
             override fun CachedFileInfo.takeTestEnvironmentOwnership() =
                 (this as CachedFileInfo.MainFileCachedInfo).testEnvironment
+
+            override val JsIrProgramTestEnvironment.testFunctionTag: String
+                get() = testFunctionTag
+
+            override val JsIrProgramTestEnvironment.suiteFunctionTag: String
+                get() = suiteFunctionTag
 
             override fun JsSrcFileArtifact.generateArtifact(module: JsModuleArtifact) = when {
                 isModified() -> module.loadFileInfoFor(this)
