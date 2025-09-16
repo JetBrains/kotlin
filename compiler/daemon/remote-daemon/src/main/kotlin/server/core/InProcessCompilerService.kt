@@ -5,14 +5,21 @@
 
 package server.core
 
+import common.CompilerUtils
 import common.SERVER_COMPILATION_WORKSPACE_DIR
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
+import org.jetbrains.kotlin.buildtools.internal.ClasspathEntrySnapshotImpl
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -44,6 +51,7 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalFirJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
 import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
 import org.jetbrains.kotlin.incremental.storage.FileLocations
@@ -62,6 +70,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.collections.plus
 import kotlin.collections.toSet
+import kotlin.io.path.createParentDirectories
 
 class InProcessCompilerService(
     var reportPerf: Boolean = false
@@ -122,6 +131,7 @@ class InProcessCompilerService(
         return performanceMetrics
     }
 
+    @OptIn(ExperimentalBuildToolsApi::class)
     fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
@@ -172,6 +182,8 @@ class InProcessCompilerService(
                 }.get()
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
+                println("compiling nonincrementally")
+
                 doCompile(daemonReporter) { _ ->
                     val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
 
@@ -188,6 +200,7 @@ class InProcessCompilerService(
                 }.get()
             }
             CompilerMode.INCREMENTAL_COMPILER -> {
+                println("compiling incrementally")
                 val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
                 val gradleIncrementalServicesFacade = servicesFacade
 
@@ -235,6 +248,21 @@ class InProcessCompilerService(
         is SourcesChanges.Known -> ChangedFiles.DeterminableFiles.Known(modifiedFiles, removedFiles)
     }
 
+    // function taken from CompilationServiceImpl.kt
+    @OptIn(ExperimentalBuildToolsApi::class)
+    fun calculateClasspathSnapshot(
+        classpathEntry: File,
+        granularity: ClassSnapshotGranularity,
+        parseInlinedLocalClasses: Boolean
+    ): ClasspathEntrySnapshot {
+        return ClasspathEntrySnapshotImpl(
+            ClasspathEntrySnapshotter.snapshot(
+                classpathEntry,
+                ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses),
+                DoNothingBuildMetricsReporter
+            )
+        )
+    }
 
     fun execIncrementalCompiler(
         k2jvmArgs: K2JVMCompilerArguments,

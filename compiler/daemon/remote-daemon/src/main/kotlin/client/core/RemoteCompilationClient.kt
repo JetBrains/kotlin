@@ -243,15 +243,6 @@ class RemoteCompilationClient(
                 )
             }
         }
-        launch(Dispatchers.IO) {
-            requestChannel.send(
-                FileTransferRequest(
-                    classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.absolutePath,
-                    computeSha256(classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile),
-                    ArtifactType.SHRUNK_CLASSPATH_SNAPSHOT
-                )
-            )
-        }
     }
 
     private fun CoroutineScope.sendSourceChangesDirectlyWithoutRequest(
@@ -288,28 +279,27 @@ class RemoteCompilationClient(
 
 suspend fun main() {
     val client = RemoteCompilationClient.getClient(RemoteCompilationServiceImplType.GRPC, "localhost", 8000)
+    client.cleanup()
     client.compile(
         "test",
-        listOf(),
+        listOf("-d", "/Users/michal.svec/Desktop/ic-example/build/classes/kotlin/main"),
         IncrementalCompilationOptions(
             sourceChanges = SourcesChanges.Known(
                 modifiedFiles = listOf(
-                    File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/core/CacheHandler.kt"),
-                    File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/core/InProcessCompilerService.kt")
+                    File("/Users/michal.svec/Desktop/ic-example/src/main/kotlin/Main.kt"),
                 ),
-                removedFiles = listOf(File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/core/Server.kt"))
+                removedFiles = listOf()
             ),
-            classpathChanges = ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges(ClasspathSnapshotFiles(
-                    currentClasspathEntrySnapshotFiles = listOf(
-                        File("/Users/michal.svec/Desktop/kotlin/compiler/cli/build/kotlin/compileKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab"),
-                        File("/Users/michal.svec/Desktop/kotlin/compiler/cli/build/kotlin/compileKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream")
-                    ),
-                    classpathSnapshotDir = File("/Users/michal.svec/Desktop/kotlin/compiler/cli/build/kotlin/compileKotlin/classpath-snapshot")
-                )
-            ),
-            workingDir = CLIENT_TMP_DIR.toFile(),
+            classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled,
+            workingDir = File("/Users/michal.svec/Desktop/ic-example/build/kotlin/compileKotlin/cacheable"),
             compilerMode = CompilerMode.INCREMENTAL_COMPILER,
             targetPlatform = CompileService.TargetPlatform.JVM,
+            outputFiles = listOf(
+                File("/Users/michal.svec/Desktop/ic-example/build/classes/kotlin/main"),
+                File("/Users/michal.svec/Desktop/ic-example/build/kotlin/compileKotlin/cacheable"),
+                File("/Users/michal.svec/Desktop/ic-example/build/kotlin/compileKotlin/local-state"),
+                File("/Users/michal.svec/Desktop/ic-example/build/kotlin/compileKotlin")
+            ),
             reportCategories = emptyArray(),
             reportSeverity = 0,
             requestedCompilationResults = emptyArray(),

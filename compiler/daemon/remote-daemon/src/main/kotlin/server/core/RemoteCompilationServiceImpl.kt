@@ -35,13 +35,16 @@ import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
+import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.classpathAsList
 import server.grpc.AuthServerInterceptor
 import java.io.File
+import java.io.Serializable
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -83,7 +86,6 @@ class RemoteCompilationServiceImpl(
             val dependencyFiles = ConcurrentHashMap<Path, File>()
             val compilerPluginFiles = ConcurrentHashMap<Path, File>()
             val classpathEntrySnapshotFiles = ConcurrentHashMap<Path, File>()
-            val shrunkClasspathFile = ConcurrentHashMap<Path, File>()
 
             val workspaceFileLockMap = ConcurrentHashMap<Path, Mutex>()
             val cacheFileLockMap = ConcurrentHashMap<Path, Mutex>()
@@ -96,7 +98,6 @@ class RemoteCompilationServiceImpl(
                     ArtifactType.DEPENDENCY -> dependencyFiles[clientPath] = file
                     ArtifactType.COMPILER_PLUGIN -> compilerPluginFiles[clientPath] = file
                     ArtifactType.CLASSPATH_ENTRY_SNAPSHOT -> classpathEntrySnapshotFiles[clientPath] = file
-                    ArtifactType.SHRUNK_CLASSPATH_SNAPSHOT -> shrunkClasspathFile[clientPath] = file
                     ArtifactType.RESULT -> debug("Received illegal file type: $artifactType")
                     ArtifactType.IC_CACHE -> debug("Received illegal file type: $artifactType")
                 }
@@ -198,7 +199,6 @@ class RemoteCompilationServiceImpl(
                     workspaceManager,
                     sourceFiles,
                     classpathEntrySnapshotFiles,
-                    shrunkClasspathFile
                 )
 
                 val remoteCompilerArguments = CompilerUtils.getRemoteCompilerArguments(
@@ -211,9 +211,11 @@ class RemoteCompilationServiceImpl(
 
                 if (remoteCompilationOptions is IncrementalCompilationOptions) {
                     val numberOfMissingFiles = requestMissingFilesFromClient(remoteCompilerArguments, this@channelFlow)
-                    allFilesReady = CompletableDeferred()
-                    pendingFiles.set(numberOfMissingFiles)
-                    allFilesReady.join()
+                    if (numberOfMissingFiles > 0) {
+                        allFilesReady = CompletableDeferred()
+                        pendingFiles.set(numberOfMissingFiles)
+                        allFilesReady.join()
+                    }
                 }
 
                 val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(remoteCompilerArguments)
@@ -242,9 +244,10 @@ class RemoteCompilationServiceImpl(
                 send(compilationResult)
                 sendCompiledFilesToClient(outputDir, this@channelFlow)
                 if (remoteCompilationOptions is IncrementalCompilationOptions) {
-                    getICCacheFolder(remoteCompilationOptions)
-                        ?.takeIf { it.exists() }
-                        ?.let { sendICCacheToClient(it, this@channelFlow) }
+                    val icCacheDir = CompilerUtils.getICCacheFolder(remoteCompilerArguments)
+                    println("obtained ic cache dir: $icCacheDir")
+                    println("obtained destination dit: ${CompilerUtils.getOutputDir(remoteCompilerArguments)}")
+                    sendICCacheToClient(icCacheDir, this@channelFlow)
                 }
                 this@channelFlow.close()
             }
@@ -257,8 +260,7 @@ class RemoteCompilationServiceImpl(
             is IncrementalCompilationOptions -> {
                 val cpChanges = co.classpathChanges
                 if (cpChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
-                    // + 1 for a shrunk snapshot file
-                    total += cpChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.size + 1
+                    total += cpChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.size
                 }
                 val srcChanges = co.sourceChanges
                 if (srcChanges is SourcesChanges.Known) {
@@ -294,7 +296,9 @@ class RemoteCompilationServiceImpl(
                 .toTypedArray(),
             compilationOptions = remoteCompilationOptions,
             servicesFacade = servicesFacade,
-            compilationResults = null,
+            compilationResults = object : CompilationResults {
+                override fun add(compilationResultCategory: Int, value: Serializable) {}
+            },
             hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
             createMessageCollector = { facade, options ->
                 remoteMessageCollector
@@ -360,6 +364,7 @@ class RemoteCompilationServiceImpl(
     }
 
     suspend fun requestMissingFilesFromClient(args: K2JVMCompilerArguments, outputChannel: ProducerScope<CompileResponse>): Int{
+        println(ArgumentUtils.convertArgumentsToStringList(args).toString())
         val missingDependencies = getMissingFiles(CompilerUtils.getDependencyFiles(args))
         val missingSources = getMissingFiles(CompilerUtils.getSourceFiles(args))
         val missingPluginFiles = getMissingFiles(CompilerUtils.getXPluginFiles(args))
@@ -391,5 +396,6 @@ class RemoteCompilationServiceImpl(
     private fun getMissingFiles(files: List<File>): List<String> {
         return files.filter { file -> !file.exists() }.map { it.absolutePath }
     }
+
 
 }

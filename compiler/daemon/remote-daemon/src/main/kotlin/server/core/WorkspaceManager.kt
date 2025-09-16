@@ -20,6 +20,11 @@ class WorkspaceManager(
     val projectName: String,
 ) {
 
+    val userProjectWorkspaceDir: Path =
+        SERVER_COMPILATION_WORKSPACE_DIR
+            .resolve(userId)
+            .resolve(projectName)
+
     init {
         Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
     }
@@ -32,33 +37,21 @@ class WorkspaceManager(
     }
 
     fun prependWorkspaceProjectDirectory(path: Path): Path {
-        return SERVER_COMPILATION_WORKSPACE_DIR
-            .resolve(userId)
-            .resolve(projectName)
-            .resolve(path)
+        val relativePath = if (path.isAbsolute) {
+            Paths.get(path.toString().removePrefix("/"))
+        } else {
+            path
+        }
+        return userProjectWorkspaceDir.resolve(relativePath).also { Files.createDirectories(it) }
     }
 
     fun removeWorkspaceProjectPrefix(path: Path): Path {
-        val workspaceProjectDir = SERVER_COMPILATION_WORKSPACE_DIR
-            .resolve(userId)
-            .resolve(projectName)
-
-        val relativePath = workspaceProjectDir.relativize(path)
+        val relativePath = userProjectWorkspaceDir.relativize(path)
         return Paths.get("/").resolve(relativePath)
     }
 
-    fun getOutputDir(moduleName: String): Path {
-        // TODO revisit this, I think I could get rid of output part
-        // maybe it would be useful to pass root dir into compilation metadata
-        // potentially just append the full user client path to workspace path
-        val outputPath = SERVER_COMPILATION_WORKSPACE_DIR
-            .resolve(userId)
-            .resolve(projectName)
-            .resolve("output")
-            .resolve(moduleName)
-
-        Files.createDirectories(outputPath)
-        return outputPath
+    fun getOutputDir(clientOutputPath: Path): Path {
+        return prependWorkspaceProjectDirectory(clientOutputPath)
     }
 
     // in scenario where .jar file is part of classpath and also part compiler plugins
@@ -88,9 +81,5 @@ class WorkspaceManager(
 
     fun getUserProjectFolder(userId: String, projectName: String) =
         "$SERVER_COMPILATION_WORKSPACE_DIR/$userId/$projectName"
-
-    fun getUserProjectSourceFolder(userId: String, projectName: String) =
-        "$SERVER_COMPILATION_WORKSPACE_DIR/$userId/$projectName/output"
-
 
 }

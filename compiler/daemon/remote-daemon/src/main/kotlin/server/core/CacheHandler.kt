@@ -16,6 +16,7 @@ import kotlinx.coroutines.sync.withLock
 import model.ArtifactType
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import java.io.File
+import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
@@ -94,8 +95,12 @@ class CacheHandler {
             // 2. as a hash of compiler arguments and input files, that is because the compilation result may be used
             // as a dependency for compilation of the same source files with different compiler arguments
             val compilationInputHash = calculateCompilationInputHash(remoteCompilerArguments)
-            val symlink = Files.createSymbolicLink(SERVER_ARTIFACTS_CACHE_DIR.resolve(compilationInputHash), targetPath.fileName)
-            artifacts[compilationInputHash] = symlink.toAbsolutePath().toString()
+            try {
+                val symlink = Files.createSymbolicLink(SERVER_ARTIFACTS_CACHE_DIR.resolve(compilationInputHash), targetPath.fileName)
+                artifacts[compilationInputHash] = symlink.toAbsolutePath().toString()
+            } catch (e: FileAlreadyExistsException) {
+                println("Warning: the compilation result is already cached as a symbolic link to $targetPath")
+            }
         }
 
         // TODO we want to delete temp files, but this tmpFile does not have to be necessarily in tmp directory

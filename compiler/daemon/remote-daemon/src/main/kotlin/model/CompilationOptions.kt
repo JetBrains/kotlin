@@ -90,8 +90,8 @@ fun ClasspathChanges.toProto(): ClasspathChangesProto {
                         .setClasspathSnapshotFiles(
                             ClasspathSnapshotFilesProto.newBuilder()
                                 .addAllCurrentClasspathEntrySnapshotFiles(this@toProto.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.map { it.absolutePath })
-                                .setShrunkPreviousClasspathSnapshotFile(
-                                    this@toProto.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.absolutePath
+                                .setClasspathSnapshotDir(
+                                    this@toProto.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.parentFile?.absolutePath
                                 )
                                 .build()
                         )
@@ -142,7 +142,7 @@ fun ClasspathChangesProto.toDomain(): ClasspathChanges {
             val filesProto = classpathSnapshotEnabled.classpathSnapshotFiles
             val snapshotFiles = ClasspathSnapshotFiles(
                 currentClasspathEntrySnapshotFiles = filesProto.currentClasspathEntrySnapshotFilesList.map { File(it) },
-                classpathSnapshotDir = File(filesProto.shrunkPreviousClasspathSnapshotFile).parentFile // TODO double check if this assigment is correct
+                classpathSnapshotDir = File(filesProto.classpathSnapshotDir)
             )
 
             when{

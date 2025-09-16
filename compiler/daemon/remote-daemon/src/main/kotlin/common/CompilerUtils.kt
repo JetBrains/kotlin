@@ -21,6 +21,7 @@ import java.nio.file.Paths
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.component1
 import kotlin.collections.component2
+import kotlin.io.path.Path
 
 object CompilerUtils {
 
@@ -33,7 +34,8 @@ object CompilerUtils {
     }
 
     fun getDependencyFiles(args: K2JVMCompilerArguments): List<File> {
-        return args.classpathAsList
+        // TODO: buggy classpathAsList implementation: for empty classpath it returns listOf(""), it causes many issues
+        return if (args.classpathAsList.size == 1 && args.classpathAsList.first().name.isEmpty()) emptyList() else args.classpathAsList
     }
 
     fun getXPluginFiles(args: K2JVMCompilerArguments): List<File> {
@@ -47,6 +49,11 @@ object CompilerUtils {
 
     fun getOutputDir(args: K2JVMCompilerArguments): File {
         return args.destinationAsFile
+    }
+
+    fun getICCacheFolder(args: K2JVMCompilerArguments): File {
+        // TODO come up with a more reliable way of determining output folder
+        return getOutputDir(args).parentFile.parentFile.parentFile.toPath().resolve("kotlin").resolve("compileKotlin").toFile()
     }
 
     private fun getRemotePath(map: Map<Path, File>?, clientPath: Path, workspaceManager: WorkspaceManager): String {
@@ -83,9 +90,8 @@ object CompilerUtils {
         }
 
         // replace output directory
-        // TODO revisit module name
         parsed.destination =
-            workspaceManager.getOutputDir(parsed.moduleName ?: "module").toString()
+            workspaceManager.getOutputDir(Paths.get(parsed.destination)).toString()
 
         // replace -classpath
         // TODO revisit !!
@@ -135,7 +141,6 @@ object CompilerUtils {
         workspaceManager: WorkspaceManager,
         sourceChangesFiles: Map<Path, File>,
         classpathEntrySnapshotFiles: Map<Path, File>,
-        shrunkClasspathSnapshotFiles: Map<Path, File>
     ): CompilationOptions {
         if (co !is IncrementalCompilationOptions) {
             return co
@@ -145,8 +150,11 @@ object CompilerUtils {
                 val remoteModified = srcChanges.modifiedFiles.map { client ->
                     sourceChangesFiles[client.toPath()] ?: client
                 }
-                // TODO: do we want to do something with the removed files?
-                SourcesChanges.Known(remoteModified, srcChanges.removedFiles)
+                // TODO what if user moved the file locally and then it was removed?
+                val remoteRemoved = srcChanges.removedFiles.map { client ->
+                    workspaceManager.prependWorkspaceProjectDirectory(client.toPath()).toFile()
+                }
+                SourcesChanges.Known(remoteModified, remoteRemoved)
             }
             else -> {
                 srcChanges
@@ -159,12 +167,9 @@ object CompilerUtils {
                     classpathEntrySnapshotFiles[client.toPath()] ?: client
                 }
 
-                val remoteShrunkPreviousClasspathSnapshotFile =
-                    shrunkClasspathSnapshotFiles[cpChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.toPath()]
-
                 val remoteClasspathSnapshotFiles = ClasspathSnapshotFiles(
                     currentClasspathEntrySnapshotFiles = remoteClasspathEntrySnapshotFiles,
-                    classpathSnapshotDir = remoteShrunkPreviousClasspathSnapshotFile!!.parentFile
+                    classpathSnapshotDir = cpChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.parentFile
                 )
 
                 when (cpChanges) {

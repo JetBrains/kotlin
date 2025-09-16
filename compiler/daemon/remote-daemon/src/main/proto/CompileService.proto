@@ -83,8 +83,7 @@ enum ArtifactTypeProto {
   COMPILER_PLUGIN = 2;
   RESULT = 3;
   CLASSPATH_ENTRY_SNAPSHOT = 4;
-  SHRUNK_CLASSPATH_SNAPSHOT = 5;
-  IC_CACHE = 6;
+  IC_CACHE = 5;
 }
 
 message MissingFilesRequestProto{
@@ -240,7 +239,7 @@ message ClasspathChangesProto {
 
 message ClasspathSnapshotFilesProto {
   repeated string current_classpath_entry_snapshot_files = 1;
-  string shrunk_previous_classpath_snapshot_file = 2;
+  string classpath_snapshot_dir = 2;
 }
 
 message SourcesChangesProto {

@@ -37,14 +37,13 @@ abstract class FileChunkingStrategy {
             }
 
             if (fileChunks.last().isDirectory) {
+                // TODO: performance improvement: reconstruct it directly from stream without need to create a temporary tar file
                 val temporaryTar = File("$filePath.tar")
                 temporaryTar.writeBytes(completeContent)
                 extractTarArchive(temporaryTar, file)
-                // TODO delete temporary tar
-//                println("[RECONSTRUCTION] folder ${fileChunks.last().filePath} has been successfully reconstructed to ${file.absolutePath}")
+                temporaryTar.delete()
             } else {
                 file.writeBytes(completeContent)
-//                println("[RECONSTRUCTION] file ${fileChunks.last().filePath} has been successfully reconstructed to ${file.absolutePath} ")
             }
             return file
         } catch (e: Exception) {
