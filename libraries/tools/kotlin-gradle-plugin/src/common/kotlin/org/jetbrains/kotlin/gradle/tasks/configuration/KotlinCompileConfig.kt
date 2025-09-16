@@ -73,12 +73,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 task.project.plugins.withId("org.gradle.kotlin.kotlin-dsl") {
                     task.kotlinDslPluginIsPresent.value(true).disallowChanges()
                 }
-
                 task.kotlinCompilerVersion.value(
-                    task.runViaBuildToolsApi.zip(task.customCompilerVersion.map { "-${task.name}" }.orElse("")) { runViaBuildToolsApi, prefixedCustomCompilerVersion ->
+                    task.runViaBuildToolsApi.map {
                         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                        if (runViaBuildToolsApi) {
-                            val btaConfiguration = project.configurations.named("$BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME$prefixedCustomCompilerVersion").get()
+                        if (it) {
+                            val btaConfiguration = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME).get()
                             val version = btaConfiguration.findBuildToolsApiImplVersion()
                             if (version == "null") {
                                 null
@@ -89,9 +88,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                                     null
                                 }
                             }
-                        } else {
+                        } else
                             project.kotlinToolingVersion
-                        }
                     }
                 )
             }

@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
-import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
@@ -134,11 +132,6 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
 
     @get:Internal
     internal abstract val runViaBuildToolsApi: Property<Boolean>
-
-    @ExperimentalKotlinGradlePluginApi
-    @ExperimentalBuildToolsApi
-    @get:Internal
-    abstract val customCompilerVersion: Property<String>
 
     protected fun validateCompilerClasspath() {
         // Note that the check triggers configuration resolution

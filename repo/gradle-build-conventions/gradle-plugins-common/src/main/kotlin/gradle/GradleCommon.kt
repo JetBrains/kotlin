@@ -659,21 +659,8 @@ private fun KotlinCompile.configureRunViaKotlinBuildToolsApi() {
     val runViaBuildToolsMethod = this::class.java.getMethod("getRunViaBuildToolsApi\$kotlin_gradle_plugin_common")
     @Suppress("UNCHECKED_CAST") val runViaBuildTools = runViaBuildToolsMethod.invoke(this) as Property<Boolean>
     runViaBuildTools.set(true)
-    try {
-        val customCompilerVersionMethod = KotlinCompile::class.java.getMethod("getCustomCompilerVersion")
-        @Suppress("UNCHECKED_CAST") val customCompilerVersion = customCompilerVersionMethod.invoke(this) as Property<String>
-        customCompilerVersion.set(project.kgpCompilerVersion)
-    } catch (_: NoSuchMethodException) {
-    }
     compilerExecutionStrategy.set(KotlinCompilerExecutionStrategy.IN_PROCESS)
 }
-
-val Project.kgpCompilerVersion: String
-    get() {
-        val catalogs = extensions.getByType<VersionCatalogsExtension>()
-        val libsCatalog = catalogs.named("libs")
-        return libsCatalog.findVersion("kotlin.for.gradle.plugins.compilation").get().requiredVersion
-    }
 
 /**
  * Configures the build tools API version for the project to use Kotlin compiler of the version
@@ -682,11 +669,10 @@ val Project.kgpCompilerVersion: String
 @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
 fun Project.configureBuildToolsApiVersionForGradleCompatibility() {
     if (extra.properties["avoidSettingCompilerVersionForBTA"].toString().toBoolean()) return
-    try {
-        KotlinCompile::class.java.getMethod("getCustomCompilerVersion")
-    } catch (_: NoSuchMethodException) {
-        (extensions.getByName("kotlin") as KotlinBaseExtension).compilerVersion.set(kgpCompilerVersion)
-    }
+    val catalogs = extensions.getByType<VersionCatalogsExtension>()
+    val libsCatalog = catalogs.named("libs")
+    val kgpCompilerVersion = libsCatalog.findVersion("kotlin.for.gradle.plugins.compilation").get().requiredVersion
+    (extensions.getByName("kotlin") as KotlinBaseExtension).compilerVersion.set(kgpCompilerVersion)
 }
 
 // Will allow combining outputs of multiple SourceSets
