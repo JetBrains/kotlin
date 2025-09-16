@@ -251,8 +251,6 @@ object StandardClassIds {
 
         val associatedObjectAnnotations = hashSetOf(AssociatedObjectKey, ExperimentalAssociatedObjects)
 
-        val ActualizeByJvmBuiltinProvider = "ActualizeByJvmBuiltinProvider".internalId()
-
         val JvmBuiltin = "JvmBuiltin".internalId()
         val SuppressBytecodeGeneration = "SuppressBytecodeGeneration".internalId()
 

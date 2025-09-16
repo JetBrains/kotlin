@@ -124,12 +124,6 @@ internal enum class RequireKotlinVersionKind {
 internal annotation class ContractsDsl
 
 /**
- * Allows matching an actual declaration for the annotated expect from serialized builtins dependency on JVM
- */
-@OptionalExpectation
-internal expect annotation class ActualizeByJvmBuiltinProvider()
-
-/**
  * Specifies that all file declarations are builtins and should be serialized to .kotlin_metadata
  */
 @Target(AnnotationTarget.FILE)
