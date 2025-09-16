@@ -9,6 +9,7 @@ import com.google.gwt.dev.js.ScopeContext
 import com.google.gwt.dev.js.parserExceptions.JsParserException
 import org.antlr.v4.runtime.ParserRuleContext
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
 class JsAstMapper(scope: JsScope, private val fileName: String) {
     companion object {
@@ -19,7 +20,7 @@ class JsAstMapper(scope: JsScope, private val fileName: String) {
 
     private val scopeContext = ScopeContext(scope)
 
-    fun mapStatement(statement: ParserRuleContext): JsStatement {
+    fun mapStatement(statement: JavaScriptParser.StatementContext): JsStatement {
         val jsStatement = map(statement)
         if (jsStatement !is JsStatement)
             throw createParserException("Expecting a statement", statement)
@@ -27,7 +28,7 @@ class JsAstMapper(scope: JsScope, private val fileName: String) {
         return jsStatement
     }
 
-    fun mapFunction(function: ParserRuleContext): JsFunction {
+    fun mapFunction(function: JavaScriptParser.FunctionDeclarationContext): JsFunction {
         val jsFunction = map(function)
         if (jsFunction !is JsFunction)
             throw createParserException("Expecting a function", function)

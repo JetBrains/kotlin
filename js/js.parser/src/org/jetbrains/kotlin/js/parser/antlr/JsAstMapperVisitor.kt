@@ -131,11 +131,11 @@ class JsAstMapperVisitor(
         return JsVars.JsVar(id, initialization).applyLocation(fileName, ctx)
     }
 
-    override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsStatement? {
-        return null
+    override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsEmpty {
+        return JsEmpty
     }
 
-    override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext): JsStatement? {
+    override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext): JsStatement {
         return visitNode<JsExpression>(ctx.expressionSequence()).makeStmt()
     }
 
@@ -207,7 +207,7 @@ class JsAstMapperVisitor(
 
     override fun visitVarModifier(ctx: JavaScriptParser.VarModifierContext): JsNode? {
         // There is no JS node that represents 'var' modifier.
-        return null
+        raiseParserException("There is no JS node that represents 'var' modifier.", ctx)
     }
 
     override fun visitContinueStatement(ctx: JavaScriptParser.ContinueStatementContext): JsContinue {
@@ -226,8 +226,9 @@ class JsAstMapperVisitor(
         }
     }
 
-    override fun visitYieldStatement(ctx: JavaScriptParser.YieldStatementContext): JsNode? {
-        raiseParserException("yield statement is not supported yet", ctx)
+    override fun visitYieldStatement(ctx: JavaScriptParser.YieldStatementContext): JsStatement {
+        val expression = visitNode<JsExpression>(ctx.expressionSequence())
+        return JsYield(expression).makeStmt()
     }
 
     override fun visitWithStatement(ctx: JavaScriptParser.WithStatementContext): JsNode? {
@@ -258,12 +259,12 @@ class JsAstMapperVisitor(
 
     override fun visitCaseBlock(ctx: JavaScriptParser.CaseBlockContext): JsNode? {
         // JS AST doesn't have a node representing switch body.
-        return null
+        raiseParserException("There is no JS node that represents 'switch' body.", ctx)
     }
 
     override fun visitCaseClauses(ctx: JavaScriptParser.CaseClausesContext): JsNode? {
         // JS AST doesn't have a node representing case clauses aggregate.
-        return null
+        raiseParserException("JS AST doesn't have a node representing case clauses aggregate.", ctx)
     }
 
     override fun visitCaseClause(ctx: JavaScriptParser.CaseClauseContext): JsCase {
@@ -342,9 +343,11 @@ class JsAstMapperVisitor(
         val name = ctx.identifier()
         val isGenerator = ctx.Multiply() != null
         val paramList = ctx.formalParameterList()
-        assert(paramList.restParameterArg() == null) { "Rest parameters are not supported yet" }
+        val restParam = paramList?.restParameterArg()
+        val formalParams = paramList?.formalParameterArg() ?: emptyList()
+        check(restParam == null) { "Rest parameters are not supported yet" }
 
-        return mapFunction(name?.text, ctx.functionBody(), paramList.formalParameterArg(), isGenerator)
+        return mapFunction(name?.text, ctx.functionBody(), formalParams, isGenerator)
     }
 
     override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsNode? {
@@ -376,8 +379,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitFormalParameterList(ctx: JavaScriptParser.FormalParameterListContext): JsNode? {
-        // JS AST doesn't have a node representing a formal parameter list.
-        return null
+        raiseParserException("JS AST doesn't have a node representing a formal parameter list.", ctx)
     }
 
     override fun visitFormalParameterArg(ctx: JavaScriptParser.FormalParameterArgContext): JsParameter {
@@ -393,7 +395,10 @@ class JsAstMapperVisitor(
     }
 
     override fun visitFunctionBody(ctx: JavaScriptParser.FunctionBodyContext): JsBlock {
-        return visitNode<JsBlock>(ctx.sourceElements())
+        ctx.sourceElements()?.let {
+            return visitNode<JsBlock>(it)
+        }
+        return JsBlock()
     }
 
     override fun visitSourceElements(ctx: JavaScriptParser.SourceElementsContext): JsBlock {
@@ -409,11 +414,11 @@ class JsAstMapperVisitor(
 
     override fun visitElementList(ctx: JavaScriptParser.ElementListContext): JsNode? {
         // JS AST doesn't have a node representing an array elements list.
-        return null
+        raiseParserException("JS AST doesn't have a node representing an array elements list.", ctx)
     }
 
     override fun visitArrayElement(ctx: JavaScriptParser.ArrayElementContext): JsExpression {
-        assert(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
+        check(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
 
         return visitNode<JsExpression>(ctx.singleExpression())
     }
@@ -467,18 +472,18 @@ class JsAstMapperVisitor(
 
     override fun visitArguments(ctx: JavaScriptParser.ArgumentsContext): JsNode? {
         // JS AST doesn't have a node representing an arguments list.'
-        return null
+        raiseParserException("JS AST doesn't have a node representing an arguments list.", ctx)
     }
 
     override fun visitArgument(ctx: JavaScriptParser.ArgumentContext): JsExpression {
-        assert(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
+        check(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
 
         ctx.singleExpression()?.let {
             return visitNode<JsExpression>(it)
         }
 
         ctx.identifier()?.let {
-            return makeRefNode(it.text)
+            return visitNode<JsNameRef>(it)
         }
 
         raiseParserException("Invalid argument: ${ctx.text}", ctx)
@@ -561,8 +566,11 @@ class JsAstMapperVisitor(
         return JsPrefixOperation(JsUnaryOperator.DEC, expression)
     }
 
-    override fun visitArgumentsExpression(ctx: JavaScriptParser.ArgumentsExpressionContext): JsNode? {
-        raiseParserException("Not yet implemented", ctx)
+    override fun visitArgumentsExpression(ctx: JavaScriptParser.ArgumentsExpressionContext): JsInvocation {
+        val qualifier = visitNode<JsExpression>(ctx.singleExpressionImpl())
+        val arguments = ctx.arguments().argument().map { visitNode<JsExpression>(it) }
+
+        return JsInvocation(qualifier, arguments)
     }
 
     override fun visitAwaitExpression(ctx: JavaScriptParser.AwaitExpressionContext): JsNode? {
@@ -719,8 +727,9 @@ class JsAstMapperVisitor(
         return JsPostfixOperation(JsUnaryOperator.INC, expression)
     }
 
-    override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext): JsNode? {
-        raiseParserException("Yield expressions are not supported yet", ctx)
+    override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext): JsYield {
+        val expression = visitNode<JsExpression>(ctx.expressionSequence())
+        return JsYield(expression)
     }
 
     override fun visitBitNotExpression(ctx: JavaScriptParser.BitNotExpressionContext): JsPrefixOperation {
@@ -751,8 +760,8 @@ class JsAstMapperVisitor(
     }
 
     override fun visitMemberDotExpression(ctx: JavaScriptParser.MemberDotExpressionContext): JsNode? {
-        assert(ctx.QuestionMark() == null) { "Optional chain expressions are not supported yet" }
-        assert(ctx.Hashtag() == null) { "Private member access expressions are not supported yet" }
+        check(ctx.QuestionMark() == null) { "Optional chain expressions are not supported yet" }
+        check(ctx.Hashtag() == null) { "Private member access expressions are not supported yet" }
 
         val jsLeft = visitNode<JsExpression>(ctx.singleExpressionImpl())
         val jsRight = scopeContext.referenceFor(ctx.identifierName().text)
@@ -767,7 +776,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitMemberIndexExpression(ctx: JavaScriptParser.MemberIndexExpressionContext): JsArrayAccess {
-        assert(ctx.QuestionMarkDot() == null) { "Optional chain expressions are not supported yet" }
+        check(ctx.QuestionMarkDot() == null) { "Optional chain expressions are not supported yet" }
         val jsObjectExpr = visitNode<JsExpression>(ctx.singleExpressionImpl())
         val jsMemberExpr = visitNode<JsExpression>(ctx.expressionSequence())
 
@@ -846,7 +855,7 @@ class JsAstMapperVisitor(
     override fun visitNamedFunction(ctx: JavaScriptParser.NamedFunctionContext): JsFunction {
         val declaration = ctx.functionDeclaration()
         val name = declaration.identifier()
-        assert(declaration.Async() == null) { "Async functions are not supported yet"}
+        check(declaration.Async() == null) { "Async functions are not supported yet"}
         val isGenerator = declaration.Multiply() != null
 
         return mapFunction(name?.text, declaration.functionBody(), declaration.formalParameterList().formalParameterArg(), isGenerator)
@@ -855,21 +864,22 @@ class JsAstMapperVisitor(
     override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext): JsFunction {
         val isGenerator = ctx.Multiply() != null
         val paramList = ctx.formalParameterList()
-        assert(paramList.restParameterArg() == null) { "Rest parameters are not supported yet" }
+        val restParam = paramList?.restParameterArg()
+        val formalParams = paramList?.formalParameterArg() ?: emptyList()
+        check(restParam == null) { "Rest parameters are not supported yet" }
 
-        return mapFunction(null, ctx.functionBody(), paramList.formalParameterArg(), isGenerator)
+        return mapFunction(null, ctx.functionBody(), formalParams, isGenerator)
     }
 
     override fun visitArrowFunction(ctx: JavaScriptParser.ArrowFunctionContext): JsFunction {
-        assert(ctx.Async() == null) { "Async arrow functions are not supported yet"}
+        check(ctx.Async() == null) { "Async arrow functions are not supported yet" }
         val parameters = ctx.arrowFunctionParameters()
 
         return mapFunction(null, ctx.arrowFunctionBody().functionBody(), parameters.formalParameterList().formalParameterArg(), false)
     }
 
     override fun visitArrowFunctionParameters(ctx: JavaScriptParser.ArrowFunctionParametersContext): JsNode? {
-        // JS AST doesn't have specific nodes for arrow function parameters
-        return null
+        raiseParserException(" JS AST doesn't have specific nodes for arrow function parameters", ctx)
     }
 
     override fun visitArrowFunctionBody(ctx: JavaScriptParser.ArrowFunctionBodyContext): JsBlock {
@@ -891,7 +901,7 @@ class JsAstMapperVisitor(
 
     override fun visitAssignmentOperator(ctx: JavaScriptParser.AssignmentOperatorContext): JsNode? {
         // JS AST doesn't have specific nodes for assignment operators
-        return null
+        raiseParserException("JS AST doesn't have specific nodes for assignment operators", ctx)
     }
 
     override fun visitLiteral(ctx: JavaScriptParser.LiteralContext): JsLiteral {
@@ -956,7 +966,7 @@ class JsAstMapperVisitor(
         }
 
         ctx.HexIntegerLiteral()?.let { hexTerminal ->
-            return hexTerminal.toDecimalLiteral()
+            return hexTerminal.toHexLiteral()
         }
 
         raiseParserException("Invalid numeric literal '${ctx.text}'", ctx)
@@ -976,7 +986,7 @@ class JsAstMapperVisitor(
 
     override fun visitIdentifierName(ctx: JavaScriptParser.IdentifierNameContext): JsNode? {
         // There is no JS node that represents identifier name.
-        return null
+        raiseParserException("There is no JS node that represents identifier name")
     }
 
     override fun visitIdentifier(ctx: JavaScriptParser.IdentifierContext): JsNameRef {
@@ -985,12 +995,12 @@ class JsAstMapperVisitor(
 
     override fun visitReservedWord(ctx: JavaScriptParser.ReservedWordContext): JsNode? {
         // There is no JS node that represents reserved word.
-        return null
+        raiseParserException("There is no JS node that represents reserved word")
     }
 
     override fun visitKeyword(ctx: JavaScriptParser.KeywordContext): JsNode? {
         // There is no JS node that represents keyword.
-        return null
+        raiseParserException("There is no JS node that represents keyword", ctx)
     }
 
     override fun visitLet_(ctx: JavaScriptParser.Let_Context): JsNode? {
@@ -1073,7 +1083,7 @@ class JsAstMapperVisitor(
     }
 
     private fun makeRefNode(identifier: String): JsNameRef {
-        return scopeContext.referenceFor(identifier)
+        return scopeContext.globalNameFor(identifier).makeRef()
     }
 
     private fun unwrapStringLiteral(literal: TerminalNode): String {
@@ -1099,7 +1109,7 @@ class JsAstMapperVisitor(
     }
 
     private fun TerminalNode.toHexLiteral(): JsIntLiteral {
-        return JsIntLiteral(text.removePrefix("0x").toInt(16))
+        return JsIntLiteral(text.removePrefix("0x").removePrefix("0X").hexToInt())
     }
 
     private inline fun <reified T> visitNode(node: ParseTree): T =
@@ -1115,5 +1125,10 @@ class JsAstMapperVisitor(
 
     private fun raiseParserException(message: String, rule: ParserRuleContext? = null): Nothing {
         throw JsParserException("Parser encountered internal error: $message", rule?.startPosition ?: CodePosition(0, 0))
+    }
+
+    private fun check(condition: Boolean, position: CodePosition? = null, messageFactory: () -> String) {
+        if (!condition)
+            throw JsParserException(messageFactory(), position ?: CodePosition(0, 0))
     }
 }

@@ -70,7 +70,7 @@ abstract class JavaScriptParserBase(input: TokenStream?) : Parser(input) {
         if (possibleIndexEosToken < 0) return false
         var ahead = _input.get(possibleIndexEosToken)
 
-        if (ahead.channel != Lexer.HIDDEN || ahead.channel != JavaScriptLexer.COMMENTS) {
+        if (ahead.channel != Lexer.HIDDEN && ahead.channel != JavaScriptLexer.COMMENTS) {
             // We're only interested in tokens on the HIDDEN channel.
             return false
         }
