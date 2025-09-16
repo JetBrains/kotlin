@@ -8,6 +8,8 @@ package test.io
 import java.io.File
 import java.io.IOException
 import java.util.*
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.createTempFile
 import kotlin.test.*
 
 class FileTreeWalkTest {
@@ -16,7 +18,7 @@ class FileTreeWalkTest {
         val referenceFilenames =
                 listOf("1", "1/2", "1/3", "1/3/4.txt", "1/3/5.txt", "6", "7.txt", "8", "8/9.txt")
         fun createTestFiles(): File {
-            val basedir = @Suppress("DEPRECATION") createTempDir()
+            val basedir = createTempDirectory().toFile()
             for (name in referenceFilenames) {
                 val file = basedir.resolve(name)
                 if (file.extension.isEmpty())
@@ -52,7 +54,7 @@ class FileTreeWalkTest {
     }
 
     @Test fun singleFile() {
-        val testFile = @Suppress("DEPRECATION") createTempFile()
+        val testFile = createTempFile().toFile()
         val nonExistantFile = testFile.resolve("foo")
         try {
             for (walk in listOf(File::walkTopDown, File::walkBottomUp)) {
@@ -437,26 +439,26 @@ class FileTreeWalkTest {
         }
     }
 
-    @Suppress("DEPRECATION")
     @Test fun streamFileTree() {
-        val dir = createTempDir()
+        val dir = createTempDirectory()
+        val dirAsFile = dir.toFile()
         try {
-            val subDir1 = createTempDir(prefix = "d1_", directory = dir)
-            val subDir2 = createTempDir(prefix = "d2_", directory = dir)
-            createTempDir(prefix = "d1_", directory = subDir1)
+            val subDir1 = createTempDirectory(prefix = "d1_", directory = dir)
+            val subDir2 = createTempDirectory(prefix = "d2_", directory = dir)
+            createTempDirectory(prefix = "d1_", directory = subDir1)
             createTempFile(prefix = "f1_", directory = subDir1)
-            createTempDir(prefix = "d1_", directory = subDir2)
-            assertEquals(6, dir.walkTopDown().count())
+            createTempDirectory(prefix = "d1_", directory = subDir2)
+            assertEquals(6, dirAsFile.walkTopDown().count())
         } finally {
-            dir.deleteRecursively()
+            dirAsFile.deleteRecursively()
         }
-        dir.mkdir()
+        dirAsFile.mkdir()
         try {
-            val it = dir.walkTopDown().iterator()
+            val it = dirAsFile.walkTopDown().iterator()
             it.next()
             assertFailsWith<NoSuchElementException>("Second call to next() should fail.") { it.next() }
         } finally {
-            dir.delete()
+            dirAsFile.delete()
         }
     }
 
