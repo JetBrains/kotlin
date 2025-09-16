@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinAndroidExtensionOrNull
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -495,7 +494,9 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
 
             build(":compileKotlinLinuxX64") {
                 extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinuxX64") {
+                    @Suppress("DEPRECATION")
                     assertCommandLineArgumentsContain(CommonCompilerArguments::languageVersion.cliArgument, firstSupported.version)
+                    @Suppress("DEPRECATION")
                     assertCommandLineArgumentsContain(CommonCompilerArguments::apiVersion.cliArgument, firstSupported.version)
                     assertCommandLineArgumentsContain("-progressive")
                 }

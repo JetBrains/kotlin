@@ -6,18 +6,20 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.testkit.runner.BuildResult
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import kotlin.reflect.KClass
 
+@Suppress("DEPRECATION")
 inline fun <reified T : CommonCompilerArguments> BuildResult.parseCompilerArguments(): T {
     return parseCompilerArguments(T::class)
 }
 
+@Suppress("DEPRECATION")
 fun <T : CommonCompilerArguments> BuildResult.parseCompilerArguments(type: KClass<T>): T {
     return parseCompilerArgumentsFromBuildOutput(type, output)
 }
 
+@Suppress("DEPRECATION")
 fun <T : CommonCompilerArguments> parseCompilerArgumentsFromBuildOutput(type: KClass<T>, buildOutput: String): T {
     val arguments = findCommandLineArguments(buildOutput).lines().map { it.trim() }
     return parseCommandLineArguments(type, arguments)

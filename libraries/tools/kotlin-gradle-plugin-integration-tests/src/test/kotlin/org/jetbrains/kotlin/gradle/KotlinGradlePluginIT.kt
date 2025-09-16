@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -282,7 +281,9 @@ class KotlinGradleIT : KGPBaseTest() {
 
             // check the arguments are not passed by default (they are inferred by the compiler)
             build("clean", "compileKotlin") {
+                @Suppress("DEPRECATION")
                 assertOutputDoesNotContain(CommonCompilerArguments::languageVersion.cliArgument)
+                @Suppress("DEPRECATION")
                 assertOutputDoesNotContain(CommonCompilerArguments::apiVersion.cliArgument)
                 assertNoBuildWarnings()
             }
@@ -293,7 +294,9 @@ class KotlinGradleIT : KGPBaseTest() {
 
             updateBuildGradle(firstSupported, firstApiVersion)
             build("clean", "compileKotlin") {
+                @Suppress("DEPRECATION")
                 assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} $firstSupported")
+                @Suppress("DEPRECATION")
                 assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} $firstApiVersion")
             }
 
@@ -302,7 +305,9 @@ class KotlinGradleIT : KGPBaseTest() {
 
             updateBuildGradle(latestStable, latestApiStable)
             build("clean", "compileKotlin") {
+                @Suppress("DEPRECATION")
                 assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} $latestStable")
+                @Suppress("DEPRECATION")
                 assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} $latestApiStable")
             }
         }
