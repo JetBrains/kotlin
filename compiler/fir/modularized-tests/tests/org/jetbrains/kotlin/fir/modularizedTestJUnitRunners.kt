@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import java.io.File
+import org.junit.jupiter.api.io.TempDir
 
 
 abstract class AbstractModularizedJUnit4Test<T : AbstractModularizedTest>(protected val test: T) : KtUsefulTestCase() {
@@ -42,4 +44,20 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit4Test<No
     NonFirResolveModularizedTotalKotlinTestPure(modularizedTestConfigFromSystemProperties())
 ) {
     fun testTotalKotlin() = test.testTotalKotlin()
+}
+
+// base for generated tests
+@Suppress("unused")
+abstract class AbstractIsolatedFulPipelineTestRunner {
+
+    abstract val config: ModularizedTestConfig
+
+    @TempDir
+    lateinit var tempPath: File
+
+    private val test by lazy { AbstractIsolatedFullPipelineModularizedTest(config) }
+
+    fun runTest(modelPath: String) {
+        test.runSingleModelCompilation(modelPath, tempPath)
+    }
 }

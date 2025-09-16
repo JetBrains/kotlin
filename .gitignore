@@ -62,3 +62,4 @@ kotlin-ide/
 .teamcity/
 .npmrc
 /.idea/AndroidProjectSystem.xml
+compiler/fir/modularized-tests/tests-gen
