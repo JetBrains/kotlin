@@ -26,11 +26,13 @@ internal fun TestGroupSuite.generateStubsTests() {
         }
 
         testClass<AbstractCompiledJsStubsTest> {
-            model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            // 1.9 is not supported for non-JVM platforms, so k1 is excluded
+            model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractCompiledCommonStubsTest> {
-            model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            // 1.9 is not supported for non-JVM platforms, so k1 is excluded
+            model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractDecompiledJvmTextTest> {
@@ -38,11 +40,13 @@ internal fun TestGroupSuite.generateStubsTests() {
         }
 
         testClass<AbstractDecompiledJsTextTest> {
-            model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            // 1.9 is not supported for non-JVM platforms, so k1 is excluded
+            model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractDecompiledCommonTextTest> {
-            model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            // 1.9 is not supported for non-JVM platforms, so k1 is excluded
+            model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 }
