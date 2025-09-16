@@ -3964,6 +3964,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val outerTypeParameters: List<KaTypeParameterSymbol>
     }
 
+    interface TypealiasExpandsToCompilerRequiredAnnotationError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = TypealiasExpandsToCompilerRequiredAnnotationError::class
+        val annotation: KaClassLikeSymbol
+    }
+
+    interface TypealiasExpandsToCompilerRequiredAnnotationWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = TypealiasExpandsToCompilerRequiredAnnotationWarning::class
+        val annotation: KaClassLikeSymbol
+    }
+
     interface RedundantVisibilityModifier : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = RedundantVisibilityModifier::class
     }

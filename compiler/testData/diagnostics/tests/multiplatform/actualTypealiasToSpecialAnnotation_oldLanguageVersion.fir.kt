@@ -7,6 +7,6 @@ expect annotation class TypealiasToKotlinPkg
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual typealias TypealiasToKotlinPkg = kotlin.Deprecated
+actual typealias TypealiasToKotlinPkg = <!TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_WARNING!>kotlin.Deprecated<!>
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, typeAliasDeclaration */

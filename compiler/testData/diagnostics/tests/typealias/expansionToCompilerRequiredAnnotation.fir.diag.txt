@@ -1,3 +1,19 @@
-/expansionToCompilerRequiredAnnotation.kt:(854,870): error: 'public' typealias exposes 'internal' in expanded type 'JvmPackageName'.
+/expansionToCompilerRequiredAnnotation.fir.kt:(128,145): warning: Typealias to a compiler-required annotation 'kotlin.Deprecated' is not allowed. Remove the typealias and use the annotation directly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KT-79369.
 
-/expansionToCompilerRequiredAnnotation.kt:(884,898): error: Cannot access 'annotation class JvmPackageName : Annotation': it is internal in file.
+/expansionToCompilerRequiredAnnotation.fir.kt:(167,191): warning: Typealias to a compiler-required annotation 'kotlin.annotation.Target' is not allowed. Remove the typealias and use the annotation directly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KT-79369.
+
+/expansionToCompilerRequiredAnnotation.fir.kt:(217,244): warning: Typealias to a compiler-required annotation 'java.lang.annotation.Target' is not allowed. Remove the typealias and use the annotation directly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KT-79369.
+
+/expansionToCompilerRequiredAnnotation.fir.kt:(267,285): warning: Typealias to a compiler-required annotation 'kotlin.jvm.JvmName' is not allowed. Remove the typealias and use the annotation directly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KT-79369.
+
+/expansionToCompilerRequiredAnnotation.fir.kt:(322,350): warning: Typealias to a compiler-required annotation 'kotlin.DeprecatedSinceKotlin' is not allowed. Remove the typealias and use the annotation directly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KT-79369.
+
+/expansionToCompilerRequiredAnnotation.fir.kt:(377,395): warning: Typealias to a compiler-required annotation 'kotlin.SinceKotlin' is not allowed. Remove the typealias and use the annotation directly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KT-79369.
+
+/expansionToCompilerRequiredAnnotation.fir.kt:(425,445): warning: Typealias to a compiler-required annotation 'java.lang.Deprecated' is not allowed. Remove the typealias and use the annotation directly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KT-79369.
+
+/expansionToCompilerRequiredAnnotation.fir.kt:(470,490): warning: Typealias to a compiler-required annotation 'kotlin.jvm.JvmRecord' is not allowed. Remove the typealias and use the annotation directly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KT-79369.
+
+/expansionToCompilerRequiredAnnotation.fir.kt:(861,877): error: 'public' typealias exposes 'internal' in expanded type 'JvmPackageName'.
+
+/expansionToCompilerRequiredAnnotation.fir.kt:(891,905): error: Cannot access 'annotation class JvmPackageName : Annotation': it is internal in file.

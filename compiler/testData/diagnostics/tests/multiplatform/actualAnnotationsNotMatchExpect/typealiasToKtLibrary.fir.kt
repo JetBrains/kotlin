@@ -1,6 +1,7 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
+// LANGUAGE: -ForbidTypeAliasToCompilerRequiredAnnotation
 // DIAGNOSTICS: -ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, -ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING, -ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING
 // MODULE: m1-common
 // FILE: common.kt
@@ -38,9 +39,9 @@ expect abstract class MyAbstractIterator<T> {
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MyDeprecatedNotMatch = kotlin.Deprecated
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MyDeprecatedNotMatch = <!TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_WARNING!>kotlin.Deprecated<!>
 
-actual typealias MyDeprecatedMatch = kotlin.Deprecated
+actual typealias MyDeprecatedMatch = <!TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_WARNING!>kotlin.Deprecated<!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MyAbstractIterator<T> = AbstractIterator<T>
 

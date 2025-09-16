@@ -1974,6 +1974,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS by error<KtElement> {
             parameter<Set<FirTypeParameterSymbol>>("outerTypeParameters")
         }
+        val TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION by deprecationError<KtElement>(LanguageFeature.ForbidTypeAliasToCompilerRequiredAnnotation) {
+            parameter<FirRegularClassSymbol>("annotation")
+        }
     }
 
     val EXTRA_CHECKERS by object : DiagnosticGroup("Extra checkers") {

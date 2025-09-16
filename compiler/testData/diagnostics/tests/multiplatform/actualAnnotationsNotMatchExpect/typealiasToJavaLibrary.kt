@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ForbidTypeAliasToCompilerRequiredAnnotation
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
