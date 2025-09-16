@@ -10,4 +10,9 @@ class MyList {
 
 fun id(x: MyList): MyList = x
 
+fun test() {
+    val a: MyList = [[[[MyList()]]]]
+    val b: MyList = MyList.of(MyList())
+}
+
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration, operator, vararg */
