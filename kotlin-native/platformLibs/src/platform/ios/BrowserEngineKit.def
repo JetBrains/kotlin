@@ -1,4 +1,4 @@
-depends = BrowserEngineCore CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security Symbols UIKit UserNotifications darwin posix
+depends = BrowserEngineCore CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security Symbols UIKit UIUtilities UserNotifications darwin posix
 language = Objective-C
 package = platform.BrowserEngineKit
 
