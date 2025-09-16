@@ -9,8 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -292,6 +291,7 @@ fun BuildResult.extractTaskCompilerArguments(
     }.substringAfter("Kotlin compiler args:")
 }
 
+@Suppress("DEPRECATION")
 inline fun <reified T : CommonToolArguments> BuildResult.extractTaskCompilerArguments(
     taskPath: String,
     logLevel: LogLevel = LogLevel.INFO

@@ -12,7 +12,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.internal.DefaultGradleRunner
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -620,6 +620,7 @@ private fun commonBuildSetup(
         // Configure a non-default directory to be able to track Kotlin daemons started from the tests
         // Useful for the tests like KGPDaemonsBaseTest
         if (buildOptions.customKotlinDaemonRunFilesDirectory != null) {
+            @Suppress("DEPRECATION")
             "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${buildOptions.customKotlinDaemonRunFilesDirectory.absolutePath}"
         } else null,
     )

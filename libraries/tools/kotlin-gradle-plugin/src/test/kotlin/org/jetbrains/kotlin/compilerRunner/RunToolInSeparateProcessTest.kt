@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.isWindows
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.util.GradleTestCapturingKotlinLogger
 import org.junit.Rule
@@ -42,6 +41,7 @@ class RunToolInSeparateProcessTest {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun expectWindowsFailure(test: () -> Unit) {
         if (isWindows) {
             try {
@@ -86,6 +86,7 @@ class RunToolInSeparateProcessTest {
         }
         assertEquals(expectedOutput, logger.messages)
         assertEquals(emptyList(), logger.exceptions)
+        @Suppress("DEPRECATION")
         assertEquals(ExitCode.OK, exitCode)
     }
 }

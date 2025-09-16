@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
-import org.jetbrains.kotlin.cli.common.arguments.preprocessCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 
 /**
  * A dummy class to be run via in [RunToolInSeparateProcessTest]
  */
+@Suppress("DEPRECATION")
 class DummyCompilerClass {
     companion object {
         @JvmStatic

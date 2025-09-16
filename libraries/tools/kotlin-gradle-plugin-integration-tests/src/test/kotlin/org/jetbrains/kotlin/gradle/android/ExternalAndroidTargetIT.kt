@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
@@ -198,12 +198,14 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
                 val parcelizeJar = "kotlin-parcelize-compiler-$KOTLIN_VERSION.jar"
 
                 assertTasksExecuted(":compileAndroidMain")
+                @Suppress("DEPRECATION")
                 val compileAndroidArguments = extractTaskCompilerArguments<K2JVMCompilerArguments>(":compileAndroidMain")
                 if (compileAndroidArguments.pluginClasspaths.orEmpty().none { File(it).name == parcelizeJar }) {
                     fail("Expected '$parcelizeJar' to be passed as a plugin classpath to the Kotlin compiler for :compileAndroidMain")
                 }
 
                 assertTasksExecuted(":compileKotlinJvm")
+                @Suppress("DEPRECATION")
                 val compileJvmArguments = extractTaskCompilerArguments<K2JVMCompilerArguments>(":compileKotlinJvm")
                 if (compileJvmArguments.pluginClasspaths.orEmpty().any { File(it).name == parcelizeJar }) {
                     fail("Expected '$parcelizeJar' to NOT be passed as a plugin classpath to the Kotlin compiler for :compileKotlinJvm")
