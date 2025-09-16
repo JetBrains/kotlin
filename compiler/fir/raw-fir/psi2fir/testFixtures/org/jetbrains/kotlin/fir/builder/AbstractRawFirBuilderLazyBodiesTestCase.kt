@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd
 import java.io.File
 
@@ -19,7 +20,7 @@ abstract class AbstractRawFirBuilderLazyBodiesTestCase : AbstractRawFirBuilderTe
         val firFileDump = FirRenderer().renderElementAsString(firFile)
         val originalExpectedFile = File(expectedPath(filePath, ".lazyBodies.txt"))
         val alternativeExpectedFile = expectedAlternativeFileIfExists(filePath)
-        KotlinTestUtils.assertEqualsToFile(alternativeExpectedFile ?: originalExpectedFile, firFileDump)
+        firFileDump.assertEqualsToFile(alternativeExpectedFile ?: originalExpectedFile)
 
         val alternativeFileContent = alternativeExpectedFile?.readText()?.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd()
             ?: return

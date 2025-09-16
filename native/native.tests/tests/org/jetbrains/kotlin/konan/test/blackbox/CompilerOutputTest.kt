@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -78,7 +79,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
         val goldenData = rootDir.resolve("output.txt")
 
-        KotlinTestUtils.assertEqualsToFile(goldenData, sanitizeCompilerOutput(compilationResult.toOutput()))
+        sanitizeCompilerOutput(compilationResult.toOutput()).assertEqualsToFile(goldenData)
     }
 
     @Test
@@ -87,7 +88,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val compilationResult = doBuildObjCFrameworkWithNameCollisions(rootDir, listOf("-Xbinary=objcExportReportNameCollisions=true"))
         val goldenData = rootDir.resolve("output.txt")
 
-        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
+        compilationResult.toOutput().sanitizeCompilationOutput().assertEqualsToFile(goldenData)
     }
 
     @Test
@@ -97,7 +98,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         assertIs<TestCompilationResult.Failure>(compilationResult)
         val goldenData = rootDir.resolve("error.txt")
 
-        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
+        compilationResult.toOutput().sanitizeCompilationOutput().assertEqualsToFile(goldenData)
     }
 
     @Test
@@ -123,7 +124,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             if (testRunSettings.get<CacheMode>().useStaticCacheForDistributionLibraries) "logging_cache_warning.txt" else "empty.txt"
         )
 
-        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
+        compilationResult.toOutput().sanitizeCompilationOutput().assertEqualsToFile(goldenData)
     }
 
     fun String.sanitizeCompilationOutput(): String = lines().joinToString(separator = "\n") { line ->
@@ -155,7 +156,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val compilationResult = compilation.result
         val goldenData = rootDir.resolve("logging_invalid_error.txt")
 
-        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
+        compilationResult.toOutput().sanitizeCompilationOutput().assertEqualsToFile(goldenData)
     }
 
     private fun doBuildObjCFrameworkWithNameCollisions(rootDir: File, additionalOptions: List<String>): TestCompilationResult<out TestCompilationArtifact.ObjCFramework> {
@@ -210,7 +211,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             .replace("MyClassObjC\\d+".toRegex(), "MyClassObjC*")
         val goldenData = testClashingBindClassToObjCNameRootDir.resolve("${name}.output.txt")
 
-        KotlinTestUtils.assertEqualsToFile(goldenData, output.sanitizeCompilationOutput())
+        output.sanitizeCompilationOutput().assertEqualsToFile(goldenData)
     }
 
     @Test
@@ -294,9 +295,8 @@ class CompilerOutputTest : CompilerOutputTestBase() {
             dependencies = listOf(poisonedLibrary, library)
         ).toOutput()
 
-        KotlinTestUtils.assertEqualsToFile(
-            rootDir.resolve("output.txt"),
-            compilationResult.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
+        compilationResult.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>").assertEqualsToFile(
+            rootDir.resolve("output.txt")
         )
     }
 
@@ -323,9 +323,8 @@ class CompilerOutputTest : CompilerOutputTestBase() {
             dependencies = listOf(poisonedLibrary, library)
         ).toOutput()
 
-        KotlinTestUtils.assertEqualsToFile(
-            rootDir.resolve("output.txt"),
-            compilationResult.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
+        compilationResult.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>").assertEqualsToFile(
+            rootDir.resolve("output.txt")
         )
     }
 }

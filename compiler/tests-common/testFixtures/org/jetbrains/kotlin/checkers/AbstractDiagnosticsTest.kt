@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.util.DescriptorValidator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE
@@ -212,10 +213,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         if (shouldCheckDiagnosticsFullText) {
             diagnosticsFullTextCollector.flush()
             diagnosticsFullTextPrintStream.flush()
-            KotlinTestUtils.assertEqualsToFile(
-                File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".diag.txt"),
-                String(diagnosticsFullTextByteArrayStream.toByteArray())
-            )
+            String(diagnosticsFullTextByteArrayStream.toByteArray())
+                .assertEqualsToFile(File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".diag.txt"))
         }
 
         checkDiagnostics(actualText.cleanupInferenceDiagnostics(), testDataFile)
@@ -232,7 +231,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     }
 
     protected open fun checkDiagnostics(actualText: String, testDataFile: File) {
-        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText)
+        actualText.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile))
     }
 
     private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
@@ -328,7 +327,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         }
 
         if (actualText.isNotEmpty() || expectedFile.exists()) {
-            KotlinTestUtils.assertEqualsToFile(expectedFile, actualText.toString())
+            actualText.toString().assertEqualsToFile(expectedFile)
         }
     }
 
@@ -508,7 +507,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     "Such tests are hard to maintain, take long time to execute and are subject to sudden unreviewed changes anyway."
         }
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText)
+        allPackagesText.assertEqualsToFile(expectedFile)
     }
 
 

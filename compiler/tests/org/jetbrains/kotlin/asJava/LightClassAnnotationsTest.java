@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.classes.KtLightClass;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.test.FileTestDataAssertionsKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 
@@ -66,6 +67,6 @@ public class LightClassAnnotationsTest extends KotlinAsJavaTestBase {
             sb.append(annotation.getText()).append("\n");
         }
 
-        KotlinTestUtils.assertEqualsToFile(new File(testDir, getTestName(false) + ".annotations.txt"), sb.toString());
+        FileTestDataAssertionsKt.assertEqualsToFile(sb.toString(), new File(testDir, getTestName(false) + ".annotations.txt"));
     }
 }

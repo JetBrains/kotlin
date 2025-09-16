@@ -24,7 +24,7 @@ import java.util.regex.Pattern
  *
  * Apart from number placeholders, regular number and quoted string literals are also supported.
  *
- * See [ValueAgnosticSanitizerTest] for more detail.
+ * See [org.jetbrains.kotlin.test.ValueAgnosticSanitizerTest] for more detail.
  */
 class ValueAgnosticSanitizer(val actualText: String) {
     companion object {

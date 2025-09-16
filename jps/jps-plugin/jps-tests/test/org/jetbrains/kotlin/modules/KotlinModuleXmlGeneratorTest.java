@@ -10,6 +10,7 @@ import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.build.JvmSourceRoot;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.jps.build.AbstractKotlinJpsBuildTestCase;
+import org.jetbrains.kotlin.test.FileTestDataAssertionsKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -36,7 +37,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptyList(),
                 IncrementalCompilation.isEnabledForJvm()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/basic.xml"), actual);
+        FileTestDataAssertionsKt.assertEqualsToFile(actual, new File(getTestDataPath() + "/basic.xml"));
     }
 
     public void testFiltered() {
@@ -54,7 +55,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptyList(),
                 IncrementalCompilation.isEnabledForJvm()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/filtered.xml"), actual);
+        FileTestDataAssertionsKt.assertEqualsToFile(actual, new File(getTestDataPath() + "/filtered.xml"));
     }
 
     public void testMultiple() {
@@ -88,7 +89,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 IncrementalCompilation.isEnabledForJvm()
         );
         String actual = builder.asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/multiple.xml"), actual);
+        FileTestDataAssertionsKt.assertEqualsToFile(actual, new File(getTestDataPath() + "/multiple.xml"));
     }
 
     public void testModularJdkRoot() {
@@ -106,6 +107,6 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptyList(),
                 IncrementalCompilation.isEnabledForJvm()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + "/modularJdkRoot.xml"), actual);
+        FileTestDataAssertionsKt.assertEqualsToFile(actual, new File(getTestDataPath() + "/modularJdkRoot.xml"));
     }
 }

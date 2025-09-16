@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import java.io.File
 
 @OptIn(SymbolInternals::class)
@@ -51,9 +52,6 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
             builder.appendLine()
         }
 
-        KotlinTestUtils.assertEqualsToFile(
-            File(testDataPath),
-            builder.toString().trimEnd() + "\n"
-        )
+        (builder.toString().trimEnd() + "\n").assertEqualsToFile(File(testDataPath))
     }
 }

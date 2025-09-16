@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.test
 import java.io.File
 import java.nio.file.Path
 
+val IS_UNDER_TEAMCITY = System.getenv("TEAMCITY_VERSION") != null
+
 abstract class Assertions {
     val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
 

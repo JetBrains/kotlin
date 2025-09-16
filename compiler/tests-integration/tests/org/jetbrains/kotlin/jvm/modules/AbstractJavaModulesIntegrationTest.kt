@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.test.JavaCompilationError
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -77,9 +78,16 @@ abstract class AbstractJavaModulesIntegrationTest(
     private fun checkKotlinOutput(moduleName: String): (String) -> Unit {
         val expectedFirFile = File(testDataDirectory, "$moduleName.fir.txt")
         return { actual ->
-            KotlinTestUtils.assertEqualsToFile(
-                if (languageVersion.usesK2 && expectedFirFile.exists()) expectedFirFile else File(testDataDirectory, "$moduleName.txt"),
-                getNormalizedCompilerOutput(actual, null, testDataPath, tmpdir.absolutePath)
+            getNormalizedCompilerOutput(
+                actual,
+                null,
+                testDataPath,
+                tmpdir.absolutePath
+            ).assertEqualsToFile(
+                if (languageVersion.usesK2 && expectedFirFile.exists()) expectedFirFile else File(
+                    testDataDirectory,
+                    "$moduleName.txt"
+                )
             )
         }
     }

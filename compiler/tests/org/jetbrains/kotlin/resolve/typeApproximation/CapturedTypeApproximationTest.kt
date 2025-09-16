@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -134,7 +135,7 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(testDataPath + "/" + filePath), result)
+        result.assertEqualsToFile(File(testDataPath + "/" + filePath))
     }
 
     private fun getTypePatternsForOneTypeVariable() = listOf("In<#T#>", "Out<#T#>", "Inv<#T#>", "Inv<in #T#>", "Inv<out #T#>")

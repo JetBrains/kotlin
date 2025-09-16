@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.test.JavaCompilationResult
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -178,7 +179,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         val result = AbstractCliTest.executeCompilerGrabOutput(compiler, args)
         if (expectedFileName != null) {
-            KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, expectedFileName), sanitizeCompilerOutput(normalizeOutput(result)))
+            sanitizeCompilerOutput(normalizeOutput(result)).assertEqualsToFile(File(testDataDirectory, expectedFileName))
         }
         return result
     }

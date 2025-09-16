@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Compa
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.jupiter.api.Tag
@@ -108,7 +109,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         )
 
         val expectedOutput = rootDir.resolve("output.txt")
-        KotlinTestUtils.assertEqualsToFile(expectedOutput, compilationResult.toOutput().sanitizeCompilationOutput())
+        compilationResult.toOutput().sanitizeCompilationOutput().assertEqualsToFile(expectedOutput)
 
         compareManifests(compilationResult, rootDir.resolve("manifest"))
     }
@@ -130,7 +131,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             val klibRoot = compilationResult.assertSuccess().resultingArtifact
             val actualManifestSanitizedText = readManifestAndSanitize(klibRoot.klibFile, targets.testTarget)
 
-            KotlinTestUtils.assertEqualsToFile(expectedManifest, actualManifestSanitizedText)
+            actualManifestSanitizedText.assertEqualsToFile(expectedManifest)
         }
 
 

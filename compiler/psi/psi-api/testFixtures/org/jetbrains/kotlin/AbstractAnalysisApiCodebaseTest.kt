@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -148,7 +149,7 @@ abstract class AbstractAnalysisApiCodebaseDumpFileComparisonTest :
 
         val expectedFile = getExpectedFile()
         val errorMessage = getErrorMessage()
-        KotlinTestUtils.assertEqualsToFile(errorMessage, expectedFile, actualText)
+        actualText.assertEqualsToFile(expectedFile, message = errorMessage)
     }
 
     private fun SourceDirectory.ForDumpFileComparison.getExpectedFile(): File {

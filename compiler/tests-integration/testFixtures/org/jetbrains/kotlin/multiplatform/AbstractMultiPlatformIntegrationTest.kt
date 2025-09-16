@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
@@ -88,7 +89,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(root, "output.txt"), result.replace('\\', '/'))
+        result.replace('\\', '/').assertEqualsToFile(File(root, "output.txt"))
     }
 
     private fun findStdlibCommon(): File {

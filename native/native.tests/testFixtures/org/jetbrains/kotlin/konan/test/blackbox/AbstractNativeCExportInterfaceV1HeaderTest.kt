@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.junit.jupiter.api.Tag
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -59,7 +60,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         val headerFile = binaryLibrary.headerFile
             ?: error("No header file found for ${moduleName}")
 
-        KotlinTestUtils.assertEqualsToFile(goldenDataHeaderFile.toFile(), headerFile.readText())
+        headerFile.readText().assertEqualsToFile(goldenDataHeaderFile.toFile())
     }
 
     private fun resolveTargetSpecificGoldenDataFile(pathToTestFile: Path): Path {

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.test.util
 
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
+import org.jetbrains.kotlin.test.compareExpectFileWithActualText
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import org.junit.Assume
@@ -14,11 +16,11 @@ import java.io.File
 
 object JUnit4Assertions : Assertions() {
     override fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String): Boolean {
-        return KotlinTestUtils.compareExpectFileWithActualText(expectedFile, actual, sanitizer).doesEqual;
+        return compareExpectFileWithActualText(expectedFile, actual, sanitizer).doesEqual;
     }
 
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
-        KotlinTestUtils.assertEqualsToFile(expectedFile, actual, sanitizer)
+        actual.assertEqualsToFile(expectedFile, sanitizer = sanitizer)
     }
 
     override fun assertEquals(expected: Any?, actual: Any?, message: (() -> String)?) {

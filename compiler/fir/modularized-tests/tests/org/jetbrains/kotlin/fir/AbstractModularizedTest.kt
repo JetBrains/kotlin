@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.test.IS_UNDER_TEAMCITY
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker

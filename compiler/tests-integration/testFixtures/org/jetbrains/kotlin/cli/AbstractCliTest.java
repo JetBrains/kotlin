@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt.ARGFILE_ARGUMENT;
-import static org.jetbrains.kotlin.test.KotlinTestUtils.assertValueAgnosticEqualsToFile;
+import static org.jetbrains.kotlin.test.FileTestDataAssertionsKt.assertValueAgnosticEqualsToFile;
 
 public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
@@ -114,7 +114,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         );
 
         File outFile = new File(fileName.replaceFirst("\\.args$", ".out"));
-        KotlinTestUtils.assertEqualsToFile(outFile, actual);
+        FileTestDataAssertionsKt.assertEqualsToFile(actual, outFile);
 
         File additionalTestConfig = new File(fileName.replaceFirst("\\.args$", ".test"));
         if (additionalTestConfig.exists()) {
@@ -214,7 +214,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
         @NotNull String actualPerfReport = perfManager.createPerformanceReport(dumpFormat);
 
-        assertValueAgnosticEqualsToFile(expectedPerfLogFile, actualPerfReport);
+        assertValueAgnosticEqualsToFile(actualPerfReport, expectedPerfLogFile);
     }
 
     @NotNull

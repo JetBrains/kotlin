@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.targets
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
@@ -82,10 +82,10 @@ abstract class SourceSetDependenciesResolution {
             .resolve(this.javaClass.simpleName)
             .resolve(expectedFilePath)
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile.toFile(), actualResult) {
+        actualResult.assertEqualsToFile(expectedFile.toFile(), sanitizer = {
             // remove comment lines
             it.replace("""\s+//.+""".toRegex(), "")
-        }
+        })
     }
 
     private fun Project.resolveAllSourceSetDependencies(): String {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator.Configuratio
 import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
 import org.jetbrains.kotlin.backend.konan.testUtils.headersTestDataDir
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.assertEqualsToFile
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.fail
@@ -687,6 +688,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()
-        KotlinTestUtils.assertEqualsToFile(root.resolve("!${root.nameWithoutExtension}.h"), generatedHeaders)
+        generatedHeaders.assertEqualsToFile(root.resolve("!${root.nameWithoutExtension}.h"))
     }
 }
