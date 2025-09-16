@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.types
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
@@ -21,22 +20,23 @@ class KaBaseResolvedClassTypeQualifier(
     private val backingSymbol: KaClassifierSymbol,
     typeArguments: List<KaTypeProjection>,
 ) : KaResolvedClassTypeQualifier {
+    private val backingTypeArguments: List<KaTypeProjection> = typeArguments
     override val token: KaLifetimeToken get() = backingSymbol.token
 
     override val name: Name get() = withValidityAssertion { backingSymbol.nameOrAnonymous }
-
     override val symbol: KaClassifierSymbol get() = withValidityAssertion { backingSymbol }
-
-    override val typeArguments: List<KaTypeProjection> by validityAsserted(typeArguments)
+    override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { backingTypeArguments }
 }
 
 @KaImplementationDetail
 class KaBaseUnresolvedClassTypeQualifier(
     name: Name,
     typeArguments: List<KaTypeProjection>,
-    override val token: KaLifetimeToken
+    override val token: KaLifetimeToken,
 ) : KaUnresolvedClassTypeQualifier {
-    override val name: Name by validityAsserted(name)
+    private val backingName: Name = name
+    private val backingTypeArguments: List<KaTypeProjection> = typeArguments
 
-    override val typeArguments: List<KaTypeProjection> by validityAsserted(typeArguments)
+    override val name: Name get() = withValidityAssertion { backingName }
+    override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { backingTypeArguments }
 }

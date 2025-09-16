@@ -61,5 +61,8 @@ public inline fun <R> KaLifetimeOwner.withValidityAssertion(action: () -> R): R 
  *
  * @see KaLifetimeOwner
  * @see KaLifetimeOwnerField
+ * @see withValidityAssertion
  */
+@Suppress("DEPRECATION")
+@Deprecated("Use a backing element + `withValidityAssertion` instead")
 public fun <T> KaLifetimeOwner.validityAsserted(value: T): KaLifetimeOwnerField<T> = KaLifetimeOwnerField(value)

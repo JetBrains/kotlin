@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -19,11 +18,11 @@ class KaBaseFunctionValueParameter(
     name: Name?,
     private val backingType: KaType,
 ) : KaFunctionValueParameter() {
-    override val type: KaType
-        get() = withValidityAssertion { backingType }
-    override val name: Name? by validityAsserted(name)
-    override val token: KaLifetimeToken
-        get() = backingType.token
+    private val backingName: Name? = name
+    override val token: KaLifetimeToken get() = backingType.token
+
+    override val type: KaType get() = withValidityAssertion { backingType }
+    override val name: Name? get() = withValidityAssertion { backingName }
 
     override fun toString(): String = "KaBaseFunctionValueParameter [name: $name, type: ${type.symbol?.classId}]"
 }

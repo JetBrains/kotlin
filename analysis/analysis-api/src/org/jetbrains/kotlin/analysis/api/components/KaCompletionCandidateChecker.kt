@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaIdeApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.psi.KtExpression
@@ -38,7 +34,7 @@ public interface KaCompletionCandidateChecker : KaSessionComponent {
     public fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
-        explicitReceiver: KtExpression?
+        explicitReceiver: KtExpression?,
     ): KaCompletionExtensionCandidateChecker
 }
 
@@ -74,10 +70,13 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
     public class ApplicableAsExtensionCallable(
         substitutor: KaSubstitutor,
         receiverCastRequired: Boolean,
-        override val token: KaLifetimeToken
+        override val token: KaLifetimeToken,
     ) : Applicable() {
-        override val substitutor: KaSubstitutor by validityAsserted(substitutor)
-        override val receiverCastRequired: Boolean by validityAsserted(receiverCastRequired)
+        private val backingSubstitutor: KaSubstitutor = substitutor
+        private val backingReceiverCastRequired: Boolean = receiverCastRequired
+
+        override val substitutor: KaSubstitutor get() = withValidityAssertion { backingSubstitutor }
+        override val receiverCastRequired: Boolean get() = withValidityAssertion { backingReceiverCastRequired }
     }
 
     @KaIdeApi
@@ -85,16 +84,19 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
     public class ApplicableAsFunctionalVariableCall(
         substitutor: KaSubstitutor,
         receiverCastRequired: Boolean,
-        override val token: KaLifetimeToken
+        override val token: KaLifetimeToken,
     ) : Applicable() {
-        override val substitutor: KaSubstitutor by validityAsserted(substitutor)
-        override val receiverCastRequired: Boolean by validityAsserted(receiverCastRequired)
+        private val backingSubstitutor: KaSubstitutor = substitutor
+        private val backingReceiverCastRequired: Boolean = receiverCastRequired
+
+        override val substitutor: KaSubstitutor get() = withValidityAssertion { backingSubstitutor }
+        override val receiverCastRequired: Boolean get() = withValidityAssertion { backingReceiverCastRequired }
     }
 
     @KaIdeApi
     @KaExperimentalApi
     public class NonApplicable(
-        override val token: KaLifetimeToken
+        override val token: KaLifetimeToken,
     ) : KaExtensionApplicabilityResult()
 }
 
@@ -107,7 +109,7 @@ context(context: KaCompletionCandidateChecker)
 public fun createExtensionCandidateChecker(
     originalFile: KtFile,
     nameExpression: KtSimpleNameExpression,
-    explicitReceiver: KtExpression?
+    explicitReceiver: KtExpression?,
 ): KaCompletionExtensionCandidateChecker {
     return with(context) { createExtensionCandidateChecker(originalFile, nameExpression, explicitReceiver) }
 }
