@@ -132,6 +132,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val DELEGATION_BY_IN_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("DELEGATION_BY_IN_JVM_RECORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JVM_RECORD_EXTENDS_CLASS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JVM_RECORD_EXTENDS_CLASS", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, PsiElement::class, getRendererFactory())
     val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val JVM_RECORDS_ILLEGAL_BYTECODE_TARGET: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_RECORDS_ILLEGAL_BYTECODE_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // JVM Modules
     val JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

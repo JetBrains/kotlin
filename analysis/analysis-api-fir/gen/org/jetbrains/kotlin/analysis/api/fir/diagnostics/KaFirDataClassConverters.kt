@@ -6811,6 +6811,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JVM_RECORDS_ILLEGAL_BYTECODE_TARGET) { firDiagnostic ->
+        JvmRecordsIllegalBytecodeTargetImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE) { firDiagnostic ->
         JavaModuleDoesNotDependOnModuleImpl(
             firDiagnostic.a,

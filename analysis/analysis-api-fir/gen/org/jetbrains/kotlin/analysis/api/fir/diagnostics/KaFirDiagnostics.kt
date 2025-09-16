@@ -4765,6 +4765,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = IllegalJavaLangRecordSupertype::class
     }
 
+    interface JvmRecordsIllegalBytecodeTarget : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmRecordsIllegalBytecodeTarget::class
+    }
+
     interface JavaModuleDoesNotDependOnModule : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = JavaModuleDoesNotDependOnModule::class
         val moduleName: String

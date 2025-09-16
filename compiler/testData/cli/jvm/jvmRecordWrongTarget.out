@@ -1,14 +1,10 @@
-warning: ATTENTION!
-This build uses unsafe internal compiler arguments:
-
--XXLanguage:+JvmRecordSupport
-
-This mode is not recommended for production use,
-as no stability/compatibility guarantees are given on
-compiler or generated code. Use it at your own risk!
-
-warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/jvm/jvmRecord.kt:1:1: error: using @JvmRecord is only allowed with -jvm-target 16 or later (or -jvm-target 15 with the -Xjvm-enable-preview flag enabled)
+compiler/testData/cli/jvm/jvmRecord.kt:1:1: error: using @JvmRecord is only allowed with -jvm-target 16 or later (or -jvm-target 15 with the -Xjvm-enable-preview flag enabled).
 @JvmRecord
 ^^^^^^^^^^
+compiler/testData/cli/jvm/jvmRecord.kt:2:6: error: cannot access 'Record' which is a supertype of 'MyRec'. Check your module classpath for missing or conflicting dependencies.
+data class MyRec(val name: String)
+     ^^^^^^^^^^^
+compiler/testData/cli/jvm/jvmRecord.kt:2:18: error: cannot access 'Record' which is a supertype of 'MyRec'. Check your module classpath for missing or conflicting dependencies.
+data class MyRec(val name: String)
+                 ^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

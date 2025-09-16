@@ -5727,6 +5727,11 @@ internal class IllegalJavaLangRecordSupertypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IllegalJavaLangRecordSupertype
 
+internal class JvmRecordsIllegalBytecodeTargetImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmRecordsIllegalBytecodeTarget
+
 internal class JavaModuleDoesNotDependOnModuleImpl(
     override val moduleName: String,
     firDiagnostic: KtPsiDiagnostic,

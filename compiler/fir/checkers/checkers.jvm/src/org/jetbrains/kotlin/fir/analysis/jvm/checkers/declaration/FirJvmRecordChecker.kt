@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.java.jvmTargetProvider
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -36,6 +39,17 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         }
 
         val annotationSource = declaration.getAnnotationByClassId(JVM_RECORD_ANNOTATION_CLASS_ID, context.session)?.source ?: return
+
+        val currentJvmTarget = context.session.jvmTargetProvider?.jvmTarget
+        if (currentJvmTarget?.areRecordsAllowed(
+                context.languageVersionSettings.getFlag(
+                    JvmAnalysisFlags.enableJvmPreview
+                )
+            ) == false
+        ) {
+            reporter.reportOn(declaration.source, FirJvmErrors.JVM_RECORDS_ILLEGAL_BYTECODE_TARGET)
+            return
+        }
 
         if (declaration.isLocal) {
             reporter.reportOn(annotationSource, FirJvmErrors.LOCAL_JVM_RECORD)
@@ -94,5 +108,10 @@ object FirJvmRecordChecker : FirRegularClassChecker(MppCheckerKind.Common) {
                 reporter.reportOn(declaration.source, FirJvmErrors.JVM_RECORD_EXTENDS_CLASS, typeRef.coneType)
             }
         }
+    }
+
+    private fun JvmTarget.areRecordsAllowed(enableJvmPreview: Boolean): Boolean {
+        if (majorVersion < JvmTarget.JVM_15.majorVersion) return false
+        return enableJvmPreview || majorVersion > JvmTarget.JVM_15.majorVersion
     }
 }
