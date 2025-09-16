@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.util.NullableArrayMapAccessor
 import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.reflect.KClass
 
-interface FirSessionComponent
-
 abstract class FirSession @PrivateSessionConstructor constructor(
     val kind: Kind
 ) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
@@ -51,6 +49,24 @@ abstract class FirSession @PrivateSessionConstructor constructor(
     @SessionConfiguration
     fun register(keyQualifiedName: String, value: FirSessionComponent) {
         registerComponent(keyQualifiedName, value)
+    }
+
+    @SessionConfiguration
+    inline fun <reified T : FirComposableSessionComponent<T>> register(value: T) {
+        register(T::class, value)
+    }
+
+    @SessionConfiguration
+    fun <T : FirComposableSessionComponent<T>> register(tClass: KClass<out T>, value: T) {
+        @Suppress("UNCHECKED_CAST")
+        val existing = getOrNull(tClass) as T?
+        val valueToRegister = if (existing != null) {
+            val composed = existing.compose(value)
+            composed
+        } else {
+            value
+        }
+        registerComponent(tClass, valueToRegister)
     }
 
     override fun toString(): String {
