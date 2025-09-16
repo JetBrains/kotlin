@@ -14,11 +14,15 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.ref.SoftReference
 import java.net.URL
 import java.net.URLClassLoader
+import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KCallable
+import kotlin.reflect.KClass
+import kotlin.reflect.KDeclarationContainer
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.jvm.jvmName
 
@@ -119,17 +123,36 @@ class RunInAlienClassLoader {
     fun `_`(loader: ClassLoader, fqns: List<String>): String {
         val out = IndentedStringBuilder()
         for (fqn in fqns) {
-            val kClass = loader.loadClass(fqn).kotlin
-            out.indented("KClass: ${kClass.qualifiedName ?: kClass.jvmName}") {
-                out.indented("members:") {
-                    out.dumpKCallables(kClass.members)
-                }
-                out.indented("declaredMembers:") {
-                    out.dumpKCallables(kClass.declaredMembers)
-                }
+            val jClass = loader.loadClass(fqn)
+            val metadata = jClass.annotations.firstIsInstanceOrNull<Metadata>()
+            when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
+                null, 1 -> out.dumpKClass(jClass.kotlin) // Kotlin and Java classes
+                2 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
+                3 -> {} // Synthetic class
+                4 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class facade
+                5 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class part
+                else -> error("Unknown kotlin.Metadata kind ${metadata.kind}")
             }
         }
         return out.toString()
+    }
+
+    private fun IndentedStringBuilder.dumpKClass(kClass: KClass<*>) {
+        indented("KClass: ${kClass.qualifiedName ?: kClass.jvmName}") {
+            indented("members:") {
+                dumpKCallables(kClass.members)
+            }
+            indented("declaredMembers:") {
+                dumpKCallables(kClass.declaredMembers)
+            }
+        }
+    }
+
+    private fun IndentedStringBuilder.dumpKDeclarationContainer(container: KDeclarationContainer) {
+        check(container !is KClass<*>)
+        indented("KDeclarationContainer: ${container::class.qualifiedName ?: container::class.jvmName}") {
+            dumpKCallables(container.members)
+        }
     }
 
     private fun IndentedStringBuilder.dumpKCallables(kCallables: Iterable<KCallable<*>>) {
@@ -155,7 +178,8 @@ class RunInAlienClassLoader {
 
         fun dump(str: String) {
             for (line in str.split("\n")) {
-                out.appendLine(indentation + line)
+                out.append(indentation)
+                out.appendLine(line)
             }
         }
 
