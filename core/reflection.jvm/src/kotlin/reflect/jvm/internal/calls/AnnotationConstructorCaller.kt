@@ -72,7 +72,7 @@ private fun Any?.transformKotlinToJvm(expectedType: Class<*>): Any? {
         is KClass<*> -> this.java
         is Array<*> -> when {
             this.isArrayOf<Class<*>>() -> return null
-            this.isArrayOf<KClass<*>>() -> this.map(KClass<*>::java).toTypedArray()
+            this.isArrayOf<KClass<*>>() -> (this as Array<KClass<*>>).map(KClass<*>::java).toTypedArray()
             else -> this
         }
         else -> this

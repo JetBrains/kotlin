@@ -7,7 +7,6 @@
 
 package kotlin.jvm
 
-import kotlin.contracts.contract
 import kotlin.internal.InlineOnly
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.jvm.internal.Reflection
@@ -96,15 +95,11 @@ public inline val <T : Any> KClass<T>.javaClass: Class<KClass<T>>
     get() = (this as java.lang.Object).getClass() as Class<KClass<T>>
 
 /**
- * Checks if the array can contain an element of type [T].
+ * Checks if array can contain element of type [T].
  */
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-public fun <reified T : Any> Array<*>.isArrayOf(): Boolean {
-    contract {
-        returns(true) implies (this@isArrayOf is Array<T>)
-    }
-    return T::class.java.isAssignableFrom(this::class.java.componentType)
-}
+public fun <reified T : Any> Array<*>.isArrayOf(): Boolean =
+    T::class.java.isAssignableFrom(this::class.java.componentType)
 
 /**
  * Returns a [KClass] instance corresponding to the annotation type of this annotation.

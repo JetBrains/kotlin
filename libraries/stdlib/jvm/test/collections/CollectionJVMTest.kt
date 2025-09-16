@@ -124,17 +124,6 @@ class CollectionJVMTest {
         }
     }
 
-    @Test fun isArrayOf() {
-        val arr: Array<*> = arrayOf("smart")
-
-        if (arr.isArrayOf<String>()) {
-            val str: String = arr[0]
-            assertEquals("smart", str)
-        } else {
-            fail("Should not be reachable")
-        }
-    }
-
     @Test fun toSortedSet() {
         val data = listOf("foo", "Foo", "bar")
         val set1 = data.toSortedSet()
