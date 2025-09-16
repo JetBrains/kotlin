@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.abi.tools.AbiFilters
 import org.junit.*
 import org.junit.rules.TestName
 import java.io.File
+import kotlin.collections.setOf
 import kotlin.io.walk
 import kotlin.test.fail
 
@@ -122,6 +123,11 @@ class CasesPublicAPITest {
     @Test
     fun enums() {
         snapshotAPIAndCompare(testName.methodName)
+    }
+
+    @Test
+    fun repeatable() {
+        snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.repeatable.RepeatableAnnotation.Container"))
     }
 
     @Test
