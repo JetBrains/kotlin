@@ -23,6 +23,7 @@ enum class JvmTarget(val target: String) {
     JVM_22("22"),
     JVM_23("23"),
     JVM_24("24"),
+    JVM_25("25"),
     ;
 
     companion object {

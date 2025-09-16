@@ -11,7 +11,7 @@ where possible options include:
   -script-templates <fully qualified class name[,]>
                              Script definition template classes.
   -module-name <name>        Name of the generated '.kotlin_module' file.
-  -jvm-target <version>      The target version of the generated JVM bytecode (1.8 and 9–24), with 1.8 as the default.
+  -jvm-target <version>      The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.
   -java-parameters           Generate metadata for Java 1.8 reflection on method parameters.
   -jvm-default {enable|no-compatibility|disable}
                              Emit JVM default methods for interface declarations with bodies. The default is 'enable'.

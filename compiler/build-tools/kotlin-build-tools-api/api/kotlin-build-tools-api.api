@@ -381,6 +381,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget
 	public static final field JVM_22 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM_23 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM_24 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
+	public static final field JVM_25 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;

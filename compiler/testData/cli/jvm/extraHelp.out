@@ -84,7 +84,7 @@ where advanced options include:
                              -Xstring-concat=inline               Concatenate strings using 'StringBuilder'
                              default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
   -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-                             The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–24.
+                             The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.
                              This also sets the value of '-jvm-target' to be equal to the selected JDK version.
   -Xsam-conversions={class|indy} Select the code generation scheme for SAM conversions.
                              -Xsam-conversions=indy          Generate SAM conversions using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
