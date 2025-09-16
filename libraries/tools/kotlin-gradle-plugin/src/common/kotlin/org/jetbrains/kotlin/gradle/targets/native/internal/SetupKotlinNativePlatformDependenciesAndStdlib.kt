@@ -31,14 +31,14 @@ import java.io.File
 internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetupAction {
     val kotlin = multiplatformExtensionOrNull ?: return@KotlinProjectSetupAction
 
-    val stdlib = project.files(project.konanDistribution.stdlib)
-    kotlin.targets.all { target ->
-        target.compilations.all { compilation ->
-            if (compilation is AbstractKotlinNativeCompilation) {
-                launch { compilation.configureStdlibAndPlatformDependencies(stdlib) }
-            }
-        }
-    }
+//    val stdlib = project.files(project.konanDistribution.stdlib)
+//    kotlin.targets.all { target ->
+//        target.compilations.all { compilation ->
+//            if (compilation is AbstractKotlinNativeCompilation) {
+//                launch { compilation.configureStdlibAndPlatformDependencies(stdlib) }
+//            }
+//        }
+//    }
 
     launch { kotlin.excludeStdlibFromNativeSourceSetDependencies() }
 }
@@ -80,28 +80,28 @@ private suspend fun KotlinMultiplatformExtension.excludeStdlibFromNativeSourceSe
     }
 }
 
-internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjectSetupCoroutine {
-    val multiplatform = multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
-    val sourceSets = multiplatform
-        .awaitSourceSets()
-        .filter { it.isNativeSourceSet.await() }
-        .filterIsInstance<DefaultKotlinSourceSet>()
-
-    val stdlib = project.files(project.konanDistribution.stdlib)
-    val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
-
-    sourceSets.forEach { sourceSet ->
-        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
-        val konanDistributionProvider = KotlinNativeFromToolchainProvider(
-            project,
-            commonizerTarget.konanTargets,
-            nativeBundleBuildService
-        ).bundleDirectory.map { KonanDistribution(it) }
-        val nativeDistributionDependencies = getNativeDistributionDependencies(konanDistributionProvider, commonizerTarget)
-        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
-        sourceSet.addDependencyForLegacyImport(stdlib)
-    }
-}
+//internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjectSetupCoroutine {
+//    val multiplatform = multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
+//    val sourceSets = multiplatform
+//        .awaitSourceSets()
+//        .filter { it.isNativeSourceSet.await() }
+//        .filterIsInstance<DefaultKotlinSourceSet>()
+//
+////    val stdlib = project.files(project.konanDistribution.stdlib)
+//    val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
+//
+////    sourceSets.forEach { sourceSet ->
+////        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
+////        val konanDistributionProvider = KotlinNativeFromToolchainProvider(
+////            project,
+////            commonizerTarget.konanTargets,
+////            nativeBundleBuildService
+////        ).bundleDirectory.map { KonanDistribution(it) }
+//////        getNativeDistributionDependencies(konanDistributionProvider, commonizerTarget)
+//////        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
+//////        sourceSet.addDependencyForLegacyImport(stdlib)
+////    }
+//}
 
 internal fun Project.getNativeDistributionDependencies(konanDistribution: Provider<KonanDistribution>, target: CommonizerTarget): FileCollection {
     return when (target) {
@@ -133,7 +133,7 @@ internal fun ObjectFactory.getOriginalPlatformLibrariesFor(
 
 
 private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
-    .filter { it.isDirectory || it.extension == "klib" }
+    .filter { it.isDirectory || it.extension == "klib" }//TODO functional test for
 
 /**
  * Legacy resolves [implementationMetadataConfigurationName] and [intransitiveMetadataConfigurationName]
@@ -147,5 +147,5 @@ private fun DefaultKotlinSourceSet.addDependencyForLegacyImport(libraries: FileC
     } else {
         implementationMetadataConfigurationName
     }
-    project.dependencies.add(metadataConfigurationName, libraries)
+    project.dependencies.addProvider(metadataConfigurationName, project.providers.provider { libraries })
 }

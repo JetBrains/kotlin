@@ -191,6 +191,7 @@ internal abstract class CInteropCommonizerTask
                     }
                 }
 
+//                (kotlinNativeProvider.get() as? KotlinNativeFromToolchainProvider)?.kotlinNativeBundleVersion?.orNull
                 CInteropCommonizerDependencies(
                     target,
                     project.files(
@@ -209,12 +210,6 @@ internal abstract class CInteropCommonizerTask
         }
     }
 
-    @Suppress("unused") // Used for UP-TO-DATE check
-    @get:Classpath
-    protected val commonizerDependenciesClasspath: FileCollection = project.filesProvider {
-        groupedCommonizerDependencies.getOrThrow().values.flatten().map { it.dependencies }
-    }
-
     @get:Nested
     internal val cinterops: SetProperty<CInteropGist> = objectFactory.setProperty<CInteropGist>()
 
@@ -231,6 +226,8 @@ internal abstract class CInteropCommonizerTask
     @TaskAction
     protected fun commonizeCInteropLibraries() {
         val metricReporter = metrics.get()
+        kotlinNativeProvider.get()
+
         addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {
             allInteropGroups.getOrThrow().forEach(::commonize)
         }
