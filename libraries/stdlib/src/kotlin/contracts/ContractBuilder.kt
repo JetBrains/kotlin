@@ -91,8 +91,6 @@ public interface ContractBuilder {
      * 2. _(optionally)_ the function [lambda] is invoked the number of times specified by the [kind] parameter,
      *  see the [InvocationKind] enum for possible values.
      *
-     * A function declaring the `callsInPlace` effect must be _inline_.
-     *
      */
     /* @sample samples.contracts.callsInPlaceAtMostOnceContract
     * @sample samples.contracts.callsInPlaceAtLeastOnceContract
