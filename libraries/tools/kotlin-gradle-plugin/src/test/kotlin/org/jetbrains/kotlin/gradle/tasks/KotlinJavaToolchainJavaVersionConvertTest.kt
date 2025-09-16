@@ -13,9 +13,9 @@ import org.gradle.internal.jvm.Jvm
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.testing.assertThrows
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.testhelpers.StubLogger
-import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Before
 import java.io.File
 import kotlin.test.Test

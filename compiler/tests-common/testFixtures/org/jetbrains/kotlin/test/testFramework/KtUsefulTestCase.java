@@ -55,7 +55,6 @@ import static org.jetbrains.kotlin.test.testFramework.Cleanup.cleanupSwingDataSt
 
 @SuppressWarnings("ALL")
 public abstract class KtUsefulTestCase extends TestCase {
-    public static final boolean IS_UNDER_TEAMCITY = System.getenv("TEAMCITY_VERSION") != null;
     public static final String TEMP_DIR_MARKER = "unitTest_";
     public static final boolean OVERWRITE_TESTDATA = Boolean.getBoolean("idea.tests.overwrite.data");
 

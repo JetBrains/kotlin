@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.gradle.unitTests.report
 
 import org.gradle.api.internal.plugins.PluginApplicationException
+import org.jetbrains.kotlin.gradle.testing.assertThrows
 import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
-import org.jetbrains.kotlin.util.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

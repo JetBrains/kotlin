@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.FinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
+import org.jetbrains.kotlin.gradle.testing.assertThrows
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*

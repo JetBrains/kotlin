@@ -9,9 +9,9 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import com.intellij.util.io.Compressor
 import org.gradle.kotlin.dsl.support.unzipTo
+import org.jetbrains.kotlin.gradle.testing.assertThrows
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
 import org.jetbrains.kotlin.gradle.utils.listDescendants
-import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder

@@ -12,10 +12,10 @@ import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import org.gradle.process.internal.ExecException
 import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.testing.assertDoesNotThrow
+import org.jetbrains.kotlin.gradle.testing.assertThrows
 import org.jetbrains.kotlin.gradle.util.assertContains
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.execAsync
-import org.jetbrains.kotlin.util.assertDoesNotThrow
-import org.jetbrains.kotlin.util.assertThrows
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.nio.file.FileSystems
