@@ -105,6 +105,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field JVM_22 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_23 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_24 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
+	public static final field JVM_25 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun fromTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;

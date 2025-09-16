@@ -146,7 +146,12 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         name = "jvm-target"
         description = ReleaseDependent(
             current = "The target version of the generated JVM bytecode (${JvmTarget.CURRENT_SUPPORTED_VERSIONS_DESCRIPTION}), " +
-                    "with ${JvmTarget.CURRENT_DEFAULT_VERSION} as the default."
+                    "with ${JvmTarget.CURRENT_DEFAULT_VERSION} as the default.",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v2_2_20 to
+                        "The target version of the generated JVM bytecode (1.8 and 9-24), " +
+                        "with ${JvmTarget.CURRENT_DEFAULT_VERSION} as the default.",
+            )
         )
 
         valueType = KotlinJvmTargetType(
@@ -638,9 +643,17 @@ default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
 
     compilerArgument {
         name = "Xjdk-release"
-        description = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
+        description = ReleaseDependent(
+            current = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
 The supported versions depend on the JDK used; for JDK 17+, the supported versions are ${JvmTarget.CURRENT_SUPPORTED_VERSIONS_DESCRIPTION}.
-This also sets the value of '-jvm-target' to be equal to the selected JDK version.""".asReleaseDependent()
+This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v2_2_20 to
+                        """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9-24.
+This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
+            )
+        )
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
 

@@ -35,9 +35,9 @@ interface KotlinJvmCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommo
     val jvmDefault: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode>
 
     /**
-     * The target version of the generated JVM bytecode (1.8 and 9–24), with 1.8 as the default.
+     * The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.
      *
-     * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"
+     * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25"
      *
      * Default value: JvmTarget.DEFAULT
      */
