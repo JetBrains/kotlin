@@ -12,16 +12,44 @@ import org.jetbrains.kotlin.utils.putToMultiMap
 
 typealias CachedTestFunctionsWithTheirPackage = Map<String, List<String>>
 
+/**
+ * Generates artifacts for per-file compilation mode from Kotlin modules.
+ *
+ *  Most of the time, a single [Artifact] corresponds to a single Kotlin [File]. However, in case there are multiple files with the same
+ *  name and package in one module, they are merged into a single [Artifact].
+ *
+ *  We also generate an additional _proxy_ [Artifact] for each module, which re-exports the declarations from all the artifacts generated
+ *  from files in this module.
+ */
 interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
     val mainModuleName: String
 
     val Module.isMain: Boolean
     val Module.fileList: Iterable<File>
 
+    /**
+     * The name of the generated artifact. There can be multiple artifacts with the same [artifactName], for example, if there are multiple
+     * files with the same name and package in a single module. In that case, they are merged into a single artifact.
+     */
     val Artifact.artifactName: String
+
+    /**
+     * Whether importing this artifact has any side effects. In Kotlin terms, this basically means whether the corresponding file contains
+     * `@EagerInitialization`-annotated top-level properties.
+     */
     val Artifact.hasEffect: Boolean
+
+    /**
+     * Whether this artifact has any exported declarations (`@JsExport`).
+     */
     val Artifact.hasExport: Boolean
+
     val Artifact.packageFqn: String
+
+    /**
+     * If this artifact contains the `main` function, returns the `main` function's tag
+     * (i.e., a unique string that corresponds to the declaration).
+     */
     val Artifact.mainFunction: String?
 
     fun Artifact.takeTestEnvironmentOwnership(): TestEnvironment?
@@ -30,6 +58,11 @@ interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
 
     fun List<Artifact>.merge(): Artifact
     fun File.generateArtifact(module: Module): Artifact?
+
+    /**
+     * Generates a special _proxy_ artifact for this module, which re-exports the declarations from all the artifacts generated from
+     * files in this module.
+     */
     fun Module.generateArtifact(
         mainFunctionTag: String?,
         suiteFunctionTag: String?,
@@ -37,6 +70,11 @@ interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
         moduleNameForEffects: String?
     ): Artifact
 
+    /**
+     * The Kotlin modules to produce artifacts for.
+     *
+     * Important: the main module (the one for which [isMain] returns true) should always go last.
+     */
     fun generatePerFileArtifacts(modules: List<Module>): List<Artifact> {
         var someModuleHasEffect = false
 
@@ -81,6 +119,8 @@ interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
                     }?.mainFunction
                 }
 
+                // Here we make use of the fact that the main module is always the last one in the list, so the last condition is
+                // well-formed.
                 if (mainFunctionTag != null || hasFileWithExportedDeclaration || hasModuleLevelEffect || suiteFunctionTag != null || (module.isMain && someModuleHasEffect)) {
                     val proxyArtifact = module.generateArtifact(
                         mainFunctionTag,

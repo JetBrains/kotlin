@@ -15,6 +15,9 @@ import java.io.File
 import java.nio.file.Files
 
 abstract class CompilationOutputs {
+    /**
+     * The transitive closure of this module's dependencies. The first element in the pair is the name of the module dependency.
+     */
     var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()
 
     abstract val tsDefinitions: TypeScriptFragment?
