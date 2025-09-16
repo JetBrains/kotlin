@@ -1741,11 +1741,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/nestedTypeAliasesEnabled.args");
     }
 
-    @TestMetadata("nestedTypeAliasesError.args")
-    public void testNestedTypeAliasesError() {
-      runTest("compiler/testData/cli/jvm/nestedTypeAliasesError.args");
-    }
-
     @TestMetadata("noJdkAvoidFailure.args")
     public void testNoJdkAvoidFailure() {
       runTest("compiler/testData/cli/jvm/noJdkAvoidFailure.args");
@@ -1929,11 +1924,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("whenGuardsEnable.args")
     public void testWhenGuardsEnable() {
       runTest("compiler/testData/cli/jvm/whenGuardsEnable.args");
-    }
-
-    @TestMetadata("whenGuardsError.args")
-    public void testWhenGuardsError() {
-      runTest("compiler/testData/cli/jvm/whenGuardsError.args");
     }
 
     @TestMetadata("wrongAbiVersion.args")
