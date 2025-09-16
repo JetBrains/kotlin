@@ -566,6 +566,16 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * When resolving ENTRY as `MyEnum.ENTRY` this is used for the `MyEnum` part
      */
     object QualifierForContextSensitiveResolution : KtFakeSourceElementKind()
+
+    /**
+     * When resolving a collection literal, for the explicit companion object receiver added to the call.
+     */
+    object CompanionObjectForOperatorOfCall : KtFakeSourceElementKind()
+
+    /**
+     * For the function call to operator `of` generated instead of a collection literal.
+     */
+    object OperatorOfCall : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

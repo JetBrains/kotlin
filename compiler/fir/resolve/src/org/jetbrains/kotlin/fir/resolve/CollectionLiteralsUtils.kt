@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -78,10 +80,10 @@ fun ResolutionContext.runCollectionLiteralResolution(
         explicitReceiver =
             companion.toImplicitResolvedQualifierReceiver(
                 components,
-                collectionLiteral.source,
+                collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CompanionObjectForOperatorOfCall),
                 resolvedToCompanion = true,
             )
-        source = collectionLiteral.source
+        source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.OperatorOfCall)
         calleeReference = buildSimpleNamedReference {
             source = collectionLiteral.source
             name = OperatorNameConventions.OF
