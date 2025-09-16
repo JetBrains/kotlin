@@ -233,6 +233,30 @@ class Uuids {
     }
 
     @Sample
+    fun v4() {
+        // Generates a random and unique uuid each time
+        val uuid1 = Uuid.generateV4()
+        val uuid2 = Uuid.generateV4()
+        val uuid3 = Uuid.generateV4()
+
+        assertPrints(uuid1 == uuid2, "false")
+        assertPrints(uuid1 == uuid3, "false")
+        assertPrints(uuid2 == uuid3, "false")
+    }
+
+    @Sample
+    fun v7() {
+        // Generates a random, unique and strictly ordered uuids each time
+        val uuid1 = Uuid.generateV7()
+        val uuid2 = Uuid.generateV7()
+        val uuid3 = Uuid.generateV7()
+
+        assertPrints(uuid1 < uuid2, "true")
+        assertPrints(uuid1 < uuid3, "true")
+        assertPrints(uuid2 < uuid3, "true")
+    }
+
+    @Sample
     fun compareTo() {
         val uuid1 = Uuid.parse("49d6d991-c780-4eb5-8585-5169c25af912")
         val uuid2 = Uuid.parse("c0bac692-7208-4448-a8fe-3e3eb128db2a")

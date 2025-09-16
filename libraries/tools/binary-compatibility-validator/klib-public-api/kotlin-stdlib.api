@@ -2110,6 +2110,8 @@ final class kotlin.uuid/Uuid : kotlin.io/Serializable, kotlin/Comparable<kotlin.
         final fun fromLongs(kotlin/Long, kotlin/Long): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.fromLongs|fromLongs(kotlin.Long;kotlin.Long){}[0]
         final fun fromUByteArray(kotlin/UByteArray): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.fromUByteArray|fromUByteArray(kotlin.UByteArray){}[0]
         final fun fromULongs(kotlin/ULong, kotlin/ULong): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.fromULongs|fromULongs(kotlin.ULong;kotlin.ULong){}[0]
+        final fun generateV4(): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.generateV4|generateV4(){}[0]
+        final fun generateV7(): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.generateV7|generateV7(){}[0]
         final fun parse(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parse|parse(kotlin.String){}[0]
         final fun parseHex(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parseHex|parseHex(kotlin.String){}[0]
         final fun parseHexDash(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parseHexDash|parseHexDash(kotlin.String){}[0]

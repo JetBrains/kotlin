@@ -16,11 +16,8 @@ private object SecureRandomHolder {
     val instance = SecureRandom()
 }
 
-@ExperimentalUuidApi
-internal actual fun secureRandomUuid(): Uuid {
-    val randomBytes = ByteArray(Uuid.SIZE_BYTES)
-    SecureRandomHolder.instance.nextBytes(randomBytes)
-    return uuidFromRandomBytes(randomBytes)
+internal actual fun secureRandomBytes(destination: ByteArray): Unit {
+    SecureRandomHolder.instance.nextBytes(destination)
 }
 
 @ExperimentalUuidApi

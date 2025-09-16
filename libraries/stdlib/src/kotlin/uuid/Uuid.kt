@@ -8,11 +8,17 @@
 
 package kotlin.uuid
 
+import kotlin.concurrent.atomics.AtomicLong
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.experimental.and
+import kotlin.experimental.or
 import kotlin.internal.InlineOnly
 import kotlin.internal.ReadObjectParameterType
 import kotlin.internal.throwReadObjectNotSupported
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Represents a Universally Unique Identifier (UUID), also known as a Globally Unique Identifier (GUID).
@@ -41,7 +47,7 @@ import kotlin.internal.throwReadObjectNotSupported
 @ExperimentalUuidApi
 public class Uuid private constructor(
     @PublishedApi internal val mostSignificantBits: Long,
-    @PublishedApi internal val leastSignificantBits: Long
+    @PublishedApi internal val leastSignificantBits: Long,
 ) : Comparable<Uuid>, Serializable {
 
     /**
@@ -539,6 +545,8 @@ public class Uuid private constructor(
         /**
          * Generates a new random [Uuid] instance.
          *
+         * This function is synonymous to [Uuid.generateV4].
+         *
          * The returned uuid conforms to the [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1)
          * and [version 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2),
          * designed to be unique with a very high probability, regardless of when or where it is generated.
@@ -568,10 +576,99 @@ public class Uuid private constructor(
          * @throws RuntimeException if the underlying API fails. Refer to the corresponding underlying API
          *   documentation for possible reasons for failure and guidance on how to handle them.
          *
+         * @see Uuid.generateV4
          * @sample samples.uuid.Uuids.random
          */
-        public fun random(): Uuid =
-            secureRandomUuid()
+        public fun random(): Uuid = generateV4()
+
+        /**
+         * Generates a new random [Uuid] instance.
+         *
+         * The returned uuid conforms to the [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1)
+         * and [version 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2),
+         * designed to be unique with a very high probability, regardless of when or where it is generated.
+         * The uuid is produced using a cryptographically secure pseudorandom number generator (CSPRNG)
+         * available on the platform. If the underlying system has not collected enough entropy, this function
+         * may block until sufficient entropy is collected, and the CSPRNG is fully initialized. It is worth mentioning
+         * that the PRNG used in the Kotlin/WasmWasi target is not guaranteed to be cryptographically secure.
+         * See the list below for details about the API used for producing the random uuid in each supported target.
+         *
+         * Note that the returned uuid is not recommended for use for cryptographic purposes.
+         * Because version 4 uuid has a partially predictable bit pattern, and utilizes at most
+         * 122 bits of entropy, regardless of platform.
+         *
+         * The following APIs are used for producing the random uuid in each of the supported targets:
+         *   - Kotlin/JVM - [java.security.SecureRandom](https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html)
+         *   - Kotlin/JS - [Crypto.getRandomValues()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/WasmJs - [Crypto.getRandomValues()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/WasmWasi - [random_get](https://github.com/WebAssembly/WASI/blob/main/legacy/preview1/docs.md#random_get)
+         *   - Kotlin/Native:
+         *       - Linux targets - [getrandom](https://www.man7.org/linux/man-pages/man2/getrandom.2.html)
+         *       - Apple and Android Native targets - [arc4random_buf](https://man7.org/linux/man-pages/man3/arc4random_buf.3.html)
+         *       - Windows targets - [BCryptGenRandom](https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptgenrandom)
+         *
+         * Note that the underlying API used to produce random uuids may change in the future.
+         *
+         * @return A randomly generated uuid.
+         * @throws RuntimeException if the underlying API fails. Refer to the corresponding underlying API
+         *   documentation for possible reasons for failure and guidance on how to handle them.
+         *
+         * @sample samples.uuid.Uuids.v4
+         */
+        public fun generateV4(): Uuid = secureRandomUuid()
+
+        /**
+         * Generates a new random [Uuid] Version 7 instance.
+         *
+         * The returned uuid is a time-based sortable UUID that conforms to the
+         * [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1)
+         * and [version 7](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2),
+         * uses UNIX timestamp in milliseconds as a prefix and a randomly generated suffix,
+         * allowing several consecutively generated uuids to be monotonically ordered and yet keep future uuid values unguessable.
+         *
+         * The current implementation guarantees strict monotonicity of returned uuids within the scope of an application lifetime.
+         * There are no monotonicity guarantees for two uuids generated in separate processes on the same host,
+         * as well as for uudis generated on different hosts.
+         * If multiple uuids were requested at the exact same instant of time, the current implementation will use
+         * the "Fixed Bit-Length Dedicated Counter" method covered by the
+         * [RFC-9562, §6.2. Monotonicity and Counters](https://www.rfc-editor.org/rfc/rfc9562.html#section-6.2)
+         * to achieve strict monotonicity.
+         *
+         * The random part of the uuid is produced using a cryptographically secure pseudorandom number generator (CSPRNG)
+         * available on the platform.
+         * If the underlying system has not collected enough entropy, this function
+         * may block until sufficient entropy is collected, and the CSPRNG is fully initialized.
+         * It is worth mentioning
+         * that the PRNG used in the Kotlin/WasmWasi target is not guaranteed to be cryptographically secure.
+         * See the list below for details about the API used for producing the random uuid in each supported target.
+         *
+         * Note that the returned uuid is not recommended for use for cryptographic purposes.
+         * Because version 7 uuid has a partially predictable bit pattern, and utilizes at most
+         * 74 bits of entropy, regardless of platform.
+         *
+         * The following APIs are used for producing the random uuid in each of the supported targets:
+         *   - Kotlin/JVM - [java.security.SecureRandom](https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html)
+         *   - Kotlin/JS - [Crypto.getRandomValues()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/WasmJs - [Crypto.getRandomValues()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/WasmWasi - [random_get](https://github.com/WebAssembly/WASI/blob/main/legacy/preview1/docs.md#random_get)
+         *   - Kotlin/Native:
+         *       - Linux targets - [getrandom](https://www.man7.org/linux/man-pages/man2/getrandom.2.html)
+         *       - Apple and Android Native targets - [arc4random_buf](https://man7.org/linux/man-pages/man3/arc4random_buf.3.html)
+         *       - Windows targets - [BCryptGenRandom](https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptgenrandom)
+         *
+         * Note that the underlying API used to produce random uuids may change in the future.
+         *
+         * @return A randomly generated uuid.
+         * @throws RuntimeException if the underlying API fails. Refer to the corresponding underlying API
+         *   documentation for possible reasons for failure and guidance on how to handle them.
+         *
+         * @sample samples.uuid.Uuids.v7
+         */
+        @OptIn(ExperimentalTime::class)
+        public fun generateV7(): Uuid = generateV7(Clock.System)
+
+        @OptIn(ExperimentalTime::class)
+        internal fun generateV7(clock: Clock): Uuid = UuidV7Generator.generate(clock)
 
         /**
          * A [Comparator] that lexically orders uuids.
@@ -611,7 +708,13 @@ private const val UUID_HEX_DASH_LENGTH = 36
 internal expect fun serializedUuid(uuid: Uuid): Any
 
 @ExperimentalUuidApi
-internal expect fun secureRandomUuid(): Uuid
+internal fun secureRandomUuid(): Uuid {
+    return uuidFromRandomBytes(ByteArray(Uuid.SIZE_BYTES).also {
+        secureRandomBytes(it)
+    })
+}
+
+internal expect fun secureRandomBytes(destination: ByteArray): Unit
 
 @ExperimentalUuidApi
 internal fun uuidFromRandomBytes(randomBytes: ByteArray): Uuid {
@@ -778,4 +881,101 @@ private fun ByteArray.truncateForErrorMessage(maxSize: Int): String {
 
 internal fun uuidThrowUnexpectedCharacterException(inputString: String, errorDescription: String, errorIndex: Int): Nothing {
     throw IllegalArgumentException("Expected $errorDescription at index $errorIndex, but was '${inputString[errorIndex]}'")
+}
+
+@OptIn(ExperimentalAtomicApi::class)
+private object UuidV7Generator {
+    private const val TIMESTAMP_BIAS_BITS = 16
+    // covers ver and rand_a fields, set ver to 7
+    private const val VERSION_MASK = 0x7000
+    // if counter's highest bit is set to one, we have an overflow
+    private const val OVERFLOW_MASK = 0x8000L
+
+    // Stores both last used timestamp in millis and 12-bit wide counter,
+    // both conveniently separated by 4-bit UUID version.
+    //
+    // Layout:                                          TIMESTAMP_BIAS_BITS
+    //                                                   /
+    // 64                                               16   12            0
+    //  |----------unix timestamp in milliseconds--------|rdzn|--counter---|
+    //  |tttttttttttttttttttttttttttttttttttttttttttttttt|0111|cccccccccccc|
+    //
+    // Where rdzn (or a red zone) works both as a valid UUID version for UUIDv7 (0b0111)
+    // and works as an overflow guard.
+    private val timestampAndCounter = AtomicLong(0L)
+
+    /**
+     * Generate a new Version 7 [Uuid] using [clock] as a timestamp source.
+     *
+     * Implementation uses a fixed bit-length dedicated counter occupying all 12 bits of rand_a field,
+     * uses a fixed bit-length dedicated counter seeding to (re) initialize a counter and
+     * tracks counter overflows. When re-initializing the counter, its most significant bit is always unset
+     * to increase the values range.
+     *
+     * Refer to [RFC-9562, 6.2. Monotonicity and Counters](https://www.rfc-editor.org/rfc/rfc9562.html#section-6.2)
+     * for more details.
+     *
+     * This implementation is thread safe.
+     */
+    @OptIn(ExperimentalTime::class)
+    @ExperimentalUuidApi
+    fun generate(clock: Clock): Uuid {
+        // we need random values for:
+        // - 62 bit random rand_b, which will be placed in the first 8 bytes
+        // - 11 bit random rand_a, which will be placed in the trailing two bytes
+        val randomBytes = ByteArray(10).also {
+            secureRandomBytes(it)
+        }
+
+        // Let's keep moderate optimism and initialize re-initialize the counter beforehand.
+        // Note that the MSB is always unset (thus the mask is 0x07).
+        val newCounter = randomBytes[8].toInt().and(0x07).shl(8).or(
+            randomBytes[9].toInt().and(0xFF)
+        ).or(VERSION_MASK)
+
+        var newTimeStampAndCounter: Long
+
+        while (true) {
+            val previousTimeStampAndCounter = timestampAndCounter.load()
+            val currentTimeMillis = clock.now().toEpochMilliseconds()
+
+            val previousTimeMillis = previousTimeStampAndCounter.ushr(TIMESTAMP_BIAS_BITS)
+
+            if (previousTimeMillis < currentTimeMillis) { // clocks are ticking!
+                // concatenate a new timestamp with a counter value
+                newTimeStampAndCounter = currentTimeMillis.shl(TIMESTAMP_BIAS_BITS).or(newCounter.toLong())
+                // try to save them, retry everything on failure
+                if (timestampAndCounter.compareAndSet(previousTimeStampAndCounter, newTimeStampAndCounter)) {
+                    break
+                } // else -> continue
+            } else { // clocks are not ticking :(
+                // increment the counter
+                newTimeStampAndCounter = previousTimeStampAndCounter + 1
+                // check for the overflow
+                if (newTimeStampAndCounter.and(OVERFLOW_MASK) != 0L) {
+                    // counter overflow, let's increment timestamp by 1ms and reseed the counter
+                    newTimeStampAndCounter = (previousTimeMillis + 1L).shl(TIMESTAMP_BIAS_BITS).or(newCounter.toLong())
+                }
+                // try to save updated timestamp and counter values, retry everything on failure
+                if (timestampAndCounter.compareAndSet(previousTimeStampAndCounter, newTimeStampAndCounter)) {
+                    break
+                }
+            }
+        }
+
+        // newTimeStampAndCounter is a valid Uuid prefix, se can just copy it:
+        // - first (in the big-endian order) 48 bits are timestamp
+        // - followed by version (0b0111)
+        // - followed by 12 bit rand_a field
+        //
+        // For the suffix, we need to copy first 8 random bytes
+        // and set two most significant bits to a valid variant value:
+        // - variant (0b10)
+        // - rand_b (62 bit)
+        randomBytes[0] = randomBytes[0]
+            .and(0x3F) // clear two MSBs
+            .or(0x80.toByte()) // set then to 0b10
+        val variantAndRandB = randomBytes.getLongAt(0)
+        return Uuid.fromLongs(newTimeStampAndCounter, variantAndRandB)
+    }
 }
