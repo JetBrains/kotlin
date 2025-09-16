@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
+// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // ^^^ Ignore Backends that apply inliner before interpreter, which messes with the interpreter.
 //     TODO, KT-80561: Reenable all backends, once unsigned operations are supported in the frontend.

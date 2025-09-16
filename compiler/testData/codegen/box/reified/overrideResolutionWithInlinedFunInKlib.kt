@@ -1,7 +1,7 @@
 // ISSUE: KT-78321
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ^^^ Wrong box result: C C make make
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // ^^^ Wrong box result: C C make make
 
 // LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization

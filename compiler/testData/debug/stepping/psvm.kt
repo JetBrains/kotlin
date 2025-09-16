@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // ^^ Because main function will be called firstly with empty arguments that will chrash runtime
 // FILE: test.kt
 

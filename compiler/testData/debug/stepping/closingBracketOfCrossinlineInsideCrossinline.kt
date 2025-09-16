@@ -1,6 +1,6 @@
 // See KT-64726
 
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // FILE: test.kt
 inline fun String.switchMapOnce(crossinline mapper: (String) -> String): String {
     return { mapper(this) }.let { it() }

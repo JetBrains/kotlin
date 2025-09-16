@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // WITH_STDLIB
 // TODO: Reified generics required some design to unify behavior across all backends
 // IGNORE_BACKEND: JS_IR

@@ -2,7 +2,7 @@
 // ISSUE: KT-57391
 // WITH_STDLIB
 
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
 // KT-57391: java.lang.IllegalStateException: IrSimpleFunctionSymbolImpl for /main|main(){}[0] is already bound
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // IGNORE_HMPP: JS_IR

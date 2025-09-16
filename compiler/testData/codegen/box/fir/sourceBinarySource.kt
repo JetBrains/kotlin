@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 //   KT-65822: JS targets are ignored, as they doesn't support source-binary-source dependencies
-// IGNORE_BACKEND_K2: WASM
+// IGNORE_BACKEND_K2: WASM_JS, WASM_WASI
 //   Reason: KT-65794
 // IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE && target=linux_x64
 // IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE && target=linux_x64

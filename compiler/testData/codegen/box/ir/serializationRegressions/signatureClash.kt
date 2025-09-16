@@ -1,5 +1,5 @@
 // https://youtrack.jetbrains.com/issue/KT-42020/Psi2ir-IllegalStateException-IrSimpleFunctionPublicSymbolImpl-for-public-...-is-already-bound-on-generic-function-whose
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND_K1: NATIVE, JS_IR
 

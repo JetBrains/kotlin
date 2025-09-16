@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // WASM_MUTE_REASON: REFLECTION
 
 fun <T> something(): T = Any() as T

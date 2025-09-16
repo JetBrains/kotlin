@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 
 class Key<T>(val s: String)
 class Value<T>(val o: T)

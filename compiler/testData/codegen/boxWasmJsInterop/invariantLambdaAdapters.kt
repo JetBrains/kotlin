@@ -1,5 +1,5 @@
-// TARGET_BACKEND: WASM
-// IGNORE_BACKEND: WASM
+// TARGET_BACKEND: WASM_JS
+// IGNORE_BACKEND: WASM_JS
 // Ignore reason KT-67438
 
 fun f1(x: Number): String = x.toString()

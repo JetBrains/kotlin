@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-// IGNORE_BACKEND_K2: WASM
+// IGNORE_BACKEND_K2: WASM_JS, WASM_WASI
 
 interface FeatureFlag<OptionType : Any> {
     val default: OptionType

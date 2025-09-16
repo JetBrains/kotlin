@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+// IGNORE_BACKEND_K2: WASM_JS, WASM_WASI
 // FILE: test.kt
 
 data class D(val i: Int, val s: String)

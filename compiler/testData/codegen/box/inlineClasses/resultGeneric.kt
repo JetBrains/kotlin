@@ -1,7 +1,7 @@
 // NATIVE and WASM failure reasons see in `result.kt`
 // JS_IR error: <main> @ /box.kt:24:12: Constructor 'Result.<init>' can not be called: No constructor found for symbol 'kotlin/Result.<init>|-8731461708390519279[0]'
 // DONT_TARGET_EXACT_BACKEND: NATIVE
-// IGNORE_BACKEND: WASM, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: WASM_JS, WASM_WASI, JS_IR, JS_IR_ES6
 // IGNORE_BACKEND: ANDROID
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR NATIVE
 // ^^^ There is unlinked call of Result.<init> after deserialization. 'ValueClasses' language feature is still unstable.
