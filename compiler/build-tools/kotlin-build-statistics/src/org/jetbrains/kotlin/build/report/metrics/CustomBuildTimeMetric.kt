@@ -13,7 +13,7 @@ class CustomBuildTimeMetric private constructor(parent: BuildTimeMetric?, name: 
         fun createIfDoesNotExistAndReturn(parent: BuildTimeMetric? = null, name: String): BuildTimeMetric {
             val newCustomBuildTimeMetric = CustomBuildTimeMetric(parent, name)
             allCustomBuildTimeMetrics.addIfAbsent(newCustomBuildTimeMetric)
-            return getAllCustomBuildTimeMetrics().find { it.name == name } ?: newCustomBuildTimeMetric
+            return getAllCustomBuildTimeMetrics().find { it.name == name }?: error("Cannot find metric $name") //I am not sure how it could be
         }
     }
 }

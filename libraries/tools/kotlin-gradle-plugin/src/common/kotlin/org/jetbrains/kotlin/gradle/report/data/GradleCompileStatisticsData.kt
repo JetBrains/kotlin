@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.report.data
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.statistics.BuildDataType
@@ -30,7 +29,6 @@ class GradleCompileStatisticsData(
     private val compilerArguments: List<String>,
     private val nonIncrementalAttributes: Set<BuildAttribute>,
     private val buildTimesMetrics: Map<BuildTimeMetric, Long>,
-    private val dynamicBuildTimesMetrics: Map<DynamicBuildTimeKey, Long>,
     private val performanceMetrics: Map<BuildPerformanceMetric, Long>,
     private val gcTimeMetrics: Map<String, Long>?,
     private val gcCountMetrics: Map<String, Long>?,
@@ -68,8 +66,6 @@ class GradleCompileStatisticsData(
     override fun getNonIncrementalAttributes(): Set<BuildAttribute> = nonIncrementalAttributes
 
     override fun getBuildTimesMetrics(): Map<BuildTimeMetric, Long> = buildTimesMetrics
-
-    override fun getDynamicBuildTimeMetrics(): Map<DynamicBuildTimeKey, Long> = dynamicBuildTimesMetrics
 
     override fun getPerformanceMetrics(): Map<BuildPerformanceMetric, Long> = performanceMetrics
 

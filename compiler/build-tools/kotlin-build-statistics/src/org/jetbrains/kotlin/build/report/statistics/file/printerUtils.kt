@@ -22,9 +22,6 @@ internal fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printBuil
             data.statisticsData.map { it.getBuildTimesMetrics() }.reduce { agg, value ->
                 (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }
             },
-            data.statisticsData.map { it.getDynamicBuildTimeMetrics() }.reduce { agg, value ->
-                (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }
-            },
             data.statisticsData.map { it.getPerformanceMetrics() }.reduce { agg, value ->
                 (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }
             },
@@ -57,14 +54,13 @@ private fun Printer.printBuildInfo(startParameters: BuildStartParameters, failur
 
 private fun Printer.printMetrics(
     buildTimesMetrics: Map<out BuildTimeMetric, Long>,
-    dynamicBuildTimesMetrics: Map<DynamicBuildTimeKey, Long>,
     performanceMetrics: Map<out BuildPerformanceMetric, Long>,
     nonIncrementalAttributes: Collection<BuildAttribute>,
     gcTimeMetrics: Map<String, Long>? = emptyMap(),
     gcCountMetrics: Map<String, Long>? = emptyMap(),
     aggregatedMetric: Boolean = false,
 ) {
-    printBuildTimes(buildTimesMetrics, dynamicBuildTimesMetrics)
+    printBuildTimes(buildTimesMetrics)
     if (aggregatedMetric) println()
 
     printBuildPerformanceMetrics(performanceMetrics)
@@ -98,18 +94,12 @@ private fun Printer.printGcMetrics(
     }
 }
 
-private fun Printer.printBuildTimes(buildTimes: Map<out BuildTimeMetric, Long>, dynamicBuildTimes: Map<DynamicBuildTimeKey, Long>) {
+private fun Printer.printBuildTimes(buildTimes: Map<out BuildTimeMetric, Long>) {
     if (buildTimes.isEmpty()) return
 
     println("Time metrics:")
     withIndent {
         val visitedBuildTimes = HashSet<BuildTimeMetric>()
-        val dynamicBuildTimesMap = dynamicBuildTimes.map { (key, time) ->
-            key.parent to (key.name to time)
-        }.groupBy(
-            keySelector = { it.first },
-            valueTransform = { it.second }
-        )
 
         fun printBuildTime(buildTime: BuildTimeMetric) {
             if (!visitedBuildTimes.add(buildTime)) return
@@ -118,20 +108,17 @@ private fun Printer.printBuildTimes(buildTimes: Map<out BuildTimeMetric, Long>, 
             if (timeMs != null) {
                 println("${buildTime.readableString}: ${formatTime(timeMs)}")
                 withIndent {
-                    dynamicBuildTimesMap[buildTime]?.forEach { (name, timeMs) ->
-                        println("$name: ${formatTime(timeMs)}")
-                    }
-                    allBuildTimeMetricsMap[buildTime]?.forEach { printBuildTime(it) }
+                    allBuildTimeMetricsByParentMap[buildTime]?.forEach { printBuildTime(it) }
                 }
             } else {
                 //Skip formatting if parent metric does not set
-                allBuildTimeMetricsMap[buildTime]?.forEach { printBuildTime(it) }
+                allBuildTimeMetricsByParentMap[buildTime]?.forEach { printBuildTime(it) }
             }
         }
 
-        for (buildTime in allBuildTimeMetrics) {
-            if (buildTime.parent != null) continue
+        val rootMetrics = allBuildTimeMetricsByParentMap[null] ?: emptyList()
 
+        for (buildTime in rootMetrics) {
             printBuildTime(buildTime)
         }
     }
@@ -226,7 +213,6 @@ private fun <B : BuildTimeMetric, P : BuildPerformanceMetric> Printer.printTasks
         if (printMetrics) {
             printMetrics(
                 buildTimesMetrics = taskData.getBuildTimesMetrics(),
-                dynamicBuildTimesMetrics = taskData.getDynamicBuildTimeMetrics(),
                 performanceMetrics = taskData.getPerformanceMetrics(),
                 nonIncrementalAttributes = taskData.getNonIncrementalAttributes(),
                 gcTimeMetrics = taskData.getGcTimeMetrics(),

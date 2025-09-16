@@ -35,4 +35,5 @@ val allBuildTimeMetrics
     get() = getAllMetricsByType(BuildTimeMetric::class) + getAllCustomBuildTimeMetrics()
 
 val allBuildPerformanceMetrics = getAllMetricsByType(BuildPerformanceMetric::class)
-val allBuildTimeMetricsMap = allBuildTimeMetrics.groupBy { it.parent }
+val allBuildTimeMetricsByParentMap
+    get() = allBuildTimeMetrics.groupBy { it.parent }
