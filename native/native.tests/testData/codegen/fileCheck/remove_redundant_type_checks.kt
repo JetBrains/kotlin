@@ -6,7 +6,9 @@ class A(val s: String, val x: Int, val y: Int) {
     fun sum(z: Int) = x + y + z
 }
 
-class B(val o: Any)
+class B(val o: Any) {
+    var a: A? = null
+}
 
 // CHECK-LABEL: define i32 @"kfun:#test1(kotlin.Any){}kotlin.Int
 fun test1(o: Any): Int {
@@ -846,6 +848,24 @@ object Test40 {
     val z = test39(A("zzz", 42, 117)) // To deny possibility of placing into static data.
 }
 
+// CHECK-LABEL: define i32 @"kfun:#test41(B?;kotlin.Any){}kotlin.Int
+fun test41(b: B?, o: Any): Int {
+    return when {
+        b?.a != null -> 42
+        b != null
+// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+                && o is A -> {
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+// CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
+// CHECK-OPT: getelementptr inbounds %"kclassbody:A#internal
+            o.x
+        }
+        else -> 117
+    }
+}
+
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val a = A("zzz", 42, 117)
@@ -891,5 +911,6 @@ fun box(): String {
     println(test39(a))
     println(Test40)
     println(Test40.z)
+    println(test41(b, b))
     return "OK"
 }
