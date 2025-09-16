@@ -235,7 +235,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
     private fun IrClass.requiresDelegationToDefaultImpls(): Boolean {
         val functionsAndAccessors = functions + properties.mapNotNull { it.getter } + properties.mapNotNull { it.setter }
         for (irMemberFun in functionsAndAccessors) {
-            if (irMemberFun.modality == Modality.ABSTRACT)
+            if (irMemberFun.modality == Modality.ABSTRACT || irMemberFun.isMethodOfAny())
                 continue
             val irImplFun = irMemberFun.resolveFakeOverride() ?: irMemberFun
             if (irImplFun.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)

@@ -58388,6 +58388,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("missingSuperinterface.kt")
+      public void testMissingSuperinterface() {
+        runTest("compiler/testData/codegen/box/sam/constructors/missingSuperinterface.kt");
+      }
+
+      @Test
       @TestMetadata("nonLiteralComparator.kt")
       public void testNonLiteralComparator() {
         runTest("compiler/testData/codegen/box/sam/constructors/nonLiteralComparator.kt");
