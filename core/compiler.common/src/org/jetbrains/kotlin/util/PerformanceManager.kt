@@ -24,6 +24,10 @@ import java.util.*
  * to get reliable performance measurements.
  */
 abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presentableName: String) {
+    companion object {
+        private const val DEBUG_MODE: Boolean = false
+    }
+
     private lateinit var thread: Thread
     private lateinit var threadMXBean: ThreadMXBean
 
@@ -146,7 +150,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         if (otherUnitStats == null) return
 
-        assert(targetPlatform.getPlatformEnumValue() == otherUnitStats.platform)
+        assertIfDebug(targetPlatform.getPlatformEnumValue() == otherUnitStats.platform)
         compilerType += otherUnitStats.compilerType
         hasErrors = hasErrors || otherUnitStats.hasErrors
 
@@ -223,23 +227,27 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun notifyDynamicPhaseFinished(name: String, parentPhaseType: PhaseType) {
-        assert(currentDynamicPhaseTime != null)
-        assert(currentDynamicPhase == name)
+        assertIfDebug(currentDynamicPhaseTime != null)
+        assertIfDebug(currentDynamicPhase == name)
 
-        dynamicPhaseMeasurements[parentPhaseType to name] =
-            (dynamicPhaseMeasurements[parentPhaseType to name] ?: Time.ZERO) + (currentTime() - currentDynamicPhaseTime!!)
+        val localCurrentDynamicPhaseTime = currentDynamicPhaseTime
+        assertIfDebug(localCurrentDynamicPhaseTime != null) { "Dynamic measurement $name must have been started before finishing" }
+        if (localCurrentDynamicPhaseTime != null) {
+            dynamicPhaseMeasurements[parentPhaseType to name] =
+                (dynamicPhaseMeasurements[parentPhaseType to name] ?: Time.ZERO) + (currentTime() - localCurrentDynamicPhaseTime)
+        }
         currentDynamicPhaseTime = null
     }
 
     fun notifyPhaseStarted(newPhaseType: PhaseType) {
-        assert(phaseStartTime == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
+        assertIfDebug(phaseStartTime == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
 
         // All phases should always be executed sequentially.
         // TODO KT-75227 However, some Web pipelines are written in a way where `BackendGeneration` executed before `Analysis` or `IrLowering`.
         //   Consider using multiple `PerformanceManager` for measuring times per each unit
         //   or fix a time measurement bug where `BackendGeneration` is measured before `Analysis` or `IrLowering`
         if (!targetPlatform.isJs()) {
-            assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
+            assertIfDebug(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
         }
 
         phaseStartTime = currentTime()
@@ -249,7 +257,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     fun notifyPhaseFinished(phaseType: PhaseType) {
         ensureNotFinalizedAndSameThread()
 
-        assert(phaseStartTime != null) { "The measurement for phase $phaseType hasn't been started or already finished" }
+        assertIfDebug(phaseStartTime != null) { "The measurement for phase $phaseType hasn't been started or already finished" }
         finishPhase(phaseType)
     }
 
@@ -278,8 +286,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             )
         }
 
-        if (compilationMXBean != null && jitStartTime != null) {
-            jitTimeMillis = compilationMXBean!!.totalCompilationTime - jitStartTime!!
+        val localCompilationMXBean = compilationMXBean
+        val localJitStartTime = jitStartTime
+        if (localCompilationMXBean != null && localJitStartTime != null) {
+            jitTimeMillis = localCompilationMXBean.totalCompilationTime - localJitStartTime
         }
 
         if (!compilerType.isK2) {
@@ -296,9 +306,13 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     private fun finishPhase(phaseType: PhaseType) {
         if (phaseType != currentPhaseType) { // It's allowed to measure the same phase multiple times (although it's better to avoid that)
-            assert(!phaseMeasurements.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
+            assertIfDebug(!phaseMeasurements.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
         }
-        phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + (currentTime() - phaseStartTime!!)
+        val localPhaseStartTime = phaseStartTime
+        assertIfDebug(localPhaseStartTime != null) { "Measurement of $phaseType must have been started before finishing" }
+        if (localPhaseStartTime != null) {
+            phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + (currentTime() - localPhaseStartTime)
+        }
         phaseStartTime = null
     }
 
@@ -380,9 +394,19 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     private fun ensureNotFinalizedAndSameThread() {
         if (!targetPlatform.isJs()) { // TODO: KT-75227
-            assert(!isFinalized) { "Cannot add a performance measurements because it's already finalized" }
+            assertIfDebug(!isFinalized) { "Cannot add a performance measurements because it's already finalized" }
         }
-        assert(Thread.currentThread() == thread) { "PerformanceManager functions can be run only from the same thread" }
+        assertIfDebug(Thread.currentThread() == thread) { "PerformanceManager functions can be run only from the same thread" }
+    }
+
+    private fun assertIfDebug(value: Boolean, lazyMessage: (() -> Any)? = null) {
+        if (DEBUG_MODE) {
+            if (lazyMessage != null) {
+                assert(value, lazyMessage)
+            } else {
+                assert(value)
+            }
+        }
     }
 }
 
