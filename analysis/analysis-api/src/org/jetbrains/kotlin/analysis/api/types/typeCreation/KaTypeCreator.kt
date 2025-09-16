@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.types.Variance
 @KaTypeCreatorDslMarker
 public interface KaTypeCreator : KaLifetimeOwner {
     /**
-     * Builds a class type with the given class ID.
+     * Builds a class type with the given [classId].
+     *
+     * If there are no classes available by [classId], returns [KaClassErrorType].
      *
      * A generic class type can be built by providing type arguments using the [init] block.
      * The caller should provide the correct number of type arguments for the class.
@@ -36,7 +38,7 @@ public interface KaTypeCreator : KaLifetimeOwner {
      *
      * ```kotlin
      * classType(StandardClassIds.List) {
-     *     argument(builtinTypes.string)
+     *     invariantTypeArgument(builtinTypes.string)
      * }
      * ```
      */
@@ -44,7 +46,9 @@ public interface KaTypeCreator : KaLifetimeOwner {
     public fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType
 
     /**
-     * Builds a class type with the given class symbol.
+     * Builds a class type from the given class [symbol].
+     *
+     * If it's impossible to construct a type from [symbol], returns [KaClassErrorType].
      *
      * A generic class type can be built by providing type arguments using the [init] block.
      * The caller is supposed to provide the correct number of type arguments for the class.
@@ -55,7 +59,9 @@ public interface KaTypeCreator : KaLifetimeOwner {
      * #### Example
      *
      * ```kotlin
-     * classType(builtinTypes.string.symbol)
+     * classType(ktClass.classSymbol as KaClassSymbol) {
+     *     invariantTypeArgument(builtinTypes.string)
+     * }
      * ```
      */
     @KaExperimentalApi
@@ -74,6 +80,9 @@ public interface KaTypeCreator : KaLifetimeOwner {
      *
      * Array types are essentially class types and could be built manually via [classType].
      * This builder just provides a more convenient way to construct them.
+     *
+     * If the type was constructed successfully, returns [KaClassType].
+     * Otherwise, returns [KaClassErrorType].
      */
     @KaExperimentalApi
     public fun arrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit = {}): KaType
@@ -81,6 +90,9 @@ public interface KaTypeCreator : KaLifetimeOwner {
     /**
      * Builds the underlying array type of a [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
      * function parameter with the given [elementType].
+     *
+     * If the type was constructed successfully, returns [KaClassType].
+     * Otherwise, returns [KaClassErrorType].
      */
     @KaExperimentalApi
     public fun varargArrayType(elementType: KaType): KaType

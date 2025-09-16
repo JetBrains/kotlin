@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.KaBaseType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
@@ -31,26 +32,23 @@ internal class KaFirTypeCreator(
     analysisSession: KaFirSession,
 ) : KaBaseTypeCreator<KaFirSession>(analysisSession) {
     override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        return buildClassType(KaBaseClassTypeBuilder.ByClassId(classId, this).apply(init))
+        val builder = KaBaseClassTypeBuilder(this).apply(init)
+        val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)
+            ?: return ConeErrorType(
+                ConeUnresolvedSymbolError(classId)
+            ).asKaType()
+        val lookupTag = classSymbol.toLookupTag()
+
+        return buildClassType(lookupTag, builder)
     }
 
     override fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        return buildClassType(KaBaseClassTypeBuilder.BySymbol(symbol, this).apply(init))
+        val symbol = symbol
+        val lookupTag = symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
+        return buildClassType(lookupTag, KaBaseClassTypeBuilder(this).apply(init))
     }
 
-    private fun buildClassType(builder: KaBaseClassTypeBuilder): KaType {
-        val lookupTag = when (builder) {
-            is KaBaseClassTypeBuilder.ByClassId -> {
-                val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
-                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKaType()
-                classSymbol.toLookupTag()
-            }
-            is KaBaseClassTypeBuilder.BySymbol -> {
-                val symbol = builder.symbol
-                symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
-            }
-        }
-
+    private fun buildClassType(lookupTag: ConeClassLikeLookupTag, builder: KaBaseClassTypeBuilder): KaClassType {
         val expectedNumberOfParameters = with(analysisSession.firSession.typeContext) { lookupTag.parametersCount() }
         val builderTypeArguments = builder.typeArguments
         val arguments = List(expectedNumberOfParameters) { index ->
@@ -67,7 +65,7 @@ internal class KaFirTypeCreator(
             builder.isMarkedNullable
         ) as ConeClassLikeType
 
-        return coneType.asKaType()
+        return coneType.asKaType() as KaClassType
     }
 
     override fun typeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType =

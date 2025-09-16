@@ -18,17 +18,14 @@ import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.KaBaseType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.StarProjectionImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -40,35 +37,37 @@ internal class KaFe10TypeCreator(
     analysisSession: KaFe10Session
 ) : KaBaseTypeCreator<KaFe10Session>(analysisSession) {
     override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        return buildClassType(KaBaseClassTypeBuilder.ByClassId(classId, this).apply(init))
+        val descriptor = analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId)
+        val builder = KaBaseClassTypeBuilder(this).apply(init)
+
+        if (descriptor == null) {
+            val name = classId.asString()
+            return buildClassErrorType(name)
+        }
+
+        return buildClassType(descriptor, builder)
     }
 
     override fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        return buildClassType(KaBaseClassTypeBuilder.BySymbol(symbol, this).apply(init))
-    }
-
-    private fun buildClassType(builder: KaBaseClassTypeBuilder): KaType {
-        val descriptor: ClassDescriptor? = when (builder) {
-            is KaBaseClassTypeBuilder.ByClassId -> {
-                analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(builder.classId)
-            }
-            is KaBaseClassTypeBuilder.BySymbol -> {
-                getSymbolDescriptor(builder.symbol) as? ClassDescriptor
-            }
-        }
+        val descriptor = getSymbolDescriptor(symbol) as? ClassDescriptor
+        val builder = KaBaseClassTypeBuilder(this).apply(init)
 
         if (descriptor == null) {
-            val name = when (builder) {
-                is KaBaseClassTypeBuilder.ByClassId -> builder.classId.asString()
-                is KaBaseClassTypeBuilder.BySymbol ->
-                    builder.symbol.classId?.asString()
-                        ?: builder.symbol.name?.asString()
-                        ?: SpecialNames.ANONYMOUS_STRING
-            }
-            val kotlinType = ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, name)
-            return KaFe10ClassErrorType(kotlinType, analysisContext)
+            val name = symbol.classId?.asString() ?: symbol.nameOrAnonymous.asString()
+            return buildClassErrorType(name)
         }
 
+        return buildClassType(descriptor, builder)
+    }
+
+    private fun buildClassErrorType(name: String): KaClassErrorType {
+        val kotlinType =
+            ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, name)
+
+        return KaFe10ClassErrorType(kotlinType, analysisContext)
+    }
+
+    private fun buildClassType(descriptor: ClassDescriptor, builder: KaBaseClassTypeBuilder): KaClassType {
         val typeParameters = descriptor.typeConstructor.parameters
         val providedTypeArguments = builder.typeArguments
         val projections = typeParameters.mapIndexed { index, typeParameter ->

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjectio
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeCreator
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeBuilder
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
@@ -64,7 +62,7 @@ abstract class KaBaseTypeCreator<T : KaSession>(val analysisSession: T) : KaType
 }
 
 @KaImplementationDetail
-sealed class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaTypeCreator by typeCreatorDelegate {
+class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaTypeCreator by typeCreatorDelegate {
     private val backingTypeArguments = mutableListOf<KaTypeProjection>()
 
     override var isMarkedNullable: Boolean = false
@@ -97,10 +95,6 @@ sealed class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClas
     }
 
     override fun typeArgument(argument: () -> KaTypeProjection) = typeArgument(argument())
-
-    class ByClassId(val classId: ClassId, typeCreatorDelegate: KaTypeCreator) : KaBaseClassTypeBuilder(typeCreatorDelegate)
-
-    class BySymbol(val symbol: KaClassLikeSymbol, typeCreatorDelegate: KaTypeCreator) : KaBaseClassTypeBuilder(typeCreatorDelegate)
 }
 
 @KaImplementationDetail
