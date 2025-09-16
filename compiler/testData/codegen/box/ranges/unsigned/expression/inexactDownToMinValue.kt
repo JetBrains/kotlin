@@ -24,7 +24,7 @@ fun box(): String {
         list2.add(i)
         if (list2.size > 23) break
     }
-    if (list2 != listOf<UInt>((MinUB + 5u).toUInt(), (MinUB + 2u).toUInt())) {
+    if (list2 != listOf<UInt>(MinUB + 5u, MinUB + 2u)) {
         return "Wrong elements for (MinUB + 5u).toUByte() downTo MinUB step 3: $list2"
     }
 
@@ -34,7 +34,7 @@ fun box(): String {
         list3.add(i)
         if (list3.size > 23) break
     }
-    if (list3 != listOf<UInt>((MinUS + 5u).toUInt(), (MinUS + 2u).toUInt())) {
+    if (list3 != listOf<UInt>(MinUS + 5u, MinUS + 2u)) {
         return "Wrong elements for (MinUS + 5u).toUShort() downTo MinUS step 3: $list3"
     }
 
