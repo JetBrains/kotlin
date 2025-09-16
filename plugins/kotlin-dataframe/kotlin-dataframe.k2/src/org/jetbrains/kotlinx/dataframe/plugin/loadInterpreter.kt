@@ -271,6 +271,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypePattern
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypeZone
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateAt
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColLambda
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColMap
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColRow
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols1
@@ -361,6 +364,9 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "With0" -> With0()
         "ConvertAsColumn" -> ConvertAsColumn()
         "PerRowCol" -> PerRowCol()
+        "UpdatePerCol" -> UpdatePerColLambda()
+        "UpdatePerColRow" -> UpdatePerColRow()
+        "UpdatePerColMap" -> UpdatePerColMap()
         "Explode0" -> Explode0()
         "Implode" -> Implode()
         "ImplodeDefault" -> ImplodeDefault()
