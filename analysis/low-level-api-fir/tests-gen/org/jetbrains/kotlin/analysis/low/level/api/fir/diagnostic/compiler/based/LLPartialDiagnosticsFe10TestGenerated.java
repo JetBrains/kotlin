@@ -18748,6 +18748,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("lambdasWithExplicitParametersViaReceivers.kt")
+      public void testLambdasWithExplicitParametersViaReceivers() {
+        runTest("compiler/testData/diagnostics/tests/inference/lambdasWithExplicitParametersViaReceivers.kt");
+      }
+
+      @Test
       @TestMetadata("listConstructor.kt")
       public void testListConstructor() {
         runTest("compiler/testData/diagnostics/tests/inference/listConstructor.kt");
