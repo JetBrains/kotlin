@@ -571,12 +571,6 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     tasks.register<Test>("functionalUnitTest") {
         include("**/org/jetbrains/kotlin/gradle/unitTests/**")
         systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
-
-        // workaround https://github.com/gradle/gradle/issues/18647
-        jvmArgs(
-            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-            "--add-opens", "java.base/java.util=ALL-UNNAMED",
-        )
     }
 
     tasks.register<Test>("functionalRegressionTest") {
