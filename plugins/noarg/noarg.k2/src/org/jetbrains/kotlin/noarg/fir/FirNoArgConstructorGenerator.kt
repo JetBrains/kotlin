@@ -47,7 +47,7 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
         session.noArgPredicateMatcher.isAnnotated(this)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> =
-        if (classSymbol is FirRegularClassSymbol && classSymbol.isAnnotatedWithNoArg()) {
+        if (classSymbol is FirRegularClassSymbol) {
             setOf(SpecialNames.INIT)
         } else {
             emptySet()
