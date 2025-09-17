@@ -59,27 +59,6 @@ fun box() {
 // test.kt:12 f
 // test.kt:21 box
 
-// EXPECTATIONS WASM ClassicFrontend
-// test.kt:18 $box (9)
-// test.kt:15 $C.<init> (1)
-// test.kt:18 $box (9, 4)
-// test.kt:19 $box (14, 8, 14)
-// test.kt:5 $C.f (12)
-// test.kt:7 $C.f (8)
-// test.kt:14 $C.m (18)
-// test.kt:8 $C.f (8)
-// test.kt:14 $C.m (18)
-// test.kt:9 $C.f (8)
-// test.kt:14 $C.m (18)
-// test.kt:10 $C.f (8)
-// test.kt:14 $C.m (18)
-// test.kt:11 $C.f (8)
-// test.kt:14 $C.m (18)
-// test.kt:12 $C.f (5)
-// test.kt:19 $box (14)
-// test.kt:20 $box (5)
-// test.kt:21 $box (1)
-
 // EXPECTATIONS WASM FIR
 // test.kt:18 $box (9)
 // test.kt:15 $C.<init> (1)
