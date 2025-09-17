@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.wasm.resolve
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -15,26 +14,16 @@ import org.jetbrains.kotlin.storage.StorageManager
 typealias WasmJsPlatformAnalyzerServices = WasmPlatformAnalyzerServices
 
 object WasmPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
-    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
-        result.add(ImportPath.fromString("kotlin.js.*"))
-    }
-
     override val platformConfigurator: PlatformConfigurator = WasmJsPlatformConfigurator
+    override val defaultImportProvider: DefaultImportProvider = WasmJsDefaultImportsProvider
 
     val builtIns: KotlinBuiltIns
         get() = DefaultBuiltIns.Instance
-
-    override val excludedImports: List<FqName> =
-        listOf("Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json").map { FqName("kotlin.js.$it") }
 }
 
 object WasmWasiPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
-    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
-        result.add(ImportPath.fromString("kotlin.wasm.*"))
-    }
-
     override val platformConfigurator: PlatformConfigurator = WasmWasiPlatformConfigurator
-
+    override val defaultImportProvider: DefaultImportProvider = WasmWasiDefaultImportsProvider
     val builtIns: KotlinBuiltIns
         get() = DefaultBuiltIns.Instance
 }

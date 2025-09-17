@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.konan.platform.NativeDefaultImportsProvider
 
 @OptIn(SessionConfiguration::class)
 abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Nothing?>() {
@@ -98,6 +98,6 @@ abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?,
         register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
         register(PlatformConflictDeclarationsDiagnosticDispatcher::class, NativeConflictDeclarationsDiagnosticDispatcher)
         register(FirOverrideChecker::class, FirNativeOverrideChecker(this))
-        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(NativePlatformAnalyzerServices))
+        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(NativeDefaultImportsProvider))
     }
 }

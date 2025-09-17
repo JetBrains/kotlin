@@ -16,28 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.storage.StorageManager
 
 object JvmPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
-    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
-        result.add(ImportPath.fromString("kotlin.jvm.*"))
-
-        fun addAllClassifiersFromScope(scope: MemberScope) {
-            for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
-                result.add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
-            }
-        }
-
-        for (builtInPackage in JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FALLBACK).builtInPackagesImportedByDefault) {
-            addAllClassifiersFromScope(builtInPackage.memberScope)
-        }
-    }
-
-    override val defaultLowPriorityImports: List<ImportPath> = listOf(ImportPath.fromString("java.lang.*"))
-
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
+    override val defaultImportProvider: DefaultImportProvider = JvmDefaultImportsProvider
 }

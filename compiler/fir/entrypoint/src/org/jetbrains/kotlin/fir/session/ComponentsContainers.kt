@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
+import org.jetbrains.kotlin.analyzer.common.CommonDefaultImportsProvider
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.jvmDefaultMode
@@ -200,7 +200,7 @@ fun FirSession.registerDefaultComponents() {
     register(FirOverridesBackwardCompatibilityHelper::class, FirDefaultOverridesBackwardCompatibilityHelper)
     register(FirDelegatedMembersFilter::class, FirDelegatedMembersFilter.Default)
     register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
-    register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(CommonPlatformAnalyzerServices))
+    register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(CommonDefaultImportsProvider))
     register(FirIdentityLessPlatformDeterminer::class, FirIdentityLessPlatformDeterminer.Default)
 }
 
