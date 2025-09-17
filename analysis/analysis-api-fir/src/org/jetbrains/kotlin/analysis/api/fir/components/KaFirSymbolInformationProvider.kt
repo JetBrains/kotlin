@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
@@ -129,5 +131,14 @@ internal class KaFirSymbolInformationProvider(
             if (this !is KaFirNamedClassSymbolBase<*>) return null
             if (firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
             return firSymbol.getAllowedAnnotationTargets(analysisSession.firSession)
+        }
+
+    override val KaSymbol.importableFqName: FqName?
+        get() = withValidityAssertion {
+            when (this) {
+                is KaClassLikeSymbol -> classId?.asSingleFqName()
+                is KaCallableSymbol -> firSymbol.computeImportableName()
+                else -> null
+            }
         }
 }

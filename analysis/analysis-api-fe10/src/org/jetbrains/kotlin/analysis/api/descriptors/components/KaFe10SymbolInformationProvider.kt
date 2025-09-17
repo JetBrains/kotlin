@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolInformationProvider
@@ -15,11 +16,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.util.OperatorChecks
 
@@ -115,4 +120,36 @@ internal class KaFe10SymbolInformationProvider(
 
             return AnnotationChecker.applicableTargetSet(descriptor)
         }
+
+    override val KaSymbol.importableFqName: FqName?
+        get() = withValidityAssertion {
+            require(this is KaFe10Symbol)
+
+            val descriptor = getSymbolDescriptor(this)
+            if (descriptor?.canBeReferencedViaImport() != true) return null
+
+            return descriptor.getImportableDescriptor().fqNameSafe
+        }
+
+    /**
+     * Copy of `org.jetbrains.kotlin.idea.imports.ImportsUtils.canBeReferencedViaImport`.
+     */
+    private fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
+        if (this is PackageViewDescriptor ||
+            DescriptorUtils.isTopLevelDeclaration(this) ||
+            this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this)
+        ) {
+            return !name.isSpecial
+        }
+
+        //Both TypeAliasDescriptor and ClassDescriptor
+        val parentClassifier = containingDeclaration as? ClassifierDescriptorWithTypeParameters ?: return false
+        if (!parentClassifier.canBeReferencedViaImport()) return false
+
+        return when (this) {
+            is ConstructorDescriptor -> !parentClassifier.isInner // inner class constructors can't be referenced via import
+            is ClassDescriptor, is TypeAliasDescriptor -> true
+            else -> parentClassifier is ClassDescriptor && parentClassifier.kind == ClassKind.OBJECT
+        }
+    }
 }

@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 @KaExperimentalApi
@@ -73,7 +75,6 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
     @KaExperimentalApi
     public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
 
-
     /**
      * Whether the property is an [inline property](https://kotlinlang.org/docs/inline-functions.html#inline-properties).
      * A property is considered `inline` when both of its accessors are `inline` or when it has the `inline` keyword.
@@ -81,6 +82,12 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public val KaKotlinPropertySymbol.isInline: Boolean
+
+    /**
+     * A [FqName] which can be used to import the given symbol, or `null` if the symbol cannot be imported.
+     */
+    @KaIdeApi
+    public val KaSymbol.importableFqName: FqName?
 }
 
 /**
@@ -146,3 +153,13 @@ public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
 context(context: KaSymbolInformationProvider)
 public val KaKotlinPropertySymbol.isInline: Boolean
     get() = with(context) { isInline }
+
+/**
+ * @see KaSymbolInformationProvider.importableFqName
+ */
+@KaContextParameterApi
+@KaIdeApi
+@OptIn(KaExperimentalApi::class)
+context(context: KaSymbolInformationProvider)
+public val KaSymbol.importableFqName: FqName?
+    get() = with(context) { importableFqName }
