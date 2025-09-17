@@ -26,6 +26,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: FunctionWithContextReceiversKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaContextParameterSymbol:
       annotations: []
       callableId: null
@@ -57,6 +58,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: FunctionWithContextReceiversKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: [
     KaContextReceiver:
@@ -111,3 +113,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: foo

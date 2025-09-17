@@ -50,6 +50,7 @@ KaNamedFunctionSymbol:
                       getContainingJvmClassName: BooleanExprContractKt
                       getContainingModule: KaSourceModule "Sources of main"
                       deprecationStatus: null
+                      importableFqName: null
               isNegated: false
           right:
             KaContractIsNullPredicateExpression:
@@ -85,6 +86,7 @@ KaNamedFunctionSymbol:
                       getContainingJvmClassName: BooleanExprContractKt
                       getContainingModule: KaSourceModule "Sources of main"
                       deprecationStatus: null
+                      importableFqName: null
               isNegated: true
           operation: AND
   ]
@@ -141,6 +143,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: BooleanExprContractKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -170,6 +173,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: BooleanExprContractKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
@@ -177,3 +181,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: boolenExprContract

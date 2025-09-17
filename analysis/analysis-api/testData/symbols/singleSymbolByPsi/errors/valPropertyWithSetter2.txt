@@ -42,6 +42,7 @@ KaPropertySetterSymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -77,9 +78,11 @@ KaPropertySetterSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(valPropertyWithSetter2.kt)
   getContainingJvmClassName: ValPropertyWithSetter2Kt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: special.accessor

@@ -69,6 +69,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: test.CommonKt
       getContainingModule: KaSourceModule "Sources of common"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(Common.kt)
@@ -76,3 +77,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of common"
   deprecationStatus: null
+  importableFqName: test.Foo

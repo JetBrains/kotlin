@@ -46,6 +46,7 @@ KaNamedFunctionSymbol:
               getContainingJvmClassName: CallsInPlaceUnknownContractKt
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+              importableFqName: null
       occurrencesRange: UNKNOWN
   ]
   hasStableParameterNames: true
@@ -106,6 +107,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: CallsInPlaceUnknownContractKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(callsInPlaceUnknownContract.kt)
@@ -113,3 +115,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: unknownContract

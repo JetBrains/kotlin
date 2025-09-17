@@ -44,3 +44,4 @@ KaKotlinPropertySymbol:
   javaSetterName: setDynamicPropertyAccess
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: <dynamic>.dynamicPropertyAccess

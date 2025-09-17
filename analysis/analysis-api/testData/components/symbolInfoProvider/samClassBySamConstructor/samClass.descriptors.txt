@@ -183,12 +183,14 @@ CONSTRUCTOR:
       getContainingJvmClassName: SamClassKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClass.kt)
   getContainingJvmClassName: SamClassKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: IntPredicate
 CLASS:
   KaNamedClassSymbol:
   annotations: []
@@ -231,3 +233,4 @@ CLASS:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: IntPredicate

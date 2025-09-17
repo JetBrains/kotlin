@@ -57,6 +57,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: VarargWithoutTypeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargWithoutType.kt)
@@ -64,3 +65,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: foo

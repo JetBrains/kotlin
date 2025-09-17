@@ -28,3 +28,4 @@ KaNamedClassSymbol:
   getContainingModule: KaScriptModule "Script scriptWithClassDeclaration.kts"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: Person

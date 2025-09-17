@@ -28,6 +28,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/SimpleClass.constructorVariableWithAnnotations
   compilerVisibility: Public
   contextParameters: []
@@ -65,6 +66,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -139,6 +141,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -177,6 +180,7 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaLibraryModule "Library lib"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -187,6 +191,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
+    importableFqName: special.accessor
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -202,3 +207,4 @@ KaKotlinPropertySymbol:
   javaSetterName: setConstructorVariableWithAnnotations
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null

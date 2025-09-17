@@ -28,6 +28,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
+    importableFqName: null
   callableId: /MyClass.Companion.extension
   compilerVisibility: Public
   contextParameters: []
@@ -71,6 +72,8 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: MyClass.Companion
       getContainingModule: KaLibraryModule "Library library"
       deprecationStatus: null
+      importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -85,6 +88,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -128,6 +132,8 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
+    importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -148,3 +154,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: true
+  importableFqName: MyClass.Companion.extension

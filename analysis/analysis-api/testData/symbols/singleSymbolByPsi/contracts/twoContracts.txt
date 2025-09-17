@@ -50,6 +50,7 @@ KaNamedFunctionSymbol:
                       getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KaSourceModule "Sources of main"
                       deprecationStatus: null
+                      importableFqName: null
               isNegated: false
           right:
             KaContractIsNullPredicateExpression:
@@ -85,6 +86,7 @@ KaNamedFunctionSymbol:
                       getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KaSourceModule "Sources of main"
                       deprecationStatus: null
+                      importableFqName: null
               isNegated: true
           operation: AND
     KaContractCallsInPlaceContractEffectDeclaration:
@@ -125,6 +127,7 @@ KaNamedFunctionSymbol:
               getContainingJvmClassName: TwoContractsKt
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+              importableFqName: null
       occurrencesRange: EXACTLY_ONCE
   ]
   hasStableParameterNames: true
@@ -180,6 +183,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -209,6 +213,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -243,6 +248,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
@@ -250,3 +256,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: twoContracts

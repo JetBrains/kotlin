@@ -29,6 +29,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: BooleanContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: [
     KaContextReceiver:
@@ -70,6 +71,7 @@ KaNamedFunctionSymbol:
                   getContainingJvmClassName: BooleanContextParameterKt
                   getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
+                  importableFqName: null
           isNegated: true
   ]
   hasStableParameterNames: true
@@ -125,6 +127,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: BooleanContextParameterKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(booleanContextParameter.kt)
@@ -132,3 +135,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: validate

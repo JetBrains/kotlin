@@ -36,6 +36,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: MyKotlinEnum
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -77,3 +78,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: MyKotlinEnum.entries

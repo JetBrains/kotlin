@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: BackingFieldKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /p
   compilerVisibility: Public
   contextParameters: []
@@ -54,6 +55,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: BackingFieldKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -122,6 +124,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -157,12 +160,14 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(backingField.kt)
     getContainingJvmClassName: BackingFieldKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(backingField.kt)
@@ -174,3 +179,4 @@ KaKotlinPropertySymbol:
   javaSetterName: setP
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: p

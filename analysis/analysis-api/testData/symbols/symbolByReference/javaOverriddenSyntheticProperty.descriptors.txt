@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SomeKotlinClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /SomeKotlinClass.foo
   compilerVisibility: Public
   contextParameters: []
@@ -67,6 +68,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: SomeKotlinClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -81,6 +83,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SomeKotlinClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -124,6 +127,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: SomeKotlinClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -144,3 +148,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null

@@ -41,3 +41,4 @@ KaNamedClassSymbol:
   getContainingModule: KaLibraryModule "Library library"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: one.Foo

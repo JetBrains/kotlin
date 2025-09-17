@@ -58,6 +58,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: one.ValueClass
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -69,3 +70,4 @@ KaNamedFunctionSymbol:
   canBeOperator: true
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
+  importableFqName: null

@@ -174,12 +174,14 @@ CONSTRUCTOR:
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script samClassInScript.kts"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClassInScript.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script samClassInScript.kts"
   deprecationStatus: null
+  importableFqName: IntPredicate
 CLASS:
   KaNamedClassSymbol:
   annotations: []
@@ -222,3 +224,4 @@ CLASS:
   getContainingModule: KaScriptModule "Script samClassInScript.kts"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: IntPredicate

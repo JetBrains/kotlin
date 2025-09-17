@@ -28,6 +28,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of jvm-main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: sample.A
 
 KaConstructorSymbol:
   annotations: []
@@ -79,12 +80,14 @@ KaConstructorSymbol:
       getContainingJvmClassName: sample.B
       getContainingModule: KaSourceModule "Sources of jvm-main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingJvmClassName: sample.B
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
+  importableFqName: sample.B
 
 KaConstructorSymbol:
   annotations: []
@@ -136,12 +139,14 @@ KaConstructorSymbol:
       getContainingJvmClassName: sample.B
       getContainingModule: KaSourceModule "Sources of jvm-main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingJvmClassName: sample.B
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
+  importableFqName: sample.B
 
 KaNamedClassSymbol:
   annotations: []
@@ -173,6 +178,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of jvm-main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: sample.B.Nested
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -215,6 +221,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -242,6 +249,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.B
     getContainingModule: KaSourceModule "Sources of jvm-main"
     deprecationStatus: null
+    importableFqName: null
   callableId: sample/B.n
   compilerVisibility: Public
   contextParameters: []
@@ -276,6 +284,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.B
     getContainingModule: KaSourceModule "Sources of jvm-main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -316,6 +325,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -347,6 +357,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of jvm-main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: sample.B
 
 KaTypeAliasSymbol:
   annotations: []
@@ -367,6 +378,7 @@ KaTypeAliasSymbol:
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
+  importableFqName: sample.C
 
 KaNamedClassSymbol:
   annotations: []
@@ -398,6 +410,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of jvm-main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: sample.D.Nested
 
 KaNamedClassSymbol:
   annotations: []
@@ -429,6 +442,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of jvm-main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: sample.D
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -467,6 +481,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
+  importableFqName: sample.baz
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -494,6 +509,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.MainKt
     getContainingModule: KaSourceModule "Sources of jvm-main"
     deprecationStatus: null
+    importableFqName: null
   callableId: sample/m
   compilerVisibility: Public
   contextParameters: []
@@ -524,6 +540,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.MainKt
     getContainingModule: KaSourceModule "Sources of jvm-main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -592,6 +609,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of jvm-main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -627,12 +645,14 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of jvm-main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(main.kt)
     getContainingJvmClassName: sample.MainKt
     getContainingModule: KaSourceModule "Sources of jvm-main"
     deprecationStatus: null
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(main.kt)
@@ -644,3 +664,4 @@ KaKotlinPropertySymbol:
   javaSetterName: setM
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: sample.m

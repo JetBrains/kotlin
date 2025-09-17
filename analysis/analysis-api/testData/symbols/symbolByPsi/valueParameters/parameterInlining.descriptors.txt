@@ -63,6 +63,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: ParameterInliningKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -97,6 +98,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: ParameterInliningKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -131,6 +133,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: ParameterInliningKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
@@ -138,3 +141,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: foo

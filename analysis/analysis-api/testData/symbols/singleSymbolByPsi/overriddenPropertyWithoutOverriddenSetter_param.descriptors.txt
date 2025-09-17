@@ -29,6 +29,7 @@ KaValueParameterSymbol:
       getContainingJvmClassName: pack.Impl
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     callableId: pack/Impl.bar
     compilerVisibility: Public
     contextParameters: []
@@ -63,6 +64,7 @@ KaValueParameterSymbol:
       getContainingJvmClassName: pack.Impl
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     hasBackingField: true
     hasGetter: true
     hasSetter: true
@@ -131,6 +133,7 @@ KaValueParameterSymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -166,6 +169,7 @@ KaValueParameterSymbol:
           getContainingJvmClassName: null
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
       ]
       visibility: PUBLIC
       getDispatchReceiver(): KaUsualClassType:
@@ -176,6 +180,7 @@ KaValueParameterSymbol:
       getContainingJvmClassName: pack.Impl
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     typeParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -191,6 +196,7 @@ KaValueParameterSymbol:
     javaSetterName: setBar
     setterDeprecationStatus: null
     isInline: false
+    importableFqName: null
   hasDefaultValue: false
   isActual: false
   isCrossinline: false
@@ -214,3 +220,4 @@ KaValueParameterSymbol:
   getContainingJvmClassName: pack.Impl
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

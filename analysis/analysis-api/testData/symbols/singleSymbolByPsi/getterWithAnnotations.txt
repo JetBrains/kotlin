@@ -29,3 +29,4 @@ KaPropertyGetterSymbol:
   getContainingJvmClassName: GetterWithAnnotationsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: special.accessor

@@ -34,6 +34,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: Base
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -73,3 +74,4 @@ KaSyntheticJavaPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  importableFqName: null

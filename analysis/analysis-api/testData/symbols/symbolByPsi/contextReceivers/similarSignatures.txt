@@ -28,6 +28,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: A
 
 KaNamedClassSymbol:
   annotations: []
@@ -59,6 +60,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: B
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -88,6 +90,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: [
     KaContextReceiver:
@@ -128,6 +131,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: tooo
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -157,6 +161,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: [
     KaContextReceiver:
@@ -197,6 +202,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: tooo
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -226,6 +232,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaContextParameterSymbol:
       annotations: []
       callableId: null
@@ -249,6 +256,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: [
     KaContextReceiver:
@@ -295,6 +303,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: tooo
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -324,6 +333,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaContextParameterSymbol:
       annotations: []
       callableId: null
@@ -347,6 +357,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: SimilarSignaturesKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: [
     KaContextReceiver:
@@ -393,3 +404,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: tooo

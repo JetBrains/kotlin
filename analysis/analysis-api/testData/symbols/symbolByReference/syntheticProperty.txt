@@ -34,6 +34,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: Derived
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -102,6 +103,7 @@ KaSyntheticJavaPropertySymbol:
       getContainingJvmClassName: Derived
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -137,6 +139,7 @@ KaSyntheticJavaPropertySymbol:
         getContainingJvmClassName: Derived
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -147,6 +150,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: Derived
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -161,3 +165,4 @@ KaSyntheticJavaPropertySymbol:
   javaGetterName: getSomething
   javaSetterName: setSomething
   setterDeprecationStatus: null
+  importableFqName: null

@@ -24,3 +24,4 @@ KaNamedClassSymbol:
 
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: kotlin.Any

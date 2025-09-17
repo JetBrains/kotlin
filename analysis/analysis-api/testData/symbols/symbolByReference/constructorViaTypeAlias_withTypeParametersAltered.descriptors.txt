@@ -43,6 +43,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersAltered.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -78,9 +79,11 @@ KaConstructorSymbol:
       getContainingJvmClassName: test.MyClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersAltered.kt)
   getContainingJvmClassName: test.MyClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.MyClass

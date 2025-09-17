@@ -21,3 +21,4 @@ KaJavaFieldSymbol:
   getContainingJvmClassName: SuperClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: SuperClass.count

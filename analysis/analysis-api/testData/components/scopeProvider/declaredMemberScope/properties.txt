@@ -28,6 +28,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.fromConstructor
   compilerVisibility: Public
   contextParameters: []
@@ -62,6 +63,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -130,6 +132,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -165,6 +168,7 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -175,6 +179,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -190,6 +195,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setFromConstructor
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -221,6 +227,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.defaultProperty
   compilerVisibility: Public
   contextParameters: []
@@ -255,6 +262,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -295,6 +303,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -326,6 +335,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.defaultVariable
   compilerVisibility: Public
   contextParameters: []
@@ -360,6 +370,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -428,6 +439,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -463,6 +475,7 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -473,6 +486,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -488,6 +502,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setDefaultVariable
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -519,6 +534,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.customAccessorAndBackingField
   compilerVisibility: Public
   contextParameters: []
@@ -549,6 +565,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -617,6 +634,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -652,12 +670,14 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(properties.kt)
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -673,6 +693,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setCustomAccessorAndBackingField
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -704,6 +725,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.customGetter
   compilerVisibility: Public
   contextParameters: []
@@ -734,6 +756,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -774,6 +797,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -805,6 +829,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.customSetter
   compilerVisibility: Public
   contextParameters: []
@@ -839,6 +864,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -907,6 +933,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -942,12 +969,14 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(properties.kt)
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -963,6 +992,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setCustomSetter
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -994,6 +1024,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.customGetterDelegation
   compilerVisibility: Public
   contextParameters: []
@@ -1024,6 +1055,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -1064,6 +1096,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1095,6 +1128,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.customGetterDelegationWithBackingField
   compilerVisibility: Public
   contextParameters: []
@@ -1125,6 +1159,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -1165,6 +1200,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1196,6 +1232,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.defaultGetterWithAnnotation
   compilerVisibility: Public
   contextParameters: []
@@ -1233,6 +1270,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -1273,6 +1311,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1304,6 +1343,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.defaultSetterWithAnotherVisibility
   compilerVisibility: Public
   contextParameters: []
@@ -1338,6 +1378,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -1406,6 +1447,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1441,6 +1483,7 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
@@ -1451,6 +1494,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -1466,6 +1510,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setDefaultSetterWithAnotherVisibility
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1497,6 +1542,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.extensionProperty
   compilerVisibility: Public
   contextParameters: []
@@ -1540,6 +1586,8 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: one.Foo
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -1550,6 +1598,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -1593,6 +1642,8 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -1613,6 +1664,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1644,6 +1696,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.postponed
   compilerVisibility: Public
   contextParameters: []
@@ -1674,6 +1727,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -1714,6 +1768,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1745,6 +1800,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.lateinitVariable
   compilerVisibility: Public
   contextParameters: []
@@ -1779,6 +1835,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -1847,6 +1904,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -1882,6 +1940,7 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -1892,6 +1951,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -1907,6 +1967,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setLateinitVariable
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -1938,6 +1999,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/Foo.abstractProperty
   compilerVisibility: Public
   contextParameters: []
@@ -1972,6 +2034,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Foo
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -2012,6 +2075,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaConstructorSymbol:
   annotations: []
@@ -2069,6 +2133,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: one.Foo
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: one/Foo.fromConstructor
         compilerVisibility: Public
         contextParameters: []
@@ -2103,6 +2168,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: one.Foo
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: special.accessor
         hasBackingField: true
         hasGetter: true
         hasSetter: true
@@ -2171,6 +2237,7 @@ KaConstructorSymbol:
             getContainingJvmClassName: null
             getContainingModule: KaSourceModule "Sources of main"
             deprecationStatus: null
+            importableFqName: null
           receiverParameter: null
           returnType: KaUsualClassType:
             annotations: []
@@ -2206,6 +2273,7 @@ KaConstructorSymbol:
               getContainingJvmClassName: null
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+              importableFqName: null
           ]
           visibility: PUBLIC
           getDispatchReceiver(): KaUsualClassType:
@@ -2216,6 +2284,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: one.Foo
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: special.accessor
         typeParameters: []
         visibility: PUBLIC
         getDispatchReceiver(): KaUsualClassType:
@@ -2231,6 +2300,7 @@ KaConstructorSymbol:
         javaSetterName: setFromConstructor
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -2254,9 +2324,11 @@ KaConstructorSymbol:
       getContainingJvmClassName: one.Foo
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(properties.kt)
   getContainingJvmClassName: one.Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: one.Foo

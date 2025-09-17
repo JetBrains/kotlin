@@ -26,6 +26,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: one.LibraryKt
       getContainingModule: KaLibraryModule "Library library"
       deprecationStatus: null
+      importableFqName: null
     KaContextParameterSymbol:
       annotations: []
       callableId: null
@@ -49,6 +50,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: one.LibraryKt
       getContainingModule: KaLibraryModule "Library library"
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: [
     KaContextReceiver:
@@ -95,3 +97,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  importableFqName: one.foo

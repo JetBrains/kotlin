@@ -46,6 +46,7 @@ KaNamedFunctionSymbol:
               getContainingJvmClassName: CallsInPlaceAtLeastOnceContractKt
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+              importableFqName: null
       occurrencesRange: AT_LEAST_ONCE
   ]
   hasStableParameterNames: true
@@ -106,6 +107,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: CallsInPlaceAtLeastOnceContractKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(callsInPlaceAtLeastOnceContract.kt)
@@ -113,3 +115,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: atLeastOnceContract

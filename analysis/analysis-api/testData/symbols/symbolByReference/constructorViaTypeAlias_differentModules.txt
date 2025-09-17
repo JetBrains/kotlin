@@ -24,3 +24,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of dep"
   deprecationStatus: null
+  importableFqName: one.SimpleClass

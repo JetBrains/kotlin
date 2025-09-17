@@ -29,3 +29,4 @@ KaJavaFieldSymbol:
   getContainingJvmClassName: Config
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

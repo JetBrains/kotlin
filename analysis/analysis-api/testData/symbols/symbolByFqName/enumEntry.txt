@@ -22,3 +22,4 @@ KaEnumEntrySymbol:
   getContainingJvmClassName: kotlin.LazyThreadSafetyMode
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  importableFqName: kotlin.LazyThreadSafetyMode.SYNCHRONIZED

@@ -27,3 +27,4 @@ KaValueParameterSymbol:
   getContainingJvmClassName: JavaAnnotation
   getContainingModule: KaLibraryModule "Library dependency"
   deprecationStatus: null
+  importableFqName: null

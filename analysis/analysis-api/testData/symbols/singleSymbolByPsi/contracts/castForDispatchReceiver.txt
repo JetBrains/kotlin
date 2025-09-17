@@ -46,6 +46,7 @@ KaNamedFunctionSymbol:
                   getContainingModule: KaSourceModule "Sources of main"
                   annotationApplicableTargets: null
                   deprecationStatus: null
+                  importableFqName: Result
           type:
             KaUsualClassType:
               annotations: []
@@ -87,3 +88,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

@@ -29,4 +29,5 @@ KaNamedClassSymbol:
 
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: one.Producer.NestedClass
   isPublicApi: false

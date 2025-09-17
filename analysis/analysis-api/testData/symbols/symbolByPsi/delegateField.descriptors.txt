@@ -50,6 +50,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: /MyColor.x
         compilerVisibility: Public
         contextParameters: []
@@ -84,6 +85,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -124,6 +126,7 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -147,6 +150,7 @@ KaConstructorSymbol:
       getContainingJvmClassName: MyColor
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -178,6 +182,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: /MyColor.y
         compilerVisibility: Public
         contextParameters: []
@@ -212,6 +217,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -252,6 +258,7 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -275,6 +282,7 @@ KaConstructorSymbol:
       getContainingJvmClassName: MyColor
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -306,6 +314,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: /MyColor.z
         compilerVisibility: Public
         contextParameters: []
@@ -340,6 +349,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -380,6 +390,7 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -403,12 +414,14 @@ KaConstructorSymbol:
       getContainingJvmClassName: MyColor
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(delegateField.kt)
   getContainingJvmClassName: MyColor
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: MyColor
 
 KaNamedClassSymbol:
   annotations: []
@@ -440,6 +453,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: MyColor
 
 KaAnonymousFunctionSymbol:
   annotations: []
@@ -465,6 +479,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -492,6 +507,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /Some.delegate
   compilerVisibility: Public
   contextParameters: []
@@ -526,6 +542,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -566,6 +583,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaAnonymousFunctionSymbol:
   annotations: []
@@ -591,6 +609,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -623,6 +642,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /Some.lambda
   compilerVisibility: Public
   contextParameters: []
@@ -662,6 +682,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -707,6 +728,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -734,6 +756,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /Some.nonLazy
   compilerVisibility: Public
   contextParameters: []
@@ -768,6 +791,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -808,6 +832,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -839,3 +864,4 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: Some

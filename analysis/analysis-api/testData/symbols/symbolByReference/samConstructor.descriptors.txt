@@ -54,9 +54,11 @@ KaSamConstructorSymbol:
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
+  importableFqName: java.lang.Runnable

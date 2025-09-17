@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
     deprecationStatus: null
+    importableFqName: null
   callableId: /MyClass.Companion.property
   compilerVisibility: Public
   contextParameters: []
@@ -62,6 +63,7 @@ KaKotlinPropertySymbol:
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
     deprecationStatus: null
+    importableFqName: MyClass.Companion.property
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -104,3 +106,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: true
+  importableFqName: MyClass.Companion.property
