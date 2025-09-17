@@ -19,9 +19,7 @@ fun box() {
 // EXPECTATIONS JS_IR
 // test.kt:6 box
 // test.kt:3 cond
-// EXPECTATIONS FIR JS_IR
 // test.kt:9 box
-// EXPECTATIONS JS_IR
 // test.kt:10 box
 
 // EXPECTATIONS WASM
