@@ -18,7 +18,7 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCppRuntime
-@PublishedApi
+@PublishedApi // Required by visibility rules in IR Validator for many tests in FirNativeCodegenLocalTestGenerated$Cinterop
 @UsedFromCompilerGeneratedCode
 internal fun ThrowNullPointerException(): Nothing {
     throw NullPointerException()
