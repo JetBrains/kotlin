@@ -684,10 +684,10 @@ class Fir2IrConverter(
                 generatedFiles.forEach { components.firProvider.recordFile(it) }
             }
 
-//            println(allFirFiles.singleOrNull()?.render())
+            // println(allFirFiles.singleOrNull()?.render())
             components.converter.runSourcesConversion(allFirFiles, irModuleFragment, components.fir2IrVisitor)
 
-//            println(irModuleFragment.dump())
+            // println(irModuleFragment.dump())
             return irModuleFragment
         }
     }

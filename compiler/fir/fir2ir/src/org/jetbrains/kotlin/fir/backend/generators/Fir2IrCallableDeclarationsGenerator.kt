@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -288,10 +290,14 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 c.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
                                 NameUtils.propertyDelegateName(property.name),
                                 true,
-                                delegate
+                                delegate.takeIf { property.isReplSnippetDeclaration != true },
+                                delegate.resolvedType.toIrType(),
                             )
                         } else {
-                            val initializer = getEffectivePropertyInitializer(property, resolveIfNeeded = true)
+                            val initializer = runIf(property.isReplSnippetDeclaration != true) {
+                                getEffectivePropertyInitializer(property, resolveIfNeeded = true)
+                            }
+
                             // There are cases when we get here for properties
                             // that have no backing field. For example, in the
                             // funExpression.kt test there's an attempt
@@ -307,7 +313,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 property.name,
                                 property.isVal,
                                 initializer,
-                                typeToUse
+                                typeToUse,
                             ).also { field ->
                                 if (initializer is FirLiteralExpression) {
                                     val constType = initializer.resolvedType.toIrType()
@@ -491,7 +497,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 visibility = visibility,
                 symbol = symbol,
                 type = inferredType,
-                isFinal = isFinal,
+                isFinal = isFinal && firInitializerExpression != null,
                 isStatic = firProperty.isStatic || !(irProperty.parent is IrClass || irProperty.parent is IrScript),
                 isExternal = firProperty.isExternal || irProperty.isExternal,
             ).also {
