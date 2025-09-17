@@ -30,6 +30,7 @@ abstract class FirReplSnippetConfiguratorExtension(
     fun interface Factory : FirExtension.Factory<FirReplSnippetConfiguratorExtension>
 
     abstract fun isReplSnippetsSource(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean
+    abstract fun getResultsFieldName(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): String?
     abstract fun FirReplSnippetBuilder.configureContainingFile(fileBuilder: FirFileBuilder)
     abstract fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>)
 }

@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 open class PsiRawFirBuilder(
     session: FirSession,
@@ -195,9 +197,10 @@ open class PsiRawFirBuilder(
         script: PsiElement,
         scriptSource: KtSourceElement,
         fileName: String,
+        resultFieldName: String?,
         setup: FirReplSnippetBuilder.() -> Unit,
     ): FirReplSnippet {
-        return Visitor().convertReplSnippet(script as KtScript, scriptSource as KtPsiSourceElement, fileName, setup)
+        return Visitor().convertReplSnippet(script as KtScript, scriptSource as KtPsiSourceElement, fileName, resultFieldName, setup)
     }
 
     protected open inner class Visitor : KtVisitor<FirElement, FirElement?>(), DestructuringContext<KtDestructuringDeclarationEntry> {
@@ -1437,6 +1440,7 @@ open class PsiRawFirBuilder(
             script: KtScript,
             scriptSource: KtPsiSourceElement,
             fileName: String,
+            resultFieldName: String?,
             setup: FirReplSnippetBuilder.() -> Unit = {},
         ): FirReplSnippet {
             val snippetName = NameUtils.getSnippetTargetClassName(Name.special("<$fileName>"))
@@ -1445,6 +1449,7 @@ open class PsiRawFirBuilder(
             val snippetSymbol = FirReplSnippetSymbol(classSymbol)
 
             val evalName = Name.identifier("$\$eval")
+            val resultFieldName = resultFieldName?.let { Name.identifier(it) }
 
             val klass = withContainerReplSymbol(snippetSymbol) {
                 withChildClassName(snippetName, isExpect = false) {
@@ -1466,7 +1471,7 @@ open class PsiRawFirBuilder(
                             registerSelfType(delegatedSelfType)
 
                             val members = mutableListOf<FirDeclaration>()
-                            val evalFunction = createEvalFunction(script, classSymbol, members, evalName)
+                            val evalFunction = createEvalFunction(script, classSymbol, members, evalName, resultFieldName)
 
                             val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
                             val constructorSource = script.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
@@ -1512,6 +1517,7 @@ open class PsiRawFirBuilder(
             classSymbol: FirRegularClassSymbol,
             members: MutableList<FirDeclaration>,
             evalName: Name,
+            resultFieldName: Name?,
         ): FirSimpleFunction {
             val evalSymbol = FirNamedFunctionSymbol(callableIdForName(evalName))
             val evalTarget = FirFunctionTarget(labelName = null, isLambda = false)
@@ -1525,13 +1531,13 @@ open class PsiRawFirBuilder(
                     symbol = evalSymbol
                     dispatchReceiverType = currentDispatchReceiverType()
                     status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
-                    returnTypeRef = FirImplicitTypeRefImplWithoutSource
+                    returnTypeRef = implicitUnitType
 
                     context.firFunctionTargets += evalTarget
 
                     body = buildOrLazyBlock {
-                        FirSingleExpressionBlock(buildBlock {
-                            this.statements += extractScriptStatements(script, classSymbol).map { statement ->
+                        buildBlock {
+                            this.statements += extractScriptStatements(script, classSymbol, resultFieldName).map { statement ->
                                 when (statement) {
                                     is FirProperty,
                                     is FirSimpleFunction,
@@ -1553,7 +1559,7 @@ open class PsiRawFirBuilder(
                                     else -> statement
                                 }
                             }
-                        }.toReturn(baseSource = script.toFirSourceElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)))
+                        }
                     }
 
                     context.firFunctionTargets.removeLast()
@@ -1568,60 +1574,118 @@ open class PsiRawFirBuilder(
         private fun extractScriptStatements(
             script: KtScript,
             containingDeclarationSymbol: FirBasedSymbol<*>,
-        ): List<FirStatement> = buildList {
-            script.declarations.forEach { declaration ->
-                when (declaration) {
-                    is KtScriptInitializer -> {
-                        val initializer = buildAnonymousInitializer(
-                            initializer = declaration,
-                            containingDeclarationSymbol = containingDeclarationSymbol,
-                            allowLazyBody = true,
-                            isLocal = true,
-                        )
+            resultFieldName: Name?,
+        ): List<FirStatement> {
+            val statements = buildList {
+                script.declarations.forEach { declaration ->
+                    when (declaration) {
+                        is KtScriptInitializer -> {
+                            val initializer = buildAnonymousInitializer(
+                                initializer = declaration,
+                                containingDeclarationSymbol = containingDeclarationSymbol,
+                                allowLazyBody = true,
+                                isLocal = true,
+                            )
 
-                        addAll(initializer.body!!.statements)
-                    }
-                    is KtDestructuringDeclaration -> {
-                        val destructuringContainerVar = generateTemporaryVariable(
-                            baseModuleData,
-                            declaration.toFirSourceElement(),
-                            "destruct",
-                            declaration.initializer.toFirExpression(
-                                "Initializer required for destructuring declaration",
-                                sourceWhenInvalidExpression = declaration
-                            ),
-                            extractAnnotationsTo = { extractAnnotationsTo(it) }
-                        )
-                        add(destructuringContainerVar)
-
-                        addDestructuringVariables(
-                            this,
-                            baseModuleData,
-                            declaration,
-                            destructuringContainerVar,
-                            tmpVariable = false,
-                            forceLocal = false,
-                        ) {
-                            configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                            addAll(initializer.body!!.statements)
                         }
-                    }
-                    is KtProperty -> {
-                        val firProperty = declaration.toFirProperty(
-                            ownerRegularOrAnonymousObjectSymbol = null,
-                            context,
-                        )
-                        add(firProperty)
-                    }
-                    else -> {
-                        val firStatement = declaration.toFirStatement()
-                        if (firStatement is FirDeclaration) {
-                            add(firStatement)
-                        } else {
-                            error("unexpected declaration type in script")
+                        is KtDestructuringDeclaration -> {
+                            val destructuringContainerVar = generateTemporaryVariable(
+                                baseModuleData,
+                                declaration.toFirSourceElement(),
+                                "destruct",
+                                declaration.initializer.toFirExpression(
+                                    "Initializer required for destructuring declaration",
+                                    sourceWhenInvalidExpression = declaration
+                                ),
+                                extractAnnotationsTo = { extractAnnotationsTo(it) }
+                            )
+                            add(destructuringContainerVar)
+
+                            addDestructuringVariables(
+                                this,
+                                baseModuleData,
+                                declaration,
+                                destructuringContainerVar,
+                                tmpVariable = false,
+                                forceLocal = false,
+                            ) {
+                                configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                            }
+                        }
+                        is KtProperty -> {
+                            val firProperty = declaration.toFirProperty(
+                                ownerRegularOrAnonymousObjectSymbol = null,
+                                context,
+                            )
+                            add(firProperty)
+                        }
+                        else -> {
+                            val firStatement = declaration.toFirStatement()
+                            if (firStatement is FirDeclaration) {
+                                add(firStatement)
+                            } else {
+                                error("unexpected declaration type in script")
+                            }
                         }
                     }
                 }
+            }.toMutableList()
+
+            val last = statements.lastOrNull()
+            if (last != null && last.isExpression() && resultFieldName != null) {
+                val propertySymbol = FirRegularPropertySymbol(callableIdForName(resultFieldName))
+                val propertyReturnType = FirImplicitTypeRefImplWithoutSource
+
+                val property =
+                    withContainerSymbol(propertySymbol) {
+                        buildProperty {
+//                            source = propertySource
+                            moduleData = baseModuleData
+                            origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty
+                            returnTypeRef = propertyReturnType
+                            name = resultFieldName
+                            isVar = false
+                            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                            symbol = propertySymbol
+                            dispatchReceiverType = currentDispatchReceiverType()
+
+                            initializer = last
+
+                            backingField = FirDefaultPropertyBackingField(
+                                moduleData = baseModuleData,
+                                origin = origin,
+                                source = null,
+                                annotations = annotations,
+                                returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                                isVar = isVar,
+                                propertySymbol = symbol,
+                                status = status,
+                            )
+
+                            getter = FirDefaultPropertyAccessor.createGetterOrSetter(
+                                source = null,
+                                baseModuleData,
+                                origin,
+                                propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef),
+                                status.visibility,
+                                propertySymbol,
+                                isGetter = true,
+                            )
+                        }
+
+                    }
+
+                statements[statements.lastIndex] = property
             }
+
+            return statements
+        }
+
+        @OptIn(ExperimentalContracts::class)
+        private fun FirElement.isExpression(): Boolean {
+            contract { returns(true) implies (this@isExpression is FirExpression) }
+            return this is FirExpression && (this !is FirBlock || this.statements.lastOrNull()?.isExpression() == true)
         }
 
         private fun convertCodeFragment(
