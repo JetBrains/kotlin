@@ -113,11 +113,15 @@ fun TestServices.getWasmTestOutputDirectory(): File {
     val pathToTestDir = allDirectives[WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR].first()
 
     val testGroupOutputDir = File(File(pathToRootOutputDir, "out"), testGroupDirPrefix)
-    val stopFile = File(pathToTestDir)
-    return generateSequence(originalFile.parentFile) { it.parentFile }
-        .takeWhile { it != stopFile }
+    val stopFile = File(pathToTestDir).absoluteFile
+    val fullPathSequence = generateSequence(originalFile.parentFile) { it.parentFile }.toList()
+    val suffixPathSequence = fullPathSequence.takeWhile { it != stopFile }
+    require(suffixPathSequence.size < fullPathSequence.size) {
+        "Folder ${stopFile.absoluteFile} (which is set by PATH_TO_TEST_DIR directive) must contain ${originalFile.parentFile.absoluteFile}"
+    }
+    return suffixPathSequence
         .map { it.name }
-        .toList().asReversed()
+        .asReversed()
         .fold(testGroupOutputDir, ::File)
         .let { File(it, originalFile.nameWithoutExtension) }
 }

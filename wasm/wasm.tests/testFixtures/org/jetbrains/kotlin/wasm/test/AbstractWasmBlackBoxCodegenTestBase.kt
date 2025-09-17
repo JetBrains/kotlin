@@ -37,7 +37,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     private val targetFrontend: FrontendKind<R>,
     targetBackend: TargetBackend,
     private val targetPlatform: TargetPlatform,
-    private val pathToTestDir: String,
+    private val pathToTestDir: String,  // must be set to longest common path prefix for all testroots provided for a certain class in GenerateWasmTests.kt
     private val testGroupOutputDirPrefix: String,
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
