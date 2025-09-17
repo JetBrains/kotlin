@@ -5,12 +5,20 @@ grant codeBase "file:{{gradle_user_home}}/-" {
 grant {
     permission java.io.FilePermission "{{gradle_user_home}}/-", "read";
     permission java.io.FilePermission "{{gradle_user_home}}", "read";
+    permission java.io.FilePermission "{{gradle_user_home}}/wrapper/dists/-", "write,delete";
     permission java.io.FilePermission "/dev/random", "read";
     permission java.io.FilePermission "/dev/urandom", "read";
     // Basic permissions needed for tests to run
     permission java.lang.RuntimePermission "*";
-    permission java.net.SocketPermission "127.0.0.1:0", "connect,resolve";
+    permission java.util.PropertyPermission "*", "write";
+    permission java.net.SocketPermission "127.0.0.1", "accept,connect,resolve";
+    permission java.net.SocketPermission "[0:0:0:0:0:0:0:1%lo0]", "accept,connect,resolve";
+    permission java.net.SocketPermission "cache-redirector.jetbrains.com:443", "connect,resolve";
+    permission java.net.SocketPermission "dtahfujkndrht.cloudfront.net:443", "connect,resolve";
+    permission java.io.SerializablePermission "enableSubstitution";
+    permission java.nio.file.LinkPermission "symbolic";
     permission java.lang.management.ManagementPermission "control";
+    permission java.lang.management.ManagementPermission "monitor";
     permission java.util.logging.LoggingPermission "control";
     permission com.sun.jdi.JDIPermission "virtualMachineManager";
     permission java.lang.reflect.ReflectPermission "suppressAccessChecks";

@@ -1,6 +1,6 @@
 import gradle.GradlePluginVariant
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+//import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
@@ -8,8 +8,9 @@ import java.nio.file.Paths
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("android-sdk-provisioner")
+    //id("android-sdk-provisioner")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("test-inputs-check")
 }
 
 testsJar()
@@ -364,6 +365,12 @@ tasks.withType<Test>().configureEach {
     environment.remove("KONAN_DATA_DIR")
     applyKotlinNativeConfiguration()
 
+    jvmArgumentProviders.add(
+        project.objects.newInstance<MuteWithDatabaseArgumentProvider>().apply {
+            mutesFile.fileValue(File(project.rootDir, "tests/mute-common.csv"))
+        })
+
+
     val noTestProperty = project.providers.gradleProperty("noTest")
     onlyIf { !noTestProperty.isPresent }
 
@@ -468,11 +475,11 @@ tasks.withType<Test>().configureEach {
             systemProperty("maven.repo.local", mavenLocalRepo)
         }
     }
-
+/*
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
     }
-
+*/
     useJUnitPlatform {
         includeEngines("junit-jupiter")
     }

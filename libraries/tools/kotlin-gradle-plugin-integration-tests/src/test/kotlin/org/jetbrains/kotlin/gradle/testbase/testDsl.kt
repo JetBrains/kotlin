@@ -71,8 +71,8 @@ fun KGPBaseTest.project(
         localRepoDir,
         buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
     )
-    projectPath.enableCacheRedirector()
-    projectPath.enableAndroidSdk()
+    //projectPath.enableCacheRedirector()
+    //projectPath.enableAndroidSdk()
     if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
         projectPath.applyKotlinCompilerArgsPlugin()
     }
@@ -715,7 +715,7 @@ private fun setupProjectFromTestResources(
         }
 }
 
-private val String.testProjectPath: Path get() = Paths.get("src", "test", "resources", "testProject", this)
+private val String.testProjectPath: Path get() = Paths.get("build", "resources", "test", "testProject", this)
 
 internal fun Path.addDefaultSettingsToSettingsGradle(
     gradleVersion: GradleVersion,

@@ -30,7 +30,7 @@ enum class JUnitMode {
     JUnit4, JUnit5
 }
 
-private abstract class MuteWithDatabaseArgumentProvider @Inject constructor(objects: ObjectFactory) : CommandLineArgumentProvider {
+abstract class MuteWithDatabaseArgumentProvider @Inject constructor(objects: ObjectFactory) : CommandLineArgumentProvider {
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     val mutesFile: RegularFileProperty = objects.fileProperty()
