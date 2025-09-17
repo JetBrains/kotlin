@@ -41,25 +41,44 @@ internal object TestApiDependenciesChecker : KotlinGradleProjectChecker {
     /**
      * Get all declared `testApi` dependencies, grouped by compilation.
      *
+     * Because api dependencies are copied from 'main' to 'test'
+     * (see [org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationAssociator])
+     * we must exclude 'main' API dependencies.
+     *
      * Fetches Configurations leniently, just in case a plugin (e.g. AGP) isn't configured correctly.
      */
     private fun KotlinGradleProjectCheckerContext.testApiDependencies(
         target: KotlinTarget,
     ): List<CompilationDependenciesPair> {
 
+        val mainCompilations = target.compilations
+            .filter { it.name == KotlinCompilation.MAIN_COMPILATION_NAME }
+
         val testCompilations = target.compilations
             .filter { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
 
-        return testCompilations.map { compilation ->
-            val apiDependencies = project.configurations
-                .findByName(compilation.apiConfigurationName)
-                ?.allDependencies
-                .orEmpty()
+        val apiDependenciesFromMain = mainCompilations
+            .flatMap { compilation ->
+                project.configurations
+                    .findByName(compilation.apiConfigurationName)
+                    ?.allDependencies
+                    .orEmpty()
+                    .map { it.stringCoordinates() }
+            }
+            .toSet()
 
-            CompilationDependenciesPair(
-                compilation,
-                apiDependencies.map { it.stringCoordinates() },
-            )
-        }
+        return testCompilations
+            .map { compilation ->
+                val apiDependenciesFromTest = project.configurations
+                    .findByName(compilation.apiConfigurationName)
+                    ?.allDependencies
+                    .orEmpty()
+                    .map { it.stringCoordinates() }
+
+                CompilationDependenciesPair(
+                    compilation,
+                    apiDependenciesFromTest - apiDependenciesFromMain,
+                )
+            }
     }
 }
