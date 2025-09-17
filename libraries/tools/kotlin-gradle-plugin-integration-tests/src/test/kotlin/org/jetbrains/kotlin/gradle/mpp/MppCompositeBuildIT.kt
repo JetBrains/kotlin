@@ -414,7 +414,10 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
         project(
             "mpp-composite-build/sample6-KT-56712-umbrella-composite/composite", gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion), buildJdk = jdkVersion.location
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                configurationCache = ConfigurationCacheValue.DISABLED,
+            ), buildJdk = jdkVersion.location
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             settingsGradleKts.toFile().replaceText("<consumerA_path>", consumerA.projectPath.toUri().path)
