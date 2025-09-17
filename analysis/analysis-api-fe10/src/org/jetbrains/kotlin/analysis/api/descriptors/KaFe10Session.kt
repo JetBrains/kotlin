@@ -36,7 +36,6 @@ internal class KaFe10Session(
     expressionInformationProvider = KaFe10ExpressionInformationProvider(analysisSessionProvider),
     evaluator = KaFe10Evaluator(analysisSessionProvider),
     referenceShortener = KaFe10ReferenceShortener(analysisSessionProvider),
-    importOptimizer = KaFe10ImportOptimizer(analysisSessionProvider),
     renderer = KaRendererImpl(analysisSessionProvider),
     visibilityChecker = KaFe10VisibilityChecker(analysisSessionProvider),
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider),
