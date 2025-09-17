@@ -29,8 +29,8 @@ import java.io.File
 
 /** Transform to create a snapshot of a classpath entry (directory or jar). */
 @CacheableTransform
-abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<BuildToolsApiClasspathEntrySnapshotTransform.Parameters>,
-    TransformActionUsingKotlinToolingDiagnostics<BuildToolsApiClasspathEntrySnapshotTransform.Parameters> {
+internal abstract class ClasspathEntrySnapshotTransform : TransformAction<ClasspathEntrySnapshotTransform.Parameters>,
+    TransformActionUsingKotlinToolingDiagnostics<ClasspathEntrySnapshotTransform.Parameters> {
 
     abstract class Parameters : TransformParameters, TransformActionUsingKotlinToolingDiagnostics.Parameters {
         @get:Internal

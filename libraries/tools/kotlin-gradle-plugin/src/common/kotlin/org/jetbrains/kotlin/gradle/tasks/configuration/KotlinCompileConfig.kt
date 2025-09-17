@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
-import org.jetbrains.kotlin.gradle.internal.transforms.BuildToolsApiClasspathEntrySnapshotTransform
+import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.plugin.BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -146,7 +146,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         registerBuildToolsApiTransformations(project, jvmToolchain, runKotlinCompilerViaBuildToolsApi)
     }
 
-    private fun TransformSpec<BuildToolsApiClasspathEntrySnapshotTransform.Parameters>.configureCommonParameters(
+    private fun TransformSpec<ClasspathEntrySnapshotTransform.Parameters>.configureCommonParameters(
         kgpVersion: String,
         classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
         classpath: Provider<out Configuration>,
@@ -195,7 +195,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         val classpath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
         val kgpVersion = project.getKotlinPluginVersion()
         project.dependencies.registerTransformForArtifactType(
-            BuildToolsApiClasspathEntrySnapshotTransform::class.java,
+            ClasspathEntrySnapshotTransform::class.java,
             fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
             toArtifactType = CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE
         ) {
@@ -209,7 +209,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             it.parameters.setupKotlinToolingDiagnosticsParameters(project)
         }
         project.dependencies.registerTransformForArtifactType(
-            BuildToolsApiClasspathEntrySnapshotTransform::class.java,
+            ClasspathEntrySnapshotTransform::class.java,
             fromArtifactType = ArtifactTypeDefinition.DIRECTORY_TYPE,
             toArtifactType = CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE
         ) {
