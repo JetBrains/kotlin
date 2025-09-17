@@ -5,19 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.konan.platform
 
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.storage.StorageManager
 
 object NativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
-    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
-        result.add(ImportPath.fromString("kotlin.native.*"))
-    }
-
     override val platformConfigurator: PlatformConfigurator = NativePlatformConfigurator
-
-    override val excludedImports: List<FqName> =
-        listOf("identityHashCode").map {
-            FqName("kotlin.native.$it")
-        }
+    override val defaultImportProvider: DefaultImportProvider = NativeDefaultImportsProvider
 }

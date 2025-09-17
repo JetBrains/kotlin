@@ -44,9 +44,9 @@ class FileScopeFactory(
     private val components: ImportResolutionComponents
 ) {
     private val defaultImports =
-        analyzerServices.getDefaultImports(includeLowPriorityImports = false).map(::DefaultImportImpl)
+        analyzerServices.defaultImportProvider.getDefaultImports(includeLowPriorityImports = false).map(::DefaultImportImpl)
 
-    private val defaultLowPriorityImports = analyzerServices.defaultLowPriorityImports.map(::DefaultImportImpl)
+    private val defaultLowPriorityImports = analyzerServices.defaultImportProvider.defaultLowPriorityImports.map(::DefaultImportImpl)
 
     private class DefaultImportImpl(private val importPath: ImportPath) : KtImportInfo {
         override val isAllUnder: Boolean get() = importPath.isAllUnder
@@ -95,7 +95,7 @@ class FileScopeFactory(
             tempTrace,
             packageFragment = null,
             aliasImportNames = aliasImportNames,
-            excludedImports = analyzerServices.excludedImports
+            excludedImports = analyzerServices.defaultImportProvider.excludedImports
         )
         val lowPriority = createDefaultImportResolver(
             makeAllUnderImportsIndexed(defaultLowPriorityImports.also { imports ->

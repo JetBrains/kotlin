@@ -6,19 +6,16 @@
 package org.jetbrains.kotlin.analyzer.common
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.storage.StorageManager
 
 private object CommonPlatformConfigurator : PlatformConfiguratorBase() {
     override fun configureModuleComponents(container: StorageComponentContainer) {}
 }
 
 object CommonPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
-    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {}
-
     override val platformConfigurator: PlatformConfigurator = CommonPlatformConfigurator
+    override val defaultImportProvider: DefaultImportProvider = CommonDefaultImportsProvider
 
     override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.AFTER_SDK
 }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
+import org.jetbrains.kotlin.js.resolve.JsDefaultImportsProvider
 import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparatorWithoutDelegate
 
 @OptIn(SessionConfiguration::class)
@@ -78,7 +78,7 @@ object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.C
         if (moduleKind != null) {
             register(FirJsModuleKind::class, FirJsModuleKind(moduleKind))
         }
-        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(JsPlatformAnalyzerServices))
+        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(JsDefaultImportsProvider))
     }
 
     // ==================================== Utilities ====================================
