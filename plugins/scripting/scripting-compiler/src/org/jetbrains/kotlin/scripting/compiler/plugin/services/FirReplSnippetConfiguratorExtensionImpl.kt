@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
@@ -48,6 +51,23 @@ class FirReplSnippetConfiguratorExtensionImpl(
 
     override fun isReplSnippetsSource(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean =
         hostConfiguration[ScriptingHostConfiguration.repl.isReplSnippetSource]?.invoke(sourceFile, scriptSource) ?: false
+
+    override fun getResultsFieldName(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): String? {
+        val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
+            // TODO: add error or log, if necessary (see implementation for scripts) (KT-74742)
+            return null
+        }
+
+        val script = scriptSource.psi as? KtScript
+        val replSnippetId = script?.getUserData(ScriptPriorities.PRIORITY_KEY)?.toString()
+        return if (replSnippetId != null) {
+            configuration[ScriptCompilationConfiguration.repl.resultFieldPrefix]
+                ?.takeIf { it.isNotBlank() }?.let { "$it$replSnippetId" }
+        } else {
+            configuration[ScriptCompilationConfiguration.resultField]
+                ?.takeIf { it.isNotBlank() }
+        }
+    }
 
     override fun FirReplSnippetBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
     }

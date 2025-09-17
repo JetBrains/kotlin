@@ -1342,7 +1342,8 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
             }
 
         return if (repSnippetConfigurator != null) {
-            convertReplSnippet(declaration, scriptSource, sourceFile.name) {
+            val resultFieldName = repSnippetConfigurator.getResultsFieldName(sourceFile, scriptSource)
+            convertReplSnippet(declaration, scriptSource, sourceFile.name, resultFieldName) {
                 with(repSnippetConfigurator) {
                     configureContainingFile(fileBuilder)
                     configure(fileBuilder.sourceFile, context)
@@ -1374,6 +1375,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         script: T,
         scriptSource: KtSourceElement,
         fileName: String,
+        resultFieldName: String?,
         setup: FirReplSnippetBuilder.() -> Unit,
     ): FirReplSnippet
 
