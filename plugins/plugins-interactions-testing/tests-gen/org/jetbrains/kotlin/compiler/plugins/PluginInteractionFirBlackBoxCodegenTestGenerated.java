@@ -24,6 +24,12 @@ public class PluginInteractionFirBlackBoxCodegenTestGenerated extends AbstractPl
   }
 
   @Test
+  @TestMetadata("noArgAndSupertypesGenerator.kt")
+  public void testNoArgAndSupertypesGenerator() {
+    runTest("plugins/plugins-interactions-testing/testData/box/noArgAndSupertypesGenerator.kt");
+  }
+
+  @Test
   @TestMetadata("parcelizeAndSupertypesGenerator.kt")
   public void testParcelizeAndSupertypesGenerator() {
     runTest("plugins/plugins-interactions-testing/testData/box/parcelizeAndSupertypesGenerator.kt");

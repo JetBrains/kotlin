@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginEnvironmentConfigu
 import org.jetbrains.kotlin.lombok.LombokAdditionalSourceFileProvider
 import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator
 import org.jetbrains.kotlin.lombok.LombokRuntimeClassPathProvider
+import org.jetbrains.kotlin.noarg.NoArgEnvironmentConfigurator
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeMainClassProvider
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider
@@ -42,6 +43,7 @@ fun TestConfigurationBuilder.enablePlugins() {
         ::AssignmentPluginEnvironmentConfigurator,
         ::SerializationEnvironmentConfigurator.bind(/*noLibraries = */false),
         ::LombokEnvironmentConfigurator,
+        ::NoArgEnvironmentConfigurator,
         ::ParcelizeEnvironmentConfigurator
     )
 
