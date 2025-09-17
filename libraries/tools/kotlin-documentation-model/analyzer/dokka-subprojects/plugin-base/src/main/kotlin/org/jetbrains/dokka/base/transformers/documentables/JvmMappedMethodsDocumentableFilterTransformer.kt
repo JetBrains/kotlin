@@ -8,12 +8,13 @@ import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.DFunction
+import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.StringValue
 import org.jetbrains.dokka.plugability.DokkaContext
 
 /**
- *  Filter out methods  that come from [mapping to Java](https://kotlinlang.org/docs/java-interop.html#mapped-types)
+ *  Filter out methods and synthetic properties that come from [mapping to Java](https://kotlinlang.org/docs/java-interop.html#mapped-types)
  *  since they have no available doc
  *
  *  Currently, a list of such methods is supported manually based on the compiler source
@@ -23,7 +24,7 @@ import org.jetbrains.dokka.plugability.DokkaContext
  * - HIDDEN
  * - VISIBLE
  * - DROP
- * - NOT_CONSIDERED in K1 / HIDDEN_IN_DECLARING_CLASS_ONLY in K2. See [DFunction.hasDeprecated]
+ * - NOT_CONSIDERED in K1 / HIDDEN_IN_DECLARING_CLASS_ONLY (KT-65438 WEAKLY_HIDDEN) in K2. See [DFunction.hasDeprecated]
  * We want co cover the HIDDEN, VISIBLE, HIDDEN_IN_DECLARING_CLASS_ONLY statuses here.
  *
  *  TODO https://youtrack.jetbrains.com/issue/KT-69796/Analysis-API-Provide-a-way-to-detect-mapped-methods-from-JVM
@@ -246,7 +247,7 @@ internal class JvmMappedMethodsDocumentableFilterTransformer(context: DokkaConte
     /**
      * KT-65438: In K1, such methods (e.g. translateEscapes, formatted... in java.lang.String) have the NOT_CONSIDERED status,
      * that means they are available and have a deprecation annotation.
-     * In K2, they are unavailable for final classes + [NOT_CONSIDER_METHOD_SIGNATURES]
+     * In K2, they are unavailable for final classes (KT-65438) + [NOT_CONSIDER_METHOD_SIGNATURES]
      * @see NOT_CONSIDER_METHOD_SIGNATURES
      */
     private fun DFunction.hasDeprecated(): Boolean = this.extra[Annotations]?.directAnnotations?.any {
@@ -256,15 +257,22 @@ internal class JvmMappedMethodsDocumentableFilterTransformer(context: DokkaConte
     } ?: false
 
     // user case: stdlib
-    private fun DFunction.isOnlyInJVM() = sourceSets.all { it.analysisPlatform == Platform.jvm }
+    private fun Documentable.isOnlyInJVM() = sourceSets.all { it.analysisPlatform == Platform.jvm }
+
+    private fun DFunction.shouldBeSuppressed() = if (this.hasDeprecated())
+        true
+    else {
+        val fqn = this.dri.let { it.packageName + "." + it.classNames + "." + it.callable?.name }
+        fqn in VISIBLE_METHOD_SIGNATURES || fqn in MUTABLE_METHOD_SIGNATURES || fqn in DEPRECATED_LIST_METHODS || fqn in HIDDEN_METHOD_SIGNATURES || fqn in NOT_CONSIDER_METHOD_SIGNATURES
+    }
 
     override fun shouldBeSuppressed(d: Documentable): Boolean =
-        if (d is DFunction && d.isOnlyInJVM()) {
-            if (d.hasDeprecated())
-                true
-            else {
-                val fqn = d.dri.let { it.packageName + "." + it.classNames + "." + it.callable?.name }
-                fqn in VISIBLE_METHOD_SIGNATURES || fqn in MUTABLE_METHOD_SIGNATURES || fqn in DEPRECATED_LIST_METHODS || fqn in HIDDEN_METHOD_SIGNATURES || fqn in NOT_CONSIDER_METHOD_SIGNATURES
+        if (d.isOnlyInJVM()) {
+            when (d) {
+                is DFunction -> d.shouldBeSuppressed()
+                // Note that, if the Java class only has a setter, it isn't visible as a property in Kotlin because Kotlin doesn't support set-only properties
+                is DProperty -> d.getter?.shouldBeSuppressed() ?: false
+                else -> false
             }
         } else false
 }

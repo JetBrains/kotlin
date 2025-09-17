@@ -17,6 +17,7 @@ class JvmMappedMethodsFilterTest : BaseAbstractTest() {
             sourceSet {
                 sourceRoots = listOf("src")
                 analysisPlatform = "jvm"
+                classpath = listOfNotNull(jvmStdlibPath)
             }
         }
     }
@@ -24,6 +25,28 @@ class JvmMappedMethodsFilterTest : BaseAbstractTest() {
     fun List<DModule>.getMethodNamesFrom(classname: String): Set<String> {
         val cl = this.mapNotNull { it.dfs { it.name == classname && it is DClasslike } }.first() as DClasslike
         return cl.functions.map { it.name }.toSet()
+    }
+
+    fun List<DModule>.getPropertyNamesFrom(classname: String): Set<String> {
+        val cl = this.mapNotNull { it.dfs { it.name == classname && it is DClasslike } }.first() as DClasslike
+        return cl.properties.map { it.name }.toSet()
+    }
+
+    @Test
+    fun `should filter out JVM synthetic properties in RuntimeException`() {
+        testInline(
+            """
+            |/src/MyRuntimeException.kt
+            |class MyRuntimeException: RuntimeException()
+            """.trimIndent(), configuration
+        ) {
+            preMergeDocumentablesTransformationStage = { modules ->
+                assertEquals(
+                    setOf("cause", "message"),
+                    modules.getPropertyNamesFrom("MyRuntimeException")
+                )
+            }
+        }
     }
 
     @Test
