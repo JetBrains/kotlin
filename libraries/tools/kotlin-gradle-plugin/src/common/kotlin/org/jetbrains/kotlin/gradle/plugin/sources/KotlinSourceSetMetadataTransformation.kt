@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
-import org.jetbrains.kotlin.gradle.plugin.mpp.ParentSourceSetVisibilityProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
 

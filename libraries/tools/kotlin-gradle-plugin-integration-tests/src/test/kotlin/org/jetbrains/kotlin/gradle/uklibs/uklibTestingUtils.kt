@@ -26,6 +26,7 @@ import java.io.Serializable
 import java.net.URLClassLoader
 import java.nio.file.Files
 import java.util.*
+import kotlin.text.set
 
 fun Project.applyMultiplatform(
     configure: KotlinMultiplatformExtension.() -> Unit,
@@ -316,6 +317,13 @@ internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy 
     propertiesExtension.set(
         PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY,
         strategy.propertyName,
+    )
+}
+
+internal fun Project.enableCinteropCommonization() {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION,
+        true,
     )
 }
 

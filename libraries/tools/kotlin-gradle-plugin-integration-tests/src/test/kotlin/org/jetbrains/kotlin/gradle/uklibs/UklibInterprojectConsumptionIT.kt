@@ -319,4 +319,56 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @GradleTestVersions
+    fun `interproject ide resolution - dependency with symmetric targets - with commonization`(gradleVersion: GradleVersion) {
+        val targets: KotlinMultiplatformExtension.() -> Unit = {
+            iosArm64()
+            iosX64()
+            sourceSets.commonMain.get().compileSource("class Common")
+        }
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjects()
+        ) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            val producer = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.enableCinteropCommonization()
+                    project.setUklibResolutionStrategy()
+                    project.setUklibPublicationStrategy()
+                    project.applyMultiplatform {
+                        targets()
+                    }
+                }
+            }
+
+            val consumer = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.enableCinteropCommonization()
+                    project.setUklibPublicationStrategy()
+                    project.setUklibResolutionStrategy()
+                    project.applyMultiplatform {
+                        targets()
+                        sourceSets.commonMain.get().dependencies {
+                            implementation(project(":producer"))
+                        }
+                    }
+                }
+            }
+
+            include(producer, "producer")
+            include(consumer, "consumer")
+
+            build("assemble")
+            build("clean")
+            resolveIdeDependencies("consumer") {
+                assertNoCompileTasksGotExecuted()
+            }
+        }
+    }
+
 }

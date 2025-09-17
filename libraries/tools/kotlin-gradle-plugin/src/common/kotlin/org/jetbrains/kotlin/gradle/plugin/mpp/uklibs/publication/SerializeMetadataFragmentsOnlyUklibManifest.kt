@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -17,12 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_ID
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
-
-@DisableCachingByDefault(because = "...")
-internal abstract class SerializeMetadataFragmentsOnlyUklibManifestWithCompilationDependencies : SerializeMetadataFragmentsOnlyUklibManifest() {
-    @get:Input
-    protected val taskDependencies = metadataFragments.map { "" }
-}
 
 @DisableCachingByDefault(because = "...")
 internal abstract class SerializeMetadataFragmentsOnlyUklibManifest : DefaultTask() {

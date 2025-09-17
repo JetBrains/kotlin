@@ -8,12 +8,16 @@ import org.gradle.api.tasks.*
 import org.gradle.util.GradleVersion
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvedConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.interprojectUklibManifestView
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.gradle.utils.future
 
 internal class MetadataDependencyTransformationTaskInputs(
     project: Project,
@@ -48,6 +52,25 @@ internal class MetadataDependencyTransformationTaskInputs(
                 .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration)
                 .files
         } else project.files()
+
+    /**
+     * [interprojectUklibManifestView] contains the same artifacts as [configurationToResolve]
+     * But for [GranularMetadataTransformation] of UKlib it is necessary to have umanifest for
+     * all dependencies. Even when [keepProjectDependencies] is false.
+     *
+     * In some sense it is similar to [projectStructureMetadataFileCollection] because it also needed in all cases,
+     * and it also contains information similar to umanifest
+     */
+    @Suppress("unused") // Gradle input
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    val interprojectUklibManifestView: FileCollection =
+        when (project.kotlinPropertiesProvider.kmpResolutionStrategy) {
+            KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> kotlinSourceSet.internal.interprojectUklibManifestView()
+            KmpResolutionStrategy.StandardKMPResolution -> project.files()
+        }
 
     @Suppress("unused") // Gradle input
     @get:InputFiles

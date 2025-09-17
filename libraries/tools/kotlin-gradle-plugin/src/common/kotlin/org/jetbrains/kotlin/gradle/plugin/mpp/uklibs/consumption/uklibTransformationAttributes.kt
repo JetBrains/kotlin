@@ -27,7 +27,6 @@ internal val uklibStateDecompressed = "decompressed"
 
 internal val uklibViewAttribute = Attribute.of("org.jetbrains.kotlin.uklibView", String::class.java)
 internal val uklibViewAttributeWholeUklib = "whole_uklib"
-internal val uklibViewAttributeIdeMetadata = "ide_metadata"
 
 internal val uklibArtifactType = Uklib.UKLIB_EXTENSION
 internal val uklibManifestArtifactType = "uklibManifest"
