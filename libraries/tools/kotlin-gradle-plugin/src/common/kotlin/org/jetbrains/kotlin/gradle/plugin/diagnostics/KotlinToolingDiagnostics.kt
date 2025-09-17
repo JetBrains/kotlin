@@ -1313,24 +1313,26 @@ internal object KotlinToolingDiagnostics {
                 .joinToString("\n") { "    - $it" }
 
             return build {
-                title("Unsupported API dependencies in test source sets")
+                title("Unsupported API dependency types in test source sets")
                     .description {
                         """
-                        |API dependencies are used in test source sets
+                        |API dependency types are used in test source sets
                         |Dependencies:
                         |$formattedDeps
                         |
-                        |Using `api()` to add API dependencies to test source sets is not supported. API dependencies are transitively exposed to consumers, but test source sets should not be consumable.
+                        |Adding API dependency types to test source sets is not supported and will removed in a future version of Kotlin.
                         |
-                        |Adding API dependencies to test source sets will removed in a future version of Kotlin.
+                        |API dependencies are transitively exposed to consumers, but test source sets should not be consumable.
                         """.trimMargin()
                     }
                     .solution {
-                        "Replace api() dependencies in test source sets with implementation dependencies. " +
-                                "If necessary, split test utilities into a separate subproject."
+                        "Replace API dependency types in test source sets with implementation dependencies."
                     }
                     .documentationLink(URI("https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures")) {
                         "For Kotlin/JVM projects, consider using Test Fixtures."
+                    }
+                    .documentationLink(URI("https://youtrack.jetbrains.com/issue/KT-63142")) {
+                        "For Test Fixtures support in non-Kotlin/JVM projects, please add your use-case to KT-63142"
                     }
             }
         }
