@@ -63932,15 +63932,21 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
-      @TestMetadata("outerClassWithTypeParameter.kt")
-      public void testOuterClassWithTypeParameter() {
-        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameter.kt");
-      }
-
-      @Test
       @TestMetadata("outerClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters.kt")
       public void testOuterClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters() {
         runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter.kt")
+      public void testOuterClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndInlineFunctionWithTypeParameter.kt")
+      public void testOuterClassWithTypeParameterAndInlineFunctionWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndInlineFunctionWithTypeParameter.kt");
       }
 
       @Test
@@ -63953,6 +63959,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       @TestMetadata("outerClassWithTypeParameterWithTwoUpperBounds.kt")
       public void testOuterClassWithTypeParameterWithTwoUpperBounds() {
         runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds.kt")
+      public void testOuterClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds.kt");
       }
 
       @Test
