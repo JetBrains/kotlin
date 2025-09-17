@@ -22,6 +22,7 @@ KaEnumEntrySymbol:
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.E.A
 
 KaEnumEntrySymbol:
   annotations: []
@@ -47,6 +48,7 @@ KaEnumEntrySymbol:
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.E.B
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -78,6 +80,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.E
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: test/E.foo
   compilerVisibility: Public
   contextParameters: []
@@ -112,6 +115,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.E
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -152,6 +156,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -194,6 +199,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -237,6 +243,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.E.values
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -298,6 +305,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: test.E
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
@@ -305,6 +313,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.E.valueOf
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -344,6 +353,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.E
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -385,6 +395,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: test.E.entries
 
 KaConstructorSymbol:
   annotations: []
@@ -412,3 +423,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.E

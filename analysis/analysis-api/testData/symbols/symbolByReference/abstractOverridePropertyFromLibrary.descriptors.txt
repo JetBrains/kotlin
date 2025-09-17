@@ -26,6 +26,7 @@ KaKotlinPropertySymbol:
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
     deprecationStatus: null
+    importableFqName: null
   callableId: /Base.foo
   compilerVisibility: Public
   contextParameters: []
@@ -62,6 +63,7 @@ KaKotlinPropertySymbol:
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: true
@@ -132,6 +134,7 @@ KaKotlinPropertySymbol:
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -169,6 +172,7 @@ KaKotlinPropertySymbol:
         getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
 
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -181,6 +185,7 @@ KaKotlinPropertySymbol:
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
     deprecationStatus: null
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -198,3 +203,4 @@ KaKotlinPropertySymbol:
   javaSetterName: setFoo
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null

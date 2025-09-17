@@ -28,6 +28,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: A
 
 KaTypeParameterSymbol:
   annotations: []
@@ -50,6 +51,7 @@ KaTypeParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -101,6 +103,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -131,6 +134,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: SimilarGenericSignatureKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
@@ -138,6 +142,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: foo
 
 KaTypeParameterSymbol:
   annotations: []
@@ -155,6 +160,7 @@ KaTypeParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -201,6 +207,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -231,6 +238,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: SimilarGenericSignatureKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
@@ -238,3 +246,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: foo

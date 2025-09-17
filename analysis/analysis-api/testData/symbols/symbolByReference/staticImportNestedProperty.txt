@@ -28,6 +28,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.two.TopLevelObject.Nested
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/two/TopLevelObject.Nested.bar
   compilerVisibility: Public
   contextParameters: []
@@ -62,6 +63,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.two.TopLevelObject.Nested
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -102,3 +104,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: one.two.TopLevelObject.Nested.bar

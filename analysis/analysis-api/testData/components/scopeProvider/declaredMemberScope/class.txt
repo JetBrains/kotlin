@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -70,6 +71,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.C
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: test/C.bar
   compilerVisibility: Public
   contextParameters: []
@@ -104,6 +106,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.C
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -144,6 +147,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaConstructorSymbol:
   annotations: []
@@ -171,3 +175,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: test.C
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.C

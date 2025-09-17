@@ -28,6 +28,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.A
 
 KaNamedClassSymbol:
   annotations: []
@@ -59,6 +60,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.InternalA
 
 KaNamedClassSymbol:
   annotations: []
@@ -90,6 +92,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.PrivateA
 
 KaNamedClassSymbol:
   annotations: []
@@ -121,6 +124,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.B
 
 KaNamedClassSymbol:
   annotations: []
@@ -152,6 +156,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.InternalB
 
 KaNamedClassSymbol:
   annotations: []
@@ -183,3 +188,4 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.PrivateB

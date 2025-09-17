@@ -48,6 +48,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -78,6 +79,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: kotlin.collections.CollectionsKt
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
@@ -85,6 +87,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  importableFqName: kotlin.collections.listOf
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -136,6 +139,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -166,6 +170,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: kotlin.collections.CollectionsKt
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
@@ -173,6 +178,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  importableFqName: kotlin.collections.listOf
 
 KaNamedFunctionSymbol:
   annotations: [
@@ -227,6 +233,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: []
   visibility: PUBLIC
@@ -235,3 +242,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  importableFqName: kotlin.collections.listOf

@@ -54,6 +54,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: null
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: one/Anno.value
         compilerVisibility: Public
         contextParameters: []
@@ -88,6 +89,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: null
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: special.accessor
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -128,6 +130,7 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
       hasDefaultValue: true
       isActual: false
       isCrossinline: false
@@ -151,12 +154,14 @@ KaConstructorSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(propertyFromAnnotationWithDefaultValueJs.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: one.Anno
 
 KaNamedClassSymbol:
   annotations: []
@@ -188,3 +193,4 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
   deprecationStatus: null
+  importableFqName: one.Anno

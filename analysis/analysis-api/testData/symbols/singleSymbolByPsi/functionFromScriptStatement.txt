@@ -58,6 +58,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script functionFromScriptStatement.kts"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(functionFromScriptStatement.kts)
@@ -65,3 +66,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaScriptModule "Script functionFromScriptStatement.kts"
   deprecationStatus: null
+  importableFqName: null

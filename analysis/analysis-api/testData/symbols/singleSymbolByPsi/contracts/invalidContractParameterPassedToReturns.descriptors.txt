@@ -61,6 +61,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -90,6 +91,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: InvalidContractParameterPassedToReturnsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(invalidContractParameterPassedToReturns.kt)
@@ -97,3 +99,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: invalidContract

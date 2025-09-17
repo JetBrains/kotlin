@@ -22,6 +22,7 @@ KaJavaFieldSymbol:
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: JavaClass.foo
 
 KaJavaFieldSymbol:
   annotations: []
@@ -51,6 +52,7 @@ KaJavaFieldSymbol:
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -88,6 +90,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: JavaClass.bar
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -130,6 +133,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -161,6 +165,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: JavaClass.NestedClass
 
 KaNamedClassSymbol:
   annotations: []
@@ -192,6 +197,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: JavaClass.InnerClass
 
 KaConstructorSymbol:
   annotations: []
@@ -219,3 +225,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: JavaClass

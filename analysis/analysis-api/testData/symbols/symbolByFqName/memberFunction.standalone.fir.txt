@@ -57,6 +57,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: kotlin.collections.List
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -72,3 +73,4 @@ KaNamedFunctionSymbol:
   canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
+  importableFqName: null

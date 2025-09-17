@@ -22,6 +22,7 @@ KaLocalVariableSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaAnonymousFunctionSymbol:
   annotations: []
@@ -71,12 +72,14 @@ KaAnonymousFunctionSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaLocalVariableSymbol:
   annotations: []
@@ -111,6 +114,7 @@ KaLocalVariableSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaLocalVariableSymbol:
   annotations: []
@@ -136,6 +140,7 @@ KaLocalVariableSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaAnonymousFunctionSymbol:
   annotations: []
@@ -185,12 +190,14 @@ KaAnonymousFunctionSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaLocalVariableSymbol:
   annotations: []
@@ -225,6 +232,7 @@ KaLocalVariableSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaLocalVariableSymbol:
   annotations: []
@@ -250,6 +258,7 @@ KaLocalVariableSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaAnonymousFunctionSymbol:
   annotations: []
@@ -299,12 +308,14 @@ KaAnonymousFunctionSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -343,6 +354,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: foo
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -413,6 +425,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: ImplicitReturnInLambdaKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
@@ -420,3 +433,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: bar

@@ -42,6 +42,7 @@ CONSTRUCTOR:
               getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+              importableFqName: null
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: false
@@ -69,6 +70,7 @@ CONSTRUCTOR:
           getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         isMarkedNullable: false
         isNullable: true
         hasFlexibleNullability: false
@@ -93,6 +95,7 @@ CONSTRUCTOR:
       getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -149,6 +152,7 @@ CONSTRUCTOR:
               getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+              importableFqName: null
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: false
@@ -184,6 +188,7 @@ CONSTRUCTOR:
                   getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
                   getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
+                  importableFqName: null
                 isMarkedNullable: false
                 isNullable: true
                 hasFlexibleNullability: false
@@ -245,6 +250,7 @@ CONSTRUCTOR:
               getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+              importableFqName: null
             isMarkedNullable: false
             isNullable: true
             hasFlexibleNullability: false
@@ -272,12 +278,14 @@ CONSTRUCTOR:
       getContainingJvmClassName: SamClassWithTypeArgumentsKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
   getContainingJvmClassName: SamClassWithTypeArgumentsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: Predicate
 CLASS:
   KaNamedClassSymbol:
   annotations: []
@@ -331,9 +339,11 @@ CLASS:
       getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: Predicate

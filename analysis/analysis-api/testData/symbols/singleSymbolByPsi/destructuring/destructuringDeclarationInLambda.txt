@@ -14,3 +14,4 @@ KaDestructuringDeclarationSymbol:
   getContainingFileSymbol: KaFileSymbol(destructuringDeclarationInLambda.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

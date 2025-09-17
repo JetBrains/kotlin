@@ -62,5 +62,6 @@ FUNCTION:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 CAN_BE_OPERATOR:
   false

@@ -14,3 +14,4 @@ KaTypeParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(incompleteFunctionTypeParameter.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

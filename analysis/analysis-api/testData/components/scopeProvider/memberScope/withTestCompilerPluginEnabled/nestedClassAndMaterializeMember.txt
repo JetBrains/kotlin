@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -100,6 +101,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: kotlin.Any
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -111,6 +113,7 @@ KaNamedFunctionSymbol:
   canBeOperator: true
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -153,6 +156,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -195,6 +199,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -226,6 +231,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.MyClass.Nested
 
 KaConstructorSymbol:
   annotations: []
@@ -253,3 +259,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: test.MyClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.MyClass

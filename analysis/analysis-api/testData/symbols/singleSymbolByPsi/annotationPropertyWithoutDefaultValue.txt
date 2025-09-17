@@ -33,6 +33,7 @@ KaValueParameterSymbol:
       getContainingJvmClassName: pack.Anno
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     callableId: pack/Anno.an
     compilerVisibility: Public
     contextParameters: []
@@ -67,6 +68,7 @@ KaValueParameterSymbol:
       getContainingJvmClassName: pack.Anno
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: special.accessor
     hasBackingField: true
     hasGetter: true
     hasSetter: false
@@ -107,6 +109,7 @@ KaValueParameterSymbol:
     javaSetterName: null
     setterDeprecationStatus: null
     isInline: false
+    importableFqName: null
   hasDefaultValue: false
   isActual: false
   isCrossinline: false
@@ -130,3 +133,4 @@ KaValueParameterSymbol:
   getContainingJvmClassName: pack.Anno
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

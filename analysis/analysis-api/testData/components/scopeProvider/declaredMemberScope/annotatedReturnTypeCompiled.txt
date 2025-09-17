@@ -70,6 +70,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: test.MyInterface
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -81,6 +82,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: [
@@ -118,6 +120,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.MyInterface
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
+    importableFqName: null
   callableId: test/MyInterface.property
   compilerVisibility: Public
   contextParameters: []
@@ -155,6 +158,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.MyInterface
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -198,3 +202,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null

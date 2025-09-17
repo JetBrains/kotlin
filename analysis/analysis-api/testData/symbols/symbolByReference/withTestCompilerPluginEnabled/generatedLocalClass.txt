@@ -28,6 +28,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: null
   compilerVisibility: Local
   contextParameters: []
@@ -76,6 +77,8 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -90,6 +93,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -138,6 +142,8 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -158,3 +164,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null

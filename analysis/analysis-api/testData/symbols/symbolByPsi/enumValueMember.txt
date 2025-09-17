@@ -54,6 +54,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Style
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: /Style.value
         compilerVisibility: Public
         contextParameters: []
@@ -88,6 +89,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Style
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: special.accessor
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -128,6 +130,7 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -151,12 +154,14 @@ KaConstructorSymbol:
       getContainingJvmClassName: Style
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(enumValueMember.kt)
   getContainingJvmClassName: Style
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: Style
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -188,6 +193,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: null
   compilerVisibility: Public
   contextParameters: []
@@ -218,6 +224,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -258,6 +265,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaEnumEntrySymbol:
   annotations: []
@@ -283,6 +291,7 @@ KaEnumEntrySymbol:
   getContainingJvmClassName: Style
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: Style.SHEET
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -314,6 +323,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Style
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /Style.exitAnimation
   compilerVisibility: Public
   contextParameters: []
@@ -348,6 +358,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Style
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -388,6 +399,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -424,3 +436,4 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: Style

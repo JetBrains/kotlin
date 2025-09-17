@@ -23,6 +23,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /lazyProp
   compilerVisibility: Public
   contextParameters: []
@@ -52,6 +53,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: true
@@ -118,6 +120,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -152,12 +155,14 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: INTERNAL
     getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
@@ -169,3 +174,4 @@ KaKotlinPropertySymbol:
   javaSetterName: setLazyProp
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: lazyProp

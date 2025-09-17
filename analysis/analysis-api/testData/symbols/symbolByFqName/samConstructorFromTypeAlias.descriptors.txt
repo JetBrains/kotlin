@@ -52,9 +52,11 @@ KaSamConstructorSymbol:
       getContainingJvmClassName: one.SamConstructorFromTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samConstructorFromTypeAlias.kt)
   getContainingJvmClassName: one.SamConstructorFromTypeAliasKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: one.MyInterface

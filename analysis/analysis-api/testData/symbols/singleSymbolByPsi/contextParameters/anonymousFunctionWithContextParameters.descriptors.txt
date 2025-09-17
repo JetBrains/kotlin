@@ -25,6 +25,7 @@ KaAnonymousFunctionSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaContextParameterSymbol:
       annotations: []
       callableId: null
@@ -47,6 +48,7 @@ KaAnonymousFunctionSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: []
   hasStableParameterNames: true
@@ -91,9 +93,11 @@ KaAnonymousFunctionSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextParameters.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

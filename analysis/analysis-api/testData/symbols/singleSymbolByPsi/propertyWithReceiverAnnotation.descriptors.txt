@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithReceiverAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /prop
   compilerVisibility: Public
   contextParameters: []
@@ -73,6 +74,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: PropertyWithReceiverAnnotationKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -83,6 +85,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithReceiverAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -132,6 +135,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithReceiverAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -148,3 +152,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: prop

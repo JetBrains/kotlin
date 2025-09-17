@@ -14,6 +14,7 @@ KaTypeParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaTypeParameterSymbol:
   annotations: []
@@ -31,6 +32,7 @@ KaTypeParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -73,6 +75,7 @@ KaNamedClassSymbol:
       getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
       compilerVisibility: Local
@@ -89,12 +92,14 @@ KaNamedClassSymbol:
       getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: X
 
 KaTypeParameterSymbol:
   annotations: []
@@ -112,6 +117,7 @@ KaTypeParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -162,12 +168,14 @@ KaNamedClassSymbol:
       getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: Y
 
 KaTypeParameterSymbol:
   annotations: [
@@ -188,6 +196,7 @@ KaTypeParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaTypeParameterSymbol:
   annotations: []
@@ -205,6 +214,7 @@ KaTypeParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -262,6 +272,7 @@ KaNamedClassSymbol:
       getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
       compilerVisibility: Local
@@ -278,9 +289,11 @@ KaNamedClassSymbol:
       getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: A

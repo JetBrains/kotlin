@@ -41,6 +41,8 @@ KaNamedFunctionSymbol:
               getContainingJvmClassName: ReferenceReceiverInContractKt
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+              importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
       occurrencesRange: EXACTLY_ONCE
   ]
   hasStableParameterNames: true
@@ -89,6 +91,8 @@ KaNamedFunctionSymbol:
     getContainingJvmClassName: ReferenceReceiverInContractKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -101,3 +105,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: referenceReceiverInContract

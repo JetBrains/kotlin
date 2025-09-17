@@ -39,3 +39,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
+  importableFqName: null

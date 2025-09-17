@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /A.abc
   compilerVisibility: Public
   contextParameters: []
@@ -58,6 +59,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: A
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -98,3 +100,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null

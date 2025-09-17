@@ -174,12 +174,14 @@ CONSTRUCTOR:
       getContainingJvmClassName: null
       getContainingModule: KaDanglingFileModule "Temporary file"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaDanglingFileModule "Temporary file"
   deprecationStatus: null
+  importableFqName: IntPredicate
 CLASS:
   KaNamedClassSymbol:
   annotations: []
@@ -222,3 +224,4 @@ CLASS:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: IntPredicate

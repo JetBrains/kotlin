@@ -39,9 +39,11 @@ KaNamedClassSymbol:
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: kotlin.collections.Iterator

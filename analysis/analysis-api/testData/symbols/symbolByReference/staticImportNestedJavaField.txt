@@ -22,3 +22,4 @@ KaJavaFieldSymbol:
   getContainingJvmClassName: Dependency.Nested
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: Dependency.Nested.bar

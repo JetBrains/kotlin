@@ -39,6 +39,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -70,6 +71,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.C
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: test/C.bar
   compilerVisibility: Public
   contextParameters: []
@@ -104,6 +106,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.C
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -144,6 +147,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -186,6 +190,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -217,6 +222,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.A
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: test/A.x
   compilerVisibility: Public
   contextParameters: []
@@ -251,6 +257,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.A
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -291,6 +298,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -352,6 +360,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: kotlin.Any
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -363,6 +372,7 @@ KaNamedFunctionSymbol:
   canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -405,6 +415,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -447,6 +458,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -478,6 +490,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.C.C2
 
 KaNamedClassSymbol:
   annotations: []
@@ -509,6 +522,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.C.O2
 
 KaNamedClassSymbol:
   annotations: []
@@ -540,6 +554,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.C.Companion
 
 KaNamedClassSymbol:
   annotations: []
@@ -571,6 +586,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.A.C1
 
 KaNamedClassSymbol:
   annotations: []
@@ -602,6 +618,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.A.O1
 
 KaConstructorSymbol:
   annotations: []
@@ -629,3 +646,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: test.C
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.C

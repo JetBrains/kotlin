@@ -63,6 +63,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
@@ -70,6 +71,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
+  importableFqName: foo
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -104,6 +106,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -140,3 +143,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: $$result

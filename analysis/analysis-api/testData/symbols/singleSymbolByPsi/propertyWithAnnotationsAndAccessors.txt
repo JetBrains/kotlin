@@ -30,6 +30,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithAnnotationsAndAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /x
   compilerVisibility: Public
   contextParameters: []
@@ -65,6 +66,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithAnnotationsAndAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -143,6 +145,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -183,12 +186,14 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(propertyWithAnnotationsAndAccessors.kt)
     getContainingJvmClassName: PropertyWithAnnotationsAndAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(propertyWithAnnotationsAndAccessors.kt)
@@ -200,3 +205,4 @@ KaKotlinPropertySymbol:
   javaSetterName: setX
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: x

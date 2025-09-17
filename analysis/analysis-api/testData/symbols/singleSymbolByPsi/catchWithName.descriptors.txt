@@ -27,3 +27,4 @@ KaValueParameterSymbol:
   getContainingJvmClassName: CatchWithNameKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

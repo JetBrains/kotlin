@@ -26,6 +26,7 @@ KaJavaFieldSymbol:
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaJavaFieldSymbol:
   annotations: []
@@ -54,6 +55,7 @@ KaJavaFieldSymbol:
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -95,6 +97,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaConstructorSymbol:
   annotations: []
@@ -122,3 +125,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: JavaClass

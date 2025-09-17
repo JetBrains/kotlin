@@ -39,7 +39,7 @@ import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
 
 @KaNonPublicApi
-@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class, KaIdeApi::class)
 public class DebugSymbolRenderer(
     public val renderExtra: Boolean = false,
     public val renderTypeByProperties: Boolean = false,
@@ -105,6 +105,8 @@ public class DebugSymbolRenderer(
                 if (symbol is KaKotlinPropertySymbol) {
                     renderComputedValue("isInline", printer, currentSymbolStack) { symbol.isInline }
                 }
+
+                renderComputedValue("importableFqName", printer, currentSymbolStack) { symbol.importableFqName }
 
                 if (renderIsPublicApi) {
                     if (symbol is KaDeclarationSymbol) {

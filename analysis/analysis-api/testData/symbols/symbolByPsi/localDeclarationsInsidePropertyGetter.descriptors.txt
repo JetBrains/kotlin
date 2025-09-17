@@ -22,6 +22,7 @@ KaLocalVariableSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -60,6 +61,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -91,6 +93,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: null
 
 KaTypeAliasSymbol:
   annotations: []
@@ -111,6 +114,7 @@ KaTypeAliasSymbol:
   getContainingFileSymbol: KaFileSymbol(localDeclarationsInsidePropertyGetter.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -138,6 +142,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: LocalDeclarationsInsidePropertyGetterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /x
   compilerVisibility: Public
   contextParameters: []
@@ -168,6 +173,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: LocalDeclarationsInsidePropertyGetterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -204,3 +210,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: x

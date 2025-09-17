@@ -25,6 +25,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: [
     KaContextReceiver:
@@ -72,6 +73,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
       compilerVisibility: Local
@@ -88,6 +90,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
       compilerVisibility: Local
@@ -104,6 +107,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -156,6 +160,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -209,6 +214,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -259,6 +265,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -309,6 +316,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -345,6 +353,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
@@ -352,3 +361,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
+  importableFqName: lib.myContext

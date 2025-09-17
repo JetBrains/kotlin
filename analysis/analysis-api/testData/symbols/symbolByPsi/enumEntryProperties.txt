@@ -28,6 +28,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: null
   compilerVisibility: Public
   contextParameters: []
@@ -62,6 +63,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -102,6 +104,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaEnumEntrySymbol:
   annotations: []
@@ -127,6 +130,7 @@ KaEnumEntrySymbol:
   getContainingJvmClassName: MyEnumClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: MyEnumClass.FirstEntry
 
 KaEnumEntrySymbol:
   annotations: []
@@ -152,6 +156,7 @@ KaEnumEntrySymbol:
   getContainingJvmClassName: MyEnumClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: MyEnumClass.SecondEntry
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -183,6 +188,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: null
   compilerVisibility: Public
   contextParameters: []
@@ -217,6 +223,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -257,6 +264,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -288,6 +296,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: null
   compilerVisibility: Public
   contextParameters: []
@@ -331,6 +340,8 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -341,6 +352,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -384,6 +396,8 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -404,6 +418,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaEnumEntrySymbol:
   annotations: []
@@ -429,6 +444,7 @@ KaEnumEntrySymbol:
   getContainingJvmClassName: MyEnumClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: MyEnumClass.ThirdEntry
 
 KaNamedClassSymbol:
   annotations: []
@@ -465,3 +481,4 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: MyEnumClass

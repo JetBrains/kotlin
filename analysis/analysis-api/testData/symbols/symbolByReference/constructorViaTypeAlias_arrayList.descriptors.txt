@@ -43,6 +43,7 @@ KaConstructorSymbol:
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescTypeParameterSymbol
 
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -73,9 +74,11 @@ KaConstructorSymbol:
       getContainingJvmClassName: java.util.ArrayList
       getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: java.util.ArrayList
   getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null
+  importableFqName: java.util.ArrayList

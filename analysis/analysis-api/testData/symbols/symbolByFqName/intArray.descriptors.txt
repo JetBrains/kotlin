@@ -37,3 +37,4 @@ KaNamedClassSymbol:
 
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: kotlin.IntArray

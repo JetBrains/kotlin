@@ -28,6 +28,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /Abc.firstProperty
   compilerVisibility: Public
   contextParameters: []
@@ -62,6 +63,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -102,6 +104,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -133,6 +136,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /Abc.secondProperty
   compilerVisibility: Public
   contextParameters: []
@@ -167,6 +171,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -207,6 +212,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -238,6 +244,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /Abc.thirdProperty
   compilerVisibility: Public
   contextParameters: []
@@ -272,6 +279,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -312,6 +320,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -354,6 +363,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -385,6 +395,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /Abc.bodyProperty
   compilerVisibility: Public
   contextParameters: []
@@ -428,6 +439,8 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: Abc
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -438,6 +451,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -481,6 +495,8 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -501,6 +517,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -543,6 +560,7 @@ KaNamedFunctionSymbol:
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -585,6 +603,7 @@ KaNamedFunctionSymbol:
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -627,6 +646,7 @@ KaNamedFunctionSymbol:
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -688,6 +708,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: Abc
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -717,6 +738,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: Abc
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -746,6 +768,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: Abc
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -757,6 +780,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -818,6 +842,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: Abc
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -829,6 +854,7 @@ KaNamedFunctionSymbol:
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -871,6 +897,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -913,6 +940,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaConstructorSymbol:
   annotations: []
@@ -970,6 +998,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: /Abc.firstProperty
         compilerVisibility: Public
         contextParameters: []
@@ -1004,6 +1033,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: special.accessor
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -1044,6 +1074,7 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -1067,6 +1098,7 @@ KaConstructorSymbol:
       getContainingJvmClassName: Abc
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -1102,6 +1134,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: /Abc.secondProperty
         compilerVisibility: Public
         contextParameters: []
@@ -1136,6 +1169,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: special.accessor
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -1176,6 +1210,7 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -1199,6 +1234,7 @@ KaConstructorSymbol:
       getContainingJvmClassName: Abc
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
@@ -1234,6 +1270,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: /Abc.thirdProperty
         compilerVisibility: Public
         contextParameters: []
@@ -1268,6 +1305,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: special.accessor
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -1308,6 +1346,7 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -1331,9 +1370,11 @@ KaConstructorSymbol:
       getContainingJvmClassName: Abc
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(dataClass.kt)
   getContainingJvmClassName: Abc
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: Abc

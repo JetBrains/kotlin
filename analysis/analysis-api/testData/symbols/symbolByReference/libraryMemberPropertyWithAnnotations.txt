@@ -31,6 +31,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/SimpleClass.memberPropertyWithAnnotations
   compilerVisibility: Public
   contextParameters: []
@@ -68,6 +69,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -108,3 +110,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null

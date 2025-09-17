@@ -43,3 +43,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib-js"
   deprecationStatus: null
+  importableFqName: null

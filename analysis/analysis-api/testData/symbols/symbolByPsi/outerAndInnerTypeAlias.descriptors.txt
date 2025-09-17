@@ -14,6 +14,7 @@ KaTypeParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -56,12 +57,14 @@ KaNamedClassSymbol:
       getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: X
 
 KaTypeAliasSymbol:
   annotations: []
@@ -87,6 +90,7 @@ KaTypeAliasSymbol:
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: TopLevelAlias
 
 KaTypeAliasSymbol:
   annotations: []
@@ -112,6 +116,7 @@ KaTypeAliasSymbol:
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: A.NestedLevelAlias
 
 KaTypeAliasSymbol:
   annotations: []
@@ -137,6 +142,7 @@ KaTypeAliasSymbol:
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaTypeAliasSymbol:
   annotations: []
@@ -162,6 +168,7 @@ KaTypeAliasSymbol:
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaTypeAliasSymbol:
   annotations: []
@@ -187,6 +194,7 @@ KaTypeAliasSymbol:
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaTypeAliasSymbol:
   annotations: []
@@ -212,6 +220,7 @@ KaTypeAliasSymbol:
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -254,6 +263,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -285,6 +295,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -327,6 +338,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -358,6 +370,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -400,6 +413,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
@@ -431,3 +445,4 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: A

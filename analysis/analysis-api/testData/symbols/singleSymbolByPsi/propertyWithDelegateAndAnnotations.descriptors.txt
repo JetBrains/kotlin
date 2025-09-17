@@ -29,6 +29,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithDelegateAndAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /lazyProperty
   compilerVisibility: Public
   contextParameters: []
@@ -59,6 +60,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithDelegateAndAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -95,3 +97,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: lazyProperty

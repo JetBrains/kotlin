@@ -45,6 +45,7 @@ KaNamedFunctionSymbol:
                   getContainingJvmClassName: ReturnsNotNullContractKt
                   getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
+                  importableFqName: null
           isNegated: true
   ]
   hasStableParameterNames: true
@@ -100,6 +101,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: ReturnsNotNullContractKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(returnsNotNullContract.kt)
@@ -107,3 +109,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: returnsNotNullContract

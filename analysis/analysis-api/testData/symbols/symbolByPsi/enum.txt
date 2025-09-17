@@ -22,6 +22,7 @@ KaEnumEntrySymbol:
   getContainingJvmClassName: X
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: X.Y
 
 KaEnumEntrySymbol:
   annotations: []
@@ -47,6 +48,7 @@ KaEnumEntrySymbol:
   getContainingJvmClassName: X
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: X.Z
 
 KaNamedClassSymbol:
   annotations: []
@@ -83,3 +85,4 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: X

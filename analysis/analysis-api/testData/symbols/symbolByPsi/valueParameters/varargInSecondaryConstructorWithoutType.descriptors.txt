@@ -47,12 +47,14 @@ KaConstructorSymbol:
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInSecondaryConstructorWithoutType.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: Foo
 
 KaNamedClassSymbol:
   annotations: []
@@ -84,3 +86,4 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: Foo

@@ -33,6 +33,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
     deprecationStatus: null
+    importableFqName: null
   callableId: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
   compilerVisibility: Public
   contextParameters: []
@@ -72,6 +73,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
     deprecationStatus: null
+    importableFqName: special.accessor
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -117,3 +119,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null

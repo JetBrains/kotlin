@@ -21,3 +21,4 @@ KaLocalVariableSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: <error property>

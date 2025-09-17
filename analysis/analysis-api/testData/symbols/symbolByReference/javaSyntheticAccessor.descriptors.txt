@@ -45,6 +45,7 @@ KaSyntheticJavaPropertySymbol:
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 
       deprecationStatus: null
+      importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -57,6 +58,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescPropertyGetterSymbol
 
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -102,6 +104,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -119,3 +122,4 @@ KaSyntheticJavaPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  importableFqName: null

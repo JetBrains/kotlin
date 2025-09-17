@@ -45,6 +45,7 @@ KaNamedFunctionSymbol:
     getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasAsAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: [
@@ -78,6 +79,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: []
   visibility: PUBLIC
@@ -86,3 +88,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: foo2

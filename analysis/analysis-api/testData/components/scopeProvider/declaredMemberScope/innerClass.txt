@@ -28,6 +28,7 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: test.B.InnerClassInB
 
 KaConstructorSymbol:
   annotations: []
@@ -55,3 +56,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: test.B
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.B

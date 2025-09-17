@@ -81,6 +81,7 @@ FUNCTION:
       getContainingJvmClassName: B
       getContainingModule: KaDanglingFileModule "Temporary file"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -103,5 +104,6 @@ FUNCTION:
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null
 CAN_BE_OPERATOR:
   true
