@@ -2032,6 +2032,12 @@ public class FirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopesGen
       }
 
       @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("compiler/testData/codegen/box/basics/simple.kt");
+      }
+
+      @Test
       @TestMetadata("spread_operator_0.kt")
       public void testSpread_operator_0() {
         runTest("compiler/testData/codegen/box/basics/spread_operator_0.kt");
