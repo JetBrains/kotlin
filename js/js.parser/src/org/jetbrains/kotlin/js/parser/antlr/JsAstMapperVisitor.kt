@@ -211,11 +211,13 @@ class JsAstMapperVisitor(
     }
 
     override fun visitContinueStatement(ctx: JavaScriptParser.ContinueStatementContext): JsContinue {
-        return JsContinue(getTargetLabel(ctx))
+        val identifier = ctx.identifier()?.let { scopeContext.localNameFor(it.text) }
+        return JsContinue(identifier?.makeRef())
     }
 
     override fun visitBreakStatement(ctx: JavaScriptParser.BreakStatementContext): JsBreak {
-        return JsBreak(getTargetLabel(ctx))
+        val identifier = ctx.identifier()?.let { scopeContext.localNameFor(it.text) }
+        return JsBreak(identifier?.makeRef())
     }
 
     override fun visitReturnStatement(ctx: JavaScriptParser.ReturnStatementContext): JsReturn {
@@ -1067,19 +1069,6 @@ class JsAstMapperVisitor(
 
             scopeContext.exitFunction()
         }
-    }
-
-    private fun getTargetLabel(statementWithLabel: ParserRuleContext): JsNameRef? {
-        val identifier = when {
-            statementWithLabel is JavaScriptParser.ContinueStatementContext ->
-                statementWithLabel.identifier()
-            statementWithLabel is JavaScriptParser.BreakStatementContext ->
-                statementWithLabel.identifier()
-            else -> raiseParserException("Unexpected node type: ${statementWithLabel.javaClass.name}", statementWithLabel)
-        }
-
-        val labelName = scopeContext.localNameFor(identifier.text)
-        return labelName.makeRef()
     }
 
     private fun makeRefNode(identifier: String): JsNameRef {
