@@ -416,6 +416,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/sample6-KT-56712-umbrella-composite/composite", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
+                // FIXME: KT-81095 this test fails with OOM when CC is enabled
                 configurationCache = ConfigurationCacheValue.DISABLED,
             ), buildJdk = jdkVersion.location
         ) {
