@@ -38,8 +38,8 @@ fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, null, 3]<!>]<!>)
     <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[1, 2, 3]<!>)
 
-    var lst: MyList<MyList<Int>> = [[1, 2, 3], [4L, 5L, 6L], [7, 8, 9]]
-    lst = [["1", "2", "3"]]
+    var lst: MyList<MyList<Int>> = [[1, 2, 3], <!ARGUMENT_TYPE_MISMATCH!>[4L, 5L, 6L]<!>, [7, 8, 9]]
+    lst = [<!ARGUMENT_TYPE_MISMATCH!>["1", "2", "3"]<!>]
     lst = []
     lst = [[]]
     lst = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]]

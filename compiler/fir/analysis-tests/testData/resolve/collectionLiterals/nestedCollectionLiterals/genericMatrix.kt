@@ -25,6 +25,7 @@ fun testMatrixInt() {
     ])
     takeMatrixInt([])
     takeMatrixInt([[], [], []])
+    takeMatrixInt([<!ARGUMENT_TYPE_MISMATCH!>["1", "2", "3"]<!>])
 
     takeMatrixInt([
         [1, 2, 3],
@@ -76,9 +77,11 @@ fun testMatrixInt() {
     matrix = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]]
     matrix = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]]
     matrix = [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]
-    matrix = [[1, null, 3]]
-    matrix = [[1, "2", 3]]
+    matrix = [<!ARGUMENT_TYPE_MISMATCH!>[1, null, 3]<!>]
+    matrix = [<!ARGUMENT_TYPE_MISMATCH!>[1, "2", 3]<!>]
     matrix = [[null!!]]
+    matrix = [<!ARGUMENT_TYPE_MISMATCH!>["1", "2", "3"]<!>]
+    val matrixString: Matrix<String> = [<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>]
 }
 
 fun testMatrix() {

@@ -2177,6 +2177,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("inDefaultValues.kt")
+        public void testInDefaultValues() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/inDefaultValues.kt");
+        }
+
+        @Test
         @TestMetadata("inReturnPositions.kt")
         public void testInReturnPositions() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/inReturnPositions.kt");
