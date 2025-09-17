@@ -15,7 +15,7 @@ import kotlin.wasm.internal.*
  */
 
 public actual class String internal @WasmPrimitiveConstructor constructor(
-    public val internalStr: JsString,
+    internal val internalStr: JsString,
     @kotlin.internal.IntrinsicConstEvaluation
     private var _chars: WasmCharArray?,
     @kotlin.internal.IntrinsicConstEvaluation
@@ -110,7 +110,6 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
-@Suppress("NOTHING_TO_INLINE")
 internal actual fun WasmCharArray.createString(): String =
     String(jsFromCharCodeArray(this, 0, this.len()).unsafeCast(), this, this.len())
 
