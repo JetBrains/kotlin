@@ -2,7 +2,7 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
@@ -52,7 +52,7 @@ abstract class KotlinNativeFrameworkConfigImpl @Inject constructor(artifactName:
     }
 }
 
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 class KotlinNativeFrameworkImpl(
     override val artifactName: String,
     override val modules: Set<Any>,
@@ -129,7 +129,7 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.staticFramework.set(isStatic)
         task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
         task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
-        @Suppress("DEPRECATION_ERROR")
+        @Suppress("DEPRECATION")
         task.kotlinOptions(kotlinOptionsFn)
         task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(enabledOnCurrentHost, task.konanTarget, project))
         task.kotlinCompilerArgumentsLogLevel

@@ -2,7 +2,7 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.visibleName
 import javax.inject.Inject
 
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 abstract class KotlinNativeLibraryConfigImpl @Inject constructor(artifactName: String) :
     KotlinNativeArtifactConfigImpl(artifactName), KotlinNativeLibraryConfig {
 
@@ -54,7 +54,7 @@ abstract class KotlinNativeLibraryConfigImpl @Inject constructor(artifactName: S
     }
 }
 
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 class KotlinNativeLibraryImpl(
     override val artifactName: String,
     override val modules: Set<Any>,
@@ -103,7 +103,7 @@ class KotlinNativeLibraryImpl(
                 task.binaryOptions.set(binaryOptions)
                 task.libraries.setFrom(project.configurations.getByName(librariesConfigurationName))
                 task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
-                @Suppress("DEPRECATION_ERROR")
+                @Suppress("DEPRECATION")
                 task.kotlinOptions(kotlinOptionsFn)
                 task.toolOptions(toolOptionsConfigure)
                 task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(enabledOnCurrentHost, task.konanTarget, project))

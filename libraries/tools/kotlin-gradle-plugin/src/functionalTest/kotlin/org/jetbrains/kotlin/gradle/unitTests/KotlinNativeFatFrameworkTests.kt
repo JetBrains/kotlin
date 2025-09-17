@@ -23,6 +23,7 @@ class KotlinNativeFatFrameworkTests {
                 iosX64()
             }
 
+            @Suppress("DEPRECATION_ERROR")
             kotlinArtifacts {
                 Native.FatFramework {
                     it.targets(

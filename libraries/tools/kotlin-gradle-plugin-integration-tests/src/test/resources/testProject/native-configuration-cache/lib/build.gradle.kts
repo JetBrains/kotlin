@@ -49,6 +49,7 @@ kotlin {
     }
 }
 
+@Suppress("DEPRECATION_ERROR")
 kotlinArtifacts {
     Native.Library("mylib") {
         target = linuxX64

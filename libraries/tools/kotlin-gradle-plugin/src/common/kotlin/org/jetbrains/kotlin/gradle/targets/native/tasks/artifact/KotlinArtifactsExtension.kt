@@ -2,7 +2,7 @@
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
@@ -34,7 +34,7 @@ abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val proje
         private val UNSAFE_NAME_SYMBOLS = """\W""".toRegex()
     }
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     override fun Library(name: String, configure: Action<KotlinNativeLibraryConfig>) {
         project.reportDiagnosticOncePerProject(
             KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
@@ -42,7 +42,7 @@ abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val proje
         addKotlinArtifact<KotlinNativeLibraryConfigImpl>(name, configure)
     }
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     override fun Library(configure: Action<KotlinNativeLibraryConfig>) {
         project.reportDiagnosticOncePerProject(
             KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
@@ -50,7 +50,7 @@ abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val proje
         addKotlinArtifact<KotlinNativeLibraryConfigImpl>(configure)
     }
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     override fun Framework(name: String, configure: Action<KotlinNativeFrameworkConfig>) {
         project.reportDiagnosticOncePerProject(
             KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
@@ -58,7 +58,7 @@ abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val proje
         addKotlinArtifact<KotlinNativeFrameworkConfigImpl>(name, configure)
     }
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     override fun Framework(configure: Action<KotlinNativeFrameworkConfig>) {
         project.reportDiagnosticOncePerProject(
             KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
@@ -66,7 +66,7 @@ abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val proje
         addKotlinArtifact<KotlinNativeFrameworkConfigImpl>(configure)
     }
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     override fun FatFramework(name: String, configure: Action<KotlinNativeFatFrameworkConfig>) {
         project.reportDiagnosticOncePerProject(
             KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
@@ -74,7 +74,7 @@ abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val proje
         addKotlinArtifact<KotlinNativeFatFrameworkConfigImpl>(name, configure)
     }
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     override fun FatFramework(configure: Action<KotlinNativeFatFrameworkConfig>) {
         project.reportDiagnosticOncePerProject(
             KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
@@ -82,7 +82,7 @@ abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val proje
         addKotlinArtifact<KotlinNativeFatFrameworkConfigImpl>(configure)
     }
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     override fun XCFramework(name: String, configure: Action<KotlinNativeXCFrameworkConfig>) {
         project.reportDiagnosticOncePerProject(
             KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
@@ -90,7 +90,7 @@ abstract class KotlinNativeArtifactDSLImpl @Inject constructor(private val proje
         addKotlinArtifact<KotlinNativeXCFrameworkConfigImpl>(name, configure)
     }
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     override fun XCFramework(configure: Action<KotlinNativeXCFrameworkConfig>) {
         project.reportDiagnosticOncePerProject(
             KotlinToolingDiagnostics.KotlinNativeArtifactsDeprecation(),
