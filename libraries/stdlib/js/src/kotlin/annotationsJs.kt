@@ -225,7 +225,7 @@ public actual annotation class JsExport {
      * - **Whole-program compilation**: If multiple libraries apply the annotation, it results in a runtime error.
      * - **Per-module compilation**: Conflicts across dependencies (like in `whole-program` mode) are resolved.
      *   However, a runtime error occurs if the annotation is applied multiple times within a single module.
-     * - **Per-file compilation**:This mode resolves the issues present in `whole-program` and `per-module` modes.
+     * - **Per-file compilation**: This mode resolves the issues present in `whole-program` and `per-module` modes.
      *   However, a new issue arises if `@JsExport.Default` is applied multiple times within the same file.
      */
     @ExperimentalJsExport
