@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CompilationDependenciesPair
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.IncorrectCompileOnlyDependenciesChecker.stringCoordinates
+import org.jetbrains.kotlin.gradle.utils.stringCoordinates
 
 /**
  * Warn if a 'test' compilation has 'testApi' dependencies.

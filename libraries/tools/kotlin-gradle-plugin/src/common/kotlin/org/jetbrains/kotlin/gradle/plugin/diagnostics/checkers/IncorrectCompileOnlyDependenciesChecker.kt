@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CompilationDependenciesPair
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.IncorrectCompileOnlyDependenciesChecker.isProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
+import org.jetbrains.kotlin.gradle.utils.stringCoordinates
 
 /**
  * Verify that if a dependency is declared as `compileOnly`, in non-JVM targets it is also exposed as an `api` element.
@@ -111,12 +112,6 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
                 PropertiesProvider(project).ignoreIncorrectNativeDependencies == true
             }
         }
-    }
-
-    internal fun Dependency.stringCoordinates(): String = buildString {
-        group?.let { append(it).append(':') }
-        append(name)
-        version?.let { append(':').append(it) }
     }
 
     /**
