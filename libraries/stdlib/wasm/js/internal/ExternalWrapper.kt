@@ -180,9 +180,6 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType {
         x.asWasmExternRef()
 }
 
-internal fun stringLength(x: ExternalInterfaceType): Int =
-    js("x.length")
-
 internal fun kotlinToJsStringAdapter(x: String?): JsString? {
     // Using nullable String to represent default value
     // for parameters with default values

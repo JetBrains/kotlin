@@ -16,10 +16,7 @@ import kotlin.wasm.internal.WasmCharArray
 @JsBuiltin(
     "js-string",
     "length",
-    """export function length(s) {
-    return s.length;
-}
-"""
+    "export const length = (s) => s.length"
 )
 internal external fun jsLength(a: JsString): Int
 
@@ -28,10 +25,7 @@ internal external fun jsLength(a: JsString): Int
 @JsBuiltin(
     "js-string",
     "concat",
-    """export function concat(a, b) {
-    return a + b;
-}
-"""
+    "export const concat = (a, b) => a + b"
 )
 internal external fun jsConcat(a: JsString, b: JsString): JsStringRef
 
@@ -39,10 +33,7 @@ internal external fun jsConcat(a: JsString, b: JsString): JsStringRef
 @JsBuiltin(
     "js-string",
     "charCodeAt",
-    """export function charCodeAt(s, i) {
-    return s.charCodeAt(i >>> 0);
-}
-"""
+    "export const charCodeAt = (s, i) => s.charCodeAt(i >>> 0)"
 )
 internal external fun jsCharCodeAt(s: JsString, i: Int): Int
 
@@ -50,7 +41,7 @@ internal external fun jsCharCodeAt(s: JsString, i: Int): Int
 @JsBuiltin(
     "js-string",
     "substring",
-    """export function substring(s, start, end) {
+    """export const substring = (s, start, end) => {
     start >>>= 0;
     end >>>= 0;
     return s.substring(start, end);
@@ -63,7 +54,7 @@ internal external fun jsSubstring(s: JsString, start: Int, end: Int): JsStringRe
 @JsBuiltin(
     "js-string",
     "compare",
-    """export function compare(a, b) {
+    """export const compare = (a, b) => {
     return a === b ? 0 : a < b ? -1 : 1;
 }
 """
@@ -74,14 +65,25 @@ internal external fun jsCompare(a: JsAny, b: JsAny): Int
 @JsBuiltin(
     "js-string",
     "equals",
-    """export function equals(a, b) {
-    return a === b ? 1 : 0;
-}
-"""
+    "export const equals = (a, b) => a === b ? 1 : 0"
 )
 internal external fun jsEquals(a: JsAny, b: JsAny): Int
 
 
+/*
+ * Loads the following wasm helpers:
+ * ```wat
+ * (module
+ *   (type $array_i16 (array (mut i16)))
+ *   (func (export "a16_set") (param (ref $array_i16) i32 i32)
+ *     local.get 0
+ *     local.get 1
+ *     local.get 2
+ *     array.set $array_i16
+ *   )
+ * )
+ * ```
+ */
 @Suppress("WRONG_JS_INTEROP_TYPE")
 @JsBuiltin(
     "js-string",
@@ -97,7 +99,7 @@ internal external fun jsEquals(a: JsAny, b: JsAny): Int
 ]));
 const helpersIntoCharCode = new WebAssembly.Instance(moduleIntoCharCode).exports;
 
-export function intoCharCodeArray(s, array, start) {
+export const intoCharCodeArray = (s, array, start) => {
     start >>>= 0;
     for (let i = 0; i < s.length; i++) {
       helpersIntoCharCode.a16_set(array, start + i, s.charCodeAt(i));
@@ -109,6 +111,19 @@ export function intoCharCodeArray(s, array, start) {
 internal external fun jsIntoCharCodeArray(string: JsAny, array: WasmCharArray, start: Int): Int
 
 
+/*
+ * Loads the following wasm helpers:
+ * ```wat
+ * (module
+ *   (type $array_i16 (array (mut i16)))
+ *   (func (export "a16_get") (param (ref $array_i16) i32) (result i32)
+ *     local.get 0
+ *     local.get 1
+ *     array.get_u $array_i16
+ *   )
+ * )
+ * ```
+ */
 @Suppress("WRONG_JS_INTEROP_TYPE")
 @JsBuiltin(
     "js-string",
@@ -123,7 +138,7 @@ internal external fun jsIntoCharCodeArray(string: JsAny, array: WasmCharArray, s
 ]));
 const helpersFromCharCodeArray = new WebAssembly.Instance(moduleFromCharCodeArray).exports;
 
-export function fromCharCodeArray(array, start, end) {
+export const fromCharCodeArray = (array, start, end) => {
     start >>>= 0;
     end >>>= 0;
     let result = [];

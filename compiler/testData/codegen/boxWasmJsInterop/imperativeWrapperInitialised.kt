@@ -40,14 +40,14 @@ fun main() {
 
 // FILE: entry.mjs
 import { instantiate } from "./index.uninstantiated.mjs";
-import * as d2FzbTpqcy1zdHJpbmc from './js-builtins.mjs';
+import * as StringBuiltinsPolyfill from './js-builtins.mjs';
 
 let inc = x => x + 1;
 
 let imports = {
     "foo": { inc1 : inc },
     "~!@#\$%^&*()_+\`-={}|[]\\\\:\\\";'<>?,./" : { inc2 : inc },
-    "wasm:js-string" : d2FzbTpqcy1zdHJpbmc,
+    "wasm:js-string" : StringBuiltinsPolyfill,
     "./bar.mjs" : {
         inc3 : inc,
         giveMeNumber(x) {

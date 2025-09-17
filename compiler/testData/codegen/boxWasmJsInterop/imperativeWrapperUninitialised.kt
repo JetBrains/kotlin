@@ -24,13 +24,13 @@ fun main() {
 
 // FILE: entry.mjs
 import { instantiate } from "./index.uninstantiated.mjs";
-import * as d2FzbTpqcy1zdHJpbmc from './js-builtins.mjs';
+import * as StringBuiltinsPolyfill from './js-builtins.mjs';
 
 let inc = x => x + 1;
 
 let imports = {
     "foo": { inc },
-    "wasm:js-string" : d2FzbTpqcy1zdHJpbmc,
+    "wasm:js-string" : StringBuiltinsPolyfill,
 }
 
 let { exports } = await instantiate(imports, /*runInitializer=*/false);

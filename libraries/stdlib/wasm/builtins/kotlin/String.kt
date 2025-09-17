@@ -4,9 +4,3 @@
  */
 
 package kotlin
-
-import kotlin.wasm.internal.*
-
-internal expect fun WasmCharArray.createString(): String
-
-internal expect fun String.getChars(): WasmCharArray

@@ -3905,10 +3905,6 @@ final class kotlin/String : kotlin/CharSequence, kotlin/Comparable<kotlin/String
 
     // Targets: [native]
     final fun plusImpl(kotlin/String): kotlin/String // kotlin/String.plusImpl|plusImpl(kotlin.String){}[0]
-
-    // Targets: [wasmJs]
-    final val internalStr // kotlin/String.internalStr|{}internalStr[0]
-        final fun <get-internalStr>(): kotlin.js/JsString // kotlin/String.internalStr.<get-internalStr>|<get-internalStr>(){}[0]
 }
 
 final value class <#A: out kotlin/Any?> kotlin/Result : kotlin.io/Serializable { // kotlin/Result|null[0]
