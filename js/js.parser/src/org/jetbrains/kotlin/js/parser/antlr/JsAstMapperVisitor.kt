@@ -35,7 +35,11 @@ class JsAstMapperVisitor(
     }
 
     override fun visitBlock(ctx: JavaScriptParser.BlockContext): JsBlock {
-        return visitNode<JsBlock>(ctx.statementList())
+        ctx.statementList()?.let {
+            return visitNode<JsBlock>(it)
+        }
+
+        return JsBlock()
     }
 
     override fun visitStatementList(ctx: JavaScriptParser.StatementListContext): JsBlock {
