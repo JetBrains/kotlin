@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirField
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -27,8 +29,6 @@ import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.toTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -115,13 +115,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
             checkClassCannotBeExtendedDirectly(symbol, superTypeRef)
             checkNamedFunctionTypeParameter(superTypeRef)
 
-            val shouldCheckSupertypeOnTypealiasWithTypeProjection = if (originalSupertype.typeArguments.isNotEmpty()) {
-                !checkProjectionInImmediateArgumentToSupertype(originalSupertype, superTypeRef)
-            } else {
-                !checkExpandedTypeCannotBeInherited(symbol, expandedSupertype, superTypeRef, originalSupertype)
-            }
-
-            if (shouldCheckSupertypeOnTypealiasWithTypeProjection) {
+            if (!checkProjectionInImmediateArgumentToSupertype(originalSupertype, superTypeRef)) {
                 checkSupertypeOnTypeAliasWithTypeProjection(originalSupertype, expandedSupertype, superTypeRef)
             }
         }
@@ -173,24 +167,6 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
             }
         }
         return result
-    }
-
-    context(reporter: DiagnosticReporter, context: CheckerContext)
-    private fun checkExpandedTypeCannotBeInherited(
-        symbol: FirBasedSymbol<*>?,
-        fullyExpandedType: ConeKotlinType,
-        superTypeRef: FirTypeRef,
-        coneType: ConeKotlinType,
-    ): Boolean {
-        if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.INTERFACE) {
-            for (typeArgument in fullyExpandedType.typeArguments) {
-                if (typeArgument.isConflictingOrNotInvariant) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.EXPANDED_TYPE_CANNOT_BE_INHERITED, coneType)
-                    return true
-                }
-            }
-        }
-        return false
     }
 
     context(reporter: DiagnosticReporter, context: CheckerContext)
