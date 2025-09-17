@@ -48,20 +48,20 @@ public class DebugSymbolRenderer(
 ) {
 
     public fun render(analysisSession: KaSession, symbol: KaSymbol): String = prettyPrint {
-        analysisSession.renderSymbol(symbol, this, linkedSetOf<KaSymbol>())
+        analysisSession.renderSymbol(symbol, this, linkedSetOf())
     }
 
     public fun renderAnnotationApplication(analysisSession: KaSession, application: KaAnnotation): String = prettyPrint {
-        analysisSession.renderAnnotationApplication(application, this, linkedSetOf<KaSymbol>())
+        analysisSession.renderAnnotationApplication(application, this, linkedSetOf())
     }
 
     public fun renderType(analysisSession: KaSession, type: KaType): String = prettyPrint {
-        analysisSession.renderType(type, this, linkedSetOf<KaSymbol>())
+        analysisSession.renderType(type, this, linkedSetOf())
     }
 
     @TestOnly
     public fun renderForSubstitutionOverrideUnwrappingTest(analysisSession: KaSession, symbol: KaSymbol): String = prettyPrint {
-        analysisSession.renderForSubstitutionOverrideUnwrappingTest(symbol, this, linkedSetOf<KaSymbol>())
+        analysisSession.renderForSubstitutionOverrideUnwrappingTest(symbol, this, linkedSetOf())
     }
 
     private fun KaSession.renderSymbol(symbol: KaSymbol, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
@@ -300,11 +300,13 @@ public class DebugSymbolRenderer(
 
     private fun KaSession.renderByPropertyNames(value: Any, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
         val members = value::class.members
+            .asSequence()
             .filter { it.name !in ignoredPropertyNames }
             .filter { it.visibility != KVisibility.PRIVATE && it.visibility != KVisibility.INTERNAL }
             .filter { !it.hasAnnotation<Deprecated>() }
             .sortedBy { it.name }
             .filterIsInstance<KProperty<*>>()
+            .toList()
 
         printer.printCollectionIfNotEmpty(members, separator = "\n") { member ->
             renderProperty(member, printer, renderSymbolsFully = false, currentSymbolStack, value)
