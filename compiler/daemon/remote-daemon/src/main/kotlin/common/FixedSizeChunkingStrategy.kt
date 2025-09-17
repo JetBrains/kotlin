@@ -20,7 +20,7 @@ class FixedSizeChunkingStrategy(
     override fun chunk(
         inputStream: InputStream,
         isDirectory: Boolean,
-        artifactType: ArtifactType,
+        artifactTypes: Set<ArtifactType>,
         filePath: String,
     ): Flow<FileChunk> {
         return flow {
@@ -55,7 +55,7 @@ class FixedSizeChunkingStrategy(
                     emit(
                         FileChunk(
                             filePath,
-                            artifactType,
+                            artifactTypes,
                             chunkData,
                             isDirectory,
                             isLast = isLast
@@ -71,9 +71,9 @@ class FixedSizeChunkingStrategy(
     override fun chunk(
         file: File,
         isDirectory: Boolean,
-        artifactType: ArtifactType,
+        artifactTypes: Set<ArtifactType>,
         filePath: String,
     ): Flow<FileChunk> {
-        return chunk(file.inputStream(), isDirectory, artifactType, filePath)
+        return chunk(file.inputStream(), isDirectory, artifactTypes, filePath)
     }
 }

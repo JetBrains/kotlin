@@ -58,7 +58,7 @@ class CacheHandler {
 
     suspend fun cacheFile(
         tmpFile: File,
-        artifactType: ArtifactType,
+        artifactTypes: Set<ArtifactType>,
         deleteOriginalFile: Boolean,
         fileLockMap: MutableMap<Path, Mutex>,
         remoteCompilerArguments: K2JVMCompilerArguments? = null,
@@ -88,7 +88,7 @@ class CacheHandler {
 
         artifacts[fingerprint] = targetPath.toAbsolutePath().toString()
 
-        if (tmpFile.isDirectory && artifactType == ArtifactType.RESULT && remoteCompilerArguments != null) {
+        if (tmpFile.isDirectory && artifactTypes.any { it == ArtifactType.RESULT } && remoteCompilerArguments != null) {
             // the compilation result is saved in the cache two ways
             // 1. as a hash of directory content, that is because the compilation result may be used as
             // a dependency for other compilation tasks

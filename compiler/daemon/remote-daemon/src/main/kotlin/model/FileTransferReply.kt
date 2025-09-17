@@ -12,17 +12,17 @@ import org.jetbrains.kotlin.server.FileTransferReplyProto
 data class FileTransferReply(
     val filePath: String,
     val isPresent: Boolean,
-    val artifactType: ArtifactType
+    val artifactTypes: Set<ArtifactType>
 ) : CompileResponse
 
 fun FileTransferReplyProto.toDomain(): FileTransferReply {
-    return FileTransferReply(filePath, isPresent, fileType.toDomain())
+    return FileTransferReply(filePath, isPresent, artifactTypesList.map { it.toDomain() }.toSet())
 }
 
 fun FileTransferReply.toProto(): FileTransferReplyProto {
     return FileTransferReplyProto.newBuilder()
         .setFilePath(filePath)
         .setIsPresent(isPresent)
-        .setFileType(artifactType.toProto())
+        .addAllArtifactTypes(artifactTypes.map { it.toProto() })
         .build()
 }

@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.server.CompilationMetadataProto
 @Serializable
 data class CompilationMetadata(
     val projectName: String,
-    val sourceFilesCount: Int,
-    val dependencyFilesCount: Int,
-    val compilerPluginFilesCount: Int,
+    val totalFilesToSend: Int,
     val compilerArguments: List<String>,
     @Contextual
     val compilationOptions: CompilationOptions
@@ -24,9 +22,7 @@ data class CompilationMetadata(
 
 fun CompilationMetadata.toProto(): CompilationMetadataProto {
     return CompilationMetadataProto.newBuilder()
-        .setSourceFilesCount(sourceFilesCount)
-        .setDependencyFilesCount(dependencyFilesCount)
-        .setCompilerPluginFileCount(compilerPluginFilesCount)
+        .setTotalFilesToSend(totalFilesToSend)
         .addAllCompilerArguments(compilerArguments)
         .setProjectName(projectName)
         .apply {
@@ -41,9 +37,7 @@ fun CompilationMetadata.toProto(): CompilationMetadataProto {
 fun CompilationMetadataProto.toDomain(): CompilationMetadata {
     return CompilationMetadata(
         projectName,
-        sourceFilesCount,
-        dependencyFilesCount,
-        compilerPluginFileCount,
+        totalFilesToSend,
         compilerArgumentsList,
         if (hasIncrementalCompilationOptions()) incrementalCompilationOptions.toDomain()
         else standardCompilationOptions.toDomain()

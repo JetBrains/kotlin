@@ -29,7 +29,6 @@ import model.FileTransferReply
 import model.FileTransferRequest
 import model.ArtifactType
 import model.MissingFilesRequest
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.Services
@@ -40,8 +39,6 @@ import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
-import org.jetbrains.kotlin.incremental.ClasspathChanges
-import org.jetbrains.kotlin.incremental.classpathAsList
 import server.grpc.AuthServerInterceptor
 import java.io.File
 import java.io.Serializable
@@ -77,7 +74,7 @@ class RemoteCompilationServiceImpl(
 
     override fun compile(compileRequests: Flow<CompileRequest>): Flow<CompileResponse> {
         return channelFlow {
-
+            // barrier that helps us to wait for all files
             var allFilesReady = CompletableDeferred<Unit>()
             val pendingFiles = AtomicInteger(0)
 
@@ -86,21 +83,27 @@ class RemoteCompilationServiceImpl(
             val dependencyFiles = ConcurrentHashMap<Path, File>()
             val compilerPluginFiles = ConcurrentHashMap<Path, File>()
             val classpathEntrySnapshotFiles = ConcurrentHashMap<Path, File>()
+            val shrunkClasspathSnapshotFiles = ConcurrentHashMap<Path, File>()
 
             val workspaceFileLockMap = ConcurrentHashMap<Path, Mutex>()
             val cacheFileLockMap = ConcurrentHashMap<Path, Mutex>()
 
             val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
-            fun signalFileAvailability(clientPath: Path, file: File, artifactType: ArtifactType) {
-                when (artifactType) {
-                    ArtifactType.SOURCE -> sourceFiles[clientPath] = file
-                    ArtifactType.DEPENDENCY -> dependencyFiles[clientPath] = file
-                    ArtifactType.COMPILER_PLUGIN -> compilerPluginFiles[clientPath] = file
-                    ArtifactType.CLASSPATH_ENTRY_SNAPSHOT -> classpathEntrySnapshotFiles[clientPath] = file
-                    ArtifactType.RESULT -> debug("Received illegal file type: $artifactType")
-                    ArtifactType.IC_CACHE -> debug("Received illegal file type: $artifactType")
+            fun signalFileAvailability(clientPath: Path, remoteFile: File, artifactType: Set<ArtifactType>) {
+                debug("signalFileAvailability: $clientPath, $remoteFile, $artifactType")
+                artifactType.forEach { artifactType ->
+                    when (artifactType) {
+                        ArtifactType.SOURCE -> sourceFiles[clientPath] = remoteFile
+                        ArtifactType.DEPENDENCY -> dependencyFiles[clientPath] = remoteFile
+                        ArtifactType.COMPILER_PLUGIN -> compilerPluginFiles[clientPath] = remoteFile
+                        ArtifactType.CLASSPATH_ENTRY_SNAPSHOT -> classpathEntrySnapshotFiles[clientPath] = remoteFile
+                        ArtifactType.SHRUNK_CLASSPATH_SNAPSHOT -> shrunkClasspathSnapshotFiles[clientPath] = remoteFile
+                        ArtifactType.RESULT -> debug("Received illegal file type: $artifactType")
+                        ArtifactType.IC_CACHE -> debug("Received illegal file type: $artifactType")
+                    }
                 }
+
                 if (pendingFiles.decrementAndGet() == 0) {
                     allFilesReady.complete(Unit)
                 }
@@ -117,7 +120,7 @@ class RemoteCompilationServiceImpl(
                     when (it) {
                         is CompilationMetadata -> {
                             compilationMetadata = it
-                            pendingFiles.set(calculateTotalFiles(compilationMetadata))
+                            pendingFiles.set(compilationMetadata.totalFilesToSend)
                             workspaceManager = WorkspaceManager(userId, compilationMetadata.projectName)
                         }
                         is FileTransferRequest -> {
@@ -129,19 +132,17 @@ class RemoteCompilationServiceImpl(
                                         val projectFile = workspaceManager.copyFileToProject(
                                             cachedFilePath = cachedFile.absolutePath,
                                             clientFilePath = it.filePath,
-                                            userId,
-                                            compilationMetadata.projectName,
                                             workspaceFileLockMap
                                         )
                                         signalFileAvailability(
                                             Paths.get(it.filePath).toAbsolutePath().normalize(),
                                             projectFile,
-                                            it.artifactType
+                                            it.artifactTypes
                                         )
                                         FileTransferReply(
                                             it.filePath,
                                             isPresent = true,
-                                            it.artifactType
+                                            it.artifactTypes
                                         )
                                     }
                                     false -> {
@@ -149,7 +150,7 @@ class RemoteCompilationServiceImpl(
                                         FileTransferReply(
                                             it.filePath,
                                             isPresent = false,
-                                            it.artifactType
+                                            it.artifactTypes
                                         )
                                     }
                                 }
@@ -165,22 +166,20 @@ class RemoteCompilationServiceImpl(
                                     val cachedFile =
                                         cacheHandler.cacheFile(
                                             reconstructedFile,
-                                            it.artifactType,
+                                            it.artifactTypes,
                                             deleteOriginalFile = true,
                                             cacheFileLockMap
                                         )
                                     val projectFile = workspaceManager.copyFileToProject(
                                         cachedFile.absolutePath,
                                         it.filePath,
-                                        userId,
-                                        compilationMetadata.projectName,
                                         workspaceFileLockMap
                                     )
-                                    debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactType}, clientPath=${it.filePath}")
+                                    debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactTypes}, clientPath=${it.filePath}")
                                     signalFileAvailability(
                                         Paths.get(it.filePath).toAbsolutePath().normalize(),
                                         projectFile,
-                                        it.artifactType
+                                        it.artifactTypes
                                     )
                                 }
                             }
@@ -195,7 +194,7 @@ class RemoteCompilationServiceImpl(
                 allFilesReady.join()
 
                 val remoteCompilationOptions = CompilerUtils.getRemoteCompilationOptions(
-                    compilationMetadata.compilationOptions as IncrementalCompilationOptions,
+                    compilationMetadata.compilationOptions,
                     workspaceManager,
                     sourceFiles,
                     classpathEntrySnapshotFiles,
@@ -211,12 +210,21 @@ class RemoteCompilationServiceImpl(
 
                 if (remoteCompilationOptions is IncrementalCompilationOptions) {
                     val numberOfMissingFiles = requestMissingFilesFromClient(remoteCompilerArguments, this@channelFlow)
+                    debug("numberOfMissingFiles: $numberOfMissingFiles")
                     if (numberOfMissingFiles > 0) {
+                        debug("Waiting for missing files...")
                         allFilesReady = CompletableDeferred()
                         pendingFiles.set(numberOfMissingFiles)
                         allFilesReady.join()
+                        debug("Done waiting for missing files")
                     }
                 }
+
+
+                println("remoteCompilerArguments are:")
+                println(remoteCompilerArguments.toString())
+
+
 
                 val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(remoteCompilerArguments)
                 val (outputDir, compilationResult) = if (isCompilationResultCached) {
@@ -234,7 +242,7 @@ class RemoteCompilationServiceImpl(
                     )
                     cacheHandler.cacheFile(
                         outputDir,
-                        ArtifactType.RESULT,
+                        setOf(ArtifactType.RESULT),
                         deleteOriginalFile = false,
                         cacheFileLockMap,
                         remoteCompilerArguments
@@ -242,36 +250,15 @@ class RemoteCompilationServiceImpl(
                     outputDir to compilationResult
                 }
                 send(compilationResult)
+                println("output dir is outputDir: $outputDir")
                 sendCompiledFilesToClient(outputDir, this@channelFlow)
                 if (remoteCompilationOptions is IncrementalCompilationOptions) {
                     val icCacheDir = CompilerUtils.getICCacheFolder(remoteCompilerArguments)
-                    println("obtained ic cache dir: $icCacheDir")
-                    println("obtained destination dit: ${CompilerUtils.getOutputDir(remoteCompilerArguments)}")
                     sendICCacheToClient(icCacheDir, this@channelFlow)
                 }
                 this@channelFlow.close()
             }
         }
-    }
-
-    private fun calculateTotalFiles(compilationMetadata: CompilationMetadata): Int {
-        var total = 0
-        when (val co = compilationMetadata.compilationOptions) {
-            is IncrementalCompilationOptions -> {
-                val cpChanges = co.classpathChanges
-                if (cpChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
-                    total += cpChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.size
-                }
-                val srcChanges = co.sourceChanges
-                if (srcChanges is SourcesChanges.Known) {
-                    total += srcChanges.modifiedFiles.size
-                }
-            }
-            is CompilationOptions -> {
-                total += compilationMetadata.sourceFilesCount + compilationMetadata.dependencyFilesCount + compilationMetadata.compilerPluginFilesCount
-            }
-        }
-        return total
     }
 
     private fun doCompilation(
@@ -316,30 +303,17 @@ class RemoteCompilationServiceImpl(
         return outputDir to CompilationResult(exitCode, CompilationResultSource.COMPILER)
     }
 
-    fun getICCacheFolder(remoteICO: IncrementalCompilationOptions): File? {
-        // TODO: come up with better and more reliable way of determining cache output folder
-        val icCandidateFolder =
-            remoteICO.outputFiles?.firstOrNull { it.toPath().toString().contains("compileKotlin") }
-
-        return icCandidateFolder?.let { f ->
-            var dir = if (f.isDirectory) f else f.parentFile
-            while (dir != null && dir.name != "compileKotlin") {
-                dir = dir.parentFile
-            }
-            dir
-        }
-    }
 
     private suspend fun sendCompiledFilesToClient(outputDir: File, outputChannel: ProducerScope<CompileResponse>){
         outputDir.walkTopDown()
             .filter { !Files.isDirectory(it.toPath()) }
             .forEach { file ->
                 val clientCleanedPath = cleanCompilationResultPath(file.path)
-                fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT, file.path).collect { chunk ->
+                fileChunkStrategy.chunk(file, isDirectory = false, setOf(ArtifactType.RESULT), file.path).collect { chunk ->
                     outputChannel.send(
                         FileChunk(
                             clientCleanedPath,
-                            ArtifactType.RESULT,
+                            setOf(ArtifactType.RESULT),
                             chunk.content,
                             chunk.isDirectory,
                             chunk.isLast,
@@ -355,7 +329,7 @@ class RemoteCompilationServiceImpl(
                 .chunk(
                     tarStream,
                     true,
-                    ArtifactType.IC_CACHE,
+                    setOf(ArtifactType.IC_CACHE),
                     workspaceManager.removeWorkspaceProjectPrefix(icCacheDir.toPath()).toString()
                 ).collect { chunk ->
                     outputChannel.send(chunk)
@@ -363,11 +337,17 @@ class RemoteCompilationServiceImpl(
         }
     }
 
-    suspend fun requestMissingFilesFromClient(args: K2JVMCompilerArguments, outputChannel: ProducerScope<CompileResponse>): Int{
-        println(ArgumentUtils.convertArgumentsToStringList(args).toString())
-        val missingDependencies = getMissingFiles(CompilerUtils.getDependencyFiles(args))
-        val missingSources = getMissingFiles(CompilerUtils.getSourceFiles(args))
-        val missingPluginFiles = getMissingFiles(CompilerUtils.getXPluginFiles(args))
+    suspend fun requestMissingFilesFromClient(args: K2JVMCompilerArguments, outputChannel: ProducerScope<CompileResponse>): Int {
+        // TODO: maybe more reliable solution than prefix removal would be to use some kind of bidirectional hashmap of clientPath <---> userProjectPath
+        val missingDependencies = getMissingFiles(CompilerUtils.getDependencyFiles(args)).map {
+            workspaceManager.removeWorkspaceProjectPrefix(it.toPath()).toString()
+        }
+        val missingSources = getMissingFiles(CompilerUtils.getSourceFiles(args)).map {
+            workspaceManager.removeWorkspaceProjectPrefix(it.toPath()).toString()
+        }
+        val missingPluginFiles = getMissingFiles(CompilerUtils.getXPluginFiles(args)).map {
+            workspaceManager.removeWorkspaceProjectPrefix(it.toPath()).toString()
+        }
 
         if (missingDependencies.isNotEmpty()) {
             outputChannel.send(
@@ -393,8 +373,8 @@ class RemoteCompilationServiceImpl(
         return missingDependencies.size + missingSources.size + missingPluginFiles.size
     }
 
-    private fun getMissingFiles(files: List<File>): List<String> {
-        return files.filter { file -> !file.exists() }.map { it.absolutePath }
+    private fun getMissingFiles(files: List<File>): List<File> {
+        return files.filter { file -> !file.exists() }
     }
 
 

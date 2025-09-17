@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.server.FileTransferRequestProto
 data class FileTransferRequest(
     val filePath: String,
     val fileFingerprint: String,
-    val artifactType: ArtifactType
+    val artifactTypes: Set<ArtifactType>
 ) : CompileRequest
 
 fun FileTransferRequest.toProto(): FileTransferRequestProto {
     return FileTransferRequestProto.newBuilder()
         .setFilePath(filePath)
         .setFileFingerprint(fileFingerprint)
-        .setArtifactType(artifactType.toProto())
+        .addAllArtifactTypes(artifactTypes.map { it.toProto() })
         .build()
 }
 
@@ -27,6 +27,6 @@ fun FileTransferRequestProto.toDomain(): FileTransferRequest {
     return FileTransferRequest(
         filePath,
         fileFingerprint,
-        artifactType.toDomain()
+        artifactTypesList.map { it.toDomain() }.toSet()
     )
 }

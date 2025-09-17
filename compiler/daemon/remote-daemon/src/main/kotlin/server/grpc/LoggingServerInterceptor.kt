@@ -45,7 +45,7 @@ class LoggingServerInterceptor : ServerInterceptor {
                 if (message is CompileResponseProto && message.hasCompiledFileChunk()){
                     val chunk = message.compiledFileChunk
                     val size = chunk.content.size()
-                    debug("sending message: FileChunkProto{file_path=${chunk.filePath}, file_type=${chunk.fileType}, is_last=${chunk.isLast}, content_size=${size} bytes}")
+                    debug("sending message: FileChunkProto{file_path=${chunk.filePath}, file_type=${chunk.artifactTypesList}, is_last=${chunk.isLast}, content_size=${size} bytes}")
                 } else {
                     debug("sending message: ${printer.print(message as MessageOrBuilder)}")
                 }
@@ -67,7 +67,7 @@ class LoggingServerInterceptor : ServerInterceptor {
                 if (message is CompileRequestProto && message.hasSourceFileChunk()){
                     val chunk = message.sourceFileChunk
                     val size = chunk.content.size()
-                    debug("receiving message: FileChunkProto{file_path=${chunk.filePath}, file_type=${chunk.fileType}, is_last=${chunk.isLast}, content_size=${size} bytes}")
+                    debug("receiving message: FileChunkProto{file_path=${chunk.filePath}, file_type=${chunk.artifactTypesList}, is_last=${chunk.isLast}, content_size=${size} bytes}")
                 } else {
                     debug("receiving message: ${printer.print(message as MessageOrBuilder)}")
                 }

@@ -16,8 +16,8 @@ import java.util.UUID
 
 abstract class FileChunkingStrategy {
 
-    abstract fun chunk(inputStream: InputStream, isDirectory: Boolean, artifactType: ArtifactType, filePath: String): Flow<FileChunk>
-    abstract fun chunk(file: File, isDirectory: Boolean, artifactType: ArtifactType, filePath: String): Flow<FileChunk>
+    abstract fun chunk(inputStream: InputStream, isDirectory: Boolean, artifactTypes: Set<ArtifactType>, filePath: String): Flow<FileChunk>
+    abstract fun chunk(file: File, isDirectory: Boolean, artifactTypes: Set<ArtifactType>, filePath: String): Flow<FileChunk>
 
     fun reconstruct(fileChunks: Collection<FileChunk>, folderPath: Path, fileName: String? = null): File {
         try {

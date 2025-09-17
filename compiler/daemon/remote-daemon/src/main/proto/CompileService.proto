@@ -33,13 +33,11 @@ message CompileResponseProto {
 
 message CompilationMetadataProto{
   string project_name = 1;
-  int32 source_files_count = 2;
-  int32 dependency_files_count = 3;
-  int32 compiler_plugin_file_count = 4;
-  repeated string compiler_arguments = 5;
+  int32 total_files_to_send = 2;
+  repeated string compiler_arguments = 3;
   oneof compilation_options {
-    CompilationOptionsProto standard_compilation_options = 6;
-    IncrementalCompilationOptionsProto incremental_compilation_options = 7;
+    CompilationOptionsProto standard_compilation_options = 4;
+    IncrementalCompilationOptionsProto incremental_compilation_options = 5;
   }
 }
 
@@ -65,7 +63,7 @@ message CompilationResultProto{
 //  google.protobuf.Timestamp created_at = 4;
 message FileChunkProto {
   string file_path = 1;
-  ArtifactTypeProto file_type = 2;
+  repeated ArtifactTypeProto artifact_types = 2;
   bytes content = 3;
   bool is_directory = 4;
   bool is_last = 5;
@@ -83,7 +81,8 @@ enum ArtifactTypeProto {
   COMPILER_PLUGIN = 2;
   RESULT = 3;
   CLASSPATH_ENTRY_SNAPSHOT = 4;
-  IC_CACHE = 5;
+  SHRUNK_CLASSPATH_SNAPSHOT = 5;
+  IC_CACHE = 6;
 }
 
 message MissingFilesRequestProto{
@@ -122,7 +121,7 @@ enum CompilationResultSourceProto {
 message FileTransferRequestProto{
   string file_path = 1;
   string file_fingerprint = 2;
-  ArtifactTypeProto artifact_type = 3;
+  repeated ArtifactTypeProto artifact_types = 3;
 }
 
 message DirectoryTransferRequestProto{
@@ -135,7 +134,7 @@ message DirectoryTransferRequestProto{
 message FileTransferReplyProto{
   string file_path = 1;
   bool is_present = 2;
-  ArtifactTypeProto file_type = 3;
+  repeated ArtifactTypeProto artifact_types = 3;
 }
 
 message FileIdentifierProto {

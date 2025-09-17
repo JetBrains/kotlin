@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.server.FileChunkProto
 @Serializable
 class FileChunk(
     val filePath: String,
-    val artifactType: ArtifactType,
+    val artifactTypes: Set<ArtifactType>,
     val content: ByteArray,
     val isDirectory: Boolean,
     val isLast: Boolean
@@ -21,7 +21,7 @@ class FileChunk(
 fun FileChunk.toProto(): FileChunkProto {
     return FileChunkProto.newBuilder()
         .setFilePath(filePath)
-        .setFileType(artifactType.toProto())
+        .addAllArtifactTypes(artifactTypes.map { it.toProto() })
         .setContent(content.toByteString())
         .setIsDirectory(isDirectory)
         .setIsLast(isLast)
@@ -29,5 +29,5 @@ fun FileChunk.toProto(): FileChunkProto {
 }
 
 fun FileChunkProto.toDomain(): FileChunk {
-    return FileChunk(filePath, fileType.toDomain(), content.toByteArray(), isDirectory, isLast)
+    return FileChunk(filePath, artifactTypesList.map { it.toDomain() }.toSet(), content.toByteArray(), isDirectory, isLast)
 }
