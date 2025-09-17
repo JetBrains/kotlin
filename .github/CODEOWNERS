@@ -214,7 +214,7 @@
 /core/compiler.common.web/ @JetBrains/kotlin-frontend
 /core/descriptors/ @JetBrains/kotlin-frontend
 /core/descriptors.jvm/ @JetBrains/kotlin-frontend
-/core/descriptors.runtime/ @JetBrains/kotlin-libraries
+/core/descriptors.runtime/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
 /core/deserialization/ @JetBrains/kotlin-frontend
 /core/deserialization.common/ @JetBrains/kotlin-frontend
 /core/deserialization.common.jvm/ @JetBrains/kotlin-frontend

@@ -249,7 +249,7 @@
 /core/compiler.common.web/ "Kotlin Frontend"
 /core/descriptors/ "Kotlin Frontend"
 /core/descriptors.jvm/ "Kotlin Frontend"
-/core/descriptors.runtime/ "Kotlin Libraries"
+/core/descriptors.runtime/ "Kotlin Libraries" alexander.udalov@jetbrains.com
 /core/deserialization/ "Kotlin Frontend"
 /core/deserialization.common/ "Kotlin Frontend"
 /core/deserialization.common.jvm/ "Kotlin Frontend"
