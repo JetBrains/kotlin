@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.js.test.converters.ClassicJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
 import org.jetbrains.kotlin.js.test.utils.configureLineNumberTests
-import org.jetbrains.kotlin.js.test.utils.configureSteppingTests
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -168,19 +167,6 @@ open class AbstractWebDemoExamplesTest : AbstractJsIrTest(
                 useHandlers(::MainCallWithArgumentsHandler)
             }
         }
-    }
-}
-
-open class AbstractIrJsSteppingTest : AbstractJsIrTest(
-    pathToTestDir = "compiler/testData/debug/stepping/",
-    testGroupOutputDirPrefix = "debug/irStepping/"
-) {
-    override val enableBoxHandlers: Boolean
-        get() = false
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureSteppingTests()
     }
 }
 
