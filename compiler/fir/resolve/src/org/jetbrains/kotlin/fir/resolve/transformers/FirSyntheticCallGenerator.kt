@@ -255,10 +255,13 @@ class FirSyntheticCallGenerator(
     ): FirExpression {
         val argumentList = buildUnaryArgumentList(anonymousFunctionExpression)
 
+        val expectedType =
+            expectedTypeData?.expectedType?.adaptExpectedTypeForLambdaIfNeeded(anonymousFunctionExpression.anonymousFunction)
+
         val reference = generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
             anonymousFunctionExpression,
             argumentList,
-            expectedTypeData?.expectedType,
+            expectedType,
             context,
         )
 
@@ -296,6 +299,26 @@ class FirSyntheticCallGenerator(
         }
 
         return resolvedArgument
+    }
+
+    private fun ConeKotlinType.adaptExpectedTypeForLambdaIfNeeded(lambda: FirAnonymousFunction): ConeKotlinType {
+        if (!lambda.hasExplicitParameterList) return this
+        if (!isSomeFunctionType(session)) return this
+
+        val isThereReceiver = receiverType(session) != null
+        if (!isThereReceiver && contextParameterNumberForFunctionType == 0) return this
+
+        val classLikeType = unwrapLowerBound() as? ConeClassLikeType ?: return this
+
+        return when {
+            lambda.valueParameters.size == classLikeType.valueParameterTypesIncludingReceiver(session).size ->
+                classLikeType.withAttributes(
+                    classLikeType.attributes
+                        .remove(CompilerConeAttributes.ExtensionFunctionType::class)
+                        .remove(CompilerConeAttributes.ContextFunctionTypeParams::class)
+                )
+            else -> this
+        }
     }
 
     /**
