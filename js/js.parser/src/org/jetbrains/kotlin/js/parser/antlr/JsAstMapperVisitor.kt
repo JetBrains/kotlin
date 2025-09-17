@@ -166,11 +166,11 @@ class JsAstMapperVisitor(
     }
 
     override fun visitForStatement(ctx: JavaScriptParser.ForStatementContext): JsFor {
-        val initSequence = ctx.expressionSequence(0)?.let { visitNode<JsExpression>(it) }
-        val initDeclaration = ctx.variableDeclarationList()?.let { visitNode<JsVars>(it) }
+        val initSequence = ctx.vars?.let { visitNode<JsExpression>(it) }
+        val initDeclaration = ctx.`var`?.let { visitNode<JsVars>(it) }
 
-        val condition = ctx.expressionSequence(1)?.let { visitNode<JsExpression>(it) }
-        val increment = ctx.expressionSequence(2)?.let { visitNode<JsExpression>(it) }
+        val condition = ctx.condition?.let { visitNode<JsExpression>(it) }
+        val increment = ctx.increment?.let { visitNode<JsExpression>(it) }
         val body = visitNode<JsStatement?>(ctx.statement()) ?: JsEmpty
 
         return when {
@@ -1093,7 +1093,7 @@ class JsAstMapperVisitor(
         nodes.map { visitNode<T>(it) }
 
     private inline fun <reified T> JsNode?.expect(): T {
-        if (this !is T) throw AssertionError("Expected ${T::class}, got ${this?.javaClass}")
+        if (this !is T) raiseParserException("Expected ${T::class}, got ${this?.javaClass}")
         return this
     }
 

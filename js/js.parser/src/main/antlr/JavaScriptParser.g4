@@ -182,7 +182,10 @@ ifStatement
 iterationStatement
     : Do statement While '(' expressionSequence ')' eos                                                                     # DoStatement
     | While '(' expressionSequence ')' statement                                                                            # WhileStatement
-    | For '(' (expressionSequence | variableDeclarationList)? ';' expressionSequence? ';' expressionSequence? ')' statement # ForStatement
+    | For '(' (vars=expressionSequence | var=variableDeclarationList)?
+            ';' condition=expressionSequence?
+            ';' increment=expressionSequence?
+          ')' statement # ForStatement
     | For '(' (singleExpression | singleVariableDeclaration) In expressionSequence ')' statement                              # ForInStatement
     | For Await? '(' (singleExpression | singleVariableDeclaration) Of expressionSequence ')' statement                       # ForOfStatement
     ;

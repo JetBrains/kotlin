@@ -2533,6 +2533,10 @@ public class JavaScriptParser extends JavaScriptParserBase {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ForStatementContext extends IterationStatementContext {
+		public ExpressionSequenceContext vars;
+		public VariableDeclarationListContext var;
+		public ExpressionSequenceContext condition;
+		public ExpressionSequenceContext increment;
 		public TerminalNode For() { return getToken(JavaScriptParser.For, 0); }
 		public TerminalNode OpenParen() { return getToken(JavaScriptParser.OpenParen, 0); }
 		public List<TerminalNode> SemiColon() { return getTokens(JavaScriptParser.SemiColon); }
@@ -2693,13 +2697,13 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				case 1:
 					{
 					setState(390);
-					expressionSequence();
+					((ForStatementContext)_localctx).vars = expressionSequence();
 					}
 					break;
 				case 2:
 					{
 					setState(391);
-					variableDeclarationList();
+					((ForStatementContext)_localctx).var = variableDeclarationList();
 					}
 					break;
 				}
@@ -2711,7 +2715,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361326928L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 2305843009213693951L) != 0)) {
 					{
 					setState(395);
-					expressionSequence();
+					((ForStatementContext)_localctx).condition = expressionSequence();
 					}
 				}
 
@@ -2723,7 +2727,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361326928L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 2305843009213693951L) != 0)) {
 					{
 					setState(399);
-					expressionSequence();
+					((ForStatementContext)_localctx).increment = expressionSequence();
 					}
 				}
 
