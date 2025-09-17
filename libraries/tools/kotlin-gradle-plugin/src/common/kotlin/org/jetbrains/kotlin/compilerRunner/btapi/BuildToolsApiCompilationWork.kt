@@ -13,6 +13,7 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.BACKUP_CLASSES
@@ -112,7 +113,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             )
             jvmCompilationOperation.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
             jvmCompilationOperation[KOTLINSCRIPT_EXTENSIONS] = workArguments.kotlinScriptExtensions
-            jvmCompilationOperation[COMPILER_ARGUMENTS_LOG_LEVEL] = workArguments.compilerArgumentsLogLevel.value
+            jvmCompilationOperation[COMPILER_ARGUMENTS_LOG_LEVEL] = JvmCompilationOperation.CompilerArgumentsLogLevel.valueOf(workArguments.compilerArgumentsLogLevel.name)
             if (metrics is BuildMetricsReporterImpl) {
                 @Suppress("DEPRECATION_ERROR")
                 jvmCompilationOperation[BuildOperation.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = true
@@ -129,9 +130,13 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     this[KEEP_IC_CACHES_IN_MEMORY] = icEnv.icFeatures.keepIncrementalCompilationCachesInMemory
                     this[OUTPUT_DIRS] = workArguments.outputFiles.map { it.toPath() }.toSet()
                     this[FORCE_RECOMPILATION] = classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
-                    this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
-                    this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = icEnv.icFeatures.enableUnsafeIncrementalCompilationForMultiplatform
-                    this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = icEnv.icFeatures.enableMonotonousIncrementalCompileSetExpansion
+                    @OptIn(ExperimentalCompilerArgument::class)
+                    run {
+                        this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
+                        this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] =
+                            icEnv.icFeatures.enableUnsafeIncrementalCompilationForMultiplatform
+                        this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = icEnv.icFeatures.enableMonotonousIncrementalCompileSetExpansion
+                    }
                 }
                 jvmCompilationOperation[INCREMENTAL_COMPILATION] = JvmSnapshotBasedIncrementalCompilationConfiguration(
                     icEnv.workingDir.toPath(),
