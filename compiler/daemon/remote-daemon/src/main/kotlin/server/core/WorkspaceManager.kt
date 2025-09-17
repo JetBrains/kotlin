@@ -14,6 +14,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import kotlin.io.path.absolute
 
 class WorkspaceManager(
     val userId: String,
@@ -42,11 +43,19 @@ class WorkspaceManager(
         } else {
             path
         }
-        return userProjectWorkspaceDir.resolve(relativePath).also { Files.createDirectories(it) }
+        return userProjectWorkspaceDir.resolve(relativePath).absolute()
     }
 
     fun removeWorkspaceProjectPrefix(path: Path): Path {
-        val relativePath = userProjectWorkspaceDir.relativize(path)
+        val base = userProjectWorkspaceDir.toAbsolutePath().normalize()
+        val normalizedInput = path.normalize()
+        val relativePath =
+            if (normalizedInput.isAbsolute) {
+                if (normalizedInput.startsWith(base)) base.relativize(normalizedInput)
+                else normalizedInput.fileName
+            } else {
+                normalizedInput
+            }
         return Paths.get("/").resolve(relativePath)
     }
 
@@ -60,12 +69,9 @@ class WorkspaceManager(
     suspend fun copyFileToProject(
         cachedFilePath: String,
         clientFilePath: String,
-        userId: String,
-        projectName: String,
         fileLockMap: MutableMap<Path, Mutex>
     ): File {
-        val projectDir = getUserProjectFolder(userId, projectName)
-        val targetPath = Paths.get(projectDir, clientFilePath)
+        val targetPath = prependWorkspaceProjectDirectory(Paths.get(clientFilePath))
         val mutex = fileLockMap.computeIfAbsent(targetPath) { Mutex() }
 
         return mutex.withLock {
@@ -78,8 +84,4 @@ class WorkspaceManager(
             }
         }
     }
-
-    fun getUserProjectFolder(userId: String, projectName: String) =
-        "$SERVER_COMPILATION_WORKSPACE_DIR/$userId/$projectName"
-
 }
