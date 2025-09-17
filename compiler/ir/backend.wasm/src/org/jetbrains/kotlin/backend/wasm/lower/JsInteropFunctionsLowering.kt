@@ -283,7 +283,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         when (this) {
             builtIns.stringType -> return FunctionBasedAdapter(adapters.kotlinToJsStringAdapter.owner)
             builtIns.booleanType -> return FunctionBasedAdapter(adapters.kotlinBooleanToExternRefAdapter.owner)
-            builtIns.anyType -> return FunctionBasedAdapter(adapters.kotlinToJsAnyAdapter.owner)
+            builtIns.anyType ->
+                return FunctionBasedAdapter(adapters.kotlinToJsAnyAdapter.owner)
             builtIns.numberType -> return FunctionBasedAdapter(adapters.numberToDoubleAdapter.owner)
 
             symbols.uByteType -> return FunctionBasedAdapter(adapters.kotlinUByteToJsNumber.owner)
