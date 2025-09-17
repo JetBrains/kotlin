@@ -140,6 +140,7 @@ internal fun assertIsNotOfType(@Suppress("UNUSED_PARAMETER") value: Any?, type: 
 }
 
 /** Asserts that the [actual] value is not `null`, with an optional [message]. */
+@IgnorableReturnValue
 public fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
     contract { returns() implies (actual != null) }
     asserter.assertNotNull(message, actual)
@@ -151,7 +152,7 @@ public fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
 @InlineOnly
 public inline fun <T : Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
     contract { returns() implies (actual != null) }
-    block(assertNotNull(actual, message))
+    val _ = block(assertNotNull(actual, message))
 }
 
 /** Asserts that the [actual] value is `null`, with an optional [message]. */
@@ -597,6 +598,7 @@ public inline fun <@OnlyInputTypes T> expect(expected: T, message: String?, bloc
  */
 @InlineOnly
 @JvmName("assertFailsAny")
+@IgnorableReturnValue
 public inline fun assertFails(block: () -> Any?): Throwable =
     checkResultIsFailure(null, runCatching(block))
 
@@ -623,6 +625,7 @@ public inline fun assertFails(block: () -> Unit): Throwable =
 @SinceKotlin("1.1")
 @InlineOnly
 @JvmName("assertFailsAny")
+@IgnorableReturnValue
 public inline fun assertFails(message: String?, block: () -> Any?): Throwable =
     checkResultIsFailure(message, runCatching(block))
 
@@ -662,6 +665,7 @@ internal fun checkResultIsFailure(message: String?, blockResult: Result<Any?>): 
  */
 @InlineOnly
 @JvmName("assertFailsWithAny")
+@IgnorableReturnValue
 public inline fun <reified T : Throwable> assertFailsWith(message: String? = null, block: () -> Any?): T =
     assertFailsWith(T::class, message, block)
 
@@ -685,6 +689,7 @@ public inline fun <reified T : Throwable> assertFailsWith(message: String? = nul
  */
 @InlineOnly
 @JvmName("assertFailsWithAny")
+@IgnorableReturnValue
 public inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Any?): T = assertFailsWith(exceptionClass, null, block)
 
 /**
@@ -708,6 +713,7 @@ public inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, blo
  */
 @InlineOnly
 @JvmName("assertFailsWithAny")
+@IgnorableReturnValue
 public inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Any?): T =
     checkResultIsFailure(exceptionClass, message, runCatching(block))
 

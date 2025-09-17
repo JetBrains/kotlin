@@ -4,11 +4,15 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.assign
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
@@ -40,9 +44,20 @@ enum class JvmTestFramework {
 }
 val jvmTestFrameworks = JvmTestFramework.values().toList()
 
-kotlin {
+fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
+    freeCompilerArgs.add("-Xreturn-value-checker=full")
+}
 
+kotlin {
     explicitApi()
+
+    metadata { // For common sources in IDE
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions.addReturnValueCheckerInfo()
+            }
+        }
+    }
 
     jvm {
         compilations {
@@ -56,6 +71,11 @@ kotlin {
             }
             val main by getting
             val test by getting
+
+            main.compileTaskProvider.configure {
+                compilerOptions.addReturnValueCheckerInfo()
+            }
+
             configureJava9Compilation(
                 "kotlin.test",
                 listOf(main.output.allOutputs),
@@ -103,6 +123,7 @@ kotlin {
                 "-Xklib-ir-inliner=intra-module",
                 "-Xir-module-name=$KOTLINTEST_MODULE_NAME",
             )
+            compilerOptions.addReturnValueCheckerInfo()
         }
     }
 
@@ -118,6 +139,7 @@ kotlin {
         }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
+            compilerOptions.addReturnValueCheckerInfo()
         }
     }
     @OptIn(ExperimentalWasmDsl::class)
@@ -132,6 +154,7 @@ kotlin {
         }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
+            compilerOptions.addReturnValueCheckerInfo()
         }
     }
 
