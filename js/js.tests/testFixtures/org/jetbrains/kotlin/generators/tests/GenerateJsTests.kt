@@ -248,10 +248,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/debug", testRunnerMethodName = "runTest0") {
-            testClass<AbstractIrJsSteppingTest>(annotations = listOf(*legacyFrontend())) {
-                model("stepping")
-            }
-
             testClass<AbstractFirJsSteppingTest> {
                 model("stepping")
             }
