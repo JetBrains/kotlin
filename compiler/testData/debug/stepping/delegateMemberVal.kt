@@ -66,11 +66,7 @@ fun box() {
 // test.kt:10 <init>
 // test.kt:2 <init>
 // test.kt:19 box
-// EXPECTATIONS ClassicFrontend JS_IR
-// test.kt:4 <get-z>
-// EXPECTATIONS FIR JS_IR
 // test.kt:5 <get-z>
-// EXPECTATIONS JS_IR
 // test.kt:5 <get-z>
 // test.kt:5 <get-z>
 // test.kt:14 getValue

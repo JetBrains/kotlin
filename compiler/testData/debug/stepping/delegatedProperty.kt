@@ -75,23 +75,13 @@ fun box() {
 // test.kt:10 <init>
 // test.kt:4 <init>
 // test.kt:22 box
-// EXPECTATIONS ClassicFrontend JS_IR
-// test.kt:6 <get-x>
-// test.kt:7 <get-x>
-// EXPECTATIONS FIR JS_IR
 // test.kt:7 <get-x>
 // test.kt:7 <get-x>
-// EXPECTATIONS JS_IR
 // test.kt:7 <get-x>
 // test.kt:12 getValue
 // test.kt:23 box
-// EXPECTATIONS ClassicFrontend JS_IR
-// test.kt:6 <set-x>
-// test.kt:7 <set-x>
-// EXPECTATIONS FIR JS_IR
 // test.kt:7 <set-x>
 // test.kt:7 <set-x>
-// EXPECTATIONS JS_IR
 // test.kt:7 <set-x>
 // test.kt:16 setValue
 // test.kt:17 setValue
@@ -106,11 +96,7 @@ fun box() {
 // test.kt:22 $box (13, 15)
 // test.kt:12 $B.getValue (15, 8)
 // test.kt:22 $box (15)
-// EXPECTATIONS ClassicFrontend WASM
-// test.kt:23 $box (4, 10, 4)
-// EXPECTATIONS FIR WASM
 // test.kt:23 $box (4, 10, 6)
-// EXPECTATIONS WASM
 // test.kt:16 $B.setValue (19, 28)
 // test.kt:17 $B.setValue (5)
 // test.kt:24 $box (1)
