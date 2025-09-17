@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 private fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(session: FirSession): FirRegularClassSymbol? {
     return when (this) {
@@ -41,8 +44,9 @@ private fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(
 }
 
 context(resolutionContext: ResolutionContext)
-private fun FirNamedFunctionSymbol.canBeMainOperatorOfOverload(outerClass: FirRegularClassSymbol): Boolean {
+private fun FirCallableSymbol<*>.canBeMainOperatorOfOverload(outerClass: FirRegularClassSymbol): Boolean {
     return when {
+        this !is FirNamedFunctionSymbol -> false
         !isOperator || name != OperatorNameConventions.OF || valueParameterSymbols.none { it.isVararg } -> false
         else -> when (val returnType = resolutionContext.returnTypeCalculator.tryCalculateReturnType(this).coneType) {
             is ConeClassLikeType if returnType.lookupTag == outerClass.toLookupTag() -> true
@@ -60,10 +64,12 @@ val ConeKotlinType.companionObjectIfDefinedOperatorOf: FirRegularClassSymbol?
     get() {
         val classSymbol = getClassRepresentativeForCollectionLiteralResolution(resolutionContext.session) ?: return null
         val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return null
-        val overloadFound = companionObjectSymbol.declarationSymbols.asSequence()
-            .filterIsInstance<FirNamedFunctionSymbol>()
-            .any { declaration -> declaration.canBeMainOperatorOfOverload(classSymbol) }
-        return if (overloadFound) companionObjectSymbol else null
+        var overloadFound = false
+        companionObjectSymbol.processAllDeclaredCallables(resolutionContext.session) { declaration ->
+            if (declaration.canBeMainOperatorOfOverload(classSymbol))
+                overloadFound = true
+        }
+        return overloadFound.ifTrue { companionObjectSymbol }
     }
 
 /**

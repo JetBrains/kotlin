@@ -1251,6 +1251,40 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/collectionLiterals")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CollectionLiterals {
+    @Test
+    public void testAllFilesPresentInCollectionLiterals() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/collectionLiterals"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("collectionLiteralInDifferentFile.kt")
+    public void testCollectionLiteralInDifferentFile() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/collectionLiterals/collectionLiteralInDifferentFile.kt");
+    }
+
+    @Test
+    @TestMetadata("collectionLiteralInDifferentModule.kt")
+    public void testCollectionLiteralInDifferentModule() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/collectionLiterals/collectionLiteralInDifferentModule.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/collectionLiterals/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleWithExplicitReturnType.kt")
+    public void testSimpleWithExplicitReturnType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/collectionLiterals/simpleWithExplicitReturnType.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/errors")
   @TestDataPath("$PROJECT_ROOT")
   public class Errors {
