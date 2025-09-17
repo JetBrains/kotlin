@@ -67,7 +67,6 @@ private constructor(
     expressionInformationProvider = KaFirExpressionInformationProvider(analysisSessionProvider),
     evaluator = KaFirEvaluator(analysisSessionProvider),
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider),
-    importOptimizer = KaFirImportOptimizer(analysisSessionProvider),
     renderer = KaRendererImpl(analysisSessionProvider),
     visibilityChecker = KaFirVisibilityChecker(analysisSessionProvider),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider),
