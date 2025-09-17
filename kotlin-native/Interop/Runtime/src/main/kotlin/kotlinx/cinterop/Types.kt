@@ -124,6 +124,7 @@ public abstract class CValues<T : CVariable> : CValuesRef<T>() {
     /**
      * Copy the referenced values to [placement] and return placement pointer.
      */
+    @IgnorableReturnValue
     public abstract fun place(placement: CPointer<T>): CPointer<T>
 }
 

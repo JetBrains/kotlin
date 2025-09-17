@@ -82,6 +82,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().con
                 )
         )
         freeCompilerArgs.add("-Xskip-prerelease-check")
+        freeCompilerArgs.add("-Xreturn-value-checker=full")
     }
 }
 
