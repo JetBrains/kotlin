@@ -613,6 +613,12 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("reorder.kt")
+  public void testReorder() {
+    runTest("compiler/testData/debug/stepping/reorder.kt");
+  }
+
+  @Test
   @TestMetadata("simpleDefaultArg.kt")
   public void testSimpleDefaultArg() {
     runTest("compiler/testData/debug/stepping/simpleDefaultArg.kt");

@@ -615,6 +615,12 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("reorder.kt")
+  public void testReorder() {
+    runTest("compiler/testData/debug/stepping/reorder.kt");
+  }
+
+  @Test
   @TestMetadata("simpleDefaultArg.kt")
   public void testSimpleDefaultArg() {
     runTest("compiler/testData/debug/stepping/simpleDefaultArg.kt");
