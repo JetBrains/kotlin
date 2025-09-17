@@ -18,6 +18,18 @@ class AnotherKlass {
     companion object Default
 }
 
+object TopLevelObject
+
+interface MyInterface
+
+enum class MyEnum { ENTRY }
+
+annotation class MyAnnotation
+
+class Generic<T> {
+    inner class Inner
+}
+
 fun box(): String {
     assertEquals("test.Klass", Klass::class.qualifiedName)
     assertEquals("test.Klass.Nested", Klass.Nested::class.qualifiedName)
@@ -26,6 +38,23 @@ fun box(): String {
     assertEquals("test.AnotherKlass", AnotherKlass::class.qualifiedName)
     assertEquals("test.AnotherKlass.Nested", AnotherKlass.Nested::class.qualifiedName)
     assertEquals("test.AnotherKlass.Default", AnotherKlass.Default::class.qualifiedName)
+
+    assertEquals("test.TopLevelObject", TopLevelObject::class.qualifiedName)
+
+
+    assertEquals("test.MyInterface", MyInterface::class.qualifiedName)
+    assertEquals("test.MyEnum", MyEnum::class.qualifiedName)
+    assertEquals("test.MyEnum", MyEnum.ENTRY::class.qualifiedName)
+    assertEquals("test.MyAnnotation", MyAnnotation::class.qualifiedName)
+    assertEquals("test.Generic", Generic::class.qualifiedName)
+    assertEquals("test.Generic.Inner", Generic.Inner::class.qualifiedName)
+
+    val inner = Generic<Int>().Inner()
+    assertEquals("test.Generic.Inner", inner::class.qualifiedName)
+    class Local
+    assertEquals(null, Local::class.qualifiedName)
+    val anonimous = object {}
+    assertEquals(null, anonimous::class.qualifiedName)
 
     return "OK"
 }
