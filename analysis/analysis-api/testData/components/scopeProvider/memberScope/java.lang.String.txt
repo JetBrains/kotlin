@@ -166,7 +166,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: java.lang.String
     getContainingModule: KaLibraryModule "SDK jdk"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false

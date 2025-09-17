@@ -40,8 +40,7 @@ KaNamedFunctionSymbol:
                   getContainingJvmClassName: ReferenceBooleanReceiverInContractKt
                   getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
-                  importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-
+                  importableFqName: null
   ]
   hasStableParameterNames: true
   isActual: false
@@ -84,8 +83,7 @@ KaNamedFunctionSymbol:
     getContainingJvmClassName: ReferenceBooleanReceiverInContractKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []

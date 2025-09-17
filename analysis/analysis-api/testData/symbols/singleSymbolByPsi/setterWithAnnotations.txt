@@ -100,4 +100,4 @@ KaPropertySetterSymbol:
   getContainingJvmClassName: SetterWithAnnotationsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  importableFqName: special.accessor
+  importableFqName: null

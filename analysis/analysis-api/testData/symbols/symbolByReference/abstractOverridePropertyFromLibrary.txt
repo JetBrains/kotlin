@@ -63,7 +63,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Base
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: true
@@ -179,7 +179,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Base
     getContainingModule: KaLibraryModule "Library lib"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:

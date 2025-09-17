@@ -288,7 +288,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.B
     getContainingModule: KaSourceModule "Sources of common-main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -523,7 +523,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.MainKt
     getContainingModule: KaSourceModule "Sources of common-main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: true
@@ -635,7 +635,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: sample.MainKt
     getContainingModule: KaSourceModule "Sources of common-main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(main.kt)

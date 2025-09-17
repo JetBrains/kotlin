@@ -227,4 +227,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: test.WithGeneratedCompanion.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  importableFqName: test.WithGeneratedCompanion
+  importableFqName: test.WithGeneratedCompanion.Companion

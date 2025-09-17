@@ -55,7 +55,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.FooKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -190,7 +190,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.FooKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -325,7 +325,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.FooKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -460,7 +460,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.BarKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -595,7 +595,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.BarKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -730,7 +730,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: test.BarKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false

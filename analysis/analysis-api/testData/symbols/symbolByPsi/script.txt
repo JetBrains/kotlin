@@ -94,7 +94,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script script.kts"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -241,7 +241,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: C
     getContainingModule: KaScriptModule "Script script.kts"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false

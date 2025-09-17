@@ -52,8 +52,7 @@ KaNamedFunctionSymbol:
     getContainingJvmClassName: FunctionWithReceiverAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []

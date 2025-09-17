@@ -89,7 +89,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Style
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
-          importableFqName: special.accessor
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -224,7 +224,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -358,7 +358,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Style
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false

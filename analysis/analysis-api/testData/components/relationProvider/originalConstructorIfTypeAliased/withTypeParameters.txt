@@ -77,7 +77,7 @@ Resolved constructor:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: test.MyClass
+    importableFqName: test.MyTypeAlias
 
 Original constructor if type aliased:
   KaConstructorSymbol:
