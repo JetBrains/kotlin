@@ -2235,6 +2235,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         public void testPlusOperator() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/plusOperator.kt");
         }
+
+        @Test
+        @TestMetadata("typealiasAsOperatorOfReturnType.kt")
+        public void testTypealiasAsOperatorOfReturnType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/typealiasAsOperatorOfReturnType.kt");
+        }
       }
     }
 
