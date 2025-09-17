@@ -686,7 +686,18 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                         null
                     } else {
                         NullablePredicate(
-                                ifNull = safeReceiverPredicate.ifNull,
+                                ifNull = if (!safeCallResult.type.isNullable())
+                                    safeReceiverPredicate.ifNull
+                                else {
+                                    val term = buildComplexTerm(safeCallResult)
+                                    Predicates.or(
+                                            safeReceiverPredicate.ifNull,
+                                            Predicates.and(
+                                                    safeReceiverPredicate.ifNotNull,
+                                                    Predicates.disjunctionOf(term setTo true)
+                                            )
+                                    )
+                                },
                                 ifNotNull = usingUpperLevelPredicate(result.predicate) {
                                     safeCallResult.accept(this, safeReceiverPredicate.ifNotNull).predicate
                                 }
