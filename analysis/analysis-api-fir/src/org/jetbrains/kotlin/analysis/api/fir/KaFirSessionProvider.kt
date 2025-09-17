@@ -245,7 +245,8 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
                 ?: error("Expected the analysis session provider to be a `${KaFirSessionProvider::class.simpleName}`.")
 
         override fun afterInvalidation(modules: Set<KaModule>) {
-            modules.forEach { analysisSessionProvider.cache.invalidate(it) }
+            val cache = analysisSessionProvider.cache
+            modules.forEach { cache.invalidate(it) }
         }
 
         override fun afterGlobalInvalidation() {
