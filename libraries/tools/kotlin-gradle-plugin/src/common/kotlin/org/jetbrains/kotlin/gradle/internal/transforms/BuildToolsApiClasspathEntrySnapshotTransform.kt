@@ -14,14 +14,17 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.GRANULARITY
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.compilerRunner.btapi.SharedApiClassesClassLoaderProvider
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.TransformActionUsingKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.utils.use
 import java.io.File
 
 /** Transform to create a snapshot of a classpath entry (directory or jar). */
@@ -93,8 +96,15 @@ abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<Bu
 
         val classLoader = parameters.classLoadersCachingService.get()
             .getClassLoader(parameters.classpath.toList(), SharedApiClassesClassLoaderProvider)
-        val compilationService = CompilationService.loadImplementation(classLoader)
-        val snapshot = compilationService.calculateClasspathSnapshot(classpathEntryInputDirOrJar, granularity, parseInlinedLocalClasses)
+        val kotlinToolchain = KotlinToolchain.loadImplementation(classLoader)
+        val snapshotOperation = kotlinToolchain.jvm.createClasspathSnapshottingOperation(classpathEntryInputDirOrJar.toPath())
+            .apply {
+                this[GRANULARITY] = granularity
+                this[PARSE_INLINED_LOCAL_CLASSES] = parseInlinedLocalClasses
+            }
+        val snapshot = kotlinToolchain.createBuildSession().use {
+            it.executeOperation(snapshotOperation)
+        }
         snapshot.saveSnapshot(snapshotOutputFile)
     }
 
