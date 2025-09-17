@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.jvm.originalSnippetValueSymbol
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
 val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier("\$\$eval")
+val REPL_SNIPPET_RESULT_PROP_NAME = Name.identifier("\$\$result")
 
 @PhaseDescription(name = "ReplSnippetsToClasses")
 internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : ModuleLoweringPass {
@@ -85,6 +87,20 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
                 )
             )
         )
+
+        val resultProp = irSnippetClass.declarations.singleOrNull { it is IrProperty && it.name == REPL_SNIPPET_RESULT_PROP_NAME } as? IrProperty
+        resultProp?.let { irResultProperty ->
+            val backingField = irResultProperty.backingField ?: return@let
+            backingField.visibility = DescriptorVisibilities.PUBLIC
+
+            val fieldType = backingField.type.toIrBasedKotlinType()
+            irSnippetClass.scriptResultFieldDataAttr =
+                ScriptResultFieldData(
+                    irSnippetClass.kotlinFqName,
+                    irResultProperty.name,
+                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(fieldType)
+                )
+        }
 
         val scriptTransformer = ReplSnippetToClassTransformer(
             context,

@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 open class PsiRawFirBuilder(
     session: FirSession,
@@ -1525,12 +1527,12 @@ open class PsiRawFirBuilder(
                     symbol = evalSymbol
                     dispatchReceiverType = currentDispatchReceiverType()
                     status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
-                    returnTypeRef = FirImplicitTypeRefImplWithoutSource
+                    returnTypeRef = implicitUnitType
 
                     context.firFunctionTargets += evalTarget
 
                     body = buildOrLazyBlock {
-                        FirSingleExpressionBlock(buildBlock {
+                        buildBlock {
                             this.statements += extractScriptStatements(script, classSymbol).map { statement ->
                                 when (statement) {
                                     is FirProperty,
@@ -1553,7 +1555,7 @@ open class PsiRawFirBuilder(
                                     else -> statement
                                 }
                             }
-                        }.toReturn(baseSource = script.toFirSourceElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)))
+                        }
                     }
 
                     context.firFunctionTargets.removeLast()
@@ -1568,60 +1570,118 @@ open class PsiRawFirBuilder(
         private fun extractScriptStatements(
             script: KtScript,
             containingDeclarationSymbol: FirBasedSymbol<*>,
-        ): List<FirStatement> = buildList {
-            script.declarations.forEach { declaration ->
-                when (declaration) {
-                    is KtScriptInitializer -> {
-                        val initializer = buildAnonymousInitializer(
-                            initializer = declaration,
-                            containingDeclarationSymbol = containingDeclarationSymbol,
-                            allowLazyBody = true,
-                            isLocal = true,
-                        )
+        ): List<FirStatement> {
+            val statements = buildList {
+                script.declarations.forEach { declaration ->
+                    when (declaration) {
+                        is KtScriptInitializer -> {
+                            val initializer = buildAnonymousInitializer(
+                                initializer = declaration,
+                                containingDeclarationSymbol = containingDeclarationSymbol,
+                                allowLazyBody = true,
+                                isLocal = true,
+                            )
 
-                        addAll(initializer.body!!.statements)
-                    }
-                    is KtDestructuringDeclaration -> {
-                        val destructuringContainerVar = generateTemporaryVariable(
-                            baseModuleData,
-                            declaration.toFirSourceElement(),
-                            "destruct",
-                            declaration.initializer.toFirExpression(
-                                "Initializer required for destructuring declaration",
-                                sourceWhenInvalidExpression = declaration
-                            ),
-                            extractAnnotationsTo = { extractAnnotationsTo(it) }
-                        )
-                        add(destructuringContainerVar)
-
-                        addDestructuringVariables(
-                            this,
-                            baseModuleData,
-                            declaration,
-                            destructuringContainerVar,
-                            tmpVariable = false,
-                            forceLocal = false,
-                        ) {
-                            configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                            addAll(initializer.body!!.statements)
                         }
-                    }
-                    is KtProperty -> {
-                        val firProperty = declaration.toFirProperty(
-                            ownerRegularOrAnonymousObjectSymbol = null,
-                            context,
-                        )
-                        add(firProperty)
-                    }
-                    else -> {
-                        val firStatement = declaration.toFirStatement()
-                        if (firStatement is FirDeclaration) {
-                            add(firStatement)
-                        } else {
-                            error("unexpected declaration type in script")
+                        is KtDestructuringDeclaration -> {
+                            val destructuringContainerVar = generateTemporaryVariable(
+                                baseModuleData,
+                                declaration.toFirSourceElement(),
+                                "destruct",
+                                declaration.initializer.toFirExpression(
+                                    "Initializer required for destructuring declaration",
+                                    sourceWhenInvalidExpression = declaration
+                                ),
+                                extractAnnotationsTo = { extractAnnotationsTo(it) }
+                            )
+                            add(destructuringContainerVar)
+
+                            addDestructuringVariables(
+                                this,
+                                baseModuleData,
+                                declaration,
+                                destructuringContainerVar,
+                                tmpVariable = false,
+                                forceLocal = false,
+                            ) {
+                                configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                            }
+                        }
+                        is KtProperty -> {
+                            val firProperty = declaration.toFirProperty(
+                                ownerRegularOrAnonymousObjectSymbol = null,
+                                context,
+                            )
+                            add(firProperty)
+                        }
+                        else -> {
+                            val firStatement = declaration.toFirStatement()
+                            if (firStatement is FirDeclaration) {
+                                add(firStatement)
+                            } else {
+                                error("unexpected declaration type in script")
+                            }
                         }
                     }
                 }
+            }.toMutableList()
+
+            val last = statements.lastOrNull()
+            if (last != null && last.isExpression()) {
+                val propertyName = Name.identifier("$\$result")
+                val propertySymbol = FirRegularPropertySymbol(callableIdForName(propertyName))
+                val propertyReturnType = FirImplicitTypeRefImplWithoutSource
+
+                val property =
+                    withContainerSymbol(propertySymbol) {
+                        buildProperty {
+//                            source = propertySource
+                            moduleData = baseModuleData
+                            origin = FirDeclarationOrigin.Synthetic.ReplContainer
+                            returnTypeRef = propertyReturnType
+                            name = propertyName
+                            isVar = false
+                            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                            symbol = propertySymbol
+                            dispatchReceiverType = currentDispatchReceiverType()
+
+                            initializer = last
+
+                            backingField = FirDefaultPropertyBackingField(
+                                moduleData = baseModuleData,
+                                origin = origin,
+                                source = null,
+                                annotations = annotations,
+                                returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                                isVar = isVar,
+                                propertySymbol = symbol,
+                                status = status,
+                            )
+
+                            getter = FirDefaultPropertyAccessor.createGetterOrSetter(
+                                source = null,
+                                baseModuleData,
+                                origin,
+                                propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef),
+                                status.visibility,
+                                propertySymbol,
+                                isGetter = true,
+                            )
+                        }
+
+                    }
+
+                statements[statements.lastIndex] = property
             }
+
+            return statements
+        }
+
+        @OptIn(ExperimentalContracts::class)
+        private fun FirElement.isExpression(): Boolean {
+            contract { returns(true) implies (this@isExpression is FirExpression) }
+            return this is FirExpression && (this !is FirBlock || this.statements.lastOrNull()?.isExpression() == true)
         }
 
         private fun convertCodeFragment(
