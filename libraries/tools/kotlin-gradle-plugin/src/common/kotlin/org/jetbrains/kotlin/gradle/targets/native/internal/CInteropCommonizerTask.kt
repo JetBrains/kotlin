@@ -191,17 +191,11 @@ internal abstract class CInteropCommonizerTask
                     }
                 }
 
-//                (kotlinNativeProvider.get() as? KotlinNativeFromToolchainProvider)?.kotlinNativeBundleVersion?.orNull
                 CInteropCommonizerDependencies(
                     target,
                     project.files(
                         externalDependencyFiles,
                         project.getNativeDistributionDependencies(
-//                            kotlinNativeProvider.flatMap {
-//                                //Force to download native dependencies
-////                                (it as? KotlinNativeFromToolchainProvider)?.kotlinNativeBundleVersion?.get()
-//                                it.bundleDirectory.map { bd -> KonanDistribution(bd) }
-//                            },
                             target,
                         )
                     )

@@ -172,9 +172,6 @@ private fun getCommonizedPlatformLibrariesFor(commonizerFile: File, target: Shar
     return targetOutputDirectory.listLibraryFiles()
 }
 
-//private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
-//    .filter { it.isDirectory || it.extension == "klib" }
-
 private val Project.addCommonizerTaskToProject
     get() = if (kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
         this

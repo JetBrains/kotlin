@@ -140,8 +140,6 @@ internal fun ObjectFactory.getOriginalPlatformLibrariesFor(
     fileCollection()
         .from(
             konanDistribution.map {
-//                println(Thread.currentThread().stackTrace.joinToString("\n") { it.toString() })
-//                Thread.dumpStack()
                 it.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
             }
         )

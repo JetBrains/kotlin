@@ -35,9 +35,7 @@ abstract class KotlinNativeDownloadTask : DefaultTask(), UsesKotlinNativeBundleB
     abstract val nativeDirectory: DirectoryProperty
 
     fun getPlatformDependencies(konanTargetName: String): Provider<Set<File>> {
-        println("DEBUG!!")
         return nativeDirectory.map {
-            println("_DEBUG_")
             KonanDistribution(it.asFile).platformLibsDir.resolve(konanTargetName).listLibraryFiles().toSet()
         }
     }
