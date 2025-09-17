@@ -1,9 +1,0 @@
-USED DECLARATIONS:
-
-Declaration: test.ClassWithTypeParam
-By names: [ClassWithTypeParam]
-
-Declaration: test.functionWithTypeParam
-By names: [functionWithTypeParam]
-
-UNRESOLVED NAMES:
