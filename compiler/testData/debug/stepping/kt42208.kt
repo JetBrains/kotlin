@@ -28,13 +28,6 @@ inline fun foo() = {
 // test.kt:6 $box (4)
 // test1.kt:11 $box (1)
 // test.kt:6 $box (4)
-
-// EXPECTATIONS ClassicFrontend WASM
-// test1.kt:11 $box$lambda.invoke (0)
-
-// EXPECTATIONS FIR WASM
 // test1.kt:11 $box$lambda.invoke (1)
-
-// EXPECTATIONS WASM
 // test.kt:6 $box (4)
 // test.kt:7 $box (1)
