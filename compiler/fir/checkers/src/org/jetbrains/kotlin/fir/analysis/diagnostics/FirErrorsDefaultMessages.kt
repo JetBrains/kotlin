@@ -3341,7 +3341,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION,
-            "Compiler-required annotations are analyzed before typealiases. Remove the typealias and use the annotation ''{0}'' directly.",
+            "Typealias to a compiler-required annotation ''{0}'' is not allowed. Remove the typealias and use the annotation directly.",
             DECLARATION_FQ_NAME
         )
 
