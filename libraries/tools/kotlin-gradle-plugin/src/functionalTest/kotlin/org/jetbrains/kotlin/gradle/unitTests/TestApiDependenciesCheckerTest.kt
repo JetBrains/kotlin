@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaTestFixturesPlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.TestApiDependencyWarning
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
@@ -139,6 +140,22 @@ class TestApiDependenciesCheckerTest {
                     }
                 }
             }
+        }
+
+        project.runLifecycleAwareTest {
+            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+            diagnostics.assertNoDiagnostics(TestApiDependencyWarning)
+        }
+    }
+
+    @Test
+    fun `when project has java-test-fixtures, and testFixturesApi has dependency, expect no warning`() {
+        val project = setupKmpProject(
+            preApplyCode = {
+                pluginManager.apply(JavaTestFixturesPlugin::class.java)
+            }
+        ) {
+            dependencies.add("testFixturesApi", "org.jetbrains.kotlinx:atomicfu:latest.release")
         }
 
         project.runLifecycleAwareTest {
