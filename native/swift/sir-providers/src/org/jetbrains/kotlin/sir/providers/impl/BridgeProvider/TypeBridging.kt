@@ -518,7 +518,7 @@ internal sealed class Bridge(
         }
     }
 
-    class AsBlock(
+    class AsBlock private constructor(
         override val swiftType: SirFunctionalType,
         private val parameters: List<Bridge> = swiftType.parameterTypes.map(::bridgeType),
         private val returnType: Bridge = bridgeType(swiftType.returnType),
@@ -530,6 +530,28 @@ internal sealed class Bridge(
             returnType = returnType.cType,
         )
     ) {
+        companion object {
+            operator fun invoke(
+                swiftType: SirFunctionalType
+            ): AsBlock = AsBlock(
+                swiftType,
+                swiftType.parameterTypes.map(::bridgeType),
+                bridgeType(swiftType.returnType)
+            )
+
+            operator fun invoke(
+                parameters: List<Bridge>,
+                returnType: Bridge,
+            ): AsBlock = AsBlock(
+                SirFunctionalType(
+                    parameterTypes = parameters.map { it.swiftType },
+                    returnType = returnType.swiftType,
+                ),
+                parameters,
+                returnType,
+            )
+        }
+
         override val cType: CType.BlockPointer
             get() = super.cType as? CType.BlockPointer
                 ?: error("attempt to generate kotlin sources for handling closure fot a type that is not closure")

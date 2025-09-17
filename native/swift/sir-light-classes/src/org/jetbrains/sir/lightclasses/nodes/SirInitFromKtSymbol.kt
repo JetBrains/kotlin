@@ -8,6 +8,7 @@ package org.jetbrains.sir.lightclasses.nodes
 import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.components.defaultType
 import org.jetbrains.kotlin.analysis.api.components.isArrayOrPrimitiveArray
+import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
@@ -208,6 +209,7 @@ internal class SirRegularInitFromKtSymbol(
             selfParameter = null,
             extensionReceiverParameter = null,
             errorParameter = null,
+            isAsync = false,
         )
     }
 
@@ -232,6 +234,7 @@ internal class SirRegularInitFromKtSymbol(
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "__error", it)
             },
+            isAsync = false,
         )
     }
 }

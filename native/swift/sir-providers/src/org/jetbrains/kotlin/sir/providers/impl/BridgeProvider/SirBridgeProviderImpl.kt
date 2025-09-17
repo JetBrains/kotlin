@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.isVoid
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.swiftIdentifier
+import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 private const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
 private const val cinterop = "kotlinx.cinterop.*"
@@ -48,7 +50,8 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         kotlinFqName: List<String>,
         selfParameter: SirParameter?,
         extensionReceiverParameter: SirParameter?,
-        errorParameter: SirParameter?
+        errorParameter: SirParameter?,
+        isAsync: Boolean,
     ): BridgeFunctionProxy? = session.withSessions {
         val covariantTypes = listOfNotNull(returnType, errorParameter?.type)
         val contravariantTypes = (explicitParameters + listOfNotNull(selfParameter, extensionReceiverParameter))
@@ -74,7 +77,8 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
                     bridge = Bridge.AsOutError
                 )
             },
-            typeNamer = typeNamer
+            isAsync = isAsync,
+            typeNamer = typeNamer,
         )
     }
 }
@@ -106,6 +110,7 @@ public interface BridgeFunctionBuilder {
     public val selfParameter: Any?
     public val extensionReceiverParameter: Any?
     public val errorParameter: Any?
+    public val isAsync: Boolean
 
     public fun buildCall(args: String): String
     public val argNames: List<String>
@@ -125,13 +130,18 @@ private class BridgeFunctionDescriptor(
     override val selfParameter: BridgeParameter?,
     override val extensionReceiverParameter: BridgeParameter?,
     override val errorParameter: BridgeParameter?,
+    override val isAsync: Boolean,
     override val typeNamer: SirTypeNamer,
 ) : BridgeFunctionBuilder, BridgeFunctionProxy {
     val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, typeNamer)
     val cBridgeName = kotlinBridgeName
 
     val allParameters
-        get() = listOfNotNull(selfParameter) + parameters + listOfNotNull(errorParameter)
+        get() = listOfNotNull(selfParameter) + parameters + listOfNotNull(errorParameter) + listOfNotNull(asyncContinuationParameter)
+
+    val asyncContinuationParameter: BridgeParameter? = isAsync.ifTrue {
+        BridgeParameter(name = "continuation", bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsVoid))
+    }
 
     override val name
         get() = kotlinFqName.joinToString(separator = ".") { it.kotlinIdentifier }
@@ -169,7 +179,10 @@ private class BridgeFunctionDescriptor(
         val descriptor = this@BridgeFunctionDescriptor
         val errorParameter = descriptor.errorParameter
 
-        if (errorParameter != null) {
+        if (isAsync) {
+            require(errorParameter == null) { "Throwing async functions aren't supported yet" }
+            add(descriptor.swiftAsyncCall(typeNamer))
+        } else if (errorParameter != null) {
             add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
             add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvoke(typeNamer))
             val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
@@ -206,7 +219,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     add(
         "public fun $kotlinBridgeName(${
             allParameters.filter { it.isRenderable }.joinToString { "${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}" }
-        }): ${returnType.kotlinType.repr} {"
+        }): ${(returnType.kotlinType.takeIf { !isAsync } ?: KotlinType.Unit).repr} {"
     )
     val indent = "    "
 
@@ -215,10 +228,23 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
         add("${indent}val $parameterName = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name.kotlinIdentifier)}")
     }
     val callSite = buildCallSite()
-    if (returnType.swiftType.isVoid && errorParameter == null) {
+    val resultName = "_result"
+
+    if (isAsync) {
+        val continuation = asyncContinuationParameter
+        require(continuation != null) { "Async functions must have a continuation" }
+        require(errorParameter == null) { "Throwing async functions aren't supported yet" }
+        add(
+            """
+            GlobalScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                val $resultName = $callSite
+                __${continuation.name}(${resultName})
+            }
+            """.trimIndent().prependIndent(indent)
+        )
+    } else if (returnType.swiftType.isVoid && errorParameter == null) {
         add("${indent}$callSite")
     } else {
-        val resultName = "_result"
         if (errorParameter != null) {
             add(
                 """
@@ -251,7 +277,20 @@ private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String 
     return returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvoke(typeNamer))
 }
 
+private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): String {
+    val continuation = asyncContinuationParameter ?: error("Can not form async call to non-async function bridge")
+
+    return """
+        await withUnsafeContinuation { nativeContinuation in
+            let ${continuation.name.swiftIdentifier}: ${continuation.bridge.swiftType.swiftName} = { nativeContinuation.resume(returning: $0) }
+            let _: () = ${swiftInvoke(typeNamer)}
+        }
+    """.trimIndent()
+}
+
 private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
+    val returnType = returnType.takeIf { !isAsync } ?: Bridge.AsVoid
+
     append(
         returnType.cType.render(buildString {
             append(cBridgeName)
@@ -264,12 +303,14 @@ private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
     append(";")
 }
 
-private fun BridgeFunctionDescriptor.additionalImports(): List<String> {
-    if (extensionReceiverParameter != null && selfParameter == null && kotlinFqName.size > 1) {
-        return listOf("$name as $safeImportName")
-    }
-    return emptyList()
-}
+private fun BridgeFunctionDescriptor.additionalImports(): List<String> = listOfNotNull(
+    (extensionReceiverParameter != null && selfParameter == null && kotlinFqName.size > 1).ifTrue {
+        "$name as $safeImportName"
+    },
+    isAsync.ifTrue {
+        "kotlinx.coroutines.*"
+    },
+)
 
 private val BridgeFunctionDescriptor.safeImportName: String
     get() = kotlinFqName.run { if (size <= 1) single() else joinToString("_") { it.replace("_", "__") } }

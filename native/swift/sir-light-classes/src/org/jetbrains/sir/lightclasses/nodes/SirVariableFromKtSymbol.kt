@@ -147,6 +147,7 @@ internal abstract class SirAbstractGetter(
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "_out_error", it)
             },
+            isAsync = false,
         )
     }
 
@@ -214,6 +215,7 @@ internal abstract class SirAbstractSetter(
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "_out_error", it)
             },
+            isAsync = false,
         )
     }
 

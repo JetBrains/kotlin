@@ -108,7 +108,8 @@ public interface SirSession :
         kotlinFqName: List<String>,
         selfParameter: SirParameter?,
         extensionReceiverParameter: SirParameter?,
-        errorParameter: SirParameter?
+        errorParameter: SirParameter?,
+        isAsync: Boolean,
     ): BridgeFunctionProxy? = with(bridgeProvider) {
         generateFunctionBridge(
             baseBridgeName,
@@ -117,7 +118,8 @@ public interface SirSession :
             kotlinFqName,
             selfParameter,
             extensionReceiverParameter,
-            errorParameter
+            errorParameter,
+            isAsync,
         )
     }
 
@@ -377,7 +379,8 @@ public interface SirBridgeProvider {
         kotlinFqName: List<String>,
         selfParameter: SirParameter?,
         extensionReceiverParameter: SirParameter?,
-        errorParameter: SirParameter?
+        errorParameter: SirParameter?,
+        isAsync: Boolean,
     ): BridgeFunctionProxy?
 
     public fun generateTypeBridge(
@@ -395,7 +398,8 @@ public fun generateFunctionBridge(
     kotlinFqName: List<String>,
     selfParameter: SirParameter?,
     extensionReceiverParameter: SirParameter?,
-    errorParameter: SirParameter?
+    errorParameter: SirParameter?,
+    isAsync: Boolean,
 ): BridgeFunctionProxy? = with(sir) {
     generateFunctionBridge(
         baseBridgeName,
@@ -404,7 +408,8 @@ public fun generateFunctionBridge(
         kotlinFqName,
         selfParameter,
         extensionReceiverParameter,
-        errorParameter
+        errorParameter,
+        isAsync,
     )
 }
 

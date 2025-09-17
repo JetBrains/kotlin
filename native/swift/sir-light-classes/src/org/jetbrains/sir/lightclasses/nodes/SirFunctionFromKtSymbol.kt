@@ -5,6 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -73,7 +74,7 @@ internal open class SirFunctionFromKtSymbol(
 
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
 
-    override val isAsync: Boolean get() = false
+    override val isAsync: Boolean get() = ktSymbol.isSuspend
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val fqName = bridgeFqName ?: return@lazyWithSessions null
@@ -96,6 +97,7 @@ internal open class SirFunctionFromKtSymbol(
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "_out_error", it)
             },
+            isAsync = isAsync,
         )
     }
 

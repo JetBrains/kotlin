@@ -151,10 +151,6 @@ public class SirVisibilityCheckerImpl(
             unsupportedDeclarationReporter.report(this@isExported, "${origin.name.lowercase()} origin is not supported yet.")
             return@withSessions false
         }
-        if (isSuspend) {
-            unsupportedDeclarationReporter.report(this@isExported, "suspend functions are not supported yet.")
-            return@withSessions false
-        }
         if (isInline) {
             unsupportedDeclarationReporter.report(this@isExported, "inline functions are not supported yet.")
             return@withSessions false

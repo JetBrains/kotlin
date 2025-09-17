@@ -135,6 +135,7 @@ internal class SirFunctionFromKtPropertySymbol(
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "_out_error", it)
             },
+            isAsync = false,
         )
     }
 

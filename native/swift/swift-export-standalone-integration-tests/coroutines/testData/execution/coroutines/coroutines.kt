@@ -8,6 +8,24 @@
 
 import kotlinx.coroutines.*
 
-fun demo() = runBlocking {
-    5
+object Foo
+
+suspend fun testPrimitive(): Int {
+    delay(33L)
+    return 42
+}
+
+suspend fun testAny(): Any {
+    delay(33L)
+    return Foo
+}
+
+suspend fun testObject(): Foo {
+    delay(33L)
+    return Foo
+}
+
+suspend fun testCustom(): String {
+    delay(33L)
+    return "Hello, World!"
 }
