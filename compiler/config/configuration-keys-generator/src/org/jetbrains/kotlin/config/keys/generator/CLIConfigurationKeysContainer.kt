@@ -37,10 +37,6 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
 
     val ALLOW_KOTLIN_PACKAGE by key<Boolean>("allow kotlin package")
 
-    val PERF_MANAGER by key<PerformanceManager>("performance manager")
-
-    val DETAILED_PERF by key<Boolean>("Enable more detailed performance statistics.")
-
     val INTELLIJ_PLUGIN_ROOT by key<String>(
         "intellij plugin root",
         comment = "Used in Eclipse plugin (see KotlinCLICompiler)"

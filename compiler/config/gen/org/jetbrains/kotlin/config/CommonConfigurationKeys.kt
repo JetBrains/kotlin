@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.util.PerformanceManager
 
 object CommonConfigurationKeys {
     @JvmField
@@ -122,6 +123,14 @@ object CommonConfigurationKeys {
     // Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments
     @JvmField
     val SCRIPTING_HOST_CONFIGURATION = CompilerConfigurationKey.create<Any>("scripting host configuration")
+
+    // It might be inaccurate if use in multithreading mode
+    @JvmField
+    val PERF_MANAGER = CompilerConfigurationKey.create<PerformanceManager>("A helper that can be used to measure performance (compiler phases, JIT and GC info) or collect stats (e.g. number of lines in a project)")
+
+    // See the description of `-Xdetailed-perf` for more details
+    @JvmField
+    val DETAILED_PERF = CompilerConfigurationKey.create<Boolean>("Enables detailed performance stats that might slow down the general compiler performance")
 
 }
 
@@ -252,4 +261,12 @@ var CompilerConfiguration.dontSortSourceFiles: Boolean
 var CompilerConfiguration.scriptingHostConfiguration: Any?
     get() = get(CommonConfigurationKeys.SCRIPTING_HOST_CONFIGURATION)
     set(value) { put(CommonConfigurationKeys.SCRIPTING_HOST_CONFIGURATION, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.perfManager: PerformanceManager?
+    get() = get(CommonConfigurationKeys.PERF_MANAGER)
+    set(value) { put(CommonConfigurationKeys.PERF_MANAGER, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.detailedPerf: Boolean
+    get() = getBoolean(CommonConfigurationKeys.DETAILED_PERF)
+    set(value) { put(CommonConfigurationKeys.DETAILED_PERF, value) }
 

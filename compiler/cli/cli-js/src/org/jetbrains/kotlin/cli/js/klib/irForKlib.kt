@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.ICData
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.generateModuleFragmentWithPlugins
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
@@ -54,7 +54,7 @@ fun generateIrForKlibSerialization(
     irFactory: IrFactory,
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
 ): Pair<IrModuleFragment, IrPluginContext> =
-    configuration[CLIConfigurationKeys.PERF_MANAGER].tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+    configuration.perfManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
         val messageCollector = configuration.messageCollector
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
         val psi2Ir = Psi2IrTranslator(

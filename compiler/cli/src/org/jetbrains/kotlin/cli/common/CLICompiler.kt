@@ -105,7 +105,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
             configuration.messageCollector = it
         }
 
-        configuration.put(CLIConfigurationKeys.PERF_MANAGER, performanceManager)
+        configuration.perfManager = performanceManager
         try {
             setupCommonArguments(configuration, arguments)
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)

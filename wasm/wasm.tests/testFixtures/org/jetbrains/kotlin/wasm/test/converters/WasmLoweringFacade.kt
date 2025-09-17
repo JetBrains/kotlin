@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
@@ -68,7 +68,7 @@ class WasmLoweringFacade(
         configuration.phaseConfig = phaseConfig
 
         val testPackage = extractTestPackage(testServices)
-        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+        val performanceManager = configuration.perfManager
         performanceManager?.let {
             it.notifyPhaseFinished(PhaseType.Initialization)
             it.notifyPhaseStarted(PhaseType.TranslationToIr)

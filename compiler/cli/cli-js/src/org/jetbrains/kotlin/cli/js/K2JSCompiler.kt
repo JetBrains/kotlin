@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.WebCliPipeline
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
@@ -72,7 +72,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         paths: KotlinPaths?,
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+        val performanceManager = configuration.perfManager
 
         val outputDirPath = arguments.outputDir
         val outputName = arguments.moduleName
@@ -226,7 +226,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         arguments: K2JSCompilerArguments,
         outputKlibPath: String,
     ): ModulesStructure {
-        val performanceManager = environmentForJS.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+        val performanceManager = environmentForJS.configuration.perfManager
         @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
         performanceManager?.notifyCurrentPhaseFinishedIfNeeded()
         lateinit var sourceModule: ModulesStructure

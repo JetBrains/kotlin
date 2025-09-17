@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsConfigurationUpdater
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
@@ -80,7 +81,7 @@ class Ir2JsTransformer private constructor(
         minimizedMemberNames = configuration.minimizedMemberNames,
     )
 
-    private val performanceManager = module.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+    private val performanceManager = module.compilerConfiguration.perfManager
 
     private fun lowerIr(): LoweredIr {
         return compile(

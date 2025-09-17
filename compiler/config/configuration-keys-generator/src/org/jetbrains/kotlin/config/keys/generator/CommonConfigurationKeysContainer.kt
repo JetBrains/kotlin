@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import kotlin.Boolean
+import org.jetbrains.kotlin.util.PerformanceManager
 
 @Suppress("unused")
 object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.config", "CommonConfigurationKeys") {
@@ -72,5 +72,15 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val SCRIPTING_HOST_CONFIGURATION by key<Any>(
         description = "scripting host configuration",
         comment = "Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments"
+    )
+
+    val PERF_MANAGER by key<PerformanceManager>(
+        description = "A helper that can be used to measure performance (compiler phases, JIT and GC info) or collect stats (e.g. number of lines in a project)",
+        comment = "It might be inaccurate if use in multithreading mode"
+    )
+
+    val DETAILED_PERF by key<Boolean>(
+        description = "Enables detailed performance stats that might slow down the general compiler performance",
+        comment = "See the description of `-Xdetailed-perf` for more details"
     )
 }

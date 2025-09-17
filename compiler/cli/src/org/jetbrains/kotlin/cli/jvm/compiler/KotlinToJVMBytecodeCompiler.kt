@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
-import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -279,8 +278,7 @@ object KotlinToJVMBytecodeCompiler {
     ): Pair<JvmIrCodegenFactory, JvmIrCodegenFactory.BackendInput> {
         val configuration = environment.configuration
         val codegenFactory = JvmIrCodegenFactory(configuration)
-        val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
-        val backendInput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+        val backendInput = environment.configuration.perfManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             codegenFactory.convertToIr(
                 environment.project,
                 environment.getSourceFiles(),
@@ -408,9 +406,7 @@ object KotlinToJVMBytecodeCompiler {
     ): GenerationState {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-
-        performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
+        configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
             codegenFactory.invokeCodegen(codegenInput)
         }
 

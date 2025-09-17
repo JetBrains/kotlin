@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForLt
 import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
@@ -59,7 +59,7 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
     friendPaths: List<String>,
 ): FirResult {
-    val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+    val performanceManager = configuration.perfManager
     return performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) {
         var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
 
