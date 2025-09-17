@@ -11,22 +11,25 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 object JvmDefaultImportsProvider : DefaultImportProvider() {
-    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
-        result.add(ImportPath.Companion.fromString("kotlin.jvm.*"))
+    private val storageManager = LockBasedStorageManager("JvmDefaultImports")
+    override val platformSpecificDefaultImports: List<ImportPath> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        buildList {
+            add(ImportPath.fromString("kotlin.jvm.*"))
 
-        fun addAllClassifiersFromScope(scope: MemberScope) {
-            for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.Companion.CLASSIFIERS, MemberScope.Companion.ALL_NAME_FILTER)) {
-                result.add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
+            fun addAllClassifiersFromScope(scope: MemberScope) {
+                for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
+                    add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
+                }
             }
-        }
 
-        for (builtInPackage in JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FALLBACK).builtInPackagesImportedByDefault) {
-            addAllClassifiersFromScope(builtInPackage.memberScope)
+            for (builtInPackage in JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FALLBACK).builtInPackagesImportedByDefault) {
+                addAllClassifiersFromScope(builtInPackage.memberScope)
+            }
         }
     }
 
-    override val defaultLowPriorityImports: List<ImportPath> = listOf(ImportPath.Companion.fromString("java.lang.*"))
+    override val defaultLowPriorityImports: List<ImportPath> = listOf(ImportPath.fromString("java.lang.*"))
 }

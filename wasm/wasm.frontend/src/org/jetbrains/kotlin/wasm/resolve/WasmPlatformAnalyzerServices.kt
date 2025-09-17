@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.wasm.resolve
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.storage.StorageManager
 
 // TODO: Here for IDE ABI, remove after rename in IDE
 typealias WasmJsPlatformAnalyzerServices = WasmPlatformAnalyzerServices

@@ -6,50 +6,31 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
-import java.util.ArrayList
 
 abstract class DefaultImportProvider {
-    private data class DefaultImportsKey(val includeKotlinComparisons: Boolean, val includeLowPriorityImports: Boolean)
+    private val defaultImports: List<ImportPath> = listOf(
+        "kotlin.*",
+        "kotlin.annotation.*",
+        "kotlin.collections.*",
+        "kotlin.ranges.*",
+        "kotlin.sequences.*",
+        "kotlin.text.*",
+        "kotlin.io.*",
+        "kotlin.comparisons.*",
+    ).map { ImportPath.fromString(it) }
 
-    private val defaultImports = LockBasedStorageManager("TargetPlatform").let { storageManager ->
-        storageManager.createMemoizedFunction<DefaultImportsKey, List<ImportPath>> { (includeKotlinComparisons, includeLowPriorityImports) ->
-            ArrayList<ImportPath>().apply {
-                listOf(
-                    "kotlin.*",
-                    "kotlin.annotation.*",
-                    "kotlin.collections.*",
-                    "kotlin.ranges.*",
-                    "kotlin.sequences.*",
-                    "kotlin.text.*",
-                    "kotlin.io.*"
-                ).forEach { add(ImportPath.fromString(it)) }
-
-                if (includeKotlinComparisons) {
-                    add(ImportPath.fromString("kotlin.comparisons.*"))
-                }
-
-                computePlatformSpecificDefaultImports(storageManager, this)
-
-                if (includeLowPriorityImports) {
-                    addAll(defaultLowPriorityImports)
-                }
-            }
-        }
-    }
-
+    abstract val platformSpecificDefaultImports: List<ImportPath>
     open val defaultLowPriorityImports: List<ImportPath> get() = emptyList()
-
-    fun getDefaultImports(includeLowPriorityImports: Boolean): List<ImportPath> =
-        defaultImports(
-            DefaultImportsKey(
-                includeKotlinComparisons = true,
-                includeLowPriorityImports = includeLowPriorityImports,
-            )
-        )
 
     open val excludedImports: List<FqName> get() = emptyList()
 
-    abstract fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>)
+    fun getDefaultImports(includeLowPriorityImports: Boolean): List<ImportPath> {
+        return buildList {
+            addAll(defaultImports)
+            addAll(platformSpecificDefaultImports)
+            if (includeLowPriorityImports) {
+                addAll(defaultLowPriorityImports)
+            }
+        }
+    }
 }

@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.analyzer.common
 
 import org.jetbrains.kotlin.resolve.DefaultImportProvider
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.storage.StorageManager
 
 object CommonDefaultImportsProvider : DefaultImportProvider() {
-    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {}
+    override val platformSpecificDefaultImports: List<ImportPath> = emptyList()
 }
