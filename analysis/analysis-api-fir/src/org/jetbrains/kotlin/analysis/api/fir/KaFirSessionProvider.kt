@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProject
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.structure.LLSess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains.LLAnalysisSessionStatistics
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -115,7 +117,11 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
             val identifier = tokenFactory.identifier
             identifier.flushPendingChanges(project)
 
-            return cache.get(useSiteModule, ::createAnalysisSession) ?: error("`createAnalysisSession` must not return `null`.")
+            val session = cache.get(useSiteModule, ::createAnalysisSession)
+                ?: error("`createAnalysisSession` must not return `null`.")
+
+            checkSessionValidity(session)
+            return session
         } catch (e: Throwable) {
             cacheCleaner.exitAnalysis()
             throw e
@@ -126,6 +132,14 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
         val resolutionFacade = useSiteKtModule.getResolutionFacade(project)
         val validityToken = tokenFactory.create(project, resolutionFacade.useSiteFirSession.createValidityTracker())
         return KaFirSession.createAnalysisSessionByResolutionFacade(resolutionFacade, validityToken)
+    }
+
+    private fun checkSessionValidity(session: KaFirSession) {
+        requireWithAttachment(session.token.isValid(), { "An analysis session acquired via `getAnalysisSession` must be valid." }) {
+            withKaModuleEntry("module", session.useSiteModule)
+            withEntry("firSessionIsValid", session.firSession.isValid.toString())
+            withEntry("firSessionInvalidationInformation", session.firSession.invalidationInformation)
+        }
     }
 
     override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement) {
