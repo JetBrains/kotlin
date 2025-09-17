@@ -49,7 +49,7 @@ private fun FirCallableSymbol<*>.canBeMainOperatorOfOverload(outerClass: FirRegu
         this !is FirNamedFunctionSymbol -> false
         !isOperator || name != OperatorNameConventions.OF || valueParameterSymbols.none { it.isVararg } -> false
         else -> when (val returnType = resolutionContext.returnTypeCalculator.tryCalculateReturnType(this).coneType) {
-            is ConeClassLikeType if returnType.lookupTag == outerClass.toLookupTag() -> true
+            is ConeClassLikeType if returnType.fullyExpandedType().lookupTag == outerClass.toLookupTag() -> true
             is ConeErrorType -> true
             else -> false
         }
