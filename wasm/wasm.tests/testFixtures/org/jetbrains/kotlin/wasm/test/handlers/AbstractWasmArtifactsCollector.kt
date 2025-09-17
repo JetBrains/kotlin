@@ -113,7 +113,7 @@ fun TestServices.getWasmTestOutputDirectory(): File {
     val pathToTestDir = allDirectives[WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR].first()
 
     val testGroupOutputDir = File(File(pathToRootOutputDir, "out"), testGroupDirPrefix)
-    val stopFile = File(pathToTestDir)
+    val stopFile = File(pathToTestDir).absoluteFile
     return generateSequence(originalFile.parentFile) { it.parentFile }
         .takeWhile { it != stopFile }
         .map { it.name }
