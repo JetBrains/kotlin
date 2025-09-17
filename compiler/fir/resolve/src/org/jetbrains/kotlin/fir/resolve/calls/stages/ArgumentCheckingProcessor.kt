@@ -356,10 +356,15 @@ internal object ArgumentCheckingProcessor {
         candidate.addPostponedAtom(postponedAtom)
     }
 
+    /**
+     * TODO: Fallback in annotation is a temporary solution. See KT-81110 and
+     *  [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.useCollectionLiteralInAnnotationResolution].
+     */
     private fun ArgumentContext.preprocessCollectionLiteral(atom: ConeResolutionAtomWithPostponedChild) {
         val expression = atom.collectionLiteralExpression
 
-        if (!LanguageFeature.CollectionLiterals.isEnabled()) {
+        val insideAnnotation = context.bodyResolveComponents.callCompleter.isInsideAnnotationContext()
+        if (insideAnnotation || !LanguageFeature.CollectionLiterals.isEnabled()) {
             atom.useFallbackForDisabledCollectionLiterals()
             resolveArgumentExpression(atom.subAtom!!)
             return

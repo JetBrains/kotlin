@@ -1999,9 +1999,27 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("inAnnotationCallsOutsideOfAnnotations.kt")
+        public void testInAnnotationCallsOutsideOfAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals/inAnnotationCallsOutsideOfAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("inAnnotations.kt")
         public void testInAnnotations() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals/inAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("inNestedAnnotations.kt")
+        public void testInNestedAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals/inNestedAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("inVarargsInAnnotations.kt")
+        public void testInVarargsInAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals/inVarargsInAnnotations.kt");
         }
       }
 

@@ -1972,7 +1972,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             when {
                 // if the feature is not supported, OR collection literal is in the annotation, use old resolution
                 !session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) ||
-                        data.forCollectionLiteralInAnnotationResolution ->
+                        enableArrayOfCallTransformation ->
                     transformCollectionLiteralInAnnotation(collectionLiteralCall, data)
                 else -> {
                     collectionLiteralCall.transformAnnotations(transformer, data)
