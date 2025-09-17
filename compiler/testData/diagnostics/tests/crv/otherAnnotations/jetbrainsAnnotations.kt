@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// WITH_STDLIB
 
 // FILE: usage/Usage.java
 package usage;

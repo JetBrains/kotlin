@@ -9724,6 +9724,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("jetbrainsContract.kt")
+        public void testJetbrainsContract() {
+          runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/jetbrainsContract.kt");
+        }
+
+        @Test
         @TestMetadata("jooq.kt")
         public void testJooq() {
           runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/jooq.kt");

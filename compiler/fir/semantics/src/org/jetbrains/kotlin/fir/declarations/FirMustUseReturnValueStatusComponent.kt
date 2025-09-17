@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -102,7 +105,29 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             ClassId(FqName("org.jooq"), Name.identifier("CheckReturnValue")),
         )
 
-        private fun List<ClassId>?.hasMustUseReturnValueLikeAnnotation() = this.orEmpty().any { it in mustUseReturnValueLikeAnnotations }
+        private val jbContractClassId = ClassId(FqName("org.jetbrains.annotations"), Name.identifier("Contract"))
+
+        private fun FirCallableSymbol<*>.isMustUseAnnotated(session: FirSession): Boolean {
+            val annotations = resolvedAnnotationClassIds.toSet()
+            if (annotations.hasMustUseReturnValueLikeAnnotation()) return true
+            if (jbContractClassId !in annotations) return false // Avoid resolving arguments unless we sure @Contract is present
+
+            val contract = resolvedAnnotationsWithClassIds.single { it.toAnnotationClassId(session) == jbContractClassId }
+            // For some reason, FirAnnotation.getBooleanArgument doesn't work here for Kotlin sources: it relies on
+            // argument.evaluateAs<FirLiteralExpression>, which requires `argument` to be resolved (coneTypeOrNull != null).
+            // Despite calling resolvedAnnotationsWithArguments, the resulting argument expression does not have the coneTypeOrNull set.
+            // Commenting `pureArg is FirLiteralExpression` makes jetbrainsContract.kt test fail.
+            val pureArg = contract.findArgumentByName(Name.identifier("pure"), returnFirstWhenNotFound = false) ?: return false
+            val value = when {
+                pureArg is FirLiteralExpression -> pureArg.value as? Boolean
+                pureArg.isResolved -> pureArg.evaluateAs<FirLiteralExpression>(session)?.value as? Boolean
+                else -> null
+            }
+            return value == true
+        }
+
+        private fun Collection<ClassId>?.hasMustUseReturnValueLikeAnnotation() =
+            this.orEmpty().any { it in mustUseReturnValueLikeAnnotations }
 
         override fun computeMustUseReturnValueForJavaCallable(
             session: FirSession,
@@ -195,7 +220,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             additionalAnnotations: List<ClassId>?,
         ): Boolean {
             // Checking the most probable places for annotation one-by-one to avoid computing unnecessary empty annotations lists:
-            if (declaration.resolvedAnnotationClassIds.hasMustUseReturnValueLikeAnnotation()) return true
+            if (declaration.isMustUseAnnotated(session)) return true
             if (containingClass?.resolvedAnnotationClassIds.hasMustUseReturnValueLikeAnnotation()) return true
             if (session.firProvider.getFirCallableContainerFile(declaration)?.symbol?.resolvedAnnotationClassIds.hasMustUseReturnValueLikeAnnotation()) return true
             if (containingProperty?.resolvedAnnotationClassIds.hasMustUseReturnValueLikeAnnotation()) return true
