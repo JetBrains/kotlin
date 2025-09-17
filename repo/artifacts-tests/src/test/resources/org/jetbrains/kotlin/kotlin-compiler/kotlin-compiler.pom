@@ -51,9 +51,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.intellij.platform</groupId>
+      <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>kotlinx-coroutines-core-jvm</artifactId>
-      <version>1.8.0-intellij-13</version>
+      <version>1.8.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
