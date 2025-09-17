@@ -127,7 +127,7 @@ class TestApiDependenciesCheckerTest {
     fun `when commonTest has api dependency, and kotlin-mpp warning is disabled, expect no warning`() {
         val project = setupKmpProject(
             preApplyCode = {
-                propertiesExtension.set("kotlin.suppressGradlePluginWarnings", "TestApiDependenciesChecker")
+                propertiesExtension.set("kotlin.suppressGradlePluginWarnings", "TestApiDependencyWarning")
             }
         ) {
             kotlin {
