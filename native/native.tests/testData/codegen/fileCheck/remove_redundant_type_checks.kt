@@ -10,6 +10,8 @@ class B(val o: Any) {
     var a: A? = null
 }
 
+class C(val o: Any?)
+
 // CHECK-LABEL: define i32 @"kfun:#test1(kotlin.Any){}kotlin.Int
 fun test1(o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
@@ -866,10 +868,27 @@ fun test41(b: B?, o: Any): Int {
     }
 }
 
+// CHECK-LABEL: define i32 @"kfun:#test42(C?;kotlin.Any){}kotlin.Int
+fun test42(c: C?, o: Any): Int {
+    return when {
+// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+        c?.o is A -> {
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+// CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
+// CHECK-OPT: getelementptr inbounds %"kclassbody:A#internal
+            c.o.x
+        }
+        else -> 117
+    }
+}
+
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val a = A("zzz", 42, 117)
     val b = B(a)
+    val c = C(a)
     println(test1(a))
     println(test2(a))
     println(test3(a))
@@ -912,5 +931,6 @@ fun box(): String {
     println(Test40)
     println(Test40.z)
     println(test41(b, b))
+    println(test42(c, b))
     return "OK"
 }
