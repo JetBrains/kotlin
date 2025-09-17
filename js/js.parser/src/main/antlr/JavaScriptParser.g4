@@ -365,29 +365,29 @@ singleExpression
     ;
 
 singleExpressionImpl
-    : anonymousFunction                                 # FunctionExpression
-    | Class identifier? classTail                       # ClassExpression
-    | singleExpressionImpl '?.' singleExpressionImpl            # OptionalChainExpression
-    | singleExpressionImpl '?.'? '[' expressionSequence ']' # MemberIndexExpression
-    | singleExpressionImpl '?'? '.' '#'? identifierName     # MemberDotExpression
+    : anonymousFunction                                                            # FunctionExpression
+    | Class identifier? classTail                                                  # ClassExpression
+    | singleExpressionImpl '?.' singleExpressionImpl                               # OptionalChainExpression
+    | singleExpressionImpl '?.'? '[' expressionSequence ']'                        # MemberIndexExpression
+    | singleExpressionImpl '?'? '.' '#'? identifierName                            # MemberDotExpression
     // Split to try `new Date()` first, then `new Date`.
-    | New identifier arguments                                             # NewExpression
-    | New singleExpressionImpl arguments                                       # NewExpression
-    | New singleExpressionImpl                                                 # NewExpression
-    | singleExpressionImpl arguments                                           # ArgumentsExpression
-    | New '.' identifier                                                   # MetaExpression // new.target
-    | singleExpressionImpl {this.notLineTerminator()}? '++'                    # PostIncrementExpression
-    | singleExpressionImpl {this.notLineTerminator()}? '--'                    # PostDecreaseExpression
-    | Delete singleExpressionImpl                                              # DeleteExpression
-    | Void singleExpressionImpl                                                # VoidExpression
-    | Typeof singleExpressionImpl                                              # TypeofExpression
-    | '++' singleExpressionImpl                                                # PreIncrementExpression
-    | '--' singleExpressionImpl                                                # PreDecreaseExpression
-    | '+' singleExpressionImpl                                                 # UnaryPlusExpression
-    | '-' singleExpressionImpl                                                 # UnaryMinusExpression
-    | '~' singleExpressionImpl                                                 # BitNotExpression
-    | '!' singleExpressionImpl                                                 # NotExpression
-    | Await singleExpressionImpl                                               # AwaitExpression
+    | New identifier arguments                                                     # NewExpression
+    | New singleExpressionImpl arguments                                           # NewExpression
+    | New singleExpressionImpl                                                     # NewExpression
+    | singleExpressionImpl arguments                                               # ArgumentsExpression
+    | New '.' identifier                                                           # MetaExpression // new.target
+    | singleExpressionImpl {this.notLineTerminator()}? '++'                        # PostIncrementExpression
+    | singleExpressionImpl {this.notLineTerminator()}? '--'                        # PostDecreaseExpression
+    | Delete singleExpressionImpl                                                  # DeleteExpression
+    | Void singleExpressionImpl                                                    # VoidExpression
+    | Typeof singleExpressionImpl                                                  # TypeofExpression
+    | '++' singleExpressionImpl                                                    # PreIncrementExpression
+    | '--' singleExpressionImpl                                                    # PreDecreaseExpression
+    | '+' singleExpressionImpl                                                     # UnaryPlusExpression
+    | '-' singleExpressionImpl                                                     # UnaryMinusExpression
+    | '~' singleExpressionImpl                                                     # BitNotExpression
+    | '!' singleExpressionImpl                                                     # NotExpression
+    | Await singleExpressionImpl                                                   # AwaitExpression
     | <assoc = right> singleExpressionImpl '**' singleExpressionImpl               # PowerExpression
     | singleExpressionImpl ('*' | '/' | '%') singleExpressionImpl                  # MultiplicativeExpression
     | singleExpressionImpl ('+' | '-') singleExpressionImpl                        # AdditiveExpression
@@ -402,19 +402,19 @@ singleExpressionImpl
     | singleExpressionImpl '|' singleExpressionImpl                                # BitOrExpression
     | singleExpressionImpl '&&' singleExpressionImpl                               # LogicalAndExpression
     | singleExpressionImpl '||' singleExpressionImpl                               # LogicalOrExpression
-    | singleExpressionImpl '?' singleExpressionImpl ':' singleExpressionImpl           # TernaryExpression
+    | singleExpressionImpl '?' singleExpressionImpl ':' singleExpressionImpl       # TernaryExpression
     | <assoc = right> singleExpressionImpl '=' singleExpressionImpl                # AssignmentExpression
     | <assoc = right> singleExpressionImpl assignmentOperator singleExpressionImpl # AssignmentOperatorExpression
-    | Import '(' singleExpressionImpl ')'                                      # ImportExpression
-    | singleExpressionImpl templateStringLiteral                               # TemplateStringExpression // ECMAScript 6
-    | (Yield | YieldStar) ({this.notLineTerminator()}? expressionSequence)?    # YieldExpression          // ECMAScript 6
-    | This                                                                 # ThisExpression
-    | identifier                                                           # IdentifierExpression
-    | Super                                                                # SuperExpression
-    | literal                                                              # LiteralExpression
-    | arrayLiteral                                                         # ArrayLiteralExpression
-    | objectLiteral                                                        # ObjectLiteralExpression
-    | '(' expressionSequence ')'                                           # ParenthesizedExpression
+    | Import '(' singleExpressionImpl ')'                                          # ImportExpression
+    | singleExpressionImpl templateStringLiteral                                   # TemplateStringExpression // ECMAScript 6
+    | (Yield | YieldStar) ({this.notLineTerminator()}? expressionSequence)?        # YieldExpression          // ECMAScript 6
+    | This                                                                         # ThisExpression
+    | identifier                                                                   # IdentifierExpression
+    | Super                                                                        # SuperExpression
+    | literal                                                                      # LiteralExpression
+    | arrayLiteral                                                                 # ArrayLiteralExpression
+    | objectLiteral                                                                # ObjectLiteralExpression
+    | '(' expressionSequence ')'                                                   # ParenthesizedExpression
     ;
 
 initializer
