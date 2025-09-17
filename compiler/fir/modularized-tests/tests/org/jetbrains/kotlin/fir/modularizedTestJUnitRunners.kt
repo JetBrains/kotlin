@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.File
 import org.junit.jupiter.api.io.TempDir
 
@@ -26,16 +27,19 @@ abstract class AbstractModularizedJUnit5Test<T : AbstractModularizedTest>(protec
 class FullPipelineModularizedTest : AbstractModularizedJUnit5Test<FullPipelineModularizedTestPure>(
     FullPipelineModularizedTestPure(modularizedTestConfigFromSystemProperties())
 ) {
+    @Test
     fun testTotalKotlin() = test.testTotalKotlin()
 }
 
 class FE1FullPipelineModularizedTest : AbstractModularizedJUnit5Test<FE1FullPipelineModularizedTestPure>(
     FE1FullPipelineModularizedTestPure(modularizedTestConfigFromSystemProperties())
 ) {
+    @Test
     fun testTotalKotlin() = test.testTotalKotlin()
 }
 
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit5Test<FirResolveModularizedTotalKotlinTestPure>(
+    @Test
     FirResolveModularizedTotalKotlinTestPure(modularizedTestConfigFromSystemProperties())
 ) {
     fun testTotalKotlin() = test.testTotalKotlin()
@@ -44,6 +48,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit5Test<FirRe
 class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit5Test<NonFirResolveModularizedTotalKotlinTestPure>(
     NonFirResolveModularizedTotalKotlinTestPure(modularizedTestConfigFromSystemProperties())
 ) {
+    @Test
     fun testTotalKotlin() = test.testTotalKotlin()
 }
 
