@@ -87,6 +87,28 @@ internal val Project.runCommonizerTask: TaskProvider<Task>
 
 private const val commonizeCInteropTaskName = "commonizeCInterop"
 
+internal fun Project.nativeDownloadTask(): TaskProvider<KotlinNativeDownloadTask> {
+    return locateOrRegisterTask<KotlinNativeDownloadTask>(
+        "kotlinNativeDownload",
+        configureTask = {
+            launch {
+                val targets = multiplatformExtensionOrNull?.awaitTargets()?.toSet().orEmpty()
+                kotlinNativeProvider.set(
+                    KotlinNativeFromToolchainProvider(
+                        project,
+                        targets.filterIsInstance<KotlinNativeTarget>().map { it.konanTarget }.toSet(),
+                        kotlinNativeBundleBuildService,
+                        true
+                    )
+                )
+                val koanDir = kotlinNativeProvider.flatMap { (it as KotlinNativeFromToolchainProvider).actualNativeHomeDirectory }
+                nativeDirectory.set(koanDir.get())
+            }
+        }
+    )
+
+}
+
 internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommonizerTask>? {
     if (cInteropCommonizationEnabled()) {
         return locateOrRegisterTask(
@@ -107,6 +129,7 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
                 kotlinCompilerArgumentsLogLevel
                     .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                     .finalizeValueOnRead()
+                dependsOn(nativeDownloadTask())
             }
         )
     }
@@ -149,8 +172,8 @@ private fun getCommonizedPlatformLibrariesFor(commonizerFile: File, target: Shar
     return targetOutputDirectory.listLibraryFiles()
 }
 
-private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
-    .filter { it.isDirectory || it.extension == "klib" }
+//private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
+//    .filter { it.isDirectory || it.extension == "klib" }
 
 private val Project.addCommonizerTaskToProject
     get() = if (kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {

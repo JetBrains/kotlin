@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -31,14 +32,14 @@ import java.io.File
 internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetupAction {
     val kotlin = multiplatformExtensionOrNull ?: return@KotlinProjectSetupAction
 
-//    val stdlib = project.files(project.konanDistribution.stdlib)
-//    kotlin.targets.all { target ->
-//        target.compilations.all { compilation ->
-//            if (compilation is AbstractKotlinNativeCompilation) {
-//                launch { compilation.configureStdlibAndPlatformDependencies(stdlib) }
-//            }
-//        }
-//    }
+    val stdlib = project.files(project.konanDistribution.stdlib)
+    kotlin.targets.all { target ->
+        target.compilations.all { compilation ->
+            if (compilation is AbstractKotlinNativeCompilation) {
+                launch { compilation.configureStdlibAndPlatformDependencies(stdlib) }
+            }
+        }
+    }
 
     launch { kotlin.excludeStdlibFromNativeSourceSetDependencies() }
 }
@@ -103,12 +104,10 @@ private suspend fun KotlinMultiplatformExtension.excludeStdlibFromNativeSourceSe
 ////    }
 //}
 
-internal fun Project.getNativeDistributionDependencies(konanDistribution: Provider<KonanDistribution>, target: CommonizerTarget): FileCollection {
+internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget): FileCollection {
     return when (target) {
-        is LeafCommonizerTarget -> project.objects.getOriginalPlatformLibrariesFor(
-            konanDistribution,
-            target
-        )
+        is LeafCommonizerTarget -> project.getOriginalPlatformLibrariesFor(target.konanTarget)
+
         is SharedCommonizerTarget -> {
             val klibs = project.commonizedNativeDistributionKlibsOrNull(target) ?: return objects.fileCollection()
             objects.fileCollection().from(klibs)
@@ -122,17 +121,33 @@ private fun ObjectFactory.getOriginalPlatformLibrariesFor(
 ): FileCollection =
     getOriginalPlatformLibrariesFor(konanDistribution, target.konanTarget)
 
+
+internal fun Project.getOriginalPlatformLibrariesFor(
+    konanTarget: KonanTarget,
+): FileCollection {
+    val kotlinNativeDownloadTask = tasks.named("kotlinNativeDownload", KotlinNativeDownloadTask::class.java)
+    return objects.fileCollection()
+        .from(
+            kotlinNativeDownloadTask.map { it.getPlatformDependencies(konanTarget.name)},
+        )
+}
+
 internal fun ObjectFactory.getOriginalPlatformLibrariesFor(
     konanDistribution: Provider<KonanDistribution>,
     konanTarget: KonanTarget,
+//    taskProvider: KotlinNativeBundleBuildService? = null,
 ): FileCollection =
     fileCollection()
         .from(
-            konanDistribution.map { it.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet() }
+            konanDistribution.map {
+//                println(Thread.currentThread().stackTrace.joinToString("\n") { it.toString() })
+//                Thread.dumpStack()
+                it.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
+            }
         )
 
 
-private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
+fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
     .filter { it.isDirectory || it.extension == "klib" }//TODO functional test for
 
 /**

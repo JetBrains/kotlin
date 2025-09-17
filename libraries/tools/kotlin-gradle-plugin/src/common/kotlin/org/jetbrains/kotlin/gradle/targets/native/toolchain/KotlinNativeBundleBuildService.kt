@@ -107,10 +107,9 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
             commonizerTarget: CommonizerTarget,
             kotlinNativeBundleBuildService: Provider<KotlinNativeBundleBuildService>,
         ): FileCollection {
-            val kotlinNativeProvider =
-                KotlinNativeFromToolchainProvider(project, commonizerTarget.konanTargets, kotlinNativeBundleBuildService)
+            KotlinNativeFromToolchainProvider(project, commonizerTarget.konanTargets, kotlinNativeBundleBuildService)
             return project.getNativeDistributionDependencies(
-                kotlinNativeProvider.konanDistributionProvider,
+//                kotlinNativeProvider.konanDistributionProvider,
                 commonizerTarget
             )
         }
