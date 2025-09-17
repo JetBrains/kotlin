@@ -27,7 +27,7 @@ internal val InternalKotlinSourceSet.metadataTransformation: GranularMetadataTra
     }
 
     val granularMetadataTransformation = GranularMetadataTransformation(
-        params = GranularMetadataTransformation.Params(project, this, transformProjectDependencies = false),
+        params = GranularMetadataTransformation.Params(project, this, transformProjectDependenciesWithSourceSetMetadataOutputs = false),
         parentSourceSetVisibilityProvider = parentSourceSetVisibilityProvider,
     )
 

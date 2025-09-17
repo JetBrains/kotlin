@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordi
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -120,12 +119,12 @@ internal class GranularMetadataTransformation(
         val objects: ObjectFactory,
         val kotlinKmpProjectIsolationEnabled: Boolean,
         val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
-        val transformProjectDependencies: Boolean,
+        val transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean,
         val uklibFragmentAttributes: Set<String>,
         val computeTransformedLibraryChecksum: Boolean,
         val kmpResolutionStrategy: KmpResolutionStrategy,
     ) {
-        constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependencies: Boolean = true) : this(
+        constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
             build = project.currentBuild,
             sourceSetName = kotlinSourceSet.name,
             resolvedMetadataConfiguration = LazyResolvedConfiguration(kotlinSourceSet.internal.resolvableMetadataConfiguration),
@@ -145,7 +144,7 @@ internal class GranularMetadataTransformation(
             kotlinKmpProjectIsolationEnabled = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled,
             sourceSetMetadataLocationsOfProjectDependencies = project.kotlinSecondaryVariantsDataSharing
                 .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration),
-            transformProjectDependencies = transformProjectDependencies,
+            transformProjectDependenciesWithSourceSetMetadataOutputs = transformProjectDependenciesWithSourceSetMetadataOutputs,
             uklibFragmentAttributes = kotlinSourceSet.metadataFragmentAttributes.map { it.convertToStringForConsumption() }.toSet(),
             computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
@@ -418,7 +417,7 @@ internal class GranularMetadataTransformation(
         val moduleId = module.id
 
         return if (moduleId is ProjectComponentIdentifier && moduleId in params.build) {
-            if (!params.transformProjectDependencies) {
+            if (!params.transformProjectDependenciesWithSourceSetMetadataOutputs) {
                 logger.debug("Skip $dependency because transformProjectDependencies is false")
                 return ProjectMetadataProvider(emptyMap())
             }
