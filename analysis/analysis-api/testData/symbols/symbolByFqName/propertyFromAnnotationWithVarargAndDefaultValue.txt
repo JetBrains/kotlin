@@ -63,7 +63,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.Anno
     getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false

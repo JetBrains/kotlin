@@ -63,7 +63,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -171,7 +171,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -279,7 +279,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -439,8 +439,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: Abc
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
-      importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-
+      importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -451,7 +450,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -495,8 +494,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol cannot be cast to org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -1033,7 +1031,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
-          importableFqName: special.accessor
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -1169,7 +1167,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
-          importableFqName: special.accessor
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -1305,7 +1303,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
-          importableFqName: special.accessor
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false

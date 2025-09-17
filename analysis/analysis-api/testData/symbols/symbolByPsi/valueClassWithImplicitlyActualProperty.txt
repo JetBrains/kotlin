@@ -89,7 +89,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: A
           getContainingModule: KaSourceModule "Sources of jvm"
           deprecationStatus: null
-          importableFqName: special.accessor
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -286,7 +286,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: B
           getContainingModule: KaSourceModule "Sources of jvm"
           deprecationStatus: null
-          importableFqName: special.accessor
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false

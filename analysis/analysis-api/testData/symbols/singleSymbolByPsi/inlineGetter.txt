@@ -55,7 +55,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: InlineGetterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: true
@@ -167,7 +167,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: InlineGetterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(inlineGetter.kt)

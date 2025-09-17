@@ -79,7 +79,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  importableFqName: special.anonymous
+  importableFqName: null
 
 KaLocalVariableSymbol:
   annotations: []
@@ -197,7 +197,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  importableFqName: special.anonymous
+  importableFqName: null
 
 KaLocalVariableSymbol:
   annotations: []
@@ -315,7 +315,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  importableFqName: special.anonymous
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []

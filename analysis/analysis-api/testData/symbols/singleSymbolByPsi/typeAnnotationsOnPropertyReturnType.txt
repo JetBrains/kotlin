@@ -69,7 +69,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: TypeAnnotationsOnPropertyReturnTypeKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false

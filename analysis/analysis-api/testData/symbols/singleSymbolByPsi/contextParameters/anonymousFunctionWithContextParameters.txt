@@ -137,4 +137,4 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  importableFqName: special.anonymous
+  importableFqName: null

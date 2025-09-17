@@ -89,7 +89,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
-          importableFqName: special.accessor
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -225,7 +225,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
-          importableFqName: special.accessor
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -361,7 +361,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: MyColor
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
-          importableFqName: special.accessor
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -491,7 +491,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  importableFqName: special.anonymous
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -554,7 +554,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: false
   hasGetter: true
   hasSetter: false
@@ -621,7 +621,7 @@ KaAnonymousFunctionSymbol:
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  importableFqName: special.anonymous
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -698,7 +698,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -811,7 +811,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: Some
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false

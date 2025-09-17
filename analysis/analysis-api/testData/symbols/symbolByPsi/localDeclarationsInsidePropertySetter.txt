@@ -173,7 +173,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: LocalDeclarationsInsidePropertySetterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -285,7 +285,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: LocalDeclarationsInsidePropertySetterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-    importableFqName: special.accessor
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(localDeclarationsInsidePropertySetter.kt)

@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -28,9 +29,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSymbolInformationProvider(
-    override val analysisSessionProvider: () -> KaFirSession
+    override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSymbolInformationProvider<KaFirSession>(), KaFirSessionComponent {
     private companion object {
         private val OBSOLETE_SYMBOL_DEPRECATION_INFO = SimpleDeprecationInfo(
@@ -137,7 +139,43 @@ internal class KaFirSymbolInformationProvider(
         get() = withValidityAssertion {
             when (this) {
                 is KaClassLikeSymbol -> classId?.asSingleFqName()
-                is KaCallableSymbol -> firSymbol.computeImportableName()
+                is KaConstructorSymbol -> containingClassId?.takeIf {
+                    context(analysisSession) {
+                        when (val containingDeclaration = containingDeclaration) {
+                            is KaNamedClassSymbol -> !containingDeclaration.isInner
+                            is KaTypeAliasSymbol -> true
+                            else -> false
+                        }
+                    }
+                }?.asSingleFqName()
+
+                is KaCallableSymbol -> {
+                    val callableId = callableId ?: return null
+                    if (callableId.classId == null) {
+                        // no containing class -> top level callable
+                        return callableId.asSingleFqName()
+                    }
+
+                    val containingClass = context(analysisSession) { containingDeclaration as? KaNamedClassSymbol } ?: return null
+                    val canBeImported = when (containingClass.classKind) {
+                        KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE, KaClassKind.ANNOTATION_CLASS -> when (this) {
+                            is KaNamedFunctionSymbol -> isStatic
+                            is KaJavaFieldSymbol -> isStatic
+                            is KaPropertySymbol -> isStatic
+                            is KaEnumEntrySymbol -> true
+                            else -> false
+                        }
+
+                        KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> true
+                        KaClassKind.ANONYMOUS_OBJECT -> errorWithAttachment("Anonymous object is not expected here since it cannot have ClassId") {
+                            withSymbolAttachment("symbol", analysisSession, this@importableFqName)
+                            withSymbolAttachment("containingClass", analysisSession, containingClass)
+                        }
+                    }
+
+                    if (canBeImported) callableId.asSingleFqName() else null
+                }
+
                 else -> null
             }
         }
