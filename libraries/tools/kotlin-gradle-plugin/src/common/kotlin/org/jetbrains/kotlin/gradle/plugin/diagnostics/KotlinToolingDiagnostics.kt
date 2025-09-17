@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CompilationDependenciesPair.Companion.toFormattedString
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
@@ -1227,7 +1228,22 @@ internal object KotlinToolingDiagnostics {
     data class CompilationDependenciesPair(
         val compilation: KotlinCompilation<*>,
         val dependencyCoords: List<String>,
-    )
+    ) {
+        companion object {
+            fun List<CompilationDependenciesPair>.toFormattedString(): String =
+                flatGroupBy(
+                    keySelector = { it.dependencyCoords },
+                    keyTransformer = { it },
+                    valueTransformer = { it.compilation.defaultSourceSet.name },
+                )
+                    .map { (dependency, sourceSetNames) ->
+                        "$dependency (source sets: ${sourceSetNames.joinToString()})"
+                    }
+                    .distinct()
+                    .sorted()
+                    .joinToString("\n") { "    - $it" }
+        }
+    }
 
     object IncorrectCompileOnlyDependencyWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
 
@@ -1241,18 +1257,7 @@ internal object KotlinToolingDiagnostics {
                 .sorted()
                 .joinToString()
 
-            val formattedCompileOnlyDeps = compilationsWithCompileOnlyDependencies
-                .flatGroupBy(
-                    keySelector = { it.dependencyCoords },
-                    keyTransformer = { it },
-                    valueTransformer = { it.compilation.defaultSourceSet.name },
-                )
-                .map { (dependency, sourceSetNames) ->
-                    "$dependency (source sets: ${sourceSetNames.joinToString()})"
-                }
-                .distinct()
-                .sorted()
-                .joinToString("\n") { "    - $it" }
+            val formattedDeps = compilationsWithCompileOnlyDependencies.toFormattedString()
 
             return build {
                 title("Unsupported `compileOnly` Dependencies in Kotlin Targets")
@@ -1260,7 +1265,7 @@ internal object KotlinToolingDiagnostics {
                         """
                         |A compileOnly dependency is used in targets: $formattedPlatformNames.
                         |Dependencies:
-                        |$formattedCompileOnlyDeps
+                        |$formattedDeps
                         |
                         |Using compileOnly dependencies in these targets is not currently supported, because compileOnly dependencies must be present during the compilation of projects that depend on this project.
                         |
@@ -1299,18 +1304,7 @@ internal object KotlinToolingDiagnostics {
             testCompilationsWithApiDependencies: List<CompilationDependenciesPair>,
         ): ToolingDiagnostic {
 
-            val formattedDeps = testCompilationsWithApiDependencies
-                .flatGroupBy(
-                    keySelector = { it.dependencyCoords },
-                    keyTransformer = { it },
-                    valueTransformer = { it.compilation.defaultSourceSet.name },
-                )
-                .map { (dependency, sourceSetNames) ->
-                    "$dependency (source sets: ${sourceSetNames.joinToString()})"
-                }
-                .distinct()
-                .sorted()
-                .joinToString("\n") { "    - $it" }
+            val formattedDeps = testCompilationsWithApiDependencies.toFormattedString()
 
             return build {
                 title("Unsupported API dependency types in test source sets")
