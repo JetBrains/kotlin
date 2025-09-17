@@ -8,11 +8,16 @@ package org.jetbrains.kotlin.js.parser.antlr
 import com.google.gwt.dev.js.rhino.CodePosition
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.Token
+import org.antlr.v4.runtime.tree.TerminalNode
+import org.jetbrains.kotlin.js.backend.ast.JsDoubleLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.js.backend.ast.JsNumberLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsParameter
+import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral
 import org.jetbrains.kotlin.js.backend.ast.JsVars
 import org.jetbrains.kotlin.js.backend.ast.SourceInfoAwareJsNode
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
@@ -61,3 +66,29 @@ internal fun <T : JsNode> T.applyLocation(fileName: String, sourceNode: ParserRu
                 targetNode.expression.source = jsLocation
         }
     }
+
+internal fun unwrapStringLiteral(literal: TerminalNode): String {
+    if (literal.text.startsWith("'") && literal.text.endsWith("'"))
+        return literal.text.removeSurrounding("'")
+
+    if (literal.text.startsWith("\"") && literal.text.endsWith("\""))
+        return literal.text.removeSurrounding("\"")
+
+    return literal.text
+}
+
+internal fun TerminalNode.toStringLiteral(): JsStringLiteral {
+    return JsStringLiteral(unwrapStringLiteral(this))
+}
+
+internal fun TerminalNode.toDecimalLiteral(): JsNumberLiteral {
+    val intValue = text.toIntOrNull()
+    if (intValue != null)
+        return JsIntLiteral(intValue)
+
+    return JsDoubleLiteral(text.toDouble())
+}
+
+internal fun TerminalNode.toHexLiteral(): JsIntLiteral {
+    return JsIntLiteral(text.removePrefix("0x").removePrefix("0X").hexToInt())
+}

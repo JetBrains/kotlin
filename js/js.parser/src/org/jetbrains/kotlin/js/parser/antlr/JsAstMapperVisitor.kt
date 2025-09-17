@@ -917,8 +917,8 @@ class JsAstMapperVisitor(
             }
         }
 
-        ctx.StringLiteral()?.run {
-            return JsStringLiteral(text)
+        ctx.StringLiteral()?.let {
+            return it.toStringLiteral()
         }
 
         ctx.RegularExpressionLiteral()?.run {
@@ -1084,32 +1084,6 @@ class JsAstMapperVisitor(
 
     private fun makeRefNode(identifier: String): JsNameRef {
         return scopeContext.globalNameFor(identifier).makeRef()
-    }
-
-    private fun unwrapStringLiteral(literal: TerminalNode): String {
-        if (literal.text.startsWith("'") && literal.text.endsWith("'"))
-            return literal.text.removeSurrounding("'")
-
-        if (literal.text.startsWith("\"") && literal.text.endsWith("\""))
-            return literal.text.removeSurrounding("\"")
-
-        return literal.text
-    }
-
-    private fun TerminalNode.toStringLiteral(): JsStringLiteral {
-        return JsStringLiteral(unwrapStringLiteral(this))
-    }
-
-    private fun TerminalNode.toDecimalLiteral(): JsNumberLiteral {
-        val intValue = text.toIntOrNull()
-        if (intValue != null)
-            return JsIntLiteral(intValue)
-
-        return JsDoubleLiteral(text.toDouble())
-    }
-
-    private fun TerminalNode.toHexLiteral(): JsIntLiteral {
-        return JsIntLiteral(text.removePrefix("0x").removePrefix("0X").hexToInt())
     }
 
     private inline fun <reified T> visitNode(node: ParseTree): T =
