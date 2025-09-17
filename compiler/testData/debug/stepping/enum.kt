@@ -73,18 +73,6 @@ fun box() {
 // test.kt:10 $E.foo (5)
 // test.kt:23 $box (8)
 // test.kt:24 $box (7)
-
-// EXPECTATIONS ClassicFrontend WASM
-// test.kt:16 $E2_initEntries (4, 6, 4)
-// test.kt:15 $E2.<init> (14, 26)
-// test.kt:16 $E2_initEntries (4)
-// test.kt:17 $E2_initEntries (4)
-// test.kt:18 $E2_initEntries (8)
-// test.kt:17 $E2_initEntries (4)
-// test.kt:15 $E2.<init> (14, 26)
-// test.kt:17 $E2_initEntries (4)
-
-// EXPECTATIONS FIR WASM
 // test.kt:16 $E2_initEntries (5, 6, 5)
 // test.kt:15 $E2.<init> (14, 26)
 // test.kt:16 $E2_initEntries (5)
@@ -93,7 +81,5 @@ fun box() {
 // test.kt:17 $E2_initEntries (5)
 // test.kt:15 $E2.<init> (14, 26)
 // test.kt:17 $E2_initEntries (5)
-
-// EXPECTATIONS WASM
 // test.kt:24 $box (7)
 // test.kt:25 $box (1)

@@ -60,11 +60,7 @@ fun nop() {}
 // test.kt:5 box
 // test.kt:31 nop
 // test.kt:25 box
-// EXPECTATIONS FIR JS_IR
 // test.kt:9 box
-// EXPECTATIONS ClassicFrontend JS_IR
-// test.kt:8 box
-// EXPECTATIONS JS_IR
 // test.kt:12 box
 // test.kt:31 nop
 // test.kt:20 box
