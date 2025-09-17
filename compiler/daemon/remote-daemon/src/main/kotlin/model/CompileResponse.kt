@@ -16,7 +16,7 @@ fun CompileResponseProto.toDomain(): CompileResponse = when {
     hasFileTransferReply() -> fileTransferReply.toDomain()
     hasCompiledFileChunk() -> compiledFileChunk.toDomain()
     hasCompilerMessage() -> compilerMessage.toDomain()
-    hasMissingFilesRequest() -> missingFilesRequest.toDomain()
+    hasMissingArtifactsRequest() -> missingArtifactsRequest.toDomain()
     else -> throw IllegalStateException("Unknown CompileResponseGrpc type") // TODO fix
 }
 
@@ -25,5 +25,5 @@ fun CompileResponse.toProto(): CompileResponseProto = when (this) {
     is FileTransferReply -> CompileResponseProto.newBuilder().setFileTransferReply(toProto()).build()
     is FileChunk -> CompileResponseProto.newBuilder().setCompiledFileChunk(toProto()).build()
     is CompilerMessage -> CompileResponseProto.newBuilder().setCompilerMessage(toProto()).build()
-    is MissingFilesRequest -> CompileResponseProto.newBuilder().setMissingFilesRequest(toProto()).build()
+    is MissingArtifactsRequest -> CompileResponseProto.newBuilder().setMissingArtifactsRequest(toProto()).build()
 }

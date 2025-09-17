@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import model.Artifact
 import model.CompilationMetadata
 import model.CompilationResult
 import model.CompilationResultSource
@@ -28,7 +29,7 @@ import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
 import model.ArtifactType
-import model.MissingFilesRequest
+import model.MissingArtifactsRequest
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.Services
@@ -209,7 +210,7 @@ class RemoteCompilationServiceImpl(
                 )
 
                 if (remoteCompilationOptions is IncrementalCompilationOptions) {
-                    val numberOfMissingFiles = requestMissingFilesFromClient(remoteCompilerArguments, this@channelFlow)
+                    val numberOfMissingFiles = requestMissingArtifactsFromClient(remoteCompilerArguments, this@channelFlow)
                     debug("numberOfMissingFiles: $numberOfMissingFiles")
                     if (numberOfMissingFiles > 0) {
                         debug("Waiting for missing files...")
@@ -337,40 +338,30 @@ class RemoteCompilationServiceImpl(
         }
     }
 
-    suspend fun requestMissingFilesFromClient(args: K2JVMCompilerArguments, outputChannel: ProducerScope<CompileResponse>): Int {
+    suspend fun requestMissingArtifactsFromClient(args: K2JVMCompilerArguments, outputChannel: ProducerScope<CompileResponse>): Int {
+        val missingArtifactsMap = mutableMapOf<Path, MutableSet<ArtifactType>>()
+
         // TODO: maybe more reliable solution than prefix removal would be to use some kind of bidirectional hashmap of clientPath <---> userProjectPath
-        val missingDependencies = getMissingFiles(CompilerUtils.getDependencyFiles(args)).map {
-            workspaceManager.removeWorkspaceProjectPrefix(it.toPath()).toString()
-        }
-        val missingSources = getMissingFiles(CompilerUtils.getSourceFiles(args)).map {
-            workspaceManager.removeWorkspaceProjectPrefix(it.toPath()).toString()
-        }
-        val missingPluginFiles = getMissingFiles(CompilerUtils.getXPluginFiles(args)).map {
-            workspaceManager.removeWorkspaceProjectPrefix(it.toPath()).toString()
+        getMissingFiles(CompilerUtils.getDependencyFiles(args)).map {
+            val clientPath = workspaceManager.removeWorkspaceProjectPrefix(it.toPath())
+            missingArtifactsMap.getOrPut(clientPath) { mutableSetOf() }.add(ArtifactType.DEPENDENCY)
         }
 
-        if (missingDependencies.isNotEmpty()) {
-            outputChannel.send(
-                MissingFilesRequest(
-                    missingDependencies, ArtifactType.DEPENDENCY
-                )
-            )
+        getMissingFiles(CompilerUtils.getSourceFiles(args)).map {
+            val clientPath = workspaceManager.removeWorkspaceProjectPrefix(it.toPath())
+            missingArtifactsMap.getOrPut(clientPath) { mutableSetOf() }.add(ArtifactType.SOURCE)
         }
-        if (missingSources.isNotEmpty()) {
-            outputChannel.send(
-                MissingFilesRequest(
-                    missingSources, ArtifactType.SOURCE
-                )
-            )
+
+        getMissingFiles(CompilerUtils.getXPluginFiles(args)).map {
+            val clientPath = workspaceManager.removeWorkspaceProjectPrefix(it.toPath())
+            missingArtifactsMap.getOrPut(clientPath) { mutableSetOf() }.add(ArtifactType.COMPILER_PLUGIN)
         }
-        if (missingPluginFiles.isNotEmpty()) {
-            outputChannel.send(
-                MissingFilesRequest(
-                    missingPluginFiles, ArtifactType.COMPILER_PLUGIN
-                )
-            )
-        }
-        return missingDependencies.size + missingSources.size + missingPluginFiles.size
+
+        val allMissingArtifacts = missingArtifactsMap.map { Artifact(it.key.toFile(), it.value) }.toSet()
+
+        outputChannel.send(MissingArtifactsRequest(allMissingArtifacts))
+
+        return allMissingArtifacts.size
     }
 
     private fun getMissingFiles(files: List<File>): List<File> {

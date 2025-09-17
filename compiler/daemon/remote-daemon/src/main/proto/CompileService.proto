@@ -13,6 +13,11 @@ service CompileService {
   rpc Cleanup (google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
+message ArtifactProto {
+  string file_path = 1;
+  repeated ArtifactTypeProto artifact_types = 2;
+}
+
 message CompileRequestProto {
   oneof request_payload {
     CompilationMetadataProto metadata = 1;
@@ -27,7 +32,7 @@ message CompileResponseProto {
     FileChunkProto compiled_file_chunk = 2;
     FileTransferReplyProto file_transfer_reply = 3;
     CompilationResultProto compilation_result = 5;
-    MissingFilesRequestProto missing_files_request = 6;
+    MissingArtifactsRequestProto missing_artifacts_request = 6;
   }
 }
 
@@ -54,7 +59,7 @@ message CompilationResultProto{
   uint32 exit_code = 1;
   CompilationResultSourceProto result_source = 2;
   // TODO, here it would be maybe good to send info what chunking of source file do we use so client can process the files accordingly
-//  uint32 file_count = 2;
+  //  uint32 file_count = 2;
 }
 
 
@@ -85,9 +90,8 @@ enum ArtifactTypeProto {
   IC_CACHE = 6;
 }
 
-message MissingFilesRequestProto{
-  repeated string file_paths = 1;
-  ArtifactTypeProto artifact_type = 2;
+message MissingArtifactsRequestProto{
+  repeated ArtifactProto missing_artifacts = 1;
 }
 
 enum CompilerModeProto {
@@ -124,22 +128,10 @@ message FileTransferRequestProto{
   repeated ArtifactTypeProto artifact_types = 3;
 }
 
-message DirectoryTransferRequestProto{
-  string directory_path = 1;
-  string directory_fingerprint = 2;
-  ArtifactTypeProto artifact_type = 3;
-  repeated FileTransferRequestProto directory_files = 4;
-}
-
 message FileTransferReplyProto{
   string file_path = 1;
   bool is_present = 2;
   repeated ArtifactTypeProto artifact_types = 3;
-}
-
-message FileIdentifierProto {
-  string file_path = 1;
-  string file_fingerprint = 2;
 }
 
 message CompilerMessageSourceLocationProto {

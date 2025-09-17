@@ -35,7 +35,7 @@ import model.CompilerMessage
 import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
-import model.MissingFilesRequest
+import model.MissingArtifactsRequest
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
@@ -212,11 +212,8 @@ class RemoteCompilationClient(
                                 }
                             }
                         }
-                        is MissingFilesRequest -> {
-                            requestTransferOfArtifacts(
-                                it.filePaths.map { fp -> Artifact(File(fp), setOf(it.artifactType)) }.toSet(),
-                                requestChannel
-                            )
+                        is MissingArtifactsRequest -> {
+                            requestTransferOfArtifacts(it.missingArtifacts, requestChannel)
                         }
                         is CompilationResult -> {
                             compilationResult = it

@@ -5,9 +5,24 @@
 
 package model
 
+import org.jetbrains.kotlin.server.ArtifactProto
 import java.io.File
 
 data class Artifact(
     val file: File,
     val types: Set<ArtifactType>
 )
+
+fun Artifact.toProto(): ArtifactProto {
+    return ArtifactProto.newBuilder()
+        .addAllArtifactTypes(types.map { it.toProto() })
+        .setFilePath(file.path)
+        .build()
+}
+
+fun ArtifactProto.toDomain(): Artifact {
+    return Artifact(
+        File(filePath),
+        artifactTypesList.map { it.toDomain() }.toSet()
+    )
+}
