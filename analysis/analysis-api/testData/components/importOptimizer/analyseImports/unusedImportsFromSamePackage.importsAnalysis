@@ -1,9 +1,0 @@
-USED DECLARATIONS:
-
-Declaration: test.SamePackage
-By names: [SamePackage]
-
-Declaration: test.samePackage
-By names: [samePackage]
-
-UNRESOLVED NAMES:

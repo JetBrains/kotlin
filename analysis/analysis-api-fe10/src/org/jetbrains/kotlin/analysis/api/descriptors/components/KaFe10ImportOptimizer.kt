@@ -6,18 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaImportOptimizer
-import org.jetbrains.kotlin.analysis.api.components.KaImportOptimizerResult
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
@@ -25,10 +22,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 internal class KaFe10ImportOptimizer(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaBaseSessionComponent<KaFe10Session>(), KaImportOptimizer, KaFe10SessionComponent {
-    override fun analyzeImportsToOptimize(file: KtFile): KaImportOptimizerResult = withPsiValidityAssertion(file) {
-        error("FE10 implementation of KtImportOptimizer should not be called from anywhere")
-    }
-
     override val KaSymbol.importableFqName: FqName?
         get() = withValidityAssertion {
             require(this is KaFe10Symbol)
