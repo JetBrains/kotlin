@@ -1,20 +1,20 @@
 Module: main
 // CallableId=/typeOfX
-FUN name:typeOfX visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:typeOfX visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:true
   VALUE_PARAMETER kind:Regular name:x index:0 type:T1 of <root>.typeOfX
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun typeOfX <T1> (x: T1 of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun typeOfX <T1> (x: T1 of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>'
       CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
         TYPE_ARG T: T1 of <root>.typeOfX
 // CallableId=/typeOfPair
-FUN name:typeOfPair visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:typeOfPair visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:true
   TYPE_PARAMETER name:T3 index:1 variance: superTypes:[kotlin.Any?] reified:false
   VALUE_PARAMETER kind:Regular name:x index:0 type:T2 of <root>.typeOfPair
   VALUE_PARAMETER kind:Regular name:y index:1 type:kotlin.Any?
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun typeOfPair <T2, T3> (x: T2 of <root>.typeOfPair, y: kotlin.Any?): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun typeOfPair <T2, T3> (x: T2 of <root>.typeOfPair, y: kotlin.Any?): kotlin.reflect.KType [inline] declared in <root>'
       BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
         VAR IR_TEMPORARY_VARIABLE name:tmp0 type:<root>.Pair<T2 of <root>.typeOfPair, kotlin.Any?> [val]
           CONSTRUCTOR_CALL 'public constructor <init> (x: A of <root>.Pair, y: B of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<T2 of <root>.typeOfPair, kotlin.Any?> origin=null

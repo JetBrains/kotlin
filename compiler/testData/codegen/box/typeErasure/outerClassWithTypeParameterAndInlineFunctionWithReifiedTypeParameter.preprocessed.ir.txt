@@ -1,20 +1,20 @@
 Module: main
 // CallableId=/typeOfX
-FUN name:typeOfX visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:typeOfX visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:F index:0 variance: superTypes:[kotlin.Any?] reified:true
   VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.A<kotlin.Any?>
   VALUE_PARAMETER kind:Regular name:b index:1 type:F of <root>.typeOfX
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun typeOfX <F> (<this>: <root>.A<kotlin.Any?>, b: F of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun typeOfX <F> (<this>: <root>.A<kotlin.Any?>, b: F of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>'
       CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
         TYPE_ARG T: F of <root>.typeOfX
 // CallableId=/typeOfPair
-FUN name:typeOfPair visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:typeOfPair visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:F index:0 variance: superTypes:[kotlin.Any?] reified:true
   VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.A<kotlin.Any?>
   VALUE_PARAMETER kind:Regular name:b index:1 type:F of <root>.typeOfPair
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun typeOfPair <F> (<this>: <root>.A<kotlin.Any?>, b: F of <root>.typeOfPair): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun typeOfPair <F> (<this>: <root>.A<kotlin.Any?>, b: F of <root>.typeOfPair): kotlin.reflect.KType [inline] declared in <root>'
       BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
         VAR IR_TEMPORARY_VARIABLE name:tmp0 type:<root>.A<kotlin.Any?> [val]
           GET_VAR '<this>: <root>.A<kotlin.Any?> declared in <root>.typeOfPair' type=<root>.A<kotlin.Any?> origin=IMPLICIT_ARGUMENT
