@@ -426,6 +426,23 @@ class CompositionTests {
             Text("Not default")
         }
     }
+
+    // This test ensures that memoization is disabled in `try` expressions. It serves as a
+    // regression test against b/419049140.
+    @Test
+    fun testMemoizationIsDisabledInTryExpressions() = compositionTest {
+        fun foo(block: () -> Unit) {}
+
+        compose {
+            try {
+                if (true) {
+                    foo(block = {})
+                    throw IllegalArgumentException("")
+                }
+            } catch (ignored: Exception) {
+            }
+        }
+    }
 }
 
 @Composable
@@ -463,7 +480,7 @@ class CrossInlineState(content: @Composable () -> Unit = { }) {
 
 public inline fun inlineWithNoinlineDefault(
     noinline default: @Composable (() -> Unit)? = { Text("Default") },
-    content: (@Composable (() -> Unit)?) -> Unit
+    content: (@Composable (() -> Unit)?) -> Unit,
 ) {
     content(default)
 }
@@ -521,11 +538,12 @@ fun RestartableVararg(vararg states: State<Unit> = emptyArray(), invoke: () -> U
 }
 
 interface Presenter {
-    @Composable fun Content()
+    @Composable
+    fun Content()
 }
 
 class PresenterImpl(
-    private val onCompose: () -> Unit
+    private val onCompose: () -> Unit,
 ) : Presenter {
     @Composable
     override fun Content() {
@@ -550,10 +568,10 @@ fun TwoRemembers(): String {
 @Composable
 fun TwoLambdas(
     lambda1: () -> Unit,
-    lambda2: (Int) -> Unit
+    lambda2: (Int) -> Unit,
 ) {
     use(lambda1)
     use(lambda2)
 }
 
-private fun use(value: Any?) { }
+private fun use(value: Any?) {}
