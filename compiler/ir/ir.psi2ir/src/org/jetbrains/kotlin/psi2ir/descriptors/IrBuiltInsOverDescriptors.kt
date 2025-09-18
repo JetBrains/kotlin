@@ -597,9 +597,6 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
     internal fun builtInsPackage(vararg packageNameSegments: String) =
         builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 
-    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
-        symbolTable.descriptorExtension.referenceSimpleFunction(property.descriptor.getter!!)
-
     private fun getClassDescriptor(classId: ClassId) : ClassDescriptor? {
         val parentClassId = classId.parentClassId
         return if (parentClassId == null) {
