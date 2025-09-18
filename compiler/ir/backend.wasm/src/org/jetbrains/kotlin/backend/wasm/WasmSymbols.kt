@@ -326,6 +326,7 @@ class WasmSymbols(
         val numberToDoubleAdapter = getInternalFunction("numberToDoubleAdapter")
 
         val jsCheckIsNullOrUndefinedAdapter = getInternalFunction("jsCheckIsNullOrUndefinedAdapter")
+        val jsCheckIsNullOrUndefinedShareableAdapter = getInternalFunction("jsCheckIsNullOrUndefinedShareableAdapter")
 
         val jsToKotlinStringAdapter = getInternalFunction("jsToKotlinStringAdapter")
         val jsToKotlinAnyAdapter = getInternalFunction("jsToKotlinAnyAdapter")
@@ -375,6 +376,7 @@ class WasmSymbols(
         val jsCode = getFunction("js", kotlinJsPackageFqName)
 
         val jsReferenceClass by lazy { getIrClass(FqName("kotlin.js.JsReference")) }
+        val jsShareableAnyClass by lazy { getIrClass(FqName("kotlin.wasm.internal.JsShareableAny")) }
 
         val jsAnyType: IrType by lazy { getIrType("kotlin.js.JsAny") }
         val jsBooleanType: IrType by lazy { getIrType("kotlin.js.JsBoolean") }

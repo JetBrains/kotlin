@@ -144,6 +144,9 @@ private fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceTy
 internal fun isNullish(ref: ExternalInterfaceType?): Boolean =
     js("ref == null")
 
+internal fun isNullishShareable(ref: JsShareableAny?): Boolean =
+    js("ref == null")
+
 internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // TODO rewrite it so to get something like:
     // block {
@@ -211,6 +214,9 @@ internal fun kotlinToJsStringAdapter(x: String?): JsString? {
 internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): ExternalInterfaceType? =
     // We deliberately avoid usage of `takeIf` here as type erase on the inlining stage leads to infinite recursion
     if (isNullish(x)) null else x
+
+internal fun jsCheckIsNullOrUndefinedShareableAdapter(x: JsShareableAny?): JsShareableAny? =
+    if (isNullishShareable(x)) null else x
 
 // js string to kotlin string import
 // TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)

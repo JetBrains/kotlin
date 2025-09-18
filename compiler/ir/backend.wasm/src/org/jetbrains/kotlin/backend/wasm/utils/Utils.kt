@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.backend.wasm.utils
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrTry
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isFunctionMarker
+import org.jetbrains.kotlin.ir.util.isSubclassOf
 import java.util.Collections
 import java.util.IdentityHashMap
 
@@ -46,4 +47,8 @@ fun <T> identityHashSetOf(): MutableSet<T> =
 
 fun <T> identityHashSetOf(expectedMaxSize: Int): MutableSet<T> =
     Collections.newSetFromMap(IdentityHashMap<T, Boolean>(expectedMaxSize))
+
+internal fun IrClass.isJsShareable(symbols: WasmSymbols): Boolean =
+    isExternal && isSubclassOf(symbols.jsRelatedSymbols.jsShareableAnyClass.owner)
+
 

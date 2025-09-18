@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.wasm.topLevelFunctionForNestedExternal
 import org.jetbrains.kotlin.backend.wasm.utils.getJsBuiltinDescriptor
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
+import org.jetbrains.kotlin.backend.wasm.utils.isJsShareable
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -380,7 +381,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             )
         } else { //nullable reference should not be checked
             val nullableValueAdapter = valueAdapter?.let(::NullOrAdapter)
-            val undefinedToNullAdapter = FunctionBasedAdapter(adapters.jsCheckIsNullOrUndefinedAdapter.owner)
+            val undefinedToNullAdapter = FunctionBasedAdapter(notNullType.getJsCheckIsNullOrUndefinedAdapterFunction().owner)
             nullableValueAdapter
                 ?.let { CombineAdapter(it, undefinedToNullAdapter) }
                 ?: undefinedToNullAdapter
@@ -406,18 +407,19 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         // js value should convert undefined into null and the null-checked
         return CombineAdapter(
             outerAdapter = nullCheckedValueAdapter,
-            innerAdapter = FunctionBasedAdapter(adapters.jsCheckIsNullOrUndefinedAdapter.owner)
+            innerAdapter = FunctionBasedAdapter(notNullType.getJsCheckIsNullOrUndefinedAdapterFunction().owner)
         )
     }
+
+    private fun IrType.getJsCheckIsNullOrUndefinedAdapterFunction() =
+        if (getClass()?.isJsShareable(symbols) ?: false)
+            adapters.jsCheckIsNullOrUndefinedShareableAdapter
+        else
+            adapters.jsCheckIsNullOrUndefinedAdapter
 
     private fun IrType.jsToKotlinAdapterIfNeeded(isReturn: Boolean): InteropTypeAdapter? {
         if (isReturn && this == builtIns.unitType)
             return null
-
-        if (isReturn && this.erasedUpperBound.name.identifier == "JsReference" && context.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)) {
-            // FIXME currently adapters only work for non-shared types
-            return null
-        }
 
         val notNullType = makeNotNull()
         val valueAdapter = notNullType.jsToKotlinAdapterIfNeededNotNullable(isReturn)
