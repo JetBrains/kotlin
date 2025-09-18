@@ -717,152 +717,137 @@ class DurationTest {
         test(DurationUnit.NANOSECONDS, "-Infinity", "-Infinity")
     }
 
+    val MILLIS_IN_SECOND = 1000L
+    val MILLIS_IN_MINUTE = MILLIS_IN_SECOND * 60L
+    val MILLIS_IN_HOUR = MILLIS_IN_MINUTE * 60L
+    val MILLIS_IN_DAY = MILLIS_IN_HOUR * 24L
 
     @Test
     fun parseAndFormatDefault() {
-        fun testParsing(string: String, expectedDuration: Duration) {
-            assertEquals(expectedDuration, Duration.parse(string), string)
-            assertEquals(expectedDuration, Duration.parseOrNull(string), string)
-        }
+        testDefaultParsing(101.days, "101d", "2424h")
+        testDefaultParsing(45.3.days, "45d 7h 12m", "45.3d", "45d 7.2h") // 0.3d == 7.2h
+        testDefaultParsing(45.days, "45d")
 
-        fun test(duration: Duration, vararg expected: String) {
-            val actual = duration.toString()
-            assertEquals(expected.first(), actual)
+        testDefaultParsing(40.5.days, "40d 12h", "40.5d", "40d 720m")
+        testDefaultParsing(40.days + 20.minutes, "40d 0h 20m", "40d 20m", "40d 1200s")
+        testDefaultParsing(40.days + 20.seconds, "40d 0h 0m 20s", "40d 20s")
+        testDefaultParsing(40.days + 100.nanoseconds, "40d 0h 0m 0.000000100s", "40d 100ns")
 
-            if (duration.isPositive()) {
-                if (' ' in actual) {
-                    assertEquals("-($actual)", (-duration).toString())
-                } else {
-                    assertEquals("-$actual", (-duration).toString())
-                }
-            }
+        testDefaultParsing(40.hours + 15.minutes, "1d 16h 15m", "40h 15m")
+        testDefaultParsing(40.hours, "1d 16h", "40h")
 
-            for (string in expected) {
-                testParsing(string, duration)
-                if (duration.isPositive() && duration.isFinite()) {
-                    testParsing("+($string)", duration)
-                    testParsing("-($string)", -duration)
-                    if (' ' !in string) {
-                        testParsing("+$string", duration)
-                        testParsing("-$string", -duration)
-                    }
-                }
-            }
-        }
+        testDefaultParsing(12.5.hours, "12h 30m")
+        testDefaultParsing(12.hours + 15.seconds, "12h 0m 15s")
+        testDefaultParsing(12.hours + 1.nanoseconds, "12h 0m 0.000000001s")
+        testDefaultParsing(30.minutes, "30m")
+        testDefaultParsing(17.5.minutes, "17m 30s")
 
-        test(101.days, "101d", "2424h")
-        test(45.3.days, "45d 7h 12m", "45.3d", "45d 7.2h") // 0.3d == 7.2h
-        test(45.days, "45d")
+        testDefaultParsing(16.5.minutes, "16m 30s")
+        testDefaultParsing(1097.1.seconds, "18m 17.1s")
+        testDefaultParsing(90.36.seconds, "1m 30.36s")
+        testDefaultParsing(50.seconds, "50s")
+        testDefaultParsing(1.3.seconds, "1.3s")
+        testDefaultParsing(1.seconds, "1s")
 
-        test(40.5.days, "40d 12h", "40.5d", "40d 720m")
-        test(40.days + 20.minutes, "40d 0h 20m", "40d 20m", "40d 1200s")
-        test(40.days + 20.seconds, "40d 0h 0m 20s", "40d 20s")
-        test(40.days + 100.nanoseconds, "40d 0h 0m 0.000000100s", "40d 100ns")
+        testDefaultParsing(0.5.seconds, "500ms")
+        testDefaultParsing(40.2.milliseconds, "40.2ms")
+        testDefaultParsing(4.225.milliseconds, "4.225ms")
+        testDefaultParsing(4.24501.milliseconds, "4.245010ms", "4ms 245us 10ns")
+        testDefaultParsing(1.milliseconds, "1ms")
 
-        test(40.hours + 15.minutes, "1d 16h 15m", "40h 15m")
-        test(40.hours, "1d 16h", "40h")
+        testDefaultParsing(0.75.milliseconds, "750us")
+        testDefaultParsing(75.35.microseconds, "75.35us")
+        testDefaultParsing(7.25.microseconds, "7.25us")
+        testDefaultParsing(1.035.microseconds, "1.035us")
+        testDefaultParsing(1.005.microseconds, "1.005us")
+        testDefaultParsing(1800.nanoseconds, "1.8us", "1800ns", "0.0000000005h")
 
-        test(12.5.hours, "12h 30m")
-        test(12.hours + 15.seconds, "12h 0m 15s")
-        test(12.hours + 1.nanoseconds, "12h 0m 0.000000001s")
-        test(30.minutes, "30m")
-        test(17.5.minutes, "17m 30s")
-
-        test(16.5.minutes, "16m 30s")
-        test(1097.1.seconds, "18m 17.1s")
-        test(90.36.seconds, "1m 30.36s")
-        test(50.seconds, "50s")
-        test(1.3.seconds, "1.3s")
-        test(1.seconds, "1s")
-
-        test(0.5.seconds, "500ms")
-        test(40.2.milliseconds, "40.2ms")
-        test(4.225.milliseconds, "4.225ms")
-        test(4.24501.milliseconds, "4.245010ms", "4ms 245us 10ns")
-        test(1.milliseconds, "1ms")
-
-        test(0.75.milliseconds, "750us")
-        test(75.35.microseconds, "75.35us")
-        test(7.25.microseconds, "7.25us")
-        test(1.035.microseconds, "1.035us")
-        test(1.005.microseconds, "1.005us")
-        test(1800.nanoseconds, "1.8us", "1800ns", "0.0000000005h")
-
-        test(950.5.nanoseconds, "951ns")
-        test(85.23.nanoseconds, "85ns")
-        test(8.235.nanoseconds, "8ns")
-        test(1.nanoseconds, "1ns", "0.9ns", "0.001us", "0.0009us")
-        test(1.3.nanoseconds, "1ns")
-        test(0.75.nanoseconds, "1ns")
-        test(0.7512.nanoseconds, "1ns")
+        testDefaultParsing(950.5.nanoseconds, "951ns")
+        testDefaultParsing(85.23.nanoseconds, "85ns")
+        testDefaultParsing(8.235.nanoseconds, "8ns")
+        testDefaultParsing(1.nanoseconds, "1ns", "0.9ns", "0.001us", "0.0009us")
+        testDefaultParsing(1.3.nanoseconds, "1ns")
+        testDefaultParsing(0.75.nanoseconds, "1ns")
+        testDefaultParsing(0.7512.nanoseconds, "1ns")
 
         // equal to zero
-        test(0.023.nanoseconds, "0s", "0.023ns")
-        test(0.0034.nanoseconds, "0s", "0.0034ns")
-        test(0.0000035.nanoseconds, "0s", "0.0000035ns")
+        testDefaultParsing(Duration.ZERO, "0s", "0.4ns", "0000.0000ns")
+        testDefaultParsing(0.023.nanoseconds, "0s", "0.023ns")
+        testDefaultParsing(0.0034.nanoseconds, "0s", "0.0034ns")
+        testDefaultParsing(0.0000035.nanoseconds, "0s", "0.0000035ns")
 
-        test(Duration.ZERO, "0s", "0.4ns", "0000.0000ns")
-        test(365.days * 10000, "3650000d")
-        test(300.days * 100000, "30000000d")
-        test(365.days * 100000, "36500000d")
-        test((MAX_MILLIS - 1).milliseconds, "53375995583d 15h 36m 27.902s") // max finite value
+        testDefaultParsing(365.days * 10000, "3650000d")
+        testDefaultParsing(300.days * 100000, "30000000d")
+        testDefaultParsing(365.days * 100000, "36500000d")
+        testDefaultParsing((MAX_MILLIS - 1).milliseconds, "53375995583d 15h 36m 27.902s") // max finite value
 
-        test(10.days, "10d")
-        test(1.days + 12.hours, "1d 12h", "1d12h")
-        test((-5).days - 23.hours - 2.minutes, "-(5d 23h 2m)", "-5d23h2m")
-        test(9.days + 7.hours + 28.minutes + 6.seconds, "9d 7h 28m 6s", "8d 31h 28m 6s")
-        test(
+        testDefaultParsing(10.days, "10d")
+        testDefaultParsing(1.days + 12.hours, "1d 12h", "1d12h")
+        testDefaultParsing((-5).days - 23.hours - 2.minutes, "-(5d 23h 2m)", "-5d23h2m")
+        testDefaultParsing(9.days + 7.hours + 28.minutes + 6.seconds, "9d 7h 28m 6s", "8d 31h 28m 6s")
+        testDefaultParsing(
             15.days + 1.hours + 45.minutes + 31.seconds + 30123.microseconds,
             "15d 1h 45m 31.030123s",
             "15d 98m 451s 30.123ms"
         )
-        test(
+        testDefaultParsing(
             102.days + 9.hours + 12.minutes + 45.seconds + 31.milliseconds + 210.123.microseconds,
             "102d 9h 12m 45.031210123s",
             "100d 57h 12m 45s 28ms 3210.12345us"
         )
-        test(
+        testDefaultParsing(
             8771.days + 14.hours + 52.minutes + 42.seconds + 997.milliseconds + 438.microseconds + 653.nanoseconds,
             "8771d 14h 52m 42.997438653s",
             "8765d 151h 452m 1233s 9873ms 123451us 987653.12345678ns"
         )
-        test(
+        testDefaultParsing(
             -(1835.days + 14.hours + 27.minutes + 46.619332752.seconds),
             "-(1835d 14h 27m 46.619332752s)",
             "-(01257d  012395h 0087542m  000115874s 0871542ms  00951487us    000125845751.985487515ns)"
         )
-        test(
+        testDefaultParsing(
             219124.days + 8.hours + 54.minutes + 38.909.seconds,
             "219124d 8h 54m 38.909s",
             "12345678910ms 18901234567890123us 18765432109876543ns"
         )
-        test(
+        testDefaultParsing(
             10_000_000_000_000_100L.microseconds + 10_000_000_000_900_000L.nanoseconds,
             "115856d 11h 33m 20s",
             "10000000000000100us 10000000000900000ns"
         )
-        test(
+        testDefaultParsing(
             4602453423018496273.milliseconds + Long.MAX_VALUE.microseconds + Long.MAX_VALUE.nanoseconds,
             "53375995583d 15h 36m 27.902s",
             "4602453423018496273ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
         )
-        test(Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us")
+        testDefaultParsing(Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us")
+        testDefaultParsing(
+            1.days + 2.hours + 3.minutes + 4.seconds + 5.milliseconds + 6.microseconds + 7.nanoseconds,
+            "1d 2h 3m 4.005006007s",
+            "1d2h3m 4s 5ms 6us 7ns"
+        )
 
-        // nanoseconds rounding
-        for (i in 0..4) {
-            test(Duration.ZERO, "0s", "0.000000000${i}s", "0.000000${i}ms", "0.000${i}us", "0.${i}ns")
-            test(1.nanoseconds, "1ns", "0.000000000${i + 5}s", "0.000000${i + 5}ms", "0.000${i + 5}us", "0.${i + 5}ns")
-        }
-        for (i in 0..5) {
-            test(Duration.ZERO, "0s", "0.00000000000000${i}d")
-        }
-        for (i in 6..9) {
-            test(1.nanoseconds, "1ns", "0.00000000000000${i}d")
-        }
-        for (i in 0..8) {
-            test(Duration.ZERO, "0s", "0.00000000000013${i}h")
-        }
-        test(1.nanoseconds, "1ns", "0.000000000000139h")
+        // close to infinite
+        testDefaultParsing(
+            53375995583.days,
+            "${MAX_MILLIS / MILLIS_IN_DAY}d"
+        )
+        testDefaultParsing(
+            53375995583.days + 15.hours,
+            "53375995583d 15h", "${MAX_MILLIS / MILLIS_IN_HOUR}h"
+        )
+        testDefaultParsing(
+            53375995583.days + 15.hours + 36.minutes,
+            "53375995583d 15h 36m", "${MAX_MILLIS / MILLIS_IN_MINUTE}m"
+        )
+        testDefaultParsing(
+            53375995583.days + 15.hours + 36.minutes + 27.seconds,
+            "53375995583d 15h 36m 27s", "${MAX_MILLIS / MILLIS_IN_SECOND}s"
+        )
+        testDefaultParsing(
+            53375995583.days + 15.hours + 36.minutes + 27.seconds + 902.milliseconds,
+            "53375995583d 15h 36m 27.902s", "${MAX_MILLIS - 1}ms"
+        )
 
         // all infinite
 //        val universeAge = Duration.days(365.25) * 13.799e9
@@ -871,11 +856,31 @@ class DurationTest {
 //        test(universeAge, "5.04e+12d")
 //        test(planckTime, "5.40e-44s")
 //        test(Duration.nanoseconds(Double.MAX_VALUE), "2.08e+294d")
-        test(
+        testDefaultParsing(
             Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity", "123456789012345d 123456789012345h",
             "4602453423018496274ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
         )
-        test(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
+        testDefaultParsing(90_000_000_000_000.minutes, "Infinity", "90000000000000m")
+        testDefaultParsing((-90_000_000_000_000).minutes, "-Infinity", "-90000000000000m")
+        testDefaultParsing(
+            Duration.INFINITE, "Infinity", "${MAX_MILLIS / MILLIS_IN_DAY + 1}d", "${MAX_MILLIS / MILLIS_IN_HOUR + 1}h",
+            "${MAX_MILLIS / MILLIS_IN_MINUTE + 1}m", "${MAX_MILLIS / MILLIS_IN_SECOND + 1}s", "${MAX_MILLIS}ms"
+        )
+        testDefaultParsing(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
+    }
+
+    @Test
+    fun nanosecondsRounding() {
+        for (i in 0..4) {
+            testDefaultParsing(Duration.ZERO, "0s", "0.000000000${i}s", "0.000000${i}ms", "0.000${i}us", "0.${i}ns")
+            testDefaultParsing(1.nanoseconds, "1ns", "0.000000000${i + 5}s", "0.000000${i + 5}ms", "0.000${i + 5}us", "0.${i + 5}ns")
+            testDefaultParsing(1.seconds - 1.nanoseconds, "999.999999ms", "0.999999999${i}s")
+            testDefaultParsing(1.seconds, "1s", "0.999999999${i + 5}s")
+            testDefaultParsing(1.milliseconds - 1.nanoseconds, "999.999us", "0.999999${i}ms")
+            testDefaultParsing(1.milliseconds, "1ms", "0.999999${i + 5}ms")
+            testDefaultParsing(1.microseconds - 1.nanoseconds, "999ns", "0.999${i}us")
+            testDefaultParsing(1.microseconds, "1us", "0.999${i + 5}us")
+        }
     }
 
     @Test
@@ -895,7 +900,7 @@ class DurationTest {
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
             "PT1S2S", "PT1S2H",
             "P9999999999999DT-9999999999999H",
-            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S"
+            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
         )) {
             assertNull(Duration.parseOrNull(invalidValue), invalidValue)
             assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parse(invalidValue) }.let { e ->
@@ -904,4 +909,73 @@ class DurationTest {
         }
     }
 
+    @Test
+    fun parseComponentOrdering() {
+        val validDefaultFormat = listOf(
+            "1d 2h 3m 4s 5ms 6us 7ns",
+            "1d 2h 3m 4s",
+            "2h 3m 4s",
+            "3m 4s 5ms",
+            "4s 5ms 6us 7ns",
+            "1d 3m",
+            "1d 4s",
+            "2h 5ms",
+        )
+
+        for (valid in validDefaultFormat) {
+            assertNotNull(Duration.parseOrNull(valid), "Should parse valid ordering: $valid")
+            Duration.parse(valid)  // should not throw
+        }
+
+        val invalidDefaultFormat = listOf(
+            "1m 2h",
+            "1s 2m",
+            "1us 2ms",
+            "1ms 2s",
+            "1ns 2us",
+            "1h 2d",
+            "3m 2h 1d",
+            "1d 3m 2h",
+            "2h 4s 3m",
+            "1d 2h 3m 4s 3m",
+            "5ms 4s 3m 2h 1d",
+            "1ns 1us 1ms 1s 1m 1h 1d",
+        )
+
+        for (invalid in invalidDefaultFormat) {
+            assertNull(Duration.parseOrNull(invalid), "Should not parse invalid ordering: $invalid")
+            assertFailsWith<IllegalArgumentException>("Should throw for invalid ordering: $invalid") {
+                Duration.parse(invalid)
+            }
+        }
+
+        val validIsoFormat = listOf(
+            "P1DT2H3M4S",
+            "PT2H3M4S",
+            "PT3M4S",
+            "P1DT4S",
+            "PT2H4S",
+        )
+
+        for (valid in validIsoFormat) {
+            assertNotNull(Duration.parseIsoStringOrNull(valid), "Should parse valid ISO ordering: $valid")
+            Duration.parseIsoString(valid)  // should not throw
+        }
+
+        val invalidIsoFormat = listOf(
+            "PT1M2H",
+            "PT1S2M",
+            "PT2H1S3M",
+            "P1DT3M2H",
+            "PT1S2M3H",
+            "PT2H3M2H",
+        )
+
+        for (invalid in invalidIsoFormat) {
+            assertNull(Duration.parseIsoStringOrNull(invalid), "Should not parse invalid ISO ordering: $invalid")
+            assertFailsWith<IllegalArgumentException>("Should throw for invalid ISO ordering: $invalid") {
+                Duration.parseIsoString(invalid)
+            }
+        }
+    }
 }
