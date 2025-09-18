@@ -31,7 +31,7 @@ class JsPropertyAccessorInlineLowering(
             return true
 
         // Just undefined value
-        if (symbol == context.intrinsics.void) {
+        if (symbol == context.symbols.void) {
             return true
         }
 

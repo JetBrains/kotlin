@@ -23,12 +23,12 @@ class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) :
         } ?: throw AssertionError("Function not found: $fqn")
 
     private val helperMapping = mapOf(
-        context.irBuiltIns.checkNotNullSymbol to context.intrinsics.jsEnsureNonNull,
+        context.irBuiltIns.checkNotNullSymbol to context.symbols.jsEnsureNonNull,
         context.irBuiltIns.throwCceSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))),
         context.irBuiltIns.throwIseSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))),
         context.irBuiltIns.illegalArgumentExceptionSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_IAE"))),
         context.irBuiltIns.noWhenBranchMatchedExceptionSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException"))),
-        context.irBuiltIns.linkageErrorSymbol to context.intrinsics.linkageErrorSymbol
+        context.irBuiltIns.linkageErrorSymbol to context.symbols.linkageErrorSymbol
     )
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean) =

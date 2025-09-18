@@ -21,7 +21,7 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
 
     private val referenceBuilderSymbol = context.kpropertyBuilder
     private val localDelegateBuilderSymbol = context.klocalDelegateBuilder
-    private val jsClassSymbol = context.intrinsics.jsClass
+    private val jsClassSymbol = context.symbols.jsClass
 
     override fun IrBuilderWithScope.createKProperty(
         reference: IrRichPropertyReference,
