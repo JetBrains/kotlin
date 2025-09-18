@@ -1,6 +1,5 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
-// WITH_REFLECT
 // ISSUE: KT-48670
 @file:OptIn(ExperimentalStdlibApi::class)
 import kotlin.reflect.typeOf
@@ -15,10 +14,7 @@ fun box(): String {
         after != "kotlin.collections.List<kotlin.collections.List<U>>" &&
         // JS_IR, JS_IR_ES6
         before != "List<List<U>>" &&
-        after != "List<List<U>>" &&
-        // JVM_IR
-        before != "java.util.List<java.util.List<U>> (Kotlin reflection is not available)" &&
-        after != "java.util.List<java.util.List<U>> (Kotlin reflection is not available)")
+        after != "List<List<U>>")
         return "FAIL: $before, $after"
     return "OK"
 }

@@ -1,6 +1,5 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
-// WITH_REFLECT
 @file:OptIn(ExperimentalStdlibApi::class)
 import kotlin.reflect.typeOf
 
@@ -16,10 +15,7 @@ fun box(): String {
             after != "kotlin.Pair<kotlin.String, T3>" &&
             // JS_IR, JS_IR_ES6
             before != "Pair<String, T3>" &&
-            after != "Pair<String, T3>" &&
-            // JVM_IR
-            before != "kotlin.Pair<java.lang.String, T3> (Kotlin reflection is not available)" &&
-            after != "kotlin.Pair<java.lang.String, T3> (Kotlin reflection is not available)")
+            after != "Pair<String, T3>")
             return "FAIL: $before, $after"
     }
     return "OK"

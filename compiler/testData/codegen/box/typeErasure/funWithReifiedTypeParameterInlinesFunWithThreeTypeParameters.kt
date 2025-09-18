@@ -1,6 +1,5 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
-// WITH_REFLECT
 import kotlin.reflect.typeOf
 
 class Triple<A, B, C>(val x: A, val y: B, val z: C)
@@ -18,10 +17,7 @@ fun box() : String {
             triple2 != "Triple<kotlin.String, T3, kotlin.Int>" &&
             // JS_IR, JS_IR_ES6
             triple1 != "Triple<String, Int, T4>" &&
-            triple2 != "Triple<String, T3, Int>" &&
-            // JVM_IR
-            triple1 != "Triple<java.lang.String, java.lang.Integer, T4> (Kotlin reflection is not available)" &&
-            triple2 != "Triple<java.lang.String, T3, java.lang.Integer> (Kotlin reflection is not available)")
+            triple2 != "Triple<String, T3, Int>")
             return "FAIL: $triple1, $triple2"
     }
     return "OK"
