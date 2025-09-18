@@ -131,7 +131,6 @@ private class FunctionContext(
     val locals = mutableSetOf<IrValueDeclaration>()
     override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
     var collectors = mutableListOf<CaptureCollector>()
-    val canRemember: Boolean get() = composable
 
     init {
         declaration.parameters.forEach {
@@ -268,6 +267,11 @@ class ComposerLambdaMemoization(
     private val declarationContextStack = mutableListOf<DeclarationContext>()
 
     private var currentFunctionContext: FunctionContext? = null
+
+    private var numEnclosingTryBlocks = 0
+
+    // Composable function invocations are not allowed in `try` blocks, so memoization is not allowed in them.
+    private val canRememberInCurrentScope: Boolean get() = numEnclosingTryBlocks == 0 && currentFunctionContext?.composable == true
 
     private var composableSingletonsClass: IrClass? = null
     private var currentFile: IrFile? = null
@@ -454,6 +458,19 @@ class ComposerLambdaMemoization(
         return result
     }
 
+    override fun visitTry(aTry: IrTry): IrExpression {
+        numEnclosingTryBlocks++
+        super.visitExpression(aTry.tryResult)
+        numEnclosingTryBlocks--
+
+        aTry.catches.forEach { super.visitCatch(it) }
+        if (aTry.finallyExpression != null) {
+            super.visitExpression(aTry.finallyExpression!!)
+        }
+
+        return aTry
+    }
+
     override fun visitVariable(declaration: IrVariable): IrStatement {
         currentFunctionContext?.declareLocal(declaration)
         return super.visitVariable(declaration)
@@ -526,7 +543,7 @@ class ComposerLambdaMemoization(
         // The syntax <expr>::<method>(<params>) and ::<function>(<params>) is reserved for
         // future use. Revisit implementation if this syntax is as a curry syntax in the future.
 
-        if (functionContext.canRemember) {
+        if (canRememberInCurrentScope) {
             // Memoize the reference for <expr>::<method>
             val argumentsAreNull = reference.arguments.all { it == null }
             val argumentsAreNullOrStable = reference.arguments.all { it.isNullOrStable() }
@@ -576,7 +593,7 @@ class ComposerLambdaMemoization(
         // We only need to make sure that remember is handled correctly around type operator
         if (
             expression.operator != IrTypeOperator.SAM_CONVERSION ||
-            currentFunctionContext?.canRemember != true
+            !canRememberInCurrentScope
         ) {
             return super.visitTypeOperator(expression)
         }
@@ -642,7 +659,7 @@ class ComposerLambdaMemoization(
 
         if (
         // Only memoize non-composable lambdas in a context we can use remember
-            !functionContext.canRemember ||
+            !canRememberInCurrentScope ||
             // Don't memoize inlined lambdas
             inlineLambdaInfo.isInlineLambda(expression.function)
         ) {

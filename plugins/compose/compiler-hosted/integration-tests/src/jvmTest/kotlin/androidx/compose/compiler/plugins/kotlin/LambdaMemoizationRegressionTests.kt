@@ -77,4 +77,43 @@ class LambdaMemoizationRegressionTests(useFir: Boolean) : AbstractIrTransformTes
             }
         """
     )
+
+    // This test ensures that memoization is disabled in `try` blocks. It serves as a regression
+    // test against b/419049140.
+    @Test
+    fun testMemoizationIsDisabledInTryBlocks() = verifyGoldenComposeIrTransform(
+        extra = """
+            fun Foo(block: () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                try {
+                    try {
+                        if (true) {
+                            Foo(block = {})
+                        }
+                    } catch (ignored: Exception) {
+                        if (true) {
+                            Foo(block = {})
+                        }
+                    } finally {
+                        if (true) {
+                            Foo(block = {})
+                        }
+                    }
+                } catch (ignored: Exception) {
+                    if (true) {
+                        Foo(block = {})
+                    }
+                } finally {
+                    if (true) {
+                        Foo(block = {})
+                    }
+                }
+            }
+        """
+    )
 }
