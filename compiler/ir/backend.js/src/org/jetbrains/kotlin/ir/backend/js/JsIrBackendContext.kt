@@ -120,9 +120,8 @@ class JsIrBackendContext(
     private val internalPackage = module.getPackage(JsStandardClassIds.BASE_JS_PACKAGE)
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
-    val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, configuration.compileLongAsBigint)
 
-    override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
+    override val reflectionSymbols: ReflectionSymbols get() = symbols.reflectionSymbols
 
     override val propertyLazyInitialization: PropertyLazyInitialization = PropertyLazyInitialization(
         enabled = configuration.get(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true),
@@ -154,15 +153,15 @@ class JsIrBackendContext(
                 }
         }
 
-    override val jsPromiseSymbol: IrClassSymbol?
-        get() = intrinsics.promiseClassSymbol
+    override val jsPromiseSymbol: IrClassSymbol
+        get() = symbols.promiseClassSymbol
 
     override val enumEntries = getIrClass(StandardClassIds.BASE_ENUMS_PACKAGE.child(Name.identifier("EnumEntries")))
     override val createEnumEntries = getFunctions(StandardClassIds.BASE_ENUMS_PACKAGE.child(Name.identifier("enumEntries")))
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
         .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
-    override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, intrinsics)
+    override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, configuration.compileLongAsBigint)
 
     override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
 

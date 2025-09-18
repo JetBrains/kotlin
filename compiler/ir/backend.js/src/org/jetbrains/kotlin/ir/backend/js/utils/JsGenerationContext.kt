@@ -95,7 +95,7 @@ class JsGenerationContext(
         }
     }
 
-    fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode
+    fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.symbols.jsCode
 
     fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean {
         return staticContext.backendContext.getJsCodeForFunction(symbol) != null

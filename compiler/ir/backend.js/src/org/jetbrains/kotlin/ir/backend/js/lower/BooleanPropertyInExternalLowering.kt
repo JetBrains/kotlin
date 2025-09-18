@@ -72,7 +72,7 @@ class BooleanPropertyInExternalLowering(
 
             if (safeExternalBoolean && function == null) {
                 return JsIrBuilder.buildCall(
-                    target = context.intrinsics.jsNativeBoolean
+                    target = context.symbols.jsNativeBoolean
                 ).apply {
                     arguments[0] = expression
                 }
@@ -91,7 +91,7 @@ class BooleanPropertyInExternalLowering(
 
                 val newBooleanGet = if (safeExternalBoolean) {
                     JsIrBuilder.buildCall(
-                        target = this@ExternalBooleanPropertyProcessor.context.intrinsics.jsNativeBoolean
+                        target = this@ExternalBooleanPropertyProcessor.context.symbols.jsNativeBoolean
                     ).apply {
                         arguments[0] = irGet(tmp)
                     }
@@ -101,8 +101,8 @@ class BooleanPropertyInExternalLowering(
         }
 
         private fun RuntimeDiagnostic.diagnosticMethod() = when (this) {
-            RuntimeDiagnostic.LOG -> context.intrinsics.jsBooleanInExternalLog
-            RuntimeDiagnostic.EXCEPTION -> context.intrinsics.jsBooleanInExternalException
+            RuntimeDiagnostic.LOG -> context.symbols.jsBooleanInExternalLog
+            RuntimeDiagnostic.EXCEPTION -> context.symbols.jsBooleanInExternalException
         }
     }
 }

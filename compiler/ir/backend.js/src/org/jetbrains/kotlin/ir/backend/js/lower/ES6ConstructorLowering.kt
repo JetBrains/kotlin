@@ -161,7 +161,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                     context.irFactory.createBlockBody(it.startOffset, it.endOffset) {
                         val selfReplacedConstructorCall = JsIrBuilder.buildCall(factoryFunction.symbol)
                             .setFactoryFunctionArguments(
-                                JsIrBuilder.buildCall(context.intrinsics.jsNewTarget),
+                                JsIrBuilder.buildCall(context.symbols.jsNewTarget),
                                 parameters.map { parameter -> JsIrBuilder.buildGetValue(parameter.symbol) } + context.getVoid(),
                             )
                         statements.add(JsIrBuilder.buildReturn(symbol, selfReplacedConstructorCall, returnType))
@@ -320,7 +320,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
 
                 val newThisValue = when {
                     constructor.isEffectivelyExternal() ->
-                        JsIrBuilder.buildCall(context.intrinsics.jsCreateExternalThisSymbol)
+                        JsIrBuilder.buildCall(context.symbols.jsCreateExternalThisSymbol)
                             .apply {
                                 originalConstructor = constructor
                                 arguments[0] = getCurrentConstructorReference(constructorReplacement)
@@ -329,7 +329,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                                 arguments[3] = boxParameterGetter
                             }
                     constructor.parentAsClass.symbol == context.irBuiltIns.anyClass ->
-                        JsIrBuilder.buildCall(context.intrinsics.jsCreateThisSymbol)
+                        JsIrBuilder.buildCall(context.symbols.jsCreateThisSymbol)
                             .apply {
                                 arguments[0] = getCurrentConstructorReference(constructorReplacement)
                                 arguments[1] = boxParameterGetter
@@ -369,7 +369,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     }
 
     private fun IrDeclaration.excludeFromExport() {
-        val jsExportIgnoreClass = context.intrinsics.jsExportIgnoreAnnotationSymbol.owner
+        val jsExportIgnoreClass = context.symbols.jsExportIgnoreAnnotationSymbol.owner
         val jsExportIgnoreCtor = jsExportIgnoreClass.primaryConstructor ?: return
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsExportIgnoreCtor.symbol)
     }

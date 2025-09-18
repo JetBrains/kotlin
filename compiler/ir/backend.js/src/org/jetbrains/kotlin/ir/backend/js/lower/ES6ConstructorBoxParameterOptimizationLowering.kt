@@ -148,8 +148,8 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
     }
 
     private val IrCall.isSuperCallWithBoxParameter: Boolean
-        get() = symbol == context.intrinsics.jsCreateThisSymbol ||
-                symbol == context.intrinsics.jsCreateExternalThisSymbol ||
+        get() = symbol == context.symbols.jsCreateThisSymbol ||
+                symbol == context.symbols.jsCreateExternalThisSymbol ||
                 symbol.owner.isEs6ConstructorReplacement && symbol.owner.boxParameter != null
 
     private fun IrCall.replaceCalleeIfNeeded(): IrCall {

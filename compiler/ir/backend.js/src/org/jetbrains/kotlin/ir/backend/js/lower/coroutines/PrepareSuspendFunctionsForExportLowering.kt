@@ -120,15 +120,15 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
     }
 
     private val dynamicType = context.dynamicType
-    private val promiseClass = context.intrinsics.promiseClassSymbol
-    private val jsNameAnnotation = context.intrinsics.jsNameAnnotationSymbol.owner.constructors.single()
-    private val jsExportAnnotation = context.intrinsics.jsExportAnnotationSymbol.owner.constructors.single()
-    private val awaitFunctionSymbol = context.intrinsics.awaitFunctionSymbol
-    private val jsClassFunctionSymbol = context.intrinsics.jsClass
-    private val jsEqeqeqFunctionSymbol = context.intrinsics.jsEqeqeq
-    private val promisifyFunctionSymbol = context.intrinsics.promisifyFunctionSymbol
-    private val jsExportIgnoreAnnotation = context.intrinsics.jsExportIgnoreAnnotationSymbol.owner.constructors.single()
-    private val jsPrototypeFunctionSymbol = context.intrinsics.jsPrototypeOfSymbol
+    private val promiseClass = context.symbols.promiseClassSymbol
+    private val jsNameAnnotation = context.symbols.jsNameAnnotationSymbol.owner.constructors.single()
+    private val jsExportAnnotation = context.symbols.jsExportAnnotationSymbol.owner.constructors.single()
+    private val awaitFunctionSymbol = context.symbols.awaitFunctionSymbol
+    private val jsClassFunctionSymbol = context.symbols.jsClass
+    private val jsEqeqeqFunctionSymbol = context.symbols.jsEqeqeq
+    private val promisifyFunctionSymbol = context.symbols.promisifyFunctionSymbol
+    private val jsExportIgnoreAnnotation = context.symbols.jsExportIgnoreAnnotationSymbol.owner.constructors.single()
+    private val jsPrototypeFunctionSymbol = context.symbols.jsPrototypeOfSymbol
     private val suspendFunctionClassSymbol = context.irBuiltIns.suspendFunctionN(0).symbol
 
     private val IrOverridableDeclaration<*>.isInterfaceMethod: Boolean
@@ -343,7 +343,7 @@ class ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall(private val contex
  * If we do this to early (during the first lowering, as an example) the [isExportedSuspendFunction] will always return `false`
  **/
 class IgnoreOriginalSuspendFunctionsThatWereExportedLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private val jsExportIgnoreAnnotation = context.intrinsics.jsExportIgnoreAnnotationSymbol.owner.constructors.single()
+    private val jsExportIgnoreAnnotation = context.symbols.jsExportIgnoreAnnotationSymbol.owner.constructors.single()
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrSimpleFunction && declaration.isExportedSuspendFunction(context)) {

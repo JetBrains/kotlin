@@ -36,7 +36,7 @@ class CaptureStackTraceInThrowables(val context: JsIrBackendContext) : BodyLower
         val statements = (irBody as? IrBlockBody)?.statements ?: return
         val delegatingConstructorCallIndex = statements.indexOfLast { it is IrDelegatingConstructorCall }
 
-        statements.add(delegatingConstructorCallIndex + 1, JsIrBuilder.buildCall(context.intrinsics.captureStack).also { call ->
+        statements.add(delegatingConstructorCallIndex + 1, JsIrBuilder.buildCall(context.symbols.captureStack).also { call ->
             val self = klass.thisReceiver!!.symbol
 
             val constructorRef = if (context.es6mode) {

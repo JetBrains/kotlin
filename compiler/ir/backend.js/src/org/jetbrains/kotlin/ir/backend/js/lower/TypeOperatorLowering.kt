@@ -46,16 +46,16 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val eqeq = context.irBuiltIns.eqeqSymbol
     private val booleanNot = context.irBuiltIns.booleanNotSymbol
 
-    private val isInterfaceSymbol get() = context.intrinsics.isInterfaceSymbol
-    private val isArraySymbol get() = context.intrinsics.isArraySymbol
-    private val isSuspendFunctionSymbol = context.intrinsics.isSuspendFunctionSymbol
+    private val isInterfaceSymbol get() = context.symbols.isInterfaceSymbol
+    private val isArraySymbol get() = context.symbols.isArraySymbol
+    private val isSuspendFunctionSymbol = context.symbols.isSuspendFunctionSymbol
 
-    //    private val isCharSymbol get() = context.intrinsics.isCharSymbol
+    //    private val isCharSymbol get() = context.symbols.isCharSymbol
 
-    private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf
-    private val isExternalObjectSymbol = context.intrinsics.isExternalObject
-    private val typeOfIntrinsicSymbol = context.intrinsics.jsTypeOf
-    private val jsClassIntrinsicSymbol = context.intrinsics.jsClass
+    private val instanceOfIntrinsicSymbol = context.symbols.jsInstanceOf
+    private val isExternalObjectSymbol = context.symbols.isExternalObject
+    private val typeOfIntrinsicSymbol = context.symbols.jsTypeOf
+    private val jsClassIntrinsicSymbol = context.symbols.jsClass
 
     private val stringMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "string")
     private val booleanMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "boolean")
@@ -346,16 +346,16 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 JsIrBuilder.buildCall(isArraySymbol).apply { arguments[0] = argument }
 
             private fun generateNumberCheck(argument: IrExpression) =
-                JsIrBuilder.buildCall(context.intrinsics.isNumberSymbol).apply { arguments[0] = argument }
+                JsIrBuilder.buildCall(context.symbols.isNumberSymbol).apply { arguments[0] = argument }
 
             private fun generateComparableCheck(argument: IrExpression) =
-                JsIrBuilder.buildCall(context.intrinsics.isComparableSymbol).apply { arguments[0] = argument }
+                JsIrBuilder.buildCall(context.symbols.isComparableSymbol).apply { arguments[0] = argument }
 
             private fun generateCharSequenceCheck(argument: IrExpression) =
-                JsIrBuilder.buildCall(context.intrinsics.isCharSequenceSymbol).apply { arguments[0] = argument }
+                JsIrBuilder.buildCall(context.symbols.isCharSequenceSymbol).apply { arguments[0] = argument }
 
             private fun generatePrimitiveArrayTypeCheck(argument: IrExpression, toType: IrType): IrExpression {
-                val f = context.intrinsics.isPrimitiveArray[toType.getPrimitiveArrayElementType()]!!
+                val f = context.symbols.isPrimitiveArray[toType.getPrimitiveArrayElementType()]!!
                 return JsIrBuilder.buildCall(f).apply { arguments[0] = argument }
             }
 
@@ -405,7 +405,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 val casted = when {
                     toType.isByte() -> maskOp(argument(), byteMask, lit24)
                     toType.isShort() -> maskOp(argument(), shortMask, lit16)
-                    toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.longFromInt).apply {
+                    toType.isLong() -> JsIrBuilder.buildCall(context.symbols.longFromInt).apply {
                         arguments[0] = argument()
                     }
                     else -> compilationException(

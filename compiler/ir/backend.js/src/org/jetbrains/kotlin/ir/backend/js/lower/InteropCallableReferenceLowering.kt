@@ -109,7 +109,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
                     context.irBuiltIns.anyType,
-                    context.intrinsics.jsBind,
+                    context.symbols.jsBind,
                     typeArgumentsCount = 0,
                     origin = JsStatementOrigins.BIND_CALL,
                 ).apply {

@@ -53,9 +53,9 @@ object EnumIntrinsicsUtils {
 
 class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean) = when (call.symbol) {
-        context.intrinsics.enumValueOfIntrinsic -> EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
-        context.intrinsics.enumValuesIntrinsic -> EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
-        context.intrinsics.enumEntriesIntrinsic -> EnumIntrinsicsUtils.transformEnumEntriesIntrinsic(call)
+        context.symbols.enumValueOfIntrinsic -> EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
+        context.symbols.enumValuesIntrinsic -> EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
+        context.symbols.enumEntriesIntrinsic -> EnumIntrinsicsUtils.transformEnumEntriesIntrinsic(call)
         else -> call
     }
 }

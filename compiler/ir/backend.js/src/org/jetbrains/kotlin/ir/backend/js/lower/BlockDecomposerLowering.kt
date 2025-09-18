@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  */
 class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlockDecomposerLowering(context) {
     override fun unreachableExpression(): IrExpression =
-        JsIrBuilder.buildCall(context.intrinsics.unreachable, context.irBuiltIns.nothingType)
+        JsIrBuilder.buildCall(context.symbols.unreachable, context.irBuiltIns.nothingType)
 }
 
 abstract class AbstractBlockDecomposerLowering(private val context: JsCommonBackendContext) : BodyLoweringPass {

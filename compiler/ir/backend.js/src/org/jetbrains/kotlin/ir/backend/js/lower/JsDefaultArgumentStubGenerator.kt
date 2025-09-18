@@ -184,9 +184,9 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                         }
                     }
                 } else {
-                    irCall(ctx.intrinsics.jsCall).apply {
+                    irCall(ctx.symbols.jsCall).apply {
                         arguments[0] = wrappedFunctionCall.arguments[0]?.deepCopyWithSymbols()
-                        arguments[1] = irCall(ctx.intrinsics.jsContexfulRef).apply {
+                        arguments[1] = irCall(ctx.symbols.jsContexfulRef).apply {
                             arguments[0] = irGet(superContext)
                             arguments[1] = irRawFunctionReference(ctx.dynamicType, originalDeclaration.symbol)
                         }
@@ -216,7 +216,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         val builder = context.createIrBuilder(symbol, startOffset, endOffset)
 
         return with(context) {
-            builder.irCall(intrinsics.jsNameAnnotationSymbol.constructors.single())
+            builder.irCall(symbols.jsNameAnnotationSymbol.constructors.single())
                 .apply {
                     arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, name.identifier)
                 }

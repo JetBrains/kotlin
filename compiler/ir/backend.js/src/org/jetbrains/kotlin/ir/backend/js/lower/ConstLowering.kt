@@ -54,11 +54,11 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
             // which will confuse the autoboxing lowering downstream.
             return IrConstImpl.long(expression.startOffset, expression.endOffset, context.irBuiltIns.longType, v)
         }
-        return lowerConst(expression, context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
+        return lowerConst(expression, context.symbols.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
     }
 
     override fun visitConst(expression: IrConst): IrExpression {
-        with(context.intrinsics) {
+        with(context.symbols) {
             if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
                 return when (expression.type.classifierOrNull) {
                     uByteClassSymbol -> lowerConst(

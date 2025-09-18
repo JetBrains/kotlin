@@ -81,7 +81,7 @@ fun jsAssignment(left: JsExpression, right: JsExpression) = JsBinaryOperation(Js
 fun prototypeOf(classNameRef: JsExpression, context: JsStaticContext) =
     JsInvocation(
         context
-            .getNameForStaticFunction(context.backendContext.intrinsics.jsPrototypeOfSymbol.owner)
+            .getNameForStaticFunction(context.backendContext.symbols.jsPrototypeOfSymbol.owner)
             .makeRef(),
         classNameRef
     )
@@ -89,7 +89,7 @@ fun prototypeOf(classNameRef: JsExpression, context: JsStaticContext) =
 fun objectCreate(prototype: JsExpression, context: JsStaticContext) =
     JsInvocation(
         context
-            .getNameForStaticFunction(context.backendContext.intrinsics.jsObjectCreateSymbol.owner)
+            .getNameForStaticFunction(context.backendContext.symbols.jsObjectCreateSymbol.owner)
             .makeRef(),
         prototype
     )
@@ -104,7 +104,7 @@ fun defineProperty(
 ): JsExpression {
     return JsInvocation(
         context
-            .getNameForStaticFunction(context.backendContext.intrinsics.jsDefinePropertySymbol.owner)
+            .getNameForStaticFunction(context.backendContext.symbols.jsDefinePropertySymbol.owner)
             .makeRef(),
         listOfNotNull(
             obj,
@@ -352,7 +352,7 @@ internal fun argumentsWithVarargAsSingleArray(
                 is JsArrayLiteral -> jsArgument
                 is JsNew -> jsArgument.arguments.firstOrNull() as? JsArrayLiteral
                 else -> null
-            } ?: if (irArgument is IrCall && irArgument.symbol == context.staticContext.backendContext.intrinsics.arrayConcat)
+            } ?: if (irArgument is IrCall && irArgument.symbol == context.staticContext.backendContext.symbols.arrayConcat)
                 jsArgument
             else
                 JsInvocation(JsNameRef("call", JsNameRef("slice", JsArrayLiteral())), jsArgument)
@@ -438,7 +438,7 @@ internal fun translateNonDispatchCallArguments(
 }
 
 private fun IrExpression.isVoidGetter(context: JsGenerationContext): Boolean = this is IrGetField &&
-        symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.intrinsics.void
+        symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.symbols.void
 
 
 private fun IrMemberAccessExpression<*>.validWithNullArgs() =

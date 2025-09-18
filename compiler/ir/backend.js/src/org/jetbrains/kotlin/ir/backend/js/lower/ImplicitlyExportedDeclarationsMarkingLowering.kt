@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  */
 class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
-    private val jsExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.intrinsics.jsExportAnnotationSymbol.constructors.single() }
-    private val jsImplicitExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.intrinsics.jsImplicitExportAnnotationSymbol.constructors.single() }
+    private val jsExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.symbols.jsExportAnnotationSymbol.constructors.single() }
+    private val jsImplicitExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.symbols.jsImplicitExportAnnotationSymbol.constructors.single() }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!declaration.isExported(context)) return null

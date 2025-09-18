@@ -48,7 +48,7 @@ class JsClassUsageInReflectionLowering(val backendContext: JsIrBackendContext) :
             when (val classSymbol = symbol as? IrClassSymbol ?: return null) {
                 irBuiltIns.nothingClass -> null
                 irBuiltIns.anyClass ->
-                    JsIrBuilder.buildCall(intrinsics.jsCode).apply {
+                    JsIrBuilder.buildCall(symbols.jsCode).apply {
                         arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, "Object")
                     }
 

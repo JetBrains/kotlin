@@ -35,8 +35,8 @@ private val SUSPEND_FUNCTION_AS_GENERATOR by IrDeclarationOriginImpl
  */
 class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val getContinuationSymbol = context.symbols.getContinuation
-    private val jsYieldFunctionSymbol = context.intrinsics.jsYieldFunctionSymbol
-    private val suspendOrReturnFunctionSymbol = context.intrinsics.suspendOrReturnFunctionSymbol
+    private val jsYieldFunctionSymbol = context.symbols.jsYieldFunctionSymbol
+    private val suspendOrReturnFunctionSymbol = context.symbols.suspendOrReturnFunctionSymbol
     private val coroutineSuspendedGetterSymbol = context.symbols.coroutineSuspendedGetter
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -64,13 +64,13 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
 
     private fun IrSimpleFunction.addJsGeneratorAnnotation() {
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
-            context.intrinsics.jsGeneratorAnnotationSymbol.owner.primaryConstructor!!.symbol
+            context.symbols.jsGeneratorAnnotationSymbol.owner.primaryConstructor!!.symbol
         )
     }
 
     private fun IrSimpleFunction.addJsExportIgnoreAnnotation() {
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
-            context.intrinsics.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol
+            context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol
         )
     }
 

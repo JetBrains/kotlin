@@ -54,7 +54,7 @@ class JsNameLinkingNamer(
         }
 
         return declaration.getName().also {
-            if (declaration == context.intrinsics.void.owner.backingField) {
+            if (declaration == context.symbols.void.owner.backingField) {
                 it.constant = true
             }
         }

@@ -95,7 +95,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
                 }
 
                 override fun visitCall(expression: IrCall): IrExpression {
-                    return if (expression.symbol == context.intrinsics.jsBoxApplySymbol) {
+                    return if (expression.symbol == context.symbols.jsBoxApplySymbol) {
                         irEmpty(context)
                     } else {
                         super.visitCall(expression)
@@ -111,11 +111,11 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
                                 map[declaration.symbol] = classThisSymbol
                                 return super.visitCall(initializer)
                             }
-                            initializer.symbol == context.intrinsics.jsCreateThisSymbol -> {
+                            initializer.symbol == context.symbols.jsCreateThisSymbol -> {
                                 map[declaration.symbol] = classThisSymbol
 
                                 return if (boxParameter != null && superClass == null) {
-                                    super.visitCall(JsIrBuilder.buildCall(context.intrinsics.jsBoxApplySymbol).apply {
+                                    super.visitCall(JsIrBuilder.buildCall(context.symbols.jsBoxApplySymbol).apply {
                                         arguments[0] = JsIrBuilder.buildGetValue(irClass.thisReceiver!!.symbol)
                                         arguments[1] = JsIrBuilder.buildGetValue(boxParameter.symbol)
                                     })
@@ -123,7 +123,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
                                     irEmpty(context)
                                 }
                             }
-                            initializer.symbol == context.intrinsics.jsCreateExternalThisSymbol -> {
+                            initializer.symbol == context.symbols.jsCreateExternalThisSymbol -> {
                                 map[declaration.symbol] = classThisSymbol
 
                                 val externalConstructor = (initializer.originalConstructor ?: superClass?.primaryConstructor)?.symbol

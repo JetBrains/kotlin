@@ -73,7 +73,7 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
     }
 
     private fun createJsObjectLiteral(): IrExpression {
-        return JsIrBuilder.buildCall(context.intrinsics.jsEmptyObject)
+        return JsIrBuilder.buildCall(context.symbols.jsEmptyObject)
     }
 
     private fun IrConstructor.generateBoxParameter(irClass: IrClass): IrValueParameter {

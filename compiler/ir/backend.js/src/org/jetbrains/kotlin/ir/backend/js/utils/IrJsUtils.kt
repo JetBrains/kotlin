@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 val IrFile.nameWithoutExtension: String get() = name.substringBeforeLast(".kt")
 
 fun IrClass.jsConstructorReference(context: JsIrBackendContext): IrExpression {
-    return JsIrBuilder.buildCall(context.intrinsics.jsClass, origin = JsStatementOrigins.CLASS_REFERENCE)
+    return JsIrBuilder.buildCall(context.symbols.jsClass, origin = JsStatementOrigins.CLASS_REFERENCE)
         .apply {
             typeArguments[0] = defaultType
         }
@@ -89,7 +89,7 @@ fun IrFunctionSymbol.isUnitInstanceFunction(context: JsIrBackendContext): Boolea
 
 // TODO: the code is written to pass Repl tests, so we should understand. why in Repl tests we don't have backingField
 fun JsIrBackendContext.getVoid(): IrExpression =
-    intrinsics.void.owner.backingField?.let {
+    symbols.void.owner.backingField?.let {
         IrGetFieldImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
