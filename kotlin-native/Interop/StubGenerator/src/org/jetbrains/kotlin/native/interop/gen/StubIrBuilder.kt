@@ -179,6 +179,11 @@ open class StubsBuildingContextImpl(
             return true
         }
 
+        // todo: KT-81145 strictEnums in cinterop should be transitive
+        if (name == "UIBarButtonItemStyle") {
+            return true
+        }
+
         if (name in configuration.nonStrictEnums) {
             return false
         }
