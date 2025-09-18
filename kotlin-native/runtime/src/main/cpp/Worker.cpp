@@ -419,23 +419,6 @@ class State {
     return true;
   }
 
-  bool scheduleJobInWorkerUnlocked(KInt id, mm::OwningExternalRCRef operation) {
-      Worker* worker = nullptr;
-      Locker locker(&lock_);
-
-      auto it = workers_.find(id);
-      if (it == workers_.end()) {
-          return false;
-      }
-      worker = it->second;
-
-      Job job;
-      job.kind = JOB_EXECUTE_AFTER;
-      job.executeAfter.operation = operation.detach();
-      worker->putJob(job, false);
-      return true;
-  }
-
   // Returns `true` if something was indeed processed.
   bool processQueueUnlocked(KInt id) {
     // Can only process queue of the current worker.
@@ -774,10 +757,6 @@ void WaitNativeWorkersTermination() {
 
 void WaitNativeWorkerTermination(KInt id) {
     theState()->waitNativeWorkersTerminationUnlocked(false, [id](KInt worker) { return worker == id; });
-}
-
-bool WorkerSchedule(KInt id, mm::OwningExternalRCRef job) {
-    return theState()->scheduleJobInWorkerUnlocked(id, std::move(job));
 }
 
 Worker::~Worker() {
