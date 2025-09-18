@@ -5,9 +5,10 @@
 
 package kotlin.js
 
-import kotlin.wasm.internal.WasmOp
-import kotlin.wasm.internal.implementedAsIntrinsic
-import kotlin.wasm.internal.returnArgumentIfItIsKotlinAny
+import kotlin.wasm.internal.externalize
+import kotlin.wasm.internal.internalize
+import kotlin.wasm.internal.unwrapShareable
+import kotlin.wasm.internal.wrapShareable
 
 /**
  * JavaScript value that can serve as a reference for any Kotlin value.
@@ -19,14 +20,12 @@ import kotlin.wasm.internal.returnArgumentIfItIsKotlinAny
 @ExperimentalWasmJsInterop
 public actual sealed external interface JsReference<out T : Any> : JsAny
 
-@WasmOp(WasmOp.EXTERN_EXTERNALIZE)
 @ExperimentalWasmJsInterop
 public actual fun <T : Any> T.toJsReference(): JsReference<T> =
-    implementedAsIntrinsic
+    wrapShareable(externalize()).unsafeCast()
 
 /** Retrieve original Kotlin value from JsReference */
 @ExperimentalWasmJsInterop
 public actual fun <T : Any> JsReference<T>.get(): T {
-    returnArgumentIfItIsKotlinAny()
-    throw ClassCastException("JsReference doesn't contain a Kotlin type")
+    return unwrapShareable(this.unsafeCast()).internalize()
 }

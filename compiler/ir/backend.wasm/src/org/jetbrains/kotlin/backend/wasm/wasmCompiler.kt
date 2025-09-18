@@ -360,6 +360,12 @@ $referencesToQualifiedAndImportedDeclarations
     }const wasmJsTag = WebAssembly.JSTag;
     const wasmTag =${if (useJsTag) " wasmJsTag ??" else "" } new WebAssembly.Tag({ parameters: ['externref'] });
 
+    class KotlinJsBox {
+        constructor(kotlinObject) {
+            this.kotlinObject = kotlinObject
+        }
+    }
+
     const js_code = {
 $jsCodeBodyIndented
     }

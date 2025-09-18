@@ -141,20 +141,6 @@ private fun doubleToExternref(x: Double): JsNumber =
 private fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceType): Boolean =
     js("lhs === rhs")
 
-
-@WasmNoOpCast
-@Suppress("unused")
-private fun Any?.asWasmAnyref(): anyref =
-    implementedAsIntrinsic
-
-@WasmOp(WasmOp.EXTERN_INTERNALIZE)
-private fun ExternalInterfaceType.externAsWasmAnyref(): anyref =
-    implementedAsIntrinsic
-
-@WasmOp(WasmOp.EXTERN_EXTERNALIZE)
-private fun Any.asWasmExternRef(): ExternalInterfaceType =
-    implementedAsIntrinsic
-
 internal fun isNullish(ref: ExternalInterfaceType?): Boolean =
     js("ref == null")
 
@@ -165,11 +151,8 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     //     br_on_cast_fail null 0 $kotlin.Any
     //     return
     // }
-    // If ref is an instance of kotlin class -- return it casted to Any
-
-    // FIXME hack to check how many other problems with externs we have
-    //  Here we have a problem because ref is non-shared and thus cannot represent Any
-//    returnArgumentIfItIsKotlinAny()
+    // If ref is a wrapped instance of kotlin class -- return it casted to Any
+    if (ref is KotlinJsBox) return ref.unsafeCast<JsReference<Any>>().get()
 
     // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,
@@ -182,10 +165,7 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType? {
     return if (x is JsExternalBox)
         x.ref
     else
-        // FIXME hack to check how many other problems with externs we have
-        //  Here we have a problem because x.ref is non-shared but Any is shared.
-        null
-        // x.asWasmExternRef()
+        x.toJsReference()
 }
 
 internal fun stringLength(x: ExternalInterfaceType): Int =
@@ -414,6 +394,29 @@ internal fun newJsArray(): ExternalInterfaceType =
 
 internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType) {
     js("array.push(element);")
+}
+
+@ExperimentalWasmJsInterop
+internal external interface JsShareableAny
+
+@ExperimentalWasmJsInterop
+internal external class KotlinJsBox(internal val kotlinObject: JsShareableAny) : JsAny
+
+@ExperimentalWasmJsInterop
+internal fun wrapShareable(obj: JsShareableAny) : KotlinJsBox = js("new KotlinJsBox(obj)")
+
+@ExperimentalWasmJsInterop
+internal fun unwrapShareable(box: KotlinJsBox) : JsShareableAny = js("box.kotlinObject")
+
+@WasmOp(WasmOp.EXTERN_EXTERNALIZE)
+@ExperimentalWasmJsInterop
+internal fun <T : Any> T.externalize(): JsShareableAny =
+    implementedAsIntrinsic
+
+@ExperimentalWasmJsInterop
+internal fun <T : Any> JsShareableAny.internalize(): T {
+    returnArgumentIfItIsKotlinAny()
+    throw ClassCastException("JsReference doesn't contain a Kotlin type")
 }
 
 /**
