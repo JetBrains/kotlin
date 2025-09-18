@@ -1,5 +1,8 @@
 // API_VERSION: 1.3
 
+// Wasi test runner using `printStackTrace` introduced in 1.4
+// IGNORE_BACKEND: WASM_WASI
+
 // This test simply checks that we still generate correct calls to PropertyReference1Impl constructors for API version < 1.4,
 // where we added and started using new constructors which take j.l.Class+int instead of KDeclarationContainer.
 
