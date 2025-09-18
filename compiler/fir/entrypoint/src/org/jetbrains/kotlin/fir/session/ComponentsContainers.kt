@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analyzer.common.CommonDefaultImportsProvider
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.toKotlinVersion
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
-import org.jetbrains.kotlin.fir.analysis.FirDefaultOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.checkers.FirIdentityLessPlatformDeterminer
 import org.jetbrains.kotlin.fir.analysis.checkers.FirInlineCheckerPlatformSpecificComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformUpperBoundsProvider
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPrimaryConstructorSuperTypeCheckerPlatformComponent
@@ -44,7 +41,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.overloads.DefaultCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirDeclarationOverloadabilityHelperImpl
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
@@ -183,22 +179,6 @@ fun FirSession.registerJavaComponents(
     register(FirPlatformUpperBoundsProvider::class, FirJavaNullabilityWarningUpperBoundsProvider(this))
     register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(FirJvmDefaultImportsProvider))
     register(FirDeclarationNameInvalidCharsProvider::class, FirDeclarationNameInvalidCharsProvider(JvmConstants.INVALID_CHARS))
-}
-
-/**
- * Registers default components for [FirSession]
- * They could be overridden by calling a function that registers specific platform components
- */
-@OptIn(SessionConfiguration::class)
-fun FirSession.registerDefaultComponents() {
-    register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
-    register(ConeCallConflictResolverFactory::class, DefaultCallConflictResolverFactory)
-    register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-    register(FirOverridesBackwardCompatibilityHelper::class, FirDefaultOverridesBackwardCompatibilityHelper)
-    register(FirDelegatedMembersFilter::class, FirDelegatedMembersFilter.Default)
-    register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
-    register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(CommonDefaultImportsProvider))
-    register(FirIdentityLessPlatformDeterminer::class, FirIdentityLessPlatformDeterminer.Default)
 }
 
 // -------------------------- Resolve components --------------------------

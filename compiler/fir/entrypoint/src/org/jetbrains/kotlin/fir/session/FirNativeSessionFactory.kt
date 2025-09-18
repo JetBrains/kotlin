@@ -87,7 +87,6 @@ abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?,
     // ==================================== Common parts ====================================
 
     private fun FirSession.registerComponents() {
-        registerDefaultComponents()
         registerNativeComponents()
     }
 

@@ -33,4 +33,5 @@ abstract class ConeCallConflictResolverFactory : FirSessionComponent {
     ): ConeCallConflictResolver
 }
 
-val FirSession.callConflictResolverFactory: ConeCallConflictResolverFactory by FirSession.sessionComponentAccessor()
+val FirSession.callConflictResolverFactory: ConeCallConflictResolverFactory
+        by FirSession.sessionComponentAccessorWithDefault(DefaultCallConflictResolverFactory)

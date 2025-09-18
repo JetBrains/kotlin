@@ -43,4 +43,5 @@ abstract class FirPlatformClassMapper : FirSessionComponent {
     abstract val classTypealiasesThatDontCauseAmbiguity: Map<ClassId, ClassId>
 }
 
-val FirSession.platformClassMapper: FirPlatformClassMapper by FirSession.sessionComponentAccessor()
+val FirSession.platformClassMapper: FirPlatformClassMapper
+        by FirSession.sessionComponentAccessorWithDefault(FirPlatformClassMapper.Default)

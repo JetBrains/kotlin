@@ -16,4 +16,5 @@ abstract class FirIdentityLessPlatformDeterminer : FirSessionComponent {
     }
 }
 
-val FirSession.identityLessPlatformDeterminer: FirIdentityLessPlatformDeterminer by FirSession.sessionComponentAccessor()
+val FirSession.identityLessPlatformDeterminer: FirIdentityLessPlatformDeterminer
+        by FirSession.sessionComponentAccessorWithDefault(FirIdentityLessPlatformDeterminer.Default)

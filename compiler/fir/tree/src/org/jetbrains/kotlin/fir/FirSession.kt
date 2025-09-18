@@ -23,6 +23,13 @@ abstract class FirSession @PrivateSessionConstructor constructor(
             return generateAccessor(T::class)
         }
 
+        @Suppress("INVISIBLE_REFERENCE")
+        inline fun <reified T : FirSessionComponent> sessionComponentAccessorWithDefault(
+            defaultImplementation: @kotlin.internal.NoInfer T
+        ): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
+            return generateAccessor(T::class, defaultImplementation)
+        }
+
         inline fun <reified T : FirSessionComponent> sessionComponentAccessor(id: String): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
             return generateAccessor(id)
         }
