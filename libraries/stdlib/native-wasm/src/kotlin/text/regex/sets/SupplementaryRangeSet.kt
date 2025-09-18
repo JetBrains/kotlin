@@ -156,4 +156,8 @@ open internal class SupplementaryRangeSet(charClass: AbstractCharClass, val igno
     }
 
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // does nothing specific
+    }
 }

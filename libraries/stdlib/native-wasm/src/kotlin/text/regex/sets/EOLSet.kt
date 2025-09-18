@@ -53,4 +53,8 @@ internal class EOLSet(val consCounter: Int, val lt: AbstractLineTerminator, val 
 
     override val name: String
             get()= "<EOL>"
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        properties.tracksConsumption = true
+    }
 }

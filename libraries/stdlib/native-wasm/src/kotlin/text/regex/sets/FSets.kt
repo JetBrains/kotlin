@@ -52,6 +52,10 @@ open internal class FSet(val groupIndex: Int) : SimpleSet() {
         return this
     }
 
+    override fun reportOwnProperties(properties: SetProperties) {
+        properties.capturesGroups = true
+    }
+
     /**
      * Marks the end of the particular group and not take into account possible
      * kickbacks (required for atomic groups, for instance)
@@ -67,6 +71,10 @@ open internal class FSet(val groupIndex: Int) : SimpleSet() {
 
         override val name: String
                 get() = "possessiveFSet"
+
+        override fun reportOwnProperties(properties: SetProperties) {
+            // does nothing specific
+        }
     }
 
     companion object {
@@ -108,6 +116,10 @@ internal class NonCapFSet(groupIndex: Int) : FSet(groupIndex) {
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean {
         return false
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        properties.tracksConsumption = true
+    }
 }
 
 /**
@@ -121,6 +133,10 @@ internal class AheadFSet : FSet(-1) {
 
     override val name: String
         get() = "AheadFSet"
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // nothing specific
+    }
 }
 
 /**
@@ -138,6 +154,10 @@ internal class BehindFSet(groupIndex: Int) : FSet(groupIndex) {
 
     override val name: String
         get() = "BehindFSet"
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // nothing specific
+    }
 }
 
 /**
@@ -158,5 +178,9 @@ internal class AtomicFSet(groupIndex: Int) : FSet(groupIndex) {
 
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean {
         return false
+    }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        properties.tracksConsumption = true
     }
 }

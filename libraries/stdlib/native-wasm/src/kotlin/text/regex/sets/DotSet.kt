@@ -64,4 +64,8 @@ internal class DotSet(val lt: AbstractLineTerminator, val matchLineTerminator: B
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean = true
     override val name: String
         get() = "."
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // does nothing
+    }
 }

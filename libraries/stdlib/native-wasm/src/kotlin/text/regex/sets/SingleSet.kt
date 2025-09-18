@@ -97,6 +97,12 @@ open internal class SingleSet(var kid: AbstractSet, fSet: FSet) : JointSet(listO
         return processSecondPassInternal()
     }
 
+    override fun reportOwnProperties(properties: SetProperties) {
+        kid.collectProperties(properties, fSet)
+        fSet.reportOwnProperties(properties)
+        properties.capturesGroups = true
+    }
+
     // Backreferenced version of the class =============================================================================
 
     /**

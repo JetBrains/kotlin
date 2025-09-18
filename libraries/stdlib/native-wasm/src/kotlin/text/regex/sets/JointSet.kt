@@ -83,4 +83,11 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
         children.replaceAll { child -> if (!child.secondPassVisited) child.processSecondPass() else child }
         return super.processSecondPassInternal()
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        children.forEach { it.collectProperties(properties, fSet) }
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || children.size > 1
+        properties.capturesGroups = true
+        fSet.reportOwnProperties(properties)
+    }
 }

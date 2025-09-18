@@ -98,4 +98,10 @@ open internal class LeafQuantifierSet(var quantifier: Quantifier,
                 throw RuntimeException("Internal Error")
             super.innerSet = innerSet
         }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        innerSet.collectProperties(properties, FSet.possessiveFSet)
+        // we don't need additional backtracking if the repetition is fixed and bound
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || min != max || max == Quantifier.INF
+    }
 }

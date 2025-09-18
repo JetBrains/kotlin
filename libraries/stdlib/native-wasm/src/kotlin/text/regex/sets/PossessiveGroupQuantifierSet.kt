@@ -54,4 +54,10 @@ internal class PossessiveGroupQuantifierSet(
             return next.matches(index, testString, matchResult)
         }
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        innerSet.collectProperties(properties, FSet.possessiveFSet)
+        // we only need to backtrack if repetitions are varying or infinite
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || min != max || max == Quantifier.INF
+    }
 }
