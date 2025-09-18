@@ -7332,6 +7332,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("arrayLiteralsInCallsReturningAnnotations.kt")
+      public void testArrayLiteralsInCallsReturningAnnotations() {
+        runTest("compiler/testData/diagnostics/tests/collectionLiterals/arrayLiteralsInCallsReturningAnnotations.kt");
+      }
+
+      @Test
       @TestMetadata("basicCollectionLiterals.kt")
       public void testBasicCollectionLiterals() {
         runTest("compiler/testData/diagnostics/tests/collectionLiterals/basicCollectionLiterals.kt");

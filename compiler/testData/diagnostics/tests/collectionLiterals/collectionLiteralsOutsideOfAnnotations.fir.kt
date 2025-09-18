@@ -1,0 +1,24 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+
+fun takeArray(array: Array<String>) {}
+
+fun test() {
+    "foo bar".<!UNRESOLVED_REFERENCE!>split<!>(<!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[""]<!>)
+    <!UNRESOLVED_REFERENCE!>unresolved<!>(<!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[""]<!>)
+    takeArray(<!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[""]<!>)
+    val v = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[""]<!>
+    <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[""]<!>
+    <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2, 3]<!>.size
+}
+
+fun baz(arg: Array<Int> = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>) {
+    if (true) <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["yes"]<!> else {<!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>["no"]<!>}
+}
+
+class Foo(
+    val v: Array<Int> = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+)
+
+/* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, functionDeclaration, ifExpression, integerLiteral,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

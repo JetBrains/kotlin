@@ -1,0 +1,62 @@
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(210,216): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(605,611): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(621,623): error: Argument type mismatch: actual type is 'Array<Any>', but 'Array<String>' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(621,623): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(655,661): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(695,727): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(712,725): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(741,743): error: Argument type mismatch: actual type is 'Array<Any>', but 'IntArray' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(741,743): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(756,760): error: Argument type mismatch: actual type is 'Array<Int>', but 'IntArray' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(756,760): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(773,785): error: Argument type mismatch: actual type is 'Array<Int>', but 'IntArray' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(779,783): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(798,840): error: Argument type mismatch: actual type is 'Array<Int>', but 'IntArray' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(820,824): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(885,889): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(921,923): error: Argument type mismatch: actual type is 'Array<Any>', but 'Array<String>' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(921,923): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(938,944): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(985,995): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1004,1014): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1025,1035): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1041,1043): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1044,1053): error: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun Array<String>.returnFoo(param: Array<String>): Foo
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1054,1056): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1080,1082): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1105,1109): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1132,1138): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1166,1168): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1195,1204): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
+
+/arrayLiteralsInCallsReturningAnnotations.fir.kt:(1231,1246): warning: Array literals outside of annotations are unsupported. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-369.
