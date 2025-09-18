@@ -104,6 +104,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfPairs
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConcatWithKeys
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertNotNull
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf3
@@ -365,6 +366,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "ToSpecificTypePattern" -> ToSpecificTypePattern()
         "With0" -> With0()
         "ConvertAsColumn" -> ConvertAsColumn()
+        "ConvertNotNull" -> ConvertNotNull()
         "PerRowCol" -> PerRowCol()
         "UpdatePerCol" -> UpdatePerColLambda()
         "UpdatePerColRow" -> UpdatePerColRow()
