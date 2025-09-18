@@ -56,10 +56,20 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
         )
 
         // Adding declared dependencies
-        auxiliary.apiConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.apiConfigurationName)
-        auxiliary.implementationConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.implementationConfigurationName)
-        auxiliary.compileOnlyConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.compileOnlyConfigurationName)
-        auxiliary.runtimeOnlyConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.runtimeOnlyConfigurationName)
+        fun extend(aux: String, main: String) {
+            project.configurations.named(aux).configure { configuration ->
+                configuration.extendsFrom(project.configurations.getByName(main))
+            }
+        }
+        extend(auxiliary.apiConfigurationName, main.apiConfigurationName)
+        extend(auxiliary.implementationConfigurationName, main.implementationConfigurationName)
+        extend(auxiliary.compileOnlyConfigurationName, main.compileOnlyConfigurationName)
+        extend(auxiliary.runtimeOnlyConfigurationName, main.runtimeOnlyConfigurationName)
+
+//        auxiliary.apiConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.apiConfigurationName)
+//        auxiliary.implementationConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.implementationConfigurationName)
+//        auxiliary.compileOnlyConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.compileOnlyConfigurationName)
+//        auxiliary.runtimeOnlyConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.runtimeOnlyConfigurationName)
     }
 }
 
