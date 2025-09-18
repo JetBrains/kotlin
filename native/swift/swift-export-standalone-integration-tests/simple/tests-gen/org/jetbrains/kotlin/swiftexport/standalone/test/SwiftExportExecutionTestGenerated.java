@@ -162,4 +162,10 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   public void testStdlibTypes() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/stdlibTypes/");
   }
+
+  @Test
+  @TestMetadata("vararg")
+  public void testVararg() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/vararg/");
+  }
 }
