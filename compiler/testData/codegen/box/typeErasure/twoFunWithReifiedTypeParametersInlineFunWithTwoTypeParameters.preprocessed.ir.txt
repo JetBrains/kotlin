@@ -1,20 +1,20 @@
 Module: main
 // CallableId=/gBefore
-FUN name:gBefore visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:gBefore visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:true
   VALUE_PARAMETER kind:Regular name:x index:0 type:T1 of <root>.gBefore
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun gBefore <T1> (x: T1 of <root>.gBefore): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun gBefore <T1> (x: T1 of <root>.gBefore): kotlin.reflect.KType [inline] declared in <root>'
       CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
         TYPE_ARG T: T1 of <root>.gBefore
 // CallableId=/fBefore
-FUN name:fBefore visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:fBefore visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:true
   TYPE_PARAMETER name:T3 index:1 variance: superTypes:[kotlin.Any?] reified:false
   VALUE_PARAMETER kind:Regular name:x index:0 type:T2 of <root>.fBefore
   VALUE_PARAMETER kind:Regular name:y index:1 type:kotlin.Any?
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun fBefore <T2, T3> (x: T2 of <root>.fBefore, y: kotlin.Any?): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun fBefore <T2, T3> (x: T2 of <root>.fBefore, y: kotlin.Any?): kotlin.reflect.KType [inline] declared in <root>'
       BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
         VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Pair<T2 of <root>.fBefore, kotlin.Any?> [val]
           CONSTRUCTOR_CALL 'public constructor <init> (first: A of kotlin.Pair, second: B of kotlin.Pair) [primary] declared in kotlin.Pair' type=kotlin.Pair<T2 of <root>.fBefore, kotlin.Any?> origin=null
@@ -32,21 +32,21 @@ FUN name:fBefore visibility:public modality:FINAL returnType:kotlin.reflect.KTyp
               CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
                 TYPE_ARG T: kotlin.Pair<T2 of <root>.fBefore, T3 of <root>.fBefore>
 // CallableId=/gAfter
-FUN name:gAfter visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:gAfter visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:true
   VALUE_PARAMETER kind:Regular name:x index:0 type:T1 of <root>.gAfter
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun gAfter <T1> (x: T1 of <root>.gAfter): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun gAfter <T1> (x: T1 of <root>.gAfter): kotlin.reflect.KType [inline] declared in <root>'
       CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
         TYPE_ARG T: T1 of <root>.gAfter
 // CallableId=/fAfter
-FUN name:fAfter visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:fAfter visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:true
   TYPE_PARAMETER name:T3 index:1 variance: superTypes:[kotlin.Any?] reified:false
   VALUE_PARAMETER kind:Regular name:x index:0 type:T2 of <root>.fAfter
   VALUE_PARAMETER kind:Regular name:y index:1 type:kotlin.Any?
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun fAfter <T2, T3> (x: T2 of <root>.fAfter, y: kotlin.Any?): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun fAfter <T2, T3> (x: T2 of <root>.fAfter, y: kotlin.Any?): kotlin.reflect.KType [inline] declared in <root>'
       BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
         VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Pair<T2 of <root>.fAfter, kotlin.Any?> [val]
           CONSTRUCTOR_CALL 'public constructor <init> (first: A of kotlin.Pair, second: B of kotlin.Pair) [primary] declared in kotlin.Pair' type=kotlin.Pair<T2 of <root>.fAfter, kotlin.Any?> origin=null
