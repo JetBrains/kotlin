@@ -6,7 +6,7 @@
 internal inline fun bar(): MySealed
     /* ACCESSOR use-site */ access$foo$tContextSensitiveResolutionTypePositionKt()
 public fun box(): String
-    val tmp0_subject: MySealed =
+    val tmp0_subject: MySealed
         /* ACCESSOR use-site */ access$foo$tContextSensitiveResolutionTypePositionKt()
 /* ACCESSOR declaration */ internal fun access$foo$tContextSensitiveResolutionTypePositionKt(x: MySealed): MySealed
     /* TARGET use-site */ foo(x = x)

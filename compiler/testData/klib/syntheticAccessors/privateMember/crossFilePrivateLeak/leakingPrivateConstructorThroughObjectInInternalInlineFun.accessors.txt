@@ -16,7 +16,7 @@ public open class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val result: Long =
+    val result: Long
         /* LOCAL declaration @0 */ local class <no name provided> : A
             /* LOCAL declaration @1 */ public constructor() /* primary */
                 /* ACCESSOR use-site */ A(x = this.<get-x>().toInt().plus(other = 1), $constructor_marker = null)

@@ -17,6 +17,6 @@ public class Foo
     /* ACCESSOR declaration */ internal /* static */ fun access$k($this: Foo): String
         /* TARGET use-site */ $this.k()
 public fun box(): String
-    val oo: String = access$o($this = this)
+    val oo: String
         /* ACCESSOR use-site */ access$o($this = this)
     /* ACCESSOR use-site */ access$k($this = this)

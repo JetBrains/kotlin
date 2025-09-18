@@ -12,7 +12,7 @@ internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
             /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
         /* INVOKE @0 */ local fun <anonymous>(): String
 public fun box(): String
-    val oo: String = access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
+    val oo: String
         /* ACCESSOR use-site */ access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
     /* ACCESSOR use-site */ access$k$tUsePrivateTopLevelFunFromDefaultArgumentsKt()
 /* ACCESSOR declaration */ internal fun access$o$tUsePrivateTopLevelFunFromDefaultArgumentsKt(): String

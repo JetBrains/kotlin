@@ -6,7 +6,7 @@
 internal inline fun bar(): MyEnum
     /* ACCESSOR use-site */ access$foo$tContextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValueKt()
 public fun box(): String
-    val tmp0_subject: MyEnum =
+    val tmp0_subject: MyEnum
         /* ACCESSOR use-site */ access$foo$tContextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValueKt()
 /* ACCESSOR declaration */ internal fun access$foo$tContextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValueKt(x: MyEnum, y: MyEnum): MyEnum
     /* TARGET use-site */ foo(x = x, y = y)

@@ -5,10 +5,10 @@
 /* TARGET declaration */ private fun funO(): String
 /* TARGET declaration */ private fun funK(): String
 internal inline fun internalInlineFun(): String
-    val tmp0: Array<out String> = [access$funO$tAKt(), "NOK", access$funK$tAKt()]
+    val tmp0: Array<out String>
         /* ACCESSOR use-site */ access$funO$tAKt()
         /* ACCESSOR use-site */ access$funK$tAKt()
-    val tmp0: Array<out String> = [access$funO$tAKt(), "NOK", access$funK$tAKt()]
+    val tmp0: Array<out String>
         /* ACCESSOR use-site */ access$funO$tAKt()
         /* ACCESSOR use-site */ access$funK$tAKt()
 /* ACCESSOR declaration */ internal fun access$funO$tAKt(): String
@@ -20,9 +20,9 @@ internal inline fun internalInlineFun(): String
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val tmp0: Array<out String> = [access$funO$tAKt(), "NOK", access$funK$tAKt()]
+    val tmp0: Array<out String>
         /* ACCESSOR use-site */ access$funO$tAKt()
         /* ACCESSOR use-site */ access$funK$tAKt()
-    val tmp0: Array<out String> = [access$funO$tAKt(), "NOK", access$funK$tAKt()]
+    val tmp0: Array<out String>
         /* ACCESSOR use-site */ access$funO$tAKt()
         /* ACCESSOR use-site */ access$funK$tAKt()

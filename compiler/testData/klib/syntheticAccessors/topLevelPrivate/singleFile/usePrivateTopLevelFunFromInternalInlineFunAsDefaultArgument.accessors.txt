@@ -13,9 +13,9 @@ internal inline fun internalInlineFun(o: String, k: String): String
     k: String
         /* ACCESSOR use-site */ access$foo$tUsePrivateTopLevelFunFromInternalInlineFunAsDefaultArgumentKt(x = k)
 public fun box(): String
-    val o: String =
+    val o: String
         /* ACCESSOR use-site */ access$foo$tUsePrivateTopLevelFunFromInternalInlineFunAsDefaultArgumentKt(x = o)
-    val k: String =
+    val k: String
         /* ACCESSOR use-site */ access$foo$tUsePrivateTopLevelFunFromInternalInlineFunAsDefaultArgumentKt(x = k)
 /* ACCESSOR declaration */ internal fun access$foo$tUsePrivateTopLevelFunFromInternalInlineFunAsDefaultArgumentKt(x: String): String
     /* TARGET use-site */ foo(x = x)

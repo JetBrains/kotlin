@@ -290,7 +290,8 @@ private class SyntheticAccessorsDumper(
                     bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES,
                     visibilityPrintingStrategy = VisibilityPrintingStrategy.ALWAYS,
                     printMemberDeclarations = false,
-                    collapseObjectLiteralBlock = true
+                    collapseObjectLiteralBlock = true,
+                    printVariableInitializers = false
                 )
             ).substringBefore('{').trimEnd()
 

@@ -23,6 +23,6 @@ public class Outer<O : Any?>
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val result: String =
+    val result: String
         /* ACCESSOR use-site */ access$<outer-this-1>($this = this)
         /* ACCESSOR use-site */ access$<outer-this-0>($this = this)

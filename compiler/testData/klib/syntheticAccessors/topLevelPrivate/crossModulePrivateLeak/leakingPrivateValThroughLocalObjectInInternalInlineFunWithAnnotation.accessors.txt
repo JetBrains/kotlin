@@ -5,7 +5,7 @@
 private val ok: String
     /* TARGET declaration */ private fun <get-ok>(): String
 internal inline fun internalInlineFun(): String
-    val obj: <no name provided> = <anonymous object>
+    val obj: <no name provided>
         /* LOCAL declaration @0 */ local class <no name provided>
             /* LOCAL declaration @1 */ public val a: String
                 /* LOCAL declaration @2 */ private /* final field */ field a: String
@@ -22,7 +22,7 @@ internal inline fun internalInlineFun(): String
 /* FILE package=<root> fileName=B.kt */
 
 public fun box(): String
-    val obj: <no name provided> = <anonymous object>
+    val obj: <no name provided>
         /* LOCAL declaration @0 */ local class <no name provided>
             /* LOCAL declaration @1 */ public val a: String
                 /* LOCAL declaration @2 */ private /* final field */ field a: String

@@ -5,7 +5,7 @@
 private val ok: String
     /* TARGET declaration */ private fun <get-ok>(): String
 internal inline fun internalInlineFun(): String
-    val obj: <no name provided> = <anonymous object>
+    val obj: <no name provided>
         /* LOCAL declaration @0 */ local class <no name provided>
             /* LOCAL declaration @1 */ public val a: String
                 /* LOCAL declaration @2 */ private /* final field */ field a: String
@@ -14,7 +14,7 @@ internal inline fun internalInlineFun(): String
                     /* LOCAL use-site @2 */ <this>.#a
     /* LOCAL use-site @3 */ obj.<get-a>()
 public fun box(): String
-    val obj: <no name provided> = <anonymous object>
+    val obj: <no name provided>
         /* LOCAL declaration @4 */ local class <no name provided>
             /* LOCAL declaration @5 */ public val a: String
                 /* LOCAL declaration @6 */ private /* final field */ field a: String

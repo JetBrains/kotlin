@@ -22,7 +22,7 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val tmp2: Int =
+    val tmp2: Int
         /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
     /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
     /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)

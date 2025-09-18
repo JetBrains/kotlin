@@ -5,17 +5,17 @@
 /* TARGET declaration */ private fun funO(): String
 /* TARGET declaration */ private fun funK(): String
 internal inline fun internalInlineFun(): String
-    val tmp0: Array<out String> = [access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt(), "NOK", access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()]
+    val tmp0: Array<out String>
         /* ACCESSOR use-site */ access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
         /* ACCESSOR use-site */ access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
-    val tmp0: Array<out String> = [access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt(), "NOK", access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()]
+    val tmp0: Array<out String>
         /* ACCESSOR use-site */ access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
         /* ACCESSOR use-site */ access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
 public fun box(): String
-    val tmp0: Array<out String> = [access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt(), "NOK", access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()]
+    val tmp0: Array<out String>
         /* ACCESSOR use-site */ access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
         /* ACCESSOR use-site */ access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
-    val tmp0: Array<out String> = [access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt(), "NOK", access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()]
+    val tmp0: Array<out String>
         /* ACCESSOR use-site */ access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
         /* ACCESSOR use-site */ access$funK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
 /* ACCESSOR declaration */ internal fun access$funO$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt(): String

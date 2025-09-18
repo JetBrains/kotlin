@@ -19,6 +19,6 @@ public class Outer<O : Any?>
         /* TARGET declaration */ <this>: InnerL1<I1, O>
     /* TARGET declaration */ <this>: Outer<O>
 public fun box(): String
-    val result: String =
+    val result: String
         /* ACCESSOR use-site */ access$<outer-this-1>($this = this)
         /* ACCESSOR use-site */ access$<outer-this-0>($this = this)

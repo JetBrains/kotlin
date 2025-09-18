@@ -12,5 +12,5 @@ internal inline fun bar(): MyEnum
 /* FILE package=<root> fileName=B.kt */
 
 public fun box(): String
-    val tmp0_subject: MyEnum =
+    val tmp0_subject: MyEnum
         /* ACCESSOR use-site */ access$foo$tAKt(x = MyEnum.X)

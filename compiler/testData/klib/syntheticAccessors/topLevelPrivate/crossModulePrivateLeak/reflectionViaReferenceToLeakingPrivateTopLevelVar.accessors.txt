@@ -22,7 +22,7 @@ public inline fun publicInlineVar(): KMutableProperty0<String>
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val tmp0: Any? =
+    val tmp0: Any?
         /* RICH PROPERTY REFERENCE */
             /* LOCAL declaration @0 */ local fun <get-privateVar>(): String
                 /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()

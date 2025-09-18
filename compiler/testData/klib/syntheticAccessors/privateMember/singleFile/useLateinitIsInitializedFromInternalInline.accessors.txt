@@ -6,14 +6,14 @@ public class OK
     private lateinit var o: String?
         /* TARGET declaration */ private field o: String?
         /* TARGET declaration */ private fun <get-o>(): String
-            val tmp: String? = <this>.#o
+            val tmp: String?
                 /* TARGET use-site */ <this>.#o
         /* TARGET declaration */ private fun <set-o>(<set-?>: String)
             /* TARGET use-site */ <this>.#o = <set-?>
     public lateinit var k: String?
         /* TARGET declaration */ private field k: String?
         public fun <get-k>(): String
-            val tmp: String? = <this>.#k
+            val tmp: String?
                 /* TARGET use-site */ <this>.#k
         public fun <set-k>(<set-?>: String)
             /* TARGET use-site */ <this>.#k = <set-?>
