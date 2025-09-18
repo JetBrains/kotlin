@@ -25,6 +25,7 @@ import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_COMPAT
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
@@ -115,11 +116,16 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             .configurations
             .maybeCreateResolvable(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
             .also {
+                project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
                 project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL")
                 it.withDependencies { dependencies ->
                     dependencies
                         .withType<ExternalDependency>()
                         .configureEach { dependency ->
+                            if (dependency.name == KOTLIN_BUILD_TOOLS_API_COMPAT) {
+                                // the compat layer is expected to be of a particular version regardless of the chosen compiler
+                                return@configureEach
+                            }
                             dependency.version { versionConstraint ->
                                 versionConstraint.strictly(project.kotlinExtensionOrNull?.compilerVersion?.get() ?: pluginVersion)
                             }
