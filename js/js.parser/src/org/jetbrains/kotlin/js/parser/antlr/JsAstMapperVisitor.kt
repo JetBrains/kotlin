@@ -871,8 +871,9 @@ class JsAstMapperVisitor(
         val name = declaration.identifier()
         check(declaration.Async() == null) { "Async functions are not supported yet"}
         val isGenerator = declaration.Multiply() != null
+        val parameters = declaration.formalParameterList()?.formalParameterArg() ?: emptyList()
 
-        return mapFunction(name?.text, declaration.functionBody(), declaration.formalParameterList().formalParameterArg(), isGenerator)
+        return mapFunction(name?.text, declaration.functionBody(), parameters, isGenerator)
     }
 
     override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext): JsFunction {
