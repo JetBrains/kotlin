@@ -8,6 +8,7 @@ package common
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.incremental.ClasspathChanges
@@ -103,7 +104,7 @@ object CompilerUtils {
         // replace -Xcompiler-plugin
         if (parsed.pluginClasspaths != null) {
             val remoteFriendPaths = mutableListOf<String>()
-            for (clientPath in parsed.pluginClasspaths){
+            for (clientPath in parsed.pluginClasspaths) {
                 val remotePath = if (clientPath.contains("kotlin-scripting-compiler-impl-embeddable")) {
                     File("src/main/kotlin/server/libsworkaround/kotlin-scripting-compiler-impl-embeddable-2.3.255-SNAPSHOT.jar").absolutePath
                 } else if (clientPath.contains("kotlin-scripting-compiler-embeddable")) {
@@ -126,7 +127,7 @@ object CompilerUtils {
             for (fs in parsed.fragmentSources) {
                 val (fragment, path) = fs.split(":")
                 val clientPath = Paths.get(path)
-                remoteFragmentSources.add("$fragment:${sourceFiles?.get(clientPath)?.toPath()?.toAbsolutePath() }")
+                remoteFragmentSources.add("$fragment:${getRemotePath(sourceFiles, clientPath, workspaceManager)}")
             }
             parsed.fragmentSources = remoteFragmentSources.toTypedArray()
         }
