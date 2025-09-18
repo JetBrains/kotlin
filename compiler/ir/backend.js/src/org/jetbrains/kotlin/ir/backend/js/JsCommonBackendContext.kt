@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.InlineClassesUtils
-import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -75,23 +74,11 @@ class JsCommonCoroutineSymbols(
     val coroutineSuspendedGetter =
         symbolFinder.findTopLevelPropertyGetter(COROUTINE_INTRINSICS_PACKAGE_FQNAME, COROUTINE_SUSPENDED_NAME.asString())
 
-    val coroutineGetContext: IrSimpleFunctionSymbol
-        get() {
-            val contextGetter =
-                continuationClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
-                    .atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
-                    ?: continuationClass.owner.declarations.filterIsInstance<IrProperty>()
-                        .atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
-            return contextGetter.symbol
-        }
-
     companion object {
         private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
         private val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
         private val COROUTINE_IMPL_NAME = Name.identifier("CoroutineImpl")
         private val CONTINUATION_NAME = Name.identifier("Continuation")
-        private val CONTINUATION_CONTEXT_GETTER_NAME = Name.special("<get-context>")
-        private val CONTINUATION_CONTEXT_PROPERTY_NAME = Name.identifier("context")
         private val COROUTINE_PACKAGE_FQNAME = FqName.fromSegments(listOf("kotlin", "coroutines"))
         private val COROUTINE_INTRINSICS_PACKAGE_FQNAME = COROUTINE_PACKAGE_FQNAME.child(INTRINSICS_PACKAGE_NAME)
     }
