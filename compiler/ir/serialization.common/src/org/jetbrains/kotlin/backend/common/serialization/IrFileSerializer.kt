@@ -1249,7 +1249,15 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(variable, LocalVariableFlags.encode(variable)))
             .setNameType(serializeNameAndType(variable.name, variable.type))
 
-        variable.delegate?.let { proto.delegate = serializeIrVariable(it) }
+        when (val delegate = variable.delegate) {
+            null -> requireAbiAtLeast(
+                abiCompatibilityLevel = ABI_LEVEL_2_3,
+                prefix = { "Nullable 'delegate' property in ${it::class.simpleName}" },
+                irNode = { variable }
+            )
+            else -> proto.delegate = serializeIrVariable(delegate)
+        }
+
         proto.getter = serializeIrFunction(variable.getter)
         variable.setter?.let { proto.setSetter(serializeIrFunction(it)) }
 
@@ -1442,7 +1450,7 @@ open class IrFileSerializer(
         val name = entry.matchAndNormalizeFilePath()
         return ProtoFileEntry.newBuilder()
             .apply {
-                if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_3))
+                if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3))
                     setName(serializeString(name))
                 else
                     setNameOld(name)
@@ -1451,7 +1459,7 @@ open class IrFileSerializer(
                 val firstRelevantLineIndex = relevantLinesRange?.first ?: entry.firstRelevantLineIndex
                 runIf(firstRelevantLineIndex != 0) { setFirstRelevantLineIndex(firstRelevantLineIndex) }
                 val lineOffsets = getRelevantOffsets(entry, relevantLinesRange)
-                if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_3)) {
+                if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3)) {
                     var lastOffset = 0
                     for (offset in lineOffsets) {
                         addLineStartOffsetDelta(offset - lastOffset)
