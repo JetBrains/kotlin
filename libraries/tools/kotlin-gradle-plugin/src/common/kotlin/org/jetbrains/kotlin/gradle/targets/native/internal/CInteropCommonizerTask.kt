@@ -195,7 +195,7 @@ internal abstract class CInteropCommonizerTask
                     target,
                     project.files(
                         externalDependencyFiles,
-                        project.getNativeDistributionDependencies(
+                        project.getNativeDistributionDependenciesWithNativeDownloadTask(
                             target,
                         )
                     )

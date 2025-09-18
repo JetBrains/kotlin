@@ -11,7 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
-import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistributionDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistributionDependenciesWithNativeDistributionProvider
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.property
@@ -70,9 +69,6 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
     }
 
     @get:Inject
-    abstract val fileSystemOperations: FileSystemOperations
-
-    @get:Inject
     abstract val archiveOperations: ArchiveOperations
 
     companion object {
@@ -105,8 +101,12 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         internal fun getNativeDistributionDependencies(
             project: Project,
             commonizerTarget: CommonizerTarget,
+            kotlinNativeBundleBuildService: Provider<KotlinNativeBundleBuildService>,
         ): FileCollection {
-            return project.getNativeDistributionDependencies(
+            val kotlinNativeProvider =
+                KotlinNativeFromToolchainProvider(project, commonizerTarget.konanTargets, kotlinNativeBundleBuildService)
+            return project.getNativeDistributionDependenciesWithNativeDistributionProvider(
+                kotlinNativeProvider.konanDistributionProvider,
                 commonizerTarget
             )
         }
