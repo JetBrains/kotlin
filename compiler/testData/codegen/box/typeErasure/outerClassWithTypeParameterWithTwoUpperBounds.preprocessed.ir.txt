@@ -1,10 +1,10 @@
 Module: main
 // CallableId=/foo
-FUN name:foo visibility:public modality:FINAL returnType:kotlin.Int [inline]
+FUN name:foo visibility:private modality:FINAL returnType:kotlin.Int [inline]
   VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.A<kotlin.CharSequence>
   VALUE_PARAMETER kind:Regular name:b index:1 type:kotlin.CharSequence
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun foo (<this>: <root>.A<kotlin.CharSequence>, b: kotlin.CharSequence): kotlin.Int [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun foo (<this>: <root>.A<kotlin.CharSequence>, b: kotlin.CharSequence): kotlin.Int [inline] declared in <root>'
       CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
         ARG <this>: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
           ARG <this>: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.CharSequence origin=GET_PROPERTY
