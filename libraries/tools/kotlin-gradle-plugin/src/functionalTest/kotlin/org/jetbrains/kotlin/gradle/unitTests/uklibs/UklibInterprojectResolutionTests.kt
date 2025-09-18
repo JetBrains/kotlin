@@ -2,14 +2,18 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.result.UnresolvedArtifactResult
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosMain
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -706,6 +710,64 @@ class UklibInterprojectResolutionTests {
         assertTaskDependenciesEqual(
             compileKotlinJs,
             "compileKotlinJs"
+        )
+    }
+
+    @Test
+    fun `KT-77389 - java runtime classpath resolution - doesn't fail with resolution ambiguity`() {
+        val root = buildProject { }
+        buildProject(projectBuilder = {
+            withParent(root)
+            withName("producer")
+        }) {
+            plugins.apply("java-library")
+        }.evaluate()
+
+        val consumer = projectWithUklibs(root, "consumer") {
+            kotlin {
+                jvm()
+                dependencies {
+                    implementation(project(":producer"))
+                }
+            }
+        }.evaluate()
+
+        val exception = consumer.configurations.getByName("jvmRuntimeClasspath").incoming.artifactView { it.isLenient = true }
+            .artifacts.failures.single().stackTraceToString()
+        assertContains(
+            "we cannot choose between the following variants of project :producer:",
+            exception
+        )
+    }
+
+    @Test
+    fun `KT-77367 - IDE resolution - doesn't fail due to transforms for interproject dependencies in a clean state`() {
+        val root = buildProject { }
+        buildProjectWithJvm(
+            projectBuilder = {
+                withParent(root)
+                withName("producer")
+            },
+            preApplyCode = {
+                enableDefaultStdlibDependency(false)
+            }
+        ).evaluate()
+
+        val consumer = projectWithUklibs(root, "consumer") {
+            kotlin {
+                jvm()
+                dependencies {
+                    implementation(project(":producer"))
+                }
+            }
+        }.evaluate()
+
+        val unresolvedDependency = IdeBinaryDependencyResolver().resolve(
+            consumer.multiplatformExtension.sourceSets.getByName("jvmMain")
+        ).single() as IdeaKotlinUnresolvedBinaryDependency
+        assertContains(
+            "Failed to transform producer.jar",
+            unresolvedDependency.cause ?: error("missing cause")
         )
     }
 
