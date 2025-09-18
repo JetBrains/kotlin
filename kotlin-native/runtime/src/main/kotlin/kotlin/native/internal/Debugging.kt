@@ -14,6 +14,7 @@ import kotlin.native.internal.escapeAnalysis.Escapes
 @Deprecated("Use kotlin.native.runtime.Debugging instead.", ReplaceWith("Debugging", "kotlin.native.runtime.Debugging"))
 @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public object Debugging {
+    @Suppress("DEPRECATION")
     public var forceCheckedShutdown: Boolean by kotlin.native.runtime.Debugging::forceCheckedShutdown
 
     public val isThreadStateRunnable: Boolean by kotlin.native.runtime.Debugging::isThreadStateRunnable
