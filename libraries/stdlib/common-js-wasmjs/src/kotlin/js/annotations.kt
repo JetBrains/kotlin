@@ -66,5 +66,5 @@ public expect annotation class JsModule(val import: String)
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")
 @Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.FILE)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
 public expect annotation class JsQualifier(val value: String)
