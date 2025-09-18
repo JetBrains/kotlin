@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
-import org.jetbrains.kotlin.fir.scopes.defaultImportProvider
+import org.jetbrains.kotlin.fir.scopes.defaultImportsProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -29,10 +29,10 @@ class FirDefaultSimpleImportingScope(
 
     override val simpleImports: Map<Name, List<FirResolvedImport>> = run {
         val importResolveTransformer = FirImportResolveTransformer(session)
-        val defaultImportProvider = session.defaultImportProvider
-        val allDefaultImports = priority.getAllDefaultImports(defaultImportProvider, LanguageVersionSettingsImpl.DEFAULT)
+        val defaultImportsProvider = session.defaultImportsProvider
+        val allDefaultImports = priority.getAllDefaultImports(defaultImportsProvider, LanguageVersionSettingsImpl.DEFAULT)
         allDefaultImports
-            ?.filter { !it.isAllUnder && it.fqName !in excludedImportNames && it.fqName !in defaultImportProvider.excludedImports }
+            ?.filter { !it.isAllUnder && it.fqName !in excludedImportNames && it.fqName !in defaultImportsProvider.excludedImports }
             ?.mapNotNull {
                 buildImport {
                     importedFqName = it.fqName

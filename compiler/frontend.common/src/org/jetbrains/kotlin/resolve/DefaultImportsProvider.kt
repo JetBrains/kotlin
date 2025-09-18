@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.name.FqName
 
-abstract class DefaultImportProvider {
+abstract class DefaultImportsProvider {
     private val defaultImports: List<ImportPath> = listOf(
         "kotlin.*",
         "kotlin.annotation.*",

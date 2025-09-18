@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.resolve.*
 
 object JvmPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
-    override val defaultImportProvider: DefaultImportProvider = JvmDefaultImportsProvider
+    override val defaultImportsProvider: DefaultImportsProvider = JvmDefaultImportsProvider
 }

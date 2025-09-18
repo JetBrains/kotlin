@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.getTopLevelClassifierNamesInPackage
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.DefaultImportProvider
+import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.ImportPath
 
-object FirJvmDefaultImportProvider : DefaultImportProvider() {
+object FirJvmDefaultImportsProvider : DefaultImportsProvider() {
     override val platformSpecificDefaultImports: List<ImportPath> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         buildList {
             add(ImportPath.fromString("kotlin.jvm.*"))

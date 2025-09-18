@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExtraNativeCheckers
 import org.jetbrains.kotlin.fir.checkers.registerNativeCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
@@ -98,6 +98,6 @@ abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?,
         register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
         register(PlatformConflictDeclarationsDiagnosticDispatcher::class, NativeConflictDeclarationsDiagnosticDispatcher)
         register(FirOverrideChecker::class, FirNativeOverrideChecker(this))
-        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(NativeDefaultImportsProvider))
+        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(NativeDefaultImportsProvider))
     }
 }

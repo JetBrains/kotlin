@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.js.resolve
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DefaultImportProvider
+import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.ImportPath
 
-object JsDefaultImportsProvider : DefaultImportProvider() {
+object JsDefaultImportsProvider : DefaultImportsProvider() {
     override val platformSpecificDefaultImports: List<ImportPath> = listOf(ImportPath.fromString("kotlin.js.*"))
 
     override val excludedImports: List<FqName> =
