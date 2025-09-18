@@ -6,6 +6,6 @@
 package org.jetbrains.kotlin.buildtools.api.cri
 
 public interface SubtypeEntry {
-    public val className: String
+    public val className: String?
     public val subtypes: Collection<String>
 }

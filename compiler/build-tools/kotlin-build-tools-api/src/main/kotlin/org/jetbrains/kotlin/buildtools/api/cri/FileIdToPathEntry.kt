@@ -6,6 +6,6 @@
 package org.jetbrains.kotlin.buildtools.api.cri
 
 public interface FileIdToPathEntry {
-    public val fileId: Int
-    public val path: String
+    public val fileId: Int?
+    public val path: String?
 }

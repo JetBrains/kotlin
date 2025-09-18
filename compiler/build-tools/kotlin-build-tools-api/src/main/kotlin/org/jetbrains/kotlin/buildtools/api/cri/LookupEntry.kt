@@ -6,6 +6,6 @@
 package org.jetbrains.kotlin.buildtools.api.cri
 
 public interface LookupEntry {
-    public val key: Long
+    public val key: Long?
     public val fileIds: Collection<Int>
 }
