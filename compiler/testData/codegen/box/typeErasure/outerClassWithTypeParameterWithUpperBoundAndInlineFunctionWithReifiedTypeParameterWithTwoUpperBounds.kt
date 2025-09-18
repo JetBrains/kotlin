@@ -1,6 +1,5 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
-// WITH_REFLECT
 import kotlin.reflect.typeOf
 
 class Pair<A, B>(val x: A, val y: B)
@@ -14,9 +13,7 @@ fun box() : String {
    val pair = A("0123456789").typeOfPair("").toString()
     if (pair != "Pair<T, kotlin.String>" &&
         // JS_IR, JS_IR_ES6
-        pair != "Pair<T, String>" &&
-        // JVM_IR
-        pair != "Pair<T, java.lang.String> (Kotlin reflection is not available)")
+        pair != "Pair<T, String>")
         return "FAIL: $pair"
     return "OK"
 }
