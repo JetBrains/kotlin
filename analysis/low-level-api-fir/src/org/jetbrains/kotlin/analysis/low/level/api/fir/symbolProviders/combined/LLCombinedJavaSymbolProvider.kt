@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJava
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.hasMetadataAnnotation
+import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -57,15 +58,13 @@ internal class LLCombinedJavaSymbolProvider private constructor(
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderClassCacheStatsCounter)
     }
 
-    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
-        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+    override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider.fromSymbolProviders(session, providers)
 
-        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? = null
-        override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
+
+        return classCache.getOrPut(classId) { computeClassLikeSymbolByClassId(it) }
     }
-
-    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        classCache.getOrPut(classId) { computeClassLikeSymbolByClassId(it) }
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         val javaClasses = javaClassFinder.findClasses(classId).filterNot(JavaClass::hasMetadataAnnotation)
@@ -95,7 +94,13 @@ internal class LLCombinedJavaSymbolProvider private constructor(
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
-    override fun hasPackage(fqName: FqName): Boolean = providers.any { it.hasPackage(fqName) }
+    override fun hasPackage(fqName: FqName): Boolean {
+        // The package set from Java symbol providers is *exact* if it can be computed.
+        val packageNames = symbolNamesProvider.getPackageNames()
+            ?: return providers.any { it.hasPackage(fqName) }
+
+        return fqName.asString() in packageNames
+    }
 
     override fun estimateSymbolCacheSize(): Long = classCache.estimatedSize
 
