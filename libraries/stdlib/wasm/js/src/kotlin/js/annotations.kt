@@ -103,5 +103,5 @@ public actual annotation class JsModule(actual val import: String)
  */
 @ExperimentalWasmJsInterop
 @Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.FILE)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
 public actual annotation class JsQualifier(actual val value: String)
