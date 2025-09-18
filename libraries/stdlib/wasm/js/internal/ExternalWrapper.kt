@@ -161,7 +161,7 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
 }
 
 
-internal fun anyToExternRef(x: Any): ExternalInterfaceType? {
+internal fun anyToExternRef(x: Any): ExternalInterfaceType {
     return if (x is JsExternalBox)
         x.ref
     else
