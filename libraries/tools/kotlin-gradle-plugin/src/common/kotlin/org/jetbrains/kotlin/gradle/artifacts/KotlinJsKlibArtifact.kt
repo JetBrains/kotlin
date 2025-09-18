@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateDecom
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UKLIB_API_ELEMENTS_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.maybeCreateUklibApiElements
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -44,7 +45,7 @@ internal val KotlinJsKlibArtifact = KotlinTargetArtifact { target, apiElements, 
     when (target.project.kotlinPropertiesProvider.kmpPublicationStrategy) {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {
             val uklibAttribute = target.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()
-            target.project.configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME).outgoing.variants {
+            target.project.maybeCreateUklibApiElements().outgoing.variants {
                 it.create(uklibAttribute) {
                     it.artifact(artifact)
                     it.attributes {

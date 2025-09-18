@@ -66,6 +66,8 @@ internal fun Project.locateOrRegisterUklibManifestSerializationWithoutCompilatio
     }
 }
 
+internal fun Project.maybeCreateUklibApiElements() = configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME)
+
 private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     archiveTask: TaskProvider<ArchiveUklibTask>,
     publishedCompilations: List<KGPUklibFragment>,
@@ -73,7 +75,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     /**
      * FIXME: We can still enter the transforms for interproject dependencies with missing files.
      */
-    val uklibApiElements = configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME).apply {
+    val uklibApiElements = maybeCreateUklibApiElements().apply {
         attributes.apply {
             attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB_API))
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
@@ -96,6 +98,18 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
         it.attributes.attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
         it.artifact(serializeUklibManifestWithoutMetadataCompilationDependencies) {
             it.extension = uklibManifestArtifactType
+        }
+    }
+    /**
+     * This outgoing configuration is used to inject interproject metadata compilation output dependencies in uklibs. See
+     * [org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyTransformationTaskInputs.interprojectUklibMetadataCompilationOutputsView]
+     */
+    uklibApiElements.outgoing.variants.create("uklibInterprojectMetadataCompilationOutputs") {
+        it.attributes.attribute(uklibStateAttribute, uklibStateDecompressed)
+        it.attributes.attribute(uklibViewAttribute, uklibViewAttributeMetadataCompilationOutputs)
+        // This artifact is never actually created or read
+        it.artifact(layout.buildDirectory.file("kotlin/uklibMetadataCompilationOutputs")) {
+            it.builtBy(metadataCompilations.map { it.fragment })
         }
     }
 

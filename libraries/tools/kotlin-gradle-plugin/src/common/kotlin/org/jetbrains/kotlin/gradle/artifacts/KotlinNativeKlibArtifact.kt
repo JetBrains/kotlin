@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateDecom
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UKLIB_API_ELEMENTS_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.maybeCreateUklibApiElements
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -100,7 +101,7 @@ internal fun createKlibArtifact(
     when (compilation.project.kotlinPropertiesProvider.kmpPublicationStrategy) {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {
             val uklibAttribute = compilation.target.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()
-            compilation.project.configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME).outgoing.variants {
+            compilation.project.maybeCreateUklibApiElements().outgoing.variants {
                 val variant = it.maybeCreate(uklibAttribute)
                 variant.registerKlibArtifact(
                     klibProducingTask.map { it.klibOutput },

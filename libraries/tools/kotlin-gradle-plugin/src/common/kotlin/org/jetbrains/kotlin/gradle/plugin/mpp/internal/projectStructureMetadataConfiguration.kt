@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttributeMetadataCompilationOutputs
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -76,6 +78,16 @@ internal fun InternalKotlinSourceSet.interprojectUklibManifestView(): FileCollec
     return resolvableMetadataConfiguration.incoming.artifactView { view ->
         view.componentFilter { it is ProjectComponentIdentifier }
         view.isLenient = true
+    }.files
+}
+
+internal fun InternalKotlinSourceSet.interprojectUklibMetadataCompilationOutputView(): FileCollection {
+    return resolvableMetadataConfiguration.incoming.artifactView { view ->
+        view.componentFilter { it is ProjectComponentIdentifier }
+        view.isLenient = true
+        view.attributes {
+            it.attribute(uklibViewAttribute, uklibViewAttributeMetadataCompilationOutputs)
+        }
     }.files
 }
 

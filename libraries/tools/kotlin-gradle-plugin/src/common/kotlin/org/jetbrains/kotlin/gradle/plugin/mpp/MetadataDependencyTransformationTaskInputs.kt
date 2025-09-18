@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataR
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.interprojectUklibManifestView
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.interprojectUklibMetadataCompilationOutputView
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
-import org.jetbrains.kotlin.gradle.utils.future
 
 internal class MetadataDependencyTransformationTaskInputs(
     project: Project,
@@ -71,6 +71,19 @@ internal class MetadataDependencyTransformationTaskInputs(
             KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> kotlinSourceSet.internal.interprojectUklibManifestView()
             KmpResolutionStrategy.StandardKMPResolution -> project.files()
         }
+
+    @Suppress("unused") // Gradle input
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    val interprojectUklibMetadataCompilationOutputsView: FileCollection =
+        if (keepProjectDependencies) {
+            when (project.kotlinPropertiesProvider.kmpResolutionStrategy) {
+                KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> kotlinSourceSet.internal.interprojectUklibMetadataCompilationOutputView()
+                KmpResolutionStrategy.StandardKMPResolution -> project.files()
+            }
+        } else project.files()
 
     @Suppress("unused") // Gradle input
     @get:InputFiles

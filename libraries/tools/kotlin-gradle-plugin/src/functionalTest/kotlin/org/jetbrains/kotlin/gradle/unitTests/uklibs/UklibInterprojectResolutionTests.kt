@@ -525,16 +525,12 @@ class UklibInterprojectResolutionTests {
         compileCommonMainKotlinMetadata = mutableSetOf(
             "consumer:transformCommonMainDependenciesMetadata",
             "producer:commonizeNativeDistribution",
-            "producer:compileAppleMainKotlinMetadata",
             "producer:compileCommonMainKotlinMetadata",
-            "producer:compileIosMainKotlinMetadata",
+            "producer:compileLinuxMainKotlinMetadata",
             "producer:compileNativeMainKotlinMetadata",
-            "producer:iosArm64MetadataElements",
-            "producer:iosX64MetadataElements",
             "producer:serializeUklibManifestWithoutCompilationDependency",
-            "producer:transformAppleMainDependenciesMetadata",
             "producer:transformCommonMainDependenciesMetadata",
-            "producer:transformIosMainDependenciesMetadata",
+            "producer:transformLinuxMainDependenciesMetadata",
             "producer:transformNativeMainDependenciesMetadata",
         ),
         compileKotlinJvm = mutableSetOf(
@@ -542,56 +538,49 @@ class UklibInterprojectResolutionTests {
             "producer:compileKotlinJvm",
             "producer:jvmJar",
         ),
-        compileKotlinIosArm64 = mutableSetOf(
-            "producer:compileKotlinIosArm64",
+        compileKotlinLinuxX64 = mutableSetOf(
+            "producer:compileKotlinLinuxX64",
         ),
         compileKotlinJs = mutableSetOf(
             "producer:compileKotlinJs",
             "producer:jsJar",
         ),
-        transformIosMainCInteropDependenciesMetadata = null,
+        transformLinuxMainCInteropDependenciesMetadata = null,
     )
 
     @Test
     fun `interproject uklib resolution - task dependencies - with commonizer`() = testInterprojectTaskDependenciesWithUklibs(
         enableCInteropCommonization = true,
         resolveIdeDependencies = mutableSetOf(
-            "consumer:cinteropConsumerIosArm64",
-            "consumer:cinteropConsumerIosX64",
+            "consumer:cinteropConsumerLinuxArm64",
+            "consumer:cinteropConsumerLinuxX64",
             "consumer:commonizeCInterop",
             "consumer:commonizeNativeDistribution",
             "consumer:copyCommonizeCInteropForIde",
-            "consumer:iosArm64Cinterop-consumerKlib",
-            "consumer:iosX64Cinterop-consumerKlib",
-            "consumer:transformAppleMainCInteropDependenciesMetadataForIde",
-            "consumer:transformAppleTestCInteropDependenciesMetadataForIde",
-            "consumer:transformIosMainCInteropDependenciesMetadataForIde",
-            "consumer:transformIosTestCInteropDependenciesMetadataForIde",
+            "consumer:linuxArm64Cinterop-consumerKlib",
+            "consumer:linuxX64Cinterop-consumerKlib",
+            "consumer:transformLinuxMainCInteropDependenciesMetadataForIde",
+            "consumer:transformLinuxTestCInteropDependenciesMetadataForIde",
             "consumer:transformNativeMainCInteropDependenciesMetadataForIde",
             "consumer:transformNativeTestCInteropDependenciesMetadataForIde",
-            // FIXME: Why is producer:commonizeCitnerop missing here, but not in a sample project with equivalent cinterop setup
-            "producer:cinteropProducerIosArm64",
-            "producer:cinteropProducerIosX64",
+            // FIXME: KT-81139: Why is :producer:commonizeCInterop missing here?
+            "producer:cinteropProducerLinuxArm64",
+            "producer:cinteropProducerLinuxX64",
             "producer:serializeUklibManifestWithoutCompilationDependency",
         ),
         compileCommonMainKotlinMetadata = mutableSetOf(
             "consumer:transformCommonMainDependenciesMetadata",
-            "producer:cinteropProducerIosArm64",
-            "producer:cinteropProducerIosX64",
+            "producer:cinteropProducerLinuxArm64",
+            "producer:cinteropProducerLinuxX64",
             "producer:commonizeCInterop",
             "producer:commonizeNativeDistribution",
-            "producer:compileAppleMainKotlinMetadata",
             "producer:compileCommonMainKotlinMetadata",
-            "producer:compileIosMainKotlinMetadata",
+            "producer:compileLinuxMainKotlinMetadata",
             "producer:compileNativeMainKotlinMetadata",
-            "producer:iosArm64MetadataElements",
-            "producer:iosX64MetadataElements",
             "producer:serializeUklibManifestWithoutCompilationDependency",
-            "producer:transformAppleMainCInteropDependenciesMetadata",
-            "producer:transformAppleMainDependenciesMetadata",
+            "producer:transformLinuxMainCInteropDependenciesMetadata",
+            "producer:transformLinuxMainDependenciesMetadata",
             "producer:transformCommonMainDependenciesMetadata",
-            "producer:transformIosMainCInteropDependenciesMetadata",
-            "producer:transformIosMainDependenciesMetadata",
             "producer:transformNativeMainCInteropDependenciesMetadata",
             "producer:transformNativeMainDependenciesMetadata",
         ),
@@ -600,16 +589,16 @@ class UklibInterprojectResolutionTests {
             "producer:compileKotlinJvm",
             "producer:jvmJar",
         ),
-        compileKotlinIosArm64 = mutableSetOf(
-            "consumer:cinteropConsumerIosArm64",
-            "producer:cinteropProducerIosArm64",
-            "producer:compileKotlinIosArm64",
+        compileKotlinLinuxX64 = mutableSetOf(
+            "consumer:cinteropConsumerLinuxX64",
+            "producer:cinteropProducerLinuxX64",
+            "producer:compileKotlinLinuxX64",
         ),
         compileKotlinJs = mutableSetOf(
             "producer:compileKotlinJs",
             "producer:jsJar",
         ),
-        transformIosMainCInteropDependenciesMetadata = mutableSetOf(
+        transformLinuxMainCInteropDependenciesMetadata = mutableSetOf(
             "producer:serializeUklibManifestWithoutCompilationDependency",
         )
     )
@@ -617,21 +606,21 @@ class UklibInterprojectResolutionTests {
     fun testInterprojectTaskDependenciesWithUklibs(
         enableCInteropCommonization: Boolean,
         resolveIdeDependencies: MutableSet<String>,
-        transformIosMainCInteropDependenciesMetadata: MutableSet<String>?,
+        transformLinuxMainCInteropDependenciesMetadata: MutableSet<String>?,
         compileCommonMainKotlinMetadata: MutableSet<String>,
         compileKotlinJvm: MutableSet<String>,
-        compileKotlinIosArm64: MutableSet<String>,
+        compileKotlinLinuxX64: MutableSet<String>,
         compileKotlinJs: MutableSet<String>,
     ) {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             val nativeTargets = listOf(
-                iosArm64(),
-                iosX64(),
+                linuxArm64(),
+                linuxX64(),
             )
             if (enableCInteropCommonization) {
-                nativeTargets.forEach { t ->
-                    t.compilations.getByName("main").cinterops.create(t.project.name) {
-                        it.definitionFile.set(t.project.layout.projectDirectory.file("${t.project}.def"))
+                nativeTargets.forEach { target ->
+                    target.compilations.getByName("main").cinterops.create(target.project.name) {
+                        it.definitionFile.set(target.project.layout.projectDirectory.file("${target.project}.def"))
                     }
                 }
             }
@@ -639,7 +628,7 @@ class UklibInterprojectResolutionTests {
             js()
         }
         val root = buildProject()
-        projectWithUklibs(
+        val producer = projectWithUklibs(
             root,
             "producer",
             preApplyCode = {
@@ -671,11 +660,15 @@ class UklibInterprojectResolutionTests {
             expectedTaskDependencies.prettyPrinted,
             consumer.tasks.getByName(consumerTaskName).closure {
                 it.taskDependencies.getDependencies(null)
-            }.filter {
-                val isLifecycleTask = it.javaClass.superclass == DefaultTask::class.java
-                val isIrrelevantProcessResourcesTask = it is ProcessResources
-                val whatever = it.name in setOf("checkKotlinGradlePluginConfigurationErrors", "kmpPartiallyResolvedDependenciesChecker")
-                return@filter !(isLifecycleTask || isIrrelevantProcessResourcesTask || whatever)
+            }.filter { task ->
+                return@filter !listOf(
+                    // isLifecycleTask
+                    { task.javaClass.superclass == DefaultTask::class.java },
+                    // isIrrelevantProcessResourcesTask
+                    { task is ProcessResources },
+                    // checkers
+                    { task.name in setOf("checkKotlinGradlePluginConfigurationErrors", "kmpPartiallyResolvedDependenciesChecker") }
+                ).any { it() }
             }.map {
                 "${it.project.name}:${it.name}"
             }.toSet().prettyPrinted,
@@ -692,13 +685,13 @@ class UklibInterprojectResolutionTests {
             "compileCommonMainKotlinMetadata"
         )
 
-        val iosCinteropTransform = "transformIosMainCInteropDependenciesMetadata"
-        transformIosMainCInteropDependenciesMetadata?.let {
+        val linuxCinteropTransform = "transformLinuxMainCInteropDependenciesMetadata"
+        transformLinuxMainCInteropDependenciesMetadata?.let {
             assertTaskDependenciesEqual(
-                transformIosMainCInteropDependenciesMetadata,
-                iosCinteropTransform
+                transformLinuxMainCInteropDependenciesMetadata,
+                linuxCinteropTransform
             )
-        } ?: assert(iosCinteropTransform !in consumer.tasks.names)
+        } ?: assert(linuxCinteropTransform !in consumer.tasks.names)
 
         assertTaskDependenciesEqual(
             compileKotlinJvm,
@@ -706,8 +699,8 @@ class UklibInterprojectResolutionTests {
         )
 
         assertTaskDependenciesEqual(
-            compileKotlinIosArm64,
-            "compileKotlinIosArm64"
+            compileKotlinLinuxX64,
+            "compileKotlinLinuxX64"
         )
 
         assertTaskDependenciesEqual(
