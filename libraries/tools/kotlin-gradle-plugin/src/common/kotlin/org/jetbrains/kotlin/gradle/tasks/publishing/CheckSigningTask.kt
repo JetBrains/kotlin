@@ -196,7 +196,7 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
                 } else {
                     missingProperties += "* 'signing.secretKeyRingFile' is not set. Please ensure you have the 'signing.secretKeyRingFile' property set to your keyring's file path."
                 }
-                if (hasKeyPassword.get()) {
+                if (hasKeyPassword.getOrElse(false)) {
                     presentProperties += "* 'signing.password' is set"
                 } else {
                     missingProperties += "* 'signing.password' is not set. Please ensure you have the 'signing.password' property set to your secret key's password."
