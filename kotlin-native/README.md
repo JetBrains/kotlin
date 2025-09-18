@@ -43,6 +43,16 @@ Prerequisites:
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
 *   macOS: Xcode 16.0 or newer
+    * if you're seeing a build error like this
+      
+            > Failed to apply plugin class 'org.jetbrains.kotlin.xcode.XcodeOverridePlugin'.
+               > org.jetbrains.kotlin.konan.MissingXcodeException: An error occurred during an xcrun execution. Make sure that Xcode and its command line tools are properly installed.
+                 Failed command: /usr/bin/xcrun -f bitcode-build-tool
+                 Try running this command in Terminal and fix the errors by making Xcode (and its command line tools) configuration correct.
+            
+      * try running `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`
+      * check if it helped via `xcrun --find bitcode-build-tool` which should print the correct path
+
     * on `macOS aarch64`, CInterop functionality is available only using aarch64 JDK builds, e.g.
 [Eclipse Temurin 17.0.5](https://github.com/adoptium/temurin17-binaries/releases) or
 [Azul Zulu JDK8](https://www.azul.com/downloads/?version=java-8-lts&os=macos&architecture=arm-64-bit&package=jdk)
