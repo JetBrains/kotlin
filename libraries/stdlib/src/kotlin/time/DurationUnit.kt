@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -58,6 +58,58 @@ internal expect fun convertDurationUnitOverflow(value: Long, sourceUnit: Duratio
 @SinceKotlin("1.5")
 internal expect fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long
 
+/**
+ * Converts a duration [value] from the specified [unit] to milliseconds.
+ *
+ * This function performs the conversion by multiplying the value with the unit's
+ * millisecond multiplier, using overflow-safe multiplication.
+ *
+ * @param value the duration value to convert. Should always be non-negative.
+ * @param unit the source duration unit
+ * @return the duration value converted to milliseconds
+ */
+internal fun convertDurationUnitToMilliseconds(value: Long, unit: DurationUnit): Long =
+    value.multiplyNonNegativeWithoutOverflow(unit.millisMultiplier)
+
+/**
+ * Multiplies this non-negative Long value by another positive Long value,
+ * clamping the result to [MAX_MILLIS] on overflow.
+ *
+ * This function optimizes multiplication for non-negative values by:
+ * - Handling special cases (0 and 1) efficiently
+ * - Using bit counting to detect potential overflow without performing the multiplication
+ * - Clamping to [MAX_MILLIS] when overflow is detected
+ *
+ * @param other the Long value to multiply by (always positive)
+ * @return the product clamped to the range [0, [MAX_MILLIS]]
+ */
+private fun Long.multiplyNonNegativeWithoutOverflow(other: Long): Long = when {
+    this == 0L -> 0L
+    this == 1L -> other.coerceAtMost(MAX_MILLIS)
+    other == 1L -> this.coerceAtMost(MAX_MILLIS)
+    else -> {
+        val bitSum = 128 - countLeadingZeroBits() - other.countLeadingZeroBits()
+        when {
+            bitSum < 63 -> this * other
+            bitSum > 63 -> MAX_MILLIS
+            else -> (this * other).coerceAtMost(MAX_MILLIS)
+        }
+    }
+}
+
+/**
+ * Number of milliseconds in one unit of this DurationUnit.
+ * Used for converting whole unit values to milliseconds during parsing.
+ */
+private val DurationUnit.millisMultiplier: Long
+    get() = when (this) {
+        DurationUnit.DAYS -> MILLIS_IN_DAY
+        DurationUnit.HOURS -> MILLIS_IN_HOUR
+        DurationUnit.MINUTES -> MILLIS_IN_MINUTE
+        DurationUnit.SECONDS -> MILLIS_IN_SECOND
+        DurationUnit.MILLISECONDS -> 1L
+        else -> error("Wrong unit for millisMultiplier: $this")
+    }
 
 @SinceKotlin("1.3")
 @Suppress("REDUNDANT_ELSE_IN_WHEN")
@@ -71,34 +123,3 @@ internal fun DurationUnit.shortName(): String = when (this) {
     DurationUnit.DAYS -> "d"
     else -> error("Unknown unit: $this")
 }
-
-@SinceKotlin("1.5")
-internal fun durationUnitByShortName(shortName: String): DurationUnit = when (shortName) {
-    "ns" -> DurationUnit.NANOSECONDS
-    "us" -> DurationUnit.MICROSECONDS
-    "ms" -> DurationUnit.MILLISECONDS
-    "s" -> DurationUnit.SECONDS
-    "m" -> DurationUnit.MINUTES
-    "h" -> DurationUnit.HOURS
-    "d" -> DurationUnit.DAYS
-    else -> throw IllegalArgumentException("Unknown duration unit short name: $shortName")
-}
-
-@SinceKotlin("1.5")
-internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean): DurationUnit =
-    when {
-        !isTimeComponent -> {
-            when (isoChar) {
-                'D' -> DurationUnit.DAYS
-                else -> throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar")
-            }
-        }
-        else -> {
-            when (isoChar) {
-                'H' -> DurationUnit.HOURS
-                'M' -> DurationUnit.MINUTES
-                'S' -> DurationUnit.SECONDS
-                else -> throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar")
-            }
-        }
-    }
