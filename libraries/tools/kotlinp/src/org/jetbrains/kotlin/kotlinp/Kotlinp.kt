@@ -148,6 +148,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendSignatures(constructor)
         appendAnnotations(constructor.annotations)
         renderConstructorModifiers(constructor, printer)
+        appendReturnValueStatus(constructor.returnValueStatus)
         append("constructor")
         appendValueParameters(constructor.valueParameters)
         appendLine()
@@ -171,6 +172,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendAnnotations(function.extensionReceiverParameterAnnotations, useSiteTarget = "receiver")
         appendContextParameters(function.contextParameters)
         renderFunctionModifiers(function, printer)
+        appendReturnValueStatus(function.returnValueStatus)
         append("fun ")
         appendTypeParameters(function.typeParameters, postfix = " ")
         appendReceiverParameterType(function.receiverParameterType)
@@ -308,6 +310,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendAnnotations(property.extensionReceiverParameterAnnotations, useSiteTarget = "receiver")
         appendContextParameters(property.contextParameters)
         renderPropertyModifiers(property, printer)
+        appendReturnValueStatus(property.returnValueStatus)
         append(if (property.isVar) "var " else "val ")
         appendTypeParameters(property.typeParameters, postfix = " ")
         appendReceiverParameterType(property.receiverParameterType)
@@ -507,6 +510,15 @@ abstract class Kotlinp(protected val settings: Settings) {
                 appendLine()
             }
         }
+    }
+
+    private fun Printer.appendReturnValueStatus(returnValueStatus: ReturnValueStatus) {
+        val s = when (returnValueStatus) {
+            ReturnValueStatus.UNSPECIFIED -> return
+            ReturnValueStatus.MUST_USE -> "/* must-use return value */ "
+            ReturnValueStatus.EXPLICITLY_IGNORABLE -> "/* ignorable return value */ "
+        }
+        append(s)
     }
 
     protected inline fun <T : Any> List<T>.sortIfNeeded(sorter: (List<T>) -> List<T>): List<T> =
