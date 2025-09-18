@@ -44,7 +44,6 @@ extern "C" void test_RunInNewThread(void (*f)()) {
 import leakMemory.*
 import kotlin.concurrent.AtomicInt
 import kotlin.native.concurrent.*
-import kotlin.native.Platform
 import kotlin.test.*
 import kotlinx.cinterop.*
 
@@ -57,7 +56,6 @@ fun ensureInititalized() {
 }
 
 fun main() {
-    Platform.isMemoryLeakCheckerActive = true
     kotlin.native.runtime.Debugging.forceCheckedShutdown = true
     assertTrue(global.value == 0)
     // Created a thread, made sure Kotlin is initialized there.
