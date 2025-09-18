@@ -22,11 +22,14 @@ grant {
     permission java.util.PropertyPermission "java.ext.dirs", "write";
     permission java.util.PropertyPermission "platform.random.idempotence.check.rate", "write";
     permission java.util.PropertyPermission "apple.awt.UIElement", "write";
+
     // IdeaSystemPropertiesForParallelRunConfigurator
     permission java.util.PropertyPermission "java.io.tmpdir", "write";
     permission java.util.PropertyPermission "ANDROID_SDK_HOME", "write";
     // DebugAttachDetectorArgs.findDebugArgs
     permission java.lang.management.ManagementPermission "monitor";
+    // Prevent loading IJ coroutines
+    permission java.util.PropertyPermission "ide.enable.implicit.blocking.context", "write";
     // KotlinTestWithEnvironmentManagement
     permission java.util.PropertyPermission "java.awt.headless", "write";
     // ReplCompilerJava8Test.testIncompatibleScriptJvmTargetProperty
