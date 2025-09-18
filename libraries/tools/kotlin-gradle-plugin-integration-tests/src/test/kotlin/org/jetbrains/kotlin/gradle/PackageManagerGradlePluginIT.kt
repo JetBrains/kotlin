@@ -619,26 +619,33 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         project("js-only-npm", gradleVersion, enableOfflineMode = true) {
             buildScriptInjection {
                 this.project.tasks.named("kotlinNpmInstall") {
-                    val projectDir = this.project.projectDir
                     val buildDir = this.project.layout.buildDirectory
 
                     it.doFirst {
-                        val npmCache = projectDir.resolve("npm-cache").also {
+                        val npmCache = buildDir.dir("npm-cache").get().asFile.also {
                             it.mkdirs()
                         }
                         buildDir.file("js/.npmrc").get().asFile.writeText(
                             """
-                                cache=${npmCache.absolutePath}
+                                cache=${npmCache.invariantSeparatorsPath}
                             """.trimIndent()
                         )
                         buildDir.file("js/.yarnrc").get().asFile.writeText(
                             """
-                                cache-folder ${npmCache.absolutePath}
+                                cache-folder "${npmCache.invariantSeparatorsPath}"
                             """.trimIndent()
                         )
                     }
                 }
             }
+
+            // populate Gradle cache
+            build("kotlinNpmInstall", enableOfflineMode = false) {
+                assertTasksExecuted(":kotlinNpmInstall")
+            }
+
+            // clean everything including NPM cache
+            build("clean")
 
             buildAndFail("kotlinNpmInstall") {
                 assertTasksFailed(":kotlinNpmInstall")
