@@ -1187,7 +1187,9 @@ class FirCallCompletionResultsWriterTransformer(
         // Having this variable before `transformSyntheticCall` is crucial because after there would be no candidate left
         val wasExpectedTypeAddedAsEqualityForSyntheticCall = syntheticCall.wasExpectedTypeAddedAsEqualityForSyntheticCall()
         return transformSyntheticCall(syntheticCall, data).apply {
-            if (wasExpectedTypeAddedAsEqualityForSyntheticCall) {
+            if (wasExpectedTypeAddedAsEqualityForSyntheticCall &&
+                LanguageFeature.EqualityConstraintForOperatorsUnderAssignments.isEnabled()
+            ) {
                 computeBranchTypes()?.let { branchTypes -> addRefinedTypeForDataFlow(branchTypes) }
             }
         }
