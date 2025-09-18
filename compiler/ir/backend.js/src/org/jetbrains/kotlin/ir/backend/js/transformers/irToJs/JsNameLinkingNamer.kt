@@ -43,7 +43,8 @@ class JsNameLinkingNamer(
             val jsModule: String? = declaration.getJsModule()
             val maybeParentFile: IrFile? = declaration.parent as? IrFile
             val fileJsModule: String? = maybeParentFile?.getJsModule()
-            val jsQualifier: List<JsName>? = maybeParentFile?.getJsQualifier()?.split('.')?.map { JsName(it, false) }
+            val jsQualifier: List<JsName>? = (declaration.getJsQualifier() ?: maybeParentFile?.getJsQualifier())
+                ?.split('.')?.map { JsName(it, false) }
 
             return when {
                 jsModule != null -> declaration.generateImportForDeclarationWithJsModule(jsModule)
