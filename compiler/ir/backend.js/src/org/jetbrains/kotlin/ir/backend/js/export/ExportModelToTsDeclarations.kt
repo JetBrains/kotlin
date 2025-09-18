@@ -196,8 +196,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     }
 
     private fun ExportedObject.generateTypeScriptString(indent: String, prefix: String): String {
-        val shouldGenerateObjectWithGetInstance =
-            isEsModules && !ir.isEffectivelyExternal() && (ir.parent as? IrClass).let { it == null || (it.isInterface && !ir.isCompanion) }
+        val shouldGenerateObjectWithGetInstance = isEsModules && !ir.isExternal
 
         val constructorTypeReference =
             if (shouldGenerateObjectWithGetInstance) MetadataConstructor else "$name.$Metadata.$MetadataConstructor"
