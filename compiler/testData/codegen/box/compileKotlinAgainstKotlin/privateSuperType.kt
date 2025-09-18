@@ -1,8 +1,3 @@
-// Fails on native when run with `-Pkotlin.internal.native.test.cacheMode=STATIC_EVERYWHERE`.
-// Looks like the call to `k` fails as `k` is not exported from the lib module.
-// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // MODULE: lib
 // FILE: Z.kt
 package z
