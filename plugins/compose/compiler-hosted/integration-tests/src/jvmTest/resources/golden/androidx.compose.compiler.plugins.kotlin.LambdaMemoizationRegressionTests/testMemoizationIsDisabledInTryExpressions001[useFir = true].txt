@@ -1,0 +1,112 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test() {
+    try {
+        try {
+            if (true) {
+                foo(block = {})
+            }
+        } catch (ignored: Exception) {
+            if (true) {
+                foo(block = {})
+            }
+        } finally {
+            if (true) {
+                foo(block = {})
+            }
+        }
+
+        if (true) {
+            foo(block = {})
+        }
+    } catch (ignored: Exception) {
+        if (true) {
+            foo(block = {})
+        }
+    } finally {
+        if (true) {
+            foo(block = {})
+        }
+    }
+
+    if (true) {
+        foo(block = {})
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test):Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    try {
+      try {
+        if (true) {
+          foo {
+          }
+        }
+      } catch (ignored: Exception) {
+        if (true) {
+          foo {
+          }
+        }
+      } finally {
+        if (true) {
+          foo {
+          }
+        }
+      }
+      if (true) {
+        foo {
+        }
+      }
+    } catch (ignored: Exception) {
+      if (true) {
+        foo {
+        }
+      }
+    } finally {
+      if (true) {
+        foo {
+        }
+      }
+    }
+    if (true) {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<{}>")
+      foo(<block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          {
+          }
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      })
+      %composer.endReplaceGroup()
+    } else {
+      %composer.startReplaceGroup(<>)
+      %composer.endReplaceGroup()
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
