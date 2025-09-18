@@ -237,7 +237,6 @@ tasks.withType<Test>().configureEach {
         logger.info("Security policy for test inputs generated to ${policyFileProvider.get().asFile.absolutePath}")
         jvmArgs(
             "-Djava.security.policy=${policyFileProvider.get().asFile.absolutePath}",
-            "-Djava.security.debug=failure",
             "-Djava.security.manager=org.jetbrains.kotlin.security.KotlinSecurityManager",
         )
     }

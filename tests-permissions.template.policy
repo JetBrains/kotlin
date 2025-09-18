@@ -3,18 +3,16 @@ grant codeBase "file:{{gradle_user_home}}/-" {
 };
 {{all_permissions_for_gradle_ro_dep_cache}}
 grant {
-    permission java.io.FilePermission "{{gradle_user_home}}/-", "read";
-    permission java.io.FilePermission "{{gradle_user_home}}", "read";
-    permission java.io.FilePermission "/dev/random", "read";
-    permission java.io.FilePermission "/dev/urandom", "read";
     // Basic permissions needed for tests to run
     permission java.lang.RuntimePermission "*";
-    permission java.net.SocketPermission "127.0.0.1:0", "connect,resolve";
+    permission java.net.SocketPermission "*", "connect,resolve";
     permission java.lang.management.ManagementPermission "control";
     permission java.util.logging.LoggingPermission "control";
     permission com.sun.jdi.JDIPermission "virtualMachineManager";
     permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+
     permission java.util.PropertyPermission "*", "read";
+
     permission java.util.PropertyPermission "idea.*", "write";
     permission java.util.PropertyPermission "psi.*", "write";
     permission java.util.PropertyPermission "org.gradle.test.worker", "write";
@@ -24,16 +22,18 @@ grant {
     permission java.util.PropertyPermission "java.ext.dirs", "write";
     permission java.util.PropertyPermission "platform.random.idempotence.check.rate", "write";
     permission java.util.PropertyPermission "apple.awt.UIElement", "write";
-
     // IdeaSystemPropertiesForParallelRunConfigurator
     permission java.util.PropertyPermission "java.io.tmpdir", "write";
     permission java.util.PropertyPermission "ANDROID_SDK_HOME", "write";
-
     // KotlinTestWithEnvironmentManagement
     permission java.util.PropertyPermission "java.awt.headless", "write";
-
     // ReplCompilerJava8Test.testIncompatibleScriptJvmTargetProperty
     permission java.util.PropertyPermission "kotlin.repl.jvm.target", "write";
+
+    permission java.io.FilePermission "{{gradle_user_home}}/-", "read,write";
+    permission java.io.FilePermission "{{gradle_user_home}}", "read";
+    permission java.io.FilePermission "/dev/random", "read";
+    permission java.io.FilePermission "/dev/urandom", "read";
 
     // Used by com.intellij.openapi.util.SystemInfo.isCrostini() to detect ChromeOs
     permission java.io.FilePermission "/dev/.cros_milestone", "read";
