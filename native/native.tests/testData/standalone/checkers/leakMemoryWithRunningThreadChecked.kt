@@ -1,5 +1,5 @@
 // EXIT_CODE: !0
-// OUTPUT_REGEX: Cannot run checkers when there are 1 alive runtimes at the shutdown.*
+// OUTPUT_REGEX: .*Cannot run checkers when there are 1 alive runtimes at the shutdown.*
 // MODULE: cinterop
 // FILE: leakMemory.def
 ---
@@ -36,8 +36,7 @@ extern "C" void test_RunInNewThread(void (*f)()) {
 // MODULE: main(cinterop)
 // FILE: main.kt
 @file:OptIn(
-    kotlin.experimental.ExperimentalNativeApi::class,
-    kotlin.native.runtime.NativeRuntimeApi::class,
+    ExperimentalStdlibApi::class,
     kotlinx.cinterop.ExperimentalForeignApi::class
 )
 
@@ -56,11 +55,13 @@ fun ensureInititalized() {
 }
 
 fun main() {
-    kotlin.native.runtime.Debugging.forceCheckedShutdown = true
     assertTrue(global.value == 0)
     // Created a thread, made sure Kotlin is initialized there.
     test_RunInNewThread(staticCFunction(::ensureInititalized))
     assertTrue(global.value == 1)
-    // Now exiting. With checked shutdown we will fail, complaining there're
-    // unfinished threads with runtimes.
+
+    val activeWorkersCount = Worker.activeWorkers.size
+    check(activeWorkersCount == 1) {
+        "Cannot run checkers when there are ${activeWorkersCount - 1} alive runtimes at the shutdown"
+    }
 }

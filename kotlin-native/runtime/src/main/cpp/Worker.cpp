@@ -529,19 +529,14 @@ class State {
     terminating_native_workers_.erase(it);
   }
 
-  template <typename F>
-  void waitNativeWorkersTerminationUnlocked(bool checkLeaks, F waitForWorker) {
+  void waitNativeWorkerTerminationUnlocked(KInt id) {
       std::vector<std::pair<KInt, pthread_t>> workersToWait;
       {
           Locker locker(&lock_);
 
-          if (checkLeaks) {
-              checkNativeWorkersLeakLocked();
-          }
-
           for (auto& kvp : terminating_native_workers_) {
               RuntimeAssert(!pthread_equal(kvp.second, pthread_self()), "Native worker is joining with itself");
-              if (waitForWorker(kvp.first)) {
+              if (kvp.first == id) {
                   workersToWait.push_back(kvp);
               }
           }
@@ -554,25 +549,6 @@ class State {
       for (auto worker : workersToWait) {
           pthread_join(worker.second, nullptr);
       }
-  }
-
-  void checkNativeWorkersLeakLocked() {
-    size_t remainingNativeWorkers = 0;
-    for (const auto& kvp : workers_) {
-      Worker* worker = kvp.second;
-      if (worker->kind() == WorkerKind::kNative) {
-        ++remainingNativeWorkers;
-      }
-    }
-
-    if (remainingNativeWorkers != 0) {
-      konan::consoleErrorf(
-        "Unfinished workers detected, %zu workers leaked!\n"
-        "Use `Platform.isMemoryLeakCheckerActive = false` to avoid this check.\n",
-        remainingNativeWorkers);
-      konan::consoleFlush();
-      std::abort();
-    }
   }
 
   KULong getWorkerPlatformThreadIdUnlocked(KInt id) {
@@ -751,12 +727,8 @@ void WorkerDestroyThreadDataIfNeeded(KInt id) {
   theState()->destroyWorkerThreadDataUnlocked(id);
 }
 
-void WaitNativeWorkersTermination() {
-  theState()->waitNativeWorkersTerminationUnlocked(true, [](KInt worker) { return true; });
-}
-
 void WaitNativeWorkerTermination(KInt id) {
-    theState()->waitNativeWorkersTerminationUnlocked(false, [id](KInt worker) { return worker == id; });
+    theState()->waitNativeWorkerTerminationUnlocked(id);
 }
 
 Worker::~Worker() {

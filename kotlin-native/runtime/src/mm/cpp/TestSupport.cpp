@@ -58,7 +58,7 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
 }
 
 void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {
-    DeinitMemory(memoryState, false);
+    DeinitMemory(memoryState);
     mm::ThreadRegistry::ClearCurrentThreadData();
 }
 

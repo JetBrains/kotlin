@@ -11,7 +11,5 @@ Worker* WorkerInit(MemoryState* memoryState);
 void WorkerDeinit(Worker* worker);
 // Clean up all associated thread state, if this was a native worker.
 void WorkerDestroyThreadDataIfNeeded(KInt id);
-// Wait until all terminating native workers finish termination. Expected to be called at most once.
-void WaitNativeWorkersTermination();
 
 #endif // RUNTIME_WORKER_H

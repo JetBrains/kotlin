@@ -76,12 +76,6 @@ public class FirNativeStandaloneTestWithInlinedFunInKlibGenerated extends Abstra
     }
 
     @Test
-    @TestMetadata("leakMemoryWithRunningThreadUnchecked.kt")
-    public void testLeakMemoryWithRunningThreadUnchecked() {
-      runTest("native/native.tests/testData/standalone/checkers/leakMemoryWithRunningThreadUnchecked.kt");
-    }
-
-    @Test
     @TestMetadata("leak_worker.kt")
     public void testLeak_worker() {
       runTest("native/native.tests/testData/standalone/checkers/leak_worker.kt");
