@@ -85,9 +85,6 @@ public class SirVisibilityCheckerImpl(
         if (ktSymbol is KaCallableSymbol && ktSymbol.contextParameters.isNotEmpty()) {
             return@withSessions SirAvailability.Unavailable("Callables with context parameters are not supported yet")
         }
-        if (ktSymbol is KaFunctionSymbol && ktSymbol.valueParameters.any { it.isVararg }) {
-            return@withSessions SirAvailability.Unavailable("Callables with vararg parameters are not supported yet")
-        }
         if (ktSymbol is KaNamedFunctionSymbol && ktSymbol.allParameters.map { it.returnType.fullyExpandedType }
                 .filter { type -> !type.isFunctionType && speciallyBridgedTypes.none { type.isClassType(it) } }
                 .any { hasUnboundTypeParameters(it) }

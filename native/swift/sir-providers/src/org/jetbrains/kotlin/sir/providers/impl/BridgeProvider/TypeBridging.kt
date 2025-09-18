@@ -23,6 +23,9 @@ internal fun bridgeType(type: SirType): Bridge = when (type) {
     else -> error("Attempt to bridge unbridgeable type: $type.")
 }
 
+private fun bridgeTypeForVariadicParameter(type: SirType): Bridge =
+    AsNSArrayForVariadic(SirArrayType(type), bridgeAsNSCollectionElement(type))
+
 private fun bridgeExistential(type: SirExistentialType): Bridge {
     if (type.protocols.singleOrNull() == KotlinRuntimeSupportModule.kotlinBridgeable) {
         return AsAnyBridgeable
@@ -34,23 +37,23 @@ private fun bridgeExistential(type: SirExistentialType): Bridge {
     )
 }
 
-private fun bridgeNominalType(type: SirNominalType): Bridge {
-    fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val bridge = bridgeType(type)) {
-        is AsIs -> AsNSNumber(bridge.swiftType)
-        is AsOptionalWrapper -> AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
-        is AsOptionalNothing -> AsObjCBridgedOptional(bridge.swiftType)
-        is AsObject,
-        is AsExistential,
-        is AsAnyBridgeable,
-        is AsOpaqueObject,
-            -> AsObjCBridged(bridge.swiftType, CType.id)
-        is AsBlock,
-        is AsObjCBridged,
-        AsOutError,
-        AsVoid
-            -> bridge
-    }
+private fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val bridge = bridgeType(type)) {
+    is AsIs -> AsNSNumber(bridge.swiftType)
+    is AsOptionalWrapper -> AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
+    is AsOptionalNothing -> AsObjCBridgedOptional(bridge.swiftType)
+    is AsObject,
+    is AsExistential,
+    is AsAnyBridgeable,
+    is AsOpaqueObject,
+        -> AsObjCBridged(bridge.swiftType, CType.id)
+    is AsBlock,
+    is AsObjCBridged,
+    AsOutError,
+    AsVoid
+        -> bridge
+}
 
+private fun bridgeNominalType(type: SirNominalType): Bridge {
     return when (val subtype = type.typeDeclaration) {
         SirSwiftModule.void -> AsVoid
 
@@ -127,16 +130,18 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
 
 internal fun bridgeParameter(parameter: SirParameter, index: Int): BridgeParameter {
     val bridgeParameterName = parameter.name?.let(::createBridgeParameterName) ?: "_$index"
-    val bridge = bridgeType(parameter.type)
+    val bridge = if (parameter.isVariadic) bridgeTypeForVariadicParameter(parameter.type) else bridgeType(parameter.type)
     return BridgeParameter(
         name = bridgeParameterName,
-        bridge = bridge
+        bridge = bridge,
+        isExplicit = parameter.origin != null,
     )
 }
 
 internal data class BridgeParameter(
     val name: String,
     val bridge: Bridge,
+    val isExplicit: Boolean = false,
 ) {
     var isRenderable: Boolean = bridge !is AsOptionalNothing && bridge !is AsVoid
 }
@@ -409,11 +414,28 @@ internal sealed class Bridge(
         }
     }
 
-    class AsNSArray(swiftType: SirNominalType, elementBridge: Bridge) : AsNSCollection(swiftType, CType.NSArray(elementBridge.cType)) {
+    open class AsNSArray(swiftType: SirNominalType, elementBridge: Bridge) : AsNSCollection(swiftType, CType.NSArray(elementBridge.cType)) {
         override val inSwiftSources = object : InSwiftSources() {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return valueExpression.mapSwift { elementBridge.inSwiftSources.swiftToKotlin(typeNamer, it) }
             }
+        }
+    }
+
+    class AsNSArrayForVariadic(swiftType: SirNominalType, elementBridge: Bridge) : AsNSArray(swiftType, elementBridge) {
+        override val inKotlinSources: ValueConversion = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val arrayKind = typeNamer.kotlinPrimitiveFqNameIfAny(swiftType.typeArguments.single()) ?: "Typed"
+                return "interpretObjCPointer<${
+                    typeNamer.kotlinFqName(
+                        swiftType,
+                        SirTypeNamer.KotlinNameType.PARAMETRIZED
+                    )
+                }>($valueExpression).to${arrayKind}Array()"
+            }
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "$valueExpression.objcPtr()"
         }
     }
 

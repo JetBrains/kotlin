@@ -430,6 +430,7 @@ public interface SirTypeNamer {
 
     public fun swiftFqName(type: SirType): String
     public fun kotlinFqName(sirType: SirType, nameType: KotlinNameType): String
+    public fun kotlinPrimitiveFqNameIfAny(sirType: SirType): String?
 }
 
 public fun SirTypeNamer(): SirTypeNamer = StandaloneSirTypeNamer
