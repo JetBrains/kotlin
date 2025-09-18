@@ -381,7 +381,7 @@ internal class KaFirResolver(
                     else -> null
                 }
             }
-            is FirArrayLiteral -> toKtCallInfo()
+            is FirCollectionLiteralCall -> toKtCallInfo()
             is FirComparisonExpression -> compareToCall.toKtCallInfo(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,
@@ -1204,7 +1204,7 @@ internal class KaFirResolver(
         return result
     }
 
-    private fun FirArrayLiteral.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
+    private fun FirCollectionLiteralCall.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
         val elementType = resolvedType.arrayElementType()?.asKaType() ?: return emptyMap()
         val typeParameter = symbol.typeParameters.singleOrNull() ?: return emptyMap()
         return mapOf(typeParameter to elementType)
@@ -1445,7 +1445,7 @@ internal class KaFirResolver(
             }
         }
 
-    private fun FirArrayLiteral.toKtCallInfo(): KaCallInfo? {
+    private fun FirCollectionLiteralCall.toKtCallInfo(): KaCallInfo? {
         val arrayOfSymbol = with(analysisSession) {
 
             val type = resolvedType as? ConeClassLikeType
@@ -1496,7 +1496,7 @@ internal class KaFirResolver(
         )
     }
 
-    private fun FirArrayLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaNamedFunctionSymbol): KaSubstitutor {
+    private fun FirCollectionLiteralCall.createSubstitutorFromTypeArguments(arrayOfSymbol: KaNamedFunctionSymbol): KaSubstitutor {
         val firSymbol = arrayOfSymbol.firSymbol
         // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
         val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KaSubstitutor.Empty(token)
@@ -1572,7 +1572,7 @@ internal class KaFirResolver(
         return ktArgumentMapping
     }
 
-    private fun FirArrayLiteral.createArgumentMapping(
+    private fun FirCollectionLiteralCall.createArgumentMapping(
         arrayOfSymbol: KaNamedFunctionSymbol,
         substitutor: KaSubstitutor,
     ): Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {

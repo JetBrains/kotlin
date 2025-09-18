@@ -323,18 +323,9 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("extensionReceiver", expression, nullable = true, withReplace = true, withTransform = true)
     }
 
-    val arrayLiteral: Element by element(Expression) {
-        kind = ImplementationKind.AbstractClass
-
+    val collectionLiteralCall: Element by element(Expression) {
         parent(expression)
         parent(call)
-    }
-
-    val collectionLiteralCall: Element by element(Expression) {
-        parent(arrayLiteral)
-        parent(resolvable)
-
-        +field("calleeReference", namedReference)
     }
 
     val checkNotNullCall: Element by element(Expression) {

@@ -363,14 +363,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformIntegerLiteralOperatorCall(integerLiteralOperatorCall, data)
     }
 
-    open fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: D): FirStatement {
-        return transformElement(arrayLiteral, data)
-    }
-
-    final override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: D): FirStatement {
-        return transformArrayLiteral(arrayLiteral, data)
-    }
-
     open fun transformCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: D): FirStatement {
         return transformElement(collectionLiteralCall, data)
     }

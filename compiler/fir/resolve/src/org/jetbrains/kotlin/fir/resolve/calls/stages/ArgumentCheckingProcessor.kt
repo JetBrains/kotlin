@@ -359,8 +359,10 @@ internal object ArgumentCheckingProcessor {
     private fun ArgumentContext.preprocessCollectionLiteral(atom: ConeResolutionAtomWithPostponedChild) {
         val expression = atom.collectionLiteralExpression
 
-        check(LanguageFeature.CollectionLiterals.isEnabled()) {
-            "FirCollectionLiteralCall must only be created when CollectionLiterals feature is enabled."
+        if (!LanguageFeature.CollectionLiterals.isEnabled()) {
+            atom.useArrayLiteralSubAtom()
+            resolveArgumentExpression(atom.subAtom!!)
+            return
         }
 
         val postponedAtom = ConeCollectionLiteralAtom(expression, expectedType, candidate)

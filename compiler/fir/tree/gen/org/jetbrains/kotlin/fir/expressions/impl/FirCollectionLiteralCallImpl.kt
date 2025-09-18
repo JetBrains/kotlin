@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -31,29 +29,21 @@ internal class FirCollectionLiteralCallImpl(
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var argumentList: FirArgumentList,
-    override var calleeReference: FirNamedReference,
 ) : FirCollectionLiteralCall() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)
-        calleeReference.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCollectionLiteralCallImpl {
         transformAnnotations(transformer, data)
         argumentList = argumentList.transform(transformer, data)
-        transformCalleeReference(transformer, data)
         return this
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCollectionLiteralCallImpl {
         annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCollectionLiteralCallImpl {
-        calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
@@ -67,14 +57,5 @@ internal class FirCollectionLiteralCallImpl(
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
         argumentList = newArgumentList
-    }
-
-    override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {
-        calleeReference = newCalleeReference
-    }
-
-    override fun replaceCalleeReference(newCalleeReference: FirReference) {
-        require(newCalleeReference is FirNamedReference)
-        replaceCalleeReference(newCalleeReference)
     }
 }

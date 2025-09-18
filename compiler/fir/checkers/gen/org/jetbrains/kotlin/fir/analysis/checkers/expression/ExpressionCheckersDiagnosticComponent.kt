@@ -155,8 +155,8 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allDoWhileLoopCheckers.check(doWhileLoop, data)
     }
 
-    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: CheckerContext) {
-        checkers.allArrayLiteralCheckers.check(arrayLiteral, data)
+    override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: CheckerContext) {
+        checkers.allCollectionLiteralCallCheckers.check(collectionLiteralCall, data)
     }
 
     override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: CheckerContext) {
@@ -257,10 +257,6 @@ class ExpressionCheckersDiagnosticComponent(
 
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
         checkers.allResolvedQualifierCheckers.check(errorResolvedQualifier, data)
-    }
-
-    override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: CheckerContext) {
-        checkers.allArrayLiteralCheckers.check(collectionLiteralCall, data)
     }
 
     private inline fun <reified E : FirStatement> Array<FirExpressionChecker<E>>.check(

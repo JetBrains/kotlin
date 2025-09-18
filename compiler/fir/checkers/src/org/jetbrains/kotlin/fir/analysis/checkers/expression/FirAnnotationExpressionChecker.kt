@@ -91,7 +91,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         }
 
         when (expression) {
-            is FirArrayLiteral -> return checkArgumentList(expression.argumentList)
+            is FirCollectionLiteralCall -> return checkArgumentList(expression.argumentList)
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
                     val unwrappedArg = arg.unwrapArgument()
@@ -219,7 +219,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
             for (ann in unwrappedErrorExpression.annotations) {
                 reporter.reportOn(ann.source, errorFactory)
             }
-            if (unwrappedErrorExpression is FirArrayLiteral) {
+            if (unwrappedErrorExpression is FirCollectionLiteralCall) {
                 checkAnnotationsInsideAnnotationCall(unwrappedErrorExpression)
             }
         }

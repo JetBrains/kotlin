@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildArrayLiteral
+import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteralCall
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
 /**
- * A transformer that converts resolved arrayOf() call to [FirArrayLiteral].
+ * A transformer that converts resolved arrayOf() call to [FirCollectionLiteralCall].
  *
  * Note that arrayOf() calls only in [FirAnnotation] or the default value of annotation constructor are transformed.
  */
@@ -35,7 +35,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
     private fun toArrayLiteral(functionCall: FirFunctionCall, session: FirSession): FirExpression? {
         if (!functionCall.isArrayOfCall(session)) return null
         if (functionCall.calleeReference !is FirResolvedNamedReference) return null
-        val arrayLiteral = buildArrayLiteral {
+        val arrayLiteral = buildCollectionLiteralCall {
             source = functionCall.source
             annotations += functionCall.annotations
             // Note that the signature is: arrayOf(vararg element). Hence, unwrapping the original argument list here.

@@ -124,7 +124,7 @@ fun FirExpression.unwrapAndFlattenArgument(flattenArrays: Boolean): List<FirExpr
 
 private fun FirExpression.unwrapAndFlattenArgumentTo(list: MutableList<FirExpression>, flattenArrays: Boolean) {
     when (val unwrapped = unwrapArgument()) {
-        is FirArrayLiteral, is FirFunctionCall -> {
+        is FirCollectionLiteralCall, is FirFunctionCall -> {
             if (flattenArrays) {
                 (unwrapped as FirCall).arguments.forEach { it.unwrapAndFlattenArgumentTo(list, flattenArrays) }
             } else {

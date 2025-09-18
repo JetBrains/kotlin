@@ -28,7 +28,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
         if (expression !is FirFunctionCall &&
             expression !is FirAnnotation &&
             expression !is FirDelegatedConstructorCall &&
-            expression !is FirArrayLiteral) return
+            expression !is FirCollectionLiteralCall) return
         val isAnnotation = expression is FirAnnotation
         val redundantSpreadWarningFactory =
             if (isAnnotation) FirErrors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION
@@ -44,7 +44,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
             }
             val type = argument.expression.resolvedType.fullyExpandedType().lowerBoundIfFlexible()
             if (type is ConeErrorType) return
-            if (argument.expression is FirArrayLiteral) return
+            if (argument.expression is FirCollectionLiteralCall) return
 
             if (type.isArrayType) return
 
@@ -62,8 +62,8 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
             }
         }
 
-        if (expression is FirArrayLiteral) {
-            // FirArrayLiteral has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
+        if (expression is FirCollectionLiteralCall) {
+            // FirCollectionLiteralCall has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
             expression.arguments.forEach { checkArgument(it, isVararg = isNamedSpread(it), expression.resolvedType) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return

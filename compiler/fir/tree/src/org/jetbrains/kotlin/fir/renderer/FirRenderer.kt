@@ -1180,10 +1180,10 @@ class FirRenderer(
             print(")")
         }
 
-        override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral) {
-            annotationRenderer?.render(arrayLiteral)
-            print("<implicitArrayOf>")
-            visitCall(arrayLiteral)
+        override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall) {
+            annotationRenderer?.render(collectionLiteralCall)
+            print("<implicitOperatorOf>")
+            visitCall(collectionLiteralCall)
         }
 
         override fun visitThrowExpression(throwExpression: FirThrowExpression) {

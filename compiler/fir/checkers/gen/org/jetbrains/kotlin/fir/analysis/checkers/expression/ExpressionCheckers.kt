@@ -50,7 +50,7 @@ abstract class ExpressionCheckers {
     open val whileLoopCheckers: Set<FirWhileLoopChecker> = emptySet()
     open val throwExpressionCheckers: Set<FirThrowExpressionChecker> = emptySet()
     open val doWhileLoopCheckers: Set<FirDoWhileLoopChecker> = emptySet()
-    open val arrayLiteralCheckers: Set<FirArrayLiteralChecker> = emptySet()
+    open val collectionLiteralCallCheckers: Set<FirCollectionLiteralCallChecker> = emptySet()
     open val classReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker> = emptySet()
     open val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker> = emptySet()
 
@@ -86,7 +86,7 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allWhileLoopCheckers: Array<FirWhileLoopChecker> by lazy { (whileLoopCheckers + loopExpressionCheckers + basicExpressionCheckers).toTypedArray() as Array<FirWhileLoopChecker> }
     @CheckersComponentInternal internal val allThrowExpressionCheckers: Array<FirThrowExpressionChecker> by lazy { (throwExpressionCheckers + basicExpressionCheckers).toTypedArray() as Array<FirThrowExpressionChecker> }
     @CheckersComponentInternal internal val allDoWhileLoopCheckers: Array<FirDoWhileLoopChecker> by lazy { (doWhileLoopCheckers + loopExpressionCheckers + basicExpressionCheckers).toTypedArray() as Array<FirDoWhileLoopChecker> }
-    @CheckersComponentInternal internal val allArrayLiteralCheckers: Array<FirArrayLiteralChecker> by lazy { (arrayLiteralCheckers + basicExpressionCheckers + callCheckers).toTypedArray() as Array<FirArrayLiteralChecker> }
+    @CheckersComponentInternal internal val allCollectionLiteralCallCheckers: Array<FirCollectionLiteralCallChecker> by lazy { (collectionLiteralCallCheckers + basicExpressionCheckers + callCheckers).toTypedArray() as Array<FirCollectionLiteralCallChecker> }
     @CheckersComponentInternal internal val allClassReferenceExpressionCheckers: Array<FirClassReferenceExpressionChecker> by lazy { (classReferenceExpressionCheckers + basicExpressionCheckers).toTypedArray() as Array<FirClassReferenceExpressionChecker> }
     @CheckersComponentInternal internal val allInaccessibleReceiverCheckers: Array<FirInaccessibleReceiverChecker> by lazy { (inaccessibleReceiverCheckers + basicExpressionCheckers).toTypedArray() as Array<FirInaccessibleReceiverChecker> }
 }
