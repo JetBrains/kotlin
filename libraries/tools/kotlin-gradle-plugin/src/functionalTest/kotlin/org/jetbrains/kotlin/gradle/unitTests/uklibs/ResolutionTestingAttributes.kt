@@ -121,6 +121,7 @@ val kmpIosX64VariantAttributes = mapOf(
     "org.jetbrains.kotlin.platform.type" to "native",
 )
 
+// This attribute is injected into "jar" artifact type here: https://github.com/gradle/gradle/blob/6bcd8bf208853950708af3c49e44eb9b974a15f3/platforms/jvm/platform-jvm/src/main/java/org/gradle/api/plugins/JvmEcosystemPlugin.java#L77-L79
 val libraryElementsJar = mapOf(
     "org.gradle.libraryelements" to "jar",
 )
@@ -140,11 +141,4 @@ val uklibArtifact = mapOf(
 )
 val klibCinteropCommonizerType = mapOf(
     "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
-)
-
-val notAMetadataJar = mapOf(
-    "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
-)
-val maybeAMetadataJar = mapOf(
-    "org.jetbrains.kotlin.isMetadataJar" to "unknown",
 )

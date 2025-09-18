@@ -174,7 +174,6 @@ private fun Configuration.applyUklibAttributes(
         attribute(USAGE_ATTRIBUTE, usage)
         attribute(uklibStateAttribute, uklibStateDecompressed)
         attribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
-        attribute(isMetadataJar, notMetadataJar)
         attribute(isUklib, isUklibTrue)
     }
 }
@@ -222,17 +221,6 @@ private fun Project.allowPSMBasedKMPToResolveLenientlyAndSelectBestMatchingVaria
     }
     dependencies.attributesSchema.attribute(KotlinPlatformType.attribute) { strategy ->
         strategy.compatibilityRules.add(AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResolution::class.java)
-    }
-    with(dependencies.artifactTypes.getByName("jar").attributes) {
-        attribute(isMetadataJar, isMetadataJarUnknown)
-    }
-    dependencies.registerTransformForArtifactType(
-        ThrowAwayMetadataJarsTransform::class.java,
-        fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
-        toArtifactType = ArtifactTypeDefinition.JAR_TYPE,
-    ) {
-        it.from.attribute(isMetadataJar, isMetadataJarUnknown)
-        it.to.attribute(isMetadataJar, notMetadataJar)
     }
 }
 
@@ -403,7 +391,3 @@ internal class SelectBestMatchingVariantForKmpResolutionUsage : AttributeDisambi
  */
 internal val isUklib = Attribute.of("org.jetbrains.kotlin.uklib", String::class.java)
 internal val isUklibTrue = "true"
-
-internal val isMetadataJar = Attribute.of("org.jetbrains.kotlin.isMetadataJar", String::class.java)
-private val isMetadataJarUnknown = "unknown"
-internal val notMetadataJar = "not-a-metadata-jar"

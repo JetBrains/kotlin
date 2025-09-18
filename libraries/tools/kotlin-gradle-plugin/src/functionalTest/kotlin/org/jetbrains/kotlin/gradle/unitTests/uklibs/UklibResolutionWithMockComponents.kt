@@ -141,7 +141,7 @@ class UklibResolutionTestsWithMockComponents {
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     configuration = kmpJvmApiVariant.name,
                     artifacts = mutableListOf(
-                        kmpJvmApiVariant.attributes + notAMetadataJar + jarArtifact,
+                        kmpJvmApiVariant.attributes + jarArtifact,
                     )
                 ),
             ).prettyPrinted, consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
@@ -151,7 +151,7 @@ class UklibResolutionTestsWithMockComponents {
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     configuration = kmpMetadataJarVariant.name,
                     artifacts = mutableListOf(
-                        kmpMetadataJarVariant.attributes + maybeAMetadataJar + jarArtifact + libraryElementsJar,
+                        kmpMetadataJarVariant.attributes + jarArtifact + libraryElementsJar,
                     )
                 ),
             ).prettyPrinted,
@@ -200,7 +200,7 @@ class UklibResolutionTestsWithMockComponents {
                 mapOf<String, ResolvedComponentWithArtifacts>(
                     "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
-                            kmpMetadataVariantAttributes + maybeAMetadataJar + jarArtifact + libraryElementsJar
+                            kmpMetadataVariantAttributes + jarArtifact + libraryElementsJar
                         ),
                         configuration = "metadataApiElements",
                     ),
@@ -209,24 +209,32 @@ class UklibResolutionTestsWithMockComponents {
             )
         }
 
-        // All the missing in producer targets resolve into metadata variant and filter out the metadata jar
+        // All the missing in producer targets resolve into metadata variant with metadata jar
         listOf(
-            { consumer.multiplatformExtension.iosX64().compilationResolution() },
-            { consumer.multiplatformExtension.jvm().compilationResolution() },
-            { consumer.multiplatformExtension.js().compilationResolution() },
-            { consumer.multiplatformExtension.wasmJs().compilationResolution() },
-            { consumer.multiplatformExtension.wasmWasi().compilationResolution() },
+            { consumer.multiplatformExtension.iosX64() },
+            { consumer.multiplatformExtension.jvm() },
+            { consumer.multiplatformExtension.js() },
+            { consumer.multiplatformExtension.wasmJs() },
+            { consumer.multiplatformExtension.wasmWasi() },
         ).forEach {
             assertEquals(
                 mapOf<String, ResolvedComponentWithArtifacts>(
                     "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                         configuration = kmpMetadataJarVariant.name,
                         artifacts = mutableListOf(
-                            // This artifact is filtered out by a transform
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "non-jvm",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "kotlin-metadata",
+                                "org.jetbrains.kotlin.platform.type" to "common",
+                            ),
                         )
                     ),
                 ).prettyPrinted,
-                it().prettyPrinted,
+                it().compilationResolution().prettyPrinted,
+                message = it().name
             )
         }
     }
@@ -284,7 +292,7 @@ class UklibResolutionTestsWithMockComponents {
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     configuration = kmpMetadataJarVariant.name,
                     artifacts = mutableListOf(
-                        // This artifact is filtered out by a transform
+                        kmpMetadataJarVariant.attributes + jarArtifact + libraryElementsJar,
                     )
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
@@ -384,13 +392,13 @@ class UklibResolutionTestsWithMockComponents {
                 "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
                     configuration = "jvmApiElements",
                     artifacts = mutableListOf(
-                        kmpJvmApiVariantAttributes + jarArtifact + notAMetadataJar,
+                        kmpJvmApiVariantAttributes + jarArtifact,
                     )
                 ),
                 "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
                     configuration = "compile",
                     artifacts = mutableListOf(
-                        jvmApiAttributes + jarArtifact + notAMetadataJar,
+                        jvmApiAttributes + jarArtifact,
                     )
                 )
             ).prettyPrinted, consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
@@ -436,7 +444,7 @@ class UklibResolutionTestsWithMockComponents {
                 "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
                     configuration = "metadataApiElements",
                     artifacts = mutableListOf(
-                        kmpMetadataVariantAttributes + maybeAMetadataJar + jarArtifact + libraryElementsJar,
+                        kmpMetadataVariantAttributes + jarArtifact + libraryElementsJar,
                     )
                 ),
             ).prettyPrinted,
@@ -474,7 +482,7 @@ class UklibResolutionTestsWithMockComponents {
                     "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                         configuration = "compile",
                         artifacts = mutableListOf(
-                            jvmApiAttributes + jarArtifact + notAMetadataJar,
+                            jvmApiAttributes + jarArtifact,
                         )
                     )
                 ).prettyPrinted,
@@ -491,7 +499,7 @@ class UklibResolutionTestsWithMockComponents {
                     "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                         configuration = "compile",
                         artifacts = mutableListOf(
-                            jvmApiAttributes + jarArtifact + maybeAMetadataJar,
+                            jvmApiAttributes + jarArtifact,
                         )
                     )
                 ).prettyPrinted,
@@ -538,7 +546,7 @@ class UklibResolutionTestsWithMockComponents {
                     "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                         configuration = "jvmApiElements",
                         artifacts = mutableListOf(
-                            jvmApiAttributes + jarArtifact + notAMetadataJar,
+                            jvmApiAttributes + jarArtifact,
                         )
                     )
                 ).prettyPrinted,
@@ -555,7 +563,7 @@ class UklibResolutionTestsWithMockComponents {
                     "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                         configuration = "jvmApiElements",
                         artifacts = mutableListOf(
-                            jvmApiAttributes + jarArtifact + maybeAMetadataJar,
+                            jvmApiAttributes + jarArtifact,
                         )
                     )
                 ).prettyPrinted,

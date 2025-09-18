@@ -95,6 +95,14 @@ class KmpResolutionIT : KGPBaseTest() {
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "non-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "kotlin-metadata",
+                            "org.jetbrains.kotlin.platform.type" to "common",
+                        ),
                     ),
                     configuration = "metadataApiElements",
                 ),
@@ -106,7 +114,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.jvm.environment" to "standard-jvm",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
                     ),
@@ -125,7 +132,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.jvm.environment" to "standard-jvm",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
                     ),
@@ -138,7 +144,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                         ),
                     ),
                     configuration = "compile",
@@ -149,7 +154,14 @@ class KmpResolutionIT : KGPBaseTest() {
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
-                        // metadata jar is filtered
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "non-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "kotlin-metadata",
+                            "org.jetbrains.kotlin.platform.type" to "common",
+                        ),
                     ),
                     configuration = "metadataApiElements",
                 ),
@@ -320,7 +332,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.jvm.environment" to "standard-jvm",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
                     ),
@@ -339,7 +350,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.jvm.environment" to "standard-jvm",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
                     ),
@@ -352,7 +362,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                         ),
                     ),
                     configuration = "compile",
@@ -548,7 +557,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.jvm.environment" to "standard-jvm",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
                     ),
@@ -561,7 +569,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                         ),
                     ),
                     configuration = "compile",
@@ -732,6 +739,14 @@ class KmpResolutionIT : KGPBaseTest() {
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "non-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "kotlin-metadata",
+                            "org.jetbrains.kotlin.platform.type" to "common",
+                        ),
                     ),
                     configuration = "metadataApiElements",
                 ),
@@ -761,7 +776,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.jvm.environment" to "standard-jvm",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
                     ),
@@ -774,7 +788,6 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                         ),
                     ),
                     configuration = "compile",
@@ -785,6 +798,14 @@ class KmpResolutionIT : KGPBaseTest() {
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "non-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "kotlin-metadata",
+                            "org.jetbrains.kotlin.platform.type" to "common",
+                        ),
                     ),
                     configuration = "metadataApiElements",
                 ),
@@ -904,7 +925,6 @@ class KmpResolutionIT : KGPBaseTest() {
                                 "org.gradle.jvm.environment" to "standard-jvm",
                                 "org.gradle.libraryelements" to "jar",
                                 "org.gradle.usage" to "java-api",
-                                "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                                 "org.jetbrains.kotlin.platform.type" to "jvm",
                             ),
                         ),
@@ -917,13 +937,20 @@ class KmpResolutionIT : KGPBaseTest() {
                                 "org.gradle.category" to "library",
                                 "org.gradle.libraryelements" to "jar",
                                 "org.gradle.usage" to "java-api",
-                                "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             ),
                         ),
                         configuration = "compile",
                     ),
                     "producer:empty:1.0" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "non-jvm",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "kotlin-metadata",
+                                "org.jetbrains.kotlin.platform.type" to "common",
+                            ),
                         ),
                         configuration = "metadataApiElements",
                     ),

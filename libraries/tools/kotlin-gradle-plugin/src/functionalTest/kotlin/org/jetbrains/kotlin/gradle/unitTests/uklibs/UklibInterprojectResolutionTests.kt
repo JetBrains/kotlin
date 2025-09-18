@@ -7,13 +7,23 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectArtifactDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.FilePathRegex
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.projectArtifactDependency
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosMain
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -22,6 +32,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.tooling.core.closure
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class UklibInterprojectResolutionTests {
 
@@ -87,11 +98,11 @@ class UklibInterprojectResolutionTests {
                 ":directJavaConsumer" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
-                            "artifactType" to "java-classes-directory",
+                            "artifactType" to "jar",
                             "org.gradle.category" to "library",
                             "org.gradle.dependency.bundling" to "external",
                             "org.gradle.jvm.version" to "17",
-                            "org.gradle.libraryelements" to "classes",
+                            "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
                         ),
                     ),
@@ -120,11 +131,11 @@ class UklibInterprojectResolutionTests {
                 ":directJavaConsumer" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
-                            "artifactType" to "java-classes-directory",
+                            "artifactType" to "jar",
                             "org.gradle.category" to "library",
                             "org.gradle.dependency.bundling" to "external",
                             "org.gradle.jvm.version" to "17",
-                            "org.gradle.libraryelements" to "classes",
+                            "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
                         ),
                     ),
@@ -137,7 +148,6 @@ class UklibInterprojectResolutionTests {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "kotlin-uklib-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.uklib" to "true",
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "jvm",
@@ -163,7 +173,6 @@ class UklibInterprojectResolutionTests {
                                 "org.gradle.jvm.version" to "17",
                                 "org.gradle.libraryelements" to "jar",
                                 "org.gradle.usage" to "java-api",
-                                "org.jetbrains.kotlin.isMetadataJar" to "unknown",
                             ),
                         ),
                         configuration = "apiElements",
@@ -241,7 +250,6 @@ class UklibInterprojectResolutionTests {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "kotlin-uklib-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.uklib" to "true",
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "jvm",
@@ -429,7 +437,6 @@ class UklibInterprojectResolutionTests {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "kotlin-uklib-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.uklib" to "true",
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "jvm",
@@ -444,7 +451,6 @@ class UklibInterprojectResolutionTests {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "kotlin-uklib-api",
-                            "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                             "org.jetbrains.kotlin.uklib" to "true",
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "jvm",
@@ -732,12 +738,9 @@ class UklibInterprojectResolutionTests {
             }
         }.evaluate()
 
-        val exception = consumer.configurations.getByName("jvmRuntimeClasspath").incoming.artifactView { it.isLenient = true }
-            .artifacts.failures.single().stackTraceToString()
-        assertContains(
-            "we cannot choose between the following variants of project :producer:",
-            exception
-        )
+        val files = consumer.configurations.getByName("jvmRuntimeClasspath").incoming.artifacts.map { it.file }
+        val jar = assertNotNull(files.singleOrNull(), files.toString())
+        assert(jar.path.endsWith("producer.jar")) { jar }
     }
 
     @Test
@@ -762,12 +765,12 @@ class UklibInterprojectResolutionTests {
             }
         }.evaluate()
 
-        val unresolvedDependency = IdeBinaryDependencyResolver().resolve(
+        val dependencies = consumer.kotlinIdeMultiplatformImport.resolveDependencies(
             consumer.multiplatformExtension.sourceSets.getByName("jvmMain")
-        ).single() as IdeaKotlinUnresolvedBinaryDependency
-        assertContains(
-            "Failed to transform producer.jar",
-            unresolvedDependency.cause ?: error("missing cause")
+        )
+        dependencies.assertMatches(
+            projectArtifactDependency(IdeaKotlinSourceDependency.Type.Regular, ":producer", FilePathRegex(".*/producer/build/libs/producer.jar")),
+            dependsOnDependency(":consumer/commonMain"),
         )
     }
 
