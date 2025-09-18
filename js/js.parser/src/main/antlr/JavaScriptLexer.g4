@@ -135,7 +135,7 @@ DecimalLiteral:
 /// Numeric Literals
 
 HexIntegerLiteral    : '0' [xX] [0-9a-fA-F] HexDigit*;
-OctalIntegerLiteral  : '0' [0-7]+ {!this.isStrictMode()}?;
+OctalIntegerLiteral  : '0' [0-9]+ {!this.isStrictMode()}?;
 OctalIntegerLiteral2 : '0' [oO] [0-7] [_0-7]*;
 BinaryIntegerLiteral : '0' [bB] [01] [_01]*;
 

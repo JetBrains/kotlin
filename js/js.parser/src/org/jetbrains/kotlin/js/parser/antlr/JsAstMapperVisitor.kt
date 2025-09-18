@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.parser.antlr
 import com.google.gwt.dev.js.ScopeContext
 import com.google.gwt.dev.js.parserExceptions.JsParserException
 import com.google.gwt.dev.js.rhino.CodePosition
+import com.google.gwt.dev.js.rhino.ErrorReporter
 import com.intellij.util.containers.addIfNotNull
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserBaseVisito
 class JsAstMapperVisitor(
     private val fileName: String,
     private val scopeContext: ScopeContext,
+    private val reporter: ErrorReporter
 ) : JavaScriptParserBaseVisitor<JsNode?>() {
     override fun visitSourceElement(ctx: JavaScriptParser.SourceElementContext): JsNode? {
         return visitNode<JsStatement?>(ctx.statement())
@@ -463,7 +465,7 @@ class JsAstMapperVisitor(
         }
 
         ctx.StringLiteral()?.let {
-            return it.toStringLiteral()
+            return it.text.toStringLiteral()
         }
 
         ctx.numericLiteral()?.let {
@@ -933,7 +935,7 @@ class JsAstMapperVisitor(
         }
 
         ctx.StringLiteral()?.let {
-            return it.toStringLiteral()
+            return it.text.toStringLiteral()
         }
 
         ctx.RegularExpressionLiteral()?.run {
@@ -968,8 +970,20 @@ class JsAstMapperVisitor(
             raiseParserException("Binary integer literals are not supported yet", ctx)
         }
 
-        ctx.OctalIntegerLiteral()?.run {
-            raiseParserException("Octal integer literals are not supported yet", ctx)
+        ctx.OctalIntegerLiteral()?.let {
+            val value = it.text.removePrefix("0")
+
+            // In a non-strict mode invalid old octal literals, such are containing 8 and 9 (like 0888 or 0999)
+            // are treated like decimal literals (888 and 999 correspondingly).
+            // To embrace compatibility, we emit a warning here like the old GWT parser did.
+            value.forEach { digit ->
+                if (digit !in '0'..'7') {
+                    reportWarning("illegal octal value '$value'; interpreting it as a decimal value")
+                    return value.toDecimalLiteral()
+                }
+            }
+
+            return value.toOctalLiteral()
         }
 
         ctx.OctalIntegerLiteral2()?.run {
@@ -977,11 +991,11 @@ class JsAstMapperVisitor(
         }
 
         ctx.DecimalLiteral()?.let { decimalTerminal ->
-            return decimalTerminal.toDecimalLiteral()
+            return decimalTerminal.text.toDecimalLiteral()
         }
 
         ctx.HexIntegerLiteral()?.let { hexTerminal ->
-            return hexTerminal.toHexLiteral()
+            return hexTerminal.text.toHexLiteral()
         }
 
         raiseParserException("Invalid numeric literal '${ctx.text}'", ctx)
@@ -1101,6 +1115,11 @@ class JsAstMapperVisitor(
 
     private fun raiseParserException(message: String, rule: ParserRuleContext? = null): Nothing {
         throw JsParserException("Parser encountered internal error: $message", rule?.startPosition ?: CodePosition(0, 0))
+    }
+
+    private fun reportWarning(message: String, rule: ParserRuleContext? = null) {
+        val position = rule?.startPosition ?: CodePosition(0, 0)
+        reporter.warning(message, position, position)
     }
 
     private fun check(condition: Boolean, position: CodePosition? = null, messageFactory: () -> String) {

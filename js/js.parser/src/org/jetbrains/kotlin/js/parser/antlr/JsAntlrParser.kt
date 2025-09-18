@@ -131,21 +131,23 @@ object JsAntlrParser {
     private fun parseExpression(accReporter: AccumulatingReporter) = parseAndMap(
         accReporter,
         parseFunc = { parser -> parser.singleExpression() },
-        mapFunc = { expression -> JsAstMapper(parserContext.scope, parserContext.fileName).mapExpression(expression) }
+        mapFunc = { expression -> JsAstMapper(parserContext.scope, parserContext.fileName, accReporter).mapExpression(expression) }
     )
 
     context(parserContext: JsParserContext)
     private fun parseStatements(accReporter: AccumulatingReporter) = parseAndMap(
         accReporter,
         parseFunc = { parser -> parser.statementList()?.statement() },
-        mapFunc = { statements -> statements.filterNotNull().map { JsAstMapper(parserContext.scope, parserContext.fileName).mapStatement(it) } }
+        mapFunc = { statements ->
+            statements.filterNotNull().map { JsAstMapper(parserContext.scope, parserContext.fileName, accReporter).mapStatement(it) }
+        }
     )
 
     context(parserContext: JsParserContext)
     private fun parseFunction(accReporter: AccumulatingReporter) = parseAndMap(
         accReporter,
         parseFunc = { parser -> parser.functionDeclaration() },
-        mapFunc = { function -> JsAstMapper(parserContext.scope, parserContext.fileName).mapFunction(function) }
+        mapFunc = { function -> JsAstMapper(parserContext.scope, parserContext.fileName, accReporter).mapFunction(function) }
     )
 
     context(parserContext: JsParserContext)

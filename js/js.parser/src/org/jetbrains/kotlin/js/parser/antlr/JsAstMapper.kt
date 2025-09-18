@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.js.parser.antlr
 
 import com.google.gwt.dev.js.ScopeContext
 import com.google.gwt.dev.js.parserExceptions.JsParserException
+import com.google.gwt.dev.js.rhino.ErrorReporter
 import org.antlr.v4.runtime.ParserRuleContext
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
-class JsAstMapper(scope: JsScope, private val fileName: String) {
+class JsAstMapper(scope: JsScope, private val fileName: String, private val reporter: ErrorReporter) {
     companion object {
         fun createParserException(message: String, ctx: ParserRuleContext): JsParserException {
             return JsParserException("Parser encountered internal error: $message", ctx.startPosition)
@@ -48,7 +49,7 @@ class JsAstMapper(scope: JsScope, private val fileName: String) {
         mapWithoutLocation(node).applyLocation(fileName, node)
 
     private fun mapWithoutLocation(node: ParserRuleContext): JsNode {
-        val visitor = JsAstMapperVisitor(fileName, scopeContext)
+        val visitor = JsAstMapperVisitor(fileName, scopeContext, reporter)
         return node.accept(visitor)!!
     }
 }

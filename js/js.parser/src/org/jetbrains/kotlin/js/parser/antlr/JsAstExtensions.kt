@@ -67,28 +67,32 @@ internal fun <T : JsNode> T.applyLocation(fileName: String, sourceNode: ParserRu
         }
     }
 
-internal fun unwrapStringLiteral(literal: TerminalNode): String {
-    if (literal.text.startsWith("'") && literal.text.endsWith("'"))
-        return literal.text.removeSurrounding("'")
+internal fun unwrapStringLiteral(literalValue: String): String {
+    if (literalValue.startsWith("'") && literalValue.endsWith("'"))
+        return literalValue.removeSurrounding("'")
 
-    if (literal.text.startsWith("\"") && literal.text.endsWith("\""))
-        return literal.text.removeSurrounding("\"")
+    if (literalValue.startsWith("\"") && literalValue.endsWith("\""))
+        return literalValue.removeSurrounding("\"")
 
-    return literal.text
+    return literalValue
 }
 
-internal fun TerminalNode.toStringLiteral(): JsStringLiteral {
+internal fun String.toStringLiteral(): JsStringLiteral {
     return JsStringLiteral(unwrapStringLiteral(this))
 }
 
-internal fun TerminalNode.toDecimalLiteral(): JsNumberLiteral {
-    val intValue = text.toIntOrNull()
+internal fun String.toDecimalLiteral(): JsNumberLiteral {
+    val intValue = toIntOrNull()
     if (intValue != null)
         return JsIntLiteral(intValue)
 
-    return JsDoubleLiteral(text.toDouble())
+    return JsDoubleLiteral(toDouble())
 }
 
-internal fun TerminalNode.toHexLiteral(): JsIntLiteral {
-    return JsIntLiteral(text.removePrefix("0x").removePrefix("0X").hexToInt())
+internal fun String.toHexLiteral(): JsIntLiteral {
+    return JsIntLiteral(removePrefix("0x").removePrefix("0X").hexToInt())
+}
+
+internal fun String.toOctalLiteral(): JsIntLiteral {
+    return JsIntLiteral(removePrefix("0").toInt())
 }
