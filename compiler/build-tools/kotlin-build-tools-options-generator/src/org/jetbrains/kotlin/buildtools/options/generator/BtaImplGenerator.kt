@@ -252,7 +252,7 @@ internal class BtaImplGenerator(
                 CodeBlock.builder()
                     .beginControlFlow(
                         "if (key.availableSinceVersion > %T(%L, %L, %L))",
-                        ClassName("kotlin", "KotlinVersion"),
+                        kotlinVersionType,
                         kotlinVersion.major,
                         kotlinVersion.minor,
                         kotlinVersion.patch

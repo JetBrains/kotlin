@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
-import kotlin.KotlinVersion
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArg
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.WEXTRA
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.X
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonToolArguments
@@ -38,7 +38,7 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
   override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V = optionsMap[key.id] as V
 
   override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinVersion(2, 2, 20)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 2, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = `value`

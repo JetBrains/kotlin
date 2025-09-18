@@ -125,7 +125,7 @@ internal class BtaApiGenerator(
                     "%T(%S, %T(%L, %L, %L))",
                     argumentTypeName,
                     name,
-                    KotlinVersion::class,
+                    kotlinVersionType,
                     introducedVersion.major,
                     introducedVersion.minor,
                     introducedVersion.patch,
@@ -236,14 +236,14 @@ internal fun TypeSpec.Builder.generateArgumentType(
             initializer("id")
         }
         if (includeSinceVersion) {
-            property<KotlinVersion>("availableSinceVersion") {
+            property("availableSinceVersion", kotlinVersionType) {
                 initializer("availableSinceVersion")
             }
         }
         primaryConstructor(
             FunSpec.constructorBuilder()
                 .addParameter("id", String::class)
-                .addParameterIf("availableSinceVersion", KotlinVersion::class, includeSinceVersion)
+                .addParameterIf("availableSinceVersion", kotlinVersionType, includeSinceVersion)
                 .build()
         )
         if (registerAsKnownArgument) {
@@ -254,7 +254,7 @@ internal fun TypeSpec.Builder.generateArgumentType(
     return argumentTypeName
 }
 
-private fun FunSpec.Builder.addParameterIf(name: String, type: KClass<*>, condition: Boolean): FunSpec.Builder {
+private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condition: Boolean): FunSpec.Builder {
     if (condition) {
         addParameter(name, type)
     }

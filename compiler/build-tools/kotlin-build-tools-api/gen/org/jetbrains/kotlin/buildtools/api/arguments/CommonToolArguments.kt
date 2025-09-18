@@ -4,10 +4,10 @@
 package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Boolean
-import kotlin.KotlinVersion
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 
 /**
  * @since 2.3.0
@@ -55,7 +55,7 @@ public interface CommonToolArguments {
    */
   public class CommonToolArgument<V>(
     public val id: String,
-    public val availableSinceVersion: KotlinVersion,
+    public val availableSinceVersion: KotlinReleaseVersion,
   )
 
   public companion object {
@@ -64,34 +64,34 @@ public interface CommonToolArguments {
      */
     @JvmField
     public val VERSION: CommonToolArgument<Boolean> =
-        CommonToolArgument("VERSION", KotlinVersion(1, 0, 0))
+        CommonToolArgument("VERSION", KotlinReleaseVersion(1, 0, 0))
 
     /**
      * Enable verbose logging output.
      */
     @JvmField
     public val VERBOSE: CommonToolArgument<Boolean> =
-        CommonToolArgument("VERBOSE", KotlinVersion(1, 0, 0))
+        CommonToolArgument("VERBOSE", KotlinReleaseVersion(1, 0, 0))
 
     /**
      * Don't generate any warnings.
      */
     @JvmField
     public val NOWARN: CommonToolArgument<Boolean> =
-        CommonToolArgument("NOWARN", KotlinVersion(1, 0, 0))
+        CommonToolArgument("NOWARN", KotlinReleaseVersion(1, 0, 0))
 
     /**
      * Report an error if there are any warnings.
      */
     @JvmField
     public val WERROR: CommonToolArgument<Boolean> =
-        CommonToolArgument("WERROR", KotlinVersion(1, 2, 0))
+        CommonToolArgument("WERROR", KotlinReleaseVersion(1, 2, 0))
 
     /**
      * Enable extra checkers for K2.
      */
     @JvmField
     public val WEXTRA: CommonToolArgument<Boolean> =
-        CommonToolArgument("WEXTRA", KotlinVersion(2, 1, 0))
+        CommonToolArgument("WEXTRA", KotlinReleaseVersion(2, 1, 0))
   }
 }
