@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isBoxedArray
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.indexBasedForEach
 
 internal class WasmVarargExpressionLowering(
     private val context: WasmBackendContext
@@ -233,7 +233,7 @@ internal class WasmVarargExpressionLowering(
         return builder.irComposite(irVararg) {
             // Emit all of the variables first so that all vararg expressions
             // are evaluated only once and in order of their appearance.
-            elementVars.forEach { +it }
+            elementVars.indexBasedForEach { +it }
 
             val arrayLength = segments
                 .map { irSize(it) }
@@ -244,7 +244,7 @@ internal class WasmVarargExpressionLowering(
                 nameHint = "vararg_array")
             val indexVar = if (segments.size >= 2) irTemporary(irInt(0), "vararg_idx") else null
 
-            segments.forEach {
+            segments.indexBasedForEach {
                 irCopyInto(arrayTempVariable, indexVar, it)
 
                 if (indexVar != null)

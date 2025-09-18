@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.wasm.ir.*
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import kotlinx.collections.immutable.*
+import org.jetbrains.kotlin.utils.indexBasedForEach
+import org.jetbrains.kotlin.utils.indexBasedForEachIndexed
 import org.jetbrains.kotlin.wasm.ir.debug.DebugData
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformation
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationConsumer
@@ -71,7 +73,7 @@ class WasmIrToBinary(
     private var offsets = persistentListOf<Box>()
 
     override fun consumeDebugInformation(debugInformation: DebugInformation) {
-        debugInformation.forEach {
+        debugInformation.indexBasedForEach {
             appendSection(WasmBinary.Section.CUSTOM) {
                 b.writeString(it.name)
                 when (it.data) {
@@ -83,7 +85,7 @@ class WasmIrToBinary(
     }
 
     private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
-        typeList.forEach { type ->
+        typeList.indexBasedForEach { type ->
             when (type) {
                 is WasmStructDeclaration -> appendStructTypeDeclaration(type)
                 is WasmArrayDeclaration -> appendArrayTypeDeclaration(type)
@@ -100,7 +102,7 @@ class WasmIrToBinary(
             // type section
             appendSection(WasmBinary.Section.TYPE) {
                 appendVectorSize(recGroups.size)
-                recGroups.forEach { recGroup ->
+                recGroups.indexBasedForEach { recGroup ->
                     if (recGroup.size > 1) {
                         b.writeVarInt7(WasmBinary.REC_GROUP)
                         appendVectorSize(recGroup.size)
@@ -114,7 +116,7 @@ class WasmIrToBinary(
             // import section
             appendSection(WasmBinary.Section.IMPORT) {
                 appendVectorSize(importsInOrder.size)
-                importsInOrder.forEach {
+                importsInOrder.indexBasedForEach {
                     when (it) {
                         is WasmFunction.Imported -> appendImportedFunction(it)
                         is WasmMemory -> appendMemory(it)
@@ -129,37 +131,37 @@ class WasmIrToBinary(
             // function section
             appendSection(WasmBinary.Section.FUNCTION) {
                 appendVectorSize(definedFunctions.size)
-                definedFunctions.forEach { appendDefinedFunction(it) }
+                definedFunctions.indexBasedForEach { appendDefinedFunction(it) }
             }
 
             // table section
             appendSection(WasmBinary.Section.TABLE) {
                 appendVectorSize(tables.size)
-                tables.forEach { appendTable(it) }
+                tables.indexBasedForEach { appendTable(it) }
             }
 
             // memory section
             appendSection(WasmBinary.Section.MEMORY) {
                 appendVectorSize(memories.size)
-                memories.forEach { appendMemory(it) }
+                memories.indexBasedForEach { appendMemory(it) }
             }
 
             // tag section
             if (tags.isNotEmpty()) {
                 appendSection(WasmBinary.Section.TAG) {
                     appendVectorSize(tags.size)
-                    tags.forEach { appendTag(it) }
+                    tags.indexBasedForEach { appendTag(it) }
                 }
             }
 
             appendSection(WasmBinary.Section.GLOBAL) {
                 appendVectorSize(globals.size)
-                globals.forEach { appendGlobal(it) }
+                globals.indexBasedForEach { appendGlobal(it) }
             }
 
             appendSection(WasmBinary.Section.EXPORT) {
                 appendVectorSize(exports.size)
-                exports.forEach { appendExport(it) }
+                exports.indexBasedForEach { appendExport(it) }
             }
 
             if (startFunction != null) {
@@ -171,7 +173,7 @@ class WasmIrToBinary(
             // element section
             appendSection(WasmBinary.Section.ELEMENT) {
                 appendVectorSize(elements.size)
-                elements.forEach { appendElement(it) }
+                elements.indexBasedForEach { appendElement(it) }
             }
 
             if (dataCount) {
@@ -183,12 +185,12 @@ class WasmIrToBinary(
             // code section
             appendSection(WasmBinary.Section.CODE, beforeContentWrite = { codeSectionOffset = b.written }) {
                 appendVectorSize(definedFunctions.size)
-                definedFunctions.forEach { appendCode(it) }
+                definedFunctions.indexBasedForEach { appendCode(it) }
             }
 
             appendSection(WasmBinary.Section.DATA) {
                 appendVectorSize(data.size)
-                data.forEach { appendData(it) }
+                data.indexBasedForEach { appendData(it) }
             }
 
             // text section (should be placed after data)
@@ -208,17 +210,17 @@ class WasmIrToBinary(
             }
             appendSection(WasmBinary.Section.TYPE) {
                 appendVectorSize(definedFunctions.size)
-                definedFunctions.forEach {
+                definedFunctions.indexBasedForEach {
                     appendModuleFieldReference(it)
                     b.writeString(it.name)
                 }
             }
             appendSection(WasmBinary.Section.IMPORT) {
                 appendVectorSize(definedFunctions.size)
-                definedFunctions.forEach {
+                definedFunctions.indexBasedForEach {
                     appendModuleFieldReference(it)
                     appendVectorSize(it.locals.size)
-                    it.locals.forEach { local ->
+                    it.locals.indexBasedForEach { local ->
                         b.writeVarUInt32(local.id)
                         b.writeString(local.name)
                     }
@@ -230,8 +232,8 @@ class WasmIrToBinary(
 
             appendSection(WasmBinary.Section.TABLE) {
                 appendVectorSize(module.recGroups.sumOf { it.size })
-                module.recGroups.forEach { recGroup ->
-                    recGroup.forEach {
+                module.recGroups.indexBasedForEach { recGroup ->
+                    recGroup.indexBasedForEach {
                         appendModuleFieldReference(it)
                         b.writeString(it.name)
                     }
@@ -240,7 +242,7 @@ class WasmIrToBinary(
 
             appendSection(WasmBinary.Section.EXPORT) {
                 appendVectorSize(module.globals.size)
-                module.globals.forEach { global ->
+                module.globals.indexBasedForEach { global ->
                     appendModuleFieldReference(global)
                     b.writeString(global.name)
                 }
@@ -251,10 +253,10 @@ class WasmIrToBinary(
             appendSection(WasmBinary.Section.CODE) {
                 val structDeclarations = module.recGroups.flatMap { it.filterIsInstance<WasmStructDeclaration>() }
                 appendVectorSize(structDeclarations.size)
-                structDeclarations.forEach {
+                structDeclarations.indexBasedForEach {
                     appendModuleFieldReference(it)
                     appendVectorSize(it.fields.size)
-                    it.fields.forEachIndexed { index, field ->
+                    it.fields.indexBasedForEachIndexed { index, field ->
                         b.writeVarUInt32(index)
                         b.writeString(field.name)
                     }
@@ -280,7 +282,7 @@ class WasmIrToBinary(
             b.writeByte(opcode.toByte())
         }
 
-        instr.immediates.forEach {
+        instr.immediates.indexBasedForEach {
             appendImmediate(it)
         }
     }
@@ -331,7 +333,7 @@ class WasmIrToBinary(
 
             is WasmImmediate.Catch -> {
                 b.writeVarUInt32(x.type.opcode)
-                x.immediates.forEach(this::appendImmediate)
+                x.immediates.indexBasedForEach(this::appendImmediate)
             }
         }
     }
@@ -367,9 +369,9 @@ class WasmIrToBinary(
     private fun appendFunctionTypeDeclaration(type: WasmFunctionType) {
         b.writeVarInt7(WasmBinary.FUNC_TYPE)
         b.writeVarUInt32(type.parameterTypes.size)
-        type.parameterTypes.forEach { appendType(it) }
+        type.parameterTypes.indexBasedForEach { appendType(it) }
         b.writeVarUInt32(type.resultTypes.size)
-        type.resultTypes.forEach { appendType(it) }
+        type.resultTypes.indexBasedForEach { appendType(it) }
     }
 
     private fun appendBlockType(type: WasmImmediate.BlockType) {
@@ -417,7 +419,7 @@ class WasmIrToBinary(
 
         b.writeVarInt7(WasmBinary.STRUCT_TYPE)
         b.writeVarUInt32(type.fields.size)
-        type.fields.forEach {
+        type.fields.indexBasedForEach {
             appendFiledType(it)
         }
     }
@@ -528,9 +530,9 @@ class WasmIrToBinary(
         fun writeElements() {
             appendVectorSize(element.values.size)
             if (funcIndices != null) {
-                funcIndices.forEach { b.writeVarUInt32(it) }
+                funcIndices.indexBasedForEach { b.writeVarUInt32(it) }
             } else {
-                element.values.forEach {
+                element.values.indexBasedForEach {
                     appendExpr((it as WasmTable.Value.Expression).expr)
                 }
             }
@@ -597,7 +599,7 @@ class WasmIrToBinary(
             }
 
             b.writeVarUInt32(function.locals.count { !it.isParameter })
-            function.locals.forEach { local ->
+            function.locals.indexBasedForEach { local ->
                 if (!local.isParameter) {
                     b.writeVarUInt32(1u)
                     appendType(local.type)

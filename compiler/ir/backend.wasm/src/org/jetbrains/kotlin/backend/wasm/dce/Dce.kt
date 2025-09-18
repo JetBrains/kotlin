@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.utils.indexBasedForEach
 
 fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBackendContext, dceDumpNameCache: DceDumpNameCache) {
     val printReachabilityInfo =
@@ -51,7 +52,7 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     }
 
     modules.onAllFiles {
-        declarations.forEach { declaration ->
+        declarations.indexBasedForEach { declaration ->
             when (declaration) {
                 is IrFunction -> {
                     if (declaration.isExported()) {
@@ -106,8 +107,8 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
 }
 
 private inline fun List<IrModuleFragment>.onAllFiles(body: IrFile.() -> Unit) {
-    forEach { module ->
-        module.files.forEach { file ->
+    indexBasedForEach { module ->
+        module.files.indexBasedForEach { file ->
             file.body()
         }
     }

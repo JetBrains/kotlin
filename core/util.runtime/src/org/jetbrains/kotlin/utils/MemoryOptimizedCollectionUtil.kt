@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.utils
 
 import java.util.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.math.min
 
 /**
@@ -90,6 +92,34 @@ infix fun <T> List<T>.memoryOptimizedPlus(element: T): List<T> =
             it.add(element)
         }
     }
+
+/**
+ * A memory-optimized version of [Iterable.forEach]. It uses indexed access to avoid iterator allocation.
+ *
+ * **Using this in a non-random access-based list will lead to performance degradation.**
+ * @see Iterable.forEach
+ */
+@OptIn(ExperimentalContracts::class)
+public inline fun <T> List<T>.indexBasedForEach(action: (T) -> Unit): Unit {
+    contract {
+        callsInPlace(action)
+    }
+    for (index in 0..size - 1) action(this[index])
+}
+
+/**
+ * A memory-optimized version of [Iterable.forEachIndexed]. It uses indexed access to avoid iterator allocation.
+ *
+ * **Using this in a non-random access-based list will lead to performance degradation.**
+ * @see Iterable.forEachIndexed
+ */
+@OptIn(ExperimentalContracts::class)
+public inline fun <T> List<T>.indexBasedForEachIndexed(action: (Int, T) -> Unit): Unit {
+    contract {
+        callsInPlace(action)
+    }
+    for (index in 0..size - 1) action(index, this[index])
+}
 
 /**
  * A memory-optimized version of [Iterable.zip].
