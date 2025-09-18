@@ -170,6 +170,7 @@ public interface KaSession : KaLifetimeOwner,
     /**
      * Returns the restored [KaType] (possibly a new type instance) if the pointer is still valid, or `null` otherwise.
      */
+    @KaExperimentalApi
     public fun <T : KaType> KaTypePointer<T>.restore(): T? = withValidityAssertion {
         @OptIn(KaImplementationDetail::class)
         restore(useSiteSession)
@@ -213,7 +214,7 @@ public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? {
  * @see KaSession.restore
  */
 @KaContextParameterApi
-@OptIn(KaExperimentalApi::class)
+@KaExperimentalApi
 context(context: KaSession)
 public fun <T : KaType> KaTypePointer<T>.restore(): T? {
     return with(context) { restore() }
