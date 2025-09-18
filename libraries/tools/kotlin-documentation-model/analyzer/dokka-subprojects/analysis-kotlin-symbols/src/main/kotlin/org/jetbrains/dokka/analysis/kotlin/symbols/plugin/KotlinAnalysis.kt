@@ -16,13 +16,20 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import java.io.File
+import java.io.IOException
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.extension
 
 internal fun Platform.toTargetPlatform() = when (this) {
     Platform.wasm -> WasmPlatforms.unspecifiedWasmPlatform
@@ -113,10 +120,19 @@ internal fun createAnalysisSession(
                         getLanguageVersionSettings(sourceSet.languageVersion, sourceSet.apiVersion)
                     platform = targetPlatform
                     moduleName = "<module ${sourceSet.displayName}>"
-                    if (isSampleProject)
-                        addSourceRoots(sourceSet.samples.map { it.toPath() })
-                    else
-                        addSourceRoots(sourceSet.sourceRoots.map { it.toPath() })
+
+                    // can be removed after https://youtrack.jetbrains.com/issue/KT-81107 is implemented (see #4266)
+                    // here we mimic the logic, which happens inside AA during building KaModule, but we follow symlinks
+                    // https://github.com/JetBrains/kotlin/blob/dcd24449718cba21bd86428e5cddb9b25e5612af/analysis/analysis-api-standalone/src/org/jetbrains/kotlin/analysis/project/structure/builder/KaSourceModuleBuilder.kt#L80
+                    if (isSampleProject) {
+                        sourceSet.samples.forEach { root ->
+                            addSourceRoots(collectSourceFilePaths(root.toPath()))
+                        }
+                    } else {
+                        sourceSet.sourceRoots.forEach { root ->
+                            addSourceRoots(collectSourceFilePaths(root.toPath()))
+                        }
+                    }
                     addModuleDependencies(
                         sourceSet,
                     )
@@ -170,4 +186,49 @@ internal fun topologicalSortByDependantSourceSets(
     }
     sourceSets.forEach(::dfs)
     return result
+}
+
+// copied from AA: https://github.com/JetBrains/kotlin/blob/dcd24449718cba21bd86428e5cddb9b25e5612af/analysis/analysis-api-standalone/src/org/jetbrains/kotlin/analysis/project/structure/impl/KaModuleUtils.kt#L60-L110
+// with a fix for following symlinks
+
+private fun collectSourceFilePaths(root: Path): List<Path> {
+    // NB: [Files#walk] throws an exception if there is an issue during IO.
+    // With [Files#walkFileTree] with a custom visitor, we can take control of exception handling.
+    val result = mutableListOf<Path>()
+    Files.walkFileTree(
+        /* start = */ root,
+        /* options = */ setOf(FileVisitOption.FOLLOW_LINKS), // <-- THIS IS THE FIX
+        /* maxDepth = */ Int.MAX_VALUE,
+        /* visitor = */ object : SimpleFileVisitor<Path>() {
+            override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
+                return if (Files.isReadable(dir))
+                    FileVisitResult.CONTINUE
+                else
+                    FileVisitResult.SKIP_SUBTREE
+            }
+
+            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                if (!Files.isRegularFile(file) || !Files.isReadable(file))
+                    return FileVisitResult.CONTINUE
+                if (file.hasSuitableExtensionToAnalyse()) {
+                    result.add(file)
+                }
+                return FileVisitResult.CONTINUE
+            }
+
+            override fun visitFileFailed(file: Path, exc: IOException): FileVisitResult {
+                // TODO: report or log [IOException]?
+                // NB: this intentionally swallows the exception, hence fail-safe.
+                // Skipping subtree doesn't make any sense, since this is not a directory.
+                // Skipping sibling may drop valid file paths afterward, so we just continue.
+                return FileVisitResult.CONTINUE
+            }
+        }
+    )
+    return result
+}
+
+private fun Path.hasSuitableExtensionToAnalyse(): Boolean {
+    val extension = extension
+    return extension == "kt" || extension == "kts" || extension == "java"
 }
