@@ -10,11 +10,6 @@ import com.google.gwt.dev.js.rhino.ErrorReporter
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.Token
-import org.antlr.v4.runtime.tree.ErrorNode
-import org.antlr.v4.runtime.tree.ParseTree
-import org.antlr.v4.runtime.tree.ParseTreeVisitor
-import org.antlr.v4.runtime.tree.RuleNode
-import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsScope
@@ -29,14 +24,39 @@ object JsAntlrParser {
         scope: JsScope,
         fileName: String
     ): List<JsStatement> {
-        val parser = initializeParser(fileName, code, 0, CodePosition(0, 0), reporter)
-        val mapper = JsAstMapper(scope, fileName)
-        val statements = parser.statementList()
-        val jsStatements = statements.statement().filterNotNull().map {
-            mapper.mapStatement(it)
-        }
+        return parseStatements(code, fileName, CodePosition(0, 0), 0, reporter, scope) ?: emptyList()
+    }
 
-        return jsStatements
+    fun parseExpression(
+        code: String,
+        fileName: String,
+        position: CodePosition,
+        offset: Int,
+        reporter: ErrorReporter,
+        scope: JsScope
+    ): JsExpression? {
+        return with(JsParserContext(fileName, code, position, offset, scope)) {
+            val accReporter = AccumulatingReporter()
+            val expression = parseExpression(accReporter)
+            pumpInspections(accReporter, reporter)
+            expression
+        }
+    }
+
+    fun parseStatements(
+        code: String,
+        fileName: String,
+        position: CodePosition,
+        offset: Int,
+        reporter: ErrorReporter,
+        scope: JsScope
+    ): List<JsStatement>? {
+        return with(JsParserContext(fileName, code, position, offset, scope)) {
+            val accReporter = AccumulatingReporter()
+            val statements = parseStatements(accReporter)
+            pumpInspections(accReporter, reporter)
+            statements
+        }
     }
 
     fun parseExpressionOrStatement(
@@ -46,59 +66,19 @@ object JsAntlrParser {
         startPosition: CodePosition,
         fileName: String
     ): List<JsStatement>? {
-        fun <TParseResult, TMapResult> parseWholeAndMap(
-            reporter: AccumulatingReporter,
-            parseFunc: (JavaScriptParser) -> TParseResult?,
-            mapFunc: (TParseResult) -> TMapResult
-        ): TMapResult? {
-            try {
-                val parser = initializeParser(fileName, code, 0, startPosition, reporter)
-                val parsedResult = parseFunc(parser) ?: return null
-                if (parser.currentToken.type != Token.EOF) {
-                    reporter.error("Unexpected token '${parser.currentToken}'", startPosition, startPosition)
-                }
-                if (reporter.hasErrors) {
-                    return null
-                }
-                return mapFunc(parsedResult)
-            } catch (ex: Throwable) {
-                reporter.error("Failed to parse: ${ex.message}", startPosition, startPosition)
-                return null
+        return with(JsParserContext(fileName, code, startPosition, 0, scope)) {
+            val expressionReporter = AccumulatingReporter()
+            val expression = parseExpression(expressionReporter)
+            if (expression != null && !expressionReporter.hasErrors) {
+                pumpInspections(expressionReporter, reporter)
+                return listOf(expression.makeStmt())
             }
+
+            val statementsReporter = AccumulatingReporter()
+            val statements = parseStatements(statementsReporter)
+            pumpInspections(statementsReporter, reporter)
+            statements
         }
-
-        fun parseExpression(accReporter: AccumulatingReporter) = parseWholeAndMap(
-            accReporter,
-            parseFunc = { parser -> parser.singleExpression() },
-            mapFunc = { expression -> JsAstMapper(scope, fileName).mapExpression(expression) }
-        )
-
-        fun parseStatements(accReporter: AccumulatingReporter) = parseWholeAndMap(
-            accReporter,
-            parseFunc = { parser -> parser.statementList()?.statement() },
-            mapFunc = { statements -> statements.filterNotNull().map { JsAstMapper(scope, fileName).mapStatement(it) } }
-        )
-
-        fun pumpInspections(from: AccumulatingReporter, to: ErrorReporter) {
-            for (warning in from.warnings) {
-                to.warning(warning.message, warning.startPosition, warning.endPosition)
-            }
-            for (error in from.errors) {
-                to.error(error.message, error.startPosition, error.endPosition)
-            }
-        }
-
-        val expressionReporter = AccumulatingReporter()
-        val expression = parseExpression(expressionReporter)
-        if (expression != null && !expressionReporter.hasErrors) {
-            pumpInspections(expressionReporter, reporter)
-            return listOf(expression.makeStmt())
-        }
-
-        val statementsReporter = AccumulatingReporter()
-        val statements = parseStatements(statementsReporter)
-        pumpInspections(statementsReporter, reporter)
-        return statements
     }
 
     fun parseFunction(
@@ -109,26 +89,23 @@ object JsAntlrParser {
         reporter: ErrorReporter,
         scope: JsScope
     ): JsFunction? {
-        val parser = initializeParser(fileName, code, offset, position, reporter)
-        val mapper = JsAstMapper(scope, fileName)
-        val function = parser.functionDeclaration()
-        return mapper.mapFunction(function)
+        return with(JsParserContext(fileName, code, position, offset, scope)) {
+            val functionReporter = AccumulatingReporter()
+            val function = parseFunction(functionReporter)
+            pumpInspections(functionReporter, reporter)
+            function
+        }
     }
 
-    private fun initializeParser(
-        file: String,
-        code: String,
-        offset: Int,
-        startPosition: CodePosition,
-        errorReporter: ErrorReporter
-    ): JavaScriptParser {
-        val inputStream = CharStreams.fromString(code, file).also {
-            it.seek(offset)
+    context(parserContext: JsParserContext)
+    private fun initializeParser(errorReporter: ErrorReporter): JavaScriptParser {
+        val inputStream = CharStreams.fromString(parserContext.code, parserContext.fileName).also {
+            it.seek(parserContext.offset)
         }
         val offsetStream = OffsetCharStream(
             inputStream,
-            startPosition.line,
-            startPosition.offset)
+            parserContext.startPosition.line,
+            parserContext.startPosition.offset)
         val lexer = JavaScriptLexer(offsetStream).apply {
             removeErrorListeners()
             addErrorListener(errorReporter)
@@ -138,6 +115,58 @@ object JsAntlrParser {
         return JavaScriptParser(tokenStream).apply {
             removeErrorListeners()
             addErrorListener(errorReporter)
+        }
+    }
+
+    private fun pumpInspections(from: AccumulatingReporter, to: ErrorReporter) {
+        for (warning in from.warnings) {
+            to.warning(warning.message, warning.startPosition, warning.endPosition)
+        }
+        for (error in from.errors) {
+            to.error(error.message, error.startPosition, error.endPosition)
+        }
+    }
+
+    context(parserContext: JsParserContext)
+    private fun parseExpression(accReporter: AccumulatingReporter) = parseAndMap(
+        accReporter,
+        parseFunc = { parser -> parser.singleExpression() },
+        mapFunc = { expression -> JsAstMapper(parserContext.scope, parserContext.fileName).mapExpression(expression) }
+    )
+
+    context(parserContext: JsParserContext)
+    private fun parseStatements(accReporter: AccumulatingReporter) = parseAndMap(
+        accReporter,
+        parseFunc = { parser -> parser.statementList()?.statement() },
+        mapFunc = { statements -> statements.filterNotNull().map { JsAstMapper(parserContext.scope, parserContext.fileName).mapStatement(it) } }
+    )
+
+    context(parserContext: JsParserContext)
+    private fun parseFunction(accReporter: AccumulatingReporter) = parseAndMap(
+        accReporter,
+        parseFunc = { parser -> parser.functionDeclaration() },
+        mapFunc = { function -> JsAstMapper(parserContext.scope, parserContext.fileName).mapFunction(function) }
+    )
+
+    context(parserContext: JsParserContext)
+    private fun <TParseResult, TMapResult> parseAndMap(
+        reporter: AccumulatingReporter,
+        parseFunc: (JavaScriptParser) -> TParseResult?,
+        mapFunc: (TParseResult) -> TMapResult
+    ): TMapResult? {
+        try {
+            val parser = initializeParser(reporter)
+            val parsedResult = parseFunc(parser) ?: return null
+            if (parser.currentToken.type != Token.EOF) {
+                reporter.error("Unexpected token '${parser.currentToken}'", parserContext.startPosition, parserContext.startPosition)
+            }
+            if (reporter.hasErrors) {
+                return null
+            }
+            return mapFunc(parsedResult)
+        } catch (ex: Throwable) {
+            reporter.error("Failed to parse: ${ex.message}", parserContext.startPosition, parserContext.startPosition)
+            return null
         }
     }
 
@@ -158,4 +187,12 @@ object JsAntlrParser {
         class Error(val message: String, val startPosition: CodePosition, val endPosition: CodePosition)
         class Warning(val message: String, val startPosition: CodePosition, val endPosition: CodePosition)
     }
+
+    private data class JsParserContext(
+        val fileName: String,
+        val code: String,
+        val startPosition: CodePosition,
+        val offset: Int,
+        val scope: JsScope
+    )
 }
