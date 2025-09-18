@@ -89,6 +89,15 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger
 	public abstract fun warn (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion : java/lang/Comparable {
+	public fun <init> (III)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)I
+	public final fun getMajor ()I
+	public final fun getMinor ()I
+	public final fun getPatch ()I
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchains {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains$Companion;
 	public abstract fun createBuildSession ()Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains$BuildSession;
@@ -233,8 +242,8 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument {
-	public fun <init> (Ljava/lang/String;Lkotlin/KotlinVersion;)V
-	public final fun getAvailableSinceVersion ()Lkotlin/KotlinVersion;
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 	public final fun getId ()Ljava/lang/String;
 }
 
@@ -256,8 +265,8 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument {
-	public fun <init> (Ljava/lang/String;Lkotlin/KotlinVersion;)V
-	public final fun getAvailableSinceVersion ()Lkotlin/KotlinVersion;
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 	public final fun getId ()Ljava/lang/String;
 }
 
@@ -349,8 +358,8 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArgu
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument {
-	public fun <init> (Ljava/lang/String;Lkotlin/KotlinVersion;)V
-	public final fun getAvailableSinceVersion ()Lkotlin/KotlinVersion;
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 	public final fun getId ()Ljava/lang/String;
 }
 
