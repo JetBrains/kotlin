@@ -160,7 +160,7 @@ public class SirTypeProviderImpl(
                                     if (classSymbol is KaClassSymbol && classSymbol.classKind == KaClassKind.INTERFACE) {
                                         SirExistentialType(classSymbol.toSir().allDeclarations.firstIsInstance<SirProtocol>())
                                     } else {
-                                        ctx.nominalTypeFromClassSymbol(classSymbol)
+                                        nominalTypeFromClassSymbol(classSymbol)
                                     }
                                 is SirAvailability.Unavailable -> null
                             }
@@ -266,7 +266,9 @@ public class SirTypeProviderImpl(
         return this
     }
 
-    private fun TypeTranslationCtx.nominalTypeFromClassSymbol(symbol: KaClassLikeSymbol): SirNominalType? = sirSession.withSessions {
+    private fun nominalTypeFromClassSymbol(
+        symbol: KaClassLikeSymbol,
+    ): SirNominalType? = sirSession.withSessions {
         symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirScopeDefiningDeclaration>()?.let(::SirNominalType)
     }
 
