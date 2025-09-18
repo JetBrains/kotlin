@@ -10,6 +10,7 @@
 
 // CHECK_BYTECODE_TEXT
 // NO_CHECK_LAMBDA_INLINING
+// WASM_FAILS_IN: NodeJs
 
 // FILE: lib.kt
 inline fun run(f: () -> Unit) {

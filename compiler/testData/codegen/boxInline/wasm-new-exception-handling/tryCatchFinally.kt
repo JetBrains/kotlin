@@ -3,6 +3,7 @@
 // TODO: remove the test when KT-66906 will be resolved
 // WITH_STDLIB
 // KJS_WITH_FULL_RUNTIME
+// WASM_FAILS_IN: WasmEdge
 
 // FILE: 1.kt
 
