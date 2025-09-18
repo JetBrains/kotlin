@@ -315,7 +315,7 @@ fun Project.configureTests() {
     }
 
     tasks.withType<Test>().configureEach {
-        if (!plugins.hasPlugin("project-tests-convention") && !plugins.hasPlugin("test-inputs-check")) {
+        if (!plugins.hasPlugin("test-inputs-check")) {
             outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
         }
         if (project.kotlinBuildProperties.limitTestTasksConcurrency) {
