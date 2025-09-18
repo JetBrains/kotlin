@@ -17,11 +17,11 @@ library {
 
       public final /* synthesized */ fun copy(intProp: kotlin/Int /* = ... */, stringProp: kotlin/String /* = ... */): test/DataClass
 
-      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+      public open /* synthesized */ operator /* must-use return value */ fun equals(other: kotlin/Any?): kotlin/Boolean
 
-      public open /* synthesized */ fun hashCode(): kotlin/Int
+      public open /* synthesized */ /* must-use return value */ fun hashCode(): kotlin/Int
 
-      public open /* synthesized */ fun toString(): kotlin/String
+      public open /* synthesized */ /* must-use return value */ fun toString(): kotlin/String
 
       public final val intProp: kotlin/Int
         public final get
@@ -37,11 +37,11 @@ library {
 
       private constructor()
 
-      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+      public open /* synthesized */ operator /* must-use return value */ fun equals(other: kotlin/Any?): kotlin/Boolean
 
-      public open /* synthesized */ fun hashCode(): kotlin/Int
+      public open /* synthesized */ /* must-use return value */ fun hashCode(): kotlin/Int
 
-      public open /* synthesized */ fun toString(): kotlin/String
+      public open /* synthesized */ /* must-use return value */ fun toString(): kotlin/String
     }
   }
 }

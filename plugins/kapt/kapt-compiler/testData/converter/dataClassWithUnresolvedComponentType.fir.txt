@@ -19,13 +19,13 @@ package test;
  *   public final (* synthesized *) fun copy(x: error/NonExistentClass (* = ... *), y: kotlin/collections/List<error/NonExistentClass> (* = ... *), z: error/NonExistentClass (* = test/TA^<error/NonExistentClass> *) (* = ... *)): test/C
  *
  *   // signature: equals(Ljava/lang/Object;)Z
- *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *   public open (* synthesized *) operator (* must-use return value *) fun equals(other: kotlin/Any?): kotlin/Boolean
  *
  *   // signature: hashCode()I
- *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *   public open (* synthesized *) (* must-use return value *) fun hashCode(): kotlin/Int
  *
  *   // signature: toString()Ljava/lang/String;
- *   public open (* synthesized *) fun toString(): kotlin/String
+ *   public open (* synthesized *) (* must-use return value *) fun toString(): kotlin/String
  *
  *   // field: x:Lerror/NonExistentClass;
  *   // getter: getX()Lerror/NonExistentClass;

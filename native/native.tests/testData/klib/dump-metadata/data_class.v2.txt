@@ -23,13 +23,13 @@ library {
       public final /* synthesized */ fun copy(intProp: kotlin/Int /* = ... */, stringProp: kotlin/String /* = ... */): test/DataClass
 
       // signature: test/DataClass.equals|equals(kotlin.Any?){}[0]
-      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+      public open /* synthesized */ operator /* must-use return value */ fun equals(other: kotlin/Any?): kotlin/Boolean
 
       // signature: test/DataClass.hashCode|hashCode(){}[0]
-      public open /* synthesized */ fun hashCode(): kotlin/Int
+      public open /* synthesized */ /* must-use return value */ fun hashCode(): kotlin/Int
 
       // signature: test/DataClass.toString|toString(){}[0]
-      public open /* synthesized */ fun toString(): kotlin/String
+      public open /* synthesized */ /* must-use return value */ fun toString(): kotlin/String
 
       // signature: test/DataClass.intProp|{}intProp[0]
       public final val intProp: kotlin/Int
@@ -54,13 +54,13 @@ library {
       private constructor()
 
       // signature: test/DataObject.equals|equals(kotlin.Any?){}[0]
-      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+      public open /* synthesized */ operator /* must-use return value */ fun equals(other: kotlin/Any?): kotlin/Boolean
 
       // signature: test/DataObject.hashCode|hashCode(){}[0]
-      public open /* synthesized */ fun hashCode(): kotlin/Int
+      public open /* synthesized */ /* must-use return value */ fun hashCode(): kotlin/Int
 
       // signature: test/DataObject.toString|toString(){}[0]
-      public open /* synthesized */ fun toString(): kotlin/String
+      public open /* synthesized */ /* must-use return value */ fun toString(): kotlin/String
     }
   }
 }
