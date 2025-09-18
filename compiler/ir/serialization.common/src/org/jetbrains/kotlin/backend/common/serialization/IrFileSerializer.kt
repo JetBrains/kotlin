@@ -316,14 +316,7 @@ open class IrFileSerializer(
                 ?: error("Given symbol is unbound and have no signature: $symbol")
             symbol is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
             else -> {
-                var symbolOwner = symbol.owner
-
-                // Prefer a real inline function over its prepared copy - the latter is only used store inlinable body,
-                // and only the former has the correct declaration shape (such as parameters) allowing to compute
-                // a valid signature of the function.
-                (symbolOwner as? IrSimpleFunction)?.originalOfPreparedInlineFunctionCopy?.let {
-                    symbolOwner = it
-                }
+                val symbolOwner = symbol.owner
 
                 // Compute the signature:
                 when {
@@ -1641,15 +1634,17 @@ open class IrFileSerializer(
 
     fun serializeIrFileWithPreparedInlineFunctions(preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
         val topLevelDeclarations = preparedFunctions.map { function ->
-            val byteArray = serializeDeclaration(function).toByteArray()
-            val idSig = declarationTable.signatureByDeclaration(
-                function.originalOfPreparedInlineFunctionCopy!!,
-                compatibleMode = false,
-                recordInSignatureClashDetector = false
-            )
-            val sigIndex = idSignatureSerializer.protoIdSignature(idSig)
+            inFile(function.file) {
+                val byteArray = serializeDeclaration(function).toByteArray()
+                val idSig = declarationTable.signatureByDeclaration(
+                    function.originalOfPreparedInlineFunctionCopy!!,
+                    compatibleMode = false,
+                    recordInSignatureClashDetector = false
+                )
+                val sigIndex = idSignatureSerializer.protoIdSignature(idSig)
 
-            SerializedDeclaration(sigIndex, byteArray)
+                SerializedDeclaration(sigIndex, byteArray)
+            }
         }
 
         // Memoize all preprocessed functions in `ProtoFile.declarationIdList`.
