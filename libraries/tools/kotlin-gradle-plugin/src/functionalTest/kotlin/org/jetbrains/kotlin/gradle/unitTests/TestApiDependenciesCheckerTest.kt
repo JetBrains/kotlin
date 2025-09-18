@@ -114,11 +114,64 @@ class TestApiDependenciesCheckerTest {
                 actual = actualWarning.message,
             )
             assertContains(
+                expected = "- org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release (source sets: linuxX64Test, macosX64Test, mingwX64Test)",
+                actual = actualWarning.message,
+            )
+            assertContains(
                 expected = "- org.jetbrains.kotlinx:kotlinx-html:latest.release (source sets: jsTest)",
+                actual = actualWarning.message,
+            )
+        }
+    }
+
+    @Test
+    fun `when multiple test and main dependencies are defined as api, expect single warning, with aggregated dependencies`() {
+        val project = setupKmpProject {
+            kotlin {
+                sourceSets.apply {
+                    commonMain {
+                        // also define the dependencies in commonMain, to verify the test API dependencies still trigger warnings.
+                        dependencies {
+                            api("org.jetbrains.kotlinx:atomicfu:latest.release")
+                            api("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
+                            api("org.jetbrains.kotlinx:kotlinx-html:latest.release")
+                        }
+                    }
+                    commonTest {
+                        dependencies {
+                            api("org.jetbrains.kotlinx:atomicfu:latest.release")
+                        }
+                    }
+                    nativeTest {
+                        dependencies {
+                            api("org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release")
+                        }
+                    }
+                    jsTest {
+                        dependencies {
+                            api("org.jetbrains.kotlinx:kotlinx-html:latest.release")
+                        }
+                    }
+                }
+            }
+        }
+
+        project.runLifecycleAwareTest {
+            val diagnostics = project.kotlinToolingDiagnosticsCollector
+                .getDiagnosticsForProject(project)
+
+            val actualWarning = diagnostics.assertContainsSingleDiagnostic(TestApiDependencyWarning)
+
+            assertContains(
+                expected = "- org.jetbrains.kotlinx:atomicfu:latest.release (source sets: jsTest, jvmTest, linuxX64Test, macosX64Test, mingwX64Test, wasmJsTest, wasmWasiTest)",
                 actual = actualWarning.message,
             )
             assertContains(
                 expected = "- org.jetbrains.kotlinx:kotlinx-serialization-json:latest.release (source sets: linuxX64Test, macosX64Test, mingwX64Test)",
+                actual = actualWarning.message,
+            )
+            assertContains(
+                expected = "- org.jetbrains.kotlinx:kotlinx-html:latest.release (source sets: jsTest)",
                 actual = actualWarning.message,
             )
         }
