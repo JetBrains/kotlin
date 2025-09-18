@@ -5,21 +5,14 @@
 
 package common
 
-import model.FileChunk
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
-import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
 import java.io.BufferedOutputStream
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.io.OutputStream
-import java.io.PipedInputStream
-import java.io.PipedOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
@@ -30,26 +23,6 @@ import java.security.MessageDigest
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-
-fun cleanCompilationResultPath(path: String): String {
-    // - cache/artifacts/<any>/
-    // - workspace/<userId>/<projectName>/output/<moduleName>/
-    val patterns = listOf(
-        Regex("""^.*?/cache/artifacts/[^/]+/"""),
-        Regex("""^.*?/workspace/[^/]+/[^/]+/output/[^/]+/""")
-    )
-    var cleaned = path
-    for (rx in patterns) {
-        val match = rx.find(cleaned)
-        if (match != null && match.range.first == 0) {
-            cleaned = cleaned.removeRange(match.range)
-            break
-        }
-    }
-    return cleaned
-}
-
 
 
 fun computeSha256(file: File): String {

@@ -5,13 +5,10 @@
 
 package benchmark
 
-import main.kotlin.server.RemoteCompilationServer
 import client.core.RemoteCompilationClient
-import common.CLIENT_COMPILED_DIR
-import common.CLIENT_TMP_DIR
-import common.SERVER_CACHE_DIR
-import common.SERVER_COMPILATION_WORKSPACE_DIR
+
 import kotlinx.serialization.ExperimentalSerializationApi
+import model.CompilationResultSource
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
@@ -25,7 +22,7 @@ enum class RemoteCompilationServiceImplType {
 class Benchmark {
 
     suspend fun compileProject(client: RemoteCompilationClient, tasks: List<Task>) {
-        client.cleanup() // TODO consider removing, this was just fro JMH multiple iterations
+//        client.cleanup() // TODO consider removing, this was just fro JMH multiple iterations
         val compilationOptions = CompilationOptions(
             compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
             targetPlatform = CompileService.TargetPlatform.JVM,
@@ -34,6 +31,8 @@ class Benchmark {
             requestedCompilationResults = arrayOf(),
         )
 
+        var fromCompiler = 0
+        var fromCache = 0
         tasks.forEachIndexed { index, task ->
 
             val res = client.compile(
@@ -46,7 +45,15 @@ class Benchmark {
             if (res.exitCode != 0) {
                 throw IllegalStateException("Thrown: Compilation number $index failed with exit code ${res.exitCode}")
             }
+            if (res.compilationResultSource == CompilationResultSource.CACHE) {
+                fromCache++
+            } else {
+                fromCompiler++
+                println("Compilation number $index returned from compiler")
+//                throw IllegalStateException("Thrown: Compilation number $index returned from compiler")
+            }
         }
+        println("${tasks.size} tasks compiled from cache: $fromCache, from compiler: $fromCompiler")
     }
 }
 // HOW TO RUN
@@ -75,7 +82,7 @@ class Benchmark {
 
 suspend fun main() {
     val ktorTasks =
-        TasksExtractor.getTasks("/Users/michal.svec/Desktop/ktor/outputlatest")
+        TasksExtractor.getTasks("/Users/michal.svec/Desktop/ktor/output")
     println("We have ${ktorTasks.size} tasks to compile")
 
     val localPort = 8000
@@ -83,19 +90,20 @@ suspend fun main() {
 
     val remotePort = 443
     val remoteWebsocketsHost = "remote-kotlin-daemon-websockets.labs.jb.gg"
-    val remoteGrpcHost = "remote-kotlin-daemon.labs-grpc.jb.gg"
+    val remoteGrpcHost = "remote-kotlin-daemon-grpc.labs.jb.gg"
 
-    val implType = RemoteCompilationServiceImplType.KOTLINX_RPC
+    val implType = RemoteCompilationServiceImplType.GRPC
 //    val server = RemoteCompilationServer.getServer(implType, localPort, logging = true)
-    val client = RemoteCompilationClient.getClient(implType, remoteWebsocketsHost, remotePort)
+    val client = RemoteCompilationClient.getClient(implType, localHost, localPort)
 
 //    server.start(block = false)
     val benchmark = Benchmark()
-    benchmark.compileProject(client, ktorTasks.subList(10, ktorTasks.size))
+//    client.cleanup()
+    benchmark.compileProject(client, ktorTasks)
 //    server.stop()
 
-    SERVER_CACHE_DIR.toFile().deleteRecursively()
-    SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
-    CLIENT_TMP_DIR.toFile().deleteRecursively()
-    CLIENT_COMPILED_DIR.toFile().deleteRecursively()
+//    SERVER_CACHE_DIR.toFile().deleteRecursively()
+//    SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
+//    CLIENT_TMP_DIR.toFile(ench).deleteRecursively()
+//    CLIENT_COMPILED_DIR.toFile().deleteRecursively()
 }

@@ -26,6 +26,7 @@ var K2JVMCompilerArguments.destinationAsFile: File
         destination = value.absolutePath
     }
 
+// TODO: maybe a bug? empty classpath is resolved to listOf(File("")), if you call .absolutePath() on that list item, you will get cwd, which may be source of bugs sometimes
 var K2JVMCompilerArguments.classpathAsList: List<File>
     get() = classpath.orEmpty().split(File.pathSeparator).map(::File)
     set(value) {

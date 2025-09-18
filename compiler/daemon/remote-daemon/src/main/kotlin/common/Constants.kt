@@ -17,7 +17,7 @@ const val TMP_FOLDER_NAME = "tmp"
 const val STORAGE_FOLDER_NAME = "storage"
 const val WORKSPACE_FOLDER_NAME = "workspace"
 
-val K8S_STORAGE_PATH: Path = Paths.get("/$STORAGE_FOLDER_NAME")
+val K8S_STORAGE_PATH: Path = Paths.get("/$STORAGE_FOLDER_NAME").toAbsolutePath()
 
 val SERVER_CACHE_DIR: Path =
     if (isServerEnvK8s()) K8S_STORAGE_PATH.resolve(CACHE_FOLDER_NAME)

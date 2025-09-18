@@ -36,6 +36,7 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
+    implementation(project(":compiler:build-tools:kotlin-build-tools-impl"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":core:compiler.common"))

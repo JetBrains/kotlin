@@ -5,21 +5,14 @@
 
 package server.core
 
-import common.CompilerUtils
-import common.SERVER_COMPILATION_WORKSPACE_DIR
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
-import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
-import org.jetbrains.kotlin.buildtools.internal.ClasspathEntrySnapshotImpl
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -51,7 +44,6 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalFirJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
 import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
 import org.jetbrains.kotlin.incremental.storage.FileLocations
@@ -62,23 +54,15 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import org.jetbrains.kotlin.util.getLinesPerSecond
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.collections.plus
 import kotlin.collections.toSet
-import kotlin.io.path.createParentDirectories
 
 class InProcessCompilerService(
     var reportPerf: Boolean = false
 ) {
-
-    init {
-        Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
-    }
 
     private val log by lazy { Logger.getLogger("compiler") }
 
@@ -182,8 +166,6 @@ class InProcessCompilerService(
                 }.get()
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
-                println("compiling nonincrementally")
-
                 doCompile(daemonReporter) { _ ->
                     val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
 
@@ -200,7 +182,6 @@ class InProcessCompilerService(
                 }.get()
             }
             CompilerMode.INCREMENTAL_COMPILER -> {
-                println("compiling incrementally")
                 val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
                 val gradleIncrementalServicesFacade = servicesFacade
 
@@ -220,8 +201,7 @@ class InProcessCompilerService(
                         }.get()
                     }
                     CompileService.TargetPlatform.JS -> withJsIC(k2PlatformArgs) {
-                        TODO("we do not support JS right now")
-                        // TODO we do not support JS right now
+//                    TODO("we do not support JS right now")
 //                    doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
 //                        execJsIncrementalCompiler(
 //                            k2PlatformArgs as K2JSCompilerArguments,
@@ -234,6 +214,7 @@ class InProcessCompilerService(
 //                            )
 //                        )
 //                    }
+                        0
                     }
                     else -> throw IllegalStateException("Incremental compilation is not supported for target platform: $targetPlatform")
 
@@ -246,22 +227,6 @@ class InProcessCompilerService(
         is SourcesChanges.Unknown -> ChangedFiles.Unknown
         is SourcesChanges.ToBeCalculated -> ChangedFiles.DeterminableFiles.ToBeComputed
         is SourcesChanges.Known -> ChangedFiles.DeterminableFiles.Known(modifiedFiles, removedFiles)
-    }
-
-    // function taken from CompilationServiceImpl.kt
-    @OptIn(ExperimentalBuildToolsApi::class)
-    fun calculateClasspathSnapshot(
-        classpathEntry: File,
-        granularity: ClassSnapshotGranularity,
-        parseInlinedLocalClasses: Boolean
-    ): ClasspathEntrySnapshot {
-        return ClasspathEntrySnapshotImpl(
-            ClasspathEntrySnapshotter.snapshot(
-                classpathEntry,
-                ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses),
-                DoNothingBuildMetricsReporter
-            )
-        )
     }
 
     fun execIncrementalCompiler(

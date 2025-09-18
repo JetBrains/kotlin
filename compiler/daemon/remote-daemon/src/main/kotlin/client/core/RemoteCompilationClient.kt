@@ -8,7 +8,6 @@ package client.core
 import benchmark.RemoteCompilationServiceImplType
 import client.grpc.GrpcRemoteCompilationServiceClient
 import com.example.KotlinxRpcRemoteCompilationServiceClient
-import common.CLIENT_COMPILED_DIR
 import common.CLIENT_TMP_DIR
 import common.CompilerUtils
 import common.FixedSizeChunkingStrategy
@@ -45,8 +44,10 @@ import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
+import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
+import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.incremental.classpathAsList
 import java.nio.file.Paths
 import java.io.File
@@ -96,11 +97,6 @@ class RemoteCompilationClient(
             val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
             println("[${LocalDateTime.now().format(formatter)}] [thread=${Thread.currentThread().name}] DEBUG SERVER: $text")
         }
-    }
-
-    init {
-        Files.createDirectories(CLIENT_COMPILED_DIR)
-        Files.createDirectories(CLIENT_TMP_DIR)
     }
 
     suspend fun compile(projectName: String, compilerArguments: List<String>, compilationOptions: CompilationOptions): CompilationResult {
@@ -193,22 +189,12 @@ class RemoteCompilationClient(
                                 fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
                                 if (it.isLast) {
                                     val allFileChunks = fileChunks.getOrDefault(it.filePath, listOf())
-                                    if (it.artifactTypes.any { at -> at == ArtifactType.IC_CACHE } && it.isDirectory) {
-                                        val clientPath = Paths.get(it.filePath)
-                                        fileChunkStrategy.reconstruct(
-                                            allFileChunks,
-                                            clientPath.parent,
-                                            clientPath.name
-                                        )
-                                    }
-                                    if (it.artifactTypes.any { at -> at == ArtifactType.RESULT }) {
-                                        val moduleName = CompilerUtils.getModuleName(parsedArgs)
-                                        fileChunkStrategy.reconstruct(
-                                            allFileChunks,
-                                            CLIENT_COMPILED_DIR.resolve(moduleName),
-                                            it.filePath,
-                                        )
-                                    }
+                                    val clientPath = Paths.get(it.filePath)
+                                    fileChunkStrategy.reconstruct(
+                                        allFileChunks,
+                                        clientPath.parent,
+                                        clientPath.name
+                                    )
                                 }
                             }
                         }
@@ -243,6 +229,8 @@ class RemoteCompilationClient(
                         val srcChanges = compilationOptions.sourceChanges
                         if (srcChanges is SourcesChanges.Known) {
                             sendSourceChangesDirectlyWithoutRequest(srcChanges, requestChannel)
+                        } else {
+                            requestTransferOfArtifacts(allArtifacts, requestChannel)
                         }
 
                         val cpChanges = compilationOptions.classpathChanges
@@ -293,7 +281,6 @@ class RemoteCompilationClient(
                 }
             }
         }
-        // TODO question: do we need to somehow handle removal of files?
     }
 
     private fun CoroutineScope.requestTransferOfArtifacts(
@@ -309,8 +296,10 @@ class RemoteCompilationClient(
 
 }
 
+// this main function just serves for testing of incremental compilation
 @OptIn(ExperimentalBuildToolsApi::class)
 suspend fun main() {
+
     val client = RemoteCompilationClient.getClient(RemoteCompilationServiceImplType.GRPC, "localhost", 8000)
 
     // taken from ktor-client-android task
@@ -320,13 +309,12 @@ suspend fun main() {
             .map { it.trim() }
 
     val outputFiles = listOf(
-        "/Users/michal.svec/Desktop/ktor/ktor-client/ktor-client-android",
         "/Users/michal.svec/Desktop/ktor/ktor-client/ktor-client-android/build/classes/atomicfu-orig/jvm/main",
         "/Users/michal.svec/Desktop/ktor/ktor-client/ktor-client-android/build/kotlin/compileKotlinJvm/cacheable",
         "/Users/michal.svec/Desktop/ktor/ktor-client/ktor-client-android/build/kotlin/compileKotlinJvm/local-state"
     ).map { File(it) }
 
-    val workingDir = File("/Users/michal.svec/Desktop/ktor/ktor-client/ktor-client-android")
+    val workingDir = File("/Users/michal.svec/Desktop/ktor/ktor-client/ktor-client-android/build/kotlin/compileKotlinJvm/cacheable")
 
     val parsedArgs = parseCommandLineArguments<K2JVMCompilerArguments>(compilerArguments)
     val classpathSnapshots = parsedArgs.classpathAsList.map {
@@ -336,33 +324,63 @@ suspend fun main() {
         snapshotOutputFile
     }
 
-    val modifiedFiles = emptyList<File>()
-    val removedFiles = emptyList<File>()
+    val shrunkSnapshotDir =
+        File("/Users/michal.svec/Desktop/ktor/ktor-client/ktor-client-android/build/kotlin/compileKotlinJvm/classpath-snapshot")
+    // Ensure required directories exist on the first run
+    Files.createDirectories(shrunkSnapshotDir.toPath())
+    outputFiles.forEach { Files.createDirectories(it.toPath()) }
+    Files.createDirectories(workingDir.toPath())
+
+    val classpathSnapshotFiles = ClasspathSnapshotFiles(
+        classpathSnapshots,
+        shrunkSnapshotDir
+    )
+
+    val incrementalSourceChanges = SourcesChanges.Known(
+        modifiedFiles = listOf(File("/Users/michal.svec/Desktop/ktor/ktor-client/ktor-client-android/jvm/src/io/ktor/client/engine/android/Android.kt")),
+        removedFiles = listOf(),
+    )
+
+    val incrementalClasspathChanges = ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler(
+        classpathSnapshotFiles
+    )
+
+    val sourceChanges = SourcesChanges.Unknown
+
+    val classpathChanges = ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
+        classpathSnapshotFiles
+    )
 
     client.compile(
         "ktor-client-android",
         compilerArguments,
         IncrementalCompilationOptions(
-            sourceChanges = SourcesChanges.Unknown,
-            classpathChanges = ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
-                ClasspathSnapshotFiles(
-                    classpathSnapshots,
-                    File("/Users/michal.svec/Desktop/kotlin/compiler/playground")
-                )
-            ),
+            sourceChanges = sourceChanges,
+            classpathChanges = classpathChanges,
             workingDir = workingDir,
             compilerMode = CompilerMode.INCREMENTAL_COMPILER,
             targetPlatform = CompileService.TargetPlatform.JVM,
             outputFiles = outputFiles,
             reportCategories = emptyArray(),
             reportSeverity = 0,
-            requestedCompilationResults = emptyArray(),
+            requestedCompilationResults = arrayOf(0, 2, 3),
             useJvmFirRunner = false,
             rootProjectDir = null,
-            buildDir = null
+            buildDir = null,
+            multiModuleICSettings = MultiModuleICSettings(
+                useModuleDetection = false,
+                buildHistoryFile = File("/Users/michal.svec/Desktop/ktor/ktor-client/ktor-client-android/build/kotlin/compileKotlinJvm/local-state/build-history.bin")
+            ),
+            icFeatures = IncrementalCompilationFeatures(
+                usePreciseJavaTracking = true,
+                withAbiSnapshot = false,
+                preciseCompilationResultsBackup = true,
+                keepIncrementalCompilationCachesInMemory = true,
+                enableUnsafeIncrementalCompilationForMultiplatform = false,
+                enableMonotonousIncrementalCompileSetExpansion = true
+            )
         )
     )
 
     classpathSnapshots.forEach { it.delete() }
-
 }

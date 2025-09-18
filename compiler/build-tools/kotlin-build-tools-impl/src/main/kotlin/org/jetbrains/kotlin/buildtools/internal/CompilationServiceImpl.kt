@@ -59,7 +59,7 @@ private fun getCurrentClasspath() = (CompilationServiceImpl::class.java.classLoa
  */
 internal fun transformUrlToFile(url: URL) = url.toURI().toPath().toFile()
 
-internal object CompilationServiceImpl : CompilationService {
+    internal object CompilationServiceImpl : CompilationService {
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
 
     override fun calculateClasspathSnapshot(

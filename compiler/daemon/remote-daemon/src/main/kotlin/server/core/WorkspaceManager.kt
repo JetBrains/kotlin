@@ -5,6 +5,8 @@
 
 package server.core
 
+import common.ARTIFACTS_FOLDER_NAME
+import common.SERVER_CACHE_DIR
 import common.SERVER_COMPILATION_WORKSPACE_DIR
 import common.copyDirectoryRecursively
 import kotlinx.coroutines.sync.Mutex
@@ -15,10 +17,12 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import kotlin.io.path.absolute
+import kotlin.io.path.name
 
 class WorkspaceManager(
     val userId: String,
     val projectName: String,
+    val clientOutputDir: Path,
 ) {
 
     val userProjectWorkspaceDir: Path =
@@ -46,7 +50,7 @@ class WorkspaceManager(
         return userProjectWorkspaceDir.resolve(relativePath).absolute()
     }
 
-    fun removeWorkspaceProjectPrefix(path: Path): Path {
+    private fun removeWorkspaceProjectPrefix(path: Path): Path {
         val base = userProjectWorkspaceDir.toAbsolutePath().normalize()
         val normalizedInput = path.normalize()
         val relativePath =
@@ -57,6 +61,21 @@ class WorkspaceManager(
                 normalizedInput
             }
         return Paths.get("/").resolve(relativePath)
+    }
+
+    private fun removeCachePrefix(remotePath: Path): Path {
+        val fingerprintFilenameIndex = remotePath.indexOfFirst { it.name == ARTIFACTS_FOLDER_NAME } + 1
+        val cleanedPath = remotePath.subpath(fingerprintFilenameIndex + 1, remotePath.nameCount)
+        val resolved = clientOutputDir.resolve(cleanedPath)
+        return resolved
+    }
+
+    fun getClientPathFromRemote(remotePath: Path): Path {
+        return if (remotePath.toString().contains(SERVER_CACHE_DIR.toString())) {
+            removeCachePrefix(remotePath)
+        } else {
+            removeWorkspaceProjectPrefix(remotePath)
+        }
     }
 
     fun getOutputDir(clientOutputPath: Path): Path {

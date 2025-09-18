@@ -11,7 +11,6 @@ import common.FixedSizeChunkingStrategy
 import common.RemoteCompilationService
 import common.createTarArchiveStream
 import common.SERVER_TMP_CACHE_DIR
-import common.cleanCompilationResultPath
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +30,7 @@ import model.FileTransferRequest
 import model.ArtifactType
 import model.MissingArtifactsRequest
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
@@ -122,7 +122,8 @@ class RemoteCompilationServiceImpl(
                         is CompilationMetadata -> {
                             compilationMetadata = it
                             pendingFiles.set(compilationMetadata.totalFilesToSend)
-                            workspaceManager = WorkspaceManager(userId, compilationMetadata.projectName)
+                            val clientOutputDir = CompilerUtils.getOutputDir(CompilerUtils.parseArgs(it.compilerArguments))
+                            workspaceManager = WorkspaceManager(userId, compilationMetadata.projectName, clientOutputDir.toPath())
                         }
                         is FileTransferRequest -> {
                             launch {
@@ -221,12 +222,6 @@ class RemoteCompilationServiceImpl(
                     }
                 }
 
-
-                println("remoteCompilerArguments are:")
-                println(remoteCompilerArguments.toString())
-
-
-
                 val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(remoteCompilerArguments)
                 val (outputDir, compilationResult) = if (isCompilationResultCached) {
                     debug("[SERVER COMPILATION] Compilation result is cached, fingerprint: $inputFingerprint")
@@ -239,7 +234,7 @@ class RemoteCompilationServiceImpl(
                     val (outputDir, compilationResult) = doCompilation(
                         remoteCompilationOptions,
                         remoteCompilerArguments,
-                        this@channelFlow::trySend// TODO: double check trySend
+                        this@channelFlow::trySend // TODO: double check trySend
                     )
                     cacheHandler.cacheFile(
                         outputDir,
@@ -251,7 +246,6 @@ class RemoteCompilationServiceImpl(
                     outputDir to compilationResult
                 }
                 send(compilationResult)
-                println("output dir is outputDir: $outputDir")
                 sendCompiledFilesToClient(outputDir, this@channelFlow)
                 if (remoteCompilationOptions is IncrementalCompilationOptions) {
                     val icCacheDir = CompilerUtils.getICCacheFolder(remoteCompilerArguments)
@@ -305,15 +299,16 @@ class RemoteCompilationServiceImpl(
     }
 
 
-    private suspend fun sendCompiledFilesToClient(outputDir: File, outputChannel: ProducerScope<CompileResponse>){
-        outputDir.walkTopDown()
+    private suspend fun sendCompiledFilesToClient(
+        remoteOutputDir: File, outputChannel: ProducerScope<CompileResponse>
+    ) {
+        remoteOutputDir.walkTopDown()
             .filter { !Files.isDirectory(it.toPath()) }
             .forEach { file ->
-                val clientCleanedPath = cleanCompilationResultPath(file.path)
                 fileChunkStrategy.chunk(file, isDirectory = false, setOf(ArtifactType.RESULT), file.path).collect { chunk ->
                     outputChannel.send(
                         FileChunk(
-                            clientCleanedPath,
+                            workspaceManager.getClientPathFromRemote(file.toPath()).toString(),
                             setOf(ArtifactType.RESULT),
                             chunk.content,
                             chunk.isDirectory,
@@ -324,14 +319,14 @@ class RemoteCompilationServiceImpl(
             }
     }
 
-    suspend fun sendICCacheToClient(icCacheDir: File, outputChannel: ProducerScope<CompileResponse>) {
-        createTarArchiveStream(icCacheDir).use { tarStream ->
+    suspend fun sendICCacheToClient(remoteIcCacheDir: File, outputChannel: ProducerScope<CompileResponse>) {
+        createTarArchiveStream(remoteIcCacheDir).use { tarStream ->
             fileChunkStrategy
                 .chunk(
                     tarStream,
                     true,
                     setOf(ArtifactType.IC_CACHE),
-                    workspaceManager.removeWorkspaceProjectPrefix(icCacheDir.toPath()).toString()
+                    workspaceManager.getClientPathFromRemote(remoteIcCacheDir.toPath()).toString()
                 ).collect { chunk ->
                     outputChannel.send(chunk)
                 }
@@ -343,17 +338,17 @@ class RemoteCompilationServiceImpl(
 
         // TODO: maybe more reliable solution than prefix removal would be to use some kind of bidirectional hashmap of clientPath <---> userProjectPath
         getMissingFiles(CompilerUtils.getDependencyFiles(args)).map {
-            val clientPath = workspaceManager.removeWorkspaceProjectPrefix(it.toPath())
+            val clientPath = workspaceManager.getClientPathFromRemote(it.toPath())
             missingArtifactsMap.getOrPut(clientPath) { mutableSetOf() }.add(ArtifactType.DEPENDENCY)
         }
 
         getMissingFiles(CompilerUtils.getSourceFiles(args)).map {
-            val clientPath = workspaceManager.removeWorkspaceProjectPrefix(it.toPath())
+            val clientPath = workspaceManager.getClientPathFromRemote(it.toPath())
             missingArtifactsMap.getOrPut(clientPath) { mutableSetOf() }.add(ArtifactType.SOURCE)
         }
 
         getMissingFiles(CompilerUtils.getXPluginFiles(args)).map {
-            val clientPath = workspaceManager.removeWorkspaceProjectPrefix(it.toPath())
+            val clientPath = workspaceManager.getClientPathFromRemote(it.toPath())
             missingArtifactsMap.getOrPut(clientPath) { mutableSetOf() }.add(ArtifactType.COMPILER_PLUGIN)
         }
 

@@ -118,7 +118,7 @@ class CacheHandler {
     }
 
     fun getCompilationResultDirectory(inputFingerprint: String): File {
-        return File("${SERVER_ARTIFACTS_CACHE_DIR}/$inputFingerprint")
+        return SERVER_ARTIFACTS_CACHE_DIR.resolve(inputFingerprint).toFile()
     }
 
 }
