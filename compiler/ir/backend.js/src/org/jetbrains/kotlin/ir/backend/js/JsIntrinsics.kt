@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class, InternalSymbolFinderAPI::class)
-class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration: CompilerConfiguration) {
+class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val compileLongAsBigint: Boolean) {
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
     val symbolFinder = irBuiltIns.symbolFinder
 
@@ -360,7 +360,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
             set(PrimitiveType.INT, "Int32")
             set(PrimitiveType.FLOAT, "Float32")
             set(PrimitiveType.DOUBLE, "Float64")
-            if (configuration.compileLongAsBigint) {
+            if (compileLongAsBigint) {
                 set(PrimitiveType.LONG, "BigInt64")
             }
         }
@@ -466,7 +466,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
         name: String,
         finder: (Name, FqName) -> T?,
     ): T? {
-        val packageName = if (configuration.compileLongAsBigint) {
+        val packageName = if (compileLongAsBigint) {
             JsStandardClassIds.LONG_AS_BIGINT_PACKAGE
         } else {
             JsStandardClassIds.BOXED_LONG_PACKAGE
