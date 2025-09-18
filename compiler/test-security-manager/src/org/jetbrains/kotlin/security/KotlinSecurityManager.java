@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.security;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Custom SecurityManager implementation for Kotlin compiler.
@@ -14,7 +15,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class KotlinSecurityManager extends SecurityManager {
     // Cache for checkRead(String file) results
-    private final Map<String, Boolean> readPermissionCache = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> readPermissionCache =
+            Collections.synchronizedMap(new LinkedHashMap<String, Boolean>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
+                    return size() > 10_000;
+                }
+            });
 
     /**
      * Public constructor required for JVM instantiation via -Djava.security.manager flag.
