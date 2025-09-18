@@ -1,10 +1,10 @@
 Module: main
 // CallableId=/runTwice
-FUN name:runTwice visibility:public modality:FINAL returnType:<root>.Pair<kotlin.Any?> [inline]
+FUN name:runTwice visibility:private modality:FINAL returnType:<root>.Pair<kotlin.Any?> [inline]
   TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
   VALUE_PARAMETER kind:Regular name:f index:0 type:kotlin.Function0<kotlin.Any?>
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun runTwice <T> (f: kotlin.Function0<kotlin.Any?>): <root>.Pair<kotlin.Any?> [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun runTwice <T> (f: kotlin.Function0<kotlin.Any?>): <root>.Pair<kotlin.Any?> [inline] declared in <root>'
       CONSTRUCTOR_CALL 'public constructor <init> (first: T of <root>.Pair, second: T of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<kotlin.Any?> origin=null
         TYPE_ARG (of class) T: kotlin.Any?
         ARG first: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
@@ -12,7 +12,7 @@ FUN name:runTwice visibility:public modality:FINAL returnType:<root>.Pair<kotlin
         ARG second: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any? origin=INVOKE
           ARG <this>: GET_VAR 'f: kotlin.Function0<kotlin.Any?> declared in <root>.runTwice' type=kotlin.Function0<kotlin.Any?> origin=VARIABLE_AS_FUNCTION
 // CallableId=/bar
-FUN name:bar visibility:public modality:FINAL returnType:kotlin.Int [inline]
+FUN name:bar visibility:private modality:FINAL returnType:kotlin.Int [inline]
   VALUE_PARAMETER kind:Regular name:test index:0 type:kotlin.Function0<kotlin.Int> [crossinline]
   BLOCK_BODY
     VAR name:outsideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> [val]
@@ -145,7 +145,7 @@ FUN name:bar visibility:public modality:FINAL returnType:kotlin.Int [inline]
         ARG <this>: CALL 'public final fun <get-globalCounter> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
         ARG other: CALL 'public final fun <get-element> (): T of kotlin.internal.SharedVariableBox declared in kotlin.internal.SharedVariableBox' type=kotlin.Int origin=null
           ARG <this>: GET_VAR 'val outsideCounter: kotlin.internal.SharedVariableBox<kotlin.Int> [val] declared in <root>.bar' type=kotlin.internal.SharedVariableBox<kotlin.Int> origin=null
-    RETURN type=kotlin.Nothing from='public final fun bar (test: kotlin.Function0<kotlin.Int>): kotlin.Int [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun bar (test: kotlin.Function0<kotlin.Int>): kotlin.Int [inline] declared in <root>'
       CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
         ARG <this>: CALL 'public final fun foo (): kotlin.Int declared in <root>.bar.<no name provided>' type=kotlin.Int origin=null
           ARG <this>: CALL 'public final fun <get-first> (): T of <root>.Pair declared in <root>.Pair' type=<root>.bar.<no name provided> origin=GET_PROPERTY

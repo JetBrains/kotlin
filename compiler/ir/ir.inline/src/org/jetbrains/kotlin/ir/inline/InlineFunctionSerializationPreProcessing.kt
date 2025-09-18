@@ -54,7 +54,7 @@ class InlineFunctionSerializationPreProcessing(
     }
 
     private fun IrSimpleFunction.convertToPublicTopLevel(): IrSimpleFunction {
-        visibility = DescriptorVisibilities.PUBLIC
+        visibility = DescriptorVisibilities.PRIVATE
         correspondingPropertySymbol = null
         parent = file
 

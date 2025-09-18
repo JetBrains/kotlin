@@ -1619,15 +1619,17 @@ open class IrFileSerializer(
 
     fun serializeIrFileWithPreparedInlineFunctions(preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
         val topLevelDeclarations = preparedFunctions.map { function ->
-            val byteArray = serializeDeclaration(function).toByteArray()
-            val idSig = declarationTable.signatureByDeclaration(
-                function.originalOfPreparedInlineFunctionCopy!!,
-                compatibleMode = false,
-                recordInSignatureClashDetector = false
-            )
-            val sigIndex = idSignatureSerializer.protoIdSignature(idSig)
+            inFile(function.file) {
+                val byteArray = serializeDeclaration(function).toByteArray()
+                val idSig = declarationTable.signatureByDeclaration(
+                    function.originalOfPreparedInlineFunctionCopy!!,
+                    compatibleMode = false,
+                    recordInSignatureClashDetector = false
+                )
+                val sigIndex = idSignatureSerializer.protoIdSignature(idSig)
 
-            SerializedDeclaration(sigIndex, byteArray)
+                SerializedDeclaration(sigIndex, byteArray)
+            }
         }
 
         // Memoize all preprocessed functions in `ProtoFile.declarationIdList`.
