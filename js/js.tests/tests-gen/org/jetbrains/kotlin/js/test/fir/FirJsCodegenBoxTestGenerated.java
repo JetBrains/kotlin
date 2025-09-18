@@ -7124,6 +7124,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       runTest("compiler/testData/codegen/box/casts/wasmCastMessages.kt");
     }
 
+    @Test
+    @TestMetadata("wasmCastMessagesWasmJs.kt")
+    public void testWasmCastMessagesWasmJs() {
+      runTest("compiler/testData/codegen/box/casts/wasmCastMessagesWasmJs.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/casts/functions")
     @TestDataPath("$PROJECT_ROOT")
