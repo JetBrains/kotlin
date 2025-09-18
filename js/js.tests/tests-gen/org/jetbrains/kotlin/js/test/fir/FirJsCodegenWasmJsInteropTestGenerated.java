@@ -374,9 +374,21 @@ public class FirJsCodegenWasmJsInteropTestGenerated extends AbstractFirJsCodegen
   }
 
   @Test
+  @TestMetadata("jsModuleWithQualifierOnDeclaration.kt")
+  public void testJsModuleWithQualifierOnDeclaration() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsModuleWithQualifierOnDeclaration.kt");
+  }
+
+  @Test
   @TestMetadata("jsQualifier.kt")
   public void testJsQualifier() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsQualifier.kt");
+  }
+
+  @Test
+  @TestMetadata("jsQualifierOnDeclaration.kt")
+  public void testJsQualifierOnDeclaration() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsQualifierOnDeclaration.kt");
   }
 
   @Test

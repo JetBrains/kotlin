@@ -440,7 +440,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     private fun referenceTopLevelExternalDeclaration(declaration: IrDeclarationWithName): String {
         var name: String? = declaration.getJsNameOrKotlinName().identifier
 
-        val qualifier = currentFile.getJsQualifier()
+        val qualifier = declaration.getJsQualifier() ?: currentFile.getJsQualifier()
 
         val module = currentFile.getJsModule()
             ?: declaration.getJsModule()?.also {

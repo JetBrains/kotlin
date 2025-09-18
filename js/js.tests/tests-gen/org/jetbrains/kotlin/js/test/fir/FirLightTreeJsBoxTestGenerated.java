@@ -8000,6 +8000,58 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/box/jsQualifierOnDeclaration")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JsQualifierOnDeclaration {
+    @Test
+    public void testAllFilesPresentInJsQualifierOnDeclaration() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsQualifierOnDeclaration"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classes.kt")
+    public void testClasses() {
+      runTest("js/js.translator/testData/box/jsQualifierOnDeclaration/classes.kt");
+    }
+
+    @Test
+    @TestMetadata("interfaces.kt")
+    public void testInterfaces() {
+      runTest("js/js.translator/testData/box/jsQualifierOnDeclaration/interfaces.kt");
+    }
+
+    @Test
+    @TestMetadata("interfacesWithCompanion.kt")
+    public void testInterfacesWithCompanion() {
+      runTest("js/js.translator/testData/box/jsQualifierOnDeclaration/interfacesWithCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("js/js.translator/testData/box/jsQualifierOnDeclaration/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleOnFileAndDeclaration.kt")
+    public void testSimpleOnFileAndDeclaration() {
+      runTest("js/js.translator/testData/box/jsQualifierOnDeclaration/simpleOnFileAndDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("umdFallback.kt")
+    public void testUmdFallback() {
+      runTest("js/js.translator/testData/box/jsQualifierOnDeclaration/umdFallback.kt");
+    }
+
+    @Test
+    @TestMetadata("withModule.kt")
+    public void testWithModule() {
+      runTest("js/js.translator/testData/box/jsQualifierOnDeclaration/withModule.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/box/keep")
   @TestDataPath("$PROJECT_ROOT")
   public class Keep {
@@ -8704,6 +8756,12 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
     @TestMetadata("jsQualifier.kt")
     public void testJsQualifier() {
       runTest("js/js.translator/testData/box/nameClashes/jsQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("jsQualifierOnDeclaration.kt")
+    public void testJsQualifierOnDeclaration() {
+      runTest("js/js.translator/testData/box/nameClashes/jsQualifierOnDeclaration.kt");
     }
 
     @Test

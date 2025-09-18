@@ -71,8 +71,9 @@ fun IrConstructor.hasStrictSignature(context: JsIrBackendContext): Boolean {
     }
 }
 
-private fun getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePackage: Boolean): FqName? {
-    return (parent as? IrFile)?.getJsQualifier()?.let { FqName(it) } ?: parent.packageFqName.takeIf { shouldIncludePackage }
+private fun IrDeclaration.getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePackage: Boolean): FqName? {
+    return (getJsQualifier() ?: (parent as? IrFile)?.getJsQualifier())
+        ?.let { FqName(it) } ?: parent.packageFqName.takeIf { shouldIncludePackage }
 }
 
 val IrClass.isInstantiableEnum: Boolean
