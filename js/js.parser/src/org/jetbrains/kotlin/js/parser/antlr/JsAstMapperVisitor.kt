@@ -187,7 +187,7 @@ class JsAstMapperVisitor(
     override fun visitForInStatement(ctx: JavaScriptParser.ForInStatementContext): JsNode? {
         val unnamedExpression = ctx.singleExpression()?.let { visitNode<JsExpression>(it) }
         val namedDeclaration = ctx.singleVariableDeclaration()?.let { visitNode<JsVars.JsVar>(it) }
-        val inTargetExpression = ctx.expressionSequence()?.let { visitNode<JsExpression>(it) }
+        val inTargetExpression = visitNode<JsExpression>(ctx.expressionSequence())
 
         val bodyStatement = visitNode<JsStatement?>(ctx.statement()) ?: JsEmpty
 
@@ -199,6 +199,7 @@ class JsAstMapperVisitor(
             }
             namedDeclaration != null -> JsForIn(namedDeclaration.name).apply {
                 iterExpression = namedDeclaration.initExpression
+                objectExpression = inTargetExpression
                 body = bodyStatement
             }
             else -> raiseParserException("Invalid 'for .. in' statement: ${ctx.text}", ctx)
