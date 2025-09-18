@@ -18,7 +18,9 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCppRuntime
-@PublishedApi // Required by visibility rules in IR Validator for many tests in FirNativeCodegenLocalTestGenerated$Cinterop
+// KT-81154: Fine-tune KlibIrValidationBeforeLoweringPhase/IrVisibilityValidator or split CEnumByValueFunctionGenerator, to get rid of @PublishedApi here,
+// since ThrowNullPointerException() is not used by compiler during 1st compilation stage
+@PublishedApi
 @UsedFromCompilerGeneratedCode
 internal fun ThrowNullPointerException(): Nothing {
     throw NullPointerException()
