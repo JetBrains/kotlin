@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -236,6 +239,10 @@ open class FirSupertypeResolverVisitor(
 
     private fun prepareReplScopes(replSnippet: FirReplSnippet): ScopePersistentList {
         return buildList {
+            val symbol = replSnippet.symbol
+            val file = symbol.moduleData.session.firProvider.getFirReplSnippetContainerFile(symbol)
+            if (file != null) addAll(prepareFileScopes(file))
+
             // TODO: robuster matching and error reporting on no extension (KT-72969)
             for (resolveExt in session.extensionService.replSnippetResolveExtensions) {
                 val scope = resolveExt.getSnippetScope(replSnippet, session)
