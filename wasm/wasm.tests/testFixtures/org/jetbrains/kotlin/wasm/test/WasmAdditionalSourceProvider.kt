@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
-import org.jetbrains.kotlin.test.services.TestModuleStructure
-import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.*
 import java.io.File
 import java.io.FileFilter
 
@@ -23,8 +21,31 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
+        val fileWithBoxFun = module.files.singleOrNull {
+            it.isKtFile && it.originalContent.contains(Regex("\\bfun\\s+box\\(\\)\\s*(?::\\s*String|=)"))
+        }
+
+        // no box function
+        if (fileWithBoxFun == null) return emptyList()
+
+        val matchResult = Regex("^package\\s+([\\w.]+)", RegexOption.MULTILINE).find(fileWithBoxFun.originalContent)
+
         val boxTestRunFile = File("wasm/wasm.tests/wasiBoxTestRun.kt")
-        return listOf(boxTestRunFile.toTestFile())
+
+        // no package
+        if (matchResult == null) return listOf(boxTestRunFile.toTestFile())
+
+        val p = matchResult.groupValues[1]
+        return listOf(
+            TestFile(
+                boxTestRunFile.name,
+                boxTestRunFile.readText().replace("box()", "$p.box()"),
+                originalFile = boxTestRunFile,
+                startLineNumberInOriginalFile = 0,
+                isAdditional = true,
+                directives = RegisteredDirectives.Empty
+            )
+        )
     }
 }
 
