@@ -191,13 +191,6 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun testKT42397() {
-        val testName = "kt42397"
-        val testCase = generateObjCFramework(testName)
-        compileAndRunSwift(testName, testCase)
-    }
-
-    @Test
     fun testKT43517() {
         val testName = "kt43517"
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)

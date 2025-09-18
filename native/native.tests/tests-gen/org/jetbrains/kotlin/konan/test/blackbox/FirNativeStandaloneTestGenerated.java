@@ -80,33 +80,9 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
     }
 
     @Test
-    @TestMetadata("leak_memory.kt")
-    public void testLeak_memory() {
-      runTest("native/native.tests/testData/standalone/checkers/leak_memory.kt");
-    }
-
-    @Test
-    @TestMetadata("leak_memory_test_runner.kt")
-    public void testLeak_memory_test_runner() {
-      runTest("native/native.tests/testData/standalone/checkers/leak_memory_test_runner.kt");
-    }
-
-    @Test
-    @TestMetadata("leak_memory_with_worker_termination.kt")
-    public void testLeak_memory_with_worker_termination() {
-      runTest("native/native.tests/testData/standalone/checkers/leak_memory_with_worker_termination.kt");
-    }
-
-    @Test
     @TestMetadata("leak_worker.kt")
     public void testLeak_worker() {
       runTest("native/native.tests/testData/standalone/checkers/leak_worker.kt");
-    }
-
-    @Test
-    @TestMetadata("worker_threadlocal_no_leak.kt")
-    public void testWorker_threadlocal_no_leak() {
-      runTest("native/native.tests/testData/standalone/checkers/worker_threadlocal_no_leak.kt");
     }
   }
 

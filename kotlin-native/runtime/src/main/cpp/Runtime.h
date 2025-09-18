@@ -36,8 +36,6 @@ RUNTIME_NOTHROW void AppendToInitializersTail(struct InitNode*);
 void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)());
 void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)());
 
-bool Kotlin_memoryLeakCheckerEnabled();
-
 bool Kotlin_forceCheckedShutdown();
 
 #ifdef __cplusplus

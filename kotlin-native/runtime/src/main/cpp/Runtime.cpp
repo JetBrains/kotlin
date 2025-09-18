@@ -61,7 +61,6 @@ void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
   }
 }
 
-KBoolean g_checkLeaks = false;
 KBoolean g_forceCheckedShutdown = false;
 
 constexpr RuntimeState* kInvalidRuntime = nullptr;
@@ -201,8 +200,7 @@ void Kotlin_shutdownRuntime() {
     auto* runtime = ::runtimeState;
     RuntimeAssert(runtime != kInvalidRuntime, "Current thread must have Kotlin runtime initialized on it");
 
-    bool needsFullShutdown = Kotlin_forceCheckedShutdown() || Kotlin_memoryLeakCheckerEnabled();
-    if (!needsFullShutdown) {
+    if (!Kotlin_forceCheckedShutdown()) {
         auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
         RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
         // The main thread is not doing anything Kotlin anymore, but will stick around to cleanup C++ globals and the like.
@@ -219,8 +217,6 @@ void Kotlin_shutdownRuntime() {
     auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
     RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
 
-    bool canDestroyRuntime = true;
-
     // First make sure workers are gone.
     WaitNativeWorkersTermination();
 
@@ -233,17 +229,12 @@ void Kotlin_shutdownRuntime() {
     // Now check for existence of any other runtimes.
     auto otherRuntimesCount = aliveRuntimesCount.load() - knownRuntimes;
     RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
-    if (Kotlin_forceCheckedShutdown()) {
-        if (otherRuntimesCount > 0) {
-            konan::consoleErrorf("Cannot run checkers when there are %d alive runtimes at the shutdown", otherRuntimesCount);
-            std::abort();
-        }
-    } else {
-        // Cannot destroy runtime globally if there're some other threads with Kotlin runtime on them.
-        canDestroyRuntime = otherRuntimesCount == 0;
+    if (otherRuntimesCount > 0) {
+        konan::consoleErrorf("Cannot run checkers when there are %d alive runtimes at the shutdown", otherRuntimesCount);
+        std::abort();
     }
 
-    deinitRuntime(runtime, canDestroyRuntime);
+    deinitRuntime(runtime, true);
 }
 
 KInt Konan_Platform_canAccessUnaligned() {
@@ -311,14 +302,6 @@ OBJ_GETTER0(Konan_Platform_getProgramName) {
     }
 }
 
-bool Kotlin_memoryLeakCheckerEnabled() {
-  return g_checkLeaks;
-}
-
-KBoolean Konan_Platform_getMemoryLeakChecker() {
-  return g_checkLeaks;
-}
-
 KInt Konan_Platform_getAvailableProcessors() {
     auto res = std::thread::hardware_concurrency();
     // C++ standard says that if this function can return 0 if value is not "well defined or not computable"
@@ -340,12 +323,6 @@ OBJ_GETTER0(Konan_Platform_getAvailableProcessorsEnv) {
         RETURN_OBJ(nullptr)
     }
     RETURN_RESULT_OF(CreateStringFromCString, env)
-}
-
-
-
-void Konan_Platform_setMemoryLeakChecker(KBoolean value) {
-  g_checkLeaks = value;
 }
 
 bool Kotlin_forceCheckedShutdown() {
