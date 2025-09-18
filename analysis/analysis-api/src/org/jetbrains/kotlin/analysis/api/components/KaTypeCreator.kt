@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -176,58 +177,114 @@ public interface KaArrayTypeBuilder : KaTypeBuilder {
 }
 
 /**
- * @see KaTypeCreator.buildClassType
+ * Builds a class type with the given class ID.
+ *
+ * A generic class type can be built by providing type arguments using the [init] block.
+ * The caller is supposed to provide the correct number of type arguments for the class.
+ *
+ * For Kotlin built-in types, consider using the overload that accepts a [KaClassLikeSymbol] instead:
+ * `buildClassType(builtinTypes.string)`.
+ *
+ *  #### Example
+ *
+ * ```kotlin
+ * buildClassType(ClassId.fromString("kotlin/collections/List")) {
+ *     argument(buildClassType(ClassId.fromString("kotlin/String")))
+ * }
+ * ```
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeCreator)
+context(s: KaSession)
 public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
-    return with(context) { buildClassType(classId, init) }
+    return with(s) {
+        buildClassType(
+            classId = classId,
+            init = init,
+        )
+    }
 }
 
 /**
- * @see KaTypeCreator.buildClassType
+ * Builds a class type with the given class symbol.
+ *
+ * A generic class type can be built by providing type arguments using the [init] block.
+ * The caller is supposed to provide the correct number of type arguments for the class.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * buildClassType(builtinTypes.string)
+ * ```
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeCreator)
+context(s: KaSession)
 public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
-    return with(context) { buildClassType(symbol, init) }
+    return with(s) {
+        buildClassType(
+            symbol = symbol,
+            init = init,
+        )
+    }
 }
 
 /**
- * @see KaTypeCreator.buildArrayType
+ * Builds a boxed / primitive (depending on the [init] block) array type from the given [elementType].
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(context: KaTypeCreator)
+context(s: KaSession)
 public fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit = {}): KaType {
-    return with(context) { buildArrayType(elementType, init) }
+    return with(s) {
+        buildArrayType(
+            elementType = elementType,
+            init = init,
+        )
+    }
 }
 
 /**
- * @see KaTypeCreator.buildVarargArrayType
+ * Builds the underlying array type of [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
+ * function parameter with the given [elementType].
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(context: KaTypeCreator)
+context(s: KaSession)
 public fun buildVarargArrayType(elementType: KaType): KaType {
-    return with(context) { buildVarargArrayType(elementType) }
+    return with(s) {
+        buildVarargArrayType(
+            elementType = elementType,
+        )
+    }
 }
 
 /**
- * @see KaTypeCreator.buildTypeParameterType
+ * Builds a [KaTypeParameterType] with the given type parameter symbol.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeCreator)
+context(s: KaSession)
 public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType {
-    return with(context) { buildTypeParameterType(symbol, init) }
+    return with(s) {
+        buildTypeParameterType(
+            symbol = symbol,
+            init = init,
+        )
+    }
 }
 
 /**
- * @see KaTypeCreator.buildStarTypeProjection
+ * Builds a [KaStarTypeProjection] (`*`).
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(context: KaTypeCreator)
+context(s: KaSession)
 public fun buildStarTypeProjection(): KaStarTypeProjection {
-    return with(context) { buildStarTypeProjection() }
+    return with(s) {
+        buildStarTypeProjection()
+    }
 }

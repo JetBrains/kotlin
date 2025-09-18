@@ -101,15 +101,31 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
 }
 
 /**
- * @see KaCompletionCandidateChecker.createExtensionCandidateChecker
+ * Returns an extension applicability checker for the given context [nameExpression].
+ * The function is meant to only be used for providing auto-completion for Kotlin in IntelliJ IDEA.
+ *
+ * The returned checker does not cache the results for individual callable candidates.
+ *
+ * @param originalFile The file being edited.
+ * @param nameExpression The expression under the caret in an in-memory copy of [originalFile]
+ *     with a placeholder identifier inserted. Also see `CompletionUtilCore.DUMMY_IDENTIFIER` in IntelliJ IDEA.
+ * @param explicitReceiver A receiver expression, if available (also from the in-memory copy of [originalFile]).
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-context(context: KaCompletionCandidateChecker)
+@KaK1Unsupported
+@KaContextParameterApi
+context(s: KaSession)
 public fun createExtensionCandidateChecker(
     originalFile: KtFile,
     nameExpression: KtSimpleNameExpression,
     explicitReceiver: KtExpression?,
 ): KaCompletionExtensionCandidateChecker {
-    return with(context) { createExtensionCandidateChecker(originalFile, nameExpression, explicitReceiver) }
+    return with(s) {
+        createExtensionCandidateChecker(
+            originalFile = originalFile,
+            nameExpression = nameExpression,
+            explicitReceiver = explicitReceiver,
+        )
+    }
 }

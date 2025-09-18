@@ -1,8 +1,0 @@
-org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider.getOriginalDeclaration()
-org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider.getOriginalKtFile()
-org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider.recordOriginalDeclaration(KtDeclaration)
-org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider.recordOriginalKtFile(KtFile)
-org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.canBeNull
-org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.defaultType
-org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.withNullability(org.jetbrains.kotlin.analysis.api.types.KaTypeNullability)
-org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker.isVisible(KaDeclarationSymbol, KaFileSymbol, KtExpression?, PsiElement)

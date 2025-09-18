@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -57,7 +58,7 @@ public interface KaCompilerFacility : KaSessionComponent {
         file: KtFile,
         configuration: CompilerConfiguration,
         target: KaCompilerTarget,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean
+        allowedErrorFilter: (KaDiagnostic) -> Boolean,
     ): KaCompilationResult
 }
 
@@ -195,17 +196,40 @@ public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cau
 public class DebuggerExtension(public val stack: Sequence<PsiElement?>)
 
 /**
- * @see KaCompilerFacility.compile
+ * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
+ *
+ * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException]. The implementation should wrap the
+ * `compile()` call into a `try`/`catch` block when necessary.
+ *
+ * @param file A file to compile.
+ *  The file must be either a source module file, or a [KtCodeFragment].
+ *  For a [KtCodeFragment], a source module context, a compiled library source context, or an empty context(`null`) are supported.
+ *
+ * @param configuration The compiler configuration.
+ *  It is recommended to submit at least the module name ([CommonConfigurationKeys.MODULE_NAME])
+ *  and language version settings ([CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]).
+ *
+ * @param target The target platform of the compilation.
+ *
+ * @param allowedErrorFilter A filter for allowed errors. Compilation will be aborted if there are errors that this filter rejects.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Throws(KaCodeCompilationException::class)
-context(context: KaCompilerFacility)
+@KaContextParameterApi
+context(s: KaSession)
 public fun compile(
     file: KtFile,
     configuration: CompilerConfiguration,
     target: KaCompilerTarget,
-    allowedErrorFilter: (KaDiagnostic) -> Boolean
+    allowedErrorFilter: (KaDiagnostic) -> Boolean,
 ): KaCompilationResult {
-    return with(context) { compile(file, configuration, target, allowedErrorFilter) }
+    return with(s) {
+        compile(
+            file = file,
+            configuration = configuration,
+            target = target,
+            allowedErrorFilter = allowedErrorFilter,
+        )
+    }
 }

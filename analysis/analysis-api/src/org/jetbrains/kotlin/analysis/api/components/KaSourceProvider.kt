@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -25,10 +26,13 @@ public interface KaSourceProvider : KaSessionComponent {
 }
 
 /**
- * @see KaSourceProvider.klibSourceFileName
+ * The source file name for the given [KtDeclaration] located in a Kotlin library (klib), or `null` if the declaration is not located in
+ * a klib, or when the source file name is not available.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
-context(context: KaSourceProvider)
+@KaK1Unsupported
+@KaContextParameterApi
+context(s: KaSession)
 public val KaDeclarationSymbol.klibSourceFileName: String?
-    get() = with(context) { klibSourceFileName }
+    get() = with(s) { klibSourceFileName }

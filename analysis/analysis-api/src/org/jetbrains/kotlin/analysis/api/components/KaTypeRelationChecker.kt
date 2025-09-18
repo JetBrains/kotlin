@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -131,59 +132,130 @@ public enum class KaSubtypingErrorTypePolicy {
 }
 
 /**
- * @see KaTypeRelationChecker.semanticallyEquals
+ * Returns whether this [KaType] is semantically equal to [other].
+ *
+ * Semantic equality stands in contrast to the structural equality implemented by [KaType.equals]. See [KaType] for a detailed
+ * discussion about structural vs. semantic type equality.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeRelationChecker)
+context(s: KaSession)
 public fun KaType.semanticallyEquals(
     other: KaType,
     errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
 ): Boolean {
-    return with(context) { semanticallyEquals(other, errorTypePolicy) }
+    return with(s) {
+        semanticallyEquals(
+            other = other,
+            errorTypePolicy = errorTypePolicy,
+        )
+    }
 }
 
 /**
- * @see KaTypeRelationChecker.isSubtypeOf
+ * Returns whether this [KaType] is a subtype of [supertype]. The relation is non-strict, i.e. any type `t` is a subtype of itself.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeRelationChecker)
+context(s: KaSession)
 public fun KaType.isSubtypeOf(
     supertype: KaType,
     errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
 ): Boolean {
-    return with(context) { isSubtypeOf(supertype, errorTypePolicy) }
+    return with(s) {
+        isSubtypeOf(
+            supertype = supertype,
+            errorTypePolicy = errorTypePolicy,
+        )
+    }
 }
 
 /**
- * @see KaTypeRelationChecker.isSubtypeOf
+ * Returns whether this [KaType] is a subtype of a class called [classId].
+ *
+ * This function provides a convenient way to check if a class extends a certain base class or interface while disregarding type
+ * arguments. For example, one may check if this [KaType] is a subtype of
+ * [StandardClassIds.Iterable][org.jetbrains.kotlin.name.StandardClassIds.Iterable].
+ *
+ * The [errorTypePolicy] is applied as such: If this [KaType] is an error type, the [LENIENT][KaSubtypingErrorTypePolicy.LENIENT] policy
+ * leads to a trivially `true` result. Errors in type arguments are not considered, as the subclass check is concerned with the applied
+ * class type and not its type arguments.
+ *
+ * This function for [ClassId]s is a convenient dual to other [isSubtypeOf] functions. As such, its result is the same as a call to
+ * [isSubtypeOf] with the following right-hand [KaType]: `a.b.Class<*, *, ...>?` given a class ID `a.b.Class` with all type arguments
+ * instantiated to a star projection.
+ *
+ * This has the following interesting implications:
+ *
+ * - If the [classId] points to or actualizes to a type alias, subclassing is checked for the expanded type, as other [isSubtypeOf]
+ *   implementations also take expansion into account. If the type alias doesn't expand to a
+ *   [KaClassType][org.jetbrains.kotlin.analysis.api.types.KaClassType], [isSubtypeOf] is trivially `false`.
+ * - If the [classId] cannot be resolved, it effectively means that we would have an "unresolved symbol" error [KaType] on the
+ *   right-hand side of [isSubtypeOf]. Hence, with a [LENIENT][KaSubtypingErrorTypePolicy.LENIENT] error type policy, [isSubtypeOf]
+ *   is `true` for all unresolved class IDs.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeRelationChecker)
+context(s: KaSession)
 public fun KaType.isSubtypeOf(
     classId: ClassId,
     errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
 ): Boolean {
-    return with(context) { isSubtypeOf(classId, errorTypePolicy) }
+    return with(s) {
+        isSubtypeOf(
+            classId = classId,
+            errorTypePolicy = errorTypePolicy,
+        )
+    }
 }
 
 /**
- * @see KaTypeRelationChecker.isSubtypeOf
+ * Returns whether this [KaType] is a subtype of a class represented by [symbol].
+ *
+ * This function provides a convenient way to check if a class extends a certain base class or interface while disregarding type
+ * arguments.
+ *
+ * The [errorTypePolicy] is applied as such: If this [KaType] is an error type, the [LENIENT][KaSubtypingErrorTypePolicy.LENIENT] policy
+ * leads to a trivially `true` result. Errors in type arguments are not considered, as the subclass check is concerned with the applied
+ * class type and not its type arguments.
+ *
+ * This function for [KaClassLikeSymbol]s is a convenient dual to other [isSubtypeOf] functions. As such, its result is the same as a
+ * call to [isSubtypeOf] with the following right-hand [KaType]: `a.b.Class<*, *, ...>?` given a class called `a.b.Class` with all type
+ * arguments instantiated to a star projection.
+ *
+ * This has the following interesting implication: If the [symbol] points to or actualizes to a type alias, subclassing is checked for
+ * the expanded type, as other [isSubtypeOf] implementations also take expansion into account. If the type alias doesn't expand to a
+ * [KaClassType][org.jetbrains.kotlin.analysis.api.types.KaClassType], [isSubtypeOf] is trivially `false`.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeRelationChecker)
+context(s: KaSession)
 public fun KaType.isSubtypeOf(
     symbol: KaClassLikeSymbol,
     errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
 ): Boolean {
-    return with(context) { isSubtypeOf(symbol, errorTypePolicy) }
+    return with(s) {
+        isSubtypeOf(
+            symbol = symbol,
+            errorTypePolicy = errorTypePolicy,
+        )
+    }
 }
 
 /**
- * @see KaTypeRelationChecker.canBeCalledAsExtensionOn
+ * Returns whether the given [receiverType] can be used as an extension receiver for [this].
+ *
+ * If [this] is not an extension callable, the result is `false`.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@KaK1Unsupported
 @KaContextParameterApi
-context(context: KaTypeRelationChecker)
+context(s: KaSession)
 public fun KaCallableSymbol.canBeCalledAsExtensionOn(receiverType: KaType): Boolean {
-    return with(context) { canBeCalledAsExtensionOn(receiverType) }
+    return with(s) {
+        canBeCalledAsExtensionOn(
+            receiverType = receiverType,
+        )
+    }
 }

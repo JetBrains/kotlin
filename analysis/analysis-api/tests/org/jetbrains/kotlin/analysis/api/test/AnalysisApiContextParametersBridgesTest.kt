@@ -6,131 +6,233 @@
 package org.jetbrains.kotlin.analysis.api.test
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseDumpFileComparisonTest
+import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseValidationTest
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isPublic
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.junit.jupiter.api.Test
+import java.io.File
 
 /**
- * This test was introduced to automatically check that every public API
- * from some [org.jetbrains.kotlin.analysis.api.components.KaSessionComponent] has a corresponding context parameter bridge in the same file.
+ * This test automatically generates and checks that every public API of a [KaSessionComponent]
+ * has a corresponding context-parameter bridge located in the same file.
  *
  * See KT-78093 Add bridges for context parameters
  *
- * The test iterates through all the source directories [sourceDirectories] and
- * for each directory [SourceDirectory.sourcePaths] builds a separate resulting file
- * containing all public API endpoints with no context parameter bridge along with fully qualified names and parameter types.
+ * The test iterates through all [sourceDirectories] and synthesizes
+ * the expected set of context-parameter bridges.
  *
- * Then the test compares the contents of the resulting file
- * and the master file [SourceDirectory.ForDumpFileComparison.outputFilePath]
+ * The goal is to prevent accidental omissions or divergence of context-parameter bridges,
+ * which are essential for user experience. If the absence of a bridge for a declaration is
+ * intentional, the declaration must be annotated with [KaNoContextParameterBridgeRequired].
  *
- * The test is intended to prevent developers from not implementing context parameter bridges,
- * as it's a vital feature for the users' experience.
- * If the lack of a context parameters bridge for some declaration is intentional,
- * the developer has to manually add this declaration to the master file.
+ * If a custom bridge is required, it must be annotated with [KaCustomContextParameterBridge].
  *
- * The test works as follows:
- * 1. For each file, the test finds all classes that are subtypes of [org.jetbrains.kotlin.analysis.api.components.KaSessionComponent] and collects all public members from them.
- * 2. In the exact same file it collects all top-level callable declarations that have [org.jetbrains.kotlin.analysis.api.KaContextParameterApi] annotation,
- * which marks them as context parameter bridges.
- * 3. For each member declaration from step 1, it checks if there's a corresponding context parameter bridge in the same file.
- * The test checks that the context parameter of the bridge matches the type of [org.jetbrains.kotlin.analysis.api.components.KaSessionComponent] the member belongs to
- * and then checks that their signatures are equivalent.
- * 4. If there's no corresponding context parameter bridge found, the test adds the member to the resulting file.
+ * How it works now:
+ * 1. For each Kotlin file, the test finds a class/object that is a subtype of [KaSessionComponent]
+ *    and collects all of its public callable members that are NOT annotated with
+ *    [KaNoContextParameterBridgeRequired].
+ * 2. Based on those members, the test GENERATES the exact text of the expected bridges
+ *    (annotated with [KaContextParameterApi]) using a canonical format. Every generated bridge
+ *    has a context parameter of type [KaSession] and a signature that mirrors the corresponding member.
+ * 3. The test then reconstructs the file content as: original content up to the last non-bridge
+ *    declaration of the component, followed by the generated bridges, and compares this text with
+ *    the real file on disk. Any mismatch indicates missing, outdated, or extra bridges.
  *
- * The test also checks that there are no unused context parameter bridges, i.e., a bridge that doesn't have a pairing member declaration
- * and thus points to itself. If such a bridge is found, the test throws an exception.
+ * This also effectively detects unused bridges: if a bridge exists in the source but is not
+ * regenerated from a component member, the text comparison will fail.
  *
- * The test relies on two fundamental assumptions:
- * 1. All public children of [org.jetbrains.kotlin.analysis.api.components.KaSessionComponent] have it as their direct supertype.
- * 2. All context parameter bridges are annotated with [org.jetbrains.kotlin.analysis.api.KaContextParameterApi] and are located in the same file as the corresponding component.
+ * Assumptions:
+ * 1. All public children of [KaSessionComponent] have it as their direct supertype.
+ * 2. Exactly one [KaSessionComponent] is allowed per file, and it must be the first declaration.
+ * 3. All context-parameter bridges are annotated with [KaContextParameterApi] and are located
+ *    in the same file as the corresponding component after all regular declarations.
  */
-class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiCodebaseDumpFileComparisonTest() {
+class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiCodebaseValidationTest() {
     @Test
     fun testContextParameterBridges() = doTest()
 
     override val sourceDirectories = listOf(
-        SourceDirectory.ForDumpFileComparison(
-            listOf("analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api"),
-            "analysis/analysis-api/api/analysis-api.missing_bridges",
+        SourceDirectory.ForValidation(
+            sourcePaths = listOf("analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api"),
         )
     )
 
-    override fun PsiFile.processFile(): List<String> = buildList {
-        if (this@processFile !is KtFile) return emptyList()
+    override fun processFile(file: File, psiFile: PsiFile) {
+        if (psiFile !is KtFile) return
 
-        val membersBySessionComponents = this@processFile.getMembersByComponent()
-        val bridgesByContextParameter = this@processFile.getBridgesByComponent()
+        val sessionComponent = psiFile.findSessionComponent() ?: run {
+            if (psiFile.declarations.any { it.hasBridgeMarker }) {
+                error("There are context parameter bridges in ${psiFile.virtualFilePath} file, but no session component.")
+            }
 
-        for ((sessionComponent, members) in membersBySessionComponents) {
-            val relatedBridges = bridgesByContextParameter[sessionComponent] ?: emptyList()
+            return
+        }
 
-            relatedBridges.filter { bridge ->
-                members.none { member ->
-                    bridge.hasTheSameSignatureWith(member)
-                }
-            }.ifNotEmpty {
+        val bridges = sessionComponent.generateBridges()
+
+        val lastNonBridgeDeclaration = sessionComponent.siblings(forward = true, withItself = true)
+            .filterIsInstance<KtDeclaration>()
+            .takeWhile { !it.hasAutoGeneratedBridgeMarker }
+            .last()
+
+        val actualText = buildString {
+            val nonBridgesPrefix = psiFile.text.take(lastNonBridgeDeclaration.endOffset)
+            appendLine(nonBridgesPrefix)
+
+            bridges.joinTo(this, prefix = "\n", separator = "\n\n")
+        }
+
+        KotlinTestUtils.assertEqualsToFile(file, actualText)
+    }
+
+    private val KtDeclaration.hasBridgeMarker: Boolean
+        get() = hasAutoGeneratedBridgeMarker || hasCustomBridgeMarker
+
+    private val KtDeclaration.hasAutoGeneratedBridgeMarker: Boolean
+        get() = hasAnnotation(BRIDGE_ANNOTATION_MARKER)
+
+    private val KtDeclaration.hasCustomBridgeMarker: Boolean
+        get() = hasAnnotation(CUSTOM_BRIDGE_ANNOTATION_MARKER)
+
+    private val KtDeclaration.hasIgnoreBridgeMarker: Boolean
+        get() = hasAnnotation(IGNORE_BRIDGE_ANNOTATION_MARKER)
+
+    private fun KtAnnotated.hasAnnotation(annotationName: String): Boolean = annotationEntries.any { annotation ->
+        annotation.shortName.toString() == annotationName
+    }
+
+    private fun KtFile.findSessionComponent(): KtClassOrObject? {
+        val declarations = declarations
+        val sessionComponent = (declarations.firstOrNull() as? KtClassOrObject)?.takeIf { it.isSessionComponent }
+
+        declarations.asSequence()
+            .drop(1)
+            .filter { it is KtClassOrObject && it.isSessionComponent }
+            .toList()
+            .ifNotEmpty {
                 error(
-                    "The following context parameters bridges are unused. Please, remove them:\n" +
-                            this.joinToString("\n") { it.renderDeclaration() + " from " + it.containingKtFile.virtualFilePath }
+                    joinToString(
+                        prefix = "Only one session component on the first declaration position is allowed.\n$virtualFilePath violates this rule for:\n",
+                        separator = "\n"
+                    ) { it.name.toString() }
                 )
             }
 
-            members.filter { member ->
-                relatedBridges.none { bridge ->
-                    bridge.hasTheSameSignatureWith(member)
+        return sessionComponent
+    }
+
+    private val KtClassOrObject.isSessionComponent: Boolean
+        get() = superTypeListEntries.any { it.textMatches(KA_SESSION_COMPONENT) } || name == KA_SESSION_CLASS
+
+    private fun KtClassOrObject.generateBridges(): Sequence<String> = declarations.asSequence()
+        .filterIsInstance<KtCallableDeclaration>()
+        .filter { it.isPublic && !it.hasIgnoreBridgeMarker }
+        .map { it.generateBridgeDeclaration() }
+
+    private fun KtCallableDeclaration.generateBridgeDeclaration(): String = PrettyPrinter(indentSize = BASE_INDENT_SIZE).apply {
+        val kDocEndOffset = docComment?.textRangeInParent?.endOffset?.plus(indentSize) ?: 0
+
+        // Add indention to the beginning of the declaration to align indent for all lines
+        val callableTextWithIndentation = " ".repeat(indentSize) + text
+        val callableKDoc = callableTextWithIndentation.take(kDocEndOffset)
+
+        // Original KDoc
+        if (callableKDoc.isNotBlank()) {
+            appendLine(callableKDoc.trimIndent())
+        }
+
+        // Warning comment. It is placed either after the KDoc or as the first attached comment,
+        // so it is a part of the declarations PSI.
+        // It is not a part of the KDoc to not expose this detail to the user.
+        appendLine("// Auto-generated bridge. DO NOT EDIT MANUALLY!")
+
+        val callableTextWithoutKdoc = callableTextWithIndentation.drop(kDocEndOffset)
+        val publicModifierStartOffset = modifierList?.visibilityModifier()!!.getStartOffsetIn(this@generateBridgeDeclaration)
+        val declarationAnnotations = callableTextWithoutKdoc.take(publicModifierStartOffset - kDocEndOffset)
+
+        // Original annotations
+        if (declarationAnnotations.isNotBlank()) {
+            appendLine(declarationAnnotations.trimIndent())
+        }
+
+        // New marker annotation
+        append('@')
+        appendLine(BRIDGE_ANNOTATION_MARKER)
+
+        // New context parameter
+        append("context(")
+        // One letter name is chosen intentionally to avoid conflicts with any potential regular parameters
+        // since they are expected to be meaningful
+        val contextParameterName = "s"
+        append(contextParameterName)
+        append(": ")
+        append(KA_SESSION_CLASS)
+        appendLine(')')
+
+        val signatureEndOffset = typeConstraintList?.textRangeInParent?.endOffset ?: typeReference!!.textRangeInParent.endOffset
+        val signature = callableTextWithIndentation.substring(publicModifierStartOffset, signatureEndOffset + indentSize)
+
+        // Original signature without body
+        append(signature.trimIndent())
+
+        // Original declaration is deprecated -> suppression on the call site is required for compilation
+        val suppressDeprecationStatement = if (hasAnnotation(DEPRECATED_ANNOTATION)) {
+            """@Suppress("DEPRECATION")"""
+        } else {
+            null
+        }
+
+        when (this@generateBridgeDeclaration) {
+            is KtProperty -> {
+                appendLine()
+                withIndent {
+                    suppressDeprecationStatement?.let(::appendLine)
+                    append("get() = with($contextParameterName) { $name }")
                 }
-            }.forEach { memberWithNoBridge ->
-                add(memberWithNoBridge.renderDeclaration())
+            }
+
+            is KtNamedFunction -> {
+                appendLine(" {")
+                withIndent {
+                    suppressDeprecationStatement?.let(::appendLine)
+                    appendLine("return with($contextParameterName) {")
+                    withIndent {
+                        append(name)
+                        append('(')
+                        withIndent {
+                            printCollectionIfNotEmpty(valueParameters, separator = "", prefix = "\n") { parameter ->
+                                val name = parameter.name
+                                append(name)
+                                append(" = ")
+                                append(name)
+                                append(",\n")
+                            }
+                        }
+
+                        appendLine(')')
+                    }
+                    appendLine("}")
+                }
+                append('}')
             }
         }
-    }
-
-    override fun SourceDirectory.ForDumpFileComparison.getErrorMessage(): String =
-        """
-            The list of context parameter bridges `${getRoots()}` does not match the expected list in `$outputFilePath`.
-            If you added new declarations to some `KaSessionComponent`, please implement a proper context parameter bridge for them.
-            Otherwise, update the exclusion list accordingly.
-        """.trimIndent()
-
-    private fun KtFile.getMembersByComponent(): Map<String, List<KtCallableDeclaration>> =
-        this.getSessionComponents()
-            .associate { sessionComponent -> sessionComponent.name as String to sessionComponent.collectPublicMembers() }
-
-    private fun KtFile.getBridgesByComponent(): Map<String, List<KtCallableDeclaration>> =
-        this.collectPublicMembers().filter { callableDeclaration ->
-            callableDeclaration.annotationEntries.any { annotation ->
-                annotation.shortName.toString() == BRIDGE_ANNOTATION_MARKER
-            }
-        }.groupBy {
-            it.modifierList?.contextReceiverList?.contextParameters()?.singleOrNull()?.typeReference?.typeElement?.text ?: "NO_COMPONENT"
-        }
-
-    private fun KtFile.getSessionComponents(): List<KtClass> {
-        return this.declarations.filterIsInstance<KtClass>()
-            .filter { ktClass ->
-                ktClass.superTypeListEntries.any { superTypeListEntry ->
-                    superTypeListEntry.text == KA_SESSION_COMPONENT
-                } || ktClass.name == KA_SESSION_CLASS
-            }
-    }
-
-    private fun KtElement.collectPublicMembers(): List<KtCallableDeclaration> =
-        (this as KtDeclarationContainer).declarations.filterIsInstance<KtCallableDeclaration>().filter { it.isPublic }
-
-    private fun KtCallableDeclaration.hasTheSameSignatureWith(other: KtCallableDeclaration): Boolean {
-        if (this.name != other.name) return false
-        if (this.typeReference?.text != other.typeReference?.text) return false
-        if (this.receiverTypeReference?.text != other.receiverTypeReference?.text) return false
-        if (this.valueParameters.map { it.name to it.typeReference?.text } !=
-            other.valueParameters.map { it.name to it.typeReference?.text }) return false
-        return true
-    }
+    }.toString()
 
     companion object {
-        private const val BRIDGE_ANNOTATION_MARKER = "KaContextParameterApi"
-        private const val KA_SESSION_COMPONENT = "KaSessionComponent"
-        private const val KA_SESSION_CLASS = "KaSession"
+        private val BRIDGE_ANNOTATION_MARKER: String = KaContextParameterApi::class.simpleName!!
+        private val CUSTOM_BRIDGE_ANNOTATION_MARKER: String = KaCustomContextParameterBridge::class.simpleName!!
+        private val IGNORE_BRIDGE_ANNOTATION_MARKER: String = KaNoContextParameterBridgeRequired::class.simpleName!!
+        private val KA_SESSION_COMPONENT: String = KaSessionComponent::class.simpleName!!
+        private val KA_SESSION_CLASS: String = KaSession::class.simpleName!!
+        private val DEPRECATED_ANNOTATION: String = Deprecated::class.simpleName!!
+        private const val BASE_INDENT_SIZE = 4
     }
 }

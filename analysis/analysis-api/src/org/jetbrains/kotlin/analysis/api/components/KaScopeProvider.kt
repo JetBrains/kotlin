@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -510,135 +511,310 @@ public class KaScopeWithKindImpl(
 }
 
 /**
- * @see KaScopeProvider.memberScope
+ * A [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
+ * (classes and objects) of the given [KaDeclarationContainerSymbol]. The scope includes members inherited from the symbol's supertypes,
+ * in addition to members which are declared explicitly inside the symbol's body.
+ *
+ * The member scope doesn't include [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters). For
+ * a scope which contains synthetic properties, please refer to [syntheticJavaPropertiesScope].
+ *
+ * @see staticMemberScope
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaDeclarationContainerSymbol.memberScope: KaScope
-    get() = with(context) { memberScope }
+    get() = with(s) { memberScope }
 
 /**
- * @see KaScopeProvider.staticMemberScope
+ * A [KaScope] containing the *static* members of the given [KaDeclarationContainerSymbol].
+ *
+ * The behavior of the scope differs based on whether the given [KaDeclarationContainerSymbol] is a Kotlin or Java class:
+ *
+ * - **Kotlin class:** The scope contains static callables (functions and properties) and classifiers (classes and objects) declared
+ *   directly in the [KaDeclarationContainerSymbol]. Hence, the static member scope for Kotlin classes is equivalent to
+ *   [staticDeclaredMemberScope].
+ * - **Java class:** The scope contains static callables (functions and properties) declared in the [KaDeclarationContainerSymbol] or
+ *   any of its superclasses (excluding static callables from super-interfaces), and classes declared directly in the
+ *   [KaDeclarationContainerSymbol]. This follows Kotlin's rules about static inheritance in Java classes, where static callables are
+ *   propagated from superclasses, but nested classes are not.
+ *
+ * #### Kotlin Example
+ *
+ * ```kotlin
+ * abstract class A {
+ *     class C1
+ *     inner class D1
+ *     object O1
+ *
+ *     // There is no way to declare a static callable in an abstract class, as only enum classes define additional static callables.
+ * }
+ *
+ * class B : A() {
+ *     class C2
+ *     inner class D2
+ *     object O2
+ *     companion object {
+ *         val baz: String = ""
+ *     }
+ * }
+ * ```
+ *
+ * The static member scope of `B` contains the following symbols:
+ *
+ * ```
+ * class C2
+ * inner class D2
+ * object O2
+ * companion object
+ * ```
+ *
+ * #### Java Example
+ *
+ * ```java
+ * // SuperInterface.java
+ * public interface SuperInterface {
+ *     public static void fromSuperInterface() { }
+ * }
+ *
+ * // SuperClass.java
+ * public abstract class SuperClass implements SuperInterface {
+ *     static class NestedSuperClass { }
+ *     class InnerSuperClass { }
+ *     public static void fromSuperClass() { }
+ * }
+ *
+ * // FILE: JavaClass.java
+ * public class JavaClass extends SuperClass {
+ *     static class NestedClass { }
+ *     class InnerClass { }
+ *     public static void fromJavaClass() { }
+ * }
+ * ```
+ *
+ * The static member scope of `JavaClass` contains the following symbols:
+ *
+ * ```
+ * public static void fromSuperClass()
+ * public static void fromJavaClass()
+ * static class NestedClass
+ * class InnerClass
+ * ```
+ *
+ * @see memberScope
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaDeclarationContainerSymbol.staticMemberScope: KaScope
-    get() = with(context) { staticMemberScope }
+    get() = with(s) { staticMemberScope }
 
 /**
- * @see KaScopeProvider.combinedMemberScope
+ * A [KaScope] containing *all* members from [memberScope] and [staticMemberScope].
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
-    get() = with(context) { combinedMemberScope }
+    get() = with(s) { combinedMemberScope }
 
 /**
- * @see KaScopeProvider.declaredMemberScope
+ * A [KaScope] containing the *non-static* callables (functions, properties, and constructors) and inner classes explicitly
+ * declared in the given [KaDeclarationContainerSymbol].
+ *
+ * The declared member scope does not contain classifiers (including the companion object) except for inner classes. To retrieve the
+ * classifiers declared in this [KaDeclarationContainerSymbol], please use the *static* declared member scope provided by
+ * [staticDeclaredMemberScope].
+ *
+ * @see staticDeclaredMemberScope
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
-    get() = with(context) { declaredMemberScope }
+    get() = with(s) { declaredMemberScope }
 
 /**
- * @see KaScopeProvider.staticDeclaredMemberScope
+ * A [KaScope] containing the *static* callables (functions and properties) and all classifiers (classes and objects) explicitly
+ * declared in the given [KaDeclarationContainerSymbol].
+ *
+ * It is worth noting that, while Java classes may contain declarations of static callables freely, in Kotlin only enum classes define
+ * static callables. Hence, for non-enum Kotlin classes, it is not expected that the static declared member scope will contain any
+ * callables.
+ *
+ * @see declaredMemberScope
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
-    get() = with(context) { staticDeclaredMemberScope }
+    get() = with(s) { staticDeclaredMemberScope }
 
 /**
- * @see KaScopeProvider.combinedDeclaredMemberScope
+ * A [KaScope] containing *all* members explicitly declared in the given [KaDeclarationContainerSymbol].
+ *
+ * In contrast to [declaredMemberScope] and [staticDeclaredMemberScope], this scope contains both static and non-static members.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
-    get() = with(context) { combinedDeclaredMemberScope }
+    get() = with(s) { combinedDeclaredMemberScope }
 
 /**
- * @see KaScopeProvider.delegatedMemberScope
+ * A [KaScope] containing synthetic callables (functions and properties) created by interface delegation.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * interface I {
+ *     val foo: Int get() = 2
+ *     fun bar(): String
+ * }
+ *
+ * class A(
+ *     private val p: I
+ * ) : I by p {
+ *     val regularProperty: Int = 5
+ * }
+ * ```
+ *
+ * The delegated member scope for `A` has the following entries:
+ *
+ * ```
+ * override val foo: kotlin.Int
+ *   get()
+ *
+ * override fun bar(): kotlin.String
+ * ```
+ *
+ * `regularProperty` is not contained in the delegated member scope because it is not a delegated property.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
-    get() = with(context) { delegatedMemberScope }
+    get() = with(s) { delegatedMemberScope }
 
 /**
- * @see KaScopeProvider.fileScope
+ * A [KaScope] containing the top-level declarations (such as classes, functions and properties) in the given [KaFileSymbol].
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaFileSymbol.fileScope: KaScope
-    get() = with(context) { fileScope }
+    get() = with(s) { fileScope }
 
 /**
- * @see KaScopeProvider.packageScope
+ * A [KaScope] containing all members of the package represented by the given [KaPackageSymbol], not including members of subpackages.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaPackageSymbol.packageScope: KaScope
-    get() = with(context) { packageScope }
+    get() = with(s) { packageScope }
 
 /**
- * @see KaScopeProvider.asCompositeScope
+ * Combines a list of [KaScope]s into a single composite [KaScope]. The resulting scope contains all members of its constituent scopes.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public fun List<KaScope>.asCompositeScope(): KaScope {
-    return with(context) { asCompositeScope() }
+    return with(s) {
+        asCompositeScope()
+    }
 }
 
 /**
- * @see KaScopeProvider.scope
+ * A [KaTypeScope] for the given [KaType], or `null` if the type is [erroneous][org.jetbrains.kotlin.analysis.api.types.KaErrorType].
+ * The scope includes all members which are callable on a given type. It also includes [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters).
+ *
+ * Comparing to [KaScope], the [KaTypeScope] contains members whose use-site type parameters have been substituted.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun foo(list: List<String>) {
+ *     list
+ * }
+ *```
+ *
+ * We can get a [KaTypeScope] for the [expression type][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.expressionType]
+ * of `list`. This scope contains a `get(index: Int): String` function, where the return type `E` from [List.get] is substituted with
+ * the type argument `String`.
+ *
+ * @see KaTypeScope
+ * @see KaTypeProvider.type
+ * @see KaExpressionTypeProvider.expressionType
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaType.scope: KaTypeScope?
-    get() = with(context) { scope }
+    get() = with(s) { scope }
 
 /**
- * @see KaScopeProvider.declarationScope
+ * A [KaScope] containing unsubstituted declarations from the [KaType]'s underlying declaration.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaTypeScope.declarationScope: KaScope
-    get() = with(context) { declarationScope }
+    get() = with(s) { declarationScope }
 
 /**
- * @see KaScopeProvider.syntheticJavaPropertiesScope
+ * A [KaTypeScope] containing the [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters) created
+ * for a given [KaType].
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KaType.syntheticJavaPropertiesScope: KaTypeScope?
-    get() = with(context) { syntheticJavaPropertiesScope }
+    get() = with(s) { syntheticJavaPropertiesScope }
 
 /**
- * @see KaScopeProvider.scopeContext
+ * Computes the lexical scope context for a given [position] in the [KtFile]. The scope context includes all scopes that are relevant
+ * for the given position, together with all available implicit receivers.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public fun KtFile.scopeContext(position: KtElement): KaScopeContext {
-    return with(context) { scopeContext(position) }
+    return with(s) {
+        scopeContext(
+            position = position,
+        )
+    }
 }
 
 /**
- * @see KaScopeProvider.importingScopeContext
+ * A [KaScopeContext] formed from all imports in the [KtFile].
+ *
+ * By default, the scope context also includes default importing scopes, which can be filtered by [KaScopeKind].
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public val KtFile.importingScopeContext: KaScopeContext
-    get() = with(context) { importingScopeContext }
+    get() = with(s) { importingScopeContext }
 
 /**
- * @see KaScopeProvider.compositeScope
+ * Returns a single [KaScope] that contains declarations from all scopes that satisfy [filter].
+ *
+ * The order of declarations corresponds to the order of their containing scopes, which are sorted according to their [indices][KaScopeKind.indexInTower]
+ * in the scope tower.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaScopeProvider)
+context(s: KaSession)
 public fun KaScopeContext.compositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope {
-    return with(context) { compositeScope(filter) }
+    return with(s) {
+        compositeScope(
+            filter = filter,
+        )
+    }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -86,55 +87,108 @@ public interface KaResolver : KaSessionComponent {
 }
 
 /**
- * @see KaResolver.resolveToSymbols
+ * Resolves the given [KtReference] to symbols.
+ *
+ * Returns an empty collection if the reference cannot be resolved, or multiple symbols if the reference is ambiguous.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaResolver)
+context(s: KaSession)
 public fun KtReference.resolveToSymbols(): Collection<KaSymbol> {
-    return with(context) { resolveToSymbols() }
+    return with(s) {
+        resolveToSymbols()
+    }
 }
 
 /**
- * @see KaResolver.resolveToSymbol
+ * Resolves the given [KtReference] to a symbol.
+ *
+ * Returns `null` if the reference cannot be resolved, or resolves to multiple symbols due to being ambiguous.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaResolver)
+context(s: KaSession)
 public fun KtReference.resolveToSymbol(): KaSymbol? {
-    return with(context) { resolveToSymbol() }
+    return with(s) {
+        resolveToSymbol()
+    }
 }
 
 /**
- * @see KaResolver.isImplicitReferenceToCompanion
+ * Checks if the [KtReference] is an implicit reference to a companion object via the containing class.
+ *
+ * #### Example
+ *
+ * ```
+ * class A {
+ *    companion object {
+ *       fun foo() {}
+ *    }
+ * }
+ * ```
+ *
+ * Given a call `A.foo()`, `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaResolver)
+context(s: KaSession)
 public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
-    return with(context) { isImplicitReferenceToCompanion() }
+    return with(s) {
+        isImplicitReferenceToCompanion()
+    }
 }
 
 /**
- * @see KaResolver.usesContextSensitiveResolution
+ * Whether the [KtReference] uses [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature under the hood.
+ *
+ * #### Example
+ *
+ * ```
+ * enum class MyEnum {
+ *     X, Y
+ * }
+ *
+ * fun foo(a: MyEnum) {}
+ *
+ * fun main() {
+ *     foo(X) // An implicit reference to MyEnum.X
+ * }
+ * ```
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(context: KaResolver)
+context(s: KaSession)
 public val KtReference.usesContextSensitiveResolution: Boolean
-    get() = with(context) { usesContextSensitiveResolution }
+    get() = with(s) { usesContextSensitiveResolution }
 
 /**
- * @see KaResolver.resolveToCall
+ * Resolves the given [KtElement] to a [KaCallInfo] object. [KaCallInfo] either contains a successfully resolved call or an error with
+ * a list of candidate calls and a diagnostic.
+ *
+ * Returns `null` if the element does not correspond to a call.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaResolver)
+context(s: KaSession)
 public fun KtElement.resolveToCall(): KaCallInfo? {
-    return with(context) { resolveToCall() }
+    return with(s) {
+        resolveToCall()
+    }
 }
 
 /**
- * @see KaResolver.resolveToCallCandidates
+ * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html) for the call
+ * corresponding to this [KtElement].
+ *
+ * To compare, the [resolveToCall] function only returns the final result of overload resolution, i.e. the most specific callable
+ * passing all compatibility checks.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaResolver)
+context(s: KaSession)
 public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> {
-    return with(context) { resolveToCallCandidates() }
+    return with(s) {
+        resolveToCallCandidates()
+    }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,20 +43,27 @@ public class KaImportOptimizerResult(
 )
 
 /**
- * @see KaImportOptimizer.analyzeImportsToOptimize
+ * Analyzes imports in the given [file] and returns a [KaImportOptimizerResult] which can later be used to optimize imports.
+ * Does **not** change the file.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-context(context: KaImportOptimizer)
+@KaContextParameterApi
+context(s: KaSession)
 public fun analyzeImportsToOptimize(file: KtFile): KaImportOptimizerResult {
-    return with(context) { analyzeImportsToOptimize(file) }
+    return with(s) {
+        analyzeImportsToOptimize(
+            file = file,
+        )
+    }
 }
 
 /**
- * @see KaImportOptimizer.importableFqName
+ * A [FqName] which can be used to import the given symbol, or `null` if the symbol cannot be imported.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-context(context: KaImportOptimizer)
+@KaContextParameterApi
+context(s: KaSession)
 public val KaSymbol.importableFqName: FqName?
-    get() = with(context) { importableFqName }
+    get() = with(s) { importableFqName }
