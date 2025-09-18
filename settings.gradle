@@ -519,7 +519,8 @@ include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-api-tests",
         ":compiler:build-tools:kotlin-build-tools-jdk-utils",
         ":compiler:build-tools:kotlin-build-tools-options-generator",
-        ":compiler:build-tools:util-kotlinpoet"
+        ":compiler:build-tools:util-kotlinpoet",
+        ":compiler:build-tools:kotlin-build-tools-cri-impl"
 
 if (!buildProperties.inJpsBuildIdeaSync) {
     include ":plugins:compose-compiler-plugin",
