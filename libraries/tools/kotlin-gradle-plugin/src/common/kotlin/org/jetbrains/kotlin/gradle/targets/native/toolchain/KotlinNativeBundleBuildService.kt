@@ -105,11 +105,8 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         internal fun getNativeDistributionDependencies(
             project: Project,
             commonizerTarget: CommonizerTarget,
-            kotlinNativeBundleBuildService: Provider<KotlinNativeBundleBuildService>,
         ): FileCollection {
-            KotlinNativeFromToolchainProvider(project, commonizerTarget.konanTargets, kotlinNativeBundleBuildService)
             return project.getNativeDistributionDependencies(
-//                kotlinNativeProvider.konanDistributionProvider,
                 commonizerTarget
             )
         }

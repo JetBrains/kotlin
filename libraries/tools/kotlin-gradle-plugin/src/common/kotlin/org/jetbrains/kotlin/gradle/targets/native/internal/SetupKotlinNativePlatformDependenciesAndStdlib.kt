@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
-import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -46,11 +45,9 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
 
 internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependencies(): FileCollection {
     val commonizerTarget = commonizerTarget.await() ?: return project.files()
-    val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
     val nativeDependency = KotlinNativeBundleBuildService.getNativeDistributionDependencies(
         project,
         commonizerTarget,
-        nativeBundleBuildService
     )
     return nativeDependency
 }
@@ -81,28 +78,22 @@ private suspend fun KotlinMultiplatformExtension.excludeStdlibFromNativeSourceSe
     }
 }
 
-//internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjectSetupCoroutine {
-//    val multiplatform = multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
-//    val sourceSets = multiplatform
-//        .awaitSourceSets()
-//        .filter { it.isNativeSourceSet.await() }
-//        .filterIsInstance<DefaultKotlinSourceSet>()
-//
-////    val stdlib = project.files(project.konanDistribution.stdlib)
-//    val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
-//
-////    sourceSets.forEach { sourceSet ->
-////        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
-////        val konanDistributionProvider = KotlinNativeFromToolchainProvider(
-////            project,
-////            commonizerTarget.konanTargets,
-////            nativeBundleBuildService
-////        ).bundleDirectory.map { KonanDistribution(it) }
-//////        getNativeDistributionDependencies(konanDistributionProvider, commonizerTarget)
-//////        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
-//////        sourceSet.addDependencyForLegacyImport(stdlib)
-////    }
-//}
+internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjectSetupCoroutine {
+    val multiplatform = multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
+    val sourceSets = multiplatform
+        .awaitSourceSets()
+        .filter { it.isNativeSourceSet.await() }
+        .filterIsInstance<DefaultKotlinSourceSet>()
+
+    val stdlib = project.files(project.konanDistribution.stdlib)
+
+    sourceSets.forEach { sourceSet ->
+        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
+        val nativeDistributionDependencies = getNativeDistributionDependencies(commonizerTarget)
+        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
+        sourceSet.addDependencyForLegacyImport(stdlib)
+    }
+}
 
 internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget): FileCollection {
     return when (target) {
