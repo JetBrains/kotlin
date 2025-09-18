@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.components.render
+import org.jetbrains.kotlin.analysis.api.components.varargArrayType
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirFunctionalType
@@ -53,7 +54,12 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
                         else -> it
                     }
                 }
-            SirParameter(argumentName = parameter.name.asString(), type = sirType, origin = KotlinParameterOrigin.ValueParameter(parameter))
+            SirParameter(
+                argumentName = parameter.name.asString(),
+                type = sirType,
+                origin = KotlinParameterOrigin.ValueParameter(parameter),
+                isVariadic = parameter.isVararg,
+            )
         }
     }
 }

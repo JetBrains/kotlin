@@ -150,7 +150,7 @@ internal class SirRegularInitFromKtSymbol(
                     }
                     val outerClassName = kotlinFqName.dropLast(1).joinToString(".")
                     val innerClassName = kotlinFqName.last()
-                    val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
+                    val innerConstructorArgs = buildActualArgsLine(args.drop(1).dropLast(1), ktSymbol)
                     val innerConstructorCall = "(${args.last()} as $outerClassName).$innerClassName($innerConstructorArgs)"
 
                     "kotlin.native.internal.initInstance(${args.first()}, $innerConstructorCall)"
@@ -163,7 +163,7 @@ internal class SirRegularInitFromKtSymbol(
                             producingType,
                             SirTypeNamer.KotlinNameType.PARAMETRIZED
                         )
-                    }(${args.drop(1).joinToString()}))"
+                    }(${buildActualArgsLine(args.drop(1), ktSymbol)}))"
                 }
             },
         )

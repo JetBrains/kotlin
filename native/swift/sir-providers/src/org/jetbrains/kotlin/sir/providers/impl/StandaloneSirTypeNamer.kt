@@ -94,7 +94,6 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
             ?: return null
         if (typeParameters.isEmpty())
             return fqname
-
         val typesRendered = typeParameters.map { it.upperBounds.firstOrNull() }
             .map {
                 when (it?.symbol?.classId?.asFqNameString()) {
