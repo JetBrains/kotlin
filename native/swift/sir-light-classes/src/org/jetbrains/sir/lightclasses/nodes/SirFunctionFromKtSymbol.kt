@@ -102,13 +102,34 @@ internal open class SirFunctionFromKtSymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(bridgeProxy?.createSirBridge {
-            val actualArgs = if (extensionReceiverParameter != null) argNames.drop(1) else argNames
-            buildCall("(${actualArgs.joinToString()})")
-        })
+        listOfNotNull(
+            bridgeProxy?.createSirBridge {
+                val actualArgs = if (extensionReceiverParameter != null) argNames.drop(1) else argNames
+                buildCall("(${buildActualArgsLine(actualArgs, ktSymbol)})")
+            }
+        )
     }
 
     override var body: SirFunctionBody?
         set(value) {}
         get() = bridgeProxy?.createSwiftInvocation { "return $it" }?.let(::SirFunctionBody)
+}
+
+internal fun buildActualArgsLine(actualArgs: List<String>, ktSymbol: KaFunctionSymbol): String {
+    return buildString {
+        var useNamed = false
+        for ((index, actualArg) in actualArgs.withIndex()) {
+            if (index > 0) {
+                append(", ")
+            }
+            if (ktSymbol.valueParameters[index].isVararg) {
+                append("*")
+                useNamed = true
+            } else if (useNamed) {
+                append(ktSymbol.valueParameters[index].name)
+                append(" = ")
+            }
+            append(actualArg)
+        }
+    }
 }

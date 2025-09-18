@@ -37,7 +37,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     }
 
     private fun kotlinParametrizedName(type: SirType): String = when (type) {
-        is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
+        is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName(type.erasedTypeArguments)
         is SirExistentialType -> type.protocols.singleOrNull()?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
         is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> null
     } ?: kotlinFqName(type)
@@ -89,20 +89,25 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     }
 
     @OptIn(KaExperimentalApi::class)
-    private fun KaClassLikeSymbol.parametrisedTypeName(): String? {
+    private fun KaClassLikeSymbol.parametrisedTypeName(erasedTypeArguments: List<SirType> = emptyList()): String? {
         val fqname = classId?.asFqNameString()
             ?: return null
         if (typeParameters.isEmpty())
             return fqname
-
-        val typesRendered = typeParameters.map { it.upperBounds.firstOrNull() }
-            .map {
-                when (it?.symbol?.classId?.asFqNameString()) {
-                    fqname -> classId?.asFqNameString() + "<${typeParameters.joinToString { "*" }}>"
-                    else -> it?.symbol?.parametrisedTypeName()
-                }
+        val typesRendered = if (erasedTypeArguments.isNotEmpty()) {
+            erasedTypeArguments.map {
+                kotlinParametrizedName(it)
             }
-            .map { it ?: "kotlin.Any?" }
+        } else {
+            typeParameters.map { it.upperBounds.firstOrNull() }
+                .map {
+                    when (it?.symbol?.classId?.asFqNameString()) {
+                        fqname -> classId?.asFqNameString() + "<${typeParameters.joinToString { "*" }}>"
+                        else -> it?.symbol?.parametrisedTypeName()
+                    }
+                }
+                .map { it ?: "kotlin.Any?" }
+        }
 
         return "$fqname<${typesRendered.joinToString()}>"
     }

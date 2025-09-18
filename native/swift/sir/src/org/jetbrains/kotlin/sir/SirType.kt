@@ -40,6 +40,7 @@ open class SirNominalType(
     val typeArguments: List<SirType> = emptyList(),
     val parent: SirNominalType? = null,
     override val attributes: List<SirAttribute> = emptyList(),
+    val erasedTypeArguments: List<SirType> = emptyList(),
 ) : SirType {
 
     override fun equals(other: Any?): Boolean {

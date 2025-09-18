@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.components.render
+import org.jetbrains.kotlin.analysis.api.components.varargArrayType
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.SirFunctionalType
@@ -74,7 +75,8 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
 @OptIn(KaExperimentalApi::class)
 context(ka: KaSession, sir: SirSession)
 private fun <P : KaParameterSymbol> createParameterType(ktSymbol: KaDeclarationSymbol, parameter: P): SirType {
-    return parameter.returnType.translateType(
+    val returnType = (parameter as? KaValueParameterSymbol)?.varargArrayType ?: parameter.returnType
+    return returnType.translateType(
         position = SirTypeVariance.CONTRAVARIANT,
         reportErrorType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: $it") },
         reportUnsupportedType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: type is not supported") },

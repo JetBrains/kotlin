@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 public class SirTypeProviderImpl(
     private val sirSession: SirSession,
@@ -160,7 +161,13 @@ public class SirTypeProviderImpl(
                                     if (classSymbol is KaClassSymbol && classSymbol.classKind == KaClassKind.INTERFACE) {
                                         SirExistentialType(classSymbol.toSir().allDeclarations.firstIsInstance<SirProtocol>())
                                     } else {
-                                        ctx.nominalTypeFromClassSymbol(classSymbol)
+                                        nominalTypeFromClassSymbol(
+                                            classSymbol,
+                                            erasedTypeArguments = runIf(classSymbol.classId == StandardClassIds.Array) {
+                                                // In the general case, we can get an infinite recursion with self-bounded parameters here
+                                                kaType.typeArguments.map { it.sirType(ctx) }
+                                            } ?: emptyList()
+                                        )
                                     }
                                 is SirAvailability.Unavailable -> null
                             }
@@ -266,8 +273,13 @@ public class SirTypeProviderImpl(
         return this
     }
 
-    private fun TypeTranslationCtx.nominalTypeFromClassSymbol(symbol: KaClassLikeSymbol): SirNominalType? = sirSession.withSessions {
-        symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirScopeDefiningDeclaration>()?.let(::SirNominalType)
+    private fun nominalTypeFromClassSymbol(
+        symbol: KaClassLikeSymbol,
+        erasedTypeArguments: List<SirType>,
+    ): SirNominalType? = sirSession.withSessions {
+        symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirScopeDefiningDeclaration>()?.let {
+            SirNominalType(it, erasedTypeArguments = erasedTypeArguments)
+        }
     }
 
     private fun SirType.optionalIfNeeded(originalKtType: KaType): SirType = sirSession.withSessions {
