@@ -8,10 +8,10 @@ import kotlin.Boolean
 import kotlin.String
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
-import kotlin.KotlinVersion as KotlinKotlinVersion
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion as EnumsKotlinVersion
 
 /**
  * @since 2.3.0
@@ -47,7 +47,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
    */
   public class CommonCompilerArgument<V>(
     public val id: String,
-    public val availableSinceVersion: KotlinKotlinVersion,
+    public val availableSinceVersion: KotlinReleaseVersion,
   )
 
   public companion object {
@@ -55,22 +55,22 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Provide source compatibility with the specified version of Kotlin.
      */
     @JvmField
-    public val LANGUAGE_VERSION: CommonCompilerArgument<EnumsKotlinVersion?> =
-        CommonCompilerArgument("LANGUAGE_VERSION", KotlinKotlinVersion(1, 0, 3))
+    public val LANGUAGE_VERSION: CommonCompilerArgument<KotlinVersion?> =
+        CommonCompilerArgument("LANGUAGE_VERSION", KotlinReleaseVersion(1, 0, 3))
 
     /**
      * Allow using declarations from only the specified version of bundled libraries.
      */
     @JvmField
-    public val API_VERSION: CommonCompilerArgument<EnumsKotlinVersion?> =
-        CommonCompilerArgument("API_VERSION", KotlinKotlinVersion(1, 0, 5))
+    public val API_VERSION: CommonCompilerArgument<KotlinVersion?> =
+        CommonCompilerArgument("API_VERSION", KotlinReleaseVersion(1, 0, 5))
 
     /**
      * Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
      */
     @JvmField
     public val KOTLIN_HOME: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("KOTLIN_HOME", KotlinKotlinVersion(1, 1, 50))
+        CommonCompilerArgument("KOTLIN_HOME", KotlinReleaseVersion(1, 1, 50))
 
     /**
      * Enable progressive compiler mode.
@@ -81,14 +81,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     public val PROGRESSIVE: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("PROGRESSIVE", KotlinKotlinVersion(1, 2, 50))
+        CommonCompilerArgument("PROGRESSIVE", KotlinReleaseVersion(1, 2, 50))
 
     /**
      * Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
      */
     @JvmField
     public val OPT_IN: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("OPT_IN", KotlinKotlinVersion(1, 4, 0))
+        CommonCompilerArgument("OPT_IN", KotlinReleaseVersion(1, 4, 0))
 
     /**
      * Disable method inlining.
@@ -98,7 +98,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_NO_INLINE: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_NO_INLINE", KotlinKotlinVersion(1, 0, 0))
+        CommonCompilerArgument("X_NO_INLINE", KotlinReleaseVersion(1, 0, 0))
 
     /**
      * Allow loading classes with bad metadata versions and pre-release classes.
@@ -108,7 +108,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_SKIP_METADATA_VERSION_CHECK: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_SKIP_METADATA_VERSION_CHECK", KotlinKotlinVersion(1, 1, 2))
+        CommonCompilerArgument("X_SKIP_METADATA_VERSION_CHECK", KotlinReleaseVersion(1, 1, 2))
 
     /**
      * Allow loading pre-release classes.
@@ -118,7 +118,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_SKIP_PRERELEASE_CHECK: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_SKIP_PRERELEASE_CHECK", KotlinKotlinVersion(1, 4, 0))
+        CommonCompilerArgument("X_SKIP_PRERELEASE_CHECK", KotlinReleaseVersion(1, 4, 0))
 
     /**
      * Report the source-to-output file mapping.
@@ -128,7 +128,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_REPORT_OUTPUT_FILES: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_REPORT_OUTPUT_FILES", KotlinKotlinVersion(1, 1, 3))
+        CommonCompilerArgument("X_REPORT_OUTPUT_FILES", KotlinReleaseVersion(1, 1, 3))
 
     /**
      * Specify an execution order constraint for compiler plugins.
@@ -141,7 +141,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_COMPILER_PLUGIN_ORDER: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_COMPILER_PLUGIN_ORDER", KotlinKotlinVersion(2, 3, 0))
+        CommonCompilerArgument("X_COMPILER_PLUGIN_ORDER", KotlinReleaseVersion(2, 3, 0))
 
     /**
      * Enable the new experimental generic type inference algorithm.
@@ -151,7 +151,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_NEW_INFERENCE: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_NEW_INFERENCE", KotlinKotlinVersion(1, 2, 20))
+        CommonCompilerArgument("X_NEW_INFERENCE", KotlinReleaseVersion(1, 2, 20))
 
     /**
      * Enable experimental inline classes.
@@ -161,7 +161,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_INLINE_CLASSES: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_INLINE_CLASSES", KotlinKotlinVersion(1, 3, 50))
+        CommonCompilerArgument("X_INLINE_CLASSES", KotlinReleaseVersion(1, 3, 50))
 
     /**
      * Report detailed performance statistics.
@@ -171,7 +171,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_REPORT_PERF: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_REPORT_PERF", KotlinKotlinVersion(1, 2, 50))
+        CommonCompilerArgument("X_REPORT_PERF", KotlinReleaseVersion(1, 2, 50))
 
     /**
      * Enable more detailed performance statistics (Experimental).
@@ -183,7 +183,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_DETAILED_PERF: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_DETAILED_PERF", KotlinKotlinVersion(2, 3, 0))
+        CommonCompilerArgument("X_DETAILED_PERF", KotlinReleaseVersion(2, 3, 0))
 
     /**
      * Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
@@ -195,7 +195,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_DUMP_PERF: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("X_DUMP_PERF", KotlinKotlinVersion(1, 2, 50))
+        CommonCompilerArgument("X_DUMP_PERF", KotlinReleaseVersion(1, 2, 50))
 
     /**
      * Change the metadata version of the generated binary files.
@@ -205,7 +205,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_METADATA_VERSION: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("X_METADATA_VERSION", KotlinKotlinVersion(1, 2, 70))
+        CommonCompilerArgument("X_METADATA_VERSION", KotlinReleaseVersion(1, 2, 70))
 
     /**
      * List backend phases.
@@ -215,7 +215,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_LIST_PHASES: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_LIST_PHASES", KotlinKotlinVersion(1, 3, 20))
+        CommonCompilerArgument("X_LIST_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
      * Disable backend phases.
@@ -225,7 +225,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_DISABLE_PHASES: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_DISABLE_PHASES", KotlinKotlinVersion(1, 3, 20))
+        CommonCompilerArgument("X_DISABLE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
      * Be verbose while performing the given backend phases.
@@ -235,7 +235,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_VERBOSE_PHASES: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_VERBOSE_PHASES", KotlinKotlinVersion(1, 3, 20))
+        CommonCompilerArgument("X_VERBOSE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
      * Dump the backend's state before these phases.
@@ -245,7 +245,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_PHASES_TO_DUMP_BEFORE: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_PHASES_TO_DUMP_BEFORE", KotlinKotlinVersion(1, 3, 20))
+        CommonCompilerArgument("X_PHASES_TO_DUMP_BEFORE", KotlinReleaseVersion(1, 3, 20))
 
     /**
      * Dump the backend's state after these phases.
@@ -255,7 +255,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_PHASES_TO_DUMP_AFTER: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_PHASES_TO_DUMP_AFTER", KotlinKotlinVersion(1, 3, 20))
+        CommonCompilerArgument("X_PHASES_TO_DUMP_AFTER", KotlinReleaseVersion(1, 3, 20))
 
     /**
      * Dump the backend's state both before and after these phases.
@@ -265,7 +265,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_PHASES_TO_DUMP: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_PHASES_TO_DUMP", KotlinKotlinVersion(1, 3, 20))
+        CommonCompilerArgument("X_PHASES_TO_DUMP", KotlinReleaseVersion(1, 3, 20))
 
     /**
      * Dump the backend state into this directory.
@@ -275,7 +275,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_DUMP_DIRECTORY: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("X_DUMP_DIRECTORY", KotlinKotlinVersion(1, 3, 50))
+        CommonCompilerArgument("X_DUMP_DIRECTORY", KotlinReleaseVersion(1, 3, 50))
 
     /**
      * Dump the declaration with the given FqName.
@@ -285,7 +285,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_DUMP_FQNAME: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("X_DUMP_FQNAME", KotlinKotlinVersion(1, 3, 50))
+        CommonCompilerArgument("X_DUMP_FQNAME", KotlinReleaseVersion(1, 3, 50))
 
     /**
      * Validate the backend's state before these phases.
@@ -295,7 +295,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_PHASES_TO_VALIDATE_BEFORE: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_PHASES_TO_VALIDATE_BEFORE", KotlinKotlinVersion(1, 3, 40))
+        CommonCompilerArgument("X_PHASES_TO_VALIDATE_BEFORE", KotlinReleaseVersion(1, 3, 40))
 
     /**
      * Validate the backend's state after these phases.
@@ -305,7 +305,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_PHASES_TO_VALIDATE_AFTER: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_PHASES_TO_VALIDATE_AFTER", KotlinKotlinVersion(1, 3, 40))
+        CommonCompilerArgument("X_PHASES_TO_VALIDATE_AFTER", KotlinReleaseVersion(1, 3, 40))
 
     /**
      * Validate the backend's state both before and after these phases.
@@ -315,7 +315,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_PHASES_TO_VALIDATE: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_PHASES_TO_VALIDATE", KotlinKotlinVersion(1, 3, 40))
+        CommonCompilerArgument("X_PHASES_TO_VALIDATE", KotlinReleaseVersion(1, 3, 40))
 
     /**
      * IR verification mode (no verification by default).
@@ -325,7 +325,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_VERIFY_IR: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("X_VERIFY_IR", KotlinKotlinVersion(2, 0, 20))
+        CommonCompilerArgument("X_VERIFY_IR", KotlinReleaseVersion(2, 0, 20))
 
     /**
      * Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
@@ -335,7 +335,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_VERIFY_IR_VISIBILITY: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_VERIFY_IR_VISIBILITY", KotlinKotlinVersion(2, 0, 20))
+        CommonCompilerArgument("X_VERIFY_IR_VISIBILITY", KotlinReleaseVersion(2, 0, 20))
 
     /**
      * Profile backend phases.
@@ -345,7 +345,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_PROFILE_PHASES: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_PROFILE_PHASES", KotlinKotlinVersion(1, 3, 20))
+        CommonCompilerArgument("X_PROFILE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
      * Check pre- and postconditions of IR lowering phases.
@@ -355,7 +355,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_CHECK_PHASE_CONDITIONS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_CHECK_PHASE_CONDITIONS", KotlinKotlinVersion(1, 3, 40))
+        CommonCompilerArgument("X_CHECK_PHASE_CONDITIONS", KotlinReleaseVersion(1, 3, 40))
 
     /**
      * Enable experimental frontend IR checkers that are not yet ready for production.
@@ -368,7 +368,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     @DeprecatedCompilerArgument
     public val X_USE_FIR_EXPERIMENTAL_CHECKERS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_USE_FIR_EXPERIMENTAL_CHECKERS", KotlinKotlinVersion(2, 1, 0))
+        CommonCompilerArgument("X_USE_FIR_EXPERIMENTAL_CHECKERS", KotlinReleaseVersion(2, 1, 0))
 
     /**
      * Compile using frontend IR internal incremental compilation.
@@ -379,7 +379,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_USE_FIR_IC: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_USE_FIR_IC", KotlinKotlinVersion(1, 7, 0))
+        CommonCompilerArgument("X_USE_FIR_IC", KotlinReleaseVersion(1, 7, 0))
 
     /**
      * Compile using the LightTree parser with the frontend IR.
@@ -389,7 +389,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_USE_FIR_LT: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_USE_FIR_LT", KotlinKotlinVersion(1, 7, 0))
+        CommonCompilerArgument("X_USE_FIR_LT", KotlinReleaseVersion(1, 7, 0))
 
     /**
      * Produce a klib that only contains the metadata of declarations.
@@ -399,7 +399,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_METADATA_KLIB: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_METADATA_KLIB", KotlinKotlinVersion(2, 0, 0))
+        CommonCompilerArgument("X_METADATA_KLIB", KotlinReleaseVersion(2, 0, 0))
 
     /**
      * Don't enable the scripting plugin by default.
@@ -409,7 +409,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_DISABLE_DEFAULT_SCRIPTING_PLUGIN: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN", KotlinKotlinVersion(1, 3, 70))
+        CommonCompilerArgument("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN", KotlinReleaseVersion(1, 3, 70))
 
     /**
      * Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
@@ -420,7 +420,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_EXPLICIT_API: CommonCompilerArgument<ExplicitApiMode> =
-        CommonCompilerArgument("X_EXPLICIT_API", KotlinKotlinVersion(1, 3, 70))
+        CommonCompilerArgument("X_EXPLICIT_API", KotlinReleaseVersion(1, 3, 70))
 
     /**
      * Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
@@ -430,7 +430,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
-        CommonCompilerArgument("X_RETURN_VALUE_CHECKER", KotlinKotlinVersion(2, 2, 0))
+        CommonCompilerArgument("X_RETURN_VALUE_CHECKER", KotlinReleaseVersion(2, 2, 0))
 
     /**
      * Suppress warnings about outdated, inconsistent, or experimental language or API versions.
@@ -440,7 +440,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_SUPPRESS_VERSION_WARNINGS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_SUPPRESS_VERSION_WARNINGS", KotlinKotlinVersion(1, 5, 0))
+        CommonCompilerArgument("X_SUPPRESS_VERSION_WARNINGS", KotlinReleaseVersion(1, 5, 0))
 
     /**
      * Suppress error about API version greater than language version.
@@ -452,7 +452,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR:
         CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR", KotlinKotlinVersion(2, 0, 0))
+        CommonCompilerArgument("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR", KotlinReleaseVersion(2, 0, 0))
 
     /**
      * 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
@@ -463,7 +463,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_EXPECT_ACTUAL_CLASSES: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_EXPECT_ACTUAL_CLASSES", KotlinKotlinVersion(1, 9, 20))
+        CommonCompilerArgument("X_EXPECT_ACTUAL_CLASSES", KotlinReleaseVersion(1, 9, 20))
 
     /**
      * The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
@@ -473,7 +473,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY", KotlinKotlinVersion(2, 0, 20))
+        CommonCompilerArgument("X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY", KotlinReleaseVersion(2, 0, 20))
 
     /**
      * Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
@@ -483,7 +483,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_UNRESTRICTED_BUILDER_INFERENCE: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_UNRESTRICTED_BUILDER_INFERENCE", KotlinKotlinVersion(1, 5, 30))
+        CommonCompilerArgument("X_UNRESTRICTED_BUILDER_INFERENCE", KotlinReleaseVersion(1, 5, 30))
 
     /**
      * Enable experimental context receivers.
@@ -493,7 +493,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_CONTEXT_RECEIVERS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_CONTEXT_RECEIVERS", KotlinKotlinVersion(1, 6, 20))
+        CommonCompilerArgument("X_CONTEXT_RECEIVERS", KotlinReleaseVersion(1, 6, 20))
 
     /**
      * Enable experimental context parameters.
@@ -503,7 +503,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_CONTEXT_PARAMETERS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_CONTEXT_PARAMETERS", KotlinKotlinVersion(2, 1, 20))
+        CommonCompilerArgument("X_CONTEXT_PARAMETERS", KotlinReleaseVersion(2, 1, 20))
 
     /**
      * Enable experimental context-sensitive resolution.
@@ -513,7 +513,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_CONTEXT_SENSITIVE_RESOLUTION: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_CONTEXT_SENSITIVE_RESOLUTION", KotlinKotlinVersion(2, 2, 0))
+        CommonCompilerArgument("X_CONTEXT_SENSITIVE_RESOLUTION", KotlinReleaseVersion(2, 2, 0))
 
     /**
      * Enable experimental non-local break and continue.
@@ -523,7 +523,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_NON_LOCAL_BREAK_CONTINUE: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_NON_LOCAL_BREAK_CONTINUE", KotlinKotlinVersion(2, 1, 0))
+        CommonCompilerArgument("X_NON_LOCAL_BREAK_CONTINUE", KotlinReleaseVersion(2, 1, 0))
 
     /**
      * Enable `when` exhaustiveness improvements that rely on data-flow analysis.
@@ -533,7 +533,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_DATA_FLOW_BASED_EXHAUSTIVENESS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_DATA_FLOW_BASED_EXHAUSTIVENESS", KotlinKotlinVersion(2, 2, 20))
+        CommonCompilerArgument("X_DATA_FLOW_BASED_EXHAUSTIVENESS", KotlinReleaseVersion(2, 2, 20))
 
     /**
      * Enable experimental language support for explicit backing fields.
@@ -543,7 +543,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_EXPLICIT_BACKING_FIELDS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_EXPLICIT_BACKING_FIELDS", KotlinKotlinVersion(2, 3, 0))
+        CommonCompilerArgument("X_EXPLICIT_BACKING_FIELDS", KotlinReleaseVersion(2, 3, 0))
 
     /**
      * Enable experimental multi-dollar interpolation.
@@ -553,7 +553,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_MULTI_DOLLAR_INTERPOLATION: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_MULTI_DOLLAR_INTERPOLATION", KotlinKotlinVersion(2, 0, 20))
+        CommonCompilerArgument("X_MULTI_DOLLAR_INTERPOLATION", KotlinReleaseVersion(2, 0, 20))
 
     /**
      * Render the internal names of warnings and errors.
@@ -563,7 +563,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_RENDER_INTERNAL_DIAGNOSTIC_NAMES: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES", KotlinKotlinVersion(1, 7, 0))
+        CommonCompilerArgument("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES", KotlinReleaseVersion(1, 7, 0))
 
     /**
      * Allow compiling scripts along with regular Kotlin sources.
@@ -573,7 +573,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS", KotlinKotlinVersion(1, 7, 20))
+        CommonCompilerArgument("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS", KotlinReleaseVersion(1, 7, 20))
 
     /**
      * Report all warnings even if errors are found.
@@ -583,7 +583,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_REPORT_ALL_WARNINGS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_REPORT_ALL_WARNINGS", KotlinKotlinVersion(2, 0, 0))
+        CommonCompilerArgument("X_REPORT_ALL_WARNINGS", KotlinReleaseVersion(2, 0, 0))
 
     /**
      * Declare common klib friend dependencies for the specific fragment.
@@ -596,7 +596,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_FRAGMENT_FRIEND_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_FRAGMENT_FRIEND_DEPENDENCY", KotlinKotlinVersion(2, 3, 0))
+        CommonCompilerArgument("X_FRAGMENT_FRIEND_DEPENDENCY", KotlinReleaseVersion(2, 3, 0))
 
     /**
      * Ignore all compilation exceptions while optimizing some constant expressions.
@@ -606,7 +606,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_IGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS", KotlinKotlinVersion(1, 9, 0))
+        CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS", KotlinReleaseVersion(1, 9, 0))
 
     /**
      * Don't report warnings when errors are suppressed. This only affects K2.
@@ -616,7 +616,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_DONT_WARN_ON_ERROR_SUPPRESSION: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_DONT_WARN_ON_ERROR_SUPPRESSION", KotlinKotlinVersion(2, 0, 0))
+        CommonCompilerArgument("X_DONT_WARN_ON_ERROR_SUPPRESSION", KotlinReleaseVersion(2, 0, 0))
 
     /**
      * Enable experimental language support for when guards.
@@ -626,7 +626,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_WHEN_GUARDS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_WHEN_GUARDS", KotlinKotlinVersion(2, 0, 20))
+        CommonCompilerArgument("X_WHEN_GUARDS", KotlinReleaseVersion(2, 0, 20))
 
     /**
      * Enable experimental language support for nested type aliases.
@@ -636,7 +636,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_NESTED_TYPE_ALIASES: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_NESTED_TYPE_ALIASES", KotlinKotlinVersion(2, 1, 20))
+        CommonCompilerArgument("X_NESTED_TYPE_ALIASES", KotlinReleaseVersion(2, 1, 20))
 
     /**
      * Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
@@ -646,7 +646,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_SUPPRESS_WARNING: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_SUPPRESS_WARNING", KotlinKotlinVersion(2, 1, 0))
+        CommonCompilerArgument("X_SUPPRESS_WARNING", KotlinReleaseVersion(2, 1, 0))
 
     /**
      * Set the severity of the given warning.
@@ -659,7 +659,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_WARNING_LEVEL: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_WARNING_LEVEL", KotlinKotlinVersion(2, 2, 0))
+        CommonCompilerArgument("X_WARNING_LEVEL", KotlinReleaseVersion(2, 2, 0))
 
     /**
      * Change the default annotation targets for constructor properties:
@@ -673,7 +673,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_ANNOTATION_DEFAULT_TARGET: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("X_ANNOTATION_DEFAULT_TARGET", KotlinKotlinVersion(2, 1, 20))
+        CommonCompilerArgument("X_ANNOTATION_DEFAULT_TARGET", KotlinReleaseVersion(2, 1, 20))
 
     /**
      * Enable experimental language support for @all: annotation use-site target.
@@ -683,7 +683,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_ANNOTATION_TARGET_ALL: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_ANNOTATION_TARGET_ALL", KotlinKotlinVersion(2, 1, 20))
+        CommonCompilerArgument("X_ANNOTATION_TARGET_ALL", KotlinReleaseVersion(2, 1, 20))
 
     /**
      * Allow 'catch' parameters to have reified types.
@@ -693,7 +693,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_ALLOW_REIFIED_TYPE_IN_CATCH: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_ALLOW_REIFIED_TYPE_IN_CATCH", KotlinKotlinVersion(2, 2, 20))
+        CommonCompilerArgument("X_ALLOW_REIFIED_TYPE_IN_CATCH", KotlinReleaseVersion(2, 2, 20))
 
     /**
      * Allow contracts on some operators and accessors, and allow checks for erased types.
@@ -703,7 +703,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS", KotlinKotlinVersion(2, 2, 20))
+        CommonCompilerArgument("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS", KotlinReleaseVersion(2, 2, 20))
 
     /**
      * Allow contracts that specify a limited conditional returns postcondition.
@@ -713,7 +713,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS", KotlinKotlinVersion(2, 2, 20))
+        CommonCompilerArgument("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS", KotlinReleaseVersion(2, 2, 20))
 
     /**
      * Allow contracts that specify a condition that holds true inside a lambda argument.
@@ -723,7 +723,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_ALLOW_HOLDSIN_CONTRACT: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_ALLOW_HOLDSIN_CONTRACT", KotlinKotlinVersion(2, 2, 20))
+        CommonCompilerArgument("X_ALLOW_HOLDSIN_CONTRACT", KotlinReleaseVersion(2, 2, 20))
 
     /**
      * Enables the following destructuring features:
@@ -736,6 +736,6 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("X_NAME_BASED_DESTRUCTURING", KotlinKotlinVersion(2, 3, 0))
+        CommonCompilerArgument("X_NAME_BASED_DESTRUCTURING", KotlinReleaseVersion(2, 3, 0))
   }
 }

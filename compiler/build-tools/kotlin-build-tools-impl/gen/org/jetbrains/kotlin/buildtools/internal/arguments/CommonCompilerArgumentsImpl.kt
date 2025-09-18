@@ -107,12 +107,12 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR_VISIBILITY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_WARNING_LEVEL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_WHEN_GUARDS
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
-import kotlin.KotlinVersion as KotlinKotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments as ArgumentsCommonCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion as EnumsKotlinVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
@@ -127,7 +127,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinKotlinVersion(2, 3, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 3, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = `value`
@@ -247,8 +247,8 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
   @Suppress("DEPRECATION")
   public fun applyCompilerArguments(arguments: CommonCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { EnumsKotlinVersion.entries.first { entry -> entry.stringValue == it } } } catch (_: NoSuchMethodError) {  }
-    try { this[API_VERSION] = arguments.apiVersion?.let { EnumsKotlinVersion.entries.first { entry -> entry.stringValue == it } } } catch (_: NoSuchMethodError) {  }
+    try { this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.entries.first { entry -> entry.stringValue == it } } } catch (_: NoSuchMethodError) {  }
+    try { this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.entries.first { entry -> entry.stringValue == it } } } catch (_: NoSuchMethodError) {  }
     try { this[KOTLIN_HOME] = arguments.kotlinHome } catch (_: NoSuchMethodError) {  }
     try { this[PROGRESSIVE] = arguments.progressiveMode } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT] = arguments.script } catch (_: NoSuchMethodError) {  }
@@ -350,10 +350,10 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val LANGUAGE_VERSION: CommonCompilerArgument<EnumsKotlinVersion?> =
+    public val LANGUAGE_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("LANGUAGE_VERSION")
 
-    public val API_VERSION: CommonCompilerArgument<EnumsKotlinVersion?> =
+    public val API_VERSION: CommonCompilerArgument<KotlinVersion?> =
         CommonCompilerArgument("API_VERSION")
 
     public val KOTLIN_HOME: CommonCompilerArgument<String?> = CommonCompilerArgument("KOTLIN_HOME")
