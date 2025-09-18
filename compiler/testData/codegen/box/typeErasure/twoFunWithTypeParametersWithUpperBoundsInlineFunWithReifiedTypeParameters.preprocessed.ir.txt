@@ -1,16 +1,16 @@
 Module: main
 // CallableId=/gBefore
-FUN name:gBefore visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:gBefore visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun gBefore <T> (): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun gBefore <T> (): kotlin.reflect.KType [inline] declared in <root>'
       CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
         TYPE_ARG T: kotlin.collections.List<T of <root>.gBefore>
 // CallableId=/fBefore
-FUN name:fBefore visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:fBefore visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Number] reified:false
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun fBefore <U> (): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun fBefore <U> (): kotlin.reflect.KType [inline] declared in <root>'
       RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
         INLINED_BLOCK type=kotlin.reflect.KType origin=null
           inlinedFunctionSymbol: public final fun gBefore <T> (): kotlin.reflect.KType [inline] declared in <root>
@@ -19,17 +19,17 @@ FUN name:fBefore visibility:public modality:FINAL returnType:kotlin.reflect.KTyp
             CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
               TYPE_ARG T: kotlin.collections.List<kotlin.collections.List<U of <root>.fBefore>>
 // CallableId=/gAfter
-FUN name:gAfter visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:gAfter visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun gAfter <T> (): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun gAfter <T> (): kotlin.reflect.KType [inline] declared in <root>'
       CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
         TYPE_ARG T: kotlin.collections.List<T of <root>.gAfter>
 // CallableId=/fAfter
-FUN name:fAfter visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+FUN name:fAfter visibility:private modality:FINAL returnType:kotlin.reflect.KType [inline]
   TYPE_PARAMETER name:U index:0 variance: superTypes:[kotlin.Number] reified:false
   BLOCK_BODY
-    RETURN type=kotlin.Nothing from='public final fun fAfter <U> (): kotlin.reflect.KType [inline] declared in <root>'
+    RETURN type=kotlin.Nothing from='private final fun fAfter <U> (): kotlin.reflect.KType [inline] declared in <root>'
       RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
         INLINED_BLOCK type=kotlin.reflect.KType origin=null
           inlinedFunctionSymbol: public final fun gAfter <T> (): kotlin.reflect.KType [inline] declared in <root>
