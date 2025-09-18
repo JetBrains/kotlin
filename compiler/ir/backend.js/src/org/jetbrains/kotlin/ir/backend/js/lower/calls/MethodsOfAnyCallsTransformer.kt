@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
-    private val intrinsics = context.intrinsics
+    private val symbols = context.symbols
     private val nameToTransformer: Map<Name, (IrFunctionAccessExpression) -> IrExpression>
 
     init {
@@ -28,9 +28,9 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             put(OperatorNameConventions.TO_STRING) { call ->
                 if (shouldReplaceToStringWithRuntimeCall(call)) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsAnyToString)
+                        irCall(call, symbols.jsAnyToString)
                     } else {
-                        irCall(call, intrinsics.jsToString)
+                        irCall(call, symbols.jsToString)
                     }
                 } else {
                     call
@@ -40,9 +40,9 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             put(OperatorNameConventions.HASH_CODE) { call ->
                 if (call.symbol.owner.isFakeOverriddenFromAny()) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsGetObjectHashCode)
+                        irCall(call, symbols.jsGetObjectHashCode)
                     } else {
-                        irCall(call, intrinsics.jsHashCode)
+                        irCall(call, symbols.jsHashCode)
                     }
                 } else {
                     call
@@ -70,7 +70,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             val superQualifierSymbol = call.superQualifierSymbol
             if (superQualifierSymbol != null &&
                 !superQualifierSymbol.owner.isInterface &&
-                superQualifierSymbol != intrinsics.anyClassSymbol) {
+                superQualifierSymbol != symbols.anyClassSymbol) {
                 return false
             }
         }

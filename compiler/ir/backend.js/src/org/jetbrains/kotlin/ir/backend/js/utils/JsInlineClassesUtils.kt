@@ -49,10 +49,10 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
         super.isClassInlineLike(klass) || klass.symbol.signature == IdSignatureValues._char
 
     override val boxIntrinsic: IrSimpleFunctionSymbol
-        get() = context.intrinsics.jsBoxIntrinsic
+        get() = context.symbols.jsBoxIntrinsic
 
     override val unboxIntrinsic: IrSimpleFunctionSymbol
-        get() = context.intrinsics.jsUnboxIntrinsic
+        get() = context.symbols.jsUnboxIntrinsic
 
     fun getRuntimeClassFor(type: IrType): IrClass? = type.erasedUpperBound.takeIf { !it.isInterface }
 }

@@ -53,7 +53,7 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 type = context.dynamicType,
-                symbol = context.intrinsics.globalThis.owner.getter!!.symbol,
+                symbol = context.symbols.globalThis.owner.getter!!.symbol,
                 typeArgumentsCount = 0,
             )
 

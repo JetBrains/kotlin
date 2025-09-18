@@ -68,8 +68,8 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
                 val shouldCallMainFunctionAsCoroutine = isLoweredSuspendFunction(context) && context.compileSuspendAsJsGenerator
                 val functionSymbolToCall = when {
                     !shouldCallMainFunctionAsCoroutine -> originalFunctionSymbol
-                    hasStringArrayParameter() -> context.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion2
-                    else -> context.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion1
+                    hasStringArrayParameter() -> context.symbols.startCoroutineUninterceptedOrReturnGeneratorVersion2
+                    else -> context.symbols.startCoroutineUninterceptedOrReturnGeneratorVersion1
                 }
 
                 val mainFunctionCall = JsIrBuilder.buildCall(functionSymbolToCall).apply {
@@ -96,7 +96,7 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
         return listOfNotNull(
             runIf(hasStringArrayParameter()) {
                 context.platformArgumentsProviderJsExpression?.let {
-                    JsIrBuilder.buildCall(context.intrinsics.jsCode).apply {
+                    JsIrBuilder.buildCall(context.symbols.jsCode).apply {
                         arguments[0] = it.toIrConst(context.irBuiltIns.stringType)
                     }
                 } ?: JsIrBuilder.buildArray(

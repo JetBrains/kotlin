@@ -135,7 +135,7 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
 
             val accessExpression = with(externalPropertyAccessorsTransformer) { it.createExternalSuperFieldAccess() } ?: return@forEach
             externalPropertyAccessorsTransformer.primaryConstructorBody.statements.add(
-                JsIrBuilder.buildCall(context.intrinsics.jsDelete).apply { arguments[0] = accessExpression }
+                JsIrBuilder.buildCall(context.symbols.jsDelete).apply { arguments[0] = accessExpression }
             )
         }
 

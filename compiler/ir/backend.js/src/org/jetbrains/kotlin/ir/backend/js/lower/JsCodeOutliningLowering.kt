@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.FunctionWithJsFuncAnnotationInliner
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope

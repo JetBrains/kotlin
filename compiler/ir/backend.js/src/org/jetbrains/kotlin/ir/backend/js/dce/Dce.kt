@@ -127,10 +127,10 @@ private fun buildRoots(
         ?.mainFunctionWrapper
         ?.let { add(it) }
 
-    addIfNotNull(context.intrinsics.void.owner.backingField)
+    addIfNotNull(context.symbols.void.owner.backingField)
 
     if (moduleKind == ModuleKind.UMD) {
-        add(context.intrinsics.globalThis.owner)
+        add(context.symbols.globalThis.owner)
     }
 
     addAll(context.testFunsPerFile.values)
@@ -139,8 +139,8 @@ private fun buildRoots(
 
 internal fun RuntimeDiagnostic.unreachableDeclarationMethod(context: JsIrBackendContext) =
     when (this) {
-        RuntimeDiagnostic.LOG -> context.intrinsics.jsUnreachableDeclarationLog
-        RuntimeDiagnostic.EXCEPTION -> context.intrinsics.jsUnreachableDeclarationException
+        RuntimeDiagnostic.LOG -> context.symbols.jsUnreachableDeclarationLog
+        RuntimeDiagnostic.EXCEPTION -> context.symbols.jsUnreachableDeclarationException
     }
 
 internal fun IrField.isKotlinPackage() =

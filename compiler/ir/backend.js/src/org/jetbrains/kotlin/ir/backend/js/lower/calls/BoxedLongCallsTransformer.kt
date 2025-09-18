@@ -27,31 +27,31 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  */
 internal class BoxedLongCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val irBuiltIns = context.irBuiltIns
-    private val intrinsics = context.intrinsics
+    private val symbols = context.symbols
     private val longAsBigInt = context.configuration.compileLongAsBigint
-    private val longLowGetter = intrinsics.longClassSymbol.getPropertyGetter("low")
-    private val longHighGetter = intrinsics.longClassSymbol.getPropertyGetter("high")
-    private val longLowField = intrinsics.longClassSymbol.fields.single { it.owner.name.asString() == "low" }
-    private val longHighField = intrinsics.longClassSymbol.fields.single { it.owner.name.asString() == "high" }
+    private val longLowGetter = symbols.longClassSymbol.getPropertyGetter("low")
+    private val longHighGetter = symbols.longClassSymbol.getPropertyGetter("high")
+    private val longLowField = symbols.longClassSymbol.fields.single { it.owner.name.asString() == "low" }
+    private val longHighField = symbols.longClassSymbol.fields.single { it.owner.name.asString() == "high" }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
-        if (call.symbol == intrinsics.jsLongToString) {
-            return irCall(call, intrinsics.longToStringImpl)
+        if (call.symbol == symbols.jsLongToString) {
+            return irCall(call, symbols.longToStringImpl)
         }
-        if (longAsBigInt && call.symbol == intrinsics.longClassSymbol.owner.primaryConstructor?.symbol) {
-            return irCall(call, intrinsics.longFromTwoInts!!)
+        if (longAsBigInt && call.symbol == symbols.longClassSymbol.owner.primaryConstructor?.symbol) {
+            return irCall(call, symbols.longFromTwoInts!!)
         }
-        if (longAsBigInt && call.symbol == intrinsics.longClassSymbol.owner.primaryConstructorReplacement?.symbol) {
-            return irCall(call, intrinsics.longFromTwoInts!!).apply {
+        if (longAsBigInt && call.symbol == symbols.longClassSymbol.owner.primaryConstructorReplacement?.symbol) {
+            return irCall(call, symbols.longFromTwoInts!!).apply {
                 // The first parameter of the primary constructor replacement function is actually `this`.
                 arguments.assignFrom(call.arguments.drop(1))
             }
         }
         if (longAsBigInt && call.symbol == longLowGetter) {
-            return irCall(call, intrinsics.longLowBits!!)
+            return irCall(call, symbols.longLowBits!!)
         }
         if (longAsBigInt && call.symbol == longHighGetter) {
-            return irCall(call, intrinsics.longHighBits!!)
+            return irCall(call, symbols.longHighBits!!)
         }
         insertNumberConversionInDateConstructorCall(call)?.let { return it }
         return call
@@ -76,7 +76,7 @@ internal class BoxedLongCallsTransformer(context: JsIrBackendContext) : CallsTra
                 // If the type of the argument can be expressed as JS `number`, don't insert the conversion
                 continue
             }
-            call.arguments[numberParameter] = JsIrBuilder.buildCall(intrinsics.jsNumberToDouble).apply {
+            call.arguments[numberParameter] = JsIrBuilder.buildCall(symbols.jsNumberToDouble).apply {
                 arguments[0] = arg
             }
         }
@@ -84,13 +84,13 @@ internal class BoxedLongCallsTransformer(context: JsIrBackendContext) : CallsTra
     }
 
     override fun transformFieldAccess(access: IrFieldAccessExpression): IrExpression {
-        if (intrinsics.longLowBits != null && access.symbol == longLowField) {
-            return IrCallImpl(access.startOffset, access.endOffset, longLowField.owner.type, intrinsics.longLowBits).apply {
+        if (symbols.longLowBits != null && access.symbol == longLowField) {
+            return IrCallImpl(access.startOffset, access.endOffset, longLowField.owner.type, symbols.longLowBits).apply {
                 arguments[0] = access.receiver
             }
         }
-        if (intrinsics.longHighBits != null && access.symbol == longHighField) {
-            return IrCallImpl(access.startOffset, access.endOffset, longHighField.owner.type, intrinsics.longHighBits).apply {
+        if (symbols.longHighBits != null && access.symbol == longHighField) {
+            return IrCallImpl(access.startOffset, access.endOffset, longHighField.owner.type, symbols.longHighBits).apply {
                 arguments[0] = access.receiver
             }
         }

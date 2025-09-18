@@ -36,7 +36,7 @@ fun optimizeProgramByIr(
 }
 
 fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment, context: JsStaticContext) {
-    val voidName = context.backendContext.intrinsics.void.owner.backingField?.let(context::getNameForField)
+    val voidName = context.backendContext.symbols.void.owner.backingField?.let(context::getNameForField)
 
     val optimizer = object : RecursiveJsVisitor() {
         override fun visitFunction(x: JsFunction) {

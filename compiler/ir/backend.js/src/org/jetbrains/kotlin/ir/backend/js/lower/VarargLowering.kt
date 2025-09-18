@@ -89,14 +89,14 @@ private class VarargTransformer(
         val arrayLiteral =
             segments.toArrayLiteral(
                 context,
-                IrSimpleTypeImpl(context.intrinsics.array, false, emptyList(), emptyList()), // TODO: Substitution
+                IrSimpleTypeImpl(context.symbols.array, false, emptyList(), emptyList()), // TODO: Substitution
                 context.irBuiltIns.anyType
             )
 
-        val concatFun = if (arrayInfo.primitiveArrayType.classifierOrNull in context.intrinsics.primitiveArrays.keys) {
-            context.intrinsics.primitiveArrayConcat
+        val concatFun = if (arrayInfo.primitiveArrayType.classifierOrNull in context.symbols.primitiveArrays.keys) {
+            context.symbols.primitiveArrayConcat
         } else {
-            context.intrinsics.arrayConcat
+            context.symbols.arrayConcat
         }
 
         val res = IrCallImpl(
@@ -126,9 +126,9 @@ private class VarargTransformer(
             val elementType = arrayInfo.primitiveElementType
             val copyFunction =
                 if (elementType.isChar() || elementType.isBoolean() || elementType.isLong())
-                    context.intrinsics.taggedArrayCopy
+                    context.symbols.taggedArrayCopy
                 else
-                    context.intrinsics.jsArraySlice
+                    context.symbols.jsArraySlice
 
             IrCallImpl(
                 expression.startOffset,
@@ -175,13 +175,13 @@ private class VarargTransformer(
 private fun List<IrExpression>.toArrayLiteral(context: JsIrBackendContext, type: IrType, varargElementType: IrType): IrExpression {
 
     // TODO: Use symbols when builtins symbol table is fixes
-    val primitiveType = context.intrinsics.primitiveArrays.mapKeys { it.key }[type.classifierOrNull]
+    val primitiveType = context.symbols.primitiveArrays.mapKeys { it.key }[type.classifierOrNull]
 
     val intrinsic =
         if (primitiveType != null)
-            context.intrinsics.primitiveToLiteralConstructor.getValue(primitiveType)
+            context.symbols.primitiveToLiteralConstructor.getValue(primitiveType)
         else
-            context.intrinsics.arrayLiteral
+            context.symbols.arrayLiteral
 
     val startOffset = firstOrNull()?.startOffset ?: UNDEFINED_OFFSET
     val endOffset = lastOrNull()?.endOffset ?: UNDEFINED_OFFSET
