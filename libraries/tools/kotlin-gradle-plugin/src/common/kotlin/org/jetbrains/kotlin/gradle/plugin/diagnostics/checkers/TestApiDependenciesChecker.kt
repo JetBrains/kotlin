@@ -4,6 +4,8 @@
  */
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
+import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -24,10 +26,19 @@ internal object TestApiDependenciesChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
-        val multiplatform = multiplatformExtension ?: return
+        val kotlinTargets =
+            sequence {
+                project.kotlinJvmExtensionOrNull?.let { kotlinJvm ->
+                    yield(kotlinJvm.target)
+                }
+                project.multiplatformExtensionOrNull?.let { kotlinMultiplatform ->
+                    yieldAll(kotlinMultiplatform.targets)
+                }
+            }
 
-        val testCompilationsWithApiDependencies = multiplatform.targets
+        val testCompilationsWithApiDependencies = kotlinTargets
             .flatMap { target -> testApiDependencies(target) }
+            .toList()
 
         if (testCompilationsWithApiDependencies.any { it.dependencyCoords.isNotEmpty() }) {
             project.reportDiagnostic(
