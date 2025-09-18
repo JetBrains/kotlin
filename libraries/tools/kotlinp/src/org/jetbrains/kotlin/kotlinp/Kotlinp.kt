@@ -142,10 +142,12 @@ abstract class Kotlinp(protected val settings: Settings) {
         container.typeAliases.sortIfNeeded { it.sortedBy(KmTypeAlias::name) }.forEach { renderTypeAlias(it, this) }
     }
 
+    @OptIn(ExperimentalMustUseStatus::class)
     fun renderConstructor(constructor: KmConstructor, printer: Printer): Unit = with(printer) {
         appendLine()
         appendVersionRequirements(constructor.versionRequirements)
         appendSignatures(constructor)
+        appendReturnValueStatus(constructor.returnValueStatus)
         appendAnnotations(constructor.annotations)
         renderConstructorModifiers(constructor, printer)
         append("constructor")
@@ -161,12 +163,13 @@ abstract class Kotlinp(protected val settings: Settings) {
         )
     }
 
-    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class, ExperimentalMustUseStatus::class)
     fun renderFunction(function: KmFunction, printer: Printer): Unit = with(printer) {
         appendLine()
         appendOrigin(function)
         appendVersionRequirements(function.versionRequirements)
         appendSignatures(function)
+        appendReturnValueStatus(function.returnValueStatus)
         appendAnnotations(function.annotations)
         appendAnnotations(function.extensionReceiverParameterAnnotations, useSiteTarget = "receiver")
         appendContextParameters(function.contextParameters)
@@ -296,12 +299,13 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendLine("}")
     }
 
-    @OptIn( ExperimentalContextParameters::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalMustUseStatus::class)
     fun renderProperty(property: KmProperty, printer: Printer): Unit = with(printer) {
         appendLine()
         appendVersionRequirements(property.versionRequirements)
         appendSignatures(property)
         appendCustomAttributes(property)
+        appendReturnValueStatus(property.returnValueStatus)
         appendAnnotations(property.annotations)
         appendAnnotations(property.backingFieldAnnotations, useSiteTarget = "field")
         appendAnnotations(property.delegateFieldAnnotations, useSiteTarget = "delegate")
@@ -507,6 +511,16 @@ abstract class Kotlinp(protected val settings: Settings) {
                 appendLine()
             }
         }
+    }
+
+    @OptIn(ExperimentalMustUseStatus::class)
+    private fun Printer.appendReturnValueStatus(returnValueStatus: ReturnValueStatus) {
+        val s = when (returnValueStatus) {
+            ReturnValueStatus.UNSPECIFIED -> return
+            ReturnValueStatus.MUST_USE -> "must-use return value"
+            ReturnValueStatus.EXPLICITLY_IGNORABLE -> "ignorable return value"
+        }
+        appendCommentedLine(s)
     }
 
     protected inline fun <T : Any> List<T>.sortIfNeeded(sorter: (List<T>) -> List<T>): List<T> =

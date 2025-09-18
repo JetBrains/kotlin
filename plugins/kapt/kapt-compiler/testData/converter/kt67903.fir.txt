@@ -6,12 +6,15 @@
  *   public constructor(value: kotlin/Int)
  *
  *   // signature: equals-impl(ILjava/lang/Object;)Z
+ *   // must-use return value
  *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
  *
  *   // signature: hashCode-impl(I)I
+ *   // must-use return value
  *   public open (* synthesized *) fun hashCode(): kotlin/Int
  *
  *   // signature: toString-impl(I)Ljava/lang/String;
+ *   // must-use return value
  *   public open (* synthesized *) fun toString(): kotlin/String
  *
  *   // field: value:I

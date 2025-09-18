@@ -1,0 +1,57 @@
+// TopLevelKt.class
+// ------------------------------------------
+package {
+
+  // signature: toplvl()I
+  // must-use return value
+  public final fun toplvl(): kotlin/Int
+
+  // module name: test-module
+}
+// X.class
+// ------------------------------------------
+public final class X : kotlin/Any {
+
+  // signature: <init>()V
+  // must-use return value
+  public constructor()
+
+  // signature: foo()I
+  // must-use return value
+  public final fun foo(): kotlin/Int
+
+  // signature: ignorable()Ljava/lang/String;
+  // ignorable return value
+  public final fun ignorable(): kotlin/String
+
+  // signature: unit()V
+  // must-use return value
+  public final fun unit(): kotlin/Unit
+
+  // field: bar:I
+  // getter: getBar()I
+  // setter: setBar(I)V
+  // must-use return value
+  public final var bar: kotlin/Int
+    public final get
+    public final set
+
+  // module name: test-module
+}
+// XKt.class
+// ------------------------------------------
+package {
+
+  // signature: unspecified()I
+  public final fun unspecified(): kotlin/Int
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    TopLevelKt
+    XKt
+  }
+}

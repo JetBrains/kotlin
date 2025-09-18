@@ -95,10 +95,13 @@ library {
 
       private constructor()
 
+      // must-use return value
       public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
 
+      // must-use return value
       public open /* synthesized */ fun hashCode(): kotlin/Int
 
+      // must-use return value
       public open /* synthesized */ fun toString(): kotlin/String
 
       public open /* delegated */ val v: kotlin/collections/HashSet<kotlin/Pair<kotlin/String, kotlin/Number>>

@@ -253,12 +253,15 @@ public final class Experiment {
      *   public final (* synthesized *) fun copy(s: kotlin/String (* = ... *)): test/Experiment.Group
      *
      *   // signature: equals(Ljava/lang/Object;)Z
+     *   // must-use return value
      *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
      *
      *   // signature: hashCode()I
+     *   // must-use return value
      *   public open (* synthesized *) fun hashCode(): kotlin/Int
      *
      *   // signature: toString()Ljava/lang/String;
+     *   // must-use return value
      *   public open (* synthesized *) fun toString(): kotlin/String
      *
      *   // field: s:Ljava/lang/String;

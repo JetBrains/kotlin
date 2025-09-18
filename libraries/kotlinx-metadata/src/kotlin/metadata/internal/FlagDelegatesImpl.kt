@@ -6,6 +6,7 @@ package kotlin.metadata.internal
 
 import kotlin.enums.EnumEntries
 import kotlin.metadata.*
+import kotlin.metadata.internal.FlagImpl
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty
 import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
@@ -54,6 +55,10 @@ internal fun <Node> modalityDelegate(flags: KMutableProperty1<Node, Int>) =
 
 internal fun <Node> memberKindDelegate(flags: KMutableProperty1<Node, Int>) =
     EnumFlagDelegate(flags, ProtoFlags.MEMBER_KIND, MemberKind.entries, MemberKind.entries.map { it.flag })
+
+@ExperimentalMustUseStatus
+internal fun <Node> returnValueStatusDelegate(flags: KMutableProperty1<Node, Int>, protoSet: ProtoFlagSet<out ProtoEnumLite>) =
+    EnumFlagDelegate(flags, protoSet, ReturnValueStatus.entries, ReturnValueStatus.entries.map { FlagImpl(protoSet, it.ordinal) })
 
 public fun classBooleanFlag(flag: Flag): BooleanFlagDelegate<KmClass> =
     BooleanFlagDelegate(KmClass::flags, flag)

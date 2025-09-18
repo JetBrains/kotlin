@@ -160,9 +160,11 @@ package test;
  *   public constructor()
  *
  *   // signature: get(I)Ljava/lang/Void;
+ *   // must-use return value
  *   public open operator fun get(index: kotlin/Int): kotlin/Nothing
  *
  *   // getter: getSize()I
+ *   // must-use return value
  *   public open val size: kotlin/Int
  *     public open (* non-default *) get
  *

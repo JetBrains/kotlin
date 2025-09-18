@@ -189,3 +189,51 @@ public enum class MemberKind(kind: Int) {
 
     internal val flag = FlagImpl(ProtoFlags.MEMBER_KIND, kind)
 }
+
+/**
+ * Represents a status associated with a return type of the callable.
+ * This status is used by the 'Unused return value' diagnostic to help it decide whether a warning should be issued.
+ *
+ * There are three main sources of this status:
+ *  * Ignorability annotations: `@MustUseReturnValues` or `@IgnorableReturnValue`.
+ *  * `-Xreturn-value-checker=full` compiler flag
+ *  * For overrides, status is copied from the base function unless explicitly changed by annotation.
+ *
+ * Note that status is not the only factor to decide whether to report the warning on a particular callable.
+ * Checker implementations should also consider other factors, such as the expression's return type or shape.
+ * For example, it is typical for Unit-returning functions to have MUST_USE return value status
+ * if they were compiled with `-Xreturn-value-checker=full` compiler flag.
+ * However, they should not be reported as unused.
+ */
+@ExperimentalMustUseStatus
+public enum class ReturnValueStatus {
+    /**
+     * Signifies that the corresponding callable does not have status associated with its return value.
+     *
+     * This is a default value for callables which were compiled without the `-Xreturn-value-checker=full` compiler flag,
+     * do not belong to any scope annotated with `@MustUseReturnValues`, and override only callables with unspecified status.
+     */
+    UNSPECIFIED,
+
+    /**
+     * Signifies that the corresponding callable has a must-use status associated with its return value.
+     * A compiler might issue a warning if the return value is not used.
+     *
+     * This status is set for all callables which were compiled with the `-Xreturn-value-checker=full` compiler flag,
+     * or placed inside a scope annotated with `@MustUseReturnValues`,
+     * unless they were annotated with `@IgnorableReturnValue`.
+     *
+     * Overriding a MUST_USE callable also sets its status to MUST_USE.
+     */
+    MUST_USE,
+
+    /**
+     * Signifies that the corresponding callable has an explicitly ignorable status associated with its return value.
+     * A compiler will not issue a warning if the return value is not used.
+     *
+     * This status may come only from the `@IgnorableReturnValue` annotation on the callable,
+     * or if the callable overrides another callable with an explicitly ignorable status.
+     */
+    EXPLICITLY_IGNORABLE
+    ;
+}
