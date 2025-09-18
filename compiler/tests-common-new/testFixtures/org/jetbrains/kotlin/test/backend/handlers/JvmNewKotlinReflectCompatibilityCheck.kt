@@ -117,7 +117,10 @@ private const val indentLiteral = "  "
 
 // This class is run inside an ad-hoc classloader so that we can work with KClass conveniently statically
 class RunInAlienClassLoader {
-    @Deprecated("Emulate private visibility", level = DeprecationLevel.ERROR)
+    @RequiresOptIn
+    annotation class PrivateVisibility
+
+    @PrivateVisibility // Emulate private visibility
     @JvmName(dumpKClasses)
     // The function name doesn't matter in compile time since it's always called with reflection
     fun `_`(loader: ClassLoader, fqns: List<String>): String {
