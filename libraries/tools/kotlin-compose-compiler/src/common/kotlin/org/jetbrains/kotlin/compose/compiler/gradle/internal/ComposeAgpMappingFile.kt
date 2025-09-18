@@ -107,8 +107,7 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val projectDirectories: ListProperty<Directory>
 
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Classpath
     abstract val projectJars: ListProperty<RegularFile>
 
     @get:Classpath
