@@ -284,9 +284,9 @@ open class AbstractFirWasmWasiTest(
 }
 
 open class AbstractFirWasmWasiCodegenBoxTest(
-    testGroupOutputDirPrefix: String = "codegen/firWasiBox/"
+    testGroupOutputDirPrefix: String = "codegen/wasi/"
 ) : AbstractFirWasmWasiTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
+    pathToTestDir = "compiler/testData/codegen/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
