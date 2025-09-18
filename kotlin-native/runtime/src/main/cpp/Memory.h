@@ -162,7 +162,7 @@ extern "C" {
 struct MemoryState;
 
 MemoryState* InitMemory();
-void DeinitMemory(MemoryState*, bool destroyRuntime);
+void DeinitMemory(MemoryState*);
 void ClearMemoryForTests(MemoryState*);
 
 //
@@ -456,9 +456,6 @@ private:
 };
 
 void initGlobalMemory() noexcept;
-
-void StartFinalizerThreadIfNeeded() noexcept;
-bool FinalizersThreadIsRunning() noexcept;
 
 void OnMemoryAllocation(size_t totalAllocatedBytes) noexcept;
 

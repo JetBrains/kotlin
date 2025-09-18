@@ -61,8 +61,6 @@ void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
   }
 }
 
-KBoolean g_forceCheckedShutdown = false;
-
 constexpr RuntimeState* kInvalidRuntime = nullptr;
 
 THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = kInvalidRuntime;
@@ -118,7 +116,7 @@ NO_INLINE RuntimeState* initRuntime() {
   return result;
 }
 
-void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
+void deinitRuntime(RuntimeState* state) {
   AssertThreadState(state->memoryState, kotlin::ThreadState::kRunnable);
   RuntimeAssert(state->status == RuntimeStatus::kRunning, "Runtime must be in the running state");
   state->status = RuntimeStatus::kDestroying;
@@ -127,8 +125,6 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   ::runtimeState = state;
   --aliveRuntimesCount;
   ClearTLS(state->memoryState);
-  if (destroyRuntime)
-    InitOrDeinitGlobalVariables(DEINIT_GLOBALS, state->memoryState);
 
   // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
   kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
@@ -136,7 +132,7 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   auto workerId = GetWorkerId(state->worker);
   WorkerDeinit(state->worker);
 
-  DeinitMemory(state->memoryState, destroyRuntime);
+  DeinitMemory(state->memoryState);
   delete state;
   WorkerDestroyThreadDataIfNeeded(workerId);
   ::runtimeState = kInvalidRuntime;
@@ -146,16 +142,13 @@ void Kotlin_deinitRuntimeCallback(void* argument) {
   auto* state = reinterpret_cast<RuntimeState*>(argument);
   // This callback may be called from any state, make sure it runs in the runnable state.
   kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kRunnable, /* reentrant = */ true);
-  deinitRuntime(state, false);
+  deinitRuntime(state);
 }
 
 }  // namespace
 
 bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
     auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
-    if (Kotlin_forceCheckedShutdown()) {
-        RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
-    }
     if (lastStatus != kGlobalRuntimeUninitialized)
         return false;
 
@@ -191,7 +184,7 @@ PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
 
 void deinitRuntimeIfNeeded() {
   if (isValidRuntime()) {
-    deinitRuntime(::runtimeState, false);
+    deinitRuntime(::runtimeState);
   }
 }
 
@@ -200,41 +193,12 @@ void Kotlin_shutdownRuntime() {
     auto* runtime = ::runtimeState;
     RuntimeAssert(runtime != kInvalidRuntime, "Current thread must have Kotlin runtime initialized on it");
 
-    if (!Kotlin_forceCheckedShutdown()) {
-        auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
-        RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
-        // The main thread is not doing anything Kotlin anymore, but will stick around to cleanup C++ globals and the like.
-        // Mark the thread native, and don't make the GC thread wait on it.
-        kotlin::SwitchThreadState(runtime->memoryState, kotlin::ThreadState::kNative);
-        return;
-    }
-
-    // If we're going to need finalizers for the full shutdown, we need to start the thread before
-    // new runtimes are disallowed.
-    kotlin::StartFinalizerThreadIfNeeded();
-
-    // Cleaners are now done, disallow new runtimes.
     auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
     RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
-
-    // First make sure workers are gone.
-    WaitNativeWorkersTermination();
-
-    // Allow the current runtime.
-    int knownRuntimes = 1;
-    if (kotlin::FinalizersThreadIsRunning()) {
-        ++knownRuntimes;
-    }
-
-    // Now check for existence of any other runtimes.
-    auto otherRuntimesCount = aliveRuntimesCount.load() - knownRuntimes;
-    RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
-    if (otherRuntimesCount > 0) {
-        konan::consoleErrorf("Cannot run checkers when there are %d alive runtimes at the shutdown", otherRuntimesCount);
-        std::abort();
-    }
-
-    deinitRuntime(runtime, true);
+    // The main thread is not doing anything Kotlin anymore, but will stick around to cleanup C++ globals and the like.
+    // Mark the thread native, and don't make the GC thread wait on it.
+    kotlin::SwitchThreadState(runtime->memoryState, kotlin::ThreadState::kNative);
+    return;
 }
 
 KInt Konan_Platform_canAccessUnaligned() {
@@ -323,18 +287,6 @@ OBJ_GETTER0(Konan_Platform_getAvailableProcessorsEnv) {
         RETURN_OBJ(nullptr)
     }
     RETURN_RESULT_OF(CreateStringFromCString, env)
-}
-
-bool Kotlin_forceCheckedShutdown() {
-    return g_forceCheckedShutdown;
-}
-
-KBoolean Kotlin_Debugging_getForceCheckedShutdown() {
-    return g_forceCheckedShutdown;
-}
-
-void Kotlin_Debugging_setForceCheckedShutdown(KBoolean value) {
-    g_forceCheckedShutdown = value;
 }
 
 KBoolean Kotlin_Debugging_isThreadStateRunnable() {
