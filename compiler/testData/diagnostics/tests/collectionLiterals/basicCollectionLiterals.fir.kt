@@ -3,24 +3,24 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
 
 fun test() {
-    val a = []
-    val b: Array<Int> = []
-    val c = [1, 2]
-    val d: Array<Int> = [1, 2]
-    val e: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[1]<!>
+    val a = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+    val b: Array<Int> = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>
+    val c = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2]<!>
+    val d: Array<Int> = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2]<!>
+    val e: Array<String> = <!INITIALIZER_TYPE_MISMATCH, UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1]<!>
 
-    val f: IntArray = [1, 2]
-    val g = [f]
+    val f: IntArray = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2]<!>
+    val g = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[f]<!>
 }
 
 fun check() {
-    [1, 2] checkType { _<Array<Int>>() }
-    [""] checkType { _<Array<String>>() }
+    <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2]<!> checkType { _<Array<Int>>() }
+    <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[""]<!> checkType { _<Array<String>>() }
 
-    val f: IntArray = [1]
-    [f] checkType { _<Array<IntArray>>() }
+    val f: IntArray = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1]<!>
+    <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[f]<!> checkType { _<Array<IntArray>>() }
 
-    [1, ""] checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Array<Any>>() }
+    <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, ""]<!> checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Array<Any>>() }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, funWithExtensionReceiver, functionDeclaration,

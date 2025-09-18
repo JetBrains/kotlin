@@ -1,0 +1,106 @@
+/kt81141.kt:11:15: error: unsupported [Collection literals outside of annotations]
+val foo = Foo(["42"])
+              ^^^^^^
+/kt81141.kt:25:9: error: unsupported [Collection literals outside of annotations]
+    Foo(["42"])
+        ^^^^^^
+/kt81141.kt:26:9: error: unsupported [Collection literals outside of annotations]
+    Foo([])
+        ^^
+/kt81141.kt:28:17: error: unsupported [Collection literals outside of annotations]
+        val x = ["42"]
+                ^^^^^^
+/kt81141.kt:32:16: error: unsupported [Collection literals outside of annotations]
+    NestedFoo(*[NestedFoo(arr = [NestedFoo()])])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/kt81141.kt:32:33: error: unsupported [Collection literals outside of annotations]
+    NestedFoo(*[NestedFoo(arr = [NestedFoo()])])
+                                ^^^^^^^^^^^^^
+/kt81141.kt:34:12: error: unsupported [Collection literals outside of annotations]
+    IntFoo([])
+           ^^
+/kt81141.kt:35:12: error: unsupported [Collection literals outside of annotations]
+    IntFoo([42])
+           ^^^^
+/kt81141.kt:36:12: error: type mismatch: inferred type is Array<Int> but IntArray was expected
+    IntFoo(run { [42] })
+           ^^^^^^^^^^^^
+/kt81141.kt:36:18: error: unsupported [Collection literals outside of annotations]
+    IntFoo(run { [42] })
+                 ^^^^
+/kt81141.kt:37:12: error: type mismatch: inferred type is Array<Int> but IntArray was expected
+    IntFoo(run {
+           ^^^^^
+/kt81141.kt:38:17: error: unsupported [Collection literals outside of annotations]
+        val x = [42]
+                ^^^^
+/kt81141.kt:42:27: error: unsupported [Collection literals outside of annotations]
+        val x: IntArray = [42]
+                          ^^^^
+/kt81141.kt:46:14: error: unsupported [Collection literals outside of annotations]
+    FooAlias([])
+             ^^
+/kt81141.kt:47:14: error: unsupported [Collection literals outside of annotations]
+    FooAlias(["42"])
+             ^^^^^^
+/kt81141.kt:50:15: error: unsupported [Collection literals outside of annotations]
+    Foo(run { [nonConst] })
+              ^^^^^^^^^^
+/kt81141.kt:52:5: error: unsupported [Collection literals outside of annotations]
+    [nonConst].returnFoo([nonConst])
+    ^^^^^^^^^^
+/kt81141.kt:52:26: error: unsupported [Collection literals outside of annotations]
+    [nonConst].returnFoo([nonConst])
+                         ^^^^^^^^^^
+/kt81141.kt:53:5: error: not enough information to infer type variable T
+    [].returnFoo([])
+    ^^
+/kt81141.kt:53:5: error: unsupported [Collection literals outside of annotations]
+    [].returnFoo([])
+    ^^
+/kt81141.kt:53:18: error: unsupported [Collection literals outside of annotations]
+    [].returnFoo([])
+                 ^^
+/kt81141.kt:55:5: error: not enough information to infer type variable T
+    returnFooGeneric([])
+    ^^^^^^^^^^^^^^^^
+/kt81141.kt:55:22: error: not enough information to infer type variable T
+    returnFooGeneric([])
+                     ^^
+/kt81141.kt:55:22: error: unsupported [Collection literals outside of annotations]
+    returnFooGeneric([])
+                     ^^
+/kt81141.kt:56:5: error: not enough information to infer type variable T
+    returnFooGeneric([42])
+    ^^^^^^^^^^^^^^^^
+/kt81141.kt:56:22: error: unsupported [Collection literals outside of annotations]
+    returnFooGeneric([42])
+                     ^^^^
+/kt81141.kt:57:5: error: not enough information to infer type variable T
+    returnFooGeneric(["42"])
+    ^^^^^^^^^^^^^^^^
+/kt81141.kt:57:22: error: unsupported [Collection literals outside of annotations]
+    returnFooGeneric(["42"])
+                     ^^^^^^
+/kt81141.kt:59:5: error: not enough information to infer type variable B
+    returnTypeParam(foo, [])
+    ^^^^^^^^^^^^^^^
+/kt81141.kt:59:26: error: not enough information to infer type variable T
+    returnTypeParam(foo, [])
+                         ^^
+/kt81141.kt:59:26: error: unsupported [Collection literals outside of annotations]
+    returnTypeParam(foo, [])
+                         ^^
+/kt81141.kt:60:5: error: not enough information to infer type variable B
+    returnTypeParam(foo, [1, 2, 3])
+    ^^^^^^^^^^^^^^^
+/kt81141.kt:60:26: error: unsupported [Collection literals outside of annotations]
+    returnTypeParam(foo, [1, 2, 3])
+                         ^^^^^^^^^
+/kt81141.kt:61:5: error: not enough information to infer type variable B
+    returnTypeParam(foo, ["1", "2", "3"])
+    ^^^^^^^^^^^^^^^
+/kt81141.kt:61:26: error: unsupported [Collection literals outside of annotations]
+    returnTypeParam(foo, ["1", "2", "3"])
+                         ^^^^^^^^^^^^^^^
+

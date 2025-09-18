@@ -20,24 +20,37 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind.Common) {
+
+    private enum class ContainingCallKind {
+        NotFound, FunctionReturningAnnotation, Annotation
+    }
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirArrayLiteral) {
-        if (!isInsideAnnotationCall() && !isInsideAnnotationConstructor()) {
-            reporter.reportOn(
-                expression.source,
-                FirErrors.UNSUPPORTED,
-                "Collection literals outside of annotations are unsupported."
-            )
+        if (isInsideAnnotationConstructor()) return
+
+        when (containingCallKind()) {
+            ContainingCallKind.Annotation -> {}
+            ContainingCallKind.FunctionReturningAnnotation -> {
+                reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION)
+            }
+            ContainingCallKind.NotFound -> {
+                reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION.errorFactory)
+            }
         }
     }
 
+    // See KT-81141
     context(context: CheckerContext)
-    private fun isInsideAnnotationCall(): Boolean = context.callsOrAssignments.asReversed().any {
-        when (it) {
-            is FirFunctionCall -> it.resolvedType.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
-            is FirAnnotationCall -> true
-            else -> false
-        }
+    private fun containingCallKind(): ContainingCallKind {
+        return context.callsOrAssignments.asReversed().maxOfOrNull {
+            when (it) {
+                is FirFunctionCall if it.resolvedType.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS ->
+                    ContainingCallKind.FunctionReturningAnnotation
+                is FirAnnotationCall -> ContainingCallKind.Annotation
+                else -> ContainingCallKind.NotFound
+            }
+        } ?: ContainingCallKind.NotFound
     }
 
     context(context: CheckerContext)

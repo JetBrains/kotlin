@@ -7374,6 +7374,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("kt81141.kt")
+      public void testKt81141() {
+        runTest("compiler/testData/diagnostics/tests/collectionLiterals/kt81141.kt");
+      }
+
+      @Test
       @TestMetadata("noCollectionLiterals.kt")
       public void testNoCollectionLiterals() {
         runTest("compiler/testData/diagnostics/tests/collectionLiterals/noCollectionLiterals.kt");
