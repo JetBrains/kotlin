@@ -19,6 +19,48 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaCompilerFacility : KaSessionComponent {
+    @KaExperimentalApi
+    public companion object {
+        /** Simple class name for the code fragment facade class. */
+        public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey<String>("code fragment class name")
+
+        /** Entry point method name for the code fragment. */
+        public val CODE_FRAGMENT_METHOD_NAME: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey<String>("code fragment method name")
+    }
+
+    /**
+     * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
+     *
+     * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException]. The implementation should wrap the
+     * `compile()` call into a `try`/`catch` block when necessary.
+     *
+     * @param file A file to compile.
+     *  The file must be either a source module file, or a [KtCodeFragment].
+     *  For a [KtCodeFragment], a source module context, a compiled library source context, or an empty context(`null`) are supported.
+     *
+     * @param configuration The compiler configuration.
+     *  It is recommended to submit at least the module name ([CommonConfigurationKeys.MODULE_NAME])
+     *  and language version settings ([CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]).
+     *
+     * @param target The target platform of the compilation.
+     *
+     * @param allowedErrorFilter A filter for allowed errors. Compilation will be aborted if there are errors that this filter rejects.
+     */
+    @KaExperimentalApi
+    @Throws(KaCodeCompilationException::class)
+    public fun compile(
+        file: KtFile,
+        configuration: CompilerConfiguration,
+        target: KaCompilerTarget,
+        allowedErrorFilter: (KaDiagnostic) -> Boolean
+    ): KaCompilationResult
+}
+
 /**
  * An in-memory compilation result returned from [KaCompilerFacility].
  *
@@ -131,48 +173,6 @@ public fun interface KaCompiledClassHandler {
      * @param className The name of the class in the JVM's internal name format, for example `"java/lang/Object"`.
      */
     public fun handleClassDefinition(file: PsiFile?, className: String)
-}
-
-@KaExperimentalApi
-@SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCompilerFacility : KaSessionComponent {
-    @KaExperimentalApi
-    public companion object {
-        /** Simple class name for the code fragment facade class. */
-        public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey<String>("code fragment class name")
-
-        /** Entry point method name for the code fragment. */
-        public val CODE_FRAGMENT_METHOD_NAME: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey<String>("code fragment method name")
-    }
-
-    /**
-     * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
-     *
-     * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException]. The implementation should wrap the
-     * `compile()` call into a `try`/`catch` block when necessary.
-     *
-     * @param file A file to compile.
-     *  The file must be either a source module file, or a [KtCodeFragment].
-     *  For a [KtCodeFragment], a source module context, a compiled library source context, or an empty context(`null`) are supported.
-     *
-     * @param configuration The compiler configuration.
-     *  It is recommended to submit at least the module name ([CommonConfigurationKeys.MODULE_NAME])
-     *  and language version settings ([CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]).
-     *
-     * @param target The target platform of the compilation.
-     *
-     * @param allowedErrorFilter A filter for allowed errors. Compilation will be aborted if there are errors that this filter rejects.
-     */
-    @KaExperimentalApi
-    @Throws(KaCodeCompilationException::class)
-    public fun compile(
-        file: KtFile,
-        configuration: CompilerConfiguration,
-        target: KaCompilerTarget,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean
-    ): KaCompilationResult
 }
 
 /**
