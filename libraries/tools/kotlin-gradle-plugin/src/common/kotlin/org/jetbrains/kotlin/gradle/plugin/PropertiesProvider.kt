@@ -716,7 +716,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION = property("kotlin.mpp.enableIntransitiveMetadataConfiguration")
         val KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE = property("kotlin.mpp.applyDefaultHierarchyTemplate")
         val KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION = property("kotlin.mpp.enableResourcesPublication")
-        val KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY = property("kotlin.mpp.resourcesResolutionStrategy")
         val KOTLIN_MPP_FILTER_RESOURCES_BY_EXTENSION = property("kotlin.mpp.filterResourcesByExtension")
         val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = property("kotlin.native.enableDependencyPropagation")
         val KOTLIN_NATIVE_CACHE_ORCHESTRATION = property("kotlin.native.cacheOrchestration")
