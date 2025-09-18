@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.SirErrorType
 import org.jetbrains.kotlin.sir.SirExistentialType
 import org.jetbrains.kotlin.sir.SirFunctionalType
 import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
@@ -29,6 +30,33 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         SirTypeNamer.KotlinNameType.FQN -> kotlinFqName(sirType)
         SirTypeNamer.KotlinNameType.PARAMETRIZED -> kotlinParametrizedName(sirType)
     }
+
+    override fun kotlinPrimitiveFqNameIfAny(sirType: SirType): String? {
+        return (sirType as? SirNominalType)?.typeDeclaration?.primitiveFqNameIfAny()
+    }
+
+    private fun SirScopeDefiningDeclaration.primitiveFqNameIfAny(): String? {
+        return primitiveFqNameMap[this]
+    }
+
+    private val primitiveFqNameMap = hashMapOf<SirScopeDefiningDeclaration, String>(
+        SirSwiftModule.bool to "Boolean",
+
+        SirSwiftModule.int8 to "Byte",
+        SirSwiftModule.int16 to "Short",
+        SirSwiftModule.int32 to "Int",
+        SirSwiftModule.int64 to "Long",
+
+        SirSwiftModule.uint8 to "UByte",
+        SirSwiftModule.uint16 to "UShort",
+        SirSwiftModule.uint32 to "UInt",
+        SirSwiftModule.uint64 to "ULong",
+
+        SirSwiftModule.double to "Double",
+        SirSwiftModule.float to "Float",
+
+        SirSwiftModule.utf16CodeUnit to "Char",
+    )
 
     private fun kotlinFqName(type: SirType): String = when (type) {
         is SirNominalType -> kotlinFqName(type)
@@ -49,28 +77,13 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
     @OptIn(KaExperimentalApi::class)
     private fun kotlinFqName(type: SirNominalType): String {
-        return when (val declaration = type.typeDeclaration) {
+        val declaration = type.typeDeclaration
+        declaration.primitiveFqNameIfAny()?.let { return it }
+        return when (declaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             KotlinRuntimeSupportModule.kotlinBridgeable -> "kotlin.Any"
             SirSwiftModule.anyHashable -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
-
-            SirSwiftModule.bool -> "Boolean"
-
-            SirSwiftModule.int8 -> "Byte"
-            SirSwiftModule.int16 -> "Short"
-            SirSwiftModule.int32 -> "Int"
-            SirSwiftModule.int64 -> "Long"
-
-            SirSwiftModule.uint8 -> "UByte"
-            SirSwiftModule.uint16 -> "UShort"
-            SirSwiftModule.uint32 -> "UInt"
-            SirSwiftModule.uint64 -> "ULong"
-
-            SirSwiftModule.double -> "Double"
-            SirSwiftModule.float -> "Float"
-
-            SirSwiftModule.utf16CodeUnit -> "Char"
 
             SirSwiftModule.unsafeMutableRawPointer -> "kotlin.native.internal.NativePtr"
 

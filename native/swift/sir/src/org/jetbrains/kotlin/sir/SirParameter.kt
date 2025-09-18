@@ -10,6 +10,7 @@ class SirParameter(
     val parameterName: String? = null, // internal function parameter name
     val type: SirType,
     val origin: Origin? = null,
+    val isVariadic: Boolean = false,
 ) {
     interface Origin
 
