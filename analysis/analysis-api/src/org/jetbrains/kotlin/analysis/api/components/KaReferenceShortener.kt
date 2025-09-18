@@ -20,6 +20,45 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
+@KaIdeApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaReferenceShortener : KaSessionComponent {
+    /**
+     * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
+     * shorten enum entries.  In case of KDoc shortens reference only if it is already imported.
+     *
+     * N.B. This API is not implemented for the FE10 implementation!
+     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
+     *
+     * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
+     */
+    @KaIdeApi
+    public fun collectPossibleReferenceShortenings(
+        file: KtFile,
+        selection: TextRange = file.textRange,
+        shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
+        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+    ): ShortenCommand
+
+    /**
+     * Collects possible references to shorten in [element]s text range. By default, it shortens a fully-qualified members to the outermost
+     * class and does not shorten enum entries.
+     *
+     * N.B. This API is not implemented for the FE10 implementation!
+     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
+     *
+     * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
+     */
+    @KaIdeApi
+    public fun collectPossibleReferenceShorteningsInElement(
+        element: KtElement,
+        shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
+        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+    ): ShortenCommand
+}
+
 /**
  * @property removeThis If set to `true`, reference shortener will detect redundant `this` qualifiers
  * and will collect them to [ShortenCommand.listOfQualifierToShortenInfo].
@@ -116,45 +155,6 @@ public enum class ShortenStrategy {
             }
         }
     }
-}
-
-@KaIdeApi
-@SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaReferenceShortener : KaSessionComponent {
-    /**
-     * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
-     * shorten enum entries.  In case of KDoc shortens reference only if it is already imported.
-     *
-     * N.B. This API is not implemented for the FE10 implementation!
-     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
-     *
-     * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
-     */
-    @KaIdeApi
-    public fun collectPossibleReferenceShortenings(
-        file: KtFile,
-        selection: TextRange = file.textRange,
-        shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
-        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
-    ): ShortenCommand
-
-    /**
-     * Collects possible references to shorten in [element]s text range. By default, it shortens a fully-qualified members to the outermost
-     * class and does not shorten enum entries.
-     *
-     * N.B. This API is not implemented for the FE10 implementation!
-     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
-     *
-     * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
-     */
-    @KaIdeApi
-    public fun collectPossibleReferenceShorteningsInElement(
-        element: KtElement,
-        shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
-        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
-    ): ShortenCommand
 }
 
 /**
