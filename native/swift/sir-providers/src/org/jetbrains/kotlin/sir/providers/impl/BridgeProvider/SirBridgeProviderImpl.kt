@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
-import org.jetbrains.kotlin.name.ClassId.Companion.topLevel
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -146,7 +145,22 @@ private class BridgeFunctionDescriptor(
     override val name
         get() = kotlinFqName.joinToString(separator = ".") { it.kotlinIdentifier }
 
-    override val argNames get() = this.parameters.map { "__${it.name}".kotlinIdentifier }
+    override val argNames
+        get() = buildList {
+            var useNamed = false
+            parameters.forEachIndexed { index, bridgeParameter ->
+                val argName = buildString {
+                    if (bridgeParameter.bridge is Bridge.AsNSArrayForVariadic) {
+                        append("*")
+                        useNamed = true
+                    } else if (useNamed && bridgeParameter.isExplicit) {
+                        append("${bridgeParameter.name} = ")
+                    }
+                    append("__${bridgeParameter.name}".kotlinIdentifier)
+                }
+                add(argName)
+            }
+        }
 
     override fun buildCall(args: String): String {
         return if (selfParameter == null) {
