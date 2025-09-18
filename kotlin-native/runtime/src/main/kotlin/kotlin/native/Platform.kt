@@ -172,12 +172,6 @@ private external fun Platform_getMemoryLeakChecker(): Boolean
 @GCUnsafeCall("Konan_Platform_setMemoryLeakChecker")
 private external fun Platform_setMemoryLeakChecker(value: Boolean): Unit
 
-@GCUnsafeCall("Konan_Platform_getCleanersLeakChecker")
-private external fun Platform_getCleanersLeakChecker(): Boolean
-
-@GCUnsafeCall("Konan_Platform_setCleanersLeakChecker")
-private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit
-
 @GCUnsafeCall("Konan_Platform_getAvailableProcessorsEnv")
 @Escapes.Nothing
 private external fun Platform_getAvailableProcessorsEnv(): String?

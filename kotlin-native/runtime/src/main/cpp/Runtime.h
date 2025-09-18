@@ -38,8 +38,6 @@ void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState,
 
 bool Kotlin_memoryLeakCheckerEnabled();
 
-bool Kotlin_cleanersLeakCheckerEnabled();
-
 bool Kotlin_forceCheckedShutdown();
 
 #ifdef __cplusplus
