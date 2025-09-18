@@ -1076,6 +1076,18 @@ public class JavaScriptParserBaseListener implements JavaScriptParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterImportMetaExpression(JavaScriptParser.ImportMetaExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitImportMetaExpression(JavaScriptParser.ImportMetaExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPreDecreaseExpression(JavaScriptParser.PreDecreaseExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}

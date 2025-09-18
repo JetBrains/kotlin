@@ -411,6 +411,7 @@ singleExpressionImpl
     | This                                                                         # ThisExpression
     | identifier                                                                   # IdentifierExpression
     | Super                                                                        # SuperExpression
+    | Import '.' Meta                                                              # ImportMetaExpression
     | literal                                                                      # LiteralExpression
     | arrayLiteral                                                                 # ArrayLiteralExpression
     | objectLiteral                                                                # ObjectLiteralExpression

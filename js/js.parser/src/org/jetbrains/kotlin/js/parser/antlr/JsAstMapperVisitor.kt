@@ -632,8 +632,9 @@ class JsAstMapperVisitor(
         return JsNullLiteral()
     }
 
-    override fun visitImportExpression(ctx: JavaScriptParser.ImportExpressionContext): JsNode? {
-        raiseParserException("Import expressions are not supported yet")
+    override fun visitImportExpression(ctx: JavaScriptParser.ImportExpressionContext): JsInvocation {
+        val argument = visitNode<JsExpression>(ctx.singleExpressionImpl())
+        return JsInvocation(makeRefNode(ctx.Import().text), argument)
     }
 
     override fun visitEqualityExpression(ctx: JavaScriptParser.EqualityExpressionContext): JsBinaryOperation {
@@ -662,6 +663,12 @@ class JsAstMapperVisitor(
 
     override fun visitSuperExpression(ctx: JavaScriptParser.SuperExpressionContext): JsNode? {
         raiseParserException("Super calls are not supported yet", ctx)
+    }
+
+    override fun visitImportMetaExpression(ctx: JavaScriptParser.ImportMetaExpressionContext?): JsNode? {
+        return makeRefNode("meta").apply {
+            qualifier = makeRefNode("import")
+        }
     }
 
     override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext): JsBinaryOperation {
