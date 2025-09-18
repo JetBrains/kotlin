@@ -180,7 +180,7 @@ class JsAstMapperVisitor(
         return when {
             initSequence != null -> JsFor(initSequence, condition, increment, body)
             initDeclaration != null -> JsFor(initDeclaration, condition, increment, body)
-            else -> raiseParserException("Invalid 'for' statement: ${ctx.text}", ctx)
+            else -> JsFor(null as JsVars?, condition, increment, body)
         }
     }
 
