@@ -26,7 +26,10 @@ sealed class S {
 
 val z: S = S.Z()
 
+@OptIn(ExperimentalContracts::class)
+fun box(): String = test()
+
 @ExperimentalContracts
-fun box(): String = when (val w = z) {
+fun test(): String = when (val w = z) {
     is S.Z -> runBlocking { w.f() }
 }
