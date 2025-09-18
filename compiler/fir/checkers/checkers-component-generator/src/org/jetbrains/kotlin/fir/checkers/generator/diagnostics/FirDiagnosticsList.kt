@@ -120,6 +120,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             LanguageFeature.ForbidParenthesizedLhsInAssignments,
             PositioningStrategy.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
         )
+        val UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION by deprecationError<PsiElement>(
+            LanguageFeature.ForbidArrayLiteralsInNonAnnotationContexts,
+        )
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {

@@ -1,19 +1,19 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun test(): Array<Int> {
-    <!UNSUPPORTED!>[1, 2]<!>
-    <!UNSUPPORTED!>[1, 2]<!>[0]
-    <!UNSUPPORTED!>[1, 2]<!>.get(0)
+    <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2]<!>
+    <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2]<!>[0]
+    <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2]<!>.get(0)
 
-    foo(<!UNSUPPORTED!>[""]<!>)
+    foo(<!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[""]<!>)
 
-    val p = <!UNSUPPORTED!>[1, 2]<!> <!UNRESOLVED_REFERENCE!>+<!> <!UNSUPPORTED!>[3, 4]<!>
+    val p = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2]<!> <!UNRESOLVED_REFERENCE!>+<!> <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[3, 4]<!>
 
-    return <!UNSUPPORTED!>[1, 2]<!>
+    return <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[1, 2]<!>
 }
 
-fun foo(a: Array<String> = <!UNSUPPORTED!>[""]<!>) {}
+fun foo(a: Array<String> = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[""]<!>) {}
 
-class A(val a: Array<Int> = <!UNSUPPORTED!>[]<!>)
+class A(val a: Array<Int> = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR!>[]<!>)
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, collectionLiteral, functionDeclaration, integerLiteral,
 localProperty, primaryConstructor, propertyDeclaration, stringLiteral */
