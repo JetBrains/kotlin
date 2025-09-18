@@ -41,44 +41,27 @@ internal object TestApiDependenciesChecker : KotlinGradleProjectChecker {
     /**
      * Get all declared `testApi` dependencies, grouped by compilation.
      *
-     * Because api dependencies are copied from 'main' to 'test'
-     * (see [org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationAssociator])
-     * we must exclude 'main' API dependencies.
-     *
      * Fetches Configurations leniently, just in case a plugin (e.g. AGP) isn't configured correctly.
      */
     private fun KotlinGradleProjectCheckerContext.testApiDependencies(
         target: KotlinTarget,
     ): List<CompilationDependenciesPair> {
 
-        val mainCompilations = target.compilations
-            .filter { it.name == KotlinCompilation.MAIN_COMPILATION_NAME }
-
         val testCompilations = target.compilations
             .filter { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
 
-        val apiDependenciesFromMain = mainCompilations
-            .flatMap { compilation ->
+        return testCompilations.map { compilation ->
+            val apiDependencies = compilation.allKotlinSourceSets.flatMap { sourceSet ->
                 project.configurations
-                    .findByName(compilation.apiConfigurationName)
-                    ?.allDependencies
+                    .findByName(sourceSet.apiConfigurationName)
+                    ?.dependencies
                     .orEmpty()
                     .map { it.stringCoordinates() }
             }
-            .toSet()
-
-        return testCompilations
-            .map { compilation ->
-                val apiDependenciesFromTest = project.configurations
-                    .findByName(compilation.apiConfigurationName)
-                    ?.allDependencies
-                    .orEmpty()
-                    .map { it.stringCoordinates() }
-
-                CompilationDependenciesPair(
-                    compilation,
-                    apiDependenciesFromTest - apiDependenciesFromMain,
-                )
-            }
+            CompilationDependenciesPair(
+                compilation,
+                apiDependencies,
+            )
+        }
     }
 }
