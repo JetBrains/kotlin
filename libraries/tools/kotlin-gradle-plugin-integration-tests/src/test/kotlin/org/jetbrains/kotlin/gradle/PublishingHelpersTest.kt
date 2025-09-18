@@ -194,6 +194,23 @@ class PublishingHelpersTest : KGPBaseTest() {
     }
 
     @GradleTest
+    @DisplayName("Should show info about missing password")
+    internal fun shouldShowInfoAboutMissingPassword(gradleVersion: GradleVersion) {
+        checkSigningConfigurationTest(gradleVersion) { buildArguments ->
+            buildScriptInjection {
+                signing.sign(publishing.publications)
+            }
+            buildAndFail(*buildArguments.filter { !it.startsWith("-Psigning.password") }.toTypedArray()) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.SigningMisconfigured,
+                    "* 'signing.password' is not set. Please ensure you have the 'signing.password' property set to your secret key's password."
+                )
+            }
+        }
+    }
+
+
+    @GradleTest
     @DisplayName("Should fail signing check when key not uploaded")
     internal fun shouldFailSigningCheckWhenKeyNotUploaded(gradleVersion: GradleVersion) {
         checkSigningConfigurationTest(gradleVersion) { buildArguments ->
