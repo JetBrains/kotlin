@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -119,7 +120,7 @@ class JsIrBackendContext(
     private val internalPackage = module.getPackage(JsStandardClassIds.BASE_JS_PACKAGE)
 
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
-    val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, configuration)
+    val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, configuration.compileLongAsBigint)
 
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 
