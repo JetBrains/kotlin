@@ -38,7 +38,7 @@ class InlineFunctionSerializationPreProcessing(
 
         val preprocessed = declaration
             .copyAndEraseTypeParameters()
-            .convertToPublicTopLevel()
+            .convertToPrivateTopLevel()
             .erasePrivateSymbols()
             .applyCrossModuleFunctionInlining()
 
@@ -53,8 +53,8 @@ class InlineFunctionSerializationPreProcessing(
             .preprocess(this) as IrSimpleFunction
     }
 
-    private fun IrSimpleFunction.convertToPublicTopLevel(): IrSimpleFunction {
-        visibility = DescriptorVisibilities.PUBLIC
+    private fun IrSimpleFunction.convertToPrivateTopLevel(): IrSimpleFunction {
+        visibility = DescriptorVisibilities.PRIVATE
         correspondingPropertySymbol = null
         parent = file
 

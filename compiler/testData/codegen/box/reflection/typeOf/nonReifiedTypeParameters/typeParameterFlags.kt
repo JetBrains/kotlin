@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR, WASM_JS
-// ^^^ KT-81070: IrClassSymbolImpl is unbound. Signature: kotlin/Any|null[0]
 // WITH_REFLECT
 // WITH_STDLIB
 
