@@ -281,4 +281,5 @@ abstract class FirDelegatedMembersFilter : FirSessionComponent {
     }
 }
 
-private val FirSession.delegatedMembersFilter: FirDelegatedMembersFilter by FirSession.sessionComponentAccessor()
+private val FirSession.delegatedMembersFilter: FirDelegatedMembersFilter
+        by FirSession.sessionComponentAccessorWithDefault(FirDelegatedMembersFilter.Default)

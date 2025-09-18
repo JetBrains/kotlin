@@ -62,7 +62,6 @@ object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.C
 
     private fun FirSession.registerComponents(compilerConfiguration: CompilerConfiguration) {
         val moduleKind = compilerConfiguration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
-        registerDefaultComponents()
         registerJsComponents(moduleKind)
     }
 

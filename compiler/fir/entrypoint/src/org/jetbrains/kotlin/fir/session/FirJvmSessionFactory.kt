@@ -128,7 +128,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
     }
 
     override fun FirSession.registerLibrarySessionComponents(c: LibraryContext) {
-        registerDefaultComponents()
         registerJavaComponents(c.projectEnvironment.getJavaModuleResolver(), c.predefinedJavaComponents)
     }
 
@@ -211,7 +210,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
     }
 
     override fun FirSession.registerSourceSessionComponents(c: SourceContext) {
-        registerDefaultComponents()
         registerJavaComponents(c.projectEnvironment.getJavaModuleResolver(), c.predefinedJavaComponents)
         register(FirJvmTargetProvider::class, FirJvmTargetProvider(c.jvmTarget))
     }

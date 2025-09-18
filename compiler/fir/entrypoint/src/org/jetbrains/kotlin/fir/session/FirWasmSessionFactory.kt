@@ -25,7 +25,6 @@ object FirWasmSessionFactory : AbstractFirKlibSessionFactory<FirWasmSessionFacto
     }
 
     override fun FirSession.registerLibrarySessionComponents(c: Context) {
-        registerDefaultComponents()
         registerWasmComponents(c.wasmTarget)
     }
 
@@ -42,7 +41,6 @@ object FirWasmSessionFactory : AbstractFirKlibSessionFactory<FirWasmSessionFacto
     override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Context) {}
 
     override fun FirSession.registerSourceSessionComponents(c: Context) {
-        registerDefaultComponents()
         registerWasmComponents(c.wasmTarget)
     }
 

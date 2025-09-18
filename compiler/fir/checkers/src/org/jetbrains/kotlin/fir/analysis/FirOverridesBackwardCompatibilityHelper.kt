@@ -71,4 +71,5 @@ abstract class FirOverridesBackwardCompatibilityHelper : FirSessionComponent {
     protected open fun additionalCheck(member: FirCallableSymbol<*>): Boolean? = null
 }
 
-val FirSession.overridesBackwardCompatibilityHelper: FirOverridesBackwardCompatibilityHelper by FirSession.sessionComponentAccessor()
+val FirSession.overridesBackwardCompatibilityHelper: FirOverridesBackwardCompatibilityHelper
+        by FirSession.sessionComponentAccessorWithDefault(FirDefaultOverridesBackwardCompatibilityHelper)

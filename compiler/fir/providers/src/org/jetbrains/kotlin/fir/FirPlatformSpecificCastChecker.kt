@@ -17,4 +17,5 @@ abstract class FirPlatformSpecificCastChecker : FirSessionComponent {
     }
 }
 
-val FirSession.firPlatformSpecificCastChecker: FirPlatformSpecificCastChecker by FirSession.sessionComponentAccessor()
+val FirSession.firPlatformSpecificCastChecker: FirPlatformSpecificCastChecker
+        by FirSession.sessionComponentAccessorWithDefault(FirPlatformSpecificCastChecker.Default)

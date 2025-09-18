@@ -484,7 +484,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
 val FirSession.moduleVisibilityChecker: FirModuleVisibilityChecker? by FirSession.nullableSessionComponentAccessor()
 private val FirSession.privateVisibleFromDifferentModulesExtension: FirPrivateVisibleFromDifferentModuleExtension? by FirSession.nullableSessionComponentAccessor()
-val FirSession.visibilityChecker: FirVisibilityChecker by FirSession.sessionComponentAccessor()
+val FirSession.visibilityChecker: FirVisibilityChecker by FirSession.sessionComponentAccessorWithDefault(FirVisibilityChecker.Default)
 
 fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {
     return when (this) {
