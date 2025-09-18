@@ -5,16 +5,43 @@
 
 package org.jetbrains.kotlin.security;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Custom SecurityManager implementation for Kotlin compiler.
  * This replaces the standard java.lang.SecurityManager.
  */
 public class KotlinSecurityManager extends SecurityManager {
-    // Cache for checkRead(String file) results
-    private final Map<String, Boolean> readPermissionCache = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> readPermissionCache =
+            Collections.synchronizedMap(new LinkedHashMap<String, Boolean>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
+                    return size() > 10_000;
+                }
+            });
+    private final Map<String, Boolean> deletePermissionCache =
+            Collections.synchronizedMap(new LinkedHashMap<String, Boolean>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
+                    return size() > 10_000;
+                }
+            });
+    private final Map<String, Boolean> writePermissionCache =
+            Collections.synchronizedMap(new LinkedHashMap<String, Boolean>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
+                    return size() > 10_000;
+                }
+            });
+    private final Map<String, Boolean> execPermissionCache =
+            Collections.synchronizedMap(new LinkedHashMap<String, Boolean>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
+                    return size() > 10_000;
+                }
+            });
 
     /**
      * Public constructor required for JVM instantiation via -Djava.security.manager flag.
@@ -48,5 +75,47 @@ public class KotlinSecurityManager extends SecurityManager {
         super.checkRead(file);
         // If we get here, permission was granted, so cache the result
         readPermissionCache.put(file, Boolean.TRUE);
+    }
+
+    @Override
+    public void checkWrite(String file) {
+        // Check if we've already verified this file
+        if (writePermissionCache.containsKey(file)) {
+            // Permission was granted, so we can return immediately
+            return;
+        }
+
+        // Delegate to parent implementation for uncached files
+        super.checkWrite(file);
+        // If we get here, permission was granted, so cache the result
+        writePermissionCache.put(file, Boolean.TRUE);
+    }
+
+    @Override
+    public void checkDelete(String file) {
+        // Check if we've already verified this file
+        if (deletePermissionCache.containsKey(file)) {
+            // Permission was granted, so we can return immediately
+            return;
+        }
+
+        // Delegate to parent implementation for uncached files
+        super.checkDelete(file);
+        // If we get here, permission was granted, so cache the result
+        deletePermissionCache.put(file, Boolean.TRUE);
+    }
+
+    @Override
+    public void checkExec(String cmd) {
+        // Check if we've already verified this file
+        if (execPermissionCache.containsKey(cmd)) {
+            // Permission was granted, so we can return immediately
+            return;
+        }
+
+        // Delegate to parent implementation for uncached files
+        super.checkExec(cmd);
+        // If we get here, permission was granted, so cache the result
+        execPermissionCache.put(cmd, Boolean.TRUE);
     }
 }
