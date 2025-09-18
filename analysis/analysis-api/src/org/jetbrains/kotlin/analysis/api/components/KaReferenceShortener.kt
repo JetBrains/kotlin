@@ -10,6 +10,7 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -214,11 +215,18 @@ public interface ShortenCommand {
 }
 
 /**
- * @see KaReferenceShortener.collectPossibleReferenceShortenings
+ * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
+ * shorten enum entries.  In case of KDoc shortens reference only if it is already imported.
+ *
+ * N.B. This API is not implemented for the FE10 implementation!
+ * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
+ *
+ * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-context(context: KaReferenceShortener)
+@KaContextParameterApi
+context(s: KaSession)
 public fun collectPossibleReferenceShortenings(
     file: KtFile,
     selection: TextRange = file.textRange,
@@ -226,24 +234,42 @@ public fun collectPossibleReferenceShortenings(
     classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
     callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
 ): ShortenCommand {
-    return with(context) {
-        collectPossibleReferenceShortenings(file, selection, shortenOptions, classShortenStrategy, callableShortenStrategy)
+    return with(s) {
+        collectPossibleReferenceShortenings(
+            file = file,
+            selection = selection,
+            shortenOptions = shortenOptions,
+            classShortenStrategy = classShortenStrategy,
+            callableShortenStrategy = callableShortenStrategy,
+        )
     }
 }
 
 /**
- * @see KaReferenceShortener.collectPossibleReferenceShorteningsInElement
+ * Collects possible references to shorten in [element]s text range. By default, it shortens a fully-qualified members to the outermost
+ * class and does not shorten enum entries.
+ *
+ * N.B. This API is not implemented for the FE10 implementation!
+ * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
+ *
+ * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-context(context: KaReferenceShortener)
+@KaContextParameterApi
+context(s: KaSession)
 public fun collectPossibleReferenceShorteningsInElement(
     element: KtElement,
     shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
     classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
     callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
 ): ShortenCommand {
-    return with(context) {
-        collectPossibleReferenceShorteningsInElement(element, shortenOptions, classShortenStrategy, callableShortenStrategy)
+    return with(s) {
+        collectPossibleReferenceShorteningsInElement(
+            element = element,
+            shortenOptions = shortenOptions,
+            classShortenStrategy = classShortenStrategy,
+            callableShortenStrategy = callableShortenStrategy,
+        )
     }
 }

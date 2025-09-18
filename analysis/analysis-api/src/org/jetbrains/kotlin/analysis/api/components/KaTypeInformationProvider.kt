@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
@@ -77,6 +79,7 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      * A public value of type `T : Any?` can potentially be `null`. But one cannot assign `null` to such a variable because the instantiated
      * type may not be nullable.
      */
+    @KaNoContextParameterBridgeRequired
     @Deprecated("Use `isNullable` instead", ReplaceWith("this.isNullable"))
     public val KaType.canBeNull: Boolean
         get() = isNullable
@@ -342,276 +345,367 @@ public object DefaultTypeClassIds {
 }
 
 /**
- * @see KaTypeInformationProvider.isDenotable
+ * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
+ * Kotlin code, as opposed to being only constructible via compiler type operations (such as type inference).
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isDenotable: Boolean
-    get() = with(context) { isDenotable }
+    get() = with(s) { isDenotable }
 
 /**
- * @see KaTypeInformationProvider.isFunctionalInterface
+ * Whether the [KaType] is a [functional interface type](https://kotlinlang.org/docs/fun-interfaces.html), such as [Runnable]. Such
+ * types are also known as SAM types.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isFunctionalInterface: Boolean
-    get() = with(context) { isFunctionalInterface }
+    get() = with(s) { isFunctionalInterface }
 
 /**
- * @see KaTypeInformationProvider.functionTypeKind
+ * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.functionTypeKind: FunctionTypeKind?
-    get() = with(context) { functionTypeKind }
+    get() = with(s) { functionTypeKind }
 
 /**
- * @see KaTypeInformationProvider.isFunctionType
+ * Whether the [KaType] is a [kotlin.Function] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isFunctionType: Boolean
-    get() = with(context) { isFunctionType }
+    get() = with(s) { isFunctionType }
 
 /**
- * @see KaTypeInformationProvider.isKFunctionType
+ * Whether the [KaType] is a [kotlin.reflect.KFunction] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isKFunctionType: Boolean
-    get() = with(context) { isKFunctionType }
+    get() = with(s) { isKFunctionType }
 
 /**
- * @see KaTypeInformationProvider.isSuspendFunctionType
+ * Whether the [KaType] is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions)
+ * type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isSuspendFunctionType: Boolean
-    get() = with(context) { isSuspendFunctionType }
+    get() = with(s) { isSuspendFunctionType }
 
 /**
- * @see KaTypeInformationProvider.isKSuspendFunctionType
+ * Whether the [KaType] is a `KSuspendFunction` type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isKSuspendFunctionType: Boolean
-    get() = with(context) { isKSuspendFunctionType }
+    get() = with(s) { isKSuspendFunctionType }
 
 /**
- * @see KaTypeInformationProvider.isNullable
+ * Whether a public value of the [KaType] can potentially be `null`.
+ *
+ * If a type can be `null`, it means that this type is not a subtype of [Any]. However, it does not mean one can assign `null` to a
+ * variable of this type. It may be unknown whether this type can accept `null`.
+ *
+ * #### Example
+ *
+ * A public value of type `T : Any?` can potentially be `null`. But one cannot assign `null` to such a variable because the instantiated
+ * type may not be nullable.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isNullable: Boolean
-    get() = with(context) { isNullable }
+    get() = with(s) { isNullable }
 
 /**
- * @see KaTypeInformationProvider.isMarkedNullable
+ * Whether the [KaType] is explicitly marked as nullable, i.e., is represented as `T?`.
+ *
+ * Note that this property just reflects the presence of nullability in the type signature,
+ * and sometimes [isMarkedNullable] being false doesn't imply that the given type cannot hold `null` or be assigned with it.
+ *
+ * For example, [isMarkedNullable] doesn't expand type aliases to check the nullability of their underlying type:
+ * ```kotlin
+ * typealias NonMarkedNullableAlias = String?
+ *
+ * fun main() {
+ *     val x: NonMarkedNullableAlias = null
+ * }
+ * ```
+ * The type of `x` is `NonMarkedNullableAlias`, which is not marked as nullable. However, it still represents a nullable type and can hold `null` and can be assigned with that.
+ *
+ * To explicitly check whether a type can potentially hold `null`, use [isNullable].
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isMarkedNullable: Boolean
-    get() = with(context) { isMarkedNullable }
+    get() = with(s) { isMarkedNullable }
 
 /**
- * @see KaTypeInformationProvider.hasFlexibleNullability
+ * Whether the [KaType] is a [org.jetbrains.kotlin.analysis.api.types.KaFlexibleType] / [org.jetbrains.kotlin.analysis.api.types.KaDynamicType] with flexible nullability or [org.jetbrains.kotlin.analysis.api.types.KaErrorType] with unknown nullability.
+ * Both safe and ordinary calls are valid on such types.
+ *
+ * Note that a flexible / dynamic type has a flexible nullability when the lower bound is non-nullable and the upper bound is nullable.
+ * E.g. `T!` has `T` as the lower bound and `T?` as the upper bound, hence it has a flexible nullability.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.hasFlexibleNullability: Boolean
-    get() = with(context) { hasFlexibleNullability }
+    get() = with(s) { hasFlexibleNullability }
 
 /**
- * @see KaTypeInformationProvider.isUnitType
+ * Whether the [KaType] is a [Unit] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isUnitType: Boolean
-    get() = with(context) { isUnitType }
+    get() = with(s) { isUnitType }
 
 /**
- * @see KaTypeInformationProvider.isIntType
+ * Whether the [KaType] is an [Int] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isIntType: Boolean
-    get() = with(context) { isIntType }
+    get() = with(s) { isIntType }
 
 /**
- * @see KaTypeInformationProvider.isLongType
+ * Whether the [KaType] is a [Long] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isLongType: Boolean
-    get() = with(context) { isLongType }
+    get() = with(s) { isLongType }
 
 /**
- * @see KaTypeInformationProvider.isShortType
+ * Whether the [KaType] is a [Short] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isShortType: Boolean
-    get() = with(context) { isShortType }
+    get() = with(s) { isShortType }
 
 /**
- * @see KaTypeInformationProvider.isByteType
+ * Whether the [KaType] is a [Byte] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isByteType: Boolean
-    get() = with(context) { isByteType }
+    get() = with(s) { isByteType }
 
 /**
- * @see KaTypeInformationProvider.isFloatType
+ * Whether the [KaType] is a [Float] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isFloatType: Boolean
-    get() = with(context) { isFloatType }
+    get() = with(s) { isFloatType }
 
 /**
- * @see KaTypeInformationProvider.isDoubleType
+ * Whether the [KaType] is a [Double] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isDoubleType: Boolean
-    get() = with(context) { isDoubleType }
+    get() = with(s) { isDoubleType }
 
 /**
- * @see KaTypeInformationProvider.isCharType
+ * Whether the [KaType] is a [Char] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isCharType: Boolean
-    get() = with(context) { isCharType }
+    get() = with(s) { isCharType }
 
 /**
- * @see KaTypeInformationProvider.isBooleanType
+ * Whether the [KaType] is a [Boolean] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isBooleanType: Boolean
-    get() = with(context) { isBooleanType }
+    get() = with(s) { isBooleanType }
 
 /**
- * @see KaTypeInformationProvider.isStringType
+ * Whether the [KaType] is a [String] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isStringType: Boolean
-    get() = with(context) { isStringType }
+    get() = with(s) { isStringType }
 
 /**
- * @see KaTypeInformationProvider.isCharSequenceType
+ * Whether the [KaType] is a [CharSequence] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isCharSequenceType: Boolean
-    get() = with(context) { isCharSequenceType }
+    get() = with(s) { isCharSequenceType }
 
 /**
- * @see KaTypeInformationProvider.isAnyType
+ * Whether the [KaType] is an [Any] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isAnyType: Boolean
-    get() = with(context) { isAnyType }
+    get() = with(s) { isAnyType }
 
 /**
- * @see KaTypeInformationProvider.isNothingType
+ * Whether the [KaType] is a [Nothing] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isNothingType: Boolean
-    get() = with(context) { isNothingType }
+    get() = with(s) { isNothingType }
 
 /**
- * @see KaTypeInformationProvider.isUIntType
+ * Whether the [KaType] is a [UInt] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isUIntType: Boolean
-    get() = with(context) { isUIntType }
+    get() = with(s) { isUIntType }
 
 /**
- * @see KaTypeInformationProvider.isULongType
+ * Whether the [KaType] is a [ULong] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isULongType: Boolean
-    get() = with(context) { isULongType }
+    get() = with(s) { isULongType }
 
 /**
- * @see KaTypeInformationProvider.isUShortType
+ * Whether the [KaType] is a [UShort] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isUShortType: Boolean
-    get() = with(context) { isUShortType }
+    get() = with(s) { isUShortType }
 
 /**
- * @see KaTypeInformationProvider.isUByteType
+ * Whether the [KaType] is a [UByte] type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isUByteType: Boolean
-    get() = with(context) { isUByteType }
+    get() = with(s) { isUByteType }
 
 /**
- * @see KaTypeInformationProvider.expandedSymbol
+ * The class symbol backing the given [KaType], if available.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.expandedSymbol: KaClassSymbol?
-    get() = with(context) { expandedSymbol }
+    get() = with(s) { expandedSymbol }
 
 /**
- * @see KaTypeInformationProvider.fullyExpandedType
+ * The type that corresponds to the given [KaType] with fully expanded type aliases.
+ *
+ * Type aliases are usually expanded immediately by the compiler, so most [KaType]s should already present in their expanded forms.
+ * Nonetheless, it is possible to obtain unexpanded types from the Analysis API, and [fullyExpandedType] may be used to expand type
+ * aliases in such types.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * interface Base
+ *
+ * typealias FirstAlias = @Anno1 Base
+ * typealias SecondAlias = @Anno2 FirstAlias
+ *
+ * fun foo(): @Anno3 SecondAlias = TODO()
+ * ```
+ *
+ * The return type of `foo()` will be `@Anno3 @Anno2 @Anno1 Base` instead of `@Anno3 SecondAlias`
+ *
+ * @see KaType.abbreviation
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.fullyExpandedType: KaType
-    get() = with(context) { fullyExpandedType }
+    get() = with(s) { fullyExpandedType }
 
 /**
- * @see KaTypeInformationProvider.isArrayOrPrimitiveArray
+ * Whether the [KaType] is an array or a primitive array type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isArrayOrPrimitiveArray: Boolean
-    get() = with(context) { isArrayOrPrimitiveArray }
+    get() = with(s) { isArrayOrPrimitiveArray }
 
 /**
- * @see KaTypeInformationProvider.isNestedArray
+ * Whether the [KaType] is an array or a primitive array type, and its element is also an array type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isNestedArray: Boolean
-    get() = with(context) { isNestedArray }
+    get() = with(s) { isNestedArray }
 
 /**
- * @see KaTypeInformationProvider.isClassType
+ * Checks whether the given [KaType] is a class type with the given [ClassId].
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public fun KaType.isClassType(classId: ClassId): Boolean {
-    return with(context) { isClassType(classId) }
+    return with(s) {
+        isClassType(
+            classId = classId,
+        )
+    }
 }
 
 /**
- * @see KaTypeInformationProvider.isPrimitive
+ * Whether the [KaType] is a primitive type.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.isPrimitive: Boolean
-    get() = with(context) { isPrimitive }
+    get() = with(s) { isPrimitive }
 
 /**
- * @see KaTypeInformationProvider.defaultInitializer
+ * The default initializer for the given [KaType], or `null` if the type is neither nullable, a primitive, nor a string.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(context: KaTypeInformationProvider)
+context(s: KaSession)
 public val KaType.defaultInitializer: String?
-    get() = with(context) { defaultInitializer }
+    get() = with(s) { defaultInitializer }

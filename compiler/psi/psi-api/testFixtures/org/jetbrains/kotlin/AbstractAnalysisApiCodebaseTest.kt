@@ -175,10 +175,10 @@ abstract class AbstractAnalysisApiCodebaseValidationTest :
         for (root in roots) {
             for (file in root.walkTopDown()) {
                 val psiFile = file.getPsiFile(psiManager, fileSystem) ?: continue
-                psiFile.processFile()
+                processFile(file, psiFile)
             }
         }
     }
 
-    abstract fun PsiFile.processFile()
+    abstract fun processFile(file: File, psiFile: PsiFile)
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -60,20 +61,34 @@ public enum class KaDiagnosticCheckerFilter {
 }
 
 /**
- * @see KaDiagnosticProvider.diagnostics
+ * Collects diagnostics for the given element.
+ *
+ * **Caution:** The result might not include diagnostics that are reported for child elements, as well as diagnostics provided by the
+ * checkers of containing elements. Therefore, the API might not return all expected diagnostics for an element.
+ * [KtFile.collectDiagnostics] should be preferred at the current time.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaDiagnosticProvider)
+@KaContextParameterApi
+context(s: KaSession)
 public fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
-    return with(context) { diagnostics(filter) }
+    return with(s) {
+        diagnostics(
+            filter = filter,
+        )
+    }
 }
 
 /**
- * @see KaDiagnosticProvider.collectDiagnostics
+ * Collects all diagnostics for the given file.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaDiagnosticProvider)
+context(s: KaSession)
 public fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
-    return with(context) { collectDiagnostics(filter) }
+    return with(s) {
+        collectDiagnostics(
+            filter = filter,
+        )
+    }
 }

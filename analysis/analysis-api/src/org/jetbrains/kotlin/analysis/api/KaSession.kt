@@ -186,36 +186,46 @@ public fun KaSession.getModule(element: PsiElement): KaModule =
     KaModuleProvider.getModule(useSiteModule.project, element, useSiteModule)
 
 /**
- * @see KaSession.useSiteModule
+ * The [KaModule] from whose perspective the analysis is performed. The use-site module defines the resolution scope of the [KaSession],
+ * which signifies *where* symbols are located (such as sources, dependencies, and so on) and *which* symbols can be found in the first
+ * place.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaSession)
+context(s: KaSession)
 public val useSiteModule: KaModule
-    get() = with(context) { useSiteModule }
+    get() = with(s) { useSiteModule }
 
 /**
- * @see KaSession.useSiteSession
+ * The [KaSession] of the current analysis context.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaSession)
+context(s: KaSession)
 public val useSiteSession: KaSession
-    get() = with(context) { useSiteSession }
+    get() = with(s) { useSiteSession }
 
 /**
- * @see KaSession.restoreSymbol
+ * Returns the restored [KaSymbol] (possibly a new symbol instance) if the pointer is still valid, or `null` otherwise.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaSession)
+context(s: KaSession)
 public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? {
-    return with(context) { restoreSymbol() }
+    return with(s) {
+        restoreSymbol()
+    }
 }
 
 /**
- * @see KaSession.restore
+ * Returns the restored [KaType] (possibly a new type instance) if the pointer is still valid, or `null` otherwise.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaSession)
+@KaContextParameterApi
+context(s: KaSession)
 public fun <T : KaType> KaTypePointer<T>.restore(): T? {
-    return with(context) { restore() }
+    return with(s) {
+        restore()
+    }
 }

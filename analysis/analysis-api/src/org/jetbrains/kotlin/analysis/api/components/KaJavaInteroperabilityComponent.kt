@@ -12,6 +12,7 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -128,11 +129,37 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
 }
 
 /**
- * @see KaJavaInteroperabilityComponent.asPsiType
+ * Converts the given [KaType] to a [PsiType] in the context of the [useSitePosition].
+ *
+ * [PsiType] is JVM conception, so this method will return `null` for non-JVM platforms, unless [allowNonJvmPlatforms] is set.
+ *
+ * @receiver The [KaType] to convert.
+ *
+ * @param useSitePosition Determines whether the given [KaType] needs to be approximated.
+ * For instance, if the given type is local but the use site is in the same local scope, we do not need to approximate the local type.
+ * However, when exposed to the public as a return type, the resulting type must be approximated accordingly.
+ *
+ * @param allowErrorTypes Determines whether the [KaType] should still be converted if it contains an error type. When this option is
+ * `false`, the result will be `null` if the [KaType] contains an error type. When `true`, erroneous types will be replaced with the
+ * `error.NonExistentClass` type.
+ *
+ * @param suppressWildcards Indicates whether wildcards in type arguments should be suppressed. This option works similar to adding a
+ * [JvmSuppressWildcards] annotation to the containing declaration.
+ *
+ * - `true` means they should be suppressed.
+ * - `false` means they should appear.
+ * - `null` means that the default applies, where wildcard suppression/appearance is determined by type annotations.
+ *
+ * @param preserveAnnotations Whether annotations from the original [KaType] should be included in the resulting [PsiType] with an
+ * appropriate conversion.
+ *
+ * @param allowNonJvmPlatforms Whether the [PsiType] should be computed even for non-JVM modules. The flag provides no validity
+ * guarantees – the returned type may be unresolvable from Java, or `null`.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaJavaInteroperabilityComponent)
+@KaContextParameterApi
+context(s: KaSession)
 public fun KaType.asPsiType(
     useSitePosition: PsiElement,
     allowErrorTypes: Boolean,
@@ -142,87 +169,121 @@ public fun KaType.asPsiType(
     preserveAnnotations: Boolean = true,
     allowNonJvmPlatforms: Boolean = false,
 ): PsiType? {
-    return with(context) {
+    return with(s) {
         asPsiType(
-            useSitePosition,
-            allowErrorTypes,
-            mode,
-            isAnnotationMethod,
-            suppressWildcards,
-            preserveAnnotations,
-            allowNonJvmPlatforms
+            useSitePosition = useSitePosition,
+            allowErrorTypes = allowErrorTypes,
+            mode = mode,
+            isAnnotationMethod = isAnnotationMethod,
+            suppressWildcards = suppressWildcards,
+            preserveAnnotations = preserveAnnotations,
+            allowNonJvmPlatforms = allowNonJvmPlatforms,
         )
     }
 }
 
 /**
- * @see KaJavaInteroperabilityComponent.asKaType
+ * Converts the given [PsiType] to a [KaType] in the context of the [useSitePosition].
+ *
+ * [useSitePosition] clarifies how to resolve some parts of the [PsiType]. For instance, it can be used to collect type parameters and
+ * apply them during the conversion.
+ *
+ * @receiver The [PsiType] to be converted.
+ *
+ * @return The converted [KaType], or `null` if conversion is not possible. For example, [PsiType] might not be resolvable.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaJavaInteroperabilityComponent)
+@KaContextParameterApi
+context(s: KaSession)
 public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
-    return with(context) { asKaType(useSitePosition) }
+    return with(s) {
+        asKaType(
+            useSitePosition = useSitePosition,
+        )
+    }
 }
 
 /**
- * @see KaJavaInteroperabilityComponent.mapToJvmType
+ * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
+ *
+ * @see TypeMappingMode
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaJavaInteroperabilityComponent)
+@KaContextParameterApi
+context(s: KaSession)
 public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type {
-    return with(context) { mapToJvmType(mode) }
+    return with(s) {
+        mapToJvmType(
+            mode = mode,
+        )
+    }
 }
 
 /**
- * @see KaJavaInteroperabilityComponent.isPrimitiveBacked
+ * Whether the given [KaType] is backed by a single JVM primitive type.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaJavaInteroperabilityComponent)
+@KaContextParameterApi
+context(s: KaSession)
 public val KaType.isPrimitiveBacked: Boolean
-    get() = with(context) { isPrimitiveBacked }
+    get() = with(s) { isPrimitiveBacked }
 
 /**
- * @see KaJavaInteroperabilityComponent.namedClassSymbol
+ * A [KaNamedClassSymbol] for the given [PsiClass], or `null` for anonymous classes, local classes, type parameters (which are also
+ * [PsiClass]es), and Kotlin light classes.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaJavaInteroperabilityComponent)
+context(s: KaSession)
 public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
-    get() = with(context) { namedClassSymbol }
+    get() = with(s) { namedClassSymbol }
 
 /**
- * @see KaJavaInteroperabilityComponent.callableSymbol
+ * A [KaCallableSymbol] for the given [PsiMember] method or field, or `null` for local declarations and Kotlin light classes.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaJavaInteroperabilityComponent)
+context(s: KaSession)
 public val PsiMember.callableSymbol: KaCallableSymbol?
-    get() = with(context) { callableSymbol }
+    get() = with(s) { callableSymbol }
 
 /**
- * @see KaJavaInteroperabilityComponent.containingJvmClassName
+ * The containing JVM class name for the given [KaCallableSymbol].
+ *
+ * The property works for both source and library declarations.
+ * The returned JVM class name is a fully qualified name separated by dots, such as `foo.bar.Baz.Companion`.
+ *
+ * Applicable only to JVM modules, and common modules with JVM targets.
+ * [containingJvmClassName] is always `null` all other kinds of modules.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaJavaInteroperabilityComponent)
+@KaContextParameterApi
+context(s: KaSession)
 public val KaCallableSymbol.containingJvmClassName: String?
-    get() = with(context) { containingJvmClassName }
+    get() = with(s) { containingJvmClassName }
 
 /**
- * @see KaJavaInteroperabilityComponent.javaGetterName
+ * The JVM getter method name for the given [KaPropertySymbol].
+ * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaJavaInteroperabilityComponent)
+@KaContextParameterApi
+context(s: KaSession)
 public val KaPropertySymbol.javaGetterName: Name
-    get() = with(context) { javaGetterName }
+    get() = with(s) { javaGetterName }
 
 /**
- * @see KaJavaInteroperabilityComponent.javaSetterName
+ * The JVM setter method name for the given [KaPropertySymbol].
+ * The behavior is undefined for modules other than JVM and common (with a JVM implementation).
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaJavaInteroperabilityComponent)
+@KaContextParameterApi
+context(s: KaSession)
 public val KaPropertySymbol.javaSetterName: Name?
-    get() = with(context) { javaSetterName }
+    get() = with(s) { javaSetterName }

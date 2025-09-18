@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
@@ -63,61 +64,91 @@ public interface KaSignatureSubstitutor : KaSessionComponent {
 }
 
 /**
- * @see KaSignatureSubstitutor.substitute
+ * Applies a [substitutor] to the given symbol and returns a [KaCallableSignature] with substituted types.
+ *
+ * @see KaSubstitutor.substitute
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaSignatureSubstitutor)
+@KaContextParameterApi
+context(s: KaSession)
 public fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> {
-    return with(context) { substitute(substitutor) }
+    return with(s) {
+        substitute(
+            substitutor = substitutor,
+        )
+    }
 }
 
 /**
- * @see KaSignatureSubstitutor.substitute
+ * Applies a [substitutor] to the given symbol and returns a [KaFunctionSignature] with substituted types.
+ *
+ * @see KaSubstitutor.substitute
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaSignatureSubstitutor)
+@KaContextParameterApi
+context(s: KaSession)
 public fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionSignature<S> {
-    return with(context) { substitute(substitutor) }
+    return with(s) {
+        substitute(
+            substitutor = substitutor,
+        )
+    }
 }
 
 /**
- * @see KaSignatureSubstitutor.substitute
+ * Applies a [substitutor] to the given symbol and returns a [KaVariableSignature] with substituted types.
+ *
+ * @see KaSubstitutor.substitute
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaSignatureSubstitutor)
+@KaContextParameterApi
+context(s: KaSession)
 public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableSignature<S> {
-    return with(context) { substitute(substitutor) }
+    return with(s) {
+        substitute(
+            substitutor = substitutor,
+        )
+    }
 }
 
 /**
- * @see KaSignatureSubstitutor.asSignature
+ * Creates a new [KaCallableSignature] for the given symbol and leaves all types unsubstituted.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaSignatureSubstitutor)
+@KaContextParameterApi
+context(s: KaSession)
 public fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> {
-    return with(context) { asSignature() }
+    return with(s) {
+        asSignature()
+    }
 }
 
 /**
- * @see KaSignatureSubstitutor.asSignature
+ * Creates a new [KaFunctionSignature] for the given symbol and leaves all types unsubstituted.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaSignatureSubstitutor)
+@KaContextParameterApi
+context(s: KaSession)
 public fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> {
-    return with(context) { asSignature() }
+    return with(s) {
+        asSignature()
+    }
 }
 
 /**
- * @see KaSignatureSubstitutor.asSignature
+ * Creates a new [KaVariableSignature] for the given symbol and leaves all types unsubstituted.
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-context(context: KaSignatureSubstitutor)
+@KaContextParameterApi
+context(s: KaSession)
 public fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S> {
-    return with(context) { asSignature() }
+    return with(s) {
+        asSignature()
+    }
 }
