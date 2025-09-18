@@ -639,7 +639,7 @@ private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: Ir
     }
 
     fun IrFunction.isCoroutine(): Boolean =
-        parentClassOrNull?.superClass?.symbol == context.staticContext.backendContext.symbols.coroutineSymbols.coroutineImpl
+        parentClassOrNull?.superClass?.symbol == context.staticContext.backendContext.symbols.coroutineImpl
 
     return currentFunctionsIncludingParents.none { it.isEs6ConstructorReplacement || it.isCoroutine() }
 }

@@ -99,5 +99,5 @@ fun IrValueParameter.isStringArrayParameter(): Boolean {
 fun IrFunction.isLoweredSuspendFunction(context: JsCommonBackendContext): Boolean {
     val parameter = parameters.lastOrNull() ?: return false
     val type = parameter.type as? IrSimpleType ?: return false
-    return type.classifier == context.symbols.coroutineSymbols.continuationClass
+    return type.classifier == context.symbols.continuationClass
 }
