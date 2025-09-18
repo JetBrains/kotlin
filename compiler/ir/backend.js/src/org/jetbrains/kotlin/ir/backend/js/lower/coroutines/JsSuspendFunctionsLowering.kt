@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -48,16 +47,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 class JsSuspendFunctionsLowering(
     ctx: JsCommonBackendContext
 ) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx), BodyLoweringPass {
-    private val coroutineSymbols = ctx.symbols.coroutineSymbols
-
-    private val coroutineImplExceptionPropertyGetter = coroutineSymbols.coroutineImplExceptionPropertyGetter
-    private val coroutineImplExceptionPropertySetter = coroutineSymbols.coroutineImplExceptionPropertySetter
-    private val coroutineImplExceptionStatePropertyGetter = coroutineSymbols.coroutineImplExceptionStatePropertyGetter
-    private val coroutineImplExceptionStatePropertySetter = coroutineSymbols.coroutineImplExceptionStatePropertySetter
-    private val coroutineImplLabelPropertySetter = coroutineSymbols.coroutineImplLabelPropertySetter
-    private val coroutineImplLabelPropertyGetter = coroutineSymbols.coroutineImplLabelPropertyGetter
-    private val coroutineImplResultSymbolGetter = coroutineSymbols.coroutineImplResultSymbolGetter
-    private val coroutineImplResultSymbolSetter = coroutineSymbols.coroutineImplResultSymbolSetter
+    private val coroutineImplExceptionPropertyGetter = ctx.symbols.coroutineImplExceptionPropertyGetter
+    private val coroutineImplExceptionPropertySetter = ctx.symbols.coroutineImplExceptionPropertySetter
+    private val coroutineImplExceptionStatePropertyGetter = ctx.symbols.coroutineImplExceptionStatePropertyGetter
+    private val coroutineImplExceptionStatePropertySetter = ctx.symbols.coroutineImplExceptionStatePropertySetter
+    private val coroutineImplLabelPropertySetter = ctx.symbols.coroutineImplLabelPropertySetter
+    private val coroutineImplLabelPropertyGetter = ctx.symbols.coroutineImplLabelPropertyGetter
+    private val coroutineImplResultSymbolGetter = ctx.symbols.coroutineImplResultSymbolGetter
+    private val coroutineImplResultSymbolSetter = ctx.symbols.coroutineImplResultSymbolSetter
 
     override val stateMachineMethodName = Name.identifier("doResume")
 
@@ -325,7 +322,7 @@ class JsSuspendFunctionsLowering(
 
         return irComposite(resultType = expectedType) {
             val tmp = createTmpVariable(delegatingCall, irType = functionReturnType)
-            val coroutineSuspended = irCall(coroutineSymbols.coroutineSuspendedGetter)
+            val coroutineSuspended = irCall(this@JsSuspendFunctionsLowering.context.symbols.coroutineSuspendedGetter)
             val condition = irEqeqeq(irGet(tmp), coroutineSuspended)
             +irIfThen(context.irBuiltIns.unitType, condition, irReturn(irGet(tmp)))
             +irImplicitCast(irGet(tmp), expectedType)

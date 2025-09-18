@@ -20,16 +20,41 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.getPropertySetter
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.BASE_JS_PACKAGE
 
 // TODO KT-77388 rename to `BackendWebSymbolsImpl`
+@OptIn(InternalSymbolFinderAPI::class)
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
 ) : PreSerializationWebSymbols, KlibSymbols(irBuiltIns) {
-    @OptIn(InternalSymbolFinderAPI::class)
-    val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns.symbolFinder)
+    override val coroutineImpl: IrClassSymbol = symbolFinder.topLevelClass(COROUTINE_PACKAGE_FQNAME, COROUTINE_IMPL_NAME.asString())
+    override val continuationClass = symbolFinder.topLevelClass(COROUTINE_PACKAGE_FQNAME, CONTINUATION_NAME.asString())
+    override val coroutineSuspendedGetter =
+        symbolFinder.findTopLevelPropertyGetter(COROUTINE_INTRINSICS_PACKAGE_FQNAME, COROUTINE_SUSPENDED_NAME.asString())
+
+    val coroutineImplLabelPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("state")!!.owner }
+    val coroutineImplLabelPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("state")!!.owner }
+    val coroutineImplResultSymbolGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("result")!!.owner }
+    val coroutineImplResultSymbolSetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("result")!!.owner }
+    val coroutineImplExceptionPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exception")!!.owner }
+    val coroutineImplExceptionPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exception")!!.owner }
+    val coroutineImplExceptionStatePropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
+    val coroutineImplExceptionStatePropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
+
+    companion object {
+        private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
+        private val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
+        private val COROUTINE_IMPL_NAME = Name.identifier("CoroutineImpl")
+        private val CONTINUATION_NAME = Name.identifier("Continuation")
+        private val COROUTINE_PACKAGE_FQNAME = FqName.fromSegments(listOf("kotlin", "coroutines"))
+        private val COROUTINE_INTRINSICS_PACKAGE_FQNAME = COROUTINE_PACKAGE_FQNAME.child(INTRINSICS_PACKAGE_NAME)
+    }
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class, InternalSymbolFinderAPI::class)
@@ -59,10 +84,6 @@ class JsSymbols(
 
     override val stringBuilder
         get() = TODO("not implemented")
-    override val coroutineImpl =
-        coroutineSymbols.coroutineImpl
-    override val coroutineSuspendedGetter =
-        coroutineSymbols.coroutineSuspendedGetter
 
     private val _arraysContentEquals = symbolFinder.topLevelFunctions(COLLECTIONS_PACKAGE_FQ_NAME, "contentEquals").filter {
         it.descriptor.extensionReceiverParameter?.type?.isMarkedNullable == true
@@ -73,8 +94,6 @@ class JsSymbols(
         get() = _arraysContentEquals.associateBy { it.owner.parameters[0].type.makeNotNull() }
 
     override val getContinuation = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, "getContinuation")
-
-    override val continuationClass = coroutineSymbols.continuationClass
 
     override val returnIfSuspended = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, "returnIfSuspended")
 

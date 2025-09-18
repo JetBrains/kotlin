@@ -95,14 +95,8 @@ class WasmSymbols(
         get() = TODO()
     override val stringBuilder =
         getIrClass(FqName("kotlin.text.StringBuilder"))
-    override val coroutineImpl =
-        coroutineSymbols.coroutineImpl
-    override val coroutineSuspendedGetter =
-        coroutineSymbols.coroutineSuspendedGetter
     override val getContinuation =
         getInternalWasmFunction("getContinuation")
-    override val continuationClass =
-        coroutineSymbols.continuationClass
     override val returnIfSuspended =
         getInternalWasmFunction("returnIfSuspended")
 
