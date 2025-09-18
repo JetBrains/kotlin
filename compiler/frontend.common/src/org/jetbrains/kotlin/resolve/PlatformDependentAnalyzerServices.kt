@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 
 abstract class PlatformDependentAnalyzerServices {
     abstract val platformConfigurator: PlatformConfigurator
-    abstract val defaultImportProvider: DefaultImportProvider
+    abstract val defaultImportsProvider: DefaultImportsProvider
 
     open fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
         ModuleInfo.DependencyOnBuiltIns.LAST

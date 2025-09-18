@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.checkers.registerWasmCheckers
-import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.resolve.WasmJsDefaultImportsProvider
@@ -52,7 +52,7 @@ object FirWasmSessionFactory : AbstractFirKlibSessionFactory<FirWasmSessionFacto
             WasmTarget.JS -> WasmJsDefaultImportsProvider
             WasmTarget.WASI -> WasmWasiDefaultImportsProvider
         }
-        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(defaultImportsProvider))
+        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(defaultImportsProvider))
     }
 
     // ==================================== Utilities ====================================

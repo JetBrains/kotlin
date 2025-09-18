@@ -30,12 +30,12 @@ abstract class AbstractKaDefaultImportsProviderTest : AbstractAnalysisApiBasedTe
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val sourceModule = mainModule.ktModule as KaSourceModule
 
-        checkImportsFromKaDefaultImportProvider(sourceModule, testServices)
+        checkImportsFromKaDefaultImportsProvider(sourceModule, testServices)
         checkImportsFromResolve(sourceModule, mainFile, testServices)
         checkExcludedImports(sourceModule, testServices)
     }
 
-    private fun checkImportsFromKaDefaultImportProvider(sourceModule: KaSourceModule, testServices: TestServices) {
+    private fun checkImportsFromKaDefaultImportsProvider(sourceModule: KaSourceModule, testServices: TestServices) {
         val imports = sourceModule.targetPlatform.getDefaultImports(sourceModule.project).defaultImports
         val actual = renderDefaultImports(imports)
         testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".default.txt")

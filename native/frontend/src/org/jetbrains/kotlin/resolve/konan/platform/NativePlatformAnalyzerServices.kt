@@ -9,5 +9,5 @@ import org.jetbrains.kotlin.resolve.*
 
 object NativePlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override val platformConfigurator: PlatformConfigurator = NativePlatformConfigurator
-    override val defaultImportProvider: DefaultImportProvider = NativeDefaultImportsProvider
+    override val defaultImportsProvider: DefaultImportsProvider = NativeDefaultImportsProvider
 }

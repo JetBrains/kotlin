@@ -14,7 +14,7 @@ typealias WasmJsPlatformAnalyzerServices = WasmPlatformAnalyzerServices
 
 object WasmPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override val platformConfigurator: PlatformConfigurator = WasmJsPlatformConfigurator
-    override val defaultImportProvider: DefaultImportProvider = WasmJsDefaultImportsProvider
+    override val defaultImportsProvider: DefaultImportsProvider = WasmJsDefaultImportsProvider
 
     val builtIns: KotlinBuiltIns
         get() = DefaultBuiltIns.Instance
@@ -22,7 +22,7 @@ object WasmPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
 
 object WasmWasiPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override val platformConfigurator: PlatformConfigurator = WasmWasiPlatformConfigurator
-    override val defaultImportProvider: DefaultImportProvider = WasmWasiDefaultImportsProvider
+    override val defaultImportsProvider: DefaultImportsProvider = WasmWasiDefaultImportsProvider
     val builtIns: KotlinBuiltIns
         get() = DefaultBuiltIns.Instance
 }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
-import org.jetbrains.kotlin.fir.scopes.defaultImportProvider
+import org.jetbrains.kotlin.fir.scopes.defaultImportsProvider
 import org.jetbrains.kotlin.fir.scopes.lookupDefaultStarImportsInSources
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -31,12 +31,12 @@ class FirSingleLevelDefaultStarImportingScope(
 ) : FirAbstractStarImportingScope(
     session, scopeSession,
     lookupInFir = session.lookupDefaultStarImportsInSources,
-    additionalExcludedImportNames + session.defaultImportProvider.excludedImports
+    additionalExcludedImportNames + session.defaultImportsProvider.excludedImports
 ), DefaultStarImportingScopeMarker {
     // TODO: put languageVersionSettings into FirSession?
     override val starImports: List<FirResolvedImport> = run {
-        val defaultImportProvider = session.defaultImportProvider
-        val allDefaultImports = priority.getAllDefaultImports(defaultImportProvider, LanguageVersionSettingsImpl.DEFAULT)
+        val defaultImportsProvider = session.defaultImportsProvider
+        val allDefaultImports = priority.getAllDefaultImports(defaultImportsProvider, LanguageVersionSettingsImpl.DEFAULT)
         allDefaultImports
             ?.filter { it.isAllUnder }
             ?.map {

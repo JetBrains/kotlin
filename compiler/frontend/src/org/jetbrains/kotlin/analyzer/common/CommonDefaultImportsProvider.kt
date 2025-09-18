@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analyzer.common
 
-import org.jetbrains.kotlin.resolve.DefaultImportProvider
+import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.ImportPath
 
-object CommonDefaultImportsProvider : DefaultImportProvider() {
+object CommonDefaultImportsProvider : DefaultImportsProvider() {
     override val platformSpecificDefaultImports: List<ImportPath> = emptyList()
 }

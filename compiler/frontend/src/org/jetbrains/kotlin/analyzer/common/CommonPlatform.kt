@@ -15,7 +15,7 @@ private object CommonPlatformConfigurator : PlatformConfiguratorBase() {
 
 object CommonPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override val platformConfigurator: PlatformConfigurator = CommonPlatformConfigurator
-    override val defaultImportProvider: DefaultImportProvider = CommonDefaultImportsProvider
+    override val defaultImportsProvider: DefaultImportsProvider = CommonDefaultImportsProvider
 
     override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.AFTER_SDK
 }

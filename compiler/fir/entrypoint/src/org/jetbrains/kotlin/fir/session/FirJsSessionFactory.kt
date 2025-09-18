@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeSpecificityComparatorProvide
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.resolve.calls.js.JsCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -78,7 +78,7 @@ object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.C
         if (moduleKind != null) {
             register(FirJsModuleKind::class, FirJsModuleKind(moduleKind))
         }
-        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(JsDefaultImportsProvider))
+        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(JsDefaultImportsProvider))
     }
 
     // ==================================== Utilities ====================================

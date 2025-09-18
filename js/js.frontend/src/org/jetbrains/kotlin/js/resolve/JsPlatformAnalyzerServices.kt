@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.*
 
 object JsPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
-    override val defaultImportProvider: DefaultImportProvider = JsDefaultImportsProvider
+    override val defaultImportsProvider: DefaultImportsProvider = JsDefaultImportsProvider
     override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
 
     val builtIns: KotlinBuiltIns
