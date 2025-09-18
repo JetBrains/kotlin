@@ -303,22 +303,32 @@ internal class KClassImpl<T : Any>(
         }
 
         val declaredNonStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
+            by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
         private val declaredStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
+            by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
         private val inheritedNonStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
+            by ReflectProperties.lazySoft {
+                when (useK1Implementation) {
+                    true -> getMembers(memberScope, INHERITED)
+                    else -> getNewMembers(this@KClassImpl)
+                }
+            }
         private val inheritedStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
+            by ReflectProperties.lazySoft {
+                when (useK1Implementation) {
+                    true -> getMembers(staticScope, INHERITED)
+                    else -> getNewMembers(this@KClassImpl)
+                }
+            }
 
         val allNonStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { declaredNonStaticMembers + inheritedNonStaticMembers }
+            by ReflectProperties.lazySoft { declaredNonStaticMembers + inheritedNonStaticMembers }
         val allStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { declaredStaticMembers + inheritedStaticMembers }
+            by ReflectProperties.lazySoft { declaredStaticMembers + inheritedStaticMembers }
         val declaredMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
+            by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
         val allMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { allNonStaticMembers + allStaticMembers }
+            by ReflectProperties.lazySoft { allNonStaticMembers + allStaticMembers }
     }
 
     val data = lazy(PUBLICATION) { Data() }
