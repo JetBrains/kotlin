@@ -42,6 +42,7 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
 
     @NotNull
     @Override
+    @SuppressWarnings("deprecation") // KT-78356
     public KtConstructorCalleeExpression getCalleeExpression() {
         return getRequiredStubOrPsiChild(KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
     }

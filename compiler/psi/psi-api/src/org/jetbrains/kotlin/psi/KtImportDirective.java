@@ -36,6 +36,7 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
 
     @Nullable
     @IfNotParsed
+    @SuppressWarnings("deprecation") // KT-78356
     public KtExpression getImportedReference() {
         KtExpression[] references = getStubOrPsiChildren(KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
         if (references.length > 0) {
@@ -45,6 +46,7 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
     }
 
     @Nullable
+    @SuppressWarnings("deprecation") // KT-78356
     public KtImportAlias getAlias() {
         return getStubOrPsiChild(KtStubBasedElementTypes.IMPORT_ALIAS);
     }

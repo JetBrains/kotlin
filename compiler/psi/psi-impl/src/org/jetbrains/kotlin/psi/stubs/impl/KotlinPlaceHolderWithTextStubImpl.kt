@@ -20,7 +20,9 @@ class KotlinPlaceHolderWithTextStubImpl<T : KtElementImplStub<*>>(
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinPlaceHolderWithTextStubImpl<T> = KotlinPlaceHolderWithTextStubImpl(
         parent = newParent,
-        elementType = stubType,
+        elementType =
+            @Suppress("DEPRECATION") // KT-78356
+            stubType,
         text = text,
     )
 }

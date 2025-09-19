@@ -300,6 +300,8 @@ internal class StubBasedFirTypeDeserializer(
     private fun KtFunctionType.isSuspend(): Boolean {
         val parent = parent as? KtElementImplStub<*>
             ?: error("Expected parent of KtTypeElement to have type KtElementImplStub<*>, but actual $parent")
+
+        @Suppress("DEPRECATION") // KT-78356
         val modifiers = parent.getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
         return modifiers.any { it.hasSuspendModifier() }
     }
