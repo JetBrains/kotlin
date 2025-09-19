@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.retrieveExternalDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.nativeDownloadTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependenciesWithNativeDistribution
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.utils.Future
@@ -37,8 +38,6 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
         compilation.project.tasks.configureEach { compileTask ->
             if (compileTask.name != compilation.compileKotlinTaskName) return@configureEach
             if (compileTask !is K2MultiplatformCompilationTask) return@configureEach
-
-            compileTask.dependsOn(project.nativeDownloadTask())
 
             /**
              * Returns fragment name of [this]
@@ -140,7 +139,7 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                                 .filterIsInstance<AbstractKotlinNativeCompilation>()
                                 .map { compilation -> compilation.konanTarget.name }.toSet()
                             if (mostCommonFragmentPerNativePlatforms[nativePlatforms] == fragmentName) {
-                                add(metadataCompilation.retrievePlatformDependencies())
+                                add(metadataCompilation.retrievePlatformDependenciesWithNativeDistribution())
                             }
                         }
                     }
