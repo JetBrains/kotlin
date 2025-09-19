@@ -112,6 +112,8 @@ internal fun Project.nativeDownloadTask(): TaskProvider<KotlinNativeDownloadTask
 
 internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommonizerTask>? {
     if (cInteropCommonizationEnabled()) {
+        val nativeDownloadTask = nativeDownloadTask()
+
         return locateOrRegisterTask(
             commonizeCInteropTaskName,
             invokeWhenRegistered = {
@@ -130,7 +132,7 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
                 kotlinCompilerArgumentsLogLevel
                     .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                     .finalizeValueOnRead()
-                dependsOn(nativeDownloadTask())
+                dependsOn(nativeDownloadTask)
             }
         )
     }
