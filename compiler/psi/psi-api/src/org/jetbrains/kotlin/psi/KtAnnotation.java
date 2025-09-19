@@ -55,6 +55,7 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
     }
 
     @Nullable
+    @SuppressWarnings("deprecation") // KT-78356
     public KtAnnotationUseSiteTarget getUseSiteTarget() {
         return getStubOrPsiChild(KtStubBasedElementTypes.ANNOTATION_TARGET);
     }

@@ -162,6 +162,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         val stub = greenStub
         if (stub != null) {
             for (stubElement in stub.childrenStubs) {
+                @Suppress("DEPRECATION") // KT-78356
                 val stubType = stubElement.stubType
                 when (stubType) {
                     // Required element found
@@ -205,6 +206,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     ): P? {
         val stub = greenStub
         if (stub != null) {
+            @Suppress("DEPRECATION") // KT-78356
             val importListStub = stub.findChildStubByType(elementType)
             return importListStub?.psi
         }
@@ -247,7 +249,9 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     override fun getStub(): KotlinFileStub? = super.getStub()?.let { it as KotlinFileStub }
 
     protected open val greenStub: KotlinFileStub?
-        get() = super.getGreenStub()?.let { it as KotlinFileStub }
+        get() =
+            @Suppress("DEPRECATION") // KT-78356
+            super.getGreenStub()?.let { it as KotlinFileStub }
 
     override fun clearCaches() {
         @Suppress("RemoveExplicitSuperQualifier")
@@ -328,6 +332,7 @@ private fun KtImportList.computeHasImportAlias(): Boolean {
     val stub = greenStub
     if (stub != null) {
         return stub.childrenStubs.any {
+            @Suppress("DEPRECATION") // KT-78356
             it is KotlinImportDirectiveStub && it.findChildStubByType(KtStubBasedElementTypes.IMPORT_ALIAS) != null
         }
     }

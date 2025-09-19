@@ -158,7 +158,7 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
         is KotlinTypeAliasStubImpl -> indexTypeAlias(stub.psi)
         is KotlinFunctionStubImpl -> indexNamedFunction(stub.psi)
         is KotlinPropertyStubImpl -> indexProperty(stub.psi)
-        is KotlinPlaceHolderStubImpl if (stub.stubType == KtStubElementTypes.CLASS_BODY) -> {
+        is KotlinPlaceHolderStubImpl if (@Suppress("DEPRECATION") stub.stubType == KtStubElementTypes.CLASS_BODY) -> {
             stub.childrenStubs
                 .filterIsInstance<KotlinClassOrObjectStub<*>>()
                 .forEach(::indexStubRecursively)

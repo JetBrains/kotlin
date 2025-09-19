@@ -26,6 +26,7 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
         get() = findChildByType(KtTokens.EQ)
 
     override fun getTypeReference(): KtTypeReference? =
+        @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
     open val namePlaceholder: PsiElement
