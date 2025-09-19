@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter

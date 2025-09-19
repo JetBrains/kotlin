@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
 
 /**
@@ -295,33 +294,7 @@ class Framework(
     override val outputKind: NativeOutputKind
         get() = NativeOutputKind.FRAMEWORK
 
-    // Embedding bitcode.
-    /**
-     * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
-     */
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val embedBitcodeMode = project.objects.property(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode::class.java)
-
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
-
-    /**
-     * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].
-     */
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith(""))
-    fun embedBitcode(mode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode) {
-        embedBitcodeMode.set(mode)
-    }
-
-    /**
-     * [embedBitcode] is deprecated and has no effect
-     */
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith(""))
-    fun embedBitcode(mode: String) = embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.valueOf(mode.toUpperCaseAsciiOnly()))
+    // Embedding bitcode DSL is removed as bitcode is no longer supported.
 
     /**
      * Specifies if the framework is linked as a static library (false by default).
@@ -334,13 +307,6 @@ class Framework(
     @ExperimentalKotlinGradlePluginApi
     val exportKdoc: Property<Boolean> = project.objects.property(true)
 
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    object BitcodeEmbeddingMode {
-        val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
-        val BITCODE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE
-        val MARKER = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.MARKER
-    }
 
     companion object {
         val frameworkTargets: Attribute<Set<String>> = attributeOf<Set<String>>(
