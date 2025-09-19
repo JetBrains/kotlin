@@ -38,9 +38,31 @@ class RecursiveRegularExpressions {
         assertEquals("b", match.groupValues[1])
     }
 
-    //@Test
+    @Test
     fun reluctantRegex() {
         val match = Regex("([ab])*?").matchEntire("a".repeat(100_000) + "b")!!
         assertEquals("b", match.groupValues[1])
+    }
+
+    @Test
+    fun repeatedReluctantEmptySet() {
+        assertTrue(Regex("(){3,5}?S").matches("S"))
+        assertTrue(Regex("(){3,}?S").matches("S"))
+        assertTrue(Regex("()+?S").matches("S"))
+        assertTrue(Regex("()??S").matches("S"))
+        assertTrue(Regex("()*?S").matches("S"))
+    }
+
+    @Test
+    fun repeatedReluctantNewLine() {
+        val res = Regex("(^$)*?LINE", RegexOption.MULTILINE).findAll("\n\n\nLINE").toList()
+        assertEquals(1, res.size)
+        assertEquals("LINE", res[0].value)
+    }
+
+    @Test
+    fun reluctantNonTrivialGroup() {
+        val re = Regex("(aa|a)+?a")
+        assertTrue(re.matches("aa"))
     }
 }

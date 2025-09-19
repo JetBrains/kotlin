@@ -219,3 +219,36 @@ internal data class SetProperties(
     var nonTrivialBacktracking: Boolean = false,
     var requiresCheckpointing: Boolean = false,
 )
+
+/**
+ * Returns `true` if [this] is a capturing or non-capturing group,
+ * that is trivial enough to match without a recursion when quantified.
+ *
+ * A quantified group qualified as trivial, could be match using [TrivialGroupQuantifierSet]
+ * or [ReluctantTrivialGroupQuantifierSet], which match iteratively, without recursion (there is no
+ * corresponding possessive set, because possessively quantified sets are free of this problem).
+ */
+internal fun JointSet.isTrivialGroupForQuantification(): Boolean {
+    val enclosedSet: AbstractSet
+    val terminator: AbstractSet
+
+    // Here, we're only considering capturing and non-capturing groups with a single child
+    when (this) {
+        is SingleSet -> {
+            enclosedSet = kid
+            terminator = fSet
+        }
+        is NonCapturingJointSet -> {
+            enclosedSet = getSingleChildOrNull() ?: return false
+            terminator = fSet
+        }
+        else -> return false
+    }
+
+    val properties = SetProperties().also { enclosedSet.collectProperties(it, terminator) }
+    if (properties.nonTrivialBacktracking || properties.capturesGroups || properties.requiresCheckpointing) {
+        // we can't deal with such a complicated regular expression!
+        return false
+    }
+    return true
+}

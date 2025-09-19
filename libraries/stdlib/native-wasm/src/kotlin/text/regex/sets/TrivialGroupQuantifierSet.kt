@@ -38,13 +38,6 @@ internal class TrivialGroupQuantifierSet private constructor(
     val min: Int get() = quantifier.min
     val max: Int get() = quantifier.max
 
-    override val consumesFixedLength: Boolean
-        get() = (min == max)
-
-    private fun List<Int>.lastMatch(): Int {
-        return if (isEmpty()) -1 else this.last()
-    }
-
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         var index = startIndex
         val matches = mutableListOf<Int>()
@@ -115,25 +108,7 @@ internal class TrivialGroupQuantifierSet private constructor(
             next: AbstractSet,
             type: Int
         ): TrivialGroupQuantifierSet? {
-            val enclosedSet: AbstractSet
-            val terminator: AbstractSet
-
-            // Here, we're only considering capturing and non-capturing groups with a single child
-            when (innerSet) {
-                is SingleSet -> {
-                    enclosedSet = innerSet.kid
-                    terminator = innerSet.fSet
-                }
-                is NonCapturingJointSet -> {
-                    enclosedSet = innerSet.getSingleChildOrNull() ?: return null
-                    terminator = innerSet.fSet
-                }
-                else -> return null
-            }
-
-            val properties = SetProperties().also { enclosedSet.collectProperties(it, terminator) }
-            if (properties.nonTrivialBacktracking || properties.capturesGroups || properties.requiresCheckpointing) {
-                // we can't deal with such a complicated regular expression!
+            if (innerSet !is JointSet || !innerSet.isTrivialGroupForQuantification()) {
                 return null
             }
             return TrivialGroupQuantifierSet(quantifier, innerSet, next, type)
