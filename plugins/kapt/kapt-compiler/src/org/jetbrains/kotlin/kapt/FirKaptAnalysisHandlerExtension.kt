@@ -99,9 +99,7 @@ open class FirKaptAnalysisHandlerExtension(
             }
             val disposable = Disposer.newDisposable("K2KaptSession.project")
             try {
-                val kaptContext = contextForStubGeneration(disposable, updatedConfiguration)
-                logger.info { "Kotlin files to compile: " + kaptContext?.firFiles?.map { it.name } }
-                kaptContext?.use(::generateKotlinSourceStubs)
+                contextForStubGeneration(disposable, updatedConfiguration)?.use(::generateKotlinSourceStubs)
             } finally {
                 disposeRootInWriteAction(disposable)
             }
@@ -187,7 +185,7 @@ open class FirKaptAnalysisHandlerExtension(
         )
         val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
 
-        reportSyntaxErrors(frontendOutput, configuration)
+        if (checkForSyntaxErrorsAndReport(frontendOutput, configuration)) return null
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Analysis)
 
@@ -210,10 +208,11 @@ open class FirKaptAnalysisHandlerExtension(
         )
     }
 
-    private fun reportSyntaxErrors(
+    private fun checkForSyntaxErrorsAndReport(
         frontendOutput: JvmFrontendPipelineArtifact,
         configuration: CompilerConfiguration,
-    ) {
+    ): Boolean {
+        var reported = false
         FirDiagnosticsCompilerResultsReporter.reportByFile(frontendOutput.diagnosticCollector) { diagnostic, location ->
             if (diagnostic.factory == FirSyntaxErrors.SYNTAX) {
                 FirDiagnosticsCompilerResultsReporter.reportDiagnosticToMessageCollector(
@@ -222,8 +221,10 @@ open class FirKaptAnalysisHandlerExtension(
                     logger.messageCollector,
                     configuration.renderDiagnosticInternalName
                 )
+                reported = true
             }
         }
+        return reported
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {
