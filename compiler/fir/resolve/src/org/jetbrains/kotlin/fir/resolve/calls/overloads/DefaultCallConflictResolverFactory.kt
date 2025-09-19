@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 object DefaultCallConflictResolverFactory : ConeCallConflictResolverFactory() {
     override fun create(
-        typeSpecificityComparator: TypeSpecificityComparator,
         components: InferenceComponents,
         transformerComponents: BodyResolveComponents
     ): ConeCompositeConflictResolver {

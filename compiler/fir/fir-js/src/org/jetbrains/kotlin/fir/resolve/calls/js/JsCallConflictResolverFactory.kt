@@ -15,12 +15,10 @@ import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeOverloadConflictReso
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparatorWithoutDelegate
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 @NoMutableState
 object JsCallConflictResolverFactory : ConeCallConflictResolverFactory() {
     override fun create(
-        typeSpecificityComparator: TypeSpecificityComparator,
         components: InferenceComponents,
         transformerComponents: BodyResolveComponents
     ): ConeCompositeConflictResolver {

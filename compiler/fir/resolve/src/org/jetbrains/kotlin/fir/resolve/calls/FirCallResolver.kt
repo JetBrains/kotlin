@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -74,7 +73,7 @@ class FirCallResolver(
     }
 
     val conflictResolver: ConeCallConflictResolver =
-        session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents, components)
+        session.callConflictResolverFactory.create(session.inferenceComponents, components)
 
     fun resolveCallAndSelectCandidate(
         functionCall: FirFunctionCall,
