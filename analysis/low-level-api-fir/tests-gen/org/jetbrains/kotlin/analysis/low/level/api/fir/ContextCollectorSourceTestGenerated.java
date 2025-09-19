@@ -1306,6 +1306,24 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("onNullAssignment.kt")
+    public void testOnNullAssignment() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onNullAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("onNullAssignment2.kt")
+    public void testOnNullAssignment2() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onNullAssignment2.kt");
+    }
+
+    @Test
+    @TestMetadata("onNullAssignmentClosingBrace.kt")
+    public void testOnNullAssignmentClosingBrace() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onNullAssignmentClosingBrace.kt");
+    }
+
+    @Test
     @TestMetadata("onReference.kt")
     public void testOnReference() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onReference.kt");
