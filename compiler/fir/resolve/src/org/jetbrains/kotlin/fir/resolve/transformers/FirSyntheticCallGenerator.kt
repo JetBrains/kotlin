@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -349,25 +351,31 @@ class FirSyntheticCallGenerator(
             it is ArgumentTypeMismatch && it.argument == this
         } as ArgumentTypeMismatch? ?: return false
 
-        val storage = if (candidate.usedOuterCs) candidate.system.currentStorage() else candidate.system.asReadOnlyStorage()
-        val substitutor = storage.buildCurrentSubstitutor(components.session.typeContext, emptyMap())
-
-        val substitutedType = substitutor.safeSubstitute(
-            components.session.typeContext,
-            argumentTypeMismatchOnWholeExpression.actualType
-        ) as ConeKotlinType
-
         when (this) {
             is FirAnonymousFunctionExpression -> {
+                val storage = if (candidate.usedOuterCs) candidate.system.currentStorage() else candidate.system.asReadOnlyStorage()
+                val substitutor = storage.buildCurrentSubstitutor(components.session.typeContext, emptyMap())
+
+                val substitutedType = substitutor.safeSubstitute(
+                    components.session.typeContext,
+                    argumentTypeMismatchOnWholeExpression.actualType
+                ) as ConeKotlinType
+
                 anonymousFunction.replaceTypeRef(
                     anonymousFunction.typeRef.withReplacedConeType(substitutedType)
                 )
             }
             is FirFunctionCall -> {
                 // completed collection literal
+                check(
+                    session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
+                            && source?.kind == KtFakeSourceElementKind.OperatorOfCall
+                ) {
+                    "Expected ${FirFunctionCall::class.simpleName} originating from ${FirCollectionLiteralCall::class.simpleName}"
+                }
             }
             else -> {
-                error("Expected FirAnonymousFunctionExpression or FirFunctionCall")
+                error("Expected ${FirAnonymousFunctionExpression::class.simpleName} or ${FirFunctionCall::class.simpleName}")
             }
         }
 
