@@ -116,7 +116,7 @@ open class AbstractFirWasmJsTest(
 open class AbstractFirWasmJsCodegenBoxTest(
     testGroupOutputDirPrefix: String = "codegen/firBox/"
 ) : AbstractFirWasmJsTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
+    pathToTestDir = "compiler/testData/codegen/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -170,7 +170,7 @@ open class AbstractFirWasmJsCodegenBoxInlineTest : AbstractFirWasmJsTest(
 }
 
 open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
-    "compiler/testData/codegen/wasmJsInterop",
+    "compiler/testData/codegen/boxWasmJsInterop",
     "codegen/firWasmJsInterop"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
