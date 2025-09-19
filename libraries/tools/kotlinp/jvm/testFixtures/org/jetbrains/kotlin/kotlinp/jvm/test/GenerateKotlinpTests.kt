@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("libraries/tools/kotlinp/jvm/tests-gen", "compiler/testData") {
+        testGroup(testsRoot, "compiler/testData") {
             testClass<AbstractKotlinpCompilerTestDataTest> {
                 model("loadJava/compiledKotlin", extension = "kt")
                 model("loadJava/compiledKotlinWithStdlib", extension = "kt")
