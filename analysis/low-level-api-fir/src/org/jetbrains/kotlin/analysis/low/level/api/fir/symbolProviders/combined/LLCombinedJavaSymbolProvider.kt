@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.api.platform.caches.withStatsCounter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.computePackageNamesWithParentPackages
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.hasMetadataAnnotation
@@ -58,6 +59,10 @@ internal class LLCombinedJavaSymbolProvider private constructor(
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderClassCacheStatsCounter)
     }
 
+    private val packageNamesWithParentPackages by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        symbolNamesProvider.getPackageNames()?.let { computePackageNamesWithParentPackages(it) }
+    }
+
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider.fromSymbolProviders(session, providers)
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
@@ -95,11 +100,14 @@ internal class LLCombinedJavaSymbolProvider private constructor(
     }
 
     override fun hasPackage(fqName: FqName): Boolean {
-        // The package set from Java symbol providers is *exact* if it can be computed.
-        val packageNames = symbolNamesProvider.getPackageNames()
-            ?: return providers.any { it.hasPackage(fqName) }
+        val packageNames = packageNamesWithParentPackages
 
-        return fqName.asString() in packageNames
+        return if (packageNames != null) {
+            // The package set from Java symbol providers is *exact* if it can be computed, so we can decide `hasPackage` directly.
+            fqName.asString() in packageNames
+        } else {
+            providers.any { it.hasPackage(fqName) }
+        }
     }
 
     override fun estimateSymbolCacheSize(): Long = classCache.estimatedSize

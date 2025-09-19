@@ -28,6 +28,22 @@ internal fun FqName.isKotlinPackage(): Boolean = startsWith(StandardNames.BUILT_
 
 internal fun String.isKotlinPackage(): Boolean = startsWith(KOTLIN_PACKAGE_PREFIX)
 
+internal fun computePackageNamesWithParentPackages(packageNames: Set<String>): Set<String> {
+    if (packageNames.isEmpty()) return emptySet()
+
+    return buildSet {
+        add("")
+
+        packageNames.forEach { packageName ->
+            var currentPackage = packageName
+            while (currentPackage.isNotEmpty()) {
+                add(currentPackage)
+                currentPackage = currentPackage.substringBeforeLast(".", missingDelimiterValue = "")
+            }
+        }
+    }
+}
+
 /**
  * Checks if this [FirBasedSymbol] has the given PSI element as a source.
  *

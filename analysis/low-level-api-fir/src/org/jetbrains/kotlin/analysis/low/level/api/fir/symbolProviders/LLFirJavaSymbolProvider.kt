@@ -52,6 +52,10 @@ internal class LLFirJavaSymbolProvider private constructor(
         }
     )
 
+    private val packageNamesWithParentPackages by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        symbolNamesProvider.getPackageNames()?.let { computePackageNamesWithParentPackages(it) }
+    }
+
     // TODO: Hacky!
     override val symbolNamesProvider: FirSymbolNamesProvider = FirDelegatingCachedSymbolNamesProvider(
         session,
@@ -73,15 +77,15 @@ internal class LLFirJavaSymbolProvider private constructor(
         return getClassLikeSymbolByClassId(classId, null)
     }
 
-    /**
-     * [KotlinJavaDeclarationNamesProvider] provides *exact* package sets (including parent packages), so we can decide [hasPackage] without
-     * querying the Java facade.
-     */
     override fun hasPackage(fqName: FqName): Boolean {
-        val packageNames = symbolNamesProvider.getPackageNames()
-            ?: return super.hasPackage(fqName)
+        val packageNames = packageNamesWithParentPackages
 
-        return fqName.asString() in packageNames
+        return if (packageNames != null) {
+            // The package set from Java symbol providers is *exact* if it can be computed, so we can decide `hasPackage` directly.
+            fqName.asString() in packageNames
+        } else {
+            super.hasPackage(fqName)
+        }
     }
 
     @LLModuleSpecificSymbolProviderAccess
