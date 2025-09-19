@@ -4,8 +4,8 @@ import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
-suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
-    x.resume("OK")
+suspend fun suspendHere(): Int = suspendCoroutineUninterceptedOrReturn { x ->
+    x.resume(42)
     COROUTINE_SUSPENDED
 }
 
@@ -13,12 +13,12 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-fun box(): String {
-    var result = ""
+fun box(): Boolean {
+    var result = -1
 
     builder {
         result = suspendHere()
     }
 
-    return result
+    return result == 42
 }
