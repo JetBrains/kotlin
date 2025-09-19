@@ -163,34 +163,26 @@ class RemoteCompilationServiceImpl(
                             fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
                             if (it.isLast) {
                                 launch {
-                                    try {
-                                        val allFileChunks = fileChunks.getOrDefault(it.filePath, listOf())
-                                        val reconstructedFile = fileChunkingStrategy.reconstruct(allFileChunks, SERVER_TMP_CACHE_DIR)
-                                        println("impl reconsctured file path: ${reconstructedFile.absolutePath} and exist=${reconstructedFile.exists()}")
-                                        val cachedFile =
-                                            cacheHandler.cacheFile(
-                                                reconstructedFile,
-                                                it.artifactTypes,
-                                                deleteOriginalFile = true,
-                                                cacheFileLockMap
-                                            )
-                                        println("impl cached file path: ${cachedFile.absolutePath} and exist=${cachedFile.exists()}")
-                                        val projectFile = workspaceManager.copyFileToProject(
-                                            cachedFile.absolutePath,
-                                            it.filePath,
-                                            workspaceFileLockMap
+                                    val allFileChunks = fileChunks.getOrDefault(it.filePath, listOf())
+                                    val reconstructedFile = fileChunkingStrategy.reconstruct(allFileChunks, SERVER_TMP_CACHE_DIR)
+                                    val cachedFile =
+                                        cacheHandler.cacheFile(
+                                            reconstructedFile,
+                                            it.artifactTypes,
+                                            deleteOriginalFile = true,
+                                            cacheFileLockMap
                                         )
-                                        println("impl project file path: ${projectFile.absolutePath} and exist=${projectFile.exists()}")
-                                        debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactTypes}, clientPath=${it.filePath}")
-                                        signalFileAvailability(
-                                            Paths.get(it.filePath).toAbsolutePath().normalize(),
-                                            projectFile,
-                                            it.artifactTypes
-                                        )
-                                    } catch (e: FileNotFoundException){
-                                        println("s")
-                                    }
-
+                                    val projectFile = workspaceManager.copyFileToProject(
+                                        cachedFile.absolutePath,
+                                        it.filePath,
+                                        workspaceFileLockMap
+                                    )
+                                    debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactTypes}, clientPath=${it.filePath}")
+                                    signalFileAvailability(
+                                        Paths.get(it.filePath).toAbsolutePath().normalize(),
+                                        projectFile,
+                                        it.artifactTypes
+                                    )
                                 }
                             }
                         }
