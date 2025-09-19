@@ -1391,4 +1391,24 @@ open class Kapt3IT : Kapt3BaseIT() {
             }
         }
     }
+
+    @DisplayName("KT-80843 Kapt does not fail on redeclaration in data class")
+    @GradleTest
+    fun testRedeclarationInDataClass(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            javaSourcesDir().resolve("invalid.kt").writeText("""
+                data class ClassWithDupProps(
+                    val rock: String,
+                    val paper: String,
+                    val scissors: String,
+                    val rock: String, // This would cause KAPT K2 to crash
+                )
+
+            """.trimIndent())
+
+            build(":kaptGenerateStubsKotlin") {
+                assertFileExists(projectPath.resolve("build/tmp/kapt3/stubs/main/ClassWithDupProps.java"))
+            }
+        }
+    }
 }
