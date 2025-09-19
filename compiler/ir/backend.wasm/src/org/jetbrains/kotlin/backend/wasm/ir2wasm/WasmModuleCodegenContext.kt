@@ -207,6 +207,8 @@ class WasmFileCodegenContext(
 
     fun referenceRttiGlobal(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
         rttiElements.globalReferences.reference(irClass.getReferenceKey())
+
+    fun referenceModuleIdMaskGlobal(): WasmSymbol<WasmGlobal> = wasmFileFragment.moduleIdMaskGlobal
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {

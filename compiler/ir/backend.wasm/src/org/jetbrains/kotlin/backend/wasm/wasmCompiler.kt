@@ -340,6 +340,8 @@ fun generateAsyncJsWrapper(
     val options = "{ builtins: ['${builtinsList.joinToString(", ")}'] }"
 
     return """
+let moduleInstanceCounter = 0;
+
 export async function instantiate(imports={}, runInitializer=true) {
     const cachedJsObjects = new WeakMap();
     // ref must be non-null
@@ -360,6 +362,7 @@ $referencesToQualifiedAndImportedDeclarations
     }const wasmJsTag = WebAssembly.JSTag;
     const wasmTag =${if (useJsTag) " wasmJsTag ??" else "" } new WebAssembly.Tag({ parameters: ['externref'] });
 
+    const moduleInstanceId = moduleInstanceCounter++;
     class KotlinJsBox {
         constructor(kotlinObject) {
             this.kotlinObject = kotlinObject
@@ -396,6 +399,7 @@ $initExternrefTableIfNeeded
         js_code,
         intrinsics: {
             tag: wasmTag,
+            moduleInstanceId: new WebAssembly.Global({ value: "i32", mutable: false }, moduleInstanceId),
 $importExternrefTableIfNeeded
         },
 $imports

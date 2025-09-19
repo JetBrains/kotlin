@@ -101,7 +101,7 @@ class WasmTypeTransformer(
             if (useSharedObjects && isFieldType) {
                 if (!isManagedExternrefField)
                     error("Fields of external types of shared objects must be marked with @ManagedExternref")
-                return WasmI32
+                return WasmI64
             }
 
             if (useSharedObjects && klass.isJsShareable(symbols)) {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.WasmTable
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+import kotlin.collections.emptyList
 
 class BuiltinIdSignatures(
     val throwable: IdSignature?,
@@ -87,6 +88,7 @@ class WasmCompiledFileFragment(
     val objectInstanceFieldInitializers: MutableList<IdSignature> = mutableListOf(),
     val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
 
+    val moduleIdMaskGlobal: WasmSymbol<WasmGlobal> = WasmSymbol(),
     val tableFunctions: MutableSet<WasmSymbol<WasmFunction>> = identityHashSetOf(),
 ) : IrICProgramFragment()
 
@@ -106,6 +108,21 @@ class WasmCompiledModuleFragment(
     var declarativeFuncElements: List<WasmElement> = mutableListOf()
     var functionsTableValues: List<WasmTable.Value.Function> = mutableListOf()
     val tableFunctionIndicesMap: MutableMap<WasmSymbol<WasmFunction>, Int> = mutableMapOf()
+
+    private val importedModuleIdGlobal : WasmGlobal = WasmGlobal(
+        name = "moduleInstanceId",
+        type = WasmI32,
+        isMutable = false,
+        init = emptyList(),
+        importPair = WasmImportDescriptor("intrinsics", WasmSymbol("moduleInstanceId")))
+
+    private val moduleIdMaskGlobal : WasmGlobal = WasmGlobal(
+        name = "moduleIdMask",
+        type = WasmI64,
+        isMutable = true, // for late initialization, not changed afterwards
+        init = buildWasmExpression {
+            buildConstI64(0L, serviceCodeLocation)
+        })
 
     private inline fun tryFindBuiltInFunction(select: (BuiltinIdSignatures) -> IdSignature?): WasmFunction? {
         for (fragment in wasmCompiledFileFragments) {
@@ -276,7 +293,6 @@ class WasmCompiledModuleFragment(
         functionsTableValues = emptyList() // prevents adding new table functions
         declarativeFuncElements = emptyList()
 
-        val useSharedObjects = useSharedObjects // TODO rename globally
         val importedTables = if (useSharedObjects) {
             listOf(
                 WasmTable(
@@ -287,11 +303,13 @@ class WasmCompiledModuleFragment(
             )
         } else emptyList()
 
+        val importedGlobals = listOf(importedModuleIdGlobal)
+
         val tags = getTags(throwableDeclaration)
         require(tags.size <= 1) { "Having more than 1 tag is not supported" }
 
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
-        val importsInOrder = importedFunctions + importedTags + importedTables
+        val importsInOrder = importedFunctions + importedTags + importedTables + importedGlobals
         tags.forEach { additionalTypes.add(it.type) }
 
         val recursiveTypeGroups = getTypes(syntheticTypes, canonicalFunctionTypes, additionalTypes)
@@ -303,6 +321,7 @@ class WasmCompiledModuleFragment(
             definedFunctions = definedFunctions,
             tables = definedTables,
             memories = listOf(memory),
+            importedGlobals = importedGlobals,
             globals = globals,
             exports = exports,
             startFunction = null,  // Module is initialized via export call
@@ -461,16 +480,17 @@ class WasmCompiledModuleFragment(
 
     private fun getGlobals(additionalTypes: MutableList<WasmTypeDeclaration>, functionsTableValues: List<WasmTable.Value.Function>) =
         mutableListOf<WasmGlobal>().apply {
-            materializeDeferredGlobals(functionsTableValues)
+            materializeDeferredGlobals()
             wasmCompiledFileFragments.forEach { fragment ->
                 addAll(fragment.globalFields.elements)
                 addAll(fragment.globalVTables.elements)
                 addAll(fragment.globalClassITables.elements.distinct())
             }
             createRttiTypeAndProcessRttiGlobals(this, additionalTypes)
+            add(moduleIdMaskGlobal)
         }
 
-    private fun materializeDeferredGlobals(functionsTableValues: List<WasmTable.Value.Function>) {
+    private fun materializeDeferredGlobals() {
         wasmCompiledFileFragments.forEach { fragment ->
             (fragment.globalVTables.elements
                     + fragment.globalClassITables.elements
@@ -539,6 +559,8 @@ class WasmCompiledModuleFragment(
             buildCall(WasmSymbol(unitGetInstance), serviceCodeLocation)
             buildCall(WasmSymbol(fieldInitializerFunction), serviceCodeLocation)
 
+            buildInitModuleIdMaskGlobal()
+
             if (tryGetAssociatedObject != null) {
                 // we do not register descriptor while no need in it
                 val registerModuleDescriptor = tryFindBuiltInFunction { it.registerModuleDescriptor }
@@ -563,6 +585,14 @@ class WasmCompiledModuleFragment(
             buildInstr(WasmOp.RETURN, serviceCodeLocation)
         }
         return masterInitFunction
+    }
+
+    private fun WasmExpressionBuilder.buildInitModuleIdMaskGlobal() {
+        buildGetGlobal(WasmSymbol(importedModuleIdGlobal), serviceCodeLocation)
+        buildInstr(WasmOp.I64_EXTEND_I32_U, serviceCodeLocation)
+        buildConstI64(32L, serviceCodeLocation)
+        buildInstr(WasmOp.I64_SHL, serviceCodeLocation)
+        buildSetGlobal(WasmSymbol(moduleIdMaskGlobal), serviceCodeLocation)
     }
 
     private fun createAssociatedObjectGetterFunction(
@@ -908,6 +938,9 @@ class WasmCompiledModuleFragment(
         bindFileFragments(wasmCompiledFileFragments, { it.functionTypes.unbound }, { it.functionTypes.defined })
         rebindEquivalentFunctions()
         bindUniqueJsFunNames()
+        for (fragment in wasmCompiledFileFragments) {
+            fragment.moduleIdMaskGlobal.bind(moduleIdMaskGlobal)
+        }
     }
 
     private fun <IrSymbolType, WasmDeclarationType : Any, WasmSymbolType : WasmSymbol<WasmDeclarationType>> bindFileFragments(
