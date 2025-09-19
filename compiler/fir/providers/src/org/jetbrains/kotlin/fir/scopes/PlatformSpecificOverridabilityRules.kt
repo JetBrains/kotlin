@@ -6,30 +6,61 @@
 package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
-interface PlatformSpecificOverridabilityRules : FirSessionComponent {
+abstract class PlatformSpecificOverridabilityRules : FirComposableSessionComponent<PlatformSpecificOverridabilityRules> {
     // Thus functions return "null" in case the status should be defined via standard platform-independent rules
-    fun isOverriddenFunction(
+    abstract fun isOverriddenFunction(
         overrideCandidate: FirSimpleFunction,
         baseDeclaration: FirSimpleFunction
     ): Boolean?
 
-    fun isOverriddenProperty(
+    abstract fun isOverriddenProperty(
         overrideCandidate: FirCallableDeclaration,
         baseDeclaration: FirProperty
     ): Boolean?
 
-    fun chooseIntersectionVisibility(
+    abstract fun chooseIntersectionVisibility(
         overrides: Collection<FirCallableSymbol<*>>,
         dispatchClassSymbol: FirRegularClassSymbol?,
     ): Visibility?
+
+    @SessionConfiguration
+    final override fun createComposed(components: List<PlatformSpecificOverridabilityRules>): Composed {
+        return Composed(components)
+    }
+
+    class Composed(
+        override val components: List<PlatformSpecificOverridabilityRules>
+    ) : PlatformSpecificOverridabilityRules(), FirComposableSessionComponent.Composed<PlatformSpecificOverridabilityRules> {
+        override fun isOverriddenFunction(
+            overrideCandidate: FirSimpleFunction,
+            baseDeclaration: FirSimpleFunction,
+        ): Boolean? {
+            return components.firstNotNullOfOrNull { it.isOverriddenFunction(overrideCandidate, baseDeclaration) }
+        }
+
+        override fun isOverriddenProperty(
+            overrideCandidate: FirCallableDeclaration,
+            baseDeclaration: FirProperty,
+        ): Boolean? {
+            return components.firstNotNullOfOrNull { it.isOverriddenProperty(overrideCandidate, baseDeclaration) }
+        }
+
+        override fun chooseIntersectionVisibility(
+            overrides: Collection<FirCallableSymbol<*>>,
+            dispatchClassSymbol: FirRegularClassSymbol?,
+        ): Visibility? {
+            return components.firstNotNullOfOrNull { it.chooseIntersectionVisibility(overrides, dispatchClassSymbol) }
+        }
+    }
 }
 
 val FirSession.platformSpecificOverridabilityRules: PlatformSpecificOverridabilityRules? by FirSession.nullableSessionComponentAccessor()

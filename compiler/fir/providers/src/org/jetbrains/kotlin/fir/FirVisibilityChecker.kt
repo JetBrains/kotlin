@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -47,7 +45,7 @@ abstract class FirPrivateVisibleFromDifferentModuleExtension : FirSessionCompone
     abstract fun canSeePrivateTopLevelDeclarationsFromFile(useSiteFile: FirFile, targetFile: FirFile): Boolean
 }
 
-abstract class FirVisibilityChecker : FirSessionComponent {
+abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilityChecker> {
     @NoMutableState
     object Default : FirVisibilityChecker() {
         override fun platformVisibilityCheck(
@@ -69,6 +67,53 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             visibilityInBaseClass: Visibility,
         ): Boolean {
             return true
+        }
+    }
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirVisibilityChecker>): Composed {
+        return Composed(components)
+    }
+
+    class Composed(
+        override val components: List<FirVisibilityChecker>
+    ) : FirVisibilityChecker(), FirComposableSessionComponent.Composed<FirVisibilityChecker> {
+        override fun platformVisibilityCheck(
+            declarationVisibility: Visibility,
+            symbol: FirBasedSymbol<*>,
+            useSiteFile: FirFile,
+            containingDeclarations: List<FirDeclaration>,
+            dispatchReceiver: FirExpression?,
+            session: FirSession,
+            isCallToPropertySetter: Boolean,
+            supertypeSupplier: SupertypeSupplier,
+        ): Boolean {
+            return components.all {
+                it.platformVisibilityCheck(
+                    declarationVisibility,
+                    symbol,
+                    useSiteFile,
+                    containingDeclarations,
+                    dispatchReceiver,
+                    session,
+                    isCallToPropertySetter,
+                    supertypeSupplier
+                )
+            }
+        }
+
+        override fun platformOverrideVisibilityCheck(
+            packageNameOfDerivedClass: FqName,
+            symbolInBaseClass: FirBasedSymbol<*>,
+            visibilityInBaseClass: Visibility,
+        ): Boolean {
+            return components.all {
+                it.platformOverrideVisibilityCheck(
+                    packageNameOfDerivedClass,
+                    symbolInBaseClass,
+                    visibilityInBaseClass
+                )
+            }
         }
     }
 

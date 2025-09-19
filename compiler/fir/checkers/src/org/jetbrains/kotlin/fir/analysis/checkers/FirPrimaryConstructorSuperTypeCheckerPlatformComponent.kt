@@ -5,16 +5,29 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
-abstract class FirPrimaryConstructorSuperTypeCheckerPlatformComponent : FirSessionComponent {
+abstract class FirPrimaryConstructorSuperTypeCheckerPlatformComponent : FirComposableSessionComponent<FirPrimaryConstructorSuperTypeCheckerPlatformComponent> {
     abstract val supertypesThatDontNeedInitializationInSubtypesConstructors: Set<ClassId>
 
     object Default : FirPrimaryConstructorSuperTypeCheckerPlatformComponent() {
         override val supertypesThatDontNeedInitializationInSubtypesConstructors: Set<ClassId> = setOf(StandardClassIds.Enum)
+    }
+
+    class Composed(
+        override val components: List<FirPrimaryConstructorSuperTypeCheckerPlatformComponent>
+    ) : FirPrimaryConstructorSuperTypeCheckerPlatformComponent(), FirComposableSessionComponent.Composed<FirPrimaryConstructorSuperTypeCheckerPlatformComponent> {
+        override val supertypesThatDontNeedInitializationInSubtypesConstructors: Set<ClassId> =
+            components.flatMapTo(mutableSetOf()) { it.supertypesThatDontNeedInitializationInSubtypesConstructors }
+    }
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirPrimaryConstructorSuperTypeCheckerPlatformComponent>): Composed {
+        return Composed(components)
     }
 }
 
