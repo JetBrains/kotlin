@@ -58,4 +58,14 @@ open internal class NonCapturingJointSet(children: List<AbstractSet>, fSet: FSet
         properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || children.size > 1
         properties.tracksConsumption = true
     }
+
+    /**
+     * If [this] set contains a single child, returns it. Otherwise, returns `null`.
+     */
+    fun getSingleChildOrNull(): AbstractSet? {
+        if (children.size == 1) {
+            return children[0]
+        }
+        return null
+    }
 }
