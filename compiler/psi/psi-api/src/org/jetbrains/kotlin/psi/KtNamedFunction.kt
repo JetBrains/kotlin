@@ -62,6 +62,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         ItemPresentationProviders.getItemPresentation(/* element = */ this)
 
     override fun getValueParameterList(): KtParameterList? =
+        @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
 
     override fun getValueParameters(): List<KtParameter> =
@@ -168,6 +169,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         false
 
     override fun getContractDescription(): KtContractEffectList? =
+        @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
 
     @OptIn(KtImplementationDetail::class)

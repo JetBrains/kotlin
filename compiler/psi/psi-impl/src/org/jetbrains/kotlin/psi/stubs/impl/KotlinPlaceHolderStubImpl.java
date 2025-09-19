@@ -19,6 +19,7 @@ public class KotlinPlaceHolderStubImpl<T extends KtElementImplStub<? extends Stu
         super(parent, elementType);
     }
 
+    @SuppressWarnings("deprecation") // KT-78356
     @Override
     @KtImplementationDetail
     public @NotNull KotlinPlaceHolderStubImpl<T> copyInto(@Nullable StubElement<?> newParent) {

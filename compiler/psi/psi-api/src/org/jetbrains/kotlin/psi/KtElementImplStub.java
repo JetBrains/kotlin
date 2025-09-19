@@ -38,6 +38,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
+    @SuppressWarnings("deprecation") // KT-78356
     public String toString() {
         return getElementType().toString();
     }
@@ -101,7 +102,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation") // KT-78356
     public PsiReference getReference() {
         PsiReference[] references = getReferences();
         return (references.length > 0) ? references[0] : null;
@@ -114,6 +115,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @NotNull
+    @SuppressWarnings("deprecation") // KT-78356
     protected <PsiT extends KtElementImplStub<?>, StubT extends StubElement<?>> List<PsiT> getStubOrPsiChildrenAsList(
             @NotNull KtStubElementType<StubT, PsiT> elementType
     ) {

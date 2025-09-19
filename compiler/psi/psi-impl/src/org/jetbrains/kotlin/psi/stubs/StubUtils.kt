@@ -30,6 +30,7 @@ object StubUtils {
     }
 
     @JvmStatic
+    @Suppress("DEPRECATION") // KT-78356
     fun createNestedClassId(parentStub: StubElement<*>, currentDeclaration: KtClassLikeDeclaration): ClassId? {
         if (currentDeclaration is KtObjectDeclaration && currentDeclaration.isObjectLiteral()) {
             return null

@@ -48,6 +48,7 @@ abstract class StubsTestEngine {
     private fun checkPsiElementTypeConsistency(assertions: AssertionsService, stubElement: StubElement<*>) {
         val psi = stubElement.psi as? StubBasedPsiElement<*>
         if (psi != null) {
+            @Suppress("DEPRECATION") // KT-78356
             assertions.assertEquals(
                 stubElement.stubType,
                 psi.elementType,
@@ -90,6 +91,7 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
 ): S {
     buffer.reset()
 
+    @Suppress("DEPRECATION") // KT-78356
     val serializer = if (originalStub is PsiFileStub<*>) {
         originalStub.type
     } else {
@@ -105,6 +107,7 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
     val deserializedStub = serializer.deserialize(stubInputStream, deserializedParentStub)
     assertEquals(-1, stubInputStream.read(), "The deserializer has to read the same amount of bytes as the serializer wrote")
     assertEquals(originalStub::class, deserializedStub::class, "The stub class must be the same")
+    @Suppress("DEPRECATION") // KT-78356
     assertEquals(originalStub.stubType, deserializedStub.stubType, "The stub type must be the same")
 
     for (originalChild in originalStub.childrenStubs) {

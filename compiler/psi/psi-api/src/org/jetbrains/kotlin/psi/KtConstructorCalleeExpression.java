@@ -37,6 +37,7 @@ public class KtConstructorCalleeExpression extends KtExpressionImplStub<KotlinPl
     }
 
     @Nullable @IfNotParsed
+    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }

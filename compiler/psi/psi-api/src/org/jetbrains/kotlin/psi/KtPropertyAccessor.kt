@@ -40,7 +40,9 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
         }
 
     open val parameterList: KtParameterList?
-        get() = getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
+        get() =
+            @Suppress("DEPRECATION") // KT-78356
+            getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
 
     open val parameter: KtParameter?
         get() = parameterList?.parameters?.firstOrNull()
@@ -82,11 +84,13 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
         findChildByType(KtTokens.EQ)
 
     override fun getContractDescription(): KtContractEffectList? =
+        @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
 
     override fun hasDeclaredReturnType(): Boolean = true
 
     override fun getTypeReference(): KtTypeReference? =
+        @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
     open val namePlaceholder: PsiElement
