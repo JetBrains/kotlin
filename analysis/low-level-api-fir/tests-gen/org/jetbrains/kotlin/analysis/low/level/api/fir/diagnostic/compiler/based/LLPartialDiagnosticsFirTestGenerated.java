@@ -1917,6 +1917,50 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CollectionLiterals {
+      @Test
+      public void testAllFilesPresentInCollectionLiterals() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes")
+      @TestDataPath("$PROJECT_ROOT")
+      public class UserTypes {
+        @Test
+        public void testAllFilesPresentInUserTypes() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("genericCollection.kt")
+        public void testGenericCollection() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/genericCollection.kt");
+        }
+
+        @Test
+        @TestMetadata("genericCollectionWithNonGenericElementType.kt")
+        public void testGenericCollectionWithNonGenericElementType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/genericCollectionWithNonGenericElementType.kt");
+        }
+
+        @Test
+        @TestMetadata("nonGenericCollection.kt")
+        public void testNonGenericCollection() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollection.kt");
+        }
+
+        @Test
+        @TestMetadata("nonGenericCollectionWithGenericElementType.kt")
+        public void testNonGenericCollectionWithGenericElementType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollectionWithGenericElementType.kt");
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
     @TestDataPath("$PROJECT_ROOT")
     public class ConstVal {
