@@ -50,7 +50,7 @@ object FirWasmSessionFactory : AbstractFirKlibSessionFactory<FirWasmSessionFacto
             WasmTarget.JS -> WasmJsDefaultImportsProvider
             WasmTarget.WASI -> WasmWasiDefaultImportsProvider
         }
-        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(defaultImportsProvider))
+        register(FirDefaultImportsProviderHolder.of(defaultImportsProvider))
     }
 
     // ==================================== Utilities ====================================
