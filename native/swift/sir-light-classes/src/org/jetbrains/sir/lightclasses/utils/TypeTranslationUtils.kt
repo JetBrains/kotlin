@@ -54,7 +54,12 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
                         else -> it
                     }
                 }
-            SirParameter(argumentName = parameter.name.asString(), type = sirType, origin = KotlinParameterOrigin.ValueParameter(parameter))
+            SirParameter(
+                argumentName = parameter.name.asString(),
+                type = sirType,
+                origin = KotlinParameterOrigin.ValueParameter(parameter),
+                isVariadic = parameter.isVararg,
+            )
         }
     }
 }
@@ -75,8 +80,7 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
 @OptIn(KaExperimentalApi::class)
 context(ka: KaSession, sir: SirSession)
 private fun <P : KaParameterSymbol> createParameterType(ktSymbol: KaDeclarationSymbol, parameter: P): SirType {
-    val returnType = (parameter as? KaValueParameterSymbol)?.varargArrayType ?: parameter.returnType
-    return returnType.translateType(
+    return parameter.returnType.translateType(
         position = SirTypeVariance.CONTRAVARIANT,
         reportErrorType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: $it") },
         reportUnsupportedType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: type is not supported") },

@@ -3,14 +3,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void * _Nullable kotlin_Array_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
-
-void * kotlin_Array_iterator(void * self);
-
-void kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, int32_t index, void * _Nullable value);
-
-int32_t kotlin_Array_size_get(void * self);
-
 _Bool kotlin_BooleanArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 void * kotlin_BooleanArray_iterator(void * self);
@@ -18,14 +10,6 @@ void * kotlin_BooleanArray_iterator(void * self);
 void kotlin_BooleanArray_set__TypesOfArguments__Swift_Int32_Swift_Bool__(void * self, int32_t index, _Bool value);
 
 int32_t kotlin_BooleanArray_size_get(void * self);
-
-double kotlin_DoubleArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
-
-void * kotlin_DoubleArray_iterator(void * self);
-
-void kotlin_DoubleArray_set__TypesOfArguments__Swift_Int32_Swift_Double__(void * self, int32_t index, double value);
-
-int32_t kotlin_DoubleArray_size_get(void * self);
 
 int32_t kotlin_IntArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
@@ -53,16 +37,8 @@ _Bool kotlin_collections_BooleanIterator_next(void * self);
 
 _Bool kotlin_collections_BooleanIterator_nextBoolean(void * self);
 
-double kotlin_collections_DoubleIterator_next(void * self);
-
-double kotlin_collections_DoubleIterator_nextDouble(void * self);
-
 int32_t kotlin_collections_IntIterator_next(void * self);
 
 int32_t kotlin_collections_IntIterator_nextInt(void * self);
-
-_Bool kotlin_collections_Iterator_hasNext(void * self);
-
-void * _Nullable kotlin_collections_Iterator_next(void * self);
 
 NS_ASSUME_NONNULL_END

@@ -26,13 +26,13 @@ public final class Accessor: KotlinRuntime.KotlinBase {
         }
         public init(
             y: Swift.Double,
-            z: ExportedKotlinPackages.kotlin.BooleanArray,
+            z: Swift.Bool...,
             outer__: main.Accessor
         ) {
             if Self.self != main.Accessor.Inner.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Accessor.Inner ") }
             let __kt = Accessor_Inner_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_ExportedKotlinPackages_kotlin_BooleanArray_main_Accessor__(__kt, y, z.__externalRCRef(), outer__.__externalRCRef())
+            Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_Swift_Bool_main_Accessor__(__kt, y, z, outer__.__externalRCRef())
         }
     }
     public var x: ExportedKotlinPackages.kotlin.IntArray {
@@ -41,12 +41,12 @@ public final class Accessor: KotlinRuntime.KotlinBase {
         }
     }
     public init(
-        x: ExportedKotlinPackages.kotlin.IntArray
+        x: Swift.Int32...
     ) {
         if Self.self != main.Accessor.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Accessor ") }
         let __kt = __root___Accessor_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_IntArray__(__kt, x.__externalRCRef())
+        __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x)
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -68,30 +68,30 @@ public final class Accessor: KotlinRuntime.KotlinBase {
     }
 }
 public func asNumberList(
-    x: ExportedKotlinPackages.kotlin.Array
+    x: ExportedKotlinPackages.kotlin.Number...
 ) -> [ExportedKotlinPackages.kotlin.Number]? {
-    return __root___asNumberList__TypesOfArguments__ExportedKotlinPackages_kotlin_Array__(x.__externalRCRef()).map { it in it as! Swift.Array<ExportedKotlinPackages.kotlin.Number> }
+    return __root___asNumberList__TypesOfArguments__ExportedKotlinPackages_kotlin_Number__(x.__externalRCRef()).map { it in it as! Swift.Array<ExportedKotlinPackages.kotlin.Number> }
 }
 public func `extension`(
     _ receiver: main.Accessor,
-    d: ExportedKotlinPackages.kotlin.DoubleArray
+    d: Swift.Double...
 ) -> Swift.Void {
-    return __root___extension__TypesOfArguments__main_Accessor_ExportedKotlinPackages_kotlin_DoubleArray__(receiver.__externalRCRef(), d.__externalRCRef())
+    return __root___extension__TypesOfArguments__main_Accessor_Swift_Double__(receiver.__externalRCRef(), d)
 }
 public func oneMore(
-    a: ExportedKotlinPackages.kotlin.Array,
+    a: Swift.String...,
     b: Swift.Int32
 ) -> Swift.Void {
-    return __root___oneMore__TypesOfArguments__ExportedKotlinPackages_kotlin_Array_Swift_Int32__(a.__externalRCRef(), b)
+    return __root___oneMore__TypesOfArguments__Swift_String_Swift_Int32__(a, b)
 }
 public func simple(
-    s: ExportedKotlinPackages.kotlin.Array
+    s: Swift.String...
 ) -> Swift.String {
-    return __root___simple__TypesOfArguments__ExportedKotlinPackages_kotlin_Array__(s.__externalRCRef())
+    return __root___simple__TypesOfArguments__Swift_String__(s)
 }
 public func withDefault(
-    a: ExportedKotlinPackages.kotlin.Array,
+    a: Swift.String...,
     b: Swift.Int32
 ) -> Swift.Void {
-    return __root___withDefault__TypesOfArguments__ExportedKotlinPackages_kotlin_Array_Swift_Int32__(a.__externalRCRef(), b)
+    return __root___withDefault__TypesOfArguments__Swift_String_Swift_Int32__(a, b)
 }

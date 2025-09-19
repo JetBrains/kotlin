@@ -568,8 +568,8 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         get() = (argumentName?.swiftIdentifier ?: "_") +
                 (parameterName?.swiftIdentifier?.let { " $it" } ?: "") + ": " +
                 (type.attributes.render().takeUnless { it.isBlank() }?.let { "$it " } ?: "") +
-                type.swiftRender
-
+                type.swiftRender +
+                if (isVariadic) "..." else ""
 }
 
 private val SirVisibility.swift
