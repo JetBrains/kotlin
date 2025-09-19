@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir.analysis
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
  *
  * Note that, in case of multi-override, if any super member requires `override`, then the `override` keyword cannot be omitted.
  */
-abstract class FirOverridesBackwardCompatibilityHelper : FirSessionComponent {
+abstract class FirOverridesBackwardCompatibilityHelper : FirComposableSessionComponent<FirOverridesBackwardCompatibilityHelper> {
     private val platformDependentAnnotation = ClassId.fromString("kotlin/internal/PlatformDependent")
 
     context(context: CheckerContext)
@@ -69,6 +70,24 @@ abstract class FirOverridesBackwardCompatibilityHelper : FirSessionComponent {
     }
 
     protected open fun additionalCheck(member: FirCallableSymbol<*>): Boolean? = null
+
+    class Composed(
+        override val components: List<FirOverridesBackwardCompatibilityHelper>
+    ) : FirOverridesBackwardCompatibilityHelper(), FirComposableSessionComponent.Composed<FirOverridesBackwardCompatibilityHelper> {
+        context(context: CheckerContext)
+        override fun overrideCanBeOmitted(overriddenMemberSymbols: List<FirCallableSymbol<*>>): Boolean {
+            return components.all { it.overrideCanBeOmitted(overriddenMemberSymbols) }
+        }
+
+        override fun additionalCheck(member: FirCallableSymbol<*>): Boolean? {
+            return components.firstNotNullOfOrNull { it.additionalCheck(member) }
+        }
+    }
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirOverridesBackwardCompatibilityHelper>): Composed {
+        return Composed(components)
+    }
 }
 
 val FirSession.overridesBackwardCompatibilityHelper: FirOverridesBackwardCompatibilityHelper
