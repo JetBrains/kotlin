@@ -561,7 +561,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
             if (functionReferenceLinkageError != null) {
                 statements.add(
-                    JsIrBuilder.buildCall(context.throwLinkageErrorInCallableNameSymbol).apply {
+                    JsIrBuilder.buildCall(context.symbols.throwLinkageErrorInCallableNameSymbol).apply {
                         arguments[0] = JsIrBuilder.buildGetValue(tmpVar.symbol)
                         arguments[1] =
                             functionReferenceLinkageError.toIrConst(context.irBuiltIns.stringType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)

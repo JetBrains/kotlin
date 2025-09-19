@@ -106,7 +106,7 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
                 )
             },
             runIf(isLoweredSuspendFunction(context)) {
-                JsIrBuilder.buildCall(context.coroutineEmptyContinuation.owner.getter!!.symbol)
+                JsIrBuilder.buildCall(context.symbols.coroutineEmptyContinuation.owner.getter!!.symbol)
             }
         )
     }

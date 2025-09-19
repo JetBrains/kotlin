@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsSymbols
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationWebSymbols
-import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -20,26 +19,14 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.findDeclaration
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.getPropertySetter
-import org.jetbrains.kotlin.ir.util.hasShape
-import org.jetbrains.kotlin.ir.util.irError
-import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JsStandardClassIds
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.util.EnumMap
+import java.util.*
 
 // TODO KT-77388 rename to `BackendWebSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class)
@@ -62,10 +49,8 @@ abstract class JsCommonSymbols(
     val testFun = CallableIds.test.functionSymbols().singleOrNull()
     val suiteFun = CallableIds.suite.functionSymbols().singleOrNull()
     val enumEntries: IrClassSymbol = ClassIds.EnumEntries.classSymbol()
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     val createEnumEntries: IrSimpleFunctionSymbol by CallableIds.enumEntries
-        .functionSymbol { it.descriptor.valueParameters.firstOrNull()?.type?.isFunctionType == false }
+        .functionSymbol { it.parameters.firstOrNull()?.type?.isFunctionOrKFunction() == false }
 }
 
 @OptIn(InternalSymbolFinderAPI::class)
@@ -74,12 +59,9 @@ class JsSymbols(
     private val stageController: StageController,
     private val compileLongAsBigint: Boolean
 ) : PreSerializationJsSymbols by PreSerializationJsSymbols.Impl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
-    override val throwNullPointerException = CallableIds.throwNpe.functionSymbol()
+    val noWhenBranchMatchedException = CallableIds.noWhenBranchMatchedException.functionSymbol()
 
-    // TODO investigate and drop if not required
-    init {
-        CallableIds.noWhenBranchMatchedException.functionSymbol()
-    }
+    override val throwNullPointerException = CallableIds.throwNpe.functionSymbol()
 
     override val throwTypeCastException = CallableIds.throwCce.functionSymbol()
 
@@ -102,6 +84,8 @@ class JsSymbols(
         get() = _arraysContentEquals.associateBy { it.owner.parameters[0].type.makeNotNull() }
 
     override val getContinuation = CallableIds.getContinuation.functionSymbol()
+
+    val coroutineEmptyContinuation: IrPropertySymbol = CallableIds.EmptyContinuation.propertySymbols().single()
 
     override val returnIfSuspended = CallableIds.returnIfSuspended.functionSymbol()
 
@@ -521,12 +505,37 @@ class JsSymbols(
     val jsCreateMutableSetFrom = CallableIds.createMutableSetFrom.functionSymbol()
     val jsCreateMapFrom = CallableIds.createMapFrom.functionSymbol()
     val jsCreateMutableMapFrom = CallableIds.createMutableMapFrom.functionSymbol()
+
+    val throwableClass = StandardClassIds.Throwable.classSymbol()
+    val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associateWith {
+        ClassId(JsStandardClassIds.BASE_JS_INTERNAL_PACKAGE, Name.identifier("${it.identifier}CompanionObject")).classSymbol()
+    }
+
+    private fun primitivesWithImplicitCompanionObject(): List<Name> {
+        val numbers = PrimitiveType.NUMBER_TYPES
+            .filter { it.name != "LONG" && it.name != "CHAR" } // skip due to they have own explicit companions
+            .map { it.typeName }
+
+        return numbers + listOf(Name.identifier("String"), Name.identifier("Boolean"))
+    }
+
+    val newThrowableSymbol = CallableIds.newThrowable.functionSymbol()
+    val extendThrowableSymbol = CallableIds.extendThrowable.functionSymbol()
+    val setupCauseParameterSymbol = CallableIds.setupCauseParameter.functionSymbol()
+    val setPropertiesToThrowableInstanceSymbol = CallableIds.setPropertiesToThrowableInstance.functionSymbol()
+
+    val kpropertyBuilder = CallableIds.getPropertyCallableRef.functionSymbol()
+    val klocalDelegateBuilder = CallableIds.getLocalDelegateReference.functionSymbol()
+    val throwLinkageErrorInCallableNameSymbol = CallableIds.throwLinkageErrorInCallableName.functionSymbol()
+
+    val eagerInitialization: IrClassSymbol = ClassIds.EagerInitialization.classSymbol()
 }
 
 private object ClassIds {
     private val String.jsClassId get() = ClassId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
     val FunctionAdapter = "FunctionAdapter".jsClassId
     val DefaultConstructorMarker = "DefaultConstructorMarker".jsClassId
+    val EagerInitialization = "EagerInitialization".jsClassId
 
     // Coroutines classes
     private val String.coroutinesClassId get() = ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier(this))
@@ -681,6 +690,13 @@ private object CallableIds {
     val createThis = "createThis".jsCallableId
     val boxApply = "boxApply".jsCallableId
     val createExternalThis = "createExternalThis".jsCallableId
+    val newThrowable = "newThrowable".jsCallableId
+    val extendThrowable = "extendThrowable".jsCallableId
+    val setupCauseParameter = "setupCauseParameter".jsCallableId
+    val setPropertiesToThrowableInstance = "setPropertiesToThrowableInstance".jsCallableId
+    val getPropertyCallableRef = "getPropertyCallableRef".jsCallableId
+    val getLocalDelegateReference = "getLocalDelegateReference".jsCallableId
+    val throwLinkageErrorInCallableName = "throwLinkageErrorInCallableName".jsCallableId
 
     // JS Long functions
     private val String.jsBoxedLongId get() = CallableId(JsStandardClassIds.BOXED_LONG_PACKAGE, Name.identifier(this))
@@ -770,4 +786,5 @@ private object CallableIds {
     val enumEntries = CallableId(StandardClassIds.BASE_ENUMS_PACKAGE, Name.identifier("enumEntries"))
     val test = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("test"))
     val suite = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("suite"))
+    val EmptyContinuation = CallableId(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal")), Name.identifier("EmptyContinuation"))
 }

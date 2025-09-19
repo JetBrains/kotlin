@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 
 class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyReferenceLowering<JsIrBackendContext>(context) {
 
-    private val referenceBuilderSymbol = context.kpropertyBuilder
-    private val localDelegateBuilderSymbol = context.klocalDelegateBuilder
+    private val referenceBuilderSymbol = context.symbols.kpropertyBuilder
+    private val localDelegateBuilderSymbol = context.symbols.klocalDelegateBuilder
     private val jsClassSymbol = context.symbols.jsClass
 
     override fun IrBuilderWithScope.createKProperty(

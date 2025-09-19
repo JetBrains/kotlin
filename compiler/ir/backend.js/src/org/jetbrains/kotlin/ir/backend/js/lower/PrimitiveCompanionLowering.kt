@@ -36,7 +36,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : BodyLowering
         if (!parent.defaultType.isPrimitiveType() && !parent.defaultType.isString())
             return null
 
-        return context.primitiveCompanionObjects[parent.name]?.owner
+        return context.symbols.primitiveCompanionObjects[parent.name]?.owner
     }
 
     private fun getActualPrimitiveCompanionPropertyAccessor(function: IrSimpleFunction): IrSimpleFunction? {
