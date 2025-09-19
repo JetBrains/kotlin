@@ -41,7 +41,7 @@ public abstract class KtStringTemplateEntry extends KtElementImplStub<KotlinPlac
         // to search directly via ast if possible
         KotlinPlaceHolderStub<?> stub = getStub();
         if (stub != null) {
-            List<StubElement> childrenStubs = stub.getChildrenStubs();
+            List<StubElement<?>> childrenStubs = stub.getChildrenStubs();
             for (StubElement<?> element : childrenStubs) {
                 PsiElement psiElement = element.getPsi();
                 if (psiElement instanceof KtExpression) {
