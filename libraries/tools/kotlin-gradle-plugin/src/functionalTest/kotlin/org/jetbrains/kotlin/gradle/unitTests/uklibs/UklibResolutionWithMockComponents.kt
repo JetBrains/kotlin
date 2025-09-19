@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Mock
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Variant
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.incremental.createDirectory
-import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import org.junit.Test
@@ -147,6 +146,14 @@ class UklibResolutionTestsWithMockComponents {
                     artifacts = mutableListOf(kmpMetadataJarVariant.attributes + jarArtifact + libraryElementsJar)
                 ),
             ).prettyPrinted, consumer.multiplatformExtension.js().compilationResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = kmpMetadataJarVariant.name,
+                    artifacts = mutableListOf(kmpMetadataJarVariant.attributes + jarArtifact + libraryElementsJar)
+                ),
+            ).prettyPrinted, consumer.multiplatformExtension.js().runtimeResolution().prettyPrinted
         )
         listOf(
             consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
@@ -322,11 +329,24 @@ class UklibResolutionTestsWithMockComponents {
             { consumer.multiplatformExtension.wasmJs() },
             { consumer.multiplatformExtension.wasmWasi() },
         ).forEach {
-            assertContains(
-                "No matching variant of foo:direct:1.0 was found",
-                assertThrows<Exception> {
-                    it().runtimeResolution()
-                }.stackTraceToString()
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpMetadataJarVariant.name,
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "non-jvm",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "kotlin-metadata",
+                                "org.jetbrains.kotlin.platform.type" to "common",
+                            ),
+                        )
+                    ),
+                ).prettyPrinted,
+                it().runtimeResolution().prettyPrinted,
+                message = it().name
             )
         }
     }
@@ -419,9 +439,11 @@ class UklibResolutionTestsWithMockComponents {
         }
 
         listOf(
-            consumer.multiplatformExtension.iosArm64().compilations.getByName("main").internal.configurations.compileDependencyConfiguration,
-            consumer.multiplatformExtension.jvm().compilations.getByName("main").internal.configurations.compileDependencyConfiguration,
-            consumer.multiplatformExtension.wasmJs().compilations.getByName("main").internal.configurations.compileDependencyConfiguration,
+            consumer.multiplatformExtension.iosArm64().compilationResolution(),
+            consumer.multiplatformExtension.jvm().compilationResolution(),
+            consumer.multiplatformExtension.jvm().runtimeResolution(),
+            consumer.multiplatformExtension.wasmJs().compilationResolution(),
+            consumer.multiplatformExtension.wasmJs().runtimeResolution(),
         ).forEach {
             assertEquals(
                 mapOf<String, ResolvedComponentWithArtifacts>(
@@ -430,7 +452,7 @@ class UklibResolutionTestsWithMockComponents {
                         artifacts = mutableListOf()
                     ),
                 ).prettyPrinted,
-                it.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
+                it.prettyPrinted
             )
         }
 
@@ -449,7 +471,7 @@ class UklibResolutionTestsWithMockComponents {
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
                         configuration = "jsApiElements-published",
                         artifacts = mutableListOf(
-                            kmpJsVariantAttributes + klibArtifact,
+                            kmpJsApiVariantAttributes + klibArtifact,
                         )
                     ),
                 ).prettyPrinted,
@@ -500,6 +522,22 @@ class UklibResolutionTestsWithMockComponents {
         assertEquals(
             mapOf<String, ResolvedComponentWithArtifacts>(
                 "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                    configuration = "jvmRuntimeElements",
+                    artifacts = mutableListOf(
+                        kmpJvmRuntimeVariantAttributes + jarArtifact,
+                    )
+                ),
+                "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                    configuration = "runtime",
+                    artifacts = mutableListOf(
+                        jvmRuntimeAttributes + jarArtifact,
+                    )
+                )
+            ).prettyPrinted, consumer.multiplatformExtension.jvm().runtimeResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
                     configuration = "wasmJsApiElements",
                     artifacts = mutableListOf(
                     )
@@ -507,10 +545,25 @@ class UklibResolutionTestsWithMockComponents {
                 "org.jetbrains.kotlin:kotlin-stdlib-wasm-js:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
                     configuration = "wasmJsApiElements",
                     artifacts = mutableListOf(
-                        kmpWasmJsVariantAttributes + klibArtifact + packed,
+                        kmpWasmJsApiVariantAttributes + klibArtifact + packed,
                     )
                 )
             ).prettyPrinted, consumer.multiplatformExtension.wasmJs().compilationResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                    configuration = "wasmJsRuntimeElements",
+                    artifacts = mutableListOf(
+                    )
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib-wasm-js:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                    configuration = "wasmJsRuntimeElements",
+                    artifacts = mutableListOf(
+                        kmpWasmJsRuntimeVariantAttributes + klibArtifact + packed,
+                    )
+                )
+            ).prettyPrinted, consumer.multiplatformExtension.wasmJs().runtimeResolution().prettyPrinted
         )
         assertEquals(
             mapOf<String, ResolvedComponentWithArtifacts>(
@@ -522,10 +575,25 @@ class UklibResolutionTestsWithMockComponents {
                 "org.jetbrains.kotlin:kotlin-stdlib-js:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
                     configuration = "jsApiElements",
                     artifacts = mutableListOf(
-                        kmpJsVariantAttributes + klibArtifact + packed,
+                        kmpJsApiVariantAttributes + klibArtifact + packed,
                     )
                 )
             ).prettyPrinted, consumer.multiplatformExtension.js().compilationResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "org.jetbrains.kotlin:kotlin-stdlib:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                    configuration = "jsRuntimeElements",
+                    artifacts = mutableListOf(
+                    )
+                ),
+                "org.jetbrains.kotlin:kotlin-stdlib-js:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
+                    configuration = "jsRuntimeElements",
+                    artifacts = mutableListOf(
+                        kmpJsRuntimeVariantAttributes + klibArtifact + packed,
+                    )
+                )
+            ).prettyPrinted, consumer.multiplatformExtension.js().runtimeResolution().prettyPrinted
         )
         assertEquals(
             mapOf<String, ResolvedComponentWithArtifacts>(
@@ -600,6 +668,23 @@ class UklibResolutionTestsWithMockComponents {
                 it.prettyPrinted,
             )
         }
+
+        listOf(
+            consumer.multiplatformExtension.jvm().runtimeResolution(),
+            consumer.multiplatformExtension.js().runtimeResolution(),
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = "runtime",
+                        artifacts = mutableListOf(
+                            jvmRuntimeAttributes + jarArtifact,
+                        )
+                    )
+                ).prettyPrinted,
+                it.prettyPrinted
+            )
+        }
     }
 
     @Test
@@ -659,6 +744,23 @@ class UklibResolutionTestsWithMockComponents {
                         configuration = "jvmApiElements",
                         artifacts = mutableListOf(
                             jvmApiAttributes + jarArtifact,
+                        )
+                    )
+                ).prettyPrinted,
+                it.prettyPrinted,
+            )
+        }
+
+        listOf(
+            consumer.multiplatformExtension.jvm().runtimeResolution(),
+            consumer.multiplatformExtension.js().runtimeResolution(),
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = "jvmRuntimeElements",
+                        artifacts = mutableListOf(
+                            jvmRuntimeAttributes + jarArtifact,
                         )
                     )
                 ).prettyPrinted,
@@ -728,6 +830,38 @@ class UklibResolutionTestsWithMockComponents {
                     artifacts = mutableListOf(uklibApiVariant.attributes + uklibTransformationJvmAttributes)
                 ),
             ).prettyPrinted, consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = uklibRuntimeVariant.name,
+                    artifacts = mutableListOf(uklibRuntimeVariant.attributes + uklibTransformationJvmAttributes)
+                ),
+            ).prettyPrinted, consumer.multiplatformExtension.jvm().runtimeResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = uklibApiVariant.name,
+                    artifacts = mutableListOf(
+                        /**
+                         * Artifacts are filtered by [UnzippedUklibToPlatformCompilationTransform]
+                         */
+                    )
+                ),
+            ).prettyPrinted, consumer.multiplatformExtension.js().compilationResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = uklibRuntimeVariant.name,
+                    artifacts = mutableListOf(
+                        /**
+                         * Artifacts are filtered by [UnzippedUklibToPlatformCompilationTransform]
+                         */
+                    )
+                ),
+            ).prettyPrinted, consumer.multiplatformExtension.js().runtimeResolution().prettyPrinted
         )
         listOf(
             consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
@@ -803,6 +937,17 @@ class UklibResolutionTestsWithMockComponents {
             ).prettyPrinted,
             consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
         )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = kmpJvmRuntimeVariant.name,
+                    artifacts = mutableListOf(
+                        kmpJvmRuntimeVariant.attributes + jarArtifact,
+                    )
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.jvm().runtimeResolution().prettyPrinted
+        )
         listOf(
             consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
             consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts()
@@ -864,6 +1009,7 @@ class UklibResolutionTestsWithMockComponents {
         listOf(
             { consumer.multiplatformExtension.iosArm64().compilationResolution() },
             { consumer.multiplatformExtension.jvm().compilationResolution() },
+            { consumer.multiplatformExtension.jvm().runtimeResolution() },
             { consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts() },
             { consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts() },
         ).forEach {

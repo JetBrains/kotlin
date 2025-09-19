@@ -87,7 +87,7 @@ val kmpIosX64MetadataVariantAttributes = mapOf(
     "org.jetbrains.kotlin.platform.type" to "native"
 )
 
-val kmpJsVariantAttributes = mutableMapOf(
+val kmpJsApiVariantAttributes = mutableMapOf(
     "org.gradle.category" to "library",
     "org.gradle.jvm.environment" to "non-jvm",
     "org.gradle.usage" to "kotlin-api",
@@ -95,10 +95,26 @@ val kmpJsVariantAttributes = mutableMapOf(
     "org.jetbrains.kotlin.js.compiler" to "ir",
     "org.jetbrains.kotlin.platform.type" to "js",
 )
-val kmpWasmJsVariantAttributes = mutableMapOf(
+val kmpJsRuntimeVariantAttributes = mutableMapOf(
+    "org.gradle.category" to "library",
+    "org.gradle.jvm.environment" to "non-jvm",
+    "org.gradle.usage" to "kotlin-runtime",
+    "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+    "org.jetbrains.kotlin.js.compiler" to "ir",
+    "org.jetbrains.kotlin.platform.type" to "js",
+)
+val kmpWasmJsApiVariantAttributes = mutableMapOf(
     "org.gradle.category" to "library",
     "org.gradle.jvm.environment" to "non-jvm",
     "org.gradle.usage" to "kotlin-api",
+    "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+    "org.jetbrains.kotlin.platform.type" to "wasm",
+    "org.jetbrains.kotlin.wasm.target" to "js",
+)
+val kmpWasmJsRuntimeVariantAttributes = mutableMapOf(
+    "org.gradle.category" to "library",
+    "org.gradle.jvm.environment" to "non-jvm",
+    "org.gradle.usage" to "kotlin-runtime",
     "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
     "org.jetbrains.kotlin.platform.type" to "wasm",
     "org.jetbrains.kotlin.wasm.target" to "js",

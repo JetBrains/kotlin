@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 
 internal const val UKLIB_API_ELEMENTS_NAME = "uklibApiElements"
 internal const val UKLIB_RUNTIME_ELEMENTS_NAME = "uklibRuntimeElements"
-private const val UKLIB_IDE_METADATA_ELEMENTS_NAME = "uklibIdeMetadataElements"
 
 internal const val UKLIB_JAVA_API_ELEMENTS_STUB_NAME = "javaApiElements"
 internal const val UKLIB_JAVA_RUNTIME_ELEMENTS_STUB_NAME = "javaRuntimeElements"
@@ -67,6 +66,7 @@ internal fun Project.locateOrRegisterUklibManifestSerializationWithoutCompilatio
 }
 
 internal fun Project.maybeCreateUklibApiElements() = configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME)
+internal fun Project.maybeCreateUklibRuntimeElements() = configurations.maybeCreateConsumable(UKLIB_RUNTIME_ELEMENTS_NAME)
 
 private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     archiveTask: TaskProvider<ArchiveUklibTask>,
@@ -113,7 +113,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
         }
     }
 
-    val uklibRuntimeElements = configurations.maybeCreateConsumable(UKLIB_RUNTIME_ELEMENTS_NAME).apply {
+    val uklibRuntimeElements = maybeCreateUklibRuntimeElements().apply {
         attributes.apply {
             attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB_RUNTIME))
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
@@ -235,6 +235,14 @@ private fun Configuration.inheritRuntimeDependenciesFromPublishedCompilations(
     publishedCompilations.forEach {
         it.internal.configurations.runtimeDependencyConfiguration?.let {
             extendsFrom(it)
+        }
+        /**
+         * If K/N is one of the published compilations, we must promote its compile dependencies dependencies to runtime
+         *
+         * FIXME: Remove this extendsFrom after OSIP-667
+         */
+        if (it is KotlinNativeCompilation) {
+            extendsFrom(it.internal.configurations.compileDependencyConfiguration)
         }
     }
 }

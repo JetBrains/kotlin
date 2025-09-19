@@ -292,8 +292,6 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
                      * when platform configurations resolved into metadata jar.
                      *
                      * KotlinPlatformType platform -> common compatibility is enabled by [AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResolution]
-                     *
-                     * FIXME: Not clear what to do with runtime?
                      */
                     KOTLIN_METADATA
                 ),
@@ -307,11 +305,21 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
                     KOTLIN_RUNTIME,
                     /**
                      * Compatibility with all the Maven POM-only and Gradle JVM producers
+                     *
+                     * FIXME: This compatibility rule is wrong: KT-81349
                      */
                     JAVA_RUNTIME,
                     JAVA_API,
-                    // FIXME: KOTLIN_API compatibility is incorrect, right?
-                    // KOTLIN_API,
+                    /**
+                     * Same as above. Fallback to metadata variant to resolve and inherit dependencies
+                     */
+                     KOTLIN_METADATA,
+                    /**
+                     * Handle pre-HMPP metadata and specifically dom-api-compat
+                     *
+                     * FIXME: Remove this case in KT-81350
+                     */
+                     KOTLIN_API,
                 ),
                 /**
                  * KOTLIN_UKLIB_METADATA is requested in per source set resolvableMetadataConfigurations. This Usage isn't published.
@@ -337,7 +345,7 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
                     /**
                      * Handle pre-HMPP metadata and specifically dom-api-compat
                      *
-                     * FIXME: Test against exact pre-HMPP publication metadata instead of dom-api-compat
+                     * FIXME: Remove this case in KT-81350
                      */
                     KOTLIN_API,
                     /**
@@ -382,11 +390,24 @@ internal class SelectBestMatchingVariantForKmpResolutionUsage : AttributeDisambi
                 KOTLIN_METADATA
             ),
             KOTLIN_UKLIB_RUNTIME to listOf(
+                /**
+                 * Prefer UKlib runtime
+                 */
                 KOTLIN_UKLIB_RUNTIME,
+                /**
+                 * If we are looking at a pre-UKlib component, select the respective runtime
+                 */
                 KOTLIN_RUNTIME,
+                /**
+                 * If we are looking at a JVM component also take the runtime
+                 */
                 JAVA_RUNTIME,
+                // FIXME: Remove in KT-81349
                 JAVA_API,
-                KOTLIN_METADATA
+                /**
+                 * Fallback to metadata if the platform is not available
+                 */
+                KOTLIN_METADATA,
             ),
             KOTLIN_UKLIB_METADATA to listOf(
                 /**
