@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("gradle-plugin-compiler-dependency-configuration")
+    id("gradle-plugin-published-compiler-dependency-configuration")
 }
 
 description = "Common klib metadata reader and writer"
