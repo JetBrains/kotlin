@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
@@ -33,7 +32,7 @@ abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServi
     abstract fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        validate(getSymbols(info.irPluginContext.irBuiltIns))
+        validate(getSymbols(info.irBuiltIns))
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

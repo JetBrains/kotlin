@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
@@ -132,7 +133,7 @@ class IrTextDumpHandler(
                 // when flags are still rendered for references to fields and classes.
                 flags.takeIf { !isReference || declaration is IrField || declaration is IrClass }.orEmpty()
             },
-            isHiddenDeclaration = { isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
+            isHiddenDeclaration = { isHiddenDeclaration(it, info.irBuiltIns) },
             stableOrder = true,
             filePathRenderer = { irFileEntry, fullPath ->
                 renderFilePathForIrFile(testFileToIrFile, testServices, irFileEntry, fullPath)
@@ -157,7 +158,7 @@ class IrTextDumpHandler(
         assertions.assertAll(
             externalClassIds.map { externalClassId ->
                 {
-                    val classDump = info.irPluginContext.findExternalClass(externalClassId).dump(dumpOptions)
+                    val classDump = info.findExternalClass(externalClassId).dump(dumpOptions)
                     val suffix = ".__${externalClassId.replace("/", ".")}"
                     val expectedFile = baseFile.withSuffixAndExtension(suffix, getDumpExtension(ignoreFirIdentical = true))
                     assertions.assertEqualsToFile(expectedFile, classDump)
@@ -166,9 +167,21 @@ class IrTextDumpHandler(
         )
     }
 
-    private fun IrPluginContext.findExternalClass(externalClassId: String): IrClass {
+    private fun IrBackendInput.findExternalClass(externalClassId: String): IrClass {
         val classId = ClassId.fromString(externalClassId)
-        return referenceClass(classId)?.owner ?: assertions.fail { "Can't find a class in external dependencies: $externalClassId" }
+
+        if (testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicFrontend &&
+            testServices.defaultsProvider.targetBackend == TargetBackend.JVM_IR
+        ) {
+            // irBuiltIns.symbolFinder sometimes returns unbound symbols in JVM K1 tests.
+            // Use IrPluginContext for this instead, it works okay.
+            return (this as IrBackendInput.JvmIrBackendInput).backendInput.pluginContext?.referenceClass(classId)?.owner
+                ?: assertions.fail { "Can't find a class in external dependencies: $externalClassId" }
+        }
+
+        @OptIn(InternalSymbolFinderAPI::class)
+        return irBuiltIns.symbolFinder.findClass(classId)?.owner
+            ?: assertions.fail { "Can't find a class in external dependencies: $externalClassId" }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

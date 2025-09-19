@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -55,8 +55,8 @@ abstract class Fir2IrCliFacade<Phase, InputPipelineArtifact, OutputPipelineArtif
 class Fir2IrCliBasedOutputArtifact<A : Fir2IrPipelineArtifact>(val cliArtifact: A) : IrBackendInput() {
     override val irModuleFragment: org.jetbrains.kotlin.ir.declarations.IrModuleFragment
         get() = cliArtifact.result.irModuleFragment
-    override val irPluginContext: IrPluginContext
-        get() = cliArtifact.result.pluginContext
+    override val irBuiltIns: IrBuiltIns
+        get() = cliArtifact.result.irBuiltIns
     override val descriptorMangler: KotlinMangler.DescriptorMangler?
         get() = null
     override val irMangler: KotlinMangler.IrMangler

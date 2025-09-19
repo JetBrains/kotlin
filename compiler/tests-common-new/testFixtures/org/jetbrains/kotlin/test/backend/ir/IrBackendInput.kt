@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -30,10 +30,7 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
 
     abstract val irModuleFragment: IrModuleFragment
 
-    /**
-     * Here plugin context can be used as a service for inspecting resulting IR module
-     */
-    abstract val irPluginContext: IrPluginContext
+    abstract val irBuiltIns: IrBuiltIns
 
     /**
      * The mangler instance that was used to build declaration signatures from (possibly deserialized) K1 descriptors for this backend,
@@ -65,7 +62,7 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
 
     data class JsIrAfterFrontendBackendInput(
         override val irModuleFragment: IrModuleFragment,
-        override val irPluginContext: IrPluginContext,
+        override val irBuiltIns: IrBuiltIns,
         val icData: List<KotlinFileSerializedData>,
         override val diagnosticReporter: BaseDiagnosticsCollector,
         val hasErrors: Boolean,
@@ -77,11 +74,13 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
     class JsIrDeserializedFromKlibBackendInput(
         override val moduleInfo: IrModuleInfo,
         override val klib: File,
-        override val irPluginContext: IrPluginContext,
     ) : DeserializedFromKlib, JsIrBackendInput() {
         override val diagnosticReporter: BaseDiagnosticsCollector = DiagnosticsCollectorStub()
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module
+
+        override val irBuiltIns: IrBuiltIns
+            get() = moduleInfo.bultins
 
         override val descriptorMangler: KotlinMangler.DescriptorMangler?
             get() = moduleInfo.symbolTable.signaturer?.mangler
@@ -94,7 +93,7 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
 
     data class WasmAfterFrontendBackendInput(
         override val irModuleFragment: IrModuleFragment,
-        override val irPluginContext: IrPluginContext,
+        override val irBuiltIns: IrBuiltIns,
         val icData: List<KotlinFileSerializedData>,
         override val diagnosticReporter: BaseDiagnosticsCollector,
         val hasErrors: Boolean,
@@ -106,11 +105,13 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
     class WasmDeserializedFromKlibBackendInput(
         override val moduleInfo: IrModuleInfo,
         override val klib: File,
-        override val irPluginContext: IrPluginContext,
     ) : DeserializedFromKlib, WasmBackendInput() {
         override val diagnosticReporter: BaseDiagnosticsCollector = DiagnosticsCollectorStub()
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module
+
+        override val irBuiltIns: IrBuiltIns
+            get() = moduleInfo.bultins
 
         override val descriptorMangler: KotlinMangler.DescriptorMangler?
             get() = moduleInfo.symbolTable.signaturer?.mangler
@@ -130,8 +131,8 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
         override val irModuleFragment: IrModuleFragment
             get() = backendInput.irModuleFragment
 
-        override val irPluginContext: IrPluginContext
-            get() = backendInput.pluginContext!!
+        override val irBuiltIns: IrBuiltIns
+            get() = backendInput.irBuiltIns
 
         override val diagnosticReporter: BaseDiagnosticsCollector
             get() = state.diagnosticReporter as BaseDiagnosticsCollector
@@ -151,7 +152,7 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
      */
     data class NativeAfterFrontendBackendInput(
         override val irModuleFragment: IrModuleFragment,
-        override val irPluginContext: IrPluginContext,
+        override val irBuiltIns: IrBuiltIns,
         override val diagnosticReporter: BaseDiagnosticsCollector,
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
@@ -162,11 +163,13 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
     class NativeDeserializedFromKlibBackendInput(
         override val moduleInfo: IrModuleInfo,
         override val klib: File,
-        override val irPluginContext: IrPluginContext,
     ) : DeserializedFromKlib, NativeBackendInput() {
         override val diagnosticReporter: BaseDiagnosticsCollector = DiagnosticsCollectorStub()
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module
+
+        override val irBuiltIns: IrBuiltIns
+            get() = moduleInfo.bultins
 
         override val descriptorMangler: KotlinMangler.DescriptorMangler?
             get() = moduleInfo.symbolTable.signaturer?.mangler

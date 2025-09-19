@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.ReferenceRenderingStrategy
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_IR_DESERIALIZATION_CHECKS
@@ -191,7 +190,7 @@ class SerializedIrDumpHandler(
             replaceImplicitSetterParameterNameWith = DEFAULT_VALUE_PARAMETER,
 
             isHiddenDeclaration = { declaration ->
-                if (IrTextDumpHandler.isHiddenDeclaration(declaration, info.irPluginContext.irBuiltIns)) {
+                if (IrTextDumpHandler.isHiddenDeclaration(declaration, info.irBuiltIns)) {
                     /** Reuse the existing rules for filtering declarations as in IR text tests. */
                     true
                 } else if (

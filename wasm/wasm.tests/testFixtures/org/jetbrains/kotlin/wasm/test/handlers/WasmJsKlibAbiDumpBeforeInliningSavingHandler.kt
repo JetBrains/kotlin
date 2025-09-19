@@ -47,7 +47,7 @@ class FirWasmJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices
             klibPath = outputFile.path,
             dependencies = emptyList(), // Does not matter.
             moduleFragment = inputArtifact.irModuleFragment,
-            irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
+            irBuiltIns = inputArtifact.irBuiltIns,
             cleanFiles = inputArtifact.icData,
             nopack = true,
             jsOutputName = null,

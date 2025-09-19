@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -43,7 +43,7 @@ open class IrInterpreterBackendHandler(testServices: TestServices) : AbstractIrH
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         val evaluator = Evaluator(
-            IrInterpreter(info.irPluginContext.irBuiltIns),
+            IrInterpreter(info.irBuiltIns),
             globalMetadataInfoHandler,
             module.languageVersionSettings.languageVersion.usesK2,
         )

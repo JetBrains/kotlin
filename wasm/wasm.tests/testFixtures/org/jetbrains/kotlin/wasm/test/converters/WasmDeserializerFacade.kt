@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.wasm.test.converters
 
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.LoadedKlibs
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
@@ -15,33 +14,18 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageCo
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
-import org.jetbrains.kotlin.ir.backend.js.loadIr
-import org.jetbrains.kotlin.ir.backend.js.loadIrForSingleModule
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.ServiceRegistrationData
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getKlibDependencies
-import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.libraryProvider
-import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 
@@ -119,7 +103,6 @@ abstract class WasmDeserializerFacadeBase(
             klibs = klibs,
         )
 
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForWasmIC(WholeWorldStageController()))
         val mainModuleLib: KotlinLibrary = klibs.included ?: error("No module with ${mainModule.libPath} found")
 
         val moduleInfo = loadKLibsIr(modulesStructure)
@@ -139,21 +122,6 @@ abstract class WasmDeserializerFacadeBase(
             )
         }
 
-        val pluginContext = IrPluginContextImpl(
-            module = mainModuleDescriptor,
-            bindingContext = BindingContext.EMPTY,
-            languageVersionSettings = configuration.languageVersionSettings,
-            st = symbolTable,
-            typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, mainModuleDescriptor),
-            irBuiltIns = moduleInfo.bultins,
-            linker = moduleInfo.deserializer,
-            messageCollector = configuration.messageCollector,
-        )
-
-        return IrBackendInput.WasmDeserializedFromKlibBackendInput(
-            moduleInfo,
-            irPluginContext = pluginContext,
-            klib = inputArtifact.outputFile,
-        )
+        return IrBackendInput.WasmDeserializedFromKlibBackendInput(moduleInfo, klib = inputArtifact.outputFile)
     }
 }
