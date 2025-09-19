@@ -48,9 +48,9 @@ public class KotlinToolchainV1Adapter(
         }
     }
 
-    override val js: JsPlatformToolchain get() = error("JS compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
-    override val native: NativePlatformToolchain get() = error("Native compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
-    override val wasm: WasmPlatformToolchain get() = error("WASM compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
+    override val js: JsPlatformToolchain get() = error("JS compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()})")
+    override val native: NativePlatformToolchain get() = error("Native compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()})")
+    override val wasm: WasmPlatformToolchain get() = error("WASM compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()})")
 
     override fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess {
         return ExecutionPolicyV1Adapter.InProcess(compilationService.makeCompilerExecutionStrategyConfiguration().useInProcessStrategy())
