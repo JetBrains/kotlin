@@ -4,4 +4,3 @@ package = platform.UIKit
 
 modules = UIUtilities
 compilerOpts = -framework UIUtilities
-linkerOpts = -framework UIUtilities
