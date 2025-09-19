@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependency
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.gradle.utils.named
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.Serializable
@@ -714,7 +715,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                 project.provider {
                     "waitForConfigurationToEnd"
                 }.flatMap {
-                    (project.tasks.named("runJvm") as TaskProvider<JavaExec>).flatMap { task ->
+                    project.tasks.named<JavaExec>("runJvm").flatMap { task ->
                         val classpath = task.classpath
                         task.outputs.files.elements.map {
                             classpath.files
