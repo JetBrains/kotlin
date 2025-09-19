@@ -5,12 +5,7 @@
 
 @kotlin.wasm.WasmExport
 fun runBoxTest(): Boolean {
-    val boxResult = box() //TODO: Support non-root package box functions
-    val isOk = boxResult == "OK"
-    if (!isOk) {
-        println("Wrong box result '${boxResult}'; Expected 'OK'")
-    }
-    return isOk
+    return box() == "OK"
 }
 
 @kotlin.wasm.WasmImport("ssw_util", "proc_exit")
@@ -18,14 +13,7 @@ private external fun procExit(code: Int)
 
 @kotlin.wasm.WasmExport
 fun startTest() {
-    try {
-        if (!runBoxTest()) {
-            procExit(1)
-        }
-    } catch (e: Throwable) {
-        println("Failed with exception!")
-        println(e.message)
-        println(e.printStackTrace())
+    if (!runBoxTest()) {
         procExit(1)
     }
 }
