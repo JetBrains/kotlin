@@ -123,7 +123,7 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
 private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
     when (kind) {
         ClassKind.INTERFACE -> return Opcodes.ACC_ABSTRACT or Opcodes.ACC_INTERFACE
-        ClassKind.ENUM_CLASS -> return Opcodes.ACC_FINAL or Opcodes.ACC_ENUM
+        ClassKind.ENUM_CLASS -> return (if (modality == Modality.ABSTRACT) Opcodes.ACC_ABSTRACT else Opcodes.ACC_FINAL) or Opcodes.ACC_ENUM
         ClassKind.ANNOTATION_CLASS -> return Opcodes.ACC_ABSTRACT or Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE
         else -> {
             if (modality === Modality.FINAL) {
