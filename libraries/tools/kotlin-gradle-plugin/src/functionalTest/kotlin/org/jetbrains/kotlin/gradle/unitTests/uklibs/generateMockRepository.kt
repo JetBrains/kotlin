@@ -19,6 +19,7 @@ import org.w3c.dom.Document
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.xml.parsers.DocumentBuilderFactory
@@ -89,6 +90,8 @@ class GradleMetadataComponent(
         val url: String,
         val name: String = url,
         val size: Int = 0,
+        // This id is used as a sanity check to avoid overwriting mocks by accident
+        val mockId: String = UUID.randomUUID().toString(),
         @kotlinx.serialization.Transient
         val type: MockVariantType = MockVariantType.EmptyJar,
     ) {
@@ -166,30 +169,30 @@ private class MockRepository(
                 )
             }
         )
-        gradleComponent.variants.forEach { variant ->
-            variant.files.forEach { file ->
-                val mockFile = componentRoot.resolve(file.url)
-                if (mockFile.exists()) {
-                    error("Trying to overwrite mock file: $mockFile")
+        gradleComponent.variants.flatMap { variant ->
+            variant.files
+        }.distinctBy { it.mockId }.forEach { file ->
+            val mockFile = componentRoot.resolve(file.url)
+            if (mockFile.exists()) {
+                error("Trying to overwrite mock file: $mockFile")
+            }
+            when (file.type) {
+                GradleMetadataComponent.MockVariantType.EmptyJar -> ZipOutputStream(FileOutputStream(mockFile)).use {  }
+                GradleMetadataComponent.MockVariantType.MetadataJar -> ZipOutputStream(FileOutputStream(mockFile)).use {
+                    it.putNextEntry(ZipEntry("META-INF/kotlin-project-structure-metadata.json"))
+                    it.closeEntry()
                 }
-                when (file.type) {
-                    GradleMetadataComponent.MockVariantType.EmptyJar -> ZipOutputStream(FileOutputStream(mockFile)).use {  }
-                    GradleMetadataComponent.MockVariantType.MetadataJar -> ZipOutputStream(FileOutputStream(mockFile)).use {
-                        it.putNextEntry(ZipEntry("META-INF/kotlin-project-structure-metadata.json"))
-                        it.closeEntry()
-                    }
-                    is GradleMetadataComponent.MockVariantType.UklibArchive -> {
-                        val temporaryDirectory = root.resolve("tmp")
-                        Uklib(
-                            module = UklibModule(
-                                fragments = file.type.fragments(temporaryDirectory)
-                            ),
-                            manifestVersion = Uklib.MAXIMUM_COMPATIBLE_UMANIFEST_VERSION,
-                        ).serializeToZipArchive(
-                            mockFile,
-                            temporaryDirectory,
-                        )
-                    }
+                is GradleMetadataComponent.MockVariantType.UklibArchive -> {
+                    val temporaryDirectory = root.resolve("tmp")
+                    Uklib(
+                        module = UklibModule(
+                            fragments = file.type.fragments(temporaryDirectory)
+                        ),
+                        manifestVersion = Uklib.MAXIMUM_COMPATIBLE_UMANIFEST_VERSION,
+                    ).serializeToZipArchive(
+                        mockFile,
+                        temporaryDirectory,
+                    )
                 }
             }
         }
