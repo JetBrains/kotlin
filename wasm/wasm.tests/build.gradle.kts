@@ -121,7 +121,7 @@ val currentOsType = run {
     OsType(osName, osArch)
 }
 
-val jsShellVersion = "134.0.2"
+val jsShellVersion = libs.versions.jsShell
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
@@ -195,11 +195,11 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
+    jsShell("org.mozilla:jsshell:${jsShellVersion.get()}:$jsShellSuffix@zip")
 
-    implicitDependencies("org.mozilla:jsshell:$jsShellVersion:win64@zip")
-    implicitDependencies("org.mozilla:jsshell:$jsShellVersion:linux-x86_64@zip")
-    implicitDependencies("org.mozilla:jsshell:$jsShellVersion:mac@zip")
+    implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:win64@zip")
+    implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:linux-x86_64@zip")
+    implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:mac@zip")
 
     wasmEdge("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:$wasmEdgeSuffix")
 
@@ -290,7 +290,7 @@ val generateTypeScriptTests by parallel(
 
 
 val jsShellDirectory = toolsDirectory.map { it.dir("JsShell").asFile }
-val jsShellUnpackedDirectory = jsShellDirectory.map { it.resolve("jsshell-$jsShellSuffix-$jsShellVersion") }
+val jsShellUnpackedDirectory = jsShellDirectory.map { it.resolve("jsshell-$jsShellSuffix-${jsShellVersion.get()}") }
 val unzipJsShell by task<Copy> {
     dependsOn(jsShell)
     from {
