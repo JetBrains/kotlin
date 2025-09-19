@@ -18,8 +18,8 @@ public final class CodeFragment {
     MAXLOCALS = 1
 
   // access flags 0x19
-  public final static run(Ljava/lang/String;)Ljava/lang/Object;
-  @Lorg/jetbrains/annotations/Nullable;() // invisible
+  public final static run(Ljava/lang/String;)Ljava/lang/String;
+  @Lorg/jetbrains/annotations/NotNull;() // invisible
     // annotable parameter count: 1 (invisible)
     @Lorg/jetbrains/annotations/Nullable;() // invisible, parameter 0
    L0

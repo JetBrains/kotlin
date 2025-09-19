@@ -54,9 +54,14 @@ import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtStatementExpression
+import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -778,7 +783,16 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
 
         return if (contextKtFile != null) {
             val contextFirFile = resolutionFacade.getOrBuildFirFile(contextKtFile)
-            val elementContext = ContextCollector.process(resolutionFacade, contextFirFile, contextPsiElement)
+
+            // Avoid using body context of expressions/statements, as those can contribute additional smart casts.
+            // Still use body contexts for declarations (e.g., to be able to address parameters of a primary constructor).
+            val preferBodyContext = when (contextPsiElement) {
+                is KtDeclaration -> contextPsiElement !is KtProperty || !contextPsiElement.isLocal
+                is KtBlockExpression -> true
+                else -> false
+            }
+
+            val elementContext = ContextCollector.process(resolutionFacade, contextFirFile, contextPsiElement, preferBodyContext)
                 ?: errorWithAttachment("Cannot find enclosing context for ${contextPsiElement::class}") {
                     withPsiEntry("contextPsiElement", contextPsiElement)
                 }
