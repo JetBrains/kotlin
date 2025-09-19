@@ -1,0 +1,12 @@
+/emptyNamedAndSpreadArguments.kt:19:8: error: no value passed for parameter 'a'
+    one()
+       ^^
+/emptyNamedAndSpreadArguments.kt:25:19: error: no value passed for parameter 'aa'
+    three(, bb =, cc = c)
+                  ^^^^^^^
+/emptyNamedAndSpreadArguments.kt:42:10: error: cannot find a parameter with this name: bb
+    many(bb=*)
+         ^^
+/emptyNamedAndSpreadArguments.kt:43:10: error: cannot find a parameter with this name: bb
+    many(bb=)
+         ^^

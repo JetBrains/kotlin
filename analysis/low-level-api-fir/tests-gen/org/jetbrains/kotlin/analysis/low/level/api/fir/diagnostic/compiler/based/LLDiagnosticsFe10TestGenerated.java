@@ -17894,6 +17894,36 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("emptyArguments.kt")
+      public void testEmptyArguments() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArgumentsInArrayAccess.kt")
+      public void testEmptyArgumentsInArrayAccess() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArgumentsInArrayAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArgumentsInArrayLiterals.kt")
+      public void testEmptyArgumentsInArrayLiterals() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArgumentsInArrayLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArgumentsInConstructors.kt")
+      public void testEmptyArgumentsInConstructors() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArgumentsInConstructors.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyNamedAndSpreadArguments.kt")
+      public void testEmptyNamedAndSpreadArguments() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyNamedAndSpreadArguments.kt");
+      }
+
+      @Test
       @TestMetadata("illegalSelectorCallableReference.kt")
       public void testIllegalSelectorCallableReference() {
         runTest("compiler/testData/diagnostics/tests/incompleteCode/illegalSelectorCallableReference.kt");

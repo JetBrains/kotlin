@@ -1,0 +1,247 @@
+/emptyArguments.fir.kt:(342,343): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(347,349): error: No value passed for parameter 'z'.
+
+/emptyArguments.fir.kt:(367,368): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(368,368): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(384,385): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(386,389): error: No value passed for parameter 'z'.
+
+/emptyArguments.fir.kt:(401,402): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(403,404): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(405,406): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(406,406): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(419,420): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(421,422): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(422,422): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(435,436): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(437,438): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(439,441): error: No value passed for parameter 'y'.
+
+/emptyArguments.fir.kt:(439,441): error: No value passed for parameter 'z'.
+
+/emptyArguments.fir.kt:(453,454): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(455,457): error: No value passed for parameter 'y'.
+
+/emptyArguments.fir.kt:(455,457): error: No value passed for parameter 'z'.
+
+/emptyArguments.fir.kt:(472,473): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(474,475): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(475,475): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(491,492): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(492,492): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(505,506): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(507,508): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(509,510): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(511,512): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(512,512): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(531,532): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(533,534): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(534,534): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(547,548): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(552,553): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(554,555): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(555,555): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(575,576): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(600,601): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(629,630): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(651,652): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(653,654): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(676,677): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(678,679): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(680,681): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(681,681): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(700,701): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(702,703): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(704,705): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(706,707): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(707,707): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(726,727): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(749,750): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(751,752): error: Argument type mismatch: actual type is 'B', but 'A' was expected.
+
+/emptyArguments.fir.kt:(754,755): error: Argument type mismatch: actual type is 'C', but 'B' was expected.
+
+/emptyArguments.fir.kt:(754,757): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(774,775): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(776,777): error: Argument type mismatch: actual type is 'B', but 'A' was expected.
+
+/emptyArguments.fir.kt:(779,780): error: Argument type mismatch: actual type is 'C', but 'B' was expected.
+
+/emptyArguments.fir.kt:(779,781): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(801,802): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(803,804): error: Argument type mismatch: actual type is 'C', but 'B' was expected.
+
+/emptyArguments.fir.kt:(803,806): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(823,824): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(825,826): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(826,826): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(844,845): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(846,847): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(848,849): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(849,849): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(867,868): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(869,870): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(871,872): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(873,874): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(874,874): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(892,893): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(894,895): error: Argument type mismatch: actual type is 'B', but 'A' was expected.
+
+/emptyArguments.fir.kt:(894,897): error: No value passed for parameter 'b'.
+
+/emptyArguments.fir.kt:(894,897): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(920,921): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(921,921): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(939,940): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(941,942): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(943,944): error: Argument type mismatch: actual type is 'C', but 'A' was expected.
+
+/emptyArguments.fir.kt:(943,945): error: No value passed for parameter 'b'.
+
+/emptyArguments.fir.kt:(943,945): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(965,966): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(967,968): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(968,968): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(995,996): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(996,996): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(1024,1025): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1026,1027): error: Argument type mismatch: actual type is 'C', but 'B' was expected.
+
+/emptyArguments.fir.kt:(1026,1028): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(1054,1055): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1056,1064): error: No value passed for parameter 'a'.
+
+/emptyArguments.fir.kt:(1081,1082): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1092,1095): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(1112,1113): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1145,1146): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1156,1157): error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
+
+/emptyArguments.fir.kt:(1159,1160): error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
+
+/emptyArguments.fir.kt:(1159,1161): error: No value passed for parameter 'a'.
+
+/emptyArguments.fir.kt:(1159,1161): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(1187,1188): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1189,1190): error: Argument type mismatch: actual type is 'C', but 'B' was expected.
+
+/emptyArguments.fir.kt:(1189,1191): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(1217,1218): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1219,1228): error: No value passed for parameter 'b'.
+
+/emptyArguments.fir.kt:(1254,1255): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1256,1257): error: Argument type mismatch: actual type is 'C', but 'B' was expected.
+
+/emptyArguments.fir.kt:(1256,1259): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(1285,1286): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1286,1286): error: Syntax error: Expecting an expression.
+
+/emptyArguments.fir.kt:(1304,1305): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1349,1350): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1382,1383): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1384,1385): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1386,1394): error: No value passed for parameter 'b'.
+
+/emptyArguments.fir.kt:(1386,1394): error: No value passed for parameter 'c'.
+
+/emptyArguments.fir.kt:(1411,1412): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1413,1414): error: Syntax error: Expecting an argument.
+
+/emptyArguments.fir.kt:(1415,1423): error: No value passed for parameter 'a'.
+
+/emptyArguments.fir.kt:(1415,1423): error: No value passed for parameter 'b'.
