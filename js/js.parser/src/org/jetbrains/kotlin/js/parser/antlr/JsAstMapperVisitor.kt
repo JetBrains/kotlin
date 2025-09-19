@@ -256,13 +256,23 @@ class JsAstMapperVisitor(
     override fun visitSwitchStatement(ctx: JavaScriptParser.SwitchStatementContext): JsSwitch {
         val jsSwitchExpr = visitNode<JsExpression>(ctx.expressionSequence())
 
-        val jsCases = ctx.caseBlock().caseClauses()?.let { visitAll<JsDefault>(it) } ?: emptyList()
-        val jsDefault = ctx.caseBlock().defaultClause()?.let { visitNode<JsDefault>(it) }
+        val jsClauses = buildList {
+            ctx.caseBlock().let { cases ->
+                cases.beforeDefault?.let {
+                    addAll(visitAll<JsCase>(it.caseClause()))
+                }
+                cases.defaultClause()?.let {
+                    add(visitNode<JsDefault>(it))
+                }
+                cases.afterDefault?.let {
+                    addAll(visitAll<JsCase>(it.caseClause()))
+                }
+            }
+        }
 
         return JsSwitch().apply {
             expression = jsSwitchExpr
-            cases.addAll(jsCases)
-            cases.addIfNotNull(jsDefault)
+            cases.addAll(jsClauses)
         }
     }
 
@@ -1117,8 +1127,8 @@ class JsAstMapperVisitor(
         throw JsParserException("Parser encountered internal error: $message", rule?.startPosition ?: CodePosition(0, 0))
     }
 
-    private fun reportWarning(message: String, rule: ParserRuleContext? = null) {
-        val position = rule?.startPosition ?: CodePosition(0, 0)
+    private fun reportWarning(message: String, position: CodePosition? = null) {
+        val position = position ?: CodePosition(0, 0)
         reporter.warning(message, position, position)
     }
 

@@ -221,7 +221,7 @@ switchStatement
     ;
 
 caseBlock
-    : '{' caseClauses? (defaultClause caseClauses?)? '}'
+    : '{' beforeDefault=caseClauses? (defaultClause afterDefault=caseClauses?)? '}'
     ;
 
 caseClauses

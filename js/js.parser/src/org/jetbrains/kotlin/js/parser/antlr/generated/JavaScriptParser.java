@@ -3281,16 +3281,18 @@ public class JavaScriptParser extends JavaScriptParserBase {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class CaseBlockContext extends ParserRuleContext {
+		public CaseClausesContext beforeDefault;
+		public CaseClausesContext afterDefault;
 		public TerminalNode OpenBrace() { return getToken(JavaScriptParser.OpenBrace, 0); }
 		public TerminalNode CloseBrace() { return getToken(JavaScriptParser.CloseBrace, 0); }
+		public DefaultClauseContext defaultClause() {
+			return getRuleContext(DefaultClauseContext.class,0);
+		}
 		public List<CaseClausesContext> caseClauses() {
 			return getRuleContexts(CaseClausesContext.class);
 		}
 		public CaseClausesContext caseClauses(int i) {
 			return getRuleContext(CaseClausesContext.class,i);
-		}
-		public DefaultClauseContext defaultClause() {
-			return getRuleContext(DefaultClauseContext.class,0);
 		}
 		public CaseBlockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3326,7 +3328,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			if (_la==Case) {
 				{
 				setState(477);
-				caseClauses();
+				((CaseBlockContext)_localctx).beforeDefault = caseClauses();
 				}
 			}
 
@@ -3343,7 +3345,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				if (_la==Case) {
 					{
 					setState(481);
-					caseClauses();
+					((CaseBlockContext)_localctx).afterDefault = caseClauses();
 					}
 				}
 
