@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.typeSpecificityComparatorProvider
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 abstract class ConeCallConflictResolver {
     fun chooseMaximallySpecificCandidates(
@@ -25,11 +27,30 @@ abstract class ConeCallConflictResolver {
 }
 
 abstract class ConeCallConflictResolverFactory : FirSessionComponent {
-    abstract fun create(
+    fun create(
         components: InferenceComponents,
         transformerComponents: BodyResolveComponents
-    ): ConeCallConflictResolver
+    ): ConeCallConflictResolver {
+        val session = components.session
+        val specificityComparator = session.typeSpecificityComparatorProvider?.typeSpecificityComparator
+            ?: TypeSpecificityComparator.NONE
+        // NB: Adding new resolvers is strongly discouraged because the results are order-dependent.
+        return ConeCompositeConflictResolver(
+            ConeEquivalentCallConflictResolver(session),
+            *createAdditionalResolvers(session).toTypedArray(),
+            ConeIntegerOperatorConflictResolver,
+            ConeOverloadConflictResolver(specificityComparator, components, transformerComponents),
+        )
+    }
+
+    abstract fun createAdditionalResolvers(session: FirSession): List<ConeCallConflictResolver>
+
+    object Default : ConeCallConflictResolverFactory() {
+        override fun createAdditionalResolvers(session: FirSession): List<ConeCallConflictResolver> {
+            return emptyList()
+        }
+    }
 }
 
 val FirSession.callConflictResolverFactory: ConeCallConflictResolverFactory
-        by FirSession.sessionComponentAccessorWithDefault(DefaultCallConflictResolverFactory)
+        by FirSession.sessionComponentAccessorWithDefault(ConeCallConflictResolverFactory.Default)
