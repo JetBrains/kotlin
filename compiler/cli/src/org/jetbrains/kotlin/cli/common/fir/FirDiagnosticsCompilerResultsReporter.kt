@@ -40,7 +40,7 @@ object FirDiagnosticsCompilerResultsReporter {
         }
     }
 
-    private fun reportByFile(
+    fun reportByFile(
         diagnosticsCollector: BaseDiagnosticsCollector, report: (KtDiagnostic, CompilerMessageSourceLocation?) -> Unit
     ): Boolean {
         var hasErrors = false
@@ -106,7 +106,7 @@ object FirDiagnosticsCompilerResultsReporter {
         return hasErrors
     }
 
-    private fun reportDiagnosticToMessageCollector(
+    fun reportDiagnosticToMessageCollector(
         diagnostic: KtDiagnostic,
         location: CompilerMessageSourceLocation?,
         reporter: MessageCollector,

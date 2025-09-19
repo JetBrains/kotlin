@@ -1360,7 +1360,8 @@ open class Kapt3IT : Kapt3BaseIT() {
             javaSourcesDir().resolve("invalid.kt").writeText("TopLevelDeclarationExpected")
 
             buildAndFail(":kaptGenerateStubsKotlin") {
-                assertOutputContains("invalid.kt:1:1 Expecting a top level declaration")
+                assertOutputContains("invalid.kt:1:1")
+                assertOutputContains("Expecting a top level declaration")
             }
         }
     }
