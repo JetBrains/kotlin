@@ -62,7 +62,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
             )
 
             registerPlatformSpecificComponentsIfAny(module)
-            register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(CommonDefaultImportsProvider))
+            register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder.Single(CommonDefaultImportsProvider))
         }
     }
 
