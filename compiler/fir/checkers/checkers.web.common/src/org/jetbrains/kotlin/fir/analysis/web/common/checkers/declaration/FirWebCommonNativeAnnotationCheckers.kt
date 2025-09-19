@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.declarations.utils.isNativeObject
 
 abstract class FirWebCommonAbstractNativeAnnotationChecker(
-    private val requiredAnnotation: ClassId
+    private val requiredAnnotation: ClassId,
+    private val isWasm: Boolean,
 ) : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext)
     protected fun FirFunction.hasRequiredAnnotation(): Boolean = hasAnnotation(requiredAnnotation, context.session)
@@ -38,14 +39,21 @@ abstract class FirWebCommonAbstractNativeAnnotationChecker(
         val isMember = !context.isTopLevel && declaration.visibility != Visibilities.Local
         val isExtension = declaration.isExtension
 
+        val error = if (!isWasm) {
+            FirWebCommonErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
+        } else {
+            FirWebCommonErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
+        }
+
         if (isMember && (isExtension || !declaration.symbol.isNativeObject(context.session)) || !isMember && !isExtension) {
             reporter.reportOn(
                 declaration.source,
-                FirWebCommonErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN,
+                error,
                 annotation.resolvedType
             )
         }
     }
 }
 
-object FirWebCommonNativeInvokeChecker : FirWebCommonAbstractNativeAnnotationChecker(WebCommonStandardClassIds.Annotations.JsNativeInvoke)
+class FirWebCommonNativeInvokeChecker(val isWasm: Boolean) :
+    FirWebCommonAbstractNativeAnnotationChecker(WebCommonStandardClassIds.Annotations.JsNativeInvoke, isWasm)

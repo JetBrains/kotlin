@@ -1069,11 +1069,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RuntimeAnnotationOnExternalDeclaration::class
     }
 
-    interface NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun::class
-        val type: KaType
-    }
-
     interface NativeIndexerKeyShouldBeStringOrNumber : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NativeIndexerKeyShouldBeStringOrNumber::class
         val kind: String
@@ -1146,6 +1141,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface WrongJsQualifier : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = WrongJsQualifier::class
+    }
+
+    interface NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun::class
+        val type: KaType
+    }
+
+    interface NativeAnnotationsAllowedOnlyOnMemberFun : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NativeAnnotationsAllowedOnlyOnMemberFun::class
+        val type: KaType
     }
 
     interface OptInUsage : KaFirDiagnostic<PsiElement> {

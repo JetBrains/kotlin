@@ -19,7 +19,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
     requiredAnnotation: ClassId,
     private val indexerKind: String,
     private val requiredParametersCount: Int,
-) : FirWebCommonAbstractNativeAnnotationChecker(requiredAnnotation) {
+) : FirWebCommonAbstractNativeAnnotationChecker(requiredAnnotation, isWasm = false) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
         super.check(declaration)

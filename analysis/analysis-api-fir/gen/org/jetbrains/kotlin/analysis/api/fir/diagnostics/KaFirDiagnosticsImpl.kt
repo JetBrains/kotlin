@@ -1285,12 +1285,6 @@ internal class RuntimeAnnotationOnExternalDeclarationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RuntimeAnnotationOnExternalDeclaration
 
-internal class NativeAnnotationsAllowedOnlyOnMemberOrExtensionFunImpl(
-    override val type: KaType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun
-
 internal class NativeIndexerKeyShouldBeStringOrNumberImpl(
     override val kind: String,
     firDiagnostic: KtPsiDiagnostic,
@@ -1380,6 +1374,18 @@ internal class WrongJsQualifierImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongJsQualifier
+
+internal class NativeAnnotationsAllowedOnlyOnMemberOrExtensionFunImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun
+
+internal class NativeAnnotationsAllowedOnlyOnMemberFunImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NativeAnnotationsAllowedOnlyOnMemberFun
 
 internal class OptInUsageImpl(
     override val optInMarkerClassId: ClassId,

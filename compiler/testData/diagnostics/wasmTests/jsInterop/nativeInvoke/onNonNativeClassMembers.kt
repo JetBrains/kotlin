@@ -2,10 +2,10 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER, -DEPRECATION
 
 class A {
-    <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeInvoke
+    <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeInvoke
     fun foo()<!> {}
 
-    <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeInvoke
+    <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeInvoke
     fun invoke(a: String): Int<!> = 0
 
     <!WRONG_ANNOTATION_TARGET!>@nativeInvoke<!>
@@ -15,10 +15,10 @@ class A {
     object Obj {}
 
     companion object {
-        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeInvoke
+        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeInvoke
         fun foo()<!> {}
 
-        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>@nativeInvoke
+        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeInvoke
         fun invoke(a: String): Int<!> = 0
     }
 }

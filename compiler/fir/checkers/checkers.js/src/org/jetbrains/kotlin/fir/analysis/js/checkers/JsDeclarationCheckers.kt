@@ -48,7 +48,7 @@ object JsDeclarationCheckers : DeclarationCheckers() {
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
         get() = setOf(
-            FirWebCommonNativeInvokeChecker,
+            FirWebCommonNativeInvokeChecker(isWasm = false),
             FirJsNativeGetterChecker,
             FirJsNativeSetterChecker,
         )
