@@ -5,15 +5,15 @@ import helpers.*
 import kotlin.coroutines.*
 
 interface I<T> {
-    suspend fun f(x: T): String = "OK"
+    suspend fun f(x: T): Int = 42
 }
 
-class C : I<String>
+class C : I<Int>
 
-fun box(): String {
-    var result = "Fail"
+fun box(): Boolean {
+    var result = -1
     suspend {
-        result = (C() as I<String>).f("Fail")
+        result = (C() as I<Int>).f(-1)
     }.startCoroutine(EmptyContinuation)
-    return result
+    return result == 42
 }
