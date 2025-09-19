@@ -5,7 +5,26 @@
 
 package org.jetbrains.kotlin.fir
 
-class FirDeclarationNameInvalidCharsProvider(val invalidChars: Set<Char>) : FirSessionComponent
+sealed class FirDeclarationNameInvalidCharsProvider : FirComposableSessionComponent<FirDeclarationNameInvalidCharsProvider> {
+    abstract val invalidChars: Set<Char>
+
+    class Composed(
+        override val components: List<FirDeclarationNameInvalidCharsProvider>,
+    ) : FirDeclarationNameInvalidCharsProvider(), FirComposableSessionComponent.Composed<FirDeclarationNameInvalidCharsProvider> {
+        override val invalidChars: Set<Char> = components.flatMapTo(mutableSetOf()) { it.invalidChars }
+    }
+
+    class Simple(override val invalidChars: Set<Char>) : FirDeclarationNameInvalidCharsProvider()
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirDeclarationNameInvalidCharsProvider>): Composed {
+        return Composed(components)
+    }
+
+    companion object {
+        fun of(invalidChars: Set<Char>): FirDeclarationNameInvalidCharsProvider = Simple(invalidChars)
+    }
+}
 
 private val FirSession.declarationNameInvalidCharsProvider: FirDeclarationNameInvalidCharsProvider? by FirSession.nullableSessionComponentAccessor()
 
