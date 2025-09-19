@@ -433,7 +433,7 @@ enum class LanguageFeature(
     TurnTypeCheckWarningsIntoErrors(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-365"),
     JvmIndyAllowLambdasWithAnnotations(KOTLIN_2_3, "KT-76606"),
     NestedTypeAliases(KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-45285"),
-    ProhibitIntersectionReifiedTypeParameter(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-71420"),
+    ProhibitIntersectionReifiedTypeParameter(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-13"),
 
     AllowCheckForErasedTypesInContracts(KOTLIN_2_3, "KT-45683"),
     AllowContractsOnSomeOperators(KOTLIN_2_3, "KT-32313"),
