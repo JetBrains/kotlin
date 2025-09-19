@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.compatibility.binary
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.DFS
@@ -28,10 +32,54 @@ class TestModule(name: String, dependenciesSymbols: List<String>, friends: List<
 }
 
 abstract class AbstractKlibBinaryCompatibilityTest : KotlinTestWithEnvironment() {
-
-    private val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+    abstract val extensionConfigs: EnvironmentConfigFiles
+    abstract val pathToRootOutputDir: String
     private val testGroupSuffix = "binaryCompatibility/"
     protected lateinit var workingDir: File
+
+    protected open val stdlibDependency: String? = null
+
+    @K1Deprecation
+    override fun createEnvironment(): KotlinCoreEnvironment {
+        return KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), extensionConfigs)
+    }
+
+    protected fun List<TestModule>.toLibrariesArg(version: Int): String {
+        val fileNames = this.map { module ->
+            if (module.hasVersions) "version$version/${module.name}" else module.name
+        }
+        val klibs = fileNames.map { File(workingDir, "$it.${org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION}").absolutePath }
+        val allDeps = stdlibDependency?.let { klibs + it } ?: klibs
+        return allDeps.joinToString(File.pathSeparator)
+    }
+
+    protected fun KotlinBaseTest.TestModule.transitiveDependencies(): Set<KotlinBaseTest.TestModule> {
+        val uniqueDependencies = mutableSetOf(this)
+        dependencies.forEach { testModule ->
+            if (testModule !in uniqueDependencies) {
+                val transitiveDependencies = testModule.transitiveDependencies()
+                uniqueDependencies.addAll(transitiveDependencies)
+            }
+        }
+        return uniqueDependencies
+    }
+
+    protected fun TestModule.dependenciesToLibrariesArg(version: Int): String =
+        this.dependencies
+            .flatMap { it.transitiveDependencies() }
+            .map { it as? TestModule ?: error("Unexpected dependency kind: $it") }
+            .toLibrariesArg(version)
+
+    protected fun TestModule.name(version: Int) = if (this.hasVersions) "version$version/${this.name}" else this.name
+
+    protected fun createFiles(files: List<TestFile>): List<String> =
+        files.map {
+            val file = File(workingDir, it.name)
+            file.writeText(it.content)
+            file.absolutePath
+        }
+
+    protected val jsOutDir get() = workingDir.resolve("out")
 
     fun doTest(filePath: String) {
         workingDir = File(pathToRootOutputDir + "out/$testGroupSuffix" + filePath)
@@ -52,7 +100,11 @@ abstract class AbstractKlibBinaryCompatibilityTest : KotlinTestWithEnvironment()
         }
     }
 
-    open fun isIgnoredTest(filePath: String): Boolean = false
+    // Const evaluation tests muted for FIR because FIR does const propagation.
+    protected fun isIgnoredTest(filePath: String): Boolean {
+        val fileName = filePath.substringAfterLast('/')
+        return fileName == "addOrRemoveConst.kt" || fileName == "changeConstInitialization.kt"
+    }
 
     fun doTest(filePath: String, expectedResult: String) {
         if (isIgnoredTest(filePath))
