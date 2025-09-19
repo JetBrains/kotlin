@@ -14,7 +14,7 @@ import kotlin.wasm.unsafe.*
  * `args_sizes_get`. Each argument is expected to be `\0` terminated.
  */
 @ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "args_get")
+@WasmImport("ssw_util", "args_get")
 private external fun wasiRawArgsGet(
     argvPtr: Int,
     argvBuf: Int,
@@ -23,7 +23,7 @@ private external fun wasiRawArgsGet(
 
 /** Return command-line argument data sizes. */
 @ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "args_sizes_get")
+@WasmImport("ssw_util", "args_sizes_get")
 private external fun wasiRawArgsSizesGet(
     argumentNumberPtr: Int,
     argumentStringSizePtr: Int,
