@@ -4,7 +4,6 @@ package = platform.UIUtilities
 
 modules = UIUtilities
 compilerOpts = -framework UIUtilities
-linkerOpts = -framework UIUtilities
 #Disabled: We had to rename packages for this module to platform.UIKit,
 # in order to preserve binary compatibility on iOS. With this rename we had a choice:
 # either to keep the package platform.UIUtilities on macOS, or to rename it to platform.UIKit.
