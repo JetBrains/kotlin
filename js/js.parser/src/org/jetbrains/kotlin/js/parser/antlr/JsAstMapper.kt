@@ -45,10 +45,7 @@ class JsAstMapper(scope: JsScope, private val fileName: String, private val repo
         return jsExpression
     }
 
-    private fun map(node: ParserRuleContext) =
-        mapWithoutLocation(node).applyLocation(fileName, node)
-
-    private fun mapWithoutLocation(node: ParserRuleContext): JsNode {
+    private fun map(node: ParserRuleContext): JsNode {
         val visitor = JsAstMapperVisitor(fileName, scopeContext, reporter)
         return node.accept(visitor)!!
     }

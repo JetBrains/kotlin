@@ -41,11 +41,11 @@ class JsAstMapperVisitor(
             return visitNode<JsBlock>(it)
         }
 
-        return JsBlock()
+        return JsBlock().applyLocation(ctx)
     }
 
     override fun visitStatementList(ctx: JavaScriptParser.StatementListContext): JsBlock {
-        return mapBlock(visitAll<JsStatement?>(ctx.statement()))
+        return mapBlock(visitAll<JsStatement?>(ctx.statement())).applyLocation(ctx)
     }
 
     override fun visitImportStatement(ctx: JavaScriptParser.ImportStatementContext): JsNode? {
@@ -121,7 +121,7 @@ class JsAstMapperVisitor(
             ctx.variableDeclaration().forEach {
                 add(visitNode<JsVars.JsVar>(it))
             }
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitSingleVariableDeclaration(ctx: JavaScriptParser.SingleVariableDeclarationContext): JsVars.JsVar {
@@ -134,7 +134,7 @@ class JsAstMapperVisitor(
         val id = scopeContext.localNameFor(originalId)
         val initialization = ctx.singleExpression()?.let { visitNode<JsExpression>(it) }
 
-        return JsVars.JsVar(id, initialization).applyLocation(fileName, ctx)
+        return JsVars.JsVar(id, initialization).applyLocation(ctx)
     }
 
     override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsEmpty {
@@ -142,7 +142,9 @@ class JsAstMapperVisitor(
     }
 
     override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext): JsStatement {
-        return visitNode<JsExpression>(ctx.expressionSequence()).makeStmt()
+        return visitNode<JsExpression>(ctx.expressionSequence())
+            .makeStmt()
+            .applyLocation(ctx)
     }
 
     override fun visitIfStatement(ctx: JavaScriptParser.IfStatementContext): JsIf {
@@ -154,21 +156,21 @@ class JsAstMapperVisitor(
             ifCondition,
             allStatements[0],
             allStatements.getOrNull(1)
-        )
+        ).applyLocation(ctx)
     }
 
     override fun visitDoStatement(ctx: JavaScriptParser.DoStatementContext): JsDoWhile {
         val body = visitNode<JsStatement?>(ctx.statement()) ?: JsEmpty
         val condition = visitNode<JsExpression>(ctx.expressionSequence())
 
-        return JsDoWhile(condition, body)
+        return JsDoWhile(condition, body).applyLocation(ctx)
     }
 
     override fun visitWhileStatement(ctx: JavaScriptParser.WhileStatementContext): JsWhile {
         val condition = visitNode<JsExpression>(ctx.expressionSequence())
         val body = visitNode<JsStatement?>(ctx.statement()) ?: JsEmpty
 
-        return JsWhile(condition, body)
+        return JsWhile(condition, body).applyLocation(ctx)
     }
 
     override fun visitForStatement(ctx: JavaScriptParser.ForStatementContext): JsFor {
@@ -183,7 +185,7 @@ class JsAstMapperVisitor(
             initSequence != null -> JsFor(initSequence, condition, increment, body)
             initDeclaration != null -> JsFor(initDeclaration, condition, increment, body)
             else -> JsFor(null as JsVars?, condition, increment, body)
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitForInStatement(ctx: JavaScriptParser.ForInStatementContext): JsNode? {
@@ -205,7 +207,7 @@ class JsAstMapperVisitor(
                 body = bodyStatement
             }
             else -> raiseParserException("Invalid 'for .. in' statement: ${ctx.text}", ctx)
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitForOfStatement(ctx: JavaScriptParser.ForOfStatementContext): JsNode? {
@@ -219,12 +221,12 @@ class JsAstMapperVisitor(
 
     override fun visitContinueStatement(ctx: JavaScriptParser.ContinueStatementContext): JsContinue {
         val identifier = ctx.identifier()?.let { scopeContext.localNameFor(it.text) }
-        return JsContinue(identifier?.makeRef())
+        return JsContinue(identifier?.makeRef()).applyLocation(ctx)
     }
 
     override fun visitBreakStatement(ctx: JavaScriptParser.BreakStatementContext): JsBreak {
         val identifier = ctx.identifier()?.let { scopeContext.localNameFor(it.text) }
-        return JsBreak(identifier?.makeRef())
+        return JsBreak(identifier?.makeRef()).applyLocation(ctx)
     }
 
     override fun visitReturnStatement(ctx: JavaScriptParser.ReturnStatementContext): JsReturn {
@@ -232,12 +234,12 @@ class JsAstMapperVisitor(
             ctx.expressionSequence()?.let {
                 expression = visitNode<JsExpression>(it)
             }
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitYieldStatement(ctx: JavaScriptParser.YieldStatementContext): JsStatement {
         val expression = visitNode<JsExpression>(ctx.expressionSequence())
-        return JsYield(expression).makeStmt()
+        return JsYield(expression).makeStmt().applyLocation(ctx)
     }
 
     override fun visitWithStatement(ctx: JavaScriptParser.WithStatementContext): JsNode? {
@@ -273,7 +275,7 @@ class JsAstMapperVisitor(
         return JsSwitch().apply {
             expression = jsSwitchExpr
             cases.addAll(jsClauses)
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitCaseBlock(ctx: JavaScriptParser.CaseBlockContext): JsNode? {
@@ -293,7 +295,7 @@ class JsAstMapperVisitor(
         return JsCase().apply {
             caseExpression = jsExpression
             statements.addAll(listOfNotNull(jsStatements))
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitDefaultClause(ctx: JavaScriptParser.DefaultClauseContext): JsDefault {
@@ -301,7 +303,7 @@ class JsAstMapperVisitor(
 
         return JsDefault().apply {
             statements.addAll(listOfNotNull(jsStatements))
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitLabelledStatement(ctx: JavaScriptParser.LabelledStatementContext): JsLabel {
@@ -312,13 +314,13 @@ class JsAstMapperVisitor(
         }
         scopeContext.exitLabel()
 
-        return jsLabel
+        return jsLabel.applyLocation(ctx)
     }
 
     override fun visitThrowStatement(ctx: JavaScriptParser.ThrowStatementContext): JsNode? {
         val jsThrowExpr = visitNode<JsExpression>(ctx.expressionSequence())
 
-        return JsThrow(jsThrowExpr)
+        return JsThrow(jsThrowExpr).applyLocation(ctx)
     }
 
     override fun visitTryStatement(ctx: JavaScriptParser.TryStatementContext): JsTry {
@@ -334,7 +336,7 @@ class JsAstMapperVisitor(
             if (jsFinallyProduction != null) {
                 finallyBlock = jsFinallyProduction
             }
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitCatchProduction(ctx: JavaScriptParser.CatchProductionContext): JsCatch {
@@ -347,7 +349,7 @@ class JsAstMapperVisitor(
             //   https://lia.disi.unibo.it/materiale/JS/developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...html#Conditional_catch_clauses
             condition = null
             scopeContext.exitCatch()
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitFinallyProduction(ctx: JavaScriptParser.FinallyProductionContext): JsBlock {
@@ -355,7 +357,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitDebuggerStatement(ctx: JavaScriptParser.DebuggerStatementContext): JsDebugger {
-        return JsDebugger()
+        return JsDebugger().applyLocation(ctx)
     }
 
     override fun visitFunctionDeclaration(ctx: JavaScriptParser.FunctionDeclarationContext): JsFunction {
@@ -367,6 +369,7 @@ class JsAstMapperVisitor(
         check(restParam == null) { "Rest parameters are not supported yet" }
 
         return mapFunction(name?.text, ctx.functionBody(), formalParams, isGenerator)
+            .applyLocation(ctx)
     }
 
     override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsNode? {
@@ -406,7 +409,7 @@ class JsAstMapperVisitor(
             ?: raiseParserException("Only identifier parameters are supported yet", ctx)
         val paramName = scopeContext.localNameFor(identifier.text)
 
-        return JsParameter(paramName)
+        return JsParameter(paramName).applyLocation(ctx)
     }
 
     override fun visitRestParameterArg(ctx: JavaScriptParser.RestParameterArgContext?): JsNode? {
@@ -417,18 +420,18 @@ class JsAstMapperVisitor(
         ctx.sourceElements()?.let {
             return visitNode<JsBlock>(it)
         }
-        return JsBlock()
+        return JsBlock().applyLocation(ctx)
     }
 
     override fun visitSourceElements(ctx: JavaScriptParser.SourceElementsContext): JsBlock {
         val statements = visitAll<JsStatement?>(ctx.sourceElement())
-        return mapBlock(statements)
+        return mapBlock(statements).applyLocation(ctx)
     }
 
     override fun visitArrayLiteral(ctx: JavaScriptParser.ArrayLiteralContext): JsArrayLiteral {
         return JsArrayLiteral().apply {
             expressions.addAll(visitAll<JsExpression>(ctx.elementList().arrayElement()))
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitElementList(ctx: JavaScriptParser.ElementListContext): JsNode? {
@@ -446,7 +449,7 @@ class JsAstMapperVisitor(
         val jsLabelExpr = visitNode<JsExpression>(ctx.propertyName())
         val jsValue = visitNode<JsExpression>(ctx.singleExpression())
 
-        return JsPropertyInitializer(jsLabelExpr, jsValue)
+        return JsPropertyInitializer(jsLabelExpr, jsValue).applyLocation(ctx)
     }
 
     override fun visitComputedPropertyExpressionAssignment(ctx: JavaScriptParser.ComputedPropertyExpressionAssignmentContext): JsNode? {
@@ -471,11 +474,11 @@ class JsAstMapperVisitor(
 
     override fun visitPropertyName(ctx: JavaScriptParser.PropertyNameContext): JsExpression {
         ctx.identifierName()?.let {
-            return JsStringLiteral(it.text)
+            return JsStringLiteral(it.text).applyLocation(ctx)
         }
 
         ctx.StringLiteral()?.let {
-            return it.text.toStringLiteral()
+            return it.text.toStringLiteral().applyLocation(ctx)
         }
 
         ctx.numericLiteral()?.let {
@@ -514,7 +517,7 @@ class JsAstMapperVisitor(
         }
 
         val exprs = visitAll<JsExpression>(ctx.singleExpression())
-        return mapComma(exprs)
+        return mapComma(exprs).applyLocation(ctx)
     }
 
     override fun visitSingleExpression(ctx: JavaScriptParser.SingleExpressionContext): JsExpression {
@@ -531,6 +534,7 @@ class JsAstMapperVisitor(
         val elseCondition = visitNode<JsExpression>(ctx.singleExpressionImpl(2))
 
         return JsConditional(conditionExpression, thenExpression, elseCondition)
+            .applyLocation(ctx)
     }
 
     override fun visitLogicalAndExpression(ctx: JavaScriptParser.LogicalAndExpressionContext): JsBinaryOperation {
@@ -538,6 +542,7 @@ class JsAstMapperVisitor(
         val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.AND, left, right)
+            .applyLocation(ctx)
     }
 
     override fun visitPowerExpression(ctx: JavaScriptParser.PowerExpressionContext): JsNode? {
@@ -547,6 +552,7 @@ class JsAstMapperVisitor(
     override fun visitPreIncrementExpression(ctx: JavaScriptParser.PreIncrementExpressionContext): JsPrefixOperation {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.INC, expression)
+            .applyLocation(ctx)
     }
 
     override fun visitObjectLiteralExpression(ctx: JavaScriptParser.ObjectLiteralExpressionContext): JsObjectLiteral {
@@ -562,6 +568,7 @@ class JsAstMapperVisitor(
         val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.INOP, left, right)
+            .applyLocation(ctx)
     }
 
     override fun visitLogicalOrExpression(ctx: JavaScriptParser.LogicalOrExpressionContext): JsBinaryOperation {
@@ -569,6 +576,7 @@ class JsAstMapperVisitor(
         val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.OR, left, right)
+            .applyLocation(ctx)
     }
 
     override fun visitOptionalChainExpression(ctx: JavaScriptParser.OptionalChainExpressionContext): JsNode? {
@@ -578,11 +586,13 @@ class JsAstMapperVisitor(
     override fun visitNotExpression(ctx: JavaScriptParser.NotExpressionContext): JsNode? {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.NOT, expression)
+            .applyLocation(ctx)
     }
 
     override fun visitPreDecreaseExpression(ctx: JavaScriptParser.PreDecreaseExpressionContext): JsPrefixOperation {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.DEC, expression)
+            .applyLocation(ctx)
     }
 
     override fun visitArgumentsExpression(ctx: JavaScriptParser.ArgumentsExpressionContext): JsInvocation {
@@ -590,6 +600,7 @@ class JsAstMapperVisitor(
         val arguments = ctx.arguments().argument().map { visitNode<JsExpression>(it) }
 
         return JsInvocation(qualifier, arguments)
+            .applyLocation(ctx)
     }
 
     override fun visitAwaitExpression(ctx: JavaScriptParser.AwaitExpressionContext): JsNode? {
@@ -597,7 +608,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitThisExpression(ctx: JavaScriptParser.ThisExpressionContext): JsThisRef {
-        return JsThisRef()
+        return JsThisRef().applyLocation(ctx)
     }
 
     override fun visitFunctionExpression(ctx: JavaScriptParser.FunctionExpressionContext): JsNode? {
@@ -606,48 +617,47 @@ class JsAstMapperVisitor(
 
     override fun visitUnaryMinusExpression(ctx: JavaScriptParser.UnaryMinusExpressionContext): JsPrefixOperation {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
-        return JsPrefixOperation(JsUnaryOperator.NEG, expression)
+        return JsPrefixOperation(JsUnaryOperator.NEG, expression).applyLocation(ctx)
     }
 
     override fun visitAssignmentExpression(ctx: JavaScriptParser.AssignmentExpressionContext): JsNode? {
         val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
         val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
-
-        return JsBinaryOperation(JsBinaryOperator.ASG, left, right)
+        return JsBinaryOperation(JsBinaryOperator.ASG, left, right).applyLocation(ctx)
     }
 
     override fun visitPostDecreaseExpression(ctx: JavaScriptParser.PostDecreaseExpressionContext): JsPostfixOperation {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
-        return JsPostfixOperation(JsUnaryOperator.DEC, expression)
+        return JsPostfixOperation(JsUnaryOperator.DEC, expression).applyLocation(ctx)
     }
 
     override fun visitTypeofExpression(ctx: JavaScriptParser.TypeofExpressionContext): JsPrefixOperation {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
-        return JsPrefixOperation(JsUnaryOperator.TYPEOF, expression)
+        return JsPrefixOperation(JsUnaryOperator.TYPEOF, expression).applyLocation(ctx)
     }
 
     override fun visitInstanceofExpression(ctx: JavaScriptParser.InstanceofExpressionContext): JsBinaryOperation {
         val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
         val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
-
-        return JsBinaryOperation(JsBinaryOperator.INSTANCEOF, left, right)
+        return JsBinaryOperation(JsBinaryOperator.INSTANCEOF, left, right).applyLocation(ctx)
     }
 
     override fun visitUnaryPlusExpression(ctx: JavaScriptParser.UnaryPlusExpressionContext): JsPrefixOperation {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
-        return JsPrefixOperation(JsUnaryOperator.POS, expression)
+        return JsPrefixOperation(JsUnaryOperator.POS, expression).applyLocation(ctx)
     }
 
     override fun visitDeleteExpression(ctx: JavaScriptParser.DeleteExpressionContext): JsExpression {
         val target = visitNode<JsExpression>(ctx.singleExpressionImpl())
         if (target is JsNameRef || target is JsArrayAccess)
-            return JsPrefixOperation(JsUnaryOperator.DELETE, target)
-        return JsNullLiteral()
+            return JsPrefixOperation(JsUnaryOperator.DELETE, target).applyLocation(ctx)
+        return JsNullLiteral().applyLocation(ctx)
     }
 
     override fun visitImportExpression(ctx: JavaScriptParser.ImportExpressionContext): JsInvocation {
         val argument = visitNode<JsExpression>(ctx.singleExpressionImpl())
-        return JsInvocation(makeRefNode(ctx.Import().text), argument)
+        val jsImportIdentifier = makeRefNode(ctx.Import().text).applyLocation(ctx.Import())
+        return JsInvocation(jsImportIdentifier, argument).applyLocation(ctx)
     }
 
     override fun visitEqualityExpression(ctx: JavaScriptParser.EqualityExpressionContext): JsBinaryOperation {
@@ -663,7 +673,7 @@ class JsAstMapperVisitor(
                 else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
 
-            JsBinaryOperation(operator, left, right)
+            JsBinaryOperation(operator, left, right).applyLocation(ctx)
         }
     }
 
@@ -672,16 +682,17 @@ class JsAstMapperVisitor(
         val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.BIT_XOR, left, right)
+            .applyLocation(ctx)
     }
 
     override fun visitSuperExpression(ctx: JavaScriptParser.SuperExpressionContext): JsNode? {
         raiseParserException("Super calls are not supported yet", ctx)
     }
 
-    override fun visitImportMetaExpression(ctx: JavaScriptParser.ImportMetaExpressionContext?): JsNode? {
+    override fun visitImportMetaExpression(ctx: JavaScriptParser.ImportMetaExpressionContext): JsNode? {
         return makeRefNode("meta").apply {
-            qualifier = makeRefNode("import")
-        }
+            qualifier = makeRefNode("import").applyLocation(ctx.Import())
+        }.applyLocation(ctx.Meta())
     }
 
     override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext): JsBinaryOperation {
@@ -696,7 +707,7 @@ class JsAstMapperVisitor(
                 else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
             JsBinaryOperation(operator, left, right)
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitBitShiftExpression(ctx: JavaScriptParser.BitShiftExpressionContext): JsBinaryOperation {
@@ -711,7 +722,7 @@ class JsAstMapperVisitor(
                 else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
             JsBinaryOperation(operator, left, right)
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitParenthesizedExpression(ctx: JavaScriptParser.ParenthesizedExpressionContext): JsExpression {
@@ -729,7 +740,7 @@ class JsAstMapperVisitor(
                 else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
             JsBinaryOperation(operator, left, right)
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitRelationalExpression(ctx: JavaScriptParser.RelationalExpressionContext): JsBinaryOperation {
@@ -745,22 +756,22 @@ class JsAstMapperVisitor(
                 else -> raiseParserException("Invalid binary operation: ${ctx.text}", ctx)
             }
             JsBinaryOperation(operator, left, right)
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitPostIncrementExpression(ctx: JavaScriptParser.PostIncrementExpressionContext): JsPostfixOperation {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
-        return JsPostfixOperation(JsUnaryOperator.INC, expression)
+        return JsPostfixOperation(JsUnaryOperator.INC, expression).applyLocation(ctx)
     }
 
     override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext): JsYield {
         val expression = visitNode<JsExpression>(ctx.expressionSequence())
-        return JsYield(expression)
+        return JsYield(expression).applyLocation(ctx)
     }
 
     override fun visitBitNotExpression(ctx: JavaScriptParser.BitNotExpressionContext): JsPrefixOperation {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
-        return JsPrefixOperation(JsUnaryOperator.BIT_NOT, expression)
+        return JsPrefixOperation(JsUnaryOperator.BIT_NOT, expression).applyLocation(ctx)
     }
 
     override fun visitNewExpression(ctx: JavaScriptParser.NewExpressionContext): JsNew {
@@ -774,7 +785,7 @@ class JsAstMapperVisitor(
         val jsArguments = visitAll<JsExpression>(ctx.arguments().argument())
         return JsNew(jsNewExpression).apply {
             arguments.addAll(jsArguments)
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitLiteralExpression(ctx: JavaScriptParser.LiteralExpressionContext): JsLiteral {
@@ -790,7 +801,7 @@ class JsAstMapperVisitor(
         check(ctx.Hashtag() == null) { "Private member access expressions are not supported yet" }
 
         val jsLeft = visitNode<JsExpression>(ctx.singleExpressionImpl())
-        val jsRight = scopeContext.referenceFor(ctx.identifierName().text)
+        val jsRight = scopeContext.referenceFor(ctx.identifierName().text).applyLocation(ctx.identifierName())
 
         return jsRight.apply {
             qualifier = jsLeft
@@ -807,6 +818,7 @@ class JsAstMapperVisitor(
         val jsMemberExpr = visitNode<JsExpression>(ctx.expressionSequence())
 
         return JsArrayAccess(jsObjectExpr, jsMemberExpr)
+            .applyLocation(ctx)
     }
 
     override fun visitIdentifierExpression(ctx: JavaScriptParser.IdentifierExpressionContext): JsNameRef {
@@ -818,6 +830,7 @@ class JsAstMapperVisitor(
         val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.BIT_AND, left, right)
+            .applyLocation(ctx)
     }
 
     override fun visitBitOrExpression(ctx: JavaScriptParser.BitOrExpressionContext): JsBinaryOperation {
@@ -825,6 +838,7 @@ class JsAstMapperVisitor(
         val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.BIT_OR, left, right)
+            .applyLocation(ctx)
     }
 
     override fun visitAssignmentOperatorExpression(ctx: JavaScriptParser.AssignmentOperatorExpressionContext): JsNode? {
@@ -850,12 +864,14 @@ class JsAstMapperVisitor(
             }
 
             JsBinaryOperation(jsOperator, left, right)
+                .applyLocation(ctx)
         }
     }
 
     override fun visitVoidExpression(ctx: JavaScriptParser.VoidExpressionContext): JsPrefixOperation {
         val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.VOID, expression)
+            .applyLocation(ctx)
     }
 
     override fun visitCoalesceExpression(ctx: JavaScriptParser.CoalesceExpressionContext): JsNode? {
@@ -875,7 +891,7 @@ class JsAstMapperVisitor(
             visitAll<JsPropertyInitializer>(ctx.propertyAssignment()).forEach {
                 propertyInitializers.add(it)
             }
-        }
+        }.applyLocation(ctx)
     }
 
     override fun visitNamedFunction(ctx: JavaScriptParser.NamedFunctionContext): JsFunction {
@@ -886,6 +902,7 @@ class JsAstMapperVisitor(
         val parameters = declaration.formalParameterList()?.formalParameterArg() ?: emptyList()
 
         return mapFunction(name?.text, declaration.functionBody(), parameters, isGenerator)
+            .applyLocation(ctx)
     }
 
     override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext): JsFunction {
@@ -896,6 +913,7 @@ class JsAstMapperVisitor(
         check(restParam == null) { "Rest parameters are not supported yet" }
 
         return mapFunction(null, ctx.functionBody(), formalParams, isGenerator)
+            .applyLocation(ctx)
     }
 
     override fun visitArrowFunction(ctx: JavaScriptParser.ArrowFunctionContext): JsFunction {
@@ -903,6 +921,7 @@ class JsAstMapperVisitor(
         val parameters = ctx.arrowFunctionParameters()
 
         return mapFunction(null, ctx.arrowFunctionBody().functionBody(), parameters.formalParameterList().formalParameterArg(), false)
+            .applyLocation(ctx)
     }
 
     override fun visitArrowFunctionParameters(ctx: JavaScriptParser.ArrowFunctionParametersContext): JsNode? {
@@ -920,7 +939,7 @@ class JsAstMapperVisitor(
             //  into anonymous function expression. Example: `() => 123` becomes `function () { return 123 }` in generated code.
             //  This is a temporary approach.
             val returnNode = JsReturn(visitNode<JsExpression>(expr))
-            return JsBlock(returnNode)
+            return JsBlock(returnNode).applyLocation(ctx)
         }
 
         raiseParserException("Invalid arrow function body: ${ctx.text}", ctx)
@@ -933,7 +952,7 @@ class JsAstMapperVisitor(
 
     override fun visitLiteral(ctx: JavaScriptParser.LiteralContext): JsLiteral {
         ctx.NullLiteral()?.run {
-            return JsNullLiteral()
+            return JsNullLiteral().applyLocation(ctx)
         }
 
         ctx.BooleanLiteral()?.let { bool ->
@@ -941,11 +960,11 @@ class JsAstMapperVisitor(
                 "true" -> JsBooleanLiteral(true)
                 "false" -> JsBooleanLiteral(false)
                 else -> raiseParserException("Invalid boolean literal: ${bool.text}", ctx)
-            }
+            }.applyLocation(ctx)
         }
 
         ctx.StringLiteral()?.let {
-            return it.text.toStringLiteral()
+            return it.text.toStringLiteral().applyLocation(ctx)
         }
 
         ctx.RegularExpressionLiteral()?.run {
@@ -961,7 +980,7 @@ class JsAstMapperVisitor(
                 parts.getOrNull(1)?.let {
                     flags = it
                 }
-            }
+            }.applyLocation(ctx)
         }
 
         return super.visitLiteral(ctx) as JsLiteral
@@ -989,11 +1008,11 @@ class JsAstMapperVisitor(
             value.forEach { digit ->
                 if (digit !in '0'..'7') {
                     reportWarning("illegal octal value '$value'; interpreting it as a decimal value", it.startPosition)
-                    return value.toDecimalLiteral()
+                    return value.toDecimalLiteral().applyLocation(ctx)
                 }
             }
 
-            return value.toOctalLiteral()
+            return value.toOctalLiteral().applyLocation(ctx)
         }
 
         ctx.OctalIntegerLiteral2()?.run {
@@ -1001,11 +1020,11 @@ class JsAstMapperVisitor(
         }
 
         ctx.DecimalLiteral()?.let { decimalTerminal ->
-            return decimalTerminal.text.toDecimalLiteral()
+            return decimalTerminal.text.toDecimalLiteral().applyLocation(ctx)
         }
 
         ctx.HexIntegerLiteral()?.let { hexTerminal ->
-            return hexTerminal.text.toHexLiteral()
+            return hexTerminal.text.toHexLiteral().applyLocation(ctx)
         }
 
         raiseParserException("Invalid numeric literal '${ctx.text}'", ctx)
@@ -1029,7 +1048,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitIdentifier(ctx: JavaScriptParser.IdentifierContext): JsNameRef {
-        return makeRefNode(ctx.text)
+        return makeRefNode(ctx.text).applyLocation(ctx)
     }
 
     override fun visitReservedWord(ctx: JavaScriptParser.ReservedWordContext): JsNode? {
@@ -1099,7 +1118,7 @@ class JsAstMapperVisitor(
 
             params.forEach {
                 val jsParam = visitNode<JsParameter>(it)
-                parameters.add(jsParam.applyLocation(fileName, it))
+                parameters.add(jsParam.applyLocation(it))
             }
 
             body = visitNode<JsBlock>(functionBody)
@@ -1136,4 +1155,39 @@ class JsAstMapperVisitor(
         if (!condition)
             throw JsParserException(messageFactory(), position ?: CodePosition(0, 0))
     }
+
+    private fun <T : JsNode> T.applyLocation(terminal: TerminalNode): T =
+        this.also { targetNode ->
+            val location = terminal.symbol.codePosition
+            targetNode.source = JsLocation(fileName, location.line, location.offset, null)
+        }
+
+    private fun <T : JsNode> T.applyLocation(sourceNode: ParserRuleContext): T =
+        this.also { targetNode ->
+            val location = when (sourceNode) {
+                is JavaScriptParser.FunctionDeclarationContext ->
+                    // For functions, consider their location to be at the opening parenthesis.
+                    sourceNode.OpenParen().symbol.codePosition
+                is JavaScriptParser.MemberDotExpressionContext ->
+                    // For dot-qualified references, consider their position to be at the rightmost name reference.
+                    sourceNode.identifierName().startPosition
+                else ->
+                    sourceNode.startPosition
+            }
+
+            val originalName = when (targetNode) {
+                is JsFunction, is JsVars.JsVar, is JsParameter -> targetNode.name?.toString()
+                else -> null
+            }
+
+            val jsLocation = JsLocation(fileName, location.line, location.offset, originalName)
+
+            when (targetNode) {
+                is SourceInfoAwareJsNode ->
+                    targetNode.source = jsLocation
+                is JsExpressionStatement if targetNode.expression.source == null ->
+                    targetNode.expression.source = jsLocation
+            }
+        }
+
 }
