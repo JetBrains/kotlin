@@ -33,4 +33,24 @@ abstract class DefaultImportsProvider {
             }
         }
     }
+
+    class Composed(val providers: List<DefaultImportsProvider>) : DefaultImportsProvider() {
+        override val platformSpecificDefaultImports: List<ImportPath> by lazy {
+            providers.map { it.platformSpecificDefaultImports }
+                .reduce<_, Collection<ImportPath>> { acc, list -> acc.intersect(list) }
+                .toList()
+        }
+
+        override val defaultLowPriorityImports: List<ImportPath> by lazy {
+            providers.map { it.defaultLowPriorityImports }
+                .reduce { acc, list -> acc + list }
+                .distinct()
+        }
+
+        override val excludedImports: List<FqName> by lazy {
+            providers.map { it.excludedImports }
+                .reduce { acc, list -> acc + list }
+                .distinct()
+        }
+    }
 }

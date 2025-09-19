@@ -120,7 +120,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
     }
 
     private fun LLFirSession.registerCommonComponents() {
-        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(CommonDefaultImportsProvider))
+        register(FirDefaultImportsProviderHolder.of(CommonDefaultImportsProvider))
     }
 
     private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KaModule) {

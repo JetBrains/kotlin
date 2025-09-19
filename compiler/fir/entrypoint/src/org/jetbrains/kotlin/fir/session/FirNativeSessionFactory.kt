@@ -97,6 +97,6 @@ abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?,
         register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
         register(PlatformConflictDeclarationsDiagnosticDispatcher::class, NativeConflictDeclarationsDiagnosticDispatcher)
         register(FirOverrideChecker::class, FirNativeOverrideChecker(this))
-        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(NativeDefaultImportsProvider))
+        register(FirDefaultImportsProviderHolder.of(NativeDefaultImportsProvider))
     }
 }

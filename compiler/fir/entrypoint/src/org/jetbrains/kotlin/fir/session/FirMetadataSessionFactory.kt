@@ -178,7 +178,7 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
     override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Nothing?) {}
 
     override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
-        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(CommonDefaultImportsProvider))
+        register(FirDefaultImportsProviderHolder.of(CommonDefaultImportsProvider))
     }
 
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean

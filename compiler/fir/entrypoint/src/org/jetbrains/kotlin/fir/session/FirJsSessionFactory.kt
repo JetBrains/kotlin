@@ -77,7 +77,7 @@ object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.C
         if (moduleKind != null) {
             register(FirJsModuleKind::class, FirJsModuleKind(moduleKind))
         }
-        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(JsDefaultImportsProvider))
+        register(FirDefaultImportsProviderHolder.of(JsDefaultImportsProvider))
     }
 
     // ==================================== Utilities ====================================

@@ -5,11 +5,34 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 
-class FirDefaultImportsProviderHolder(val provider: DefaultImportsProvider) : FirSessionComponent
+sealed class FirDefaultImportsProviderHolder : FirComposableSessionComponent<FirDefaultImportsProviderHolder> {
+    companion object {
+        fun of(provider: DefaultImportsProvider): FirDefaultImportsProviderHolder {
+            return Single(provider)
+        }
+    }
+
+    class Single(override val provider: DefaultImportsProvider) : FirDefaultImportsProviderHolder()
+
+    class Composed(
+        override val components: List<FirDefaultImportsProviderHolder>
+    ) : FirDefaultImportsProviderHolder(), FirComposableSessionComponent.Composed<FirDefaultImportsProviderHolder> {
+        override val provider: DefaultImportsProvider = DefaultImportsProvider.Composed(components.map { it.provider })
+    }
+
+    abstract val provider: DefaultImportsProvider
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirDefaultImportsProviderHolder>): Composed {
+        return Composed(components)
+    }
+}
 
 private val FirSession.defaultImportsProviderHolder: FirDefaultImportsProviderHolder by FirSession.sessionComponentAccessor()
 val FirSession.defaultImportsProvider: DefaultImportsProvider get() = defaultImportsProviderHolder.provider
