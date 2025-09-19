@@ -10,6 +10,7 @@ package kotlin.js
  */
 @Suppress("NOT_DOCUMENTED")
 public external interface Console {
+    public fun debug(vararg o: Any?): Unit
     public fun dir(o: Any): Unit
     public fun error(vararg o: Any?): Unit
     public fun info(vararg o: Any?): Unit
