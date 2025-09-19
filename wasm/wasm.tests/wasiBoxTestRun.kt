@@ -4,28 +4,8 @@
  */
 
 @kotlin.wasm.WasmExport
-fun runBoxTest(): Boolean {
+fun runBoxTest(): Int {
     val boxResult = box()
     val isOk = boxResult == "OK"
-    if (!isOk) {
-        println("Wrong box result '${boxResult}'; Expected 'OK'")
-    }
-    return isOk
-}
-
-@kotlin.wasm.WasmImport("wasi_snapshot_preview1", "proc_exit")
-private external fun wasiProcExit(code: Int)
-
-@kotlin.wasm.WasmExport
-fun startTest() {
-    try {
-        if (!runBoxTest()) {
-            wasiProcExit(1)
-        }
-    } catch (e: Throwable) {
-        println("Failed with exception!")
-        println(e.message)
-        println(e.printStackTrace())
-        wasiProcExit(1)
-    }
+    return if (isOk) 1 else 0
 }

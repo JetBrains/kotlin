@@ -114,6 +114,26 @@ internal sealed class WasmVM(
             )
     }
 
+    object StackSwitching : WasmVM("StackSwitching", property = "wasm.engine.path.StackSwitching", entryPointIsJsFile = false) {
+        override fun run(
+            entryFile: String,
+            jsFiles: List<String>,
+            workingDirectory: File?,
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>,
+        ): String {
+            require(jsFiles.isEmpty())
+            require(useNewExceptionHandling)
+            return tool.run(
+                *toolArgs.toTypedArray(),
+                entryFile,
+                "-e",
+                "(module instance) (invoke \"_initialize\") (invoke \"runBoxTest\")",
+                workingDirectory = workingDirectory,
+            )
+        }
+    }
+
     companion object {
         // TODO remove .local
         private const val propertyWithPathToJavaScriptCore = "javascript.engine.path.JavaScriptCore.local"
