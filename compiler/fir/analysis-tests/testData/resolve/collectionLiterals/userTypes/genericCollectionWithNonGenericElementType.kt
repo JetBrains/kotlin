@@ -33,7 +33,6 @@ fun test() {
     acceptList<Nothing?>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[]<!>)
     acceptList<Any?>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", A()]<!>) // should not pass
     acceptList<String?>(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", null]<!>) // should not pass
-
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, nullableType,
