@@ -58,7 +58,7 @@ fun main() {
             "WEB_SOCKETS" -> RemoteCompilationServiceImplType.KOTLINX_RPC
             else -> RemoteCompilationServiceImplType.GRPC
         }
-        val server = RemoteCompilationServer.getServer(implType, port, logging = true)
+        val server = RemoteCompilationServer.getServer(implType, port, logging = false)
         server.start(block = true)
     } catch (e: Exception) {
         println("error occurred: ${e.message}")

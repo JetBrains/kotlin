@@ -1,5 +1,6 @@
 package com.example
 
+import client.core.Client
 import common.RemoteCompilationService
 import io.ktor.client.*
 import io.ktor.http.*
@@ -18,7 +19,7 @@ class KotlinxRpcRemoteCompilationServiceClient(
     private val host: String = "localhost",
     private val port: Int,
     private val serialization: KrpcSerialFormatConfiguration.() -> Unit
-) : RemoteCompilationService {
+) : Client {
 
     val ktorClient = HttpClient {
         installKrpc {
@@ -56,4 +57,9 @@ class KotlinxRpcRemoteCompilationServiceClient(
     override suspend fun cleanup() {
         compilationService.cleanup()
     }
+
+    override fun close() {
+        ktorClient.close()
+    }
+
 }

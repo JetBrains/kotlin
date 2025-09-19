@@ -30,7 +30,6 @@ import model.FileTransferRequest
 import model.ArtifactType
 import model.MissingArtifactsRequest
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
@@ -113,8 +112,8 @@ class RemoteCompilationServiceImpl(
             lateinit var compilationMetadata: CompilationMetadata
 
             // TODO: this general impl is dependent on GRPC auth mechanism, that's wrong
-            val userId = AuthServerInterceptor.USER_ID_CONTEXT_KEY.get() ?: "3489439j"
-
+//            val userId = AuthServerInterceptor.USER_ID_CONTEXT_KEY.get() ?: "3489439j"
+            val userId = "jfd09424jfdsfksldf023"
             // here we consume request stream
             launch {
                 compileRequests.collect {

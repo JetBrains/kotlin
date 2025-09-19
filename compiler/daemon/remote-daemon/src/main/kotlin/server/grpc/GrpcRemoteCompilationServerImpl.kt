@@ -38,10 +38,10 @@ class GrpcRemoteCompilationServerImpl(
                                 logging = logging,
                             )
                         ),
-                        listOfNotNull(
-                            if (logging) LoggingServerInterceptor() else null,
-                            AuthServerInterceptor(BasicHTTPAuthServer())
-                        ),
+//                        listOfNotNull(
+//                            if (logging) LoggingServerInterceptor() else null,
+//                            AuthServerInterceptor(BasicHTTPAuthServer())
+//                        ),
                     )
             ).build()
 

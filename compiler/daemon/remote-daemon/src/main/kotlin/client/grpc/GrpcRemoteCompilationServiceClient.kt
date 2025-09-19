@@ -6,8 +6,8 @@
 package client.grpc
 
 import client.core.BasicHTTPAuthClient
+import client.core.Client
 import com.google.protobuf.Empty
-import common.RemoteCompilationService
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.flow.Flow
@@ -17,8 +17,6 @@ import model.CompileResponse
 import model.toDomain
 import model.toProto
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt
-import java.io.Closeable
-import java.util.concurrent.TimeUnit
 
 class GrpcRemoteCompilationServiceClient(
     private val host: String,
@@ -31,8 +29,8 @@ class GrpcRemoteCompilationServiceClient(
             if (logging) builder.intercept(RemoteClientInterceptor())
             if (host == "localhost") builder.usePlaintext() else builder.useTransportSecurity()
         }
-        .build(),
-) : RemoteCompilationService, Closeable {
+        .build()
+) : Client {
 
     private val stub: CompileServiceGrpcKt.CompileServiceCoroutineStub = CompileServiceGrpcKt
         .CompileServiceCoroutineStub(channel)
@@ -54,6 +52,7 @@ class GrpcRemoteCompilationServiceClient(
     }
 
     override fun close() {
-        channel.shutdown().awaitTermination(5, TimeUnit.SECONDS)
+        channel.shutdown()
     }
+
 }

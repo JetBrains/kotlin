@@ -139,10 +139,10 @@ serviceAccountAnnotations: {}
 # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
 resources:
   requests:
-    cpu: 5000m
+    cpu: 8000m
     memory: 16Gi
   limits:
-    cpu: 5000m
+    cpu: 8000m
     memory: 40Gi
 
 # Added specifically for choosing GPU model - can be used for other things
