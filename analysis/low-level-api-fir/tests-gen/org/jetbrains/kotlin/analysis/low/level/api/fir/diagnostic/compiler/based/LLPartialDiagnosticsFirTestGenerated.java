@@ -117,6 +117,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
     }
 
     @Test
+    @TestMetadata("collectionLiteralInLambdaReturningAnnotation.kt")
+    public void testCollectionLiteralInLambdaReturningAnnotation() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiteralInLambdaReturningAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("companion.kt")
     public void testCompanion() {
       runTest("compiler/fir/analysis-tests/testData/resolve/companion.kt");
