@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K1
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_JVM_ABI_K1_K2
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.JVM_ABI_K1_K2_DIFF
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
@@ -35,6 +36,21 @@ class AbiCheckerSuppressor(testServices: TestServices) : AfterAnalysisChecker(te
             }
             return emptyList()
         }
+
+        // Some test might be both green in K1 and with a default language version in K2,
+        // but K2 mode is effectively run with `supportsFeature` working just as the LV were set to 1.9
+        // (see delegated anonymous object at org.jetbrains.kotlin.test.TestSetupUtilsKt.runWithEnablingFirUseOption).
+        // And while the mission for JvmAbiConsistencyTest seems to be completed, it's ok sometimes to skip it for the newer test,
+        // at least with trivial generated ABI.
+        if (testServices.moduleStructure.allDirectives.contains(IGNORE_JVM_ABI_K1_K2)) {
+            if (failedAssertions.isEmpty()) {
+                return listOf(
+                    AssertionError("Test contains ${IGNORE_JVM_ABI_K1_K2.name} both pipelines are successful.").wrap()
+                )
+            }
+            return emptyList()
+        }
+
         return failedAssertions
     }
 }
