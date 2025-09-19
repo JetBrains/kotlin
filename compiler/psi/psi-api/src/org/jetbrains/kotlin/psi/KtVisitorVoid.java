@@ -177,6 +177,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitArgument(argument, null);
     }
 
+    public void visitEmptyArgument(@NotNull KtEmptyValueArgument emptyArgument) {
+        super.visitEmptyArgument(emptyArgument, null);
+    }
+
     public void visitExpression(@NotNull KtExpression expression) {
         super.visitExpression(expression, null);
     }

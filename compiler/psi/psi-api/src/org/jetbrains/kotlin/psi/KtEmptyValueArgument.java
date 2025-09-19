@@ -18,4 +18,9 @@ public class KtEmptyValueArgument extends KtElementImplStub<KotlinPlaceHolderStu
     public KtEmptyValueArgument(@NotNull KotlinPlaceHolderStub<KtEmptyValueArgument> stub) {
         super(stub, KtStubBasedElementTypes.EMPTY_VALUE_ARGUMENT);
     }
+
+    @Override
+    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
+        return visitor.visitEmptyArgument(this, data);
+    }
 }

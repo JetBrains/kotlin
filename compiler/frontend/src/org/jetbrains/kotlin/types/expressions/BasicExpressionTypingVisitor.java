@@ -414,6 +414,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
+    public KotlinTypeInfo visitEmptyArgument(@NotNull KtEmptyValueArgument argument, ExpressionTypingContext context) {
+        context.trace.report(ARGUMENT_EXPECTED.on(argument));
+        return TypeInfoFactoryKt.noTypeInfo(context);
+    }
+
+    @Override
     public KotlinTypeInfo visitSuperExpression(@NotNull KtSuperExpression expression, ExpressionTypingContext context) {
         LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, true);
 

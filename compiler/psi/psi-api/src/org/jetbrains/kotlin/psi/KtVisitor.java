@@ -195,6 +195,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitKtElement(argument, data);
     }
 
+    public R visitEmptyArgument(@NotNull KtEmptyValueArgument emptyArgument, D data) {
+        return visitExpression(emptyArgument, data);
+    }
+
     public R visitExpression(@NotNull KtExpression expression, D data) {
         return visitKtElement(expression, data);
     }

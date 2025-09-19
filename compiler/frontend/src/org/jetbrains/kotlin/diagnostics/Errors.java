@@ -924,6 +924,7 @@ public interface Errors {
 
     // Checking call arguments
 
+    DiagnosticFactory0<KtEmptyValueArgument> ARGUMENT_EXPECTED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> MIXING_NAMED_AND_POSITIONED_ARGUMENTS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtReferenceExpression> ARGUMENT_PASSED_TWICE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtReferenceExpression, KtReferenceExpression> NAMED_PARAMETER_NOT_FOUND =

@@ -1,112 +1,304 @@
-/emptyArguments.kt:20:17: error: no value passed for parameter 'z'
+/emptyArguments.kt:20:12: error: expected an argument
     asFunc(, 2, 3)
-                ^^
-/emptyArguments.kt:22:17: error: no value passed for parameter 'z'
+           ^
+/emptyArguments.kt:21:18: error: expected an argument
+    asFunc(1, 2, ,)
+                 ^
+/emptyArguments.kt:22:15: error: expected an argument
     asFunc(1, , 3,)
-                ^^^
-/emptyArguments.kt:25:16: error: no value passed for parameter 'y'
-    asFunc(, , 3)
-               ^^
-/emptyArguments.kt:25:16: error: no value passed for parameter 'z'
-    asFunc(, , 3)
-               ^^
-/emptyArguments.kt:26:14: error: no value passed for parameter 'y'
-    asFunc(, 2)
+              ^
+/emptyArguments.kt:23:12: error: expected an argument
+    asFunc(, , ,)
+           ^
+/emptyArguments.kt:23:14: error: expected an argument
+    asFunc(, , ,)
+             ^
+/emptyArguments.kt:23:16: error: expected an argument
+    asFunc(, , ,)
+               ^
+/emptyArguments.kt:24:12: error: expected an argument
+    asFunc(, ,)
+           ^
+/emptyArguments.kt:24:14: error: expected an argument
+    asFunc(, ,)
+             ^
+/emptyArguments.kt:24:14: error: no value passed for parameter 'z'
+    asFunc(, ,)
              ^^
+/emptyArguments.kt:25:12: error: expected an argument
+    asFunc(, , 3)
+           ^
+/emptyArguments.kt:25:14: error: expected an argument
+    asFunc(, , 3)
+             ^
+/emptyArguments.kt:26:12: error: expected an argument
+    asFunc(, 2)
+           ^
 /emptyArguments.kt:26:14: error: no value passed for parameter 'z'
     asFunc(, 2)
              ^^
-/emptyArguments.kt:41:19: error: type mismatch: inferred type is B but A was expected
-    asTypedFunc(, b, c,)
+/emptyArguments.kt:27:15: error: expected an argument
+    asFunc(1, , ,)
+              ^
+/emptyArguments.kt:27:17: error: expected an argument
+    asFunc(1, , ,)
+                ^
+/emptyArguments.kt:28:15: error: expected an argument
+    asFunc(1, ,)
+              ^
+/emptyArguments.kt:28:15: error: no value passed for parameter 'z'
+    asFunc(1, ,)
+              ^^
+/emptyArguments.kt:29:12: error: expected an argument
+    asFunc(, , , ,)
+           ^
+/emptyArguments.kt:29:14: error: expected an argument
+    asFunc(, , , ,)
+             ^
+/emptyArguments.kt:29:16: error: expected an argument
+    asFunc(, , , ,)
+               ^
+/emptyArguments.kt:29:18: error: expected an argument
+    asFunc(, , , ,)
+                 ^
+/emptyArguments.kt:29:18: error: too many arguments for public fun asFunc(x: Int, y: Int, z: Int): Unit defined in root package in file emptyArguments.kt
+    asFunc(, , , ,)
+                 ^
+/emptyArguments.kt:30:18: error: expected an argument
+    asFunc(1, 2, , ,)
+                 ^
+/emptyArguments.kt:30:20: error: expected an argument
+    asFunc(1, 2, , ,)
+                   ^
+/emptyArguments.kt:30:20: error: too many arguments for public fun asFunc(x: Int, y: Int, z: Int): Unit defined in root package in file emptyArguments.kt
+    asFunc(1, 2, , ,)
+                   ^
+/emptyArguments.kt:31:12: error: expected an argument
+    asFunc(, 2, , ,)
+           ^
+/emptyArguments.kt:31:17: error: expected an argument
+    asFunc(, 2, , ,)
+                ^
+/emptyArguments.kt:31:19: error: expected an argument
+    asFunc(, 2, , ,)
                   ^
-/emptyArguments.kt:41:22: error: type mismatch: inferred type is C but B was expected
-    asTypedFunc(, b, c,)
-                     ^
-/emptyArguments.kt:41:22: error: no value passed for parameter 'c'
-    asTypedFunc(, b, c,)
-                     ^^^
-/emptyArguments.kt:42:19: error: type mismatch: inferred type is B but A was expected
-    asTypedFunc(, b, c)
+/emptyArguments.kt:31:19: error: too many arguments for public fun asFunc(x: Int, y: Int, z: Int): Unit defined in root package in file emptyArguments.kt
+    asFunc(, 2, , ,)
                   ^
-/emptyArguments.kt:42:22: error: type mismatch: inferred type is C but B was expected
-    asTypedFunc(, b, c)
+/emptyArguments.kt:33:18: error: expected an argument
+    asVarargFunc(, 2, 3)
+                 ^
+/emptyArguments.kt:34:18: error: expected an argument
+    asVarargFunc(, 2, 3,)
+                 ^
+/emptyArguments.kt:35:21: error: expected an argument
+    asVarargFunc(1, , 3)
+                    ^
+/emptyArguments.kt:36:18: error: expected an argument
+    asVarargFunc(, , 3,)
+                 ^
+/emptyArguments.kt:36:20: error: expected an argument
+    asVarargFunc(, , 3,)
+                   ^
+/emptyArguments.kt:37:18: error: expected an argument
+    asVarargFunc(, , ,)
+                 ^
+/emptyArguments.kt:37:20: error: expected an argument
+    asVarargFunc(, , ,)
+                   ^
+/emptyArguments.kt:37:22: error: expected an argument
+    asVarargFunc(, , ,)
                      ^
-/emptyArguments.kt:42:22: error: no value passed for parameter 'c'
+/emptyArguments.kt:38:18: error: expected an argument
+    asVarargFunc(, , , ,)
+                 ^
+/emptyArguments.kt:38:20: error: expected an argument
+    asVarargFunc(, , , ,)
+                   ^
+/emptyArguments.kt:38:22: error: expected an argument
+    asVarargFunc(, , , ,)
+                     ^
+/emptyArguments.kt:38:24: error: expected an argument
+    asVarargFunc(, , , ,)
+                       ^
+/emptyArguments.kt:39:18: error: expected an argument
+    asVarargFunc(, 2,)
+                 ^
+/emptyArguments.kt:41:17: error: expected an argument
+    asTypedFunc(, b, c,)
+                ^
+/emptyArguments.kt:42:17: error: expected an argument
     asTypedFunc(, b, c)
-                     ^^
-/emptyArguments.kt:43:22: error: type mismatch: inferred type is C but B was expected
+                ^
+/emptyArguments.kt:43:20: error: expected an argument
     asTypedFunc(a, , c,)
-                     ^
-/emptyArguments.kt:43:22: error: no value passed for parameter 'c'
-    asTypedFunc(a, , c,)
-                     ^^^
-/emptyArguments.kt:47:19: error: type mismatch: inferred type is B but A was expected
-    asTypedFunc(, b,)
+                   ^
+/emptyArguments.kt:44:17: error: expected an argument
+    asTypedFunc(, ,)
+                ^
+/emptyArguments.kt:44:19: error: expected an argument
+    asTypedFunc(, ,)
                   ^
-/emptyArguments.kt:47:19: error: no value passed for parameter 'b'
+/emptyArguments.kt:44:19: error: no value passed for parameter 'c'
+    asTypedFunc(, ,)
+                  ^^
+/emptyArguments.kt:45:17: error: expected an argument
+    asTypedFunc(, , ,)
+                ^
+/emptyArguments.kt:45:19: error: expected an argument
+    asTypedFunc(, , ,)
+                  ^
+/emptyArguments.kt:45:21: error: expected an argument
+    asTypedFunc(, , ,)
+                    ^
+/emptyArguments.kt:46:17: error: expected an argument
+    asTypedFunc(, , , ,)
+                ^
+/emptyArguments.kt:46:19: error: expected an argument
+    asTypedFunc(, , , ,)
+                  ^
+/emptyArguments.kt:46:21: error: expected an argument
+    asTypedFunc(, , , ,)
+                    ^
+/emptyArguments.kt:46:23: error: expected an argument
+    asTypedFunc(, , , ,)
+                      ^
+/emptyArguments.kt:46:23: error: too many arguments for public fun asTypedFunc(a: A, b: B, c: C): Unit defined in root package in file emptyArguments.kt
+    asTypedFunc(, , , ,)
+                      ^
+/emptyArguments.kt:47:17: error: expected an argument
     asTypedFunc(, b,)
-                  ^^^
+                ^
 /emptyArguments.kt:47:19: error: no value passed for parameter 'c'
     asTypedFunc(, b,)
                   ^^^
-/emptyArguments.kt:49:21: error: type mismatch: inferred type is C but A was expected
+/emptyArguments.kt:48:23: error: expected an argument
+    asTypedFunc(a, b, ,)
+                      ^
+/emptyArguments.kt:49:17: error: expected an argument
     asTypedFunc(, , c)
-                    ^
-/emptyArguments.kt:49:21: error: no value passed for parameter 'b'
+                ^
+/emptyArguments.kt:49:19: error: expected an argument
     asTypedFunc(, , c)
-                    ^^
-/emptyArguments.kt:49:21: error: no value passed for parameter 'c'
-    asTypedFunc(, , c)
-                    ^^
-/emptyArguments.kt:53:28: error: type mismatch: inferred type is C but B was expected
+                  ^
+/emptyArguments.kt:50:20: error: expected an argument
+    asTypedFunc(a, , ,)
+                   ^
+/emptyArguments.kt:50:22: error: expected an argument
+    asTypedFunc(a, , ,)
+                     ^
+/emptyArguments.kt:51:26: error: expected an argument
+    asTypedFunc(a, b, c, ,)
+                         ^
+/emptyArguments.kt:51:26: error: too many arguments for public fun asTypedFunc(a: A, b: B, c: C): Unit defined in root package in file emptyArguments.kt
+    asTypedFunc(a, b, c, ,)
+                         ^
+/emptyArguments.kt:53:26: error: expected an argument
     asTypedFunc(a = A(), , c)
-                           ^
-/emptyArguments.kt:53:28: error: no value passed for parameter 'c'
-    asTypedFunc(a = A(), , c)
-                           ^^
+                         ^
+/emptyArguments.kt:54:26: error: expected an argument
+    asTypedFunc(c = C(), , b = B())
+                         ^
+/emptyArguments.kt:54:26: error: mixing named and positioned arguments is not allowed
+    asTypedFunc(c = C(), , b = B())
+                         ^
 /emptyArguments.kt:54:28: error: no value passed for parameter 'a'
     asTypedFunc(c = C(), , b = B())
                            ^^^^^^^^
+/emptyArguments.kt:55:17: error: expected an argument
+    asTypedFunc(, a = A(), b,)
+                ^
+/emptyArguments.kt:55:19: error: an argument is already passed for this parameter
+    asTypedFunc(, a = A(), b,)
+                  ^
+/emptyArguments.kt:55:28: error: mixing named and positioned arguments is not allowed
+    asTypedFunc(, a = A(), b,)
+                           ^
+/emptyArguments.kt:55:28: error: no value passed for parameter 'b'
+    asTypedFunc(, a = A(), b,)
+                           ^^^
 /emptyArguments.kt:55:28: error: no value passed for parameter 'c'
     asTypedFunc(, a = A(), b,)
                            ^^^
-/emptyArguments.kt:57:28: error: mixing named and positioned arguments is not allowed
+/emptyArguments.kt:56:17: error: expected an argument
+    asTypedFunc(, a, b = B(), c)
+                ^
+/emptyArguments.kt:56:19: error: type mismatch: inferred type is A but B was expected
+    asTypedFunc(, a, b = B(), c)
+                  ^
+/emptyArguments.kt:56:22: error: an argument is already passed for this parameter
+    asTypedFunc(, a, b = B(), c)
+                     ^
+/emptyArguments.kt:56:31: error: mixing named and positioned arguments is not allowed
+    asTypedFunc(, a, b = B(), c)
+                              ^
+/emptyArguments.kt:56:31: error: no value passed for parameter 'c'
+    asTypedFunc(, a, b = B(), c)
+                              ^^
+/emptyArguments.kt:57:17: error: expected an argument
+    asTypedFunc(, b = B(), a, c)
+                ^
+/emptyArguments.kt:57:28: error: type mismatch: inferred type is A but C was expected
     asTypedFunc(, b = B(), a, c)
                            ^
-/emptyArguments.kt:57:31: error: mixing named and positioned arguments is not allowed
+/emptyArguments.kt:57:31: error: too many arguments for public fun asTypedFunc(a: A, b: B, c: C): Unit defined in root package in file emptyArguments.kt
     asTypedFunc(, b = B(), a, c)
                               ^
-/emptyArguments.kt:57:31: error: no value passed for parameter 'a'
-    asTypedFunc(, b = B(), a, c)
-                              ^^
-/emptyArguments.kt:57:31: error: no value passed for parameter 'c'
-    asTypedFunc(, b = B(), a, c)
-                              ^^
-/emptyArguments.kt:58:28: error: type mismatch: inferred type is C but B was expected
+/emptyArguments.kt:58:26: error: expected an argument
     asTypedFunc(a = A(), , c)
-                           ^
-/emptyArguments.kt:58:28: error: no value passed for parameter 'c'
-    asTypedFunc(a = A(), , c)
-                           ^^
-/emptyArguments.kt:59:28: error: no value passed for parameter 'b'
+                         ^
+/emptyArguments.kt:59:26: error: expected an argument
     asTypedFunc(a = A(), , c = C(),)
-                           ^^^^^^^^^
-/emptyArguments.kt:60:28: error: type mismatch: inferred type is C but B was expected
+                         ^
+/emptyArguments.kt:60:26: error: expected an argument
     asTypedFunc(a = A(), , c,)
+                         ^
+/emptyArguments.kt:61:26: error: expected an argument
+    asTypedFunc(a = A(), ,)
+                         ^
+/emptyArguments.kt:61:26: error: no value passed for parameter 'c'
+    asTypedFunc(a = A(), ,)
+                         ^^
+/emptyArguments.kt:62:17: error: expected an argument
+    asTypedFunc(, a = A(), b = B(), c = C())
+                ^
+/emptyArguments.kt:62:19: error: an argument is already passed for this parameter
+    asTypedFunc(, a = A(), b = B(), c = C())
+                  ^
+/emptyArguments.kt:63:17: error: expected an argument
+    asTypedFunc(, a = A(), b, c)
+                ^
+/emptyArguments.kt:63:19: error: an argument is already passed for this parameter
+    asTypedFunc(, a = A(), b, c)
+                  ^
+/emptyArguments.kt:63:28: error: mixing named and positioned arguments is not allowed
+    asTypedFunc(, a = A(), b, c)
                            ^
-/emptyArguments.kt:60:28: error: no value passed for parameter 'c'
-    asTypedFunc(a = A(), , c,)
-                           ^^^
-/emptyArguments.kt:64:21: error: no value passed for parameter 'b'
+/emptyArguments.kt:63:31: error: mixing named and positioned arguments is not allowed
+    asTypedFunc(, a = A(), b, c)
+                              ^
+/emptyArguments.kt:63:31: error: no value passed for parameter 'b'
+    asTypedFunc(, a = A(), b, c)
+                              ^^
+/emptyArguments.kt:63:31: error: no value passed for parameter 'c'
+    asTypedFunc(, a = A(), b, c)
+                              ^^
+/emptyArguments.kt:64:17: error: expected an argument
     asTypedFunc(, , a = A())
-                    ^^^^^^^^
+                ^
+/emptyArguments.kt:64:19: error: expected an argument
+    asTypedFunc(, , a = A())
+                  ^
+/emptyArguments.kt:64:21: error: an argument is already passed for this parameter
+    asTypedFunc(, , a = A())
+                    ^
 /emptyArguments.kt:64:21: error: no value passed for parameter 'c'
     asTypedFunc(, , a = A())
                     ^^^^^^^^
-/emptyArguments.kt:65:21: error: no value passed for parameter 'a'
+/emptyArguments.kt:65:17: error: expected an argument
     asTypedFunc(, , c = C())
-                    ^^^^^^^^
-/emptyArguments.kt:65:21: error: no value passed for parameter 'b'
+                ^
+/emptyArguments.kt:65:19: error: expected an argument
     asTypedFunc(, , c = C())
-                    ^^^^^^^^
+                  ^
 
