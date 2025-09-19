@@ -147,6 +147,14 @@ class UklibResolutionTestsWithMockComponents {
                 ),
             ).prettyPrinted, consumer.multiplatformExtension.js().compilationResolution().prettyPrinted
         )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = kmpMetadataJarVariant.name,
+                    artifacts = mutableListOf(kmpMetadataJarVariant.attributes + jarArtifact + libraryElementsJar)
+                ),
+            ).prettyPrinted, consumer.multiplatformExtension.js().runtimeResolution().prettyPrinted
+        )
         listOf(
             consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
             consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
