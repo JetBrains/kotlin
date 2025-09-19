@@ -55,6 +55,7 @@ object ClsClassFinder {
             if (fileContent == null) {
                 ClassFileViewProvider.isInnerClass(file)
             } else {
+                @Suppress("DEPRECATION") // KT-81203
                 ClassFileViewProvider.isInnerClass(file, fileContent)
             }
         } catch (exception: Exception) {
