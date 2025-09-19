@@ -13,6 +13,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -639,6 +640,10 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName("Minified app contains Compose mapping file")
     @AndroidGradlePluginTests
     @GradleAndroidTest
+    @DisabledOnOs(
+        OS.WINDOWS, disabledReason = "AGP contains a bug that prevents test output files from being cleaned up on Windows. " +
+                "See: https://issuetracker.google.com/issues/445967244"
+    )
     @TestMetadata("AndroidSimpleComposeApp")
     fun testMinifyWithCompose(
         gradleVersion: GradleVersion,
