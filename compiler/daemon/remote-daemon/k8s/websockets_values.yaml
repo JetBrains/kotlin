@@ -171,7 +171,7 @@ service:
 #     mountPath: /data
 pvc:
   compilation-storage:
-    size: 10Gi
+    size: 20Gi
     mountPath: /storage
 
 # You can extend pod.spec.volumes with the following field
