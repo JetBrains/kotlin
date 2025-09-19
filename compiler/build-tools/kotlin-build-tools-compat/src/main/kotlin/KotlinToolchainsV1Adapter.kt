@@ -52,7 +52,7 @@ public class KotlinToolchainsV1Adapter(
         @Suppress("UNCHECKED_CAST")
         return when (type) {
             JvmPlatformToolchain::class.java -> jvm
-            else -> error("Unsupported platform toolchain type: $type. Only JVM compilation is supported in BTA API v1 fallback (compiler version ${getCompilerVersion()}.")
+            else -> error("Unsupported platform toolchain type: $type. Only JVM compilation is supported in BTA API v1 fallback (compiler version ${getCompilerVersion()}).")
         } as T
     }
 
@@ -353,7 +353,7 @@ private class BuildSessionV1Adapter(
                 operation.execute(projectId, executionPolicy, logger) as R
             }
             else -> {
-                error("Unsupported operation type with BTA API v1 fallback (compiler version ${kotlinToolchains.getCompilerVersion()}: ${operation::class.simpleName}")
+                error("Unsupported operation type with BTA API v1 fallback (compiler version ${kotlinToolchains.getCompilerVersion()}: ${operation::class.simpleName}).")
             }
         }
     }
