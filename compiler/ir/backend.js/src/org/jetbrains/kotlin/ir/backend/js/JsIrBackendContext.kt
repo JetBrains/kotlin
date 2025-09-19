@@ -156,11 +156,6 @@ class JsIrBackendContext(
     override val jsPromiseSymbol: IrClassSymbol
         get() = symbols.promiseClassSymbol
 
-    override val enumEntries = getIrClass(StandardClassIds.BASE_ENUMS_PACKAGE.child(Name.identifier("EnumEntries")))
-    override val createEnumEntries = getFunctions(StandardClassIds.BASE_ENUMS_PACKAGE.child(Name.identifier("enumEntries")))
-        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
-        .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
-
     override val symbols = JsSymbols(irBuiltIns, irFactory.stageController, configuration.compileLongAsBigint)
 
     override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
@@ -192,14 +187,6 @@ class JsIrBackendContext(
             )
         )
     )
-
-
-    override val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let {
-        symbolTable.descriptorExtension.referenceSimpleFunction(it)
-    }
-    override val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let {
-        symbolTable.descriptorExtension.referenceSimpleFunction(it)
-    }
 
     val newThrowableSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
     val extendThrowableSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("extendThrowable"))

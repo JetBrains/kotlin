@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationWasmSymbols
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -22,17 +19,15 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 @OptIn(ObsoleteDescriptorBasedAPI::class, InternalSymbolFinderAPI::class)
@@ -107,10 +102,6 @@ class WasmSymbols(
         get() = _arraysContentEquals.associateBy { it.owner.parameters[0].type.makeNotNull() }
 
     val throwLinkageError = getFunction("throwIrLinkageError", StandardClassIds.BASE_INTERNAL_PACKAGE)
-
-    val enumEntries = getIrClass(FqName.fromSegments(listOf("kotlin", "enums", "EnumEntries")))
-    val createEnumEntries = symbolFinder.topLevelFunctions(enumsInternalPackageFqName, "enumEntries")
-        .find { it.descriptor.valueParameters.firstOrNull()?.type?.isFunctionType == false }!!
 
     val appendable = getIrClass(FqName.fromSegments(listOf("kotlin", "text", "Appendable")))
 
@@ -220,8 +211,6 @@ class WasmSymbols(
 
     val getWasmAbiVersion = getInternalWasmFunction("getWasmAbiVersion")
 
-    val testFun = maybeGetFunction("test", kotlinTestPackageFqName)
-    val suiteFun = maybeGetFunction("suite", kotlinTestPackageFqName)
     val registerRootSuiteBlock = maybeGetFunction("registerRootSuiteBlock", kotlinTestPackageFqName)
     val runRootSuites = maybeGetFunction("runRootSuites", kotlinTestPackageFqName)
 

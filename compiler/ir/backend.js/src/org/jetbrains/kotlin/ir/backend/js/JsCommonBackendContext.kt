@@ -41,12 +41,6 @@ interface JsCommonBackendContext : CommonBackendContext {
     val es6mode: Boolean
         get() = false
 
-    val suiteFun: IrSimpleFunctionSymbol?
-    val testFun: IrSimpleFunctionSymbol?
-
-    val enumEntries: IrClassSymbol
-    val createEnumEntries: IrSimpleFunctionSymbol
-
     val externalPackageFragment: MutableMap<IrFileSymbol, IrFile>
     val additionalExportedDeclarations: Set<IrDeclaration>
     val bodilessBuiltInsPackageFragment: IrPackageFragment
