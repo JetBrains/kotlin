@@ -28,7 +28,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             classProto.flags,
             classProto.annotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
         ) ?: super.loadClassAnnotations(classProto, nameResolver)
 
     override fun loadFunctionAnnotations(
@@ -42,7 +42,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             functionProto.flags,
             functionProto.annotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
         ) ?: super.loadFunctionAnnotations(containerSource, functionProto, nameResolver, typeTable)
 
     override fun loadPropertyAnnotations(
@@ -57,7 +57,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             propertyProto.flags,
             propertyProto.annotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
             AnnotationUseSiteTarget.PROPERTY,
         ) ?: super.loadPropertyAnnotations(containerSource, propertyProto, containingClassProto, nameResolver, typeTable)
 
@@ -72,7 +72,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             constructorProto.flags,
             constructorProto.annotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
         ) ?: super.loadConstructorAnnotations(containerSource, constructorProto, nameResolver, typeTable)
 
     override fun loadValueParameterAnnotations(
@@ -90,7 +90,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             valueParameterProto.flags,
             valueParameterProto.annotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
         ) ?: super.loadValueParameterAnnotations(
             containerSource,
             callableProto,
@@ -112,7 +112,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             flags = null,
             enumEntryProto.annotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
         ) ?: super.loadEnumEntryAnnotations(classId, enumEntryProto, nameResolver)
 
     override fun loadPropertyGetterAnnotations(
@@ -127,7 +127,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             getterFlags,
             propertyProto.getterAnnotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
         ) ?: super.loadPropertyGetterAnnotations(containerSource, propertyProto, nameResolver, typeTable, getterFlags)
 
     override fun loadPropertySetterAnnotations(
@@ -142,7 +142,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             setterFlags,
             propertyProto.setterAnnotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
         ) ?: super.loadPropertySetterAnnotations(containerSource, propertyProto, nameResolver, typeTable, setterFlags)
 
     override fun loadPropertyBackingFieldAnnotations(
@@ -156,7 +156,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             propertyProto.flags,
             propertyProto.backingFieldAnnotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
             AnnotationUseSiteTarget.FIELD,
         ) ?: super.loadPropertyBackingFieldAnnotations(containerSource, propertyProto, nameResolver, typeTable)
 
@@ -171,7 +171,7 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             propertyProto.flags,
             propertyProto.delegateFieldAnnotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
             AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD,
         ) ?: super.loadPropertyDelegatedFieldAnnotations(containerSource, propertyProto, nameResolver, typeTable)
 
@@ -187,14 +187,14 @@ class KlibBasedAnnotationDeserializer(private val session: FirSession) :
             flags = null,
             callableProto.extensionReceiverAnnotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
         )
         is ProtoBuf.Property -> loadAnnotationsFromMetadataGuarded(
             session,
             flags = null,
             callableProto.extensionReceiverAnnotationList,
             nameResolver,
-            LanguageFeature.KlibAnnotationsInCommonMetadata,
+            LanguageFeature.KlibAnnotationsInMetadata,
         )
         else -> null
     } ?: super.loadExtensionReceiverParameterAnnotations(containerSource, callableProto, nameResolver, typeTable, kind)
