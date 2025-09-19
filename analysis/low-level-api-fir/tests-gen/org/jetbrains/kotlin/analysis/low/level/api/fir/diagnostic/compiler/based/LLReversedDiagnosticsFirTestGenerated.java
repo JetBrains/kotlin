@@ -5540,6 +5540,18 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("lambdasWithExplicitParametersViaReceiversFeatureDisabled.kt")
+      public void testLambdasWithExplicitParametersViaReceiversFeatureDisabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdasWithExplicitParametersViaReceiversFeatureDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdasWithExplicitParametersViaReceiversFeatureEnabled.kt")
+      public void testLambdasWithExplicitParametersViaReceiversFeatureEnabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdasWithExplicitParametersViaReceiversFeatureEnabled.kt");
+      }
+
+      @Test
       @TestMetadata("lambdasWithExplicitParametersWithContexts.kt")
       public void testLambdasWithExplicitParametersWithContexts() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdasWithExplicitParametersWithContexts.kt");
