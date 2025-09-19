@@ -38,6 +38,7 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
         return targetLabel()?.getReferencedNameAsName()
     }
 
+    @Suppress("DEPRECATION")
     fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
     fun name(): String? = labelName() ?: typeReference()?.nameForReceiverLabel()
