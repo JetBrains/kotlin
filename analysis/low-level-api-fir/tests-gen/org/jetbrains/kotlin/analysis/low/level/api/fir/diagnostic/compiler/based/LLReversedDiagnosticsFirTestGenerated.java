@@ -2063,6 +2063,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("noExplicitReturnTypeRecursion.kt")
+        public void testNoExplicitReturnTypeRecursion() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/noExplicitReturnTypeRecursion.kt");
+        }
+
+        @Test
         @TestMetadata("nonGenericCollection.kt")
         public void testNonGenericCollection() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollection.kt");
