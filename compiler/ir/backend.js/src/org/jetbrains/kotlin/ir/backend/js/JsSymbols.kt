@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.PreSerializationWebSymbols
 import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -41,7 +42,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.EnumMap
 
 // TODO KT-77388 rename to `BackendWebSymbolsImpl`
-@OptIn(InternalSymbolFinderAPI::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class, InternalSymbolFinderAPI::class)
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
 ) : PreSerializationWebSymbols, KlibSymbols(irBuiltIns) {
@@ -57,6 +58,12 @@ abstract class JsCommonSymbols(
     val coroutineImplExceptionPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exception")!!.owner }
     val coroutineImplExceptionStatePropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
     val coroutineImplExceptionStatePropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
+
+    val testFun = CallableIds.test.functionSymbols().singleOrNull()
+    val suiteFun = CallableIds.suite.functionSymbols().singleOrNull()
+    val enumEntries: IrClassSymbol = ClassIds.EnumEntries.classSymbol()
+    val createEnumEntries: IrSimpleFunctionSymbol by CallableIds.enumEntries
+        .functionSymbol { it.descriptor.valueParameters.firstOrNull()?.type?.isFunctionType == false }
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class, InternalSymbolFinderAPI::class)
@@ -545,6 +552,7 @@ private object ClassIds {
 
     // Other
     val PrimitiveClasses = ClassId(JsStandardClassIds.BASE_REFLECT_JS_INTERNAL_PACKAGE, Name.identifier("PrimitiveClasses"))
+    val EnumEntries = ClassId(StandardClassIds.BASE_ENUMS_PACKAGE, Name.identifier("EnumEntries"))
 }
 
 private val String.jsCallableId get() = CallableId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
@@ -776,4 +784,7 @@ private object CallableIds {
     val subString = CallableId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("substring"))
     val until = CallableId(StandardNames.RANGES_PACKAGE_FQ_NAME, Name.identifier("until"))
     val throwIrLinkageError = CallableId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier("throwIrLinkageError"))
+    val enumEntries = CallableId(StandardClassIds.BASE_ENUMS_PACKAGE, Name.identifier("enumEntries"))
+    val test = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("test"))
+    val suite = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("suite"))
 }

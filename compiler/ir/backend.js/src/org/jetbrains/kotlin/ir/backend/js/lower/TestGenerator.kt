@@ -84,7 +84,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
 
         val function = context.irFactory.buildFun {
             this.name = Name.identifier("$name test fun")
-            this.returnType = if (this@createInvocation == context.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
+            this.returnType = if (this@createInvocation == context.symbols.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
             this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
         }
 
@@ -116,7 +116,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
         if (irClass.modality == Modality.ABSTRACT || irClass.isEffectivelyExternal() || irClass.isExpect) return
 
         val suiteFunBody by lazy(LazyThreadSafetyMode.NONE) {
-            context.suiteFun!!.createInvocation(irClass.name.asString(), parentFunction(), irClass.isIgnored)
+            context.symbols.suiteFun!!.createInvocation(irClass.name.asString(), parentFunction(), irClass.isIgnored)
         }
 
         val beforeFunctions = irClass.declarations.filterIsInstanceAnd<IrSimpleFunction> { it.isBefore }
@@ -160,7 +160,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
         irClass: IrClass,
         parentFunction: IrSimpleFunction,
     ) {
-        val fn = context.testFun!!.createInvocation(testFun.name.asString(), parentFunction, testFun.isIgnored)
+        val fn = context.symbols.testFun!!.createInvocation(testFun.name.asString(), parentFunction, testFun.isIgnored)
         val body = fn.body as IrBlockBody
 
         val exceptionMessage = when {

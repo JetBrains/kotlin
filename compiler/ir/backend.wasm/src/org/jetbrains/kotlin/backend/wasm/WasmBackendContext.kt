@@ -99,9 +99,6 @@ class WasmBackendContext(
     override val sharedVariablesManager = KlibSharedVariablesManager(wasmSymbols)
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
 
-    override val enumEntries = wasmSymbols.enumEntries
-    override val createEnumEntries = wasmSymbols.createEnumEntries
-
     override val propertyLazyInitialization: PropertyLazyInitialization =
         PropertyLazyInitialization(enabled = propertyLazyInitialization, eagerInitialization = wasmSymbols.eagerInitialization)
 
@@ -113,11 +110,6 @@ class WasmBackendContext(
     //
     // Unit test support, mostly borrowed from the JS implementation
     //
-
-    override val suiteFun: IrSimpleFunctionSymbol?
-        get() = wasmSymbols.suiteFun
-    override val testFun: IrSimpleFunctionSymbol?
-        get() = wasmSymbols.testFun
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
         configuration.partialLinkageConfig,
