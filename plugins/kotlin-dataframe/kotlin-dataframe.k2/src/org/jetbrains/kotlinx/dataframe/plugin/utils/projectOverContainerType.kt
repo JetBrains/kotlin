@@ -14,3 +14,8 @@ fun ConeKotlinType.projectOverDataColumnType() =
     Names.DATA_COLUMN_CLASS_ID.constructClassLikeType(
         typeArguments = arrayOf(this.toTypeProjection(Variance.INVARIANT))
     )
+
+fun ConeKotlinType.projectOverDataRowType() =
+    Names.DATA_ROW_CLASS_ID.constructClassLikeType(
+        typeArguments = arrayOf(this.toTypeProjection(Variance.INVARIANT))
+    )
