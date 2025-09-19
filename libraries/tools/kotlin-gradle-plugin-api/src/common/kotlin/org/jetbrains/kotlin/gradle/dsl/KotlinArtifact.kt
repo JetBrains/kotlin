@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.dsl
 import org.gradle.api.*
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -57,11 +56,6 @@ interface KotlinNativeLibrary : KotlinNativeArtifact {
 @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeFramework : KotlinNativeArtifact {
     val target: KonanTarget
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
@@ -70,11 +64,6 @@ interface KotlinNativeFramework : KotlinNativeArtifact {
 @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeFatFramework : KotlinNativeArtifact {
     val targets: Set<KonanTarget>
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
@@ -83,11 +72,6 @@ interface KotlinNativeFatFramework : KotlinNativeArtifact {
 @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeXCFramework : KotlinNativeArtifact {
     val targets: Set<KonanTarget>
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
@@ -135,11 +119,6 @@ interface KotlinNativeLibraryConfig : KotlinNativeArtifactConfig {
 @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeFrameworkConfig : KotlinNativeArtifactConfig {
     var target: KonanTarget
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
@@ -149,11 +128,6 @@ interface KotlinNativeFrameworkConfig : KotlinNativeArtifactConfig {
 interface KotlinNativeFatFrameworkConfig : KotlinNativeArtifactConfig {
     var targets: Set<KonanTarget>
     fun targets(vararg targets: KonanTarget)
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
@@ -163,11 +137,6 @@ interface KotlinNativeFatFrameworkConfig : KotlinNativeArtifactConfig {
 interface KotlinNativeXCFrameworkConfig : KotlinNativeArtifactConfig {
     var targets: Set<KonanTarget>
     fun targets(vararg targets: KonanTarget)
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**

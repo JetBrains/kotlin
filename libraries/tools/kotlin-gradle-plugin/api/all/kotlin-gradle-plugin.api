@@ -1004,13 +1004,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/DefaultKo
 	public abstract fun predicate ()Z
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework$BitcodeEmbeddingMode {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework$BitcodeEmbeddingMode;
-	public final fun getBITCODE ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public final fun getDISABLE ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public final fun getMARKER ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-}
-
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework$Companion {
 	public final fun getFrameworkTargets ()Lorg/gradle/api/attributes/Attribute;
 }
@@ -5208,7 +5201,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/KotlinArtifactsExtensionImpl : org/jetbrains/kotlin/gradle/dsl/KotlinArtifactsExtension {
-	public final field EmbedBitcodeMode Lorg/jetbrains/kotlin/gradle/targets/native/tasks/artifact/KotlinArtifactsExtensionImpl$BitcodeEmbeddingModeDsl;
 	public fun <init> (Lorg/gradle/api/Project;)V
 	public final fun getAndroidArm32 ()Lorg/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_ARM32;
 	public final fun getAndroidArm64 ()Lorg/jetbrains/kotlin/konan/target/KonanTarget$ANDROID_ARM64;
@@ -5237,13 +5229,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/
 	public final fun getWatchosDeviceArm64 ()Lorg/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_DEVICE_ARM64;
 	public final fun getWatchosSimulatorArm64 ()Lorg/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_SIMULATOR_ARM64;
 	public final fun getWatchosX64 ()Lorg/jetbrains/kotlin/konan/target/KonanTarget$WATCHOS_X64;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/KotlinArtifactsExtensionImpl$BitcodeEmbeddingModeDsl {
-	public fun <init> ()V
-	public final fun getBITCODE ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public final fun getDISABLE ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public final fun getMARKER ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/KotlinArtifactsExtensionKt {
@@ -5285,20 +5270,16 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/
 	public fun <init> (Ljava/lang/String;)V
 	public synthetic fun createArtifact (Lorg/gradle/api/plugins/ExtensionAware;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinArtifact;
 	public fun createArtifact (Lorg/gradle/api/plugins/ExtensionAware;)Lorg/jetbrains/kotlin/gradle/targets/native/tasks/artifact/KotlinNativeFatFrameworkImpl;
-	public fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public fun getTargets ()Ljava/util/Set;
-	public fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public fun setTargets (Ljava/util/Set;)V
 	public fun targets ([Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 	protected fun validate ()V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/KotlinNativeFatFrameworkImpl : org/gradle/api/plugins/ExtensionAware, org/jetbrains/kotlin/gradle/dsl/KotlinNativeFatFramework {
-	public fun <init> (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ZLjava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;Lorg/gradle/api/plugins/ExtensionAware;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ZLjava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;Lorg/gradle/api/plugins/ExtensionAware;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ZLjava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Ljava/util/Set;Lorg/gradle/api/plugins/ExtensionAware;)V
 	public fun getArtifactName ()Ljava/lang/String;
 	public fun getBinaryOptions ()Ljava/util/Map;
-	public fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public fun getExtensions ()Lorg/gradle/api/plugins/ExtensionContainer;
 	public fun getKotlinOptionsFn ()Lkotlin/jvm/functions/Function1;
 	public fun getLinkerOptions ()Ljava/util/List;
@@ -5321,11 +5302,9 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/KotlinNativeFrameworkImpl : org/gradle/api/plugins/ExtensionAware, org/jetbrains/kotlin/gradle/dsl/KotlinNativeFramework {
-	public fun <init> (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ZLjava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Lorg/jetbrains/kotlin/konan/target/KonanTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;Lorg/gradle/api/plugins/ExtensionAware;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ZLjava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Lorg/jetbrains/kotlin/konan/target/KonanTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;Lorg/gradle/api/plugins/ExtensionAware;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ZLjava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Lorg/jetbrains/kotlin/konan/target/KonanTarget;Lorg/gradle/api/plugins/ExtensionAware;)V
 	public fun getArtifactName ()Ljava/lang/String;
 	public fun getBinaryOptions ()Ljava/util/Map;
-	public fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public fun getExtensions ()Lorg/gradle/api/plugins/ExtensionContainer;
 	public fun getKotlinOptionsFn ()Lkotlin/jvm/functions/Function1;
 	public fun getLinkerOptions ()Ljava/util/List;
@@ -5372,7 +5351,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/
 	public abstract fun getBinaryOptions ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getDebuggable ()Lorg/gradle/api/provider/Property;
 	public abstract fun getDestinationDir ()Lorg/gradle/api/file/DirectoryProperty;
-	public abstract fun getEmbedBitcode ()Lorg/gradle/api/provider/Property;
 	public abstract fun getEntryPoint ()Lorg/gradle/api/provider/Property;
 	public abstract fun getExportLibraries ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public final fun getFreeCompilerArgs ()Ljava/util/List;
@@ -5403,20 +5381,16 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/
 	public fun <init> (Ljava/lang/String;)V
 	public synthetic fun createArtifact (Lorg/gradle/api/plugins/ExtensionAware;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinArtifact;
 	public fun createArtifact (Lorg/gradle/api/plugins/ExtensionAware;)Lorg/jetbrains/kotlin/gradle/targets/native/tasks/artifact/KotlinNativeXCFrameworkImpl;
-	public fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public fun getTargets ()Ljava/util/Set;
-	public fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public fun setTargets (Ljava/util/Set;)V
 	public fun targets ([Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 	protected fun validate ()V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/native/tasks/artifact/KotlinNativeXCFrameworkImpl : org/gradle/api/plugins/ExtensionAware, org/jetbrains/kotlin/gradle/dsl/KotlinNativeXCFramework {
-	public fun <init> (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ZLjava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;Lorg/gradle/api/plugins/ExtensionAware;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ZLjava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;Lorg/gradle/api/plugins/ExtensionAware;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ZLjava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Ljava/util/Map;Ljava/util/Set;Lorg/gradle/api/plugins/ExtensionAware;)V
 	public fun getArtifactName ()Ljava/lang/String;
 	public fun getBinaryOptions ()Ljava/util/Map;
-	public fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public fun getExtensions ()Lorg/gradle/api/plugins/ExtensionContainer;
 	public fun getKotlinOptionsFn ()Lkotlin/jvm/functions/Function1;
 	public fun getLinkerOptions ()Ljava/util/List;
@@ -6200,8 +6174,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 	public final fun getCompilerPluginOptions ()Lorg/jetbrains/kotlin/gradle/tasks/CompilerPluginOptions;
 	public final fun getDebuggable ()Z
 	public fun getDestinationDirectory ()Lorg/gradle/api/file/DirectoryProperty;
-	public final fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public final fun getEmbedBitcodeMode ()Lorg/gradle/api/provider/Provider;
 	public final fun getEntryPoint ()Ljava/lang/String;
 	public final fun getExportKdoc ()Lorg/gradle/api/provider/Provider;
 	public final fun getExportLibraries ()Lorg/gradle/api/file/FileCollection;

@@ -578,27 +578,21 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeComp
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFatFramework : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifact {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFatFrameworkConfig : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactConfig {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
-	public abstract fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public abstract fun setTargets (Ljava/util/Set;)V
 	public abstract fun targets ([Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFramework : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifact {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFrameworkConfig : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactConfig {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
-	public abstract fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public abstract fun setTarget (Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 }
 
@@ -612,14 +606,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeLibr
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeXCFramework : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifact {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeXCFrameworkConfig : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactConfig {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
-	public abstract fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public abstract fun setTargets (Ljava/util/Set;)V
 	public abstract fun targets ([Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 }
@@ -1475,19 +1466,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/attributes/Kl
 public final class org/jetbrains/kotlin/gradle/plugin/attributes/KlibPackaging$Companion {
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode : java/lang/Enum {
-	public static final field BITCODE Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public static final field DISABLE Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public static final field MARKER Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-}
-
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType : java/lang/Enum, org/gradle/api/Named {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType$Companion;
 	public static final field DEBUG Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;
 	public static final field RELEASE Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;
-	public final fun embedBitcode (Lorg/jetbrains/kotlin/konan/target/KonanTarget;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public final fun getDebuggable ()Z
 	public fun getName ()Ljava/lang/String;
 	public final fun getOptimized ()Z

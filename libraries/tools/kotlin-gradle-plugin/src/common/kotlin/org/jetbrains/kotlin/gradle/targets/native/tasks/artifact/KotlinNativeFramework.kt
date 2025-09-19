@@ -68,9 +68,6 @@ class KotlinNativeFrameworkImpl(
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val target: KonanTarget,
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    override val embedBitcode: BitcodeEmbeddingMode? = null,
     extensions: ExtensionAware
 ) : KotlinNativeFramework, ExtensionAware by extensions {
     private val kind = NativeOutputKind.FRAMEWORK
