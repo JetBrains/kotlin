@@ -988,7 +988,7 @@ class JsAstMapperVisitor(
             // To embrace compatibility, we emit a warning here like the old GWT parser did.
             value.forEach { digit ->
                 if (digit !in '0'..'7') {
-                    reportWarning("illegal octal value '$value'; interpreting it as a decimal value")
+                    reportWarning("illegal octal value '$value'; interpreting it as a decimal value", it.startPosition)
                     return value.toDecimalLiteral()
                 }
             }

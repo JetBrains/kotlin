@@ -33,6 +33,9 @@ internal fun ParserRuleContext.toJsLocationRelativeTo(origin: JsLocation): JsLoc
 internal val ParserRuleContext.startPosition: CodePosition
     get() = start.codePosition
 
+internal val TerminalNode.startPosition: CodePosition
+    get() = symbol.codePosition
+
 internal val ParserRuleContext.stopPosition: CodePosition
     get() = stop.codePosition
 
