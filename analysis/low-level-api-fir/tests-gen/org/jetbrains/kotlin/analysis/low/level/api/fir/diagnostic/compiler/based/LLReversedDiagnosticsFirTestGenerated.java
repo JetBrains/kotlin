@@ -1926,6 +1926,70 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled")
+      @TestDataPath("$PROJECT_ROOT")
+      public class CollectionLiteralsDisabled {
+        @Test
+        public void testAllFilesPresentInCollectionLiteralsDisabled() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("inAnnotations.kt")
+        public void testInAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("inArgumentPositions.kt")
+        public void testInArgumentPositions() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inArgumentPositions.kt");
+        }
+
+        @Test
+        @TestMetadata("inAssignments.kt")
+        public void testInAssignments() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inAssignments.kt");
+        }
+
+        @Test
+        @TestMetadata("inFreePositions.kt")
+        public void testInFreePositions() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inFreePositions.kt");
+        }
+
+        @Test
+        @TestMetadata("inInterfaceDelegations.kt")
+        public void testInInterfaceDelegations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inInterfaceDelegations.kt");
+        }
+
+        @Test
+        @TestMetadata("inPropertyDelegations.kt")
+        public void testInPropertyDelegations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inPropertyDelegations.kt");
+        }
+
+        @Test
+        @TestMetadata("inReceiverPositions.kt")
+        public void testInReceiverPositions() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inReceiverPositions.kt");
+        }
+
+        @Test
+        @TestMetadata("inReturns.kt")
+        public void testInReturns() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inReturns.kt");
+        }
+
+        @Test
+        @TestMetadata("inWhenConditions.kt")
+        public void testInWhenConditions() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inWhenConditions.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/noOperatorOf")
       @TestDataPath("$PROJECT_ROOT")
       public class NoOperatorOf {
