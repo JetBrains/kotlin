@@ -71,9 +71,20 @@ runtimeJar()
 sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
 javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs
 
-// Use the bootstrap K/N stdlib for compiling test code samples.
-val nativeDistribution = NativeCompilerDownloader(project).also { it.downloadIfNeeded() }.compilerDirectory
-
 tasks.test.configure {
-    systemProperty("kotlin.internal.native.test.nativeHome", nativeDistribution.absolutePath)
+    // Use the bootstrap K/N stdlib for compiling test code samples.
+    val nativeDistributionDownloader = NativeCompilerDownloader(project)
+
+    doFirst {
+        nativeDistributionDownloader.downloadIfNeeded()
+    }
+
+    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        val compilerDirectory = project.layout.dir(
+            providers.provider { nativeDistributionDownloader.compilerDirectory }
+        )
+
+        classpath.from(compilerDirectory)
+        property.set("kotlin.internal.native.test.nativeHome")
+    }
 }
