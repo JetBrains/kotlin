@@ -240,6 +240,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
+    val IGNORE_JVM_ABI_K1_K2 by stringDirective(
+        description = "Ignore failures when running pipelines when computing difference in JVM ABI between K1 and K2",
+        applicability = Global
+    )
+
     val DISABLE_IR_VISIBILITY_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for visibility violations when validating IR on the target backend"
     )

@@ -1,3 +1,4 @@
+// IGNORE_JVM_ABI_K1_K2
 // ISSUE: KT-78127
 
 fun <T : Any> materialize(): T {
