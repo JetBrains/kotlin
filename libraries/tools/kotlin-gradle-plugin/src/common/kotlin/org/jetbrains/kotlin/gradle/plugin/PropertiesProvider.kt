@@ -194,12 +194,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kmpPublicationStrategy: KmpPublicationStrategy
         get() = this.get(KOTLIN_KMP_PUBLICATION_STRATEGY)?.let {
             KmpPublicationStrategy.fromProperty(it)
-        } ?: KmpPublicationStrategy.StandardKMPPublication
+        } ?: KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication
 
     val kmpResolutionStrategy: KmpResolutionStrategy
         get() = this.get(KOTLIN_KMP_RESOLUTION_STRATEGY)?.let {
             KmpResolutionStrategy.fromProperty(it)
-        } ?: KmpResolutionStrategy.StandardKMPResolution
+        } ?: KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs
 
     // Throw in IDE resolvers instead of just printing them
     val strictResolveIdeDependencies: Boolean
