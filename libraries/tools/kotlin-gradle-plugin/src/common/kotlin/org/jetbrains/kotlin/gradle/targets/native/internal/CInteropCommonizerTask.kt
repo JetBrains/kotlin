@@ -204,6 +204,12 @@ internal abstract class CInteropCommonizerTask
         }
     }
 
+    @Suppress("unused") // Used for UP-TO-DATE check
+    @get:Classpath
+    protected val commonizerDependenciesClasspath: FileCollection = project.filesProvider {
+        groupedCommonizerDependencies.getOrThrow().values.flatten().map { it.dependencies }
+    }
+
     @get:Nested
     internal val cinterops: SetProperty<CInteropGist> = objectFactory.setProperty<CInteropGist>()
 
