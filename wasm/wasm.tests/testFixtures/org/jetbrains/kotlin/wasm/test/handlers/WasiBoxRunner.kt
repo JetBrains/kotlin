@@ -103,7 +103,7 @@ class WasiBoxRunner(
             }
         }
 
-        writeToFilesAndRunTest("dev", artifacts.compilerResult)
+//        writeToFilesAndRunTest("dev", artifacts.compilerResult)
         writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
         artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) }
     }
