@@ -67,10 +67,7 @@ object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.C
 
     fun FirSession.registerJsComponents(moduleKind: ModuleKind?) {
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
-        register(
-            FirTypeSpecificityComparatorProvider::class,
-            FirTypeSpecificityComparatorProvider(JsTypeSpecificityComparatorWithoutDelegate(typeContext))
-        )
+        register(FirTypeSpecificityComparatorProvider.of(JsTypeSpecificityComparatorWithoutDelegate(typeContext)))
         register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
         register(FirIdentityLessPlatformDeterminer::class, FirJsIdentityLessPlatformDeterminer)
 

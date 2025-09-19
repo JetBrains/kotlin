@@ -166,10 +166,7 @@ fun FirSession.registerJavaComponents(
 
     register(FirJavaVisibilityChecker)
     register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
-    register(
-        FirTypeSpecificityComparatorProvider::class,
-        FirTypeSpecificityComparatorProvider(JvmTypeSpecificityComparator(typeContext))
-    )
+    register(FirTypeSpecificityComparatorProvider.of(JvmTypeSpecificityComparator(typeContext)))
     register(FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirJvmOverridesBackwardCompatibilityHelper)
