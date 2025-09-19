@@ -176,7 +176,7 @@ fun FirSession.registerJavaComponents(
     register(FirJvmInlineCheckerComponent())
     register(FirGenericArrayClassLiteralSupport::class, FirGenericArrayClassLiteralSupport.Enabled)
     register(FirJvmDelegatedMembersFilter(this))
-    register(FirPlatformUpperBoundsProvider::class, FirJavaNullabilityWarningUpperBoundsProvider(this))
+    register(FirJavaNullabilityWarningUpperBoundsProvider(this))
     register(FirDefaultImportsProviderHolder.of(FirJvmDefaultImportsProvider))
     register(FirDeclarationNameInvalidCharsProvider::class, FirDeclarationNameInvalidCharsProvider.of(JvmConstants.INVALID_CHARS))
 }
