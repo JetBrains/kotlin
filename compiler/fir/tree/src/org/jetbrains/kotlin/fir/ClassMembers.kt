@@ -24,6 +24,7 @@ fun FirCallableDeclaration.dispatchReceiverClassTypeOrNull(): ConeClassLikeType?
 fun FirCallableSymbol<*>.dispatchReceiverClassLookupTagOrNull(): ConeClassLikeLookupTag? =
     fir.dispatchReceiverClassLookupTagOrNull()
 
+
 fun FirCallableDeclaration.dispatchReceiverClassLookupTagOrNull(): ConeClassLikeLookupTag? =
     dispatchReceiverClassTypeOrNull()?.lookupTag
 
