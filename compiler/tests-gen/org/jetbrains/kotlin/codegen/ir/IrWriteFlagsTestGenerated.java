@@ -106,6 +106,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
       }
 
+      @TestMetadata("abstractInnerEnum.kt")
+      public void testAbstractInnerEnum() {
+        runTest("compiler/testData/writeFlags/class/accessFlags/abstractInnerEnum.kt");
+      }
+
       public void testAllFilesPresentInAccessFlags() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
@@ -113,6 +118,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       @TestMetadata("defaultImpls.kt")
       public void testDefaultImpls() {
         runTest("compiler/testData/writeFlags/class/accessFlags/defaultImpls.kt");
+      }
+
+      @TestMetadata("finalInnerEnum.kt")
+      public void testFinalInnerEnum() {
+        runTest("compiler/testData/writeFlags/class/accessFlags/finalInnerEnum.kt");
       }
 
       @TestMetadata("innerSealed.kt")
