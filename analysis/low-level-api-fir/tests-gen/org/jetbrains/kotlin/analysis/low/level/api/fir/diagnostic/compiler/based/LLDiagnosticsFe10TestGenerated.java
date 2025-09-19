@@ -543,6 +543,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("emptyArguments.kt")
+    public void testEmptyArguments() {
+      runTest("compiler/testData/diagnostics/tests/emptyArguments.kt");
+    }
+
+    @Test
     @TestMetadata("emptyLhsClassLiterals.kt")
     public void testEmptyLhsClassLiterals() {
       runTest("compiler/testData/diagnostics/tests/emptyLhsClassLiterals.kt");

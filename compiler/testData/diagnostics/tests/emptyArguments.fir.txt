@@ -1,0 +1,73 @@
+FILE: emptyArguments.fir.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun asFunc(x: R|kotlin/Int|, y: R|kotlin/Int|, z: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun asVarargFunc(vararg xs: R|kotlin/IntArray|): R|kotlin/Unit| {
+    }
+    public final fun asTypedFunc(a: R|A|, b: R|B|, c: R|C|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval a: R|A| = R|/A.A|()
+        lval b: R|B| = R|/B.B|()
+        lval c: R|C| = R|/C.C|()
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(Int(2), Int(3))
+        R|/asFunc|(Int(1), Int(2), ERROR_EXPR(Argument is absent))
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(Int(1), Int(3))
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(ERROR_EXPR(Argument is absent))
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(ERROR_EXPR(Argument is absent))
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(Int(3))
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(Int(2))
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(Int(1), ERROR_EXPR(Argument is absent))
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(Int(1), ERROR_EXPR(Argument is absent))
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(ERROR_EXPR(Argument is absent))
+        R|/asFunc|(Int(1), Int(2), ERROR_EXPR(Argument is absent))
+        R|/asFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asFunc>#|(Int(2), ERROR_EXPR(Argument is absent))
+        R|/asVarargFunc|(vararg(Int(2), Int(3)))
+        R|/asVarargFunc|(vararg(Int(2), Int(3)))
+        R|/asVarargFunc|(vararg(Int(1), Int(3)))
+        R|/asVarargFunc|(vararg(Int(3)))
+        R|/asVarargFunc|(vararg(ERROR_EXPR(Argument is absent)))
+        R|/asVarargFunc|(vararg(ERROR_EXPR(Argument is absent)))
+        R|/asVarargFunc|(vararg(Int(2)))
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|<local>/b|, R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|<local>/b|, R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|<local>/a|, R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(ERROR_EXPR(Argument is absent))
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(ERROR_EXPR(Argument is absent))
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(ERROR_EXPR(Argument is absent))
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|<local>/b|)
+        R|/asTypedFunc|(R|<local>/a|, R|<local>/b|, ERROR_EXPR(Argument is absent))
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|<local>/a|, ERROR_EXPR(Argument is absent))
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|<local>/a|, R|<local>/b|, R|<local>/c|, ERROR_EXPR(Argument is absent))
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/A.A|(), R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/C.C|(), R|/B.B|())
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/A.A|(), R|<local>/b|)
+        R|/asTypedFunc|(R|<local>/a|, R|/B.B|(), R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/B.B|(), R|<local>/a|, R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/A.A|(), R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/A.A|(), R|/C.C|())
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/A.A|(), R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/A.A|(), ERROR_EXPR(Argument is absent))
+        R|/asTypedFunc|(R|/A.A|(), R|/B.B|(), R|/C.C|())
+        R|/asTypedFunc|(R|/A.A|(), R|<local>/b|, R|<local>/c|)
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/A.A|())
+        R|/asTypedFunc<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /asTypedFunc>#|(R|/C.C|())
+    }
