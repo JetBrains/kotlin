@@ -9357,27 +9357,55 @@ public class FirWasmWasiCodegenBoxTestGenerated extends AbstractFirWasmWasiCodeg
       }
 
       @Test
+      @TestMetadata("genericCollection.kt")
+      public void testGenericCollection() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/genericCollection.kt");
+      }
+
+      @Test
+      @TestMetadata("multipleOfOverloads.kt")
+      public void testMultipleOfOverloads() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/multipleOfOverloads.kt");
+      }
+
+      @Test
+      @TestMetadata("nonGenericCollection.kt")
+      public void testNonGenericCollection() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/nonGenericCollection.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/collectionLiteralsInAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CollectionLiteralsInAnnotations {
+      @Test
+      public void testAllFilesPresentInCollectionLiteralsInAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiteralsInAnnotations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+      }
+
+      @Test
       @TestMetadata("collectionLiteralsInArgumentPosition.kt")
       public void testCollectionLiteralsInArgumentPosition() {
-        runTest("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsInArgumentPosition.kt");
+        runTest("compiler/testData/codegen/box/collectionLiteralsInAnnotations/collectionLiteralsInArgumentPosition.kt");
       }
 
       @Test
       @TestMetadata("collectionLiteralsWithConstants.kt")
       public void testCollectionLiteralsWithConstants() {
-        runTest("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsWithConstants.kt");
+        runTest("compiler/testData/codegen/box/collectionLiteralsInAnnotations/collectionLiteralsWithConstants.kt");
       }
 
       @Test
       @TestMetadata("collectionLiteralsWithVarargs.kt")
       public void testCollectionLiteralsWithVarargs() {
-        runTest("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsWithVarargs.kt");
+        runTest("compiler/testData/codegen/box/collectionLiteralsInAnnotations/collectionLiteralsWithVarargs.kt");
       }
 
       @Test
       @TestMetadata("defaultAnnotationParameterValues.kt")
       public void testDefaultAnnotationParameterValues() {
-        runTest("compiler/testData/codegen/box/collectionLiterals/defaultAnnotationParameterValues.kt");
+        runTest("compiler/testData/codegen/box/collectionLiteralsInAnnotations/defaultAnnotationParameterValues.kt");
       }
     }
 
