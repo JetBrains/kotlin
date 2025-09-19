@@ -36,6 +36,23 @@ public object Delegates {
 
     /**
      * Returns a property delegate for a read/write property that calls a specified callback function when changed,
+     * but only if the new value is different from the old value.
+     * @param initialValue the initial value of the property.
+     * @param onChange the callback which is called after the change of the property is made. The value of the property
+     *  has already been changed when this callback is invoked.
+     *
+     *  @sample samples.properties.Delegates.distinctObservableDelegate
+     */
+    public inline fun <T> distinctObservable(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Unit):
+            ReadWriteProperty<Any?, T> =
+        object : ObservableProperty<T>(initialValue) {
+            override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T) = oldValue != newValue
+
+            override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange(property, oldValue, newValue)
+        }
+
+    /**
+     * Returns a property delegate for a read/write property that calls a specified callback function when changed,
      * allowing the callback to veto the modification.
      * @param initialValue the initial value of the property.
      * @param onChange the callback which is called before a change to the property value is attempted.
