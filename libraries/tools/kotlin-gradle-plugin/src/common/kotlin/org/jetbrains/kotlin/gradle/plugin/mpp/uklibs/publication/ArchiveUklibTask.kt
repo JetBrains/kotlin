@@ -64,12 +64,12 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
             !isASkippedMetadataCompilation
         }
 
-        val bambooFragments = compiledFragments
-            .groupBy { it.attributes }
-            .filter { it.value.size > 1 }
-        if (bambooFragments.isNotEmpty()) throw UklibWithDuplicateAttributes(
-            duplicates = bambooFragments.mapValues { it.value.map { it.identifier }.sorted().toSet() }
-        )
+//        val bambooFragments = compiledFragments
+//            .groupBy { it.attributes }
+//            .filter { it.value.size > 1 }
+//        if (bambooFragments.isNotEmpty()) throw UklibWithDuplicateAttributes(
+//            duplicates = bambooFragments.mapValues { it.value.map { it.identifier }.sorted().toSet() }
+//        )
 
         outputZip.getFile().parentFile.mkdirs()
         temporariesDirectory.getFile().mkdirs()
