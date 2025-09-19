@@ -29,8 +29,8 @@ private const val CLOCK_ID_MONOTONIC = 1
  * Return the time value of a clock. Note: This is similar to `clock_gettime` in POSIX.
  */
 @ExperimentalWasmInterop
-//@WasmImport("wasi_snapshot_preview1", "clock_time_get")
-private fun wasiRawClockTimeGet(clockId: Int, precision: Long, resultPtr: Int): Int = TODO()
+@WasmImport("wasi_snapshot_preview1", "clock_time_get")
+private external fun wasiRawClockTimeGet(clockId: Int, precision: Long, resultPtr: Int): Int
 
 /**
  * Returns timestamp of the given clock in nanoseconds.

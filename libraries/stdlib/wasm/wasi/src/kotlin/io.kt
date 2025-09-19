@@ -19,8 +19,8 @@ private const val STDERR = 2
  * Write to a file descriptor. Note: This is similar to `writev` in POSIX.
  */
 @ExperimentalWasmInterop
-//@WasmImport("wasi_snapshot_preview1", "fd_write")
-private fun wasiRawFdWrite(descriptor: Int, scatterPtr: Int, scatterSize: Int, errorPtr: Int): Int = TODO()
+@WasmImport("wasi_snapshot_preview1", "fd_write")
+private external fun wasiRawFdWrite(descriptor: Int, scatterPtr: Int, scatterSize: Int, errorPtr: Int): Int
 
 @OptIn(ExperimentalWasmInterop::class)
 internal fun wasiPrintImpl(

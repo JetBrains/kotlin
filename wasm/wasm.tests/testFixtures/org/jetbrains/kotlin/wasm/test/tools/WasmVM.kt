@@ -115,6 +115,7 @@ internal sealed class WasmVM(
     }
 
     object StackSwitching : WasmVM("StackSwitching", property = "wasm.engine.path.StackSwitching", entryPointIsJsFile = false) {
+        val runScriptPath = File("wasm/wasm.tests/run.wast").absolutePath
         override fun run(
             entryFile: String,
             jsFiles: List<String>,
@@ -123,16 +124,18 @@ internal sealed class WasmVM(
             toolArgs: List<String>,
         ): String {
             require(jsFiles.isEmpty())
+            require(entryFile == "./index.wasm") //TODO
             require(useNewExceptionHandling)
             return tool.run(
                 *toolArgs.toTypedArray(),
-                entryFile,
+//                entryFile,
                 "-e",
-                "(module instance) (invoke \"_initialize\") (invoke \"runBoxTest\")",
+                "(input \"$runScriptPath\")",
                 workingDirectory = workingDirectory,
             )
         }
     }
+//                    (input "/Users/zalim.bashorov/dev/kotlin_1/tmp/run.wast")
 
     companion object {
         // TODO remove .local
