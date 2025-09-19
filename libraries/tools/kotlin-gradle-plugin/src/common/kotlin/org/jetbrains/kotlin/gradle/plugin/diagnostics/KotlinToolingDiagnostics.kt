@@ -79,7 +79,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object UklibPublicationWithCinterops : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object UklibPublicationWithCinterops : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(target: String, interopName: String) = build {
             title("Uklib Publication With Cinterops")
                 .description("Publication of ${Uklib.UKLIB_NAME} with cinterops is not yet supported. Target '$target' declares cinterop '$interopName'")
@@ -87,7 +87,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object UklibSourceSetStructureUnderRefinementViolation : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object UklibSourceSetStructureUnderRefinementViolation : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(sourceSet: KotlinSourceSet, missingRefinements: List<KotlinSourceSet>) = build {
             title("Uklib Incompatible Source Set Structure")
                 .description(
