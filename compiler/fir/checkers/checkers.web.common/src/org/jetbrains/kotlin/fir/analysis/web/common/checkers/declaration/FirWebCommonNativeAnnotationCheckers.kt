@@ -28,9 +28,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isNativeObject
 abstract class FirWebCommonAbstractNativeAnnotationChecker(
     private val requiredAnnotation: ClassId,
     private val isWasm: Boolean,
-) : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+) : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext)
-    protected fun FirFunction.hasRequiredAnnotation(): Boolean = hasAnnotation(requiredAnnotation, context.session)
+    protected fun hasRequiredAnnotation(declaration: FirFunction): Boolean =
+        declaration.hasAnnotation(requiredAnnotation, context.session)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {

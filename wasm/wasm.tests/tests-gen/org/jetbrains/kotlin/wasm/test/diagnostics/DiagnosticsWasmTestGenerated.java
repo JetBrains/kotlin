@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
   @Test
   public void testAllFilesPresentInWasmTests() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "jsInterop/nativeInvoke");
   }
 
   @Test
@@ -42,7 +42,7 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
   public class JsInterop {
     @Test
     public void testAllFilesPresentInJsInterop() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "nativeInvoke");
     }
 
     @Test
@@ -208,58 +208,6 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
       @TestMetadata("prohibitedOnNonNative.kt")
       public void testProhibitedOnNonNative() {
         runTest("compiler/testData/diagnostics/wasmTests/jsInterop/module/prohibitedOnNonNative.kt");
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop/nativeInvoke")
-    @TestDataPath("$PROJECT_ROOT")
-    public class NativeInvoke {
-      @Test
-      public void testAllFilesPresentInNativeInvoke() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/jsInterop/nativeInvoke"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-      }
-
-      @Test
-      @TestMetadata("onLocalNonNativeClassMembers.kt")
-      public void testOnLocalNonNativeClassMembers() {
-        runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nativeInvoke/onLocalNonNativeClassMembers.kt");
-      }
-
-      @Test
-      @TestMetadata("onLocalOtherDeclarations.kt")
-      public void testOnLocalOtherDeclarations() {
-        runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nativeInvoke/onLocalOtherDeclarations.kt");
-      }
-
-      @Test
-      @TestMetadata("onNativeClassMembers.kt")
-      public void testOnNativeClassMembers() {
-        runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nativeInvoke/onNativeClassMembers.kt");
-      }
-
-      @Test
-      @TestMetadata("onNestedDeclarationsInsideNativeClass.kt")
-      public void testOnNestedDeclarationsInsideNativeClass() {
-        runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nativeInvoke/onNestedDeclarationsInsideNativeClass.kt");
-      }
-
-      @Test
-      @TestMetadata("onNestedDeclarationsInsideNonNativeClass.kt")
-      public void testOnNestedDeclarationsInsideNonNativeClass() {
-        runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nativeInvoke/onNestedDeclarationsInsideNonNativeClass.kt");
-      }
-
-      @Test
-      @TestMetadata("onNonNativeClassMembers.kt")
-      public void testOnNonNativeClassMembers() {
-        runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nativeInvoke/onNonNativeClassMembers.kt");
-      }
-
-      @Test
-      @TestMetadata("onTopLevelOtherDeclarations.kt")
-      public void testOnTopLevelOtherDeclarations() {
-        runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nativeInvoke/onTopLevelOtherDeclarations.kt");
       }
     }
 

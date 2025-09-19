@@ -68,7 +68,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
 internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeGetter, "getter", 1) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
-        if (!declaration.hasRequiredAnnotation()) return
+        if (!hasRequiredAnnotation(declaration)) return
         super.check(declaration)
 
         if (!declaration.returnTypeRef.coneType.isMarkedNullable) {
@@ -80,7 +80,7 @@ internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsS
 internal object FirJsNativeSetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeSetter, "setter", 2) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
-        if (!declaration.hasRequiredAnnotation()) return
+        if (!hasRequiredAnnotation(declaration)) return
         super.check(declaration)
 
         val returnType = declaration.returnTypeRef.coneType
