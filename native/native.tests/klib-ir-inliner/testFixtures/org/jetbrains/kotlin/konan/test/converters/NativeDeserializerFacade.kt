@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.konan.test.converters
 
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializ
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -43,7 +40,6 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput.NativeDeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
@@ -67,17 +63,12 @@ class NativeDeserializerFacade(
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): NativeDeserializedFromKlibBackendInput? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val (moduleInfo, pluginContext) = loadIrFromKlib(module, configuration)
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val moduleInfo = loadIrFromKlib(module, configuration)
 
-        return NativeDeserializedFromKlibBackendInput(
-            moduleInfo,
-            irPluginContext = pluginContext,
-            klib = inputArtifact.outputFile,
-        )
+        return NativeDeserializedFromKlibBackendInput(moduleInfo, klib = inputArtifact.outputFile)
     }
 
-    private fun loadIrFromKlib(module: TestModule, configuration: CompilerConfiguration): Pair<IrModuleInfo, IrPluginContext> {
+    private fun loadIrFromKlib(module: TestModule, configuration: CompilerConfiguration): IrModuleInfo {
         val messageCollector = configuration.messageCollector
         val symbolTable = SymbolTable(IdSignatureDescriptor(KonanManglerDesc), IrFactoryImpl)
 
@@ -87,7 +78,7 @@ class NativeDeserializerFacade(
             .map { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
         val friendModules = mapOf(mainModuleLib.uniqueName to friendLibraries.map { it.uniqueName })
 
-        val moduleInfo = getIrModuleInfoForKlib(
+        return getIrModuleInfoForKlib(
             moduleDescriptor,
             sortDependencies(NativeEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
             friendModules,
@@ -95,19 +86,6 @@ class NativeDeserializerFacade(
             symbolTable,
             messageCollector,
         ) { if (it == mainModuleLib) moduleDescriptor else testServices.libraryProvider.getDescriptorByCompiledLibrary(it) }
-
-        val pluginContext = IrPluginContextImpl(
-            module = moduleDescriptor,
-            bindingContext = BindingContext.EMPTY,
-            languageVersionSettings = configuration.languageVersionSettings,
-            st = symbolTable,
-            typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor),
-            irBuiltIns = moduleInfo.bultins,
-            linker = moduleInfo.deserializer,
-            messageCollector = messageCollector,
-        )
-
-        return moduleInfo to pluginContext
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)

@@ -122,7 +122,7 @@ class NativeKlibSerializerFacade(
                 KonanIrModuleSerializer(
                     settings = IrSerializationSettings(configuration),
                     diagnosticReporter = irDiagnosticReporter,
-                    irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
+                    irBuiltIns = inputArtifact.irBuiltIns,
                 )
             },
             inputArtifact.metadataSerializer ?: error("expected metadata serializer"),
