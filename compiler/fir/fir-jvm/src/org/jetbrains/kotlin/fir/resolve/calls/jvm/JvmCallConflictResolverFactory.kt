@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeIntegerOperatorConfl
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeOverloadConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 
 @NoMutableState
 object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
     override fun create(
-        typeSpecificityComparator: TypeSpecificityComparator,
         components: InferenceComponents,
         transformerComponents: BodyResolveComponents
     ): ConeCompositeConflictResolver {

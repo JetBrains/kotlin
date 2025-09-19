@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 abstract class ConeCallConflictResolver {
     fun chooseMaximallySpecificCandidates(
@@ -27,7 +26,6 @@ abstract class ConeCallConflictResolver {
 
 abstract class ConeCallConflictResolverFactory : FirSessionComponent {
     abstract fun create(
-        typeSpecificityComparator: TypeSpecificityComparator,
         components: InferenceComponents,
         transformerComponents: BodyResolveComponents
     ): ConeCallConflictResolver
