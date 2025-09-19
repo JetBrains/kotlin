@@ -317,7 +317,6 @@ val unzipWasmEdge by task<Copy> {
     }
     into(wasmEdgeDirectory)
     inputs.property("currentOsTypeForConfigurationCache", currentOsTypeForConfigurationCache)
-    inputs.property("wasmEdgeUnpackedDirectory", wasmEdgeUnpackedDirectory)
 
     doLast {
         if (currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX)) return@doLast
@@ -399,8 +398,6 @@ fun Test.setupWasmEdge() {
     inputs.files(unzipWasmEdge.map { it.outputs })
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .withPropertyName("wasmEdgeUnzipped")
-
-    inputs.property("wasmEdgeUnpackedDirectory", wasmEdgeUnpackedDirectory)
 
     doFirst {
         val wasmEdgeExecutablePath = wasmEdgeUnpackedDirectory.get()
