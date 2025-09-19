@@ -9,9 +9,11 @@ import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.VariantMetadata
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.*
+import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 
 internal val UklibConsumptionSetupAction = KotlinProjectSetupAction {
@@ -59,6 +62,7 @@ private fun Project.setupUklibConsumption() {
     allowMetadataConfigurationsToResolveUnzippedUklib(sourceSets)
     allowPSMBasedKMPToResolveLenientlyAndSelectBestMatchingVariant()
     allowPlatformCompilationsToResolvePlatformCompilationArtifactFromUklib(targets)
+    workaroundLegacySkikoResolutionKT77539()
 }
 
 private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifactFromUklib(
@@ -221,6 +225,33 @@ private fun Project.allowPSMBasedKMPToResolveLenientlyAndSelectBestMatchingVaria
     }
     dependencies.attributesSchema.attribute(KotlinPlatformType.attribute) { strategy ->
         strategy.compatibilityRules.add(AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResolution::class.java)
+    }
+}
+
+/**
+ * KT-77539: Skiko used to publish with a hacky Android variant which was actually a jvm("android") target. The artifacts weren't actually
+ * published to Maven central. In the future Skiko should start publishing with proper androidTarget() attributes, and this hack will no
+ * longer be necessary
+ */
+private fun Project.workaroundLegacySkikoResolutionKT77539() {
+    dependencies.components.withModule("org.jetbrains.skiko:skiko") {
+        val configureAndroidEnvironment: (VariantMetadata) -> Unit = {
+            it.attributes.attribute(
+                TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.objects.named(TargetJvmEnvironment.ANDROID),
+            )
+        }
+        it.withVariant("androidApiElements-published") { configureAndroidEnvironment(it) }
+        it.withVariant("androidRuntimeElements-published") { configureAndroidEnvironment(it) }
+
+        val configureJvmEnvironment: (VariantMetadata) -> Unit = {
+            it.attributes.attribute(
+                TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.objects.named(TargetJvmEnvironment.STANDARD_JVM),
+            )
+        }
+        it.withVariant("awtApiElements-published") { configureJvmEnvironment(it) }
+        it.withVariant("awtRuntimeElements-published") { configureJvmEnvironment(it) }
     }
 }
 
