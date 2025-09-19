@@ -7,6 +7,8 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
@@ -111,7 +113,7 @@ internal open class SirFunctionFromKtSymbol(
     }
 
     override var body: SirFunctionBody?
-        set(value) {}
+        set(_) {}
         get() = bridgeProxy?.createSwiftInvocation { "return $it" }?.let(::SirFunctionBody)
 }
 
@@ -122,17 +124,35 @@ internal fun buildActualArgsLine(actualArgs: List<String>, ktSymbol: KaFunctionS
             if (index > 0) {
                 append(", ")
             }
-            val isVararg = ktSymbol.valueParameters[index].isVararg
+            val kaValueParameterSymbol = ktSymbol.valueParameters[index]
+            val isVararg = kaValueParameterSymbol.isVararg
             if (isVararg) {
                 append("*")
                 useNamed = true
             } else if (useNamed) {
-                append(ktSymbol.valueParameters[index].name)
+                append(kaValueParameterSymbol.name)
                 append(" = ")
             }
             append(actualArg)
             if (isVararg) {
-                append(".toTypedArray()")
+                val arrayKind = when ((kaValueParameterSymbol.returnType as? KaClassType)?.classId) {
+                    StandardClassIds.Int -> "Int"
+                    StandardClassIds.Byte -> "Byte"
+                    StandardClassIds.Short -> "Short"
+                    StandardClassIds.Long -> "Long"
+                    StandardClassIds.Float -> "Float"
+                    StandardClassIds.Double -> "Double"
+                    StandardClassIds.Boolean -> "Boolean"
+                    StandardClassIds.Char -> "Char"
+
+                    StandardClassIds.UInt -> "UInt"
+                    StandardClassIds.UByte -> "UByte"
+                    StandardClassIds.UShort -> "UShort"
+                    StandardClassIds.ULong -> "ULong"
+
+                    else -> "Typed"
+                }
+                append(".to${arrayKind}Array()")
             }
         }
     }

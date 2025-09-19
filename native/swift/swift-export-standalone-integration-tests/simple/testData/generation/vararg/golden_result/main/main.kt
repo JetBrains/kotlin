@@ -18,7 +18,7 @@ public fun Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutable
     val __y = y
     val __z = interpretObjCPointer<kotlin.collections.List<Boolean>>(z)
     val __outer__ = kotlin.native.internal.ref.dereferenceExternalRCRef(outer__) as Accessor
-    kotlin.native.internal.initInstance(____kt, (__outer__ as Accessor).Inner(__y, *__z.toTypedArray()))
+    kotlin.native.internal.initInstance(____kt, (__outer__ as Accessor).Inner(__y, *__z.toBooleanArray()))
 }
 
 @ExportedBridge("Accessor_Inner_y_get")
@@ -67,7 +67,7 @@ public fun __root___Accessor_init_allocate(): kotlin.native.internal.NativePtr {
 public fun __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32___(__kt: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __x = interpretObjCPointer<kotlin.collections.List<Int>>(x)
-    kotlin.native.internal.initInstance(____kt, Accessor(*__x.toTypedArray()))
+    kotlin.native.internal.initInstance(____kt, Accessor(*__x.toIntArray()))
 }
 
 @ExportedBridge("__root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number___")
@@ -81,7 +81,7 @@ public fun __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPa
 public fun __root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double___(`receiver`: kotlin.native.internal.NativePtr, d: kotlin.native.internal.NativePtr): Unit {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Accessor
     val __d = interpretObjCPointer<kotlin.collections.List<Double>>(d)
-    __receiver.extension(*__d.toTypedArray())
+    __receiver.extension(*__d.toDoubleArray())
 }
 
 @ExportedBridge("__root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Swift_Int32__")
