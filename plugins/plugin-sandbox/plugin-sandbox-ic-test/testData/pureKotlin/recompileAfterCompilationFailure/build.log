@@ -1,0 +1,16 @@
+================ Step #1 =================
+
+Compiling files:
+  src/b.kt
+End of files
+Exit code: ABORT
+COMPILATION FAILED
+Unresolved reference 'doesNotExist'.
+
+================ Step #2 =================
+
+Compiling files:
+  src/b.kt
+End of files
+Exit code: OK
+------------------------------------------
