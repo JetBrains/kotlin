@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -81,7 +80,10 @@ class FirCallCompletionResultsWriterTransformer(
     private val samResolver: FirSamResolver,
     private val context: BodyResolveContext,
     private val mode: Mode = Mode.Normal,
-    private val insideAnnotationContext: Boolean = false,
+    // TODO: this is a temporary solution.
+    //  The way we deal with collection literals inside annotations (annotation constructors) and in usual calls should be unified.
+    //  For now, however, they are intentionally separated. Related issue: KT-81110.
+    private var insideAnnotationContext: Boolean = false,
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
 
     private fun finallySubstituteOrNull(
@@ -107,20 +109,25 @@ class FirCallCompletionResultsWriterTransformer(
         Normal, DelegatedPropertyCompletion
     }
 
-    // TODO: this is a temporary solution.
-    //  The way we deal with collection literals inside annotations (annotation constructors) and in usual calls should be unified.
-    //  For now, however, they are intentionally separated. Related issue: KT-81110.
-    private val useCollectionLiteralInAnnotationResolution: Boolean
-        get() = enableArrayOfCallTransformation || insideAnnotationContext
-
-    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
-        enableArrayOfCallTransformation = true
+    private inline fun <T> withCollectionLiteralInAnnotationResolution(block: () -> T): T {
+        val savedInsideAnnotationContext = insideAnnotationContext
+        insideAnnotationContext = true
         return try {
             block()
         } finally {
-            enableArrayOfCallTransformation = false
+            insideAnnotationContext = savedInsideAnnotationContext
         }
     }
+
+    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T =
+        withCollectionLiteralInAnnotationResolution {
+            enableArrayOfCallTransformation = true
+            return try {
+                block()
+            } finally {
+                enableArrayOfCallTransformation = false
+            }
+        }
 
     private fun <T : FirQualifiedAccessExpression> prepareQualifiedTransform(
         qualifiedAccessExpression: T, calleeReference: FirNamedReferenceWithCandidate,
@@ -389,7 +396,7 @@ class FirCallCompletionResultsWriterTransformer(
         data: ExpectedArgumentType?
     ): FirStatement {
         if (!session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) ||
-            useCollectionLiteralInAnnotationResolution
+            insideAnnotationContext
         ) {
             return transformArrayLiteralInAnnotation(collectionLiteralCall, data)
         }
@@ -626,7 +633,7 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        withFirArrayOfCallTransformer {
+        withCollectionLiteralInAnnotationResolution {
             annotationCall.transformArgumentList(expectedArgumentsTypeMapping = null)
         }
         return annotationCall
