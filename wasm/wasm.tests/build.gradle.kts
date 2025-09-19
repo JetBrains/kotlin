@@ -376,8 +376,7 @@ val createJscRunner by task<CreateJscRunner> {
     val runnerFilePath = jscDirectory.map { it.resolve(runnerFileName) }
     outputFile.fileProvider(runnerFilePath)
 
-    val outputFile = unzipJsc.map { it.outputs.files.singleFile }
-    inputDirectory.fileProvider(outputFile)
+    inputDirectory.fileProvider(unzipJsc.map { it.outputs.files.singleFile })
 }
 
 fun Test.setupSpiderMonkey() {
