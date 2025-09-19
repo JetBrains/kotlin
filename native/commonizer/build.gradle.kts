@@ -73,11 +73,7 @@ javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no
 
 tasks.test.configure {
     // Use the bootstrap K/N stdlib for compiling test code samples.
-    val nativeDistributionDownloader = NativeCompilerDownloader(project)
-
-    doFirst {
-        nativeDistributionDownloader.downloadIfNeeded()
-    }
+    val nativeDistributionDownloader = NativeCompilerDownloader(project).also { it.downloadIfNeeded() }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         val compilerDirectory = project.layout.dir(
