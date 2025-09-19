@@ -7,13 +7,17 @@ package common
 
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
-import org.jetbrains.kotlin.buildtools.internal.ClasspathEntrySnapshotImpl
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.incremental.classpathDiff.AccessibleClassSnapshot
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotExternalizer
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
+import org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot
+import org.jetbrains.kotlin.incremental.storage.saveToFile
 import java.io.File
 import java.security.MessageDigest
 
@@ -58,3 +62,29 @@ fun calculateClasspathSnapshot(
         )
     )
 }
+
+// these classes are defined as internal in BTA, for the time being they are just pasted here
+@OptIn(ExperimentalBuildToolsApi::class)
+class ClasspathEntrySnapshotImpl(
+    private val origin: org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot,
+) :
+    ClasspathEntrySnapshot {
+    override val classSnapshots: Map<String, ClassSnapshot>
+        get() = origin.classSnapshots.mapValues {
+            when (val snapshot = it.value) {
+                is AccessibleClassSnapshot -> AccessibleClassSnapshotImpl(snapshot.classAbiHash)
+                is InaccessibleClassSnapshot -> InaccessibleClassSnapshotImpl
+            }
+        }
+
+    override fun saveSnapshot(path: File) {
+        ClasspathEntrySnapshotExternalizer.saveToFile(path, origin)
+    }
+}
+
+@OptIn(ExperimentalBuildToolsApi::class)
+internal class AccessibleClassSnapshotImpl(override val classAbiHash: Long) :
+    org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
+
+@OptIn(ExperimentalBuildToolsApi::class)
+internal object InaccessibleClassSnapshotImpl : org.jetbrains.kotlin.buildtools.api.jvm.InaccessibleClassSnapshot
