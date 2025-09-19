@@ -73,7 +73,7 @@ internal class PrivateTypeFromInternalInlineUsageChecker(
 
     companion object {
         fun check(caller: IrFunction, call: IrExpression, callee: IrFunction, node: MethodNode, context: JvmBackendContext) {
-            if (caller.visibility == DescriptorVisibilities.INTERNAL && callee.isEffectivelyPrivate()) {
+            if (caller.isInline && caller.visibility == DescriptorVisibilities.INTERNAL && callee.isEffectivelyPrivate()) {
                 val privateClassIds = PrivateTypeFromInternalInlineUsageChecker(context).findPrivateClassUsages(node)
                 for (classId in privateClassIds) {
                     context.ktDiagnosticReporter.at(call, caller.fileParent)
