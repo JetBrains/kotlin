@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.ir.backend.jvm.loadJvmKlibs
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -84,6 +86,14 @@ object GenerationUtils {
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
     ): GenerationState {
         PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
+
+        for (file in files) {
+            try {
+                AnalyzingUtils.checkForSyntacticErrors(file)
+            } catch (e: Exception) {
+                throw TestsCompiletimeError(e)
+            }
+        }
 
         if (FirAnalysisHandlerExtension.analyze(project, configuration) == false) {
             throw CompilationErrorException()

@@ -23,10 +23,6 @@ class Kapt4IT : Kapt3IT() {
         super.testKt18799(gradleVersion)
     }
 
-    @Disabled("KT-71786: K2KAPT task does not fail")
-    @GradleTest
-    override fun testFailOnTopLevelSyntaxError(gradleVersion: GradleVersion) {}
-
     @DisplayName("KT-61879: K2 KAPT works with proguarded compiler jars and enum class")
     @GradleTest
     fun testEnumClass(gradleVersion: GradleVersion) {
