@@ -3,7 +3,8 @@
  * The .NET Foundation licenses this file to you under the MIT license.
  */
 @file:OptIn(ExperimentalUnsignedTypes::class)
-package kotlin.text
+
+package kotlin.wasm.internal
 
 import kotlin.math.abs
 

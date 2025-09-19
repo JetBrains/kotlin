@@ -5,6 +5,7 @@
 
 package kotlin.text
 
+import kotlin.wasm.internal.parseDouble
 import kotlin.wasm.internal.wasm_f32_demote_f64
 
 /**
@@ -94,7 +95,7 @@ public actual fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?: numbe
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-public actual fun String.toDouble(): Double = kotlin.text.parseDouble(this)
+public actual fun String.toDouble(): Double = parseDouble(this)
 
 /**
  * Parses the string as a [Float] number and returns the result.
