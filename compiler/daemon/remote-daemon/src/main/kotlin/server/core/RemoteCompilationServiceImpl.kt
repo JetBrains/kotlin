@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.io.files.FileNotFoundException
 import model.Artifact
 import model.CompilationMetadata
 import model.CompilationResult
@@ -88,7 +89,7 @@ class RemoteCompilationServiceImpl(
             val workspaceFileLockMap = ConcurrentHashMap<Path, Mutex>()
             val cacheFileLockMap = ConcurrentHashMap<Path, Mutex>()
 
-            val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
+            val fileChunks = ConcurrentHashMap<String, MutableList<FileChunk>>()
 
             fun signalFileAvailability(clientPath: Path, remoteFile: File, artifactType: Set<ArtifactType>) {
                 debug("signalFileAvailability: $clientPath, $remoteFile, $artifactType")
@@ -162,26 +163,34 @@ class RemoteCompilationServiceImpl(
                             fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
                             if (it.isLast) {
                                 launch {
-                                    val allFileChunks = fileChunks.getOrDefault(it.filePath, listOf())
-                                    val reconstructedFile = fileChunkingStrategy.reconstruct(allFileChunks, SERVER_TMP_CACHE_DIR)
-                                    val cachedFile =
-                                        cacheHandler.cacheFile(
-                                            reconstructedFile,
-                                            it.artifactTypes,
-                                            deleteOriginalFile = true,
-                                            cacheFileLockMap
+                                    try {
+                                        val allFileChunks = fileChunks.getOrDefault(it.filePath, listOf())
+                                        val reconstructedFile = fileChunkingStrategy.reconstruct(allFileChunks, SERVER_TMP_CACHE_DIR)
+                                        println("impl reconsctured file path: ${reconstructedFile.absolutePath} and exist=${reconstructedFile.exists()}")
+                                        val cachedFile =
+                                            cacheHandler.cacheFile(
+                                                reconstructedFile,
+                                                it.artifactTypes,
+                                                deleteOriginalFile = true,
+                                                cacheFileLockMap
+                                            )
+                                        println("impl cached file path: ${cachedFile.absolutePath} and exist=${cachedFile.exists()}")
+                                        val projectFile = workspaceManager.copyFileToProject(
+                                            cachedFile.absolutePath,
+                                            it.filePath,
+                                            workspaceFileLockMap
                                         )
-                                    val projectFile = workspaceManager.copyFileToProject(
-                                        cachedFile.absolutePath,
-                                        it.filePath,
-                                        workspaceFileLockMap
-                                    )
-                                    debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactTypes}, clientPath=${it.filePath}")
-                                    signalFileAvailability(
-                                        Paths.get(it.filePath).toAbsolutePath().normalize(),
-                                        projectFile,
-                                        it.artifactTypes
-                                    )
+                                        println("impl project file path: ${projectFile.absolutePath} and exist=${projectFile.exists()}")
+                                        debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactTypes}, clientPath=${it.filePath}")
+                                        signalFileAvailability(
+                                            Paths.get(it.filePath).toAbsolutePath().normalize(),
+                                            projectFile,
+                                            it.artifactTypes
+                                        )
+                                    } catch (e: FileNotFoundException){
+                                        println("s")
+                                    }
+
                                 }
                             }
                         }
