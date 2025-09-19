@@ -263,9 +263,3 @@ private object UnnamedContextParameterNameKey : FirDeclarationDataKey()
 var FirValueParameter.generatedContextParameterName: Name? by FirDeclarationDataRegistry.data(UnnamedContextParameterNameKey)
 
 val FirValueParameterSymbol.generatedContextParameterName: Name? get() = fir.generatedContextParameterName
-
-class FirDeclarationNameInvalidCharsProvider(val invalidChars: Set<Char>) : FirSessionComponent
-
-private val FirSession.declarationNameInvalidCharsProvider: FirDeclarationNameInvalidCharsProvider? by FirSession.nullableSessionComponentAccessor()
-
-val FirSession.declarationNameInvalidChars: Set<Char> get() = declarationNameInvalidCharsProvider?.invalidChars ?: emptySet()
