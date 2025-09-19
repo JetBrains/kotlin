@@ -1,0 +1,13 @@
+package foo
+
+var result = "Error"
+
+fun functionToCall(): Int {
+    result = "OK"
+    return 1
+}
+
+fun anotherFunction(): String {
+    result = "Another"
+    return "Another"
+}
