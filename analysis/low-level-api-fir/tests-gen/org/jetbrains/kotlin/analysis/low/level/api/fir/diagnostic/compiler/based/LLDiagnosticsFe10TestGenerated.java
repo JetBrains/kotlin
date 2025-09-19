@@ -729,6 +729,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("falseNegativeUpperBoundViolated.kt")
+    public void testFalseNegativeUpperBoundViolated() {
+      runTest("compiler/testData/diagnostics/tests/falseNegativeUpperBoundViolated.kt");
+    }
+
+    @Test
+    @TestMetadata("falseNegativeUpperBoundViolated_WithPlaceholderAndOuterFunction.kt")
+    public void testFalseNegativeUpperBoundViolated_WithPlaceholderAndOuterFunction() {
+      runTest("compiler/testData/diagnostics/tests/falseNegativeUpperBoundViolated_WithPlaceholderAndOuterFunction.kt");
+    }
+
+    @Test
     @TestMetadata("falsePositiveRedundantVisibility.kt")
     public void testFalsePositiveRedundantVisibility() {
       runTest("compiler/testData/diagnostics/tests/falsePositiveRedundantVisibility.kt");
