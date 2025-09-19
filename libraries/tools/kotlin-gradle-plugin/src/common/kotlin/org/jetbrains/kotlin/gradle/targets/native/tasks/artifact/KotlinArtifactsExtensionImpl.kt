@@ -6,7 +6,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinArtifact
 import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactConfig
 import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactsExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -21,18 +20,6 @@ abstract class KotlinArtifactsExtensionImpl @Inject constructor(project: Project
     val RELEASE = NativeBuildType.RELEASE
     val DEBUG = NativeBuildType.DEBUG
 
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    class BitcodeEmbeddingModeDsl {
-        val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
-        val BITCODE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE
-        val MARKER = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.MARKER
-    }
-
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    @JvmField
-    val EmbedBitcodeMode = BitcodeEmbeddingModeDsl()
 
     val androidX64 = KonanTarget.ANDROID_X64
     val androidX86 = KonanTarget.ANDROID_X86
