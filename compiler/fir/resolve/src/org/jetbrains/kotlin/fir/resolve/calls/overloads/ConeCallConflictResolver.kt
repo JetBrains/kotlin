@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.typeSpecificityComparatorProvider
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -26,7 +27,7 @@ abstract class ConeCallConflictResolver {
     ): Set<Candidate>
 }
 
-abstract class ConeCallConflictResolverFactory : FirSessionComponent {
+abstract class ConeCallConflictResolverFactory : FirComposableSessionComponent<ConeCallConflictResolverFactory> {
     fun create(
         components: InferenceComponents,
         transformerComponents: BodyResolveComponents
@@ -49,6 +50,19 @@ abstract class ConeCallConflictResolverFactory : FirSessionComponent {
         override fun createAdditionalResolvers(session: FirSession): List<ConeCallConflictResolver> {
             return emptyList()
         }
+    }
+
+    class Composed(
+        override val components: List<ConeCallConflictResolverFactory>
+    ) : ConeCallConflictResolverFactory(), FirComposableSessionComponent.Composed<ConeCallConflictResolverFactory> {
+        override fun createAdditionalResolvers(session: FirSession): List<ConeCallConflictResolver> {
+            return components.flatMap { it.createAdditionalResolvers(session) }
+        }
+    }
+
+    @SessionConfiguration
+    override fun createComposed(components: List<ConeCallConflictResolverFactory>): Composed {
+        return Composed(components)
     }
 }
 
