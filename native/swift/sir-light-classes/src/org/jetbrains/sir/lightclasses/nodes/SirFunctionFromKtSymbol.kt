@@ -122,7 +122,8 @@ internal fun buildActualArgsLine(actualArgs: List<String>, ktSymbol: KaFunctionS
             if (index > 0) {
                 append(", ")
             }
-            if (ktSymbol.valueParameters[index].isVararg) {
+            val isVararg = ktSymbol.valueParameters[index].isVararg
+            if (isVararg) {
                 append("*")
                 useNamed = true
             } else if (useNamed) {
@@ -130,6 +131,9 @@ internal fun buildActualArgsLine(actualArgs: List<String>, ktSymbol: KaFunctionS
                 append(" = ")
             }
             append(actualArg)
+            if (isVararg) {
+                append(".toTypedArray()")
+            }
         }
     }
 }

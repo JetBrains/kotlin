@@ -127,7 +127,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
 
 internal fun bridgeParameter(parameter: SirParameter, index: Int): BridgeParameter {
     val bridgeParameterName = parameter.name?.let(::createBridgeParameterName) ?: "_$index"
-    val bridge = bridgeType(parameter.type)
+    val bridge = bridgeType(if (parameter.isVariadic) SirArrayType(parameter.type) else parameter.type)
     return BridgeParameter(
         name = bridgeParameterName,
         bridge = bridge
