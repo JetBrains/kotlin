@@ -5,79 +5,21 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compatibility.binary.AbstractKlibBinaryCompatibilityTest
 import org.jetbrains.kotlin.compatibility.binary.TestFile
 import org.jetbrains.kotlin.compatibility.binary.TestModule
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.test.Directives
-import org.jetbrains.kotlin.test.KotlinBaseTest
 import java.io.File
 
-abstract class AbstractFirJsKlibEvolutionTest : AbstractJsKlibEvolutionTest(CompilerType.K2) {
-    // Const evaluation tests muted for FIR because FIR does const propagation.
-    override fun isIgnoredTest(filePath: String): Boolean {
-        val fileName = filePath.substringAfterLast('/')
-        return fileName == "addOrRemoveConst.kt" || fileName == "changeConstInitialization.kt"
-    }
-}
-
-abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : AbstractKlibBinaryCompatibilityTest() {
-    enum class CompilerType {
-        K1,
-        K2 {
-            override fun setup(args: K2JSCompilerArguments) {
-                args.languageVersion = "2.0" // Activate FIR.
-            }
-        };
-
-        open fun setup(args: K2JSCompilerArguments) = Unit
-    }
-
-    override fun createEnvironment() =
-        KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
-
-    private fun TestModule.name(version: Int) = if (this.hasVersions) "version$version/${this.name}" else this.name
-
-    private fun List<TestModule>.toLibrariesArg(version: Int): String {
-        val fileNames = this.map { it.name(version) }
-        val allDependencies = fileNames.map { File(workingDir, it.klib).absolutePath } + STDLIB_DEPENDENCY
-        return allDependencies.joinToString(File.pathSeparator)
-    }
-
-    private fun TestModule.dependenciesToLibrariesArg(version: Int): String =
-        this.dependencies
-            .flatMap { it.transitiveDependencies() }
-            .map { it as? TestModule ?: error("Unexpected dependency kind: $it") }
-            .toLibrariesArg(version)
-
-    private fun KotlinBaseTest.TestModule.transitiveDependencies(): Set<KotlinBaseTest.TestModule> {
-        val uniqueDependencies = mutableSetOf(this)
-        dependencies.forEach { testModule ->
-            if (testModule !in uniqueDependencies) {
-                val transitiveDependencies = testModule.transitiveDependencies()
-                uniqueDependencies.addAll(transitiveDependencies)
-            }
-        }
-
-        return uniqueDependencies
-    }
-
-    private val jsOutDir get() = workingDir.resolve("out")
-
+abstract class AbstractFirJsKlibEvolutionTest : AbstractKlibBinaryCompatibilityTest() {
+    override val extensionConfigs: EnvironmentConfigFiles = EnvironmentConfigFiles.JS_CONFIG_FILES
+    override val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+    override val stdlibDependency: String? = System.getProperty("kotlin.js.full.stdlib.path")
     private val TestModule.jsPath get() = File(jsOutDir, "${this.name}.js").absolutePath
-
-    private fun createFiles(files: List<TestFile>): List<String> =
-        files.map {
-            val file = File(workingDir, it.name)
-            file.writeText(it.content)
-            file.absolutePath
-        }
 
     private fun runnerFunctionFile(): Pair<String, File> {
         val file = File(workingDir, RUNNER_FUNCTION_FILE)
@@ -94,7 +36,6 @@ abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : Abs
             moduleName = module.name(version)
             irProduceKlibFile = true
             irModuleName = module.name
-            compilerType.setup(this)
         }
     }
 
@@ -113,7 +54,6 @@ abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : Abs
             moduleName = module.name
             irProduceJs = true
             irModuleName = module.name
-            compilerType.setup(this)
             partialLinkageMode = "disable" // Don't use partial linkage for KLIB evolution tests.
         }
     }
@@ -127,8 +67,6 @@ abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : Abs
     companion object {
         private val String.klib: String get() = "$this.$KLIB_FILE_EXTENSION"
         private val String.js: String get() = "$this.js"
-
-        private val STDLIB_DEPENDENCY = System.getProperty("kotlin.js.full.stdlib.path")
 
         // A @JsExport wrapper for box().
         // Otherwise box() is not available in js.
