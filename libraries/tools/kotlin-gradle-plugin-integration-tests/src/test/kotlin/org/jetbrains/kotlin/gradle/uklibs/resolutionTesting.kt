@@ -43,5 +43,5 @@ fun TestProject.metadataTransformationOutputClasspath(
     return outputClasspath
 }
 
-fun List<File>.relativeTransformationPathComponents(): List<List<String>> = map { it.lastPathComponents(2) }
+fun List<File>.relativeTransformationPathComponents(componentsNumber: Int = 2): List<List<String>> = map { it.lastPathComponents(componentsNumber) }
 private fun File.lastPathComponents(number: Int): List<String> = toPath().toList().takeLast(number).map { it.pathString }
