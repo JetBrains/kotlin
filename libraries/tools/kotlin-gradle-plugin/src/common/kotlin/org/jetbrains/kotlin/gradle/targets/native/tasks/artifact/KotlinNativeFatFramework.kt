@@ -12,7 +12,6 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Provider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
@@ -31,9 +30,6 @@ abstract class KotlinNativeFatFrameworkConfigImpl @Inject constructor(artifactNa
         this.targets = targets.toSet()
     }
 
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    override var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode? = null
 
     override fun validate() {
         super.validate()
@@ -80,9 +76,6 @@ class KotlinNativeFatFrameworkImpl(
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val targets: Set<KonanTarget>,
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    override val embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode? = null,
     extensions: ExtensionAware
 ) : KotlinNativeFatFramework, ExtensionAware by extensions {
     override fun getName() = lowerCamelCaseName(artifactName, "FatFramework")
