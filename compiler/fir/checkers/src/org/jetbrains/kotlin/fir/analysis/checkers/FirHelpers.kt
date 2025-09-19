@@ -434,10 +434,10 @@ val Name.isDelegated: Boolean get() = asString().startsWith("\$\$delegate_")
 val ConeTypeProjection.isConflictingOrNotInvariant: Boolean get() = kind != ProjectionKind.INVARIANT || this is ConeKotlinTypeConflictingProjection
 
 val CheckerContext.secondToLastContainer: FirElement?
-    get() = when {
-        containingElements.size >= 2 -> containingElements[containingElements.lastIndex - 1]
-        else -> null
-    }
+    get() = nthLastContainer(2)
+
+context (checker: CheckerContext)
+fun nthLastContainer(n: Int): FirElement? = checker.containingElements.let { it.getOrNull(it.size - n) }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkTypeMismatch(
