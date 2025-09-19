@@ -3,7 +3,7 @@ description = "Kotlin Build Report Common"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("gradle-plugin-compiler-dependency-configuration")
+    id("gradle-plugin-published-compiler-dependency-configuration")
     id("project-tests-convention")
 }
 

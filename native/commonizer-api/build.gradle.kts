@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    id("gradle-plugin-compiler-dependency-configuration")
+    id("gradle-plugin-published-compiler-dependency-configuration")
     id("project-tests-convention")
 }
 
