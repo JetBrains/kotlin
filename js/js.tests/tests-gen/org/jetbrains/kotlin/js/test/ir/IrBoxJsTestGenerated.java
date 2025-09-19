@@ -8114,6 +8114,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("simpleOnFileAndDeclaration.kt")
+    public void testSimpleOnFileAndDeclaration() {
+      runTest("js/js.translator/testData/box/jsQualifierOnDeclaration/simpleOnFileAndDeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("umdFallback.kt")
     public void testUmdFallback() {
       runTest("js/js.translator/testData/box/jsQualifierOnDeclaration/umdFallback.kt");
