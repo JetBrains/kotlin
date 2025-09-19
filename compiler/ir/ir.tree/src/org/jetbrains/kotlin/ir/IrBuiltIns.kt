@@ -252,14 +252,6 @@ abstract class SymbolFinder {
         return findFunctions(CallableId(FqName.fromSegments(listOf(*packageNameSegments)), name))
     }
 
-    fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> {
-        return findFunctions(CallableId(packageFqName, name))
-    }
-
-    fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> {
-        return findProperties(CallableId(packageFqName, name))
-    }
-
     fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol? {
         return findClass(ClassId(FqName.fromSegments(listOf(*packageNameSegments)), name))
     }
@@ -267,18 +259,6 @@ abstract class SymbolFinder {
     fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
         return findClass(ClassId(packageFqName, name))
     }
-
-    fun topLevelProperty(packageName: FqName, name: String): IrPropertySymbol {
-        val elements = findProperties(Name.identifier(name), packageName).toList()
-        require(elements.isNotEmpty()) { "No property ${packageName}.$name found" }
-        require(elements.size == 1) {
-            "Several properties ${packageName}.$name found:\n${elements.joinToString("\n")}"
-        }
-        return elements.single()
-    }
-
-    fun topLevelFunctions(packageName: FqName, name: String): Iterable<IrSimpleFunctionSymbol> =
-        findFunctions(Name.identifier(name), packageName)
 
     inline fun topLevelFunction(
         callableId: CallableId,
