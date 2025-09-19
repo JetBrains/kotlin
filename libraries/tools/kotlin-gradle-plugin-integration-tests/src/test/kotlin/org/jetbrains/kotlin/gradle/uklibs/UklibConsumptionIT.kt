@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.uklibs
 
 import com.android.build.api.dsl.LibraryExtension
+import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -551,6 +554,54 @@ class UklibConsumptionIT : KGPBaseTest() {
                     }
                 }.buildAndReturn("assemble").prettyPrinted
             )
+            assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+                mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "standard-jvm",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmRuntimeElements",
+                    ),
+                    "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                            ),
+                        ),
+                        configuration = "runtime",
+                    ),
+                    "producer:empty:1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "uklib",
+                                "org.gradle.category" to "library",
+                                "org.gradle.usage" to "kotlin-uklib-runtime",
+                                "org.jetbrains.kotlin.uklib" to "true",
+                                "org.jetbrains.kotlin.uklibState" to "decompressed",
+                                "org.jetbrains.kotlin.uklibView" to "jvm",
+                            ),
+                        ),
+                        configuration = "uklibRuntimeElements",
+                    ),
+                ).prettyPrinted,
+                buildScriptReturn {
+                    project.ignoreAccessViolations {
+                        project.configurations.getByName(
+                            java.sourceSets.getByName("jvmMain").runtimeClasspathConfigurationName
+                        ).resolveProjectDependencyComponentsWithArtifacts()
+                    }
+                }.buildAndReturn("assemble").prettyPrinted
+            )
         }
     }
 
@@ -594,6 +645,94 @@ class UklibConsumptionIT : KGPBaseTest() {
 
             // FIXME: Validate properly we resolved Uklib in the export and -library configurations
             build("linkDebugStaticLinuxArm64")
+        }
+    }
+
+    @GradleTest
+    fun `uklib consumption - jvm binaries consume uklibs`(
+        version: GradleVersion,
+    ) {
+        val direct = project("empty", version) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "producer"
+            }
+            buildScriptInjection {
+                project.setUklibPublicationStrategy()
+            }
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosX64()
+                    jvm()
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        data class Producer(val value: String = "Foo")
+                        """.trimIndent()
+                    )
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
+
+        project("empty", version) {
+            buildScriptInjection {
+                project.setUklibPublicationStrategy()
+                project.setUklibResolutionStrategy()
+            }
+            plugins {
+                kotlin("multiplatform")
+            }
+            addPublishedProjectToRepositories(direct)
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosX64()
+                    jvm {
+                        binaries {
+                            executable {
+                                mainClass.set("Main")
+                            }
+                        }
+                    }
+                    sourceSets.commonMain.get().compileSource("""
+                        object Main {
+                            @JvmStatic
+                            fun main(args: Array<String>) {
+                                println(Producer())
+                            }
+                        }
+                    """.trimIndent())
+                    sourceSets.commonMain.get().dependencies {
+                        api(direct.rootCoordinate)
+                    }
+                }
+            }
+
+            val runJvmClasspath: Set<File> = providerBuildScriptReturn {
+                project.provider {
+                    "waitForConfigurationToEnd"
+                }.flatMap {
+                    (project.tasks.named("runJvm") as TaskProvider<JavaExec>).flatMap { task ->
+                        val classpath = task.classpath
+                        task.outputs.files.elements.map {
+                            classpath.files
+                        }
+                    }
+                }
+            }.buildAndReturn("runJvm")
+            assertEquals(
+                listOf<List<String>>(
+                    mutableListOf("kotlin", "jvm", "main",),
+                    mutableListOf("classes", "java", "jvmMain",),
+                    mutableListOf("processedResources", "jvm", "main",),
+                    mutableListOf("transformed", "unzipped_uklib_producer.uklib", "jvmMain"),
+                    mutableListOf("kotlin-stdlib", defaultBuildOptions.kotlinVersion, "kotlin-stdlib-${defaultBuildOptions.kotlinVersion}.jar"),
+                    mutableListOf("annotations", "13.0", "annotations-13.0.jar"),
+                ).prettyPrinted,
+                runJvmClasspath.toList().relativeTransformationPathComponents(3).prettyPrinted
+            )
         }
     }
 

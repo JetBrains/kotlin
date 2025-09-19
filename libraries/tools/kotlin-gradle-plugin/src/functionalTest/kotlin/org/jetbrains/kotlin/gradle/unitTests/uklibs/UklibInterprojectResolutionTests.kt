@@ -2,27 +2,19 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.artifacts.result.UnresolvedArtifactResult
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectArtifactDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.FilePathRegex
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.projectArtifactDependency
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosMain
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
@@ -90,8 +82,28 @@ class UklibInterprojectResolutionTests {
                 .resolveProjectDependencyComponentsWithArtifacts()
                 .prettyPrinted
         )
+        assertEquals(
+            mapOf(
+                ":producer" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "standard-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-runtime",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "jvmRuntimeElements",
+                ),
+            ).prettyPrinted,
+            directJavaConsumer.configurations.getByName("runtimeClasspath")
+                .resolveProjectDependencyComponentsWithArtifacts()
+                .prettyPrinted
+        )
 
-        assertResolveArtifactMatchesAttributes(
+        assertResolvedCompilationArtifactMatchesAttributes(
             transitiveUklibConsumer.multiplatformExtension.iosArm64(),
             mutableMapOf(
                 /** FIXME: KT-81055 java classes will not be filtered by [org.jetbrains.kotlin.gradle.tasks.canKlibBePassedToCompiler] */
@@ -125,7 +137,7 @@ class UklibInterprojectResolutionTests {
             ),
         )
 
-        assertResolveArtifactMatchesAttributes(
+        assertResolvedCompilationArtifactMatchesAttributes(
             transitiveUklibConsumer.multiplatformExtension.jvm(),
             mapOf(
                 ":directJavaConsumer" to ResolvedComponentWithArtifacts(
@@ -154,6 +166,38 @@ class UklibInterprojectResolutionTests {
                         ),
                     ),
                     configuration = "uklibApiElements",
+                ),
+            )
+        )
+        assertResolvedRuntimeArtifactMatchesAttributes(
+            transitiveUklibConsumer.multiplatformExtension.jvm(),
+            mapOf(
+                ":directJavaConsumer" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.dependency.bundling" to "external",
+                            "org.gradle.jvm.version" to "17",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-runtime",
+                        ),
+                    ),
+                    configuration = "runtimeElements",
+                ),
+                ":producer" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "kotlin-uklib-runtime",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "jvm",
+                        ),
+                    ),
+                    configuration = "uklibRuntimeElements",
                 ),
             )
         )
@@ -220,7 +264,7 @@ class UklibInterprojectResolutionTests {
             }
         }.evaluate()
 
-        assertResolveArtifactMatchesAttributes(
+        assertResolvedCompilationArtifactMatchesAttributes(
             consumer.multiplatformExtension.iosArm64(),
             mapOf(
                 ":producer" to ResolvedComponentWithArtifacts(
@@ -240,7 +284,7 @@ class UklibInterprojectResolutionTests {
             ),
         )
 
-        assertResolveArtifactMatchesAttributes(
+        assertResolvedCompilationArtifactMatchesAttributes(
             consumer.multiplatformExtension.jvm(),
             mapOf(
                 ":producer" to ResolvedComponentWithArtifacts(
@@ -259,8 +303,27 @@ class UklibInterprojectResolutionTests {
                 ),
             )
         )
+        assertResolvedRuntimeArtifactMatchesAttributes(
+            consumer.multiplatformExtension.jvm(),
+            mapOf(
+                ":producer" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "kotlin-uklib-runtime",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "jvm",
+                        ),
+                    ),
+                    configuration = "uklibRuntimeElements",
+                ),
+            )
+        )
 
-        assertResolveArtifactMatchesAttributes(
+        assertResolvedCompilationArtifactMatchesAttributes(
             consumer.multiplatformExtension.js(),
             mapOf(
                 ":producer" to ResolvedComponentWithArtifacts(
@@ -276,6 +339,25 @@ class UklibInterprojectResolutionTests {
                         ),
                     ),
                     configuration = "uklibApiElements",
+                ),
+            )
+        )
+        assertResolvedRuntimeArtifactMatchesAttributes(
+            consumer.multiplatformExtension.js(),
+            mapOf(
+                ":producer" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "klib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-runtime",
+                            "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "js_ir",
+                        ),
+                    ),
+                    configuration = "uklibRuntimeElements",
                 ),
             )
         )
@@ -344,6 +426,21 @@ class UklibInterprojectResolutionTests {
                 it.toString(),
             )
         }
+        listOf(
+            consumer.multiplatformExtension.jvm().runtimeResolution(),
+            consumer.multiplatformExtension.js().runtimeResolution(),
+        ).forEach {
+            assertEquals(
+                mapOf(
+                    ":producer" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(),
+                        configuration = "uklibRuntimeElements",
+                    ),
+                ).prettyPrinted,
+                it.prettyPrinted,
+                it.toString(),
+            )
+        }
 
         listOf(
             consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration,
@@ -402,7 +499,7 @@ class UklibInterprojectResolutionTests {
             }
         }.evaluate()
 
-        assertResolveArtifactMatchesAttributes(
+        assertResolvedCompilationArtifactMatchesAttributes(
             consumer.multiplatformExtension.iosArm64(),
             mapOf(
                 ":intermediate" to ResolvedComponentWithArtifacts(
@@ -427,7 +524,7 @@ class UklibInterprojectResolutionTests {
             ),
         )
 
-        assertResolveArtifactMatchesAttributes(
+        assertResolvedCompilationArtifactMatchesAttributes(
             consumer.multiplatformExtension.jvm(),
             mapOf(
                 ":intermediate" to ResolvedComponentWithArtifacts(
@@ -460,8 +557,41 @@ class UklibInterprojectResolutionTests {
                 ),
             )
         )
+        assertResolvedRuntimeArtifactMatchesAttributes(
+            consumer.multiplatformExtension.jvm(),
+            mapOf(
+                ":intermediate" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "kotlin-uklib-runtime",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "jvm",
+                        ),
+                    ),
+                    configuration = "uklibRuntimeElements",
+                ),
+                ":producer" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "kotlin-uklib-runtime",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "jvm",
+                        ),
+                    ),
+                    configuration = "uklibRuntimeElements",
+                ),
+            )
+        )
 
-        assertResolveArtifactMatchesAttributes(
+        assertResolvedCompilationArtifactMatchesAttributes(
             consumer.multiplatformExtension.js(),
             mapOf(
                 ":intermediate" to ResolvedComponentWithArtifacts(
@@ -482,6 +612,30 @@ class UklibInterprojectResolutionTests {
                         ),
                     ),
                     configuration = "uklibApiElements",
+                ),
+            )
+        )
+        assertResolvedRuntimeArtifactMatchesAttributes(
+            consumer.multiplatformExtension.js(),
+            mapOf(
+                ":intermediate" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "uklibRuntimeElements",
+                ),
+                ":producer" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "klib",
+                            "org.gradle.category" to "library",
+                            "org.gradle.usage" to "kotlin-uklib-runtime",
+                            "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                            "org.jetbrains.kotlin.uklib" to "true",
+                            "org.jetbrains.kotlin.uklibState" to "decompressed",
+                            "org.jetbrains.kotlin.uklibView" to "js_ir",
+                        ),
+                    ),
+                    configuration = "uklibRuntimeElements",
                 ),
             )
         )
@@ -556,6 +710,13 @@ class UklibInterprojectResolutionTests {
             "producer:jsJar",
         ),
         transformLinuxMainCInteropDependenciesMetadata = null,
+        runJvm = mutableSetOf(
+            "consumer:compileJvmMainJava",
+            "consumer:compileKotlinJvm",
+            "producer:compileJvmMainJava",
+            "producer:compileKotlinJvm",
+            "producer:jvmJar",
+        ),
     )
 
     @Test
@@ -610,7 +771,14 @@ class UklibInterprojectResolutionTests {
         ),
         transformLinuxMainCInteropDependenciesMetadata = mutableSetOf(
             "producer:serializeUklibManifestWithoutCompilationDependency",
-        )
+        ),
+        runJvm = mutableSetOf(
+            "consumer:compileJvmMainJava",
+            "consumer:compileKotlinJvm",
+            "producer:compileJvmMainJava",
+            "producer:compileKotlinJvm",
+            "producer:jvmJar",
+        ),
     )
 
     fun testInterprojectTaskDependenciesWithUklibs(
@@ -621,6 +789,7 @@ class UklibInterprojectResolutionTests {
         compileKotlinJvm: MutableSet<String>,
         compileKotlinLinuxX64: MutableSet<String>,
         compileKotlinJs: MutableSet<String>,
+        runJvm: MutableSet<String>,
     ) {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             val nativeTargets = listOf(
@@ -634,7 +803,11 @@ class UklibInterprojectResolutionTests {
                     }
                 }
             }
-            jvm()
+            jvm {
+                binaries {
+                    executable { }
+                }
+            }
             js()
         }
         val root = buildProject()
@@ -706,6 +879,10 @@ class UklibInterprojectResolutionTests {
         assertTaskDependenciesEqual(
             compileKotlinJvm,
             "compileKotlinJvm"
+        )
+        assertTaskDependenciesEqual(
+            runJvm,
+            "runJvm"
         )
 
         assertTaskDependenciesEqual(
@@ -794,13 +971,24 @@ class UklibInterprojectResolutionTests {
         code = code,
     )
 
-    fun assertResolveArtifactMatchesAttributes(
+    fun assertResolvedCompilationArtifactMatchesAttributes(
         target: KotlinTarget,
         resolvedComponents: Map<ComponentPath, ResolvedComponentWithArtifacts>,
     ) {
         assertEquals(
             resolvedComponents.prettyPrinted,
             target.compilationResolution().prettyPrinted,
+            target.name,
+        )
+    }
+
+    fun assertResolvedRuntimeArtifactMatchesAttributes(
+        target: KotlinTarget,
+        resolvedComponents: Map<ComponentPath, ResolvedComponentWithArtifacts>,
+    ) {
+        assertEquals(
+            resolvedComponents.prettyPrinted,
+            target.runtimeResolution().prettyPrinted,
             target.name,
         )
     }

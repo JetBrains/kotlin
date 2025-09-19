@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateDecom
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.maybeCreateUklibApiElements
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.maybeCreateUklibRuntimeElements
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
@@ -29,12 +30,17 @@ internal val KotlinJvmJarArtifact = KotlinTargetArtifact { target, apiElements, 
     when (target.project.kotlinPropertiesProvider.kmpPublicationStrategy) {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {
             val uklibAttribute = target.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()
-            mainCompilation.project.maybeCreateUklibApiElements().outgoing.variants {
-                it.create(uklibAttribute) {
-                    it.artifact(artifact)
-                    it.attributes {
-                        it.attribute(uklibStateAttribute, uklibStateDecompressed)
-                        it.attribute(uklibViewAttribute, uklibAttribute)
+            listOf(
+                mainCompilation.project.maybeCreateUklibApiElements(),
+                mainCompilation.project.maybeCreateUklibRuntimeElements(),
+            ).forEach {
+                it.outgoing.variants {
+                    it.create(uklibAttribute) {
+                        it.artifact(artifact)
+                        it.attributes {
+                            it.attribute(uklibStateAttribute, uklibStateDecompressed)
+                            it.attribute(uklibViewAttribute, uklibAttribute)
+                        }
                     }
                 }
             }

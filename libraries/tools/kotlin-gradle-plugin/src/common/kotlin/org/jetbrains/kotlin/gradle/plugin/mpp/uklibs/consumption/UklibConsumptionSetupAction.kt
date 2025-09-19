@@ -261,8 +261,6 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
                      * when platform configurations resolved into metadata jar.
                      *
                      * KotlinPlatformType platform -> common compatibility is enabled by [AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResolution]
-                     *
-                     * FIXME: Not clear what to do with runtime?
                      */
                     KOTLIN_METADATA
                 ),
@@ -279,8 +277,14 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
                      */
                     JAVA_RUNTIME,
                     JAVA_API,
-                    // FIXME: KOTLIN_API compatibility is incorrect, right?
-                    // KOTLIN_API,
+                    /**
+                     * Same as above. Fallback to metadata variant to resolve and inherit dependencies
+                     */
+                     KOTLIN_METADATA,
+                    /**
+                     * Handle pre-HMPP metadata and specifically dom-api-compat
+                     */
+                     KOTLIN_API,
                 ),
                 /**
                  * KOTLIN_UKLIB_METADATA is requested in per source set resolvableMetadataConfigurations. This Usage isn't published.
@@ -351,11 +355,23 @@ internal class SelectBestMatchingVariantForKmpResolutionUsage : AttributeDisambi
                 KOTLIN_METADATA
             ),
             KOTLIN_UKLIB_RUNTIME to listOf(
+                /**
+                 * Prefer UKlib runtime
+                 */
                 KOTLIN_UKLIB_RUNTIME,
+                /**
+                 * If we are looking at a pre-UKlib component, select the respective runtime
+                 */
                 KOTLIN_RUNTIME,
+                /**
+                 * If we are looking at a JVM component also take the runtime
+                 */
                 JAVA_RUNTIME,
                 JAVA_API,
-                KOTLIN_METADATA
+                /**
+                 * Fallback to metadata if the platform is not available
+                 */
+                KOTLIN_METADATA,
             ),
             KOTLIN_UKLIB_METADATA to listOf(
                 /**
