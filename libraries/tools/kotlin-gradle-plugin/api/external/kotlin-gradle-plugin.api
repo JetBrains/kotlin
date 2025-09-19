@@ -1026,16 +1026,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/Executable : org/jetbr
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary, org/gradle/api/attributes/HasAttributes {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework$Companion;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
-	public final fun embedBitcode (Ljava/lang/String;)V
-	public final fun embedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public synthetic fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
 	public fun getAttributes ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeContainer;
-	public final fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public final fun getEmbedBitcodeMode ()Lorg/gradle/api/provider/Property;
 	public final fun getExportKdoc ()Lorg/gradle/api/provider/Property;
 	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 	public final fun isStatic ()Z
-	public final fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public final fun setStatic (Z)V
 }
 

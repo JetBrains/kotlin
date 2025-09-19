@@ -44,11 +44,6 @@ enum class NativeBuildType(
      */
     override fun getName(): String = name.lowercase()
 
-    /** @suppress **/
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR", "UNUSED_PARAMETER")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR, replaceWith = ReplaceWith(""))
-    fun embedBitcode(target: KonanTarget) = BitcodeEmbeddingMode.DISABLE
 
     /** @suppress **/
     companion object {
@@ -125,31 +120,3 @@ enum class NativeOutputKind(
     open fun availableFor(target: KonanTarget) = true
 }
 
-/**
- * An enum class representing different modes of embedding LLVM IR bitcode in a binary.
- *
- * Bitcode is used in Apple's platforms to defer part of the compilation process to the
- * device where the application is running. These options allow control over whether
- * bitcode should be included in the binary and how it should be embedded.
- *
- * @property DISABLE No bitcode is embedded in the binary.
- * @property BITCODE Bitcode is embedded as part of the binary, allowing later optimization.
- * @property MARKER Only a placeholder marker is embedded instead of actual bitcode.
- */
-@OptIn(InternalKotlinGradlePluginApi::class)
-@Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-enum class BitcodeEmbeddingMode {
-    /** Don't embed LLVM IR bitcode. */
-    DISABLE,
-
-    /** Embed LLVM IR bitcode as data. */
-    BITCODE,
-
-    /** Embed placeholder LLVM IR data as a marker. */
-    MARKER,
-}
-
-/** @suppress **/
-@InternalKotlinGradlePluginApi
-const val BITCODE_EMBEDDING_DEPRECATION_MESSAGE =
-    "Bitcode embedding is not supported anymore. Configuring it has no effect. The corresponding DSL parameters will be removed in Kotlin 2.3"

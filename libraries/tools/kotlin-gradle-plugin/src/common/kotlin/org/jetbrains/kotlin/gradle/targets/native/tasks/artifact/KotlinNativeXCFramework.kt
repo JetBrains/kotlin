@@ -11,7 +11,6 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
@@ -29,10 +28,6 @@ abstract class KotlinNativeXCFrameworkConfigImpl @Inject constructor(artifactNam
     override fun targets(vararg targets: KonanTarget) {
         this.targets = targets.toSet()
     }
-
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    override var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode? = null
 
     override fun validate() {
         super.validate()
@@ -79,9 +74,6 @@ class KotlinNativeXCFrameworkImpl(
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val targets: Set<KonanTarget>,
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    override val embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode? = null,
     extensions: ExtensionAware
 ) : KotlinNativeXCFramework, ExtensionAware by extensions {
     override fun getName() = lowerCamelCaseName(artifactName, "XCFramework")
