@@ -1,27 +1,22 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
-import org.gradle.api.artifacts.result.UnresolvedDependencyResult
+import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.kotlin.dsl.create
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
-import org.jetbrains.kotlin.gradle.util.assertContains
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.enableDefaultJsDomApiDependency
-import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
-import org.jetbrains.kotlin.gradle.util.kotlin
-import org.jetbrains.kotlin.gradle.util.setUklibPublicationStrategy
-import org.jetbrains.kotlin.gradle.util.setUklibResolutionStrategy
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import kotlin.test.assertEquals
 
 class KT77539UklibSkikoResolution {
 
     @get:Rule
     val temporaryFolder = TemporaryFolder()
 
+    /** See [org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.workaroundLegacySkikoResolutionKT77539] */
     @Test
-    fun test() {
+    fun `skiko resolution doesn't explode because of hacky android variant`() {
         val project = buildProjectWithMPP(
             preApplyCode = {
                 setUklibPublicationStrategy()
@@ -41,16 +36,21 @@ class KT77539UklibSkikoResolution {
                 }
             }
         }.evaluate()
-        val skiko = project.configurations.getByName("jvmCompileClasspath")
-            .incoming.resolutionResult.allDependencies.single() as UnresolvedDependencyResult
-        assertContains(
-            """
-                  - androidApiElements-published
-                  - awtApiElements-published
-                  - metadataApiElements
-                All of them match the consumer attributes:
-            """.trimIndent(),
-            skiko.failure.stackTraceToString()
+        val skikoCompilationDependency = project.configurations.getByName("jvmCompileClasspath")
+            .incoming.resolutionResult.allComponents.map {
+                (it as ResolvedComponentResult).variants.single().displayName
+            }
+        val skikoRuntimeDependency = project.configurations.getByName("jvmRuntimeClasspath")
+            .incoming.resolutionResult.allComponents.map {
+                (it as ResolvedComponentResult).variants.single().displayName
+            }
+        assertEquals(
+            listOf("jvmCompileClasspath", "awtApiElements-published", "awtApiElements-published"),
+            skikoCompilationDependency,
+        )
+        assertEquals(
+            listOf("jvmRuntimeClasspath", "awtRuntimeElements-published", "awtRuntimeElements-published"),
+            skikoRuntimeDependency,
         )
     }
 }
