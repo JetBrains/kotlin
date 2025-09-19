@@ -316,7 +316,7 @@ wasmProjectTest("testFir") {
 
 wasmProjectTest("testStackSwitching") {
     dependsOn(generateTypeScriptTests)
-    include("**/Fir*.class")
+    include("**/FirWasmWasi*.class")
     exclude(
         "**/*WasmJsSteppingTestGenerated.class",
         "**/*WasmInvalidation*.class"

@@ -125,6 +125,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirWasmWasiCodegenBoxTest> {
                 model("codegen/boxWasmWasi")
+                model("codegen/box/coroutines")
             }
 
             testClass<AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest> {
