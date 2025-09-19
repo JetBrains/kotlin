@@ -45,6 +45,7 @@ public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStu
     }
 
     @Nullable
+    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }

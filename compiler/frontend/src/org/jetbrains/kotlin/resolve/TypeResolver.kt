@@ -56,9 +56,9 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ThrowingScope
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -146,6 +146,7 @@ class TypeResolver(
     }
 
     internal fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
+        @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
 
     // TODO: remove this method and its usages in 1.4

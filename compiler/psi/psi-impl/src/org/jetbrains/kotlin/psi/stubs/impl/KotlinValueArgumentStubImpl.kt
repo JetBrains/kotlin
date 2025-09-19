@@ -21,7 +21,9 @@ class KotlinValueArgumentStubImpl<T : KtValueArgument>(
     @Suppress("UNCHECKED_CAST")
     override fun copyInto(newParent: StubElement<*>?): KotlinValueArgumentStubImpl<T> = KotlinValueArgumentStubImpl(
         parent = newParent,
-        elementType = stubType as KtValueArgumentElementType<T>,
+        elementType =
+            @Suppress("DEPRECATION") // KT-78356
+            stubType as KtValueArgumentElementType<T>,
         isSpread = isSpread,
     )
 }
