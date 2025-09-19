@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.wasm.test
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
@@ -20,11 +18,10 @@ import org.jetbrains.kotlin.klib.PartialLinkageTestStructureExtractor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase.CompilerType
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
+import org.jetbrains.kotlin.wasm.test.tools.runCompilerViaCLI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.PrintStream
 import kotlin.io.path.createTempDirectory
 
 abstract class AbstractWasmPartialLinkageNoICTestCase : AbstractWasmPartialLinkageTestCase(CompilerType.NO_IC)
@@ -197,27 +194,6 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
             it.takeIf { it.isDirectory } ?: it.parentFile
         }
         return outputDirectory.listFiles()!!.filter { it.extension == "js" }
-    }
-
-    private fun runCompilerViaCLI(vararg compilerArgs: List<String?>?) {
-        val allCompilerArgs = compilerArgs.flatMap { args -> args.orEmpty().filterNotNull() }.toTypedArray()
-
-        val compilerXmlOutput = ByteArrayOutputStream()
-        val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            K2JSCompiler().execFullPathsInMessages(printStream, allCompilerArgs)
-        }
-
-        if (exitCode != ExitCode.OK)
-            throw AssertionError(
-                buildString {
-                    appendLine("Compiler failure.")
-                    appendLine("Exit code = $exitCode.")
-                    appendLine("Compiler messages:")
-                    appendLine("==========")
-                    appendLine(compilerXmlOutput.toString(Charsets.UTF_8.name()))
-                    appendLine("==========")
-                }
-            )
     }
 
     companion object {
