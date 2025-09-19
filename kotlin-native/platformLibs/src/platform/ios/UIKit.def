@@ -7,7 +7,6 @@ compilerOpts = -framework UIKit
 linkerOpts = -framework UIKit
 excludedFunctions = UISceneErrorDomain
 
-strictEnums = UINavigationItemSearchBarPlacement
 objcClassesIncludingCategories = NSMutableParagraphStyle NSParagraphStyle NSTextContainer NSTextTab NSTextAttachment
 allowIncludingObjCCategoriesFromDefFile = true
 ---
