@@ -1,0 +1,7 @@
+/falseNegativeUpperBoundViolated.fir.kt:(400,409): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+
+/falseNegativeUpperBoundViolated.fir.kt:(432,441): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+
+/falseNegativeUpperBoundViolated.fir.kt:(464,466): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+
+/falseNegativeUpperBoundViolated.fir.kt:(489,491): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
