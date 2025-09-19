@@ -109,6 +109,7 @@
         <option value="$PROJECT_DIR$/plugins/power-assert/testData" />
         <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData" />
         <option value="$PROJECT_DIR$/plugins/scripting/scripting-tests/testData" />
+        <option value="$PROJECT_DIR$/libraries/tools/kotlinp/jvm/testData" />
       </array>
     </option>
     <option name="testDataDirectories">
