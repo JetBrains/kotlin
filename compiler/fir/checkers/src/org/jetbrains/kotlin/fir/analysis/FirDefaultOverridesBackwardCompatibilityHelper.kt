@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis
 
-object FirDefaultOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatibilityHelper()
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
+
+object FirDefaultOverridesBackwardCompatibilityHelper : FirOverridesBackwardCompatibilityHelper(),
+    FirComposableSessionComponent.Single<FirOverridesBackwardCompatibilityHelper>

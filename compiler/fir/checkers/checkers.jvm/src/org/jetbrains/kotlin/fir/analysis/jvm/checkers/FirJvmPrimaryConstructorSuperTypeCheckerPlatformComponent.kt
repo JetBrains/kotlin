@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPrimaryConstructorSuperTypeCheckerPlatformComponent
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent : FirPrimaryConstructorSuperTypeCheckerPlatformComponent() {
+object FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent : FirPrimaryConstructorSuperTypeCheckerPlatformComponent(),
+    FirComposableSessionComponent.Single<FirPrimaryConstructorSuperTypeCheckerPlatformComponent> {
     override val supertypesThatDontNeedInitializationInSubtypesConstructors: Set<ClassId> =
         setOf(StandardClassIds.Enum, JvmStandardClassIds.Java.Record)
 }

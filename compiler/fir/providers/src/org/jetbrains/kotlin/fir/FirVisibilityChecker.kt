@@ -47,7 +47,7 @@ abstract class FirPrivateVisibleFromDifferentModuleExtension : FirSessionCompone
 
 abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilityChecker> {
     @NoMutableState
-    object Default : FirVisibilityChecker() {
+    object Default : FirVisibilityChecker(), FirComposableSessionComponent.Single<FirVisibilityChecker> {
         override fun platformVisibilityCheck(
             declarationVisibility: Visibility,
             symbol: FirBasedSymbol<*>,

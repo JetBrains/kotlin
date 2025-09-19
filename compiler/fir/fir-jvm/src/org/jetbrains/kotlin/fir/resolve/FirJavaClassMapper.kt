@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
@@ -16,7 +17,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 @NoMutableState
-class FirJavaClassMapper(private val session: FirSession) : FirPlatformClassMapper() {
+class FirJavaClassMapper(private val session: FirSession) : FirPlatformClassMapper(),
+    FirComposableSessionComponent.Single<FirPlatformClassMapper> {
     override fun getCorrespondingPlatformClass(declaration: FirClassLikeDeclaration): FirRegularClass? {
         val javaClassId = getCorrespondingPlatformClass(declaration.symbol.classId)
         return javaClassId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it)?.fir } as? FirRegularClass

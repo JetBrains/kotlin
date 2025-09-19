@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.FirInlineCheckerPlatformSpecificComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 
-class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent() {
+class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent(), FirComposableSessionComponent.Single<FirInlineCheckerPlatformSpecificComponent> {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun isGenerallyOk(declaration: FirDeclaration): Boolean {
         // local inline functions are prohibited

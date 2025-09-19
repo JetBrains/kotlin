@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformUpperBoundsProvider
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -13,7 +14,8 @@ import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitut
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 
-class FirJavaNullabilityWarningUpperBoundsProvider(session: FirSession) : FirPlatformUpperBoundsProvider() {
+class FirJavaNullabilityWarningUpperBoundsProvider(session: FirSession) : FirPlatformUpperBoundsProvider(),
+    FirComposableSessionComponent.Single<FirPlatformUpperBoundsProvider> {
     private val substitutor: EnhancedForWarningConeSubstitutor = EnhancedForWarningConeSubstitutor(
         session.typeContext,
     )

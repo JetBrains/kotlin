@@ -5,21 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCompositeConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeEquivalentCallConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeIntegerOperatorConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeOverloadConflictResolver
-import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 
 @NoMutableState
-object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
+object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory(), FirComposableSessionComponent.Single<ConeCallConflictResolverFactory> {
     override fun createAdditionalResolvers(session: FirSession): List<ConeCallConflictResolver> {
         return listOf(JvmPlatformOverloadsConflictResolver(session))
     }

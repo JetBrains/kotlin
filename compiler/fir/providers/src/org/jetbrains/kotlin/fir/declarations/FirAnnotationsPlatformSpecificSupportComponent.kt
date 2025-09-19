@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 /**
  * @see org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox.Companion
  */
-abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSessionComponent<FirAnnotationsPlatformSpecificSupportComponent> {
+abstract class FirAnnotationsPlatformSpecificSupportComponent :
+    FirComposableSessionComponent<FirAnnotationsPlatformSpecificSupportComponent> {
     abstract val requiredAnnotationsWithArguments: Set<ClassId>
     abstract val requiredAnnotations: Set<ClassId>
     abstract val volatileAnnotations: Set<ClassId>
@@ -56,7 +57,8 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
 
     class Composed(
         override val components: List<FirAnnotationsPlatformSpecificSupportComponent>
-    ) : FirAnnotationsPlatformSpecificSupportComponent(), FirComposableSessionComponent.Composed<FirAnnotationsPlatformSpecificSupportComponent> {
+    ) : FirAnnotationsPlatformSpecificSupportComponent(),
+        FirComposableSessionComponent.Composed<FirAnnotationsPlatformSpecificSupportComponent> {
         override val requiredAnnotationsWithArguments: Set<ClassId> =
             components.flatMapTo(mutableSetOf()) { it.requiredAnnotationsWithArguments }
         override val requiredAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.requiredAnnotations }
@@ -91,7 +93,8 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
         return Composed(components)
     }
 
-    object Default : FirAnnotationsPlatformSpecificSupportComponent() {
+    object Default : FirAnnotationsPlatformSpecificSupportComponent(),
+        FirComposableSessionComponent.Single<FirAnnotationsPlatformSpecificSupportComponent> {
         override val requiredAnnotationsWithArguments: Set<ClassId> = setOf(
             StandardClassIds.Annotations.Deprecated,
             StandardClassIds.Annotations.Target,

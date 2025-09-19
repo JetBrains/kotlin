@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 
@@ -18,7 +17,8 @@ sealed class FirDefaultImportsProviderHolder : FirComposableSessionComponent<Fir
         }
     }
 
-    class Single(override val provider: DefaultImportsProvider) : FirDefaultImportsProviderHolder()
+    class Single(override val provider: DefaultImportsProvider) : FirDefaultImportsProviderHolder(),
+        FirComposableSessionComponent.Single<FirDefaultImportsProviderHolder>
 
     class Composed(
         override val components: List<FirDefaultImportsProviderHolder>

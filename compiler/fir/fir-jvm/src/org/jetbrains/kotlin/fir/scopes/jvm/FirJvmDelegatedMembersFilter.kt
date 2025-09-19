@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -21,7 +22,8 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
  * KT-18324: If original is java method with default then delegated function should not be generated
  * See org.jetbrains.kotlin.resolve.jvm.JvmDelegationFilter for K1 implementation
  */
-class FirJvmDelegatedMembersFilter(private val session: FirSession) : FirDelegatedMembersFilter() {
+class FirJvmDelegatedMembersFilter(private val session: FirSession) : FirDelegatedMembersFilter(),
+    FirComposableSessionComponent.Single<FirDelegatedMembersFilter> {
     companion object {
         val PLATFORM_DEPENDENT_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.PlatformDependent"))
     }

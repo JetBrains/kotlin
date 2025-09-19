@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -13,7 +14,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatformSpecificSupportComponent() {
+object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatformSpecificSupportComponent(),
+    FirComposableSessionComponent.Single<FirAnnotationsPlatformSpecificSupportComponent> {
     override val requiredAnnotationsWithArguments: Set<ClassId> = setOf(
         StandardClassIds.Annotations.Deprecated,
         StandardClassIds.Annotations.Target,

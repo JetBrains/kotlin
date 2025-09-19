@@ -19,22 +19,27 @@ interface FirComposableSessionComponent<T : FirComposableSessionComponent<T>> : 
     @SessionConfiguration
     fun compose(other: T): T {
         val components = buildList {
-            addAll(components)
-            addAll(other.components)
+            addAll(asComponentsList())
+            addAll(other.asComponentsList())
         }.distinct()
         components.singleOrNull()?.let { return it }
         @Suppress("UNCHECKED_CAST")
         return createComposed(components) as T
     }
 
-    @Suppress("UNCHECKED_CAST")
-    val components: List<T>
-        get() = listOf(this as T)
+    fun asComponentsList(): List<T>
 
     @SessionConfiguration
     fun createComposed(components: List<T>): Composed<T>
 
+    interface Single<T : FirComposableSessionComponent<T>> : FirComposableSessionComponent<T> {
+        @Suppress("UNCHECKED_CAST")
+        override fun asComponentsList(): List<T> = listOf(this as T)
+    }
+
     interface Composed<T : FirComposableSessionComponent<T>> : FirComposableSessionComponent<T> {
-        override val components: List<T>
+        val components: List<T>
+
+        override fun asComponentsList(): List<T> = components
     }
 }

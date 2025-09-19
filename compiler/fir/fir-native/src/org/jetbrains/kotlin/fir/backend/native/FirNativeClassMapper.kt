@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.fir.backend.native
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
-class FirNativeClassMapper : FirPlatformClassMapper() {
+class FirNativeClassMapper : FirPlatformClassMapper(), FirComposableSessionComponent.Single<FirPlatformClassMapper> {
     override fun getCorrespondingPlatformClass(declaration: FirClassLikeDeclaration): FirRegularClass? {
         return null
     }

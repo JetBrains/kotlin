@@ -14,7 +14,8 @@ sealed class FirDeclarationNameInvalidCharsProvider : FirComposableSessionCompon
         override val invalidChars: Set<Char> = components.flatMapTo(mutableSetOf()) { it.invalidChars }
     }
 
-    class Simple(override val invalidChars: Set<Char>) : FirDeclarationNameInvalidCharsProvider()
+    class Simple(override val invalidChars: Set<Char>) : FirDeclarationNameInvalidCharsProvider(),
+        FirComposableSessionComponent.Single<FirDeclarationNameInvalidCharsProvider>
 
     @SessionConfiguration
     override fun createComposed(components: List<FirDeclarationNameInvalidCharsProvider>): Composed {

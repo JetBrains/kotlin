@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 sealed class FirTypeSpecificityComparatorProvider : FirComposableSessionComponent<FirTypeSpecificityComparatorProvider> {
     abstract val typeSpecificityComparator: TypeSpecificityComparator
 
-    class Simple(override val typeSpecificityComparator: TypeSpecificityComparator) : FirTypeSpecificityComparatorProvider()
+    class Simple(override val typeSpecificityComparator: TypeSpecificityComparator) : FirTypeSpecificityComparatorProvider(), FirComposableSessionComponent.Single<FirTypeSpecificityComparatorProvider> {}
 
     class Composed(
         override val components: List<FirTypeSpecificityComparatorProvider>,

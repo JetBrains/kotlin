@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
@@ -24,7 +25,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationExtension(session) {
+class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationExtension(session),
+    FirComposableSessionComponent.Single<FirDeserializationExtension> {
     override fun createConstDeserializer(
         containerSource: DeserializedContainerSource?,
         session: FirSession,

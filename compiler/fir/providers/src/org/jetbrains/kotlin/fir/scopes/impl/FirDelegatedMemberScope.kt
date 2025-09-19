@@ -271,7 +271,7 @@ private val PUBLIC_METHOD_NAMES_IN_ANY = setOf("equals", "hashCode", "toString")
 abstract class FirDelegatedMembersFilter : FirComposableSessionComponent<FirDelegatedMembersFilter> {
     abstract fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean
 
-    object Default : FirDelegatedMembersFilter() {
+    object Default : FirDelegatedMembersFilter(), FirComposableSessionComponent.Single<FirDelegatedMembersFilter> {
         override fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean {
             return false
         }

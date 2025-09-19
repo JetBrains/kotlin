@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 abstract class FirPrimaryConstructorSuperTypeCheckerPlatformComponent : FirComposableSessionComponent<FirPrimaryConstructorSuperTypeCheckerPlatformComponent> {
     abstract val supertypesThatDontNeedInitializationInSubtypesConstructors: Set<ClassId>
 
-    object Default : FirPrimaryConstructorSuperTypeCheckerPlatformComponent() {
+    object Default : FirPrimaryConstructorSuperTypeCheckerPlatformComponent(), FirComposableSessionComponent.Single<FirPrimaryConstructorSuperTypeCheckerPlatformComponent> {
         override val supertypesThatDontNeedInitializationInSubtypesConstructors: Set<ClassId> = setOf(StandardClassIds.Enum)
     }
 

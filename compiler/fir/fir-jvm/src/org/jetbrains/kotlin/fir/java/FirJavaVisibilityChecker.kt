@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.FqName
 
 @NoMutableState
-object FirJavaVisibilityChecker : FirVisibilityChecker() {
+object FirJavaVisibilityChecker : FirVisibilityChecker(), FirComposableSessionComponent.Single<FirVisibilityChecker> {
     override fun platformVisibilityCheck(
         declarationVisibility: Visibility,
         symbol: FirBasedSymbol<*>,

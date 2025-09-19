@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.hasEnumEntries
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
-open class FirEnumEntriesSupport(val session: FirSession) : FirComposableSessionComponent<FirEnumEntriesSupport> {
+abstract class FirEnumEntriesSupport(val session: FirSession) : FirComposableSessionComponent<FirEnumEntriesSupport> {
     protected val isEnumEntriesAvailable: Boolean by lazy {
         session.getRegularClassSymbolByClassId(StandardClassIds.EnumEntries) != null
     }
@@ -21,6 +21,8 @@ open class FirEnumEntriesSupport(val session: FirSession) : FirComposableSession
     open fun canSynthesizeEnumEntriesFor(klass: FirClass): Boolean {
         return klass.hasEnumEntries && isEnumEntriesAvailable
     }
+
+    class Default(session: FirSession) : FirEnumEntriesSupport(session), FirComposableSessionComponent.Single<FirEnumEntriesSupport>
 
     class Composed(
         session: FirSession,
@@ -37,7 +39,8 @@ open class FirEnumEntriesSupport(val session: FirSession) : FirComposableSession
     }
 }
 
-class FirJvmEnumEntriesSupport(session: FirSession) : FirEnumEntriesSupport(session) {
+class FirJvmEnumEntriesSupport(session: FirSession) : FirEnumEntriesSupport(session),
+    FirComposableSessionComponent.Single<FirEnumEntriesSupport> {
     // In JVM modules "entries" can be called even on enum compiled without this property.
     override fun canSynthesizeEnumEntriesFor(klass: FirClass): Boolean = isEnumEntriesAvailable
 }

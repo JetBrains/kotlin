@@ -46,7 +46,7 @@ abstract class ConeCallConflictResolverFactory : FirComposableSessionComponent<C
 
     abstract fun createAdditionalResolvers(session: FirSession): List<ConeCallConflictResolver>
 
-    object Default : ConeCallConflictResolverFactory() {
+    object Default : ConeCallConflictResolverFactory(), FirComposableSessionComponent.Single<ConeCallConflictResolverFactory> {
         override fun createAdditionalResolvers(session: FirSession): List<ConeCallConflictResolver> {
             return emptyList()
         }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 abstract class FirPlatformClassMapper : FirComposableSessionComponent<FirPlatformClassMapper> {
     @NoMutableState
-    object Default : FirPlatformClassMapper() {
+    object Default : FirPlatformClassMapper(), FirComposableSessionComponent.Single<FirPlatformClassMapper> {
         override fun getCorrespondingPlatformClass(declaration: FirClassLikeDeclaration): FirRegularClass? {
             return null
         }

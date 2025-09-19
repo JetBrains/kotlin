@@ -86,7 +86,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirSamConstructorStorage::class, FirSamConstructorStorage(this))
     register(FirOverrideService::class, FirOverrideService(this))
     register(FirDynamicMembersStorage::class, FirDynamicMembersStorage(this))
-    register(FirEnumEntriesSupport(this))
+    register(FirEnumEntriesSupport::class, FirEnumEntriesSupport.Default(this))
     register(FirOverrideChecker::class, FirStandardOverrideChecker(this))
     register(FirDeclarationOverloadabilityHelper::class, FirDeclarationOverloadabilityHelperImpl(this))
     register(FirAnnotationsPlatformSpecificSupportComponent.Default)
@@ -153,7 +153,10 @@ fun FirSession.registerJavaComponents(
     )
     register(FirEnhancedSymbolsStorage::class, predefinedComponents?.enhancementStorage ?: FirEnhancedSymbolsStorage(this))
     register(FirMappedSymbolStorage::class, predefinedComponents?.mappedStorage ?: FirMappedSymbolStorage(this))
-    register(FirRenamedForOverrideSymbolsStorage::class, predefinedComponents?.renamedFunctionsStorage ?: FirRenamedForOverrideSymbolsStorage(this))
+    register(
+        FirRenamedForOverrideSymbolsStorage::class,
+        predefinedComponents?.renamedFunctionsStorage ?: FirRenamedForOverrideSymbolsStorage(this)
+    )
     register(FirSyntheticPropertiesStorage::class, FirSyntheticPropertiesStorage(this))
     register(PlatformSupertypeUpdater::class, JvmSupertypeUpdater(this))
     register(JavaOverridabilityRules(this))
