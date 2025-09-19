@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_ERROR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_TARGET_WARNING
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_DECLARATION_VISIBILITY
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.ERROR
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
@@ -56,7 +58,7 @@ class ExpressionAnalysisAdditionalChecker(
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOfNotNull(
             Checker(isTest),
-            InlineDataFrameLocalClassesChecker,
+            DataFrameFunctionCallTransformationContextChecker,
         )
     }
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
@@ -70,6 +72,7 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
     val CAST_TARGET_WARNING by warning1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATA_SCHEMA_DECLARATION_VISIBILITY by error1<KtElement, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR by error1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = DataFrameDiagnosticMessages
 }
@@ -81,6 +84,7 @@ object DataFrameDiagnosticMessages : BaseDiagnosticRendererFactory() {
         map.put(CAST_TARGET_WARNING, "{0}", TO_STRING)
         map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE, "{0}", TO_STRING)
         map.put(DATA_SCHEMA_DECLARATION_VISIBILITY, "{0}", TO_STRING)
+        map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR, "{0}", TO_STRING)
     }
 }
 
@@ -189,18 +193,24 @@ internal object DataSchemaDeclarationChecker : FirRegularClassChecker(mppKind = 
     }
 }
 
-private data object InlineDataFrameLocalClassesChecker : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
+private data object DataFrameFunctionCallTransformationContextChecker : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         expression.toResolvedCallableReference()?.toResolvedNamedFunctionSymbol()?.let { symbol ->
-            if (
-                FunctionCallTransformer.shouldRefine(expression.annotations, symbol, context.session) &&
-                context.containingDeclarations.any { it is FirNamedFunctionSymbol && it.isInline }
-            ) {
+            val shouldRefine = FunctionCallTransformer.shouldRefine(expression.annotations, symbol, context.session)
+            if (shouldRefine && context.containingDeclarations.any { it is FirNamedFunctionSymbol && it.isInline }) {
                 reporter.reportOn(
                     expression.source,
                     DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE,
                     "DataFrame compiler plugin is not yet supported in inline functions"
+                )
+            }
+
+            if (shouldRefine && context.containingDeclarations.lastOrNull() is FirPropertyAccessorSymbol) {
+                reporter.reportOn(
+                    expression.source,
+                    DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR,
+                    "DataFrame compiler plugin is not yet supported in property accessors bodies. Use property with initializer or a function instead"
                 )
             }
         }

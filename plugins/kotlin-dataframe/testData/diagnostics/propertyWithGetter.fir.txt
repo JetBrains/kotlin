@@ -1,0 +1,12 @@
+FILE: propertyWithGetter.kt
+    public final class Context : R|kotlin/Any| {
+        public constructor(): R|Context| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val peopleDf: R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Any?>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Any?>| {
+                ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(firstName).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/String|>(vararg(String(Alice))))))
+            }
+
+    }

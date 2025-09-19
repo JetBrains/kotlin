@@ -21,6 +21,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.EmptyDeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
@@ -128,6 +129,7 @@ class FunctionCallTransformer(
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
         if (!shouldRefine(callSiteAnnotations, symbol, session)) return null
         // See org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyRegularClassChecker
+        if (callInfo.containingDeclarations.lastOrNull() is FirPropertyAccessor) return null
         if (callInfo.containingDeclarations.any { it is FirFunction && it.isInline }) return null
         if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
             return null
