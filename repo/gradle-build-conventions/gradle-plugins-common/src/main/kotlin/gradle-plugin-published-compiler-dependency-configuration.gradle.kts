@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
  * It should be removed after a proper resolution is provided.
  * Also, update the mention of this plugin from `gradle.properties`
  *
- * This plugin limits AV/LV for modules embedded into KGP, so it's safe to use a version compatible with bootstrap for Gradle-related modules.
- * KGP during embedding of these dependencies cuts off the Kotlin metadata as it's only required at compilation time and we do not expose those modules publicly.
+ * This plugin limits AV/LV for modules used in published form, so they are strictly limited to LV <= 2.0 for compatibility with older Gradle versions
  */
 
 plugins {
     kotlin("jvm")
 }
 
-limitLanguageAndApiVersions(KotlinVersion.KOTLIN_2_2)
+@Suppress("DEPRECATION")
+limitLanguageAndApiVersions(KotlinVersion.KOTLIN_2_0)
