@@ -205,7 +205,7 @@ private class FirConstCheckVisitor(
                 return ConstantArgumentKind.NOT_CONST
             }
 
-            if (!exp.hasAllowedCompileTimeType() || exp.getExpandedType().isUnsignedType) {
+            if (!exp.hasAllowedCompileTimeType() || (!intrinsicConstEvaluation && exp.getExpandedType().isUnsignedType)) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
@@ -458,13 +458,14 @@ private class FirConstCheckVisitor(
 
         val receiverClassId = this.dispatchReceiver?.getExpandedType()?.classId
 
-        if (receiverClassId in StandardClassIds.unsignedTypes) return false
+        if (!intrinsicConstEvaluation && receiverClassId in StandardClassIds.unsignedTypes) return false
 
         if (
             name in compileTimeFunctions ||
             name in compileTimeExtensionFunctions ||
             name == OperatorNameConventions.TO_STRING ||
-            name in OperatorNameConventions.NUMBER_CONVERSIONS
+            name in OperatorNameConventions.NUMBER_CONVERSIONS ||
+            (intrinsicConstEvaluation && name in OperatorNameConventions.UNSIGNED_CONVERSIONS)
         ) return true
 
         if (calleeReference.name == OperatorNameConventions.GET && receiverClassId == StandardClassIds.String) return true

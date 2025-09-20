@@ -117,17 +117,17 @@ const val convert7 = oneVal.toByte()
 const val convert8 = oneVal.toShort()
 const val convert9 = oneVal.toInt()
 const val convert10 = oneVal.toLong()
-const val convert11 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.toByte().toULong()<!>
-const val convert12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.toShort().toULong()<!>
-const val convert13 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.toULong()<!>
-const val convert14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1L.toULong()<!>
-const val convert15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0f.toULong()<!>
-const val convert16 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>10.toULong()<!>
+const val convert11 = 1.toByte().toULong()
+const val convert12 = 1.toShort().toULong()
+const val convert13 = 1.toULong()
+const val convert14 = 1L.toULong()
+const val convert15 = 1.0f.toULong()
+const val convert16 = 10.toULong()
 
-const val equals1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal == twoVal<!>
-const val equals2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>twoVal == twoVal<!>
-const val equals3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>threeVal == twoVal<!>
-const val equals4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>fourVal == twoVal<!>
+const val equals1 = oneVal == twoVal
+const val equals2 = twoVal == twoVal
+const val equals3 = threeVal == twoVal
+const val equals4 = fourVal == twoVal
 
 const val toString1 = oneVal.toString()
 const val toString2 = twoVal.toString()

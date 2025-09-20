@@ -75,6 +75,10 @@ object OperatorNameConventions {
     @JvmField val TO_CHAR = Name.identifier("toChar")
     @JvmField val TO_SHORT = Name.identifier("toShort")
     @JvmField val TO_BYTE = Name.identifier("toByte")
+    @JvmField val TO_ULONG = Name.identifier("toULong")
+    @JvmField val TO_UINT = Name.identifier("toUInt")
+    @JvmField val TO_USHORT = Name.identifier("toUShort")
+    @JvmField val TO_UBYTE = Name.identifier("toUByte")
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
@@ -110,6 +114,9 @@ object OperatorNameConventions {
 
     @JvmField
     val NUMBER_CONVERSIONS = setOf(TO_DOUBLE, TO_FLOAT, TO_LONG, TO_INT, TO_SHORT, TO_BYTE, TO_CHAR)
+
+    @JvmField
+    val UNSIGNED_CONVERSIONS = setOf(TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE)
 
     val TOKENS_BY_OPERATOR_NAME = mapOf(
         INC to "++",
