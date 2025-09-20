@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +IntrinsicConstEvaluation
+// DIAGNOSTICS: -REDUNDANT_CALL_OF_CONVERSION_METHOD
 // WITH_STDLIB
 const val zeroVal = 0u.toUShort()
 const val oneVal = 1u.toUShort()
@@ -89,7 +90,7 @@ const val xor2 = twoVal.xor(twoVal)
 const val xor3 = threeVal.xor(twoVal)
 const val xor4 = 12u.toUShort().xor(10u.toUShort())
 
-const val inv1 = zeroVal.toUShort().inv()
+const val inv1 = zeroVal.inv()
 const val inv2 = oneVal.inv()
 
 const val convert1 = oneVal.toUByte()

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +IntrinsicConstEvaluation
+// DIAGNOSTICS: -REDUNDANT_CALL_OF_CONVERSION_METHOD
 // WITH_STDLIB
 const val zeroVal = 0UL
 const val oneVal = 1UL

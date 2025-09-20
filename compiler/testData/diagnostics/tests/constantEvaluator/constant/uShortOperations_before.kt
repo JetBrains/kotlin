@@ -1,6 +1,7 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -IntrinsicConstEvaluation
+// DIAGNOSTICS: -REDUNDANT_CALL_OF_CONVERSION_METHOD
 // WITH_STDLIB
 const val zeroVal = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0u.toUShort()<!>
 const val oneVal = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toUShort()<!>
@@ -90,7 +91,7 @@ const val xor2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>twoVal.xor(twoVal)<!>
 const val xor3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>threeVal.xor(twoVal)<!>
 const val xor4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>12u.toUShort().xor(10u.toUShort())<!>
 
-const val inv1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>zeroVal.toUShort().inv()<!>
+const val inv1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>zeroVal.inv()<!>
 const val inv2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal.inv()<!>
 
 const val convert1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal.toUByte()<!>
