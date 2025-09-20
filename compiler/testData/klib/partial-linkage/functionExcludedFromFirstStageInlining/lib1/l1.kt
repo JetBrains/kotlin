@@ -1,3 +1,4 @@
+@file:Suppress("INVISIBLE_REFERENCE")
 @kotlin.internal.DoNotInlineOnFirstStage
 inline fun inlineFunction() = "inlineFunction.v1"
 
