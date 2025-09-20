@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
+import kotlin.reflect.full.memberFunctions
 
 val DEST_FILE: File = File("compiler/frontend.common/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
 private val EXCLUDED_FUNCTIONS: List<String> = listOf("rangeTo", "rangeUntil", "hashCode", "inc", "dec", "subSequence")
@@ -85,6 +86,35 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
             binaryOperationsMap.add(Operation("mod", parameters))
         }
     }
+
+    val unsignedClasses = listOf(UInt::class, ULong::class, UByte::class, UShort::class)
+    for (unsignedClass in unsignedClasses) {
+        unsignedClass.memberFunctions
+            .filter { !EXCLUDED_FUNCTIONS.contains(it.name) }
+            .forEach { function ->
+                val args = function.parameters.map { it.type.toString().removePrefix("kotlin.") }
+                when (function.parameters.size) {
+                    1 -> unaryOperationsMap.add(Operation(function.name, args ))
+                    2 -> binaryOperationsMap.add(Operation(function.name, args))
+                }
+            }
+    }
+
+    val uintConversionExtensions = mapOf(
+        "Long" to listOf("toULong", "toUInt", "toUShort", "toUByte"),
+        "Int" to listOf("toULong", "toUInt", "toUShort", "toUByte"),
+        "Short" to listOf("toULong", "toUInt", "toUShort", "toUByte"),
+        "Byte" to listOf("toULong", "toUInt", "toUShort", "toUByte"),
+        "Double" to listOf("toULong", "toUInt"),
+        "Float" to listOf("toULong", "toUInt"),
+    )
+
+    for ((type, extensions) in uintConversionExtensions) {
+        for (extension in extensions) {
+            unaryOperationsMap.add(Operation(extension, listOf(type)))
+        }
+    }
+
     return Pair(unaryOperationsMap, binaryOperationsMap)
 }
 
@@ -148,7 +178,7 @@ private fun generateBinaryOp(
             p.println("${rightType.toCompilTimeTypeFormat()} -> when (name) {")
             p.pushIndent()
             for ((name, _) in operations) {
-                val castToRightType = if (rightType == "Any") "" else " as ${rightType}"
+                val castToRightType = if (rightType == "Any" || rightType == "Any?") "" else " as ${rightType}"
                 p.println("\"$name\" -> return (left as ${leftType}).$name(right$castToRightType)")
             }
             p.popIndent()

@@ -28,6 +28,10 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Byte).toString()
             "unaryMinus" -> return (value as Byte).unaryMinus()
             "unaryPlus" -> return (value as Byte).unaryPlus()
+            "toULong" -> return (value as Byte).toULong()
+            "toUInt" -> return (value as Byte).toUInt()
+            "toUShort" -> return (value as Byte).toUShort()
+            "toUByte" -> return (value as Byte).toUByte()
         }
         CHAR -> when (name) {
             "toByte" -> return (value as Char).toByte()
@@ -51,6 +55,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Double).toString()
             "unaryMinus" -> return (value as Double).unaryMinus()
             "unaryPlus" -> return (value as Double).unaryPlus()
+            "toULong" -> return (value as Double).toULong()
+            "toUInt" -> return (value as Double).toUInt()
         }
         FLOAT -> when (name) {
             "toByte" -> return (value as Float).toByte()
@@ -63,6 +69,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Float).toString()
             "unaryMinus" -> return (value as Float).unaryMinus()
             "unaryPlus" -> return (value as Float).unaryPlus()
+            "toULong" -> return (value as Float).toULong()
+            "toUInt" -> return (value as Float).toUInt()
         }
         INT -> when (name) {
             "inv" -> return (value as Int).inv()
@@ -76,6 +84,10 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Int).toString()
             "unaryMinus" -> return (value as Int).unaryMinus()
             "unaryPlus" -> return (value as Int).unaryPlus()
+            "toULong" -> return (value as Int).toULong()
+            "toUInt" -> return (value as Int).toUInt()
+            "toUShort" -> return (value as Int).toUShort()
+            "toUByte" -> return (value as Int).toUByte()
         }
         LONG -> when (name) {
             "inv" -> return (value as Long).inv()
@@ -89,6 +101,10 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Long).toString()
             "unaryMinus" -> return (value as Long).unaryMinus()
             "unaryPlus" -> return (value as Long).unaryPlus()
+            "toULong" -> return (value as Long).toULong()
+            "toUInt" -> return (value as Long).toUInt()
+            "toUShort" -> return (value as Long).toUShort()
+            "toUByte" -> return (value as Long).toUByte()
         }
         SHORT -> when (name) {
             "toByte" -> return (value as Short).toByte()
@@ -101,10 +117,70 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Short).toString()
             "unaryMinus" -> return (value as Short).unaryMinus()
             "unaryPlus" -> return (value as Short).unaryPlus()
+            "toULong" -> return (value as Short).toULong()
+            "toUInt" -> return (value as Short).toUInt()
+            "toUShort" -> return (value as Short).toUShort()
+            "toUByte" -> return (value as Short).toUByte()
         }
         STRING -> when (name) {
             "length" -> return (value as String).length
             "toString" -> return (value as String).toString()
+        }
+        UINT -> when (name) {
+            "inv" -> return (value as UInt).inv()
+            "toByte" -> return (value as UInt).toByte()
+            "toDouble" -> return (value as UInt).toDouble()
+            "toFloat" -> return (value as UInt).toFloat()
+            "toInt" -> return (value as UInt).toInt()
+            "toLong" -> return (value as UInt).toLong()
+            "toShort" -> return (value as UInt).toShort()
+            "toString" -> return (value as UInt).toString()
+            "toUByte" -> return (value as UInt).toUByte()
+            "toUInt" -> return (value as UInt).toUInt()
+            "toULong" -> return (value as UInt).toULong()
+            "toUShort" -> return (value as UInt).toUShort()
+        }
+        ULONG -> when (name) {
+            "inv" -> return (value as ULong).inv()
+            "toByte" -> return (value as ULong).toByte()
+            "toDouble" -> return (value as ULong).toDouble()
+            "toFloat" -> return (value as ULong).toFloat()
+            "toInt" -> return (value as ULong).toInt()
+            "toLong" -> return (value as ULong).toLong()
+            "toShort" -> return (value as ULong).toShort()
+            "toString" -> return (value as ULong).toString()
+            "toUByte" -> return (value as ULong).toUByte()
+            "toUInt" -> return (value as ULong).toUInt()
+            "toULong" -> return (value as ULong).toULong()
+            "toUShort" -> return (value as ULong).toUShort()
+        }
+        UBYTE -> when (name) {
+            "inv" -> return (value as UByte).inv()
+            "toByte" -> return (value as UByte).toByte()
+            "toDouble" -> return (value as UByte).toDouble()
+            "toFloat" -> return (value as UByte).toFloat()
+            "toInt" -> return (value as UByte).toInt()
+            "toLong" -> return (value as UByte).toLong()
+            "toShort" -> return (value as UByte).toShort()
+            "toString" -> return (value as UByte).toString()
+            "toUByte" -> return (value as UByte).toUByte()
+            "toUInt" -> return (value as UByte).toUInt()
+            "toULong" -> return (value as UByte).toULong()
+            "toUShort" -> return (value as UByte).toUShort()
+        }
+        USHORT -> when (name) {
+            "inv" -> return (value as UShort).inv()
+            "toByte" -> return (value as UShort).toByte()
+            "toDouble" -> return (value as UShort).toDouble()
+            "toFloat" -> return (value as UShort).toFloat()
+            "toInt" -> return (value as UShort).toInt()
+            "toLong" -> return (value as UShort).toLong()
+            "toShort" -> return (value as UShort).toShort()
+            "toString" -> return (value as UShort).toString()
+            "toUByte" -> return (value as UShort).toUByte()
+            "toUInt" -> return (value as UShort).toUInt()
+            "toULong" -> return (value as UShort).toULong()
+            "toUShort" -> return (value as UShort).toUShort()
         }
         else -> {}
     }
@@ -521,6 +597,210 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
             }
             INT -> when (name) {
                 "get" -> return (left as String).get(right as Int)
+            }
+            else -> {}
+        }
+        UINT -> when (rightType) {
+            UINT -> when (name) {
+                "and" -> return (left as UInt).and(right as UInt)
+                "compareTo" -> return (left as UInt).compareTo(right as UInt)
+                "div" -> return (left as UInt).div(right as UInt)
+                "floorDiv" -> return (left as UInt).floorDiv(right as UInt)
+                "minus" -> return (left as UInt).minus(right as UInt)
+                "mod" -> return (left as UInt).mod(right as UInt)
+                "or" -> return (left as UInt).or(right as UInt)
+                "plus" -> return (left as UInt).plus(right as UInt)
+                "rem" -> return (left as UInt).rem(right as UInt)
+                "times" -> return (left as UInt).times(right as UInt)
+                "xor" -> return (left as UInt).xor(right as UInt)
+            }
+            UBYTE -> when (name) {
+                "compareTo" -> return (left as UInt).compareTo(right as UByte)
+                "div" -> return (left as UInt).div(right as UByte)
+                "floorDiv" -> return (left as UInt).floorDiv(right as UByte)
+                "minus" -> return (left as UInt).minus(right as UByte)
+                "mod" -> return (left as UInt).mod(right as UByte)
+                "plus" -> return (left as UInt).plus(right as UByte)
+                "rem" -> return (left as UInt).rem(right as UByte)
+                "times" -> return (left as UInt).times(right as UByte)
+            }
+            USHORT -> when (name) {
+                "compareTo" -> return (left as UInt).compareTo(right as UShort)
+                "div" -> return (left as UInt).div(right as UShort)
+                "floorDiv" -> return (left as UInt).floorDiv(right as UShort)
+                "minus" -> return (left as UInt).minus(right as UShort)
+                "mod" -> return (left as UInt).mod(right as UShort)
+                "plus" -> return (left as UInt).plus(right as UShort)
+                "rem" -> return (left as UInt).rem(right as UShort)
+                "times" -> return (left as UInt).times(right as UShort)
+            }
+            ULONG -> when (name) {
+                "compareTo" -> return (left as UInt).compareTo(right as ULong)
+                "div" -> return (left as UInt).div(right as ULong)
+                "floorDiv" -> return (left as UInt).floorDiv(right as ULong)
+                "minus" -> return (left as UInt).minus(right as ULong)
+                "mod" -> return (left as UInt).mod(right as ULong)
+                "plus" -> return (left as UInt).plus(right as ULong)
+                "rem" -> return (left as UInt).rem(right as ULong)
+                "times" -> return (left as UInt).times(right as ULong)
+            }
+            ANY -> when (name) {
+                "equals" -> return (left as UInt).equals(right)
+            }
+            INT -> when (name) {
+                "shl" -> return (left as UInt).shl(right as Int)
+                "shr" -> return (left as UInt).shr(right as Int)
+            }
+            else -> {}
+        }
+        ULONG -> when (rightType) {
+            ULONG -> when (name) {
+                "and" -> return (left as ULong).and(right as ULong)
+                "compareTo" -> return (left as ULong).compareTo(right as ULong)
+                "div" -> return (left as ULong).div(right as ULong)
+                "floorDiv" -> return (left as ULong).floorDiv(right as ULong)
+                "minus" -> return (left as ULong).minus(right as ULong)
+                "mod" -> return (left as ULong).mod(right as ULong)
+                "or" -> return (left as ULong).or(right as ULong)
+                "plus" -> return (left as ULong).plus(right as ULong)
+                "rem" -> return (left as ULong).rem(right as ULong)
+                "times" -> return (left as ULong).times(right as ULong)
+                "xor" -> return (left as ULong).xor(right as ULong)
+            }
+            UBYTE -> when (name) {
+                "compareTo" -> return (left as ULong).compareTo(right as UByte)
+                "div" -> return (left as ULong).div(right as UByte)
+                "floorDiv" -> return (left as ULong).floorDiv(right as UByte)
+                "minus" -> return (left as ULong).minus(right as UByte)
+                "mod" -> return (left as ULong).mod(right as UByte)
+                "plus" -> return (left as ULong).plus(right as UByte)
+                "rem" -> return (left as ULong).rem(right as UByte)
+                "times" -> return (left as ULong).times(right as UByte)
+            }
+            USHORT -> when (name) {
+                "compareTo" -> return (left as ULong).compareTo(right as UShort)
+                "div" -> return (left as ULong).div(right as UShort)
+                "floorDiv" -> return (left as ULong).floorDiv(right as UShort)
+                "minus" -> return (left as ULong).minus(right as UShort)
+                "mod" -> return (left as ULong).mod(right as UShort)
+                "plus" -> return (left as ULong).plus(right as UShort)
+                "rem" -> return (left as ULong).rem(right as UShort)
+                "times" -> return (left as ULong).times(right as UShort)
+            }
+            UINT -> when (name) {
+                "compareTo" -> return (left as ULong).compareTo(right as UInt)
+                "div" -> return (left as ULong).div(right as UInt)
+                "floorDiv" -> return (left as ULong).floorDiv(right as UInt)
+                "minus" -> return (left as ULong).minus(right as UInt)
+                "mod" -> return (left as ULong).mod(right as UInt)
+                "plus" -> return (left as ULong).plus(right as UInt)
+                "rem" -> return (left as ULong).rem(right as UInt)
+                "times" -> return (left as ULong).times(right as UInt)
+            }
+            ANY -> when (name) {
+                "equals" -> return (left as ULong).equals(right)
+            }
+            INT -> when (name) {
+                "shl" -> return (left as ULong).shl(right as Int)
+                "shr" -> return (left as ULong).shr(right as Int)
+            }
+            else -> {}
+        }
+        UBYTE -> when (rightType) {
+            UBYTE -> when (name) {
+                "and" -> return (left as UByte).and(right as UByte)
+                "compareTo" -> return (left as UByte).compareTo(right as UByte)
+                "div" -> return (left as UByte).div(right as UByte)
+                "floorDiv" -> return (left as UByte).floorDiv(right as UByte)
+                "minus" -> return (left as UByte).minus(right as UByte)
+                "mod" -> return (left as UByte).mod(right as UByte)
+                "or" -> return (left as UByte).or(right as UByte)
+                "plus" -> return (left as UByte).plus(right as UByte)
+                "rem" -> return (left as UByte).rem(right as UByte)
+                "times" -> return (left as UByte).times(right as UByte)
+                "xor" -> return (left as UByte).xor(right as UByte)
+            }
+            USHORT -> when (name) {
+                "compareTo" -> return (left as UByte).compareTo(right as UShort)
+                "div" -> return (left as UByte).div(right as UShort)
+                "floorDiv" -> return (left as UByte).floorDiv(right as UShort)
+                "minus" -> return (left as UByte).minus(right as UShort)
+                "mod" -> return (left as UByte).mod(right as UShort)
+                "plus" -> return (left as UByte).plus(right as UShort)
+                "rem" -> return (left as UByte).rem(right as UShort)
+                "times" -> return (left as UByte).times(right as UShort)
+            }
+            UINT -> when (name) {
+                "compareTo" -> return (left as UByte).compareTo(right as UInt)
+                "div" -> return (left as UByte).div(right as UInt)
+                "floorDiv" -> return (left as UByte).floorDiv(right as UInt)
+                "minus" -> return (left as UByte).minus(right as UInt)
+                "mod" -> return (left as UByte).mod(right as UInt)
+                "plus" -> return (left as UByte).plus(right as UInt)
+                "rem" -> return (left as UByte).rem(right as UInt)
+                "times" -> return (left as UByte).times(right as UInt)
+            }
+            ULONG -> when (name) {
+                "compareTo" -> return (left as UByte).compareTo(right as ULong)
+                "div" -> return (left as UByte).div(right as ULong)
+                "floorDiv" -> return (left as UByte).floorDiv(right as ULong)
+                "minus" -> return (left as UByte).minus(right as ULong)
+                "mod" -> return (left as UByte).mod(right as ULong)
+                "plus" -> return (left as UByte).plus(right as ULong)
+                "rem" -> return (left as UByte).rem(right as ULong)
+                "times" -> return (left as UByte).times(right as ULong)
+            }
+            ANY -> when (name) {
+                "equals" -> return (left as UByte).equals(right)
+            }
+            else -> {}
+        }
+        USHORT -> when (rightType) {
+            USHORT -> when (name) {
+                "and" -> return (left as UShort).and(right as UShort)
+                "compareTo" -> return (left as UShort).compareTo(right as UShort)
+                "div" -> return (left as UShort).div(right as UShort)
+                "floorDiv" -> return (left as UShort).floorDiv(right as UShort)
+                "minus" -> return (left as UShort).minus(right as UShort)
+                "mod" -> return (left as UShort).mod(right as UShort)
+                "or" -> return (left as UShort).or(right as UShort)
+                "plus" -> return (left as UShort).plus(right as UShort)
+                "rem" -> return (left as UShort).rem(right as UShort)
+                "times" -> return (left as UShort).times(right as UShort)
+                "xor" -> return (left as UShort).xor(right as UShort)
+            }
+            UBYTE -> when (name) {
+                "compareTo" -> return (left as UShort).compareTo(right as UByte)
+                "div" -> return (left as UShort).div(right as UByte)
+                "floorDiv" -> return (left as UShort).floorDiv(right as UByte)
+                "minus" -> return (left as UShort).minus(right as UByte)
+                "mod" -> return (left as UShort).mod(right as UByte)
+                "plus" -> return (left as UShort).plus(right as UByte)
+                "rem" -> return (left as UShort).rem(right as UByte)
+                "times" -> return (left as UShort).times(right as UByte)
+            }
+            UINT -> when (name) {
+                "compareTo" -> return (left as UShort).compareTo(right as UInt)
+                "div" -> return (left as UShort).div(right as UInt)
+                "floorDiv" -> return (left as UShort).floorDiv(right as UInt)
+                "minus" -> return (left as UShort).minus(right as UInt)
+                "mod" -> return (left as UShort).mod(right as UInt)
+                "plus" -> return (left as UShort).plus(right as UInt)
+                "rem" -> return (left as UShort).rem(right as UInt)
+                "times" -> return (left as UShort).times(right as UInt)
+            }
+            ULONG -> when (name) {
+                "compareTo" -> return (left as UShort).compareTo(right as ULong)
+                "div" -> return (left as UShort).div(right as ULong)
+                "floorDiv" -> return (left as UShort).floorDiv(right as ULong)
+                "minus" -> return (left as UShort).minus(right as ULong)
+                "mod" -> return (left as UShort).mod(right as ULong)
+                "plus" -> return (left as UShort).plus(right as ULong)
+                "rem" -> return (left as UShort).rem(right as ULong)
+                "times" -> return (left as UShort).times(right as ULong)
+            }
+            ANY -> when (name) {
+                "equals" -> return (left as UShort).equals(right)
             }
             else -> {}
         }
