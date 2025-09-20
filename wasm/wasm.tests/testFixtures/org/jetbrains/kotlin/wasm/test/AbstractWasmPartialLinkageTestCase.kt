@@ -197,7 +197,7 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
     }
 
     companion object {
-        private const val BIN_DIR_NAME = "_bins_wasm"
+        internal const val BIN_DIR_NAME = "_bins_wasm"
     }
 }
 

@@ -162,6 +162,12 @@ fun Test.setupGradlePropertiesForwarding() {
     }
 }
 
+fun Test.setupWasmKlibEvolutionTests() {
+    val wasmJsStdlibPath = "libraries/stdlib/build/classes/kotlin/wasmJs/main" // TODO: try using `kotlinPathsForCompiler.wasmJsStdLibKlibPath` here
+    systemProperty("kotlin.wasm.full.stdlib.path", wasmJsStdlibPath)
+    inputs.dir(rootDir.resolve(wasmJsStdlibPath))
+}
+
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 val typescriptTestsDir = testDataDir.resolve("typescript-export")
 val wasmTestDir = typescriptTestsDir.resolve("wasm")
@@ -299,6 +305,7 @@ projectTests {
             setupWasmStdlib("js")
             setupWasmStdlib("wasi")
             setupGradlePropertiesForwarding()
+            setupWasmKlibEvolutionTests()
             systemProperty("kotlin.wasm.test.root.out.dir", "${layout.buildDirectory.get().asFile}/")
             body()
         }
