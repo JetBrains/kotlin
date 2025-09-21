@@ -799,11 +799,16 @@ private fun ConstraintSystemError.toDiagnostic(
         is NotEnoughInformationForTypeParameter<*> -> if (candidate.symbol is FirConstructorSymbol &&
             candidate.callInfo.callSite is FirDelegatedConstructorCall
         ) {
-            FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
-                source,
-                ((this.typeVariable as ConeTypeVariable).typeConstructor.originalTypeParameter as ConeTypeParameterLookupTag).typeParameterSymbol,
-                session
-            )
+            val lookupTag = ((this.typeVariable as ConeTypeVariable).typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)
+            // If we can't retrieve a proper type parameter lookup tag (e.g., it's null),
+            // skip reporting this specialized diagnostic to avoid NPE. Other paths will report appropriate diagnostics.
+            lookupTag?.let {
+                FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
+                    source,
+                    it.typeParameterSymbol,
+                    session
+                )
+            }
         } else null
 
         is InferredEmptyIntersection -> {
