@@ -15,8 +15,8 @@ private fun assertCustomJsError(e: JsException, caller: String): Boolean {
     return e.message == "Custom error message" &&
             jsGetName(e.thrownValue) == "MyCustomError" &&
             stacktrace.contains("throwCustomNamedJsError") &&
-            stacktrace.contains("<main>.$caller") &&
-            stacktrace.contains("<main>.box")
+            (stacktrace.contains("<main>.$caller") || stacktrace.contains("$caller@<main>")) &&
+            (stacktrace.contains("<main>.box") || stacktrace.contains("box@<main>"))
 }
 
 inline fun <reified T : Throwable> wasThrown(fn: () -> Any?): Boolean {
