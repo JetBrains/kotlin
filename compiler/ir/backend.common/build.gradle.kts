@@ -11,7 +11,6 @@ dependencies {
     api(project(":compiler:ir.interpreter"))
     api(project(":compiler:ir.serialization.common"))
     api(project(":compiler:ir.validation"))
-    implementation(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
 
     testImplementation(kotlinTest("junit"))
