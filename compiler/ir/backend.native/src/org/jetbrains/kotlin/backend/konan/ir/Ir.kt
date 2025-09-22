@@ -244,6 +244,10 @@ private object CallableIds {
     val contentHashCode = "contentHashCode".collectionsId
     val copyInto = "copyInto".collectionsId
     val copyOf = "copyOf".collectionsId
+
+    // Internal interop functions
+    private val String.internalInteropCallableId get() = CallableId(RuntimeNames.kotlinxCInteropInternalPackageName, Name.identifier(this))
+    val interopCallMarker = "interopCallMarker".internalInteropCallableId
 }
 
 private fun CompilerConfiguration.getMainCallableId() : CallableId? {
@@ -367,7 +371,7 @@ class KonanSymbols(
     val typedIntrinsic = ClassIds.typedIntrinsic.classSymbol()
     val cToKotlinBridge = ClassIds.cToKotlinBridge.classSymbol()
     val kotlinToCBridge = ClassIds.kotlinToCBridge.classSymbol()
-    val interopCallMarker = symbolFinder.topLevelFunction(RuntimeNames.kotlinxCInteropInternalPackageName, "interopCallMarker")
+    val interopCallMarker = CallableIds.interopCallMarker.functionSymbol()
 
     val objCMethodImp = ClassIds.objCMethodImp.classSymbol()
 

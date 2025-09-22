@@ -18,19 +18,13 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
-import org.jetbrains.kotlin.ir.util.irError
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 
 /**
  * Symbols for builtins that are available without any context and are not specific to any backend
@@ -258,25 +252,5 @@ abstract class SymbolFinder {
 
     fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
         return findClass(ClassId(packageFqName, name))
-    }
-
-    inline fun topLevelFunction(
-        callableId: CallableId,
-        condition: (IrFunctionSymbol) -> Boolean = { true },
-    ): IrSimpleFunctionSymbol {
-        val elements = findFunctions(callableId).filter(condition)
-        require(elements.isNotEmpty()) { "No function ${callableId} found corresponding given condition" }
-        require(elements.size == 1) {
-            "Several functions ${callableId} found corresponding given condition:\n${elements.joinToString("\n")}"
-        }
-        return elements.single()
-    }
-
-    inline fun topLevelFunction(
-        packageName: FqName,
-        name: String,
-        condition: (IrFunctionSymbol) -> Boolean = { true },
-    ): IrSimpleFunctionSymbol {
-        return topLevelFunction(CallableId(packageName, Name.identifier(name)), condition)
     }
 }
