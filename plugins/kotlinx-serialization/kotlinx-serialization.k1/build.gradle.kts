@@ -13,6 +13,7 @@ dependencies {
     compileOnly(project(":compiler:config.jvm"))
     compileOnly(project(":compiler:ir.backend.common")) // needed for CompilationException
     compileOnly(project(":core:deserialization.common.jvm")) // needed for CompilationException
+    compileOnly(project(":compiler:backend-common")) // needed for CodegenUtil
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
 
