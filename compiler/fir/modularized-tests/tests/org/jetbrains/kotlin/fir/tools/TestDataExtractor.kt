@@ -232,13 +232,17 @@ object TestDataExtractor {
                 }
                 else -> {
                     val f = File(arg)
-                    if (f.isFile && f.exists() && f.extension == "xml") {
-                        println("Single model file: $arg")
-                        models += f
-                    } else if (f.isDirectory) {
-                        println("Model directory: $arg")
-                        f.walkTopDown().filter { it.extension == "xml" }.forEach { models += it }
-                    } else error("Unknown or unrecognised model file or directory: $arg")
+                    when {
+                        f.isDirectory -> {
+                            println("Model directory: $arg")
+                            f.walkTopDown().filter { it.extension == "xml" }.forEach { models += it }
+                        }
+                        f.isFile && f.exists() && f.extension == "xml" -> {
+                            println("Single model file: $arg")
+                            models += f
+                        }
+                        else -> error("Unknown or unrecognised model file or directory: $arg")
+                    }
                 }
             }
         }
