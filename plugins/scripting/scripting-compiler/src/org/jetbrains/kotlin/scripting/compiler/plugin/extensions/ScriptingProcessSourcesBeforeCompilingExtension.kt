@@ -123,14 +123,6 @@ class KotlinScriptExpressionExplainTransformer(
         }
         return super.visitScriptNew(declaration)
     }
-
-    override fun visitExpression(expression: IrExpression): IrExpression {
-        val symbol = currentScope!!.scope.scopeOwnerSymbol
-        val builder = DeclarationIrBuilder(context, symbol, expression.startOffset, expression.endOffset)
-        return builder.irExplain(expression, sourceFile) { variables ->
-            variables.last()
-        }
-    }
 }
 
 class ScriptingIrExplainGenerationExtension(val project: MockProject) : IrGenerationExtension {

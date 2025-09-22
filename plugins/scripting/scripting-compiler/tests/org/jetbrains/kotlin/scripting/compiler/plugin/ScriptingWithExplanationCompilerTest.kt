@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -55,10 +56,10 @@ private class KotlinExplainEvaluationConfiguration : ScriptEvaluationConfigurati
     }
 )
 
-private class KotlinExplainCompilationConfiguration() : ScriptCompilationConfiguration(
+private class KotlinExplainCompilationConfiguration : ScriptCompilationConfiguration(
     {
         displayName("Kotlin Scratch")
-        explainField("\$\$explain")
+        explainField($$$"$$explain")
     })
 
 private class KotlinExplainHostConfiguration : ScriptingHostConfiguration(
@@ -66,11 +67,15 @@ private class KotlinExplainHostConfiguration : ScriptingHostConfiguration(
         getScriptingClass(JvmGetScriptingClass())
     })
 
+private val additionalClasspath = System.getProperty("kotlin.test.script.classpath")
+private val powerAssertJar = File("dist/kotlinc/lib/power-assert-compiler-plugin.jar").absolutePath
 
 class ScriptingWithExplanationCompilerTest {
     companion object {
         const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
-        const val TEST_SCRIPT_TO_EXPLAIN = "$TEST_DATA_DIR/compiler/explain/simpleExplain.kts"
+        const val TEST_SCRIPT_TO_EXPLAIN_1 = "$TEST_DATA_DIR/compiler/explain/simpleExplain.kts"
+        const val TEST_SCRIPT_TO_EXPLAIN_2 = "$TEST_DATA_DIR/compiler/explain/explainWithNonLastExpr.kts"
+        const val TEST_SCRIPT_TO_EXPLAIN_3 = "$TEST_DATA_DIR/compiler/explain/ifStatement.kts"
     }
 
     init {
@@ -79,27 +84,9 @@ class ScriptingWithExplanationCompilerTest {
 
     @Test
     fun scriptShouldFlushExplainInformationAfterEvaluation() {
-        val additionalClasspath = System.getProperty("kotlin.test.script.classpath")
-        val powerAssertJar = File("dist/kotlinc/lib/power-assert-compiler-plugin.jar").absolutePath
         withTempDir { _ ->
             val (out, err, ret) = captureOutErrRet {
-                CLICompiler.doMainNoExit(
-                    K2JVMCompiler(),
-                    arrayOf(
-                        "-P",
-                        "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
-                        "-P",
-                        "plugin:kotlin.scripting:disable-standard-script=true",
-                        "-P",
-                        "plugin:kotlin.scripting:enable-script-explanation=true",
-                        "-Xplugin=$powerAssertJar",
-                        "-P",
-                        "plugin:kotlin.scripting:script-templates=${KotlinExplainScript::class.java.name}",
-                        K2JVMCompilerArguments::classpath.cliArgument, additionalClasspath,
-                        "-script",
-                        TEST_SCRIPT_TO_EXPLAIN,
-                    )
-                )
+                runScriptWithExplain(TEST_SCRIPT_TO_EXPLAIN_1)
             }
             val lines = pathToExplainingFile.readLines()
             assertEquals(
@@ -114,9 +101,59 @@ class ScriptingWithExplanationCompilerTest {
                     "(82, 83) = 1",
                     "(78, 83) = 4",
                     "(74, 83) = kotlin.Unit",
-                    "\$\$result(85, 87) = 42",
+                    $$$"$$result(85, 87) = 42",
+                ), lines
+            )
+        }
+    }
+
+    @Test
+    fun testScriptExplainShouldCoverNonLastExpressions() {
+        withTempDir { _ ->
+            val (out, err, ret) = captureOutErrRet {
+                runScriptWithExplain(TEST_SCRIPT_TO_EXPLAIN_2)
+            }
+            val lines = pathToExplainingFile.readLines()
+            assertEquals(
+                listOf(
+                    "a(8, 9) = 7",
+                    "(11, 16) = 42",
+                    $$$"$$result(18, 24) = 6"
+                ), lines
+            )
+        }
+    }
+
+    @Test
+    fun testScriptExplainShouldCoverIfExpression() {
+        withTempDir { _ ->
+            val (out, err, ret) = captureOutErrRet {
+                runScriptWithExplain(TEST_SCRIPT_TO_EXPLAIN_3)
+            }
+            val lines = pathToExplainingFile.readLines()
+            assertEquals(
+                listOf(
+                    $$$"$$result(69, 74) = false"
                 ), lines
             )
         }
     }
 }
+
+private fun runScriptWithExplain(scriptPath: String): ExitCode = CLICompiler.doMainNoExit(
+    K2JVMCompiler(),
+    arrayOf(
+        "-P",
+        "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+        "-P",
+        "plugin:kotlin.scripting:disable-standard-script=true",
+        "-P",
+        "plugin:kotlin.scripting:enable-script-explanation=true",
+        "-Xplugin=$powerAssertJar",
+        "-P",
+        "plugin:kotlin.scripting:script-templates=${KotlinExplainScript::class.java.name}",
+        K2JVMCompilerArguments::classpath.cliArgument, additionalClasspath,
+        "-script",
+        scriptPath,
+    )
+)
