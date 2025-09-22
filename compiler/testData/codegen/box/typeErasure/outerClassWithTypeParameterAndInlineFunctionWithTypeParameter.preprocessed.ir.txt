@@ -1,0 +1,18 @@
+Module: main
+// CallableId=/foo
+FUN name:foo visibility:public modality:FINAL returnType:kotlin.String [inline]
+  TYPE_PARAMETER name:F index:0 variance: superTypes:[kotlin.Any?] reified:false
+  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.A<kotlin.Any?>
+  VALUE_PARAMETER kind:Regular name:b index:1 type:kotlin.Any?
+  VALUE_PARAMETER kind:Regular name:c index:2 type:kotlin.Any?
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun foo <F> (<this>: <root>.A<kotlin.Any?>, b: kotlin.Any?, c: kotlin.Any?): kotlin.String [inline] declared in <root>'
+      CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+        ARG <this>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+          ARG <this>: CALL 'public final fun toString (<this>: kotlin.Any?): kotlin.String declared in kotlin' type=kotlin.String origin=null
+            ARG <this>: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.Any? origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.A<kotlin.Any?> declared in <root>.foo' type=<root>.A<kotlin.Any?> origin=IMPLICIT_ARGUMENT
+          ARG other: CALL 'public final fun toString (<this>: kotlin.Any?): kotlin.String declared in kotlin' type=kotlin.String origin=null
+            ARG <this>: GET_VAR 'b: kotlin.Any? declared in <root>.foo' type=kotlin.Any? origin=null
+        ARG other: CALL 'public final fun toString (<this>: kotlin.Any?): kotlin.String declared in kotlin' type=kotlin.String origin=null
+          ARG <this>: GET_VAR 'c: kotlin.Any? declared in <root>.foo' type=kotlin.Any? origin=null
