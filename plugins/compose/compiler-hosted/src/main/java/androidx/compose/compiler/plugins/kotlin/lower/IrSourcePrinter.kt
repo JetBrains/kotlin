@@ -261,7 +261,8 @@ class IrSourcePrinterVisitor(
                         when (fn.name.asString()) {
                             "equals",
                             "EQEQ",
-                            "EQEQEQ" -> {
+                            "EQEQEQ",
+                                -> {
                                 val prevIsInNotCall = isInNotCall
                                 isInNotCall = true
                                 arg.print()
@@ -302,7 +303,8 @@ class IrSourcePrinterVisitor(
                 // no names for
                 "invoke", "get", "set" -> ""
                 "iterator", "hasNext", "next", "getValue", "setValue",
-                "noWhenBranchMatchedException" -> name
+                "noWhenBranchMatchedException",
+                    -> name
                 "CHECK_NOT_NULL" -> "!!"
                 "THROW_ISE" -> "throw IllegalStateException()"
                 else -> {
@@ -314,7 +316,8 @@ class IrSourcePrinterVisitor(
             val printBinary = when (name) {
                 "equals",
                 "EQEQ",
-                "EQEQEQ" -> {
+                "EQEQEQ",
+                    -> {
                     expression.argumentForKind(IrParameterKind.DispatchReceiver)?.type?.isInt() == true ||
                             expression.argumentForKind(IrParameterKind.ExtensionReceiver)?.type?.isInt() == true ||
                             function.namedParameters.let {
@@ -374,7 +377,8 @@ class IrSourcePrinterVisitor(
                 }
                 // builtin static operators
                 "greater", "less", "lessOrEqual", "greaterOrEqual", "EQEQ", "EQEQEQ",
-                "ieee754equals" -> {
+                "ieee754equals",
+                    -> {
                     expression.arguments[0]?.print()
                     print(" $opSymbol ")
                     expression.arguments[1]?.print()
@@ -1259,7 +1263,7 @@ class IrSourcePrinterVisitor(
     }
 
     override fun visitCatch(aCatch: IrCatch) {
-        print("<<CATCH>>")
+        aCatch.result.print()
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression) {
@@ -1374,7 +1378,9 @@ class IrSourcePrinterVisitor(
         println()
         if (aTry.catches.isNotEmpty()) {
             aTry.catches.forEach {
-                println("} catch() {")
+                print("} catch (")
+                print("${it.catchParameter.normalizedName}: ${printType(it.catchParameter.type)}")
+                println(") {")
                 indented {
                     it.print()
                 }
