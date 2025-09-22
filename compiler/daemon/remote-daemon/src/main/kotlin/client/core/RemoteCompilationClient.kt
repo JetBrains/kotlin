@@ -11,7 +11,6 @@ import com.example.KotlinxRpcRemoteCompilationServiceClient
 import common.CLIENT_TMP_DIR
 import common.CompilerUtils
 import common.FixedSizeChunkingStrategy
-import common.RemoteCompilationService
 import common.calculateClasspathSnapshot
 import common.computeSha256
 import common.createTarArchiveStream
@@ -23,6 +22,8 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.rpc.krpc.serialization.cbor.cbor
+import kotlinx.rpc.krpc.serialization.json.json
+import kotlinx.rpc.krpc.serialization.protobuf.protobuf
 import kotlinx.serialization.ExperimentalSerializationApi
 import model.Artifact
 import model.ArtifactType
@@ -76,19 +77,18 @@ class RemoteCompilationClient(
         ): RemoteCompilationClient {
             val clientImpl = when (implType) {
                 RemoteCompilationServiceImplType.KOTLINX_RPC -> {
-                    // TODO logging
                     @OptIn(ExperimentalSerializationApi::class)
                     KotlinxRpcRemoteCompilationServiceClient(
                         host,
                         port,
-                        serialization = { cbor() }
+                        serialization = { protobuf() }
                     )
                 }
                 RemoteCompilationServiceImplType.GRPC -> {
                     GrpcRemoteCompilationServiceClient(host, port, logging)
                 }
             }
-            return RemoteCompilationClient(clientImpl)
+            return RemoteCompilationClient(clientImpl, logging)
         }
     }
 

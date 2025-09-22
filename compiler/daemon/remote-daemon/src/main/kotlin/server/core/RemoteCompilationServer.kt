@@ -7,6 +7,7 @@ package main.kotlin.server
 import benchmark.RemoteCompilationServiceImplType
 import common.getServerEnv
 import kotlinx.rpc.krpc.serialization.cbor.cbor
+import kotlinx.rpc.krpc.serialization.protobuf.protobuf
 import kotlinx.serialization.ExperimentalSerializationApi
 import server.core.Server
 import server.grpc.GrpcRemoteCompilationServerImpl
@@ -27,7 +28,7 @@ class RemoteCompilationServer(
                     KotlinxRpcRemoteCompilationServerImpl(
                         port,
                         logging = logging,
-                        serialization = { cbor() }
+                        serialization = { protobuf() }
                     )
                 }
             }
@@ -52,13 +53,14 @@ class RemoteCompilationServer(
 fun main() {
     try {
         val port = 8000
-        val implEnv = System.getenv("IMPL_TYPE") ?: "GRPC"
+        val implEnv = System.getenv("IMPL_TYPE") ?: "WEB_SOCKETS"
+        val loggingEnv = (System.getenv("LOGGING") ?: "false").toBoolean()
         val implType = when (implEnv) {
             "GRPC" -> RemoteCompilationServiceImplType.GRPC
             "WEB_SOCKETS" -> RemoteCompilationServiceImplType.KOTLINX_RPC
             else -> RemoteCompilationServiceImplType.GRPC
         }
-        val server = RemoteCompilationServer.getServer(implType, port, logging = false)
+        val server = RemoteCompilationServer.getServer(implType, port, loggingEnv)
         server.start(block = true)
     } catch (e: Exception) {
         println("error occurred: ${e.message}")

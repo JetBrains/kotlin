@@ -104,6 +104,8 @@ customEnv:
     value: "K8S_DEBUG"
   - name: IMPL_TYPE
     value: "WEB_SOCKETS"
+  - name: LOGGING
+    value: "false"
 
 # Typically you need `internal-nginx` className for application working inside JetBrains networks
 # and just `nginx` className for external applications(but make sure you enable auth and don't exposing any sensitive data)
