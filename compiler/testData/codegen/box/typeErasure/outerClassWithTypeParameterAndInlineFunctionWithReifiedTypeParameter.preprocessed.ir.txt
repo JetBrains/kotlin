@@ -1,0 +1,38 @@
+Module: main
+// CallableId=/typeOfX
+FUN name:typeOfX visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+  TYPE_PARAMETER name:F index:0 variance: superTypes:[kotlin.Any?] reified:true
+  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.A<kotlin.Any?>
+  VALUE_PARAMETER kind:Regular name:b index:1 type:F of <root>.typeOfX
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun typeOfX <F> (<this>: <root>.A<kotlin.Any?>, b: F of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>'
+      CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+        TYPE_ARG T: F of <root>.typeOfX
+// CallableId=/typeOfPair
+FUN name:typeOfPair visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+  TYPE_PARAMETER name:F index:0 variance: superTypes:[kotlin.Any?] reified:true
+  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.A<kotlin.Any?>
+  VALUE_PARAMETER kind:Regular name:b index:1 type:F of <root>.typeOfPair
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun typeOfPair <F> (<this>: <root>.A<kotlin.Any?>, b: F of <root>.typeOfPair): kotlin.reflect.KType [inline] declared in <root>'
+      BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
+        VAR IR_TEMPORARY_VARIABLE name:tmp0 type:<root>.A<kotlin.Any?> [val]
+          GET_VAR '<this>: <root>.A<kotlin.Any?> declared in <root>.typeOfPair' type=<root>.A<kotlin.Any?> origin=IMPLICIT_ARGUMENT
+        VAR IR_TEMPORARY_VARIABLE name:tmp2 type:<root>.Pair<kotlin.Any?, F of <root>.typeOfPair> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: A of <root>.Pair, y: B of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<kotlin.Any?, F of <root>.typeOfPair> origin=null
+            TYPE_ARG (of class) A: kotlin.Any?
+            TYPE_ARG (of class) B: F of <root>.typeOfPair
+            ARG x: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.Any? origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.A<kotlin.Any?> declared in <root>.typeOfPair' type=<root>.A<kotlin.Any?> origin=IMPLICIT_ARGUMENT
+            ARG y: GET_VAR 'b: F of <root>.typeOfPair declared in <root>.typeOfPair' type=F of <root>.typeOfPair origin=null
+        RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
+          INLINED_BLOCK type=kotlin.reflect.KType origin=null
+            inlinedFunctionSymbol: public final fun typeOfX <F> (b: F of <root>.A.typeOfX): kotlin.reflect.KType [inline] declared in <root>.A
+            inlinedFunctionFileEntry: FILE_ENTRY path:outerClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter.kt
+            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:<root>.A<kotlin.Any?> [val]
+              GET_VAR 'val tmp0: <root>.A<kotlin.Any?> [val] declared in <root>.typeOfPair' type=<root>.A<kotlin.Any?> origin=null
+            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:b type:<root>.Pair<kotlin.Any?, F of <root>.typeOfPair> [val]
+              GET_VAR 'val tmp2: <root>.Pair<kotlin.Any?, F of <root>.typeOfPair> [val] declared in <root>.typeOfPair' type=<root>.Pair<kotlin.Any?, F of <root>.typeOfPair> origin=null
+            RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+                TYPE_ARG T: <root>.Pair<T of <root>.A, F of <root>.typeOfPair>
