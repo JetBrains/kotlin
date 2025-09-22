@@ -82,7 +82,7 @@ object TestDataExtractor {
         if (hasErrors) {
             error("[TestDataExtractor] Some files are missing, cannot update the test data zip file")
         }
-
+        println("Candidate files [${candidates.size}]:\n  ${candidates.joinToString("\n  ") { "$it (exists: ${it.exists()})" }} ")
         return candidates
     }
 
@@ -232,17 +232,22 @@ object TestDataExtractor {
                 }
                 else -> {
                     val f = File(arg)
-                    if (f.isFile && f.exists() && f.extension == "xml") models += f
-                    else if (f.isDirectory) f.walkTopDown().filter { it.extension == "xml" }.forEach { models += it }
-                    else error("Unknown or unrecognised model file or directory: $arg")
+                    if (f.isFile && f.exists() && f.extension == "xml") {
+                        println("Single model file: $arg")
+                        models += f
+                    } else if (f.isDirectory) {
+                        println("Model directory: $arg")
+                        f.walkTopDown().filter { it.extension == "xml" }.forEach { models += it }
+                    } else error("Unknown or unrecognised model file or directory: $arg")
                 }
             }
         }
 
         if (destination == null) error("Destination (-d) argument is not specified")
         if (rootDir == null) error("Root directory (-r) argument is not specified")
+        println("Root directory: ${rootDir.absolutePath}")
 
-        println("Destination: ${destination.absolutePath} (already exists: ${destination.exists()})")
+        println("Destination: ${destination.normalize().absolutePath} (already exists: ${destination.exists()})")
         if (additionalPaths.isEmpty() && models.isEmpty()) error("No models and no additional files specified, nothing to do")
         return ExtractorArgs(destination, rootDir.absoluteFile, additionalPaths, models)
     }
