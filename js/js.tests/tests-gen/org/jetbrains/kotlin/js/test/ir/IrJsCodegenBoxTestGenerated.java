@@ -61181,6 +61181,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("funWithTypeParameterContextParameterAndExtensionReceiverInsideClass.kt")
+    public void testFunWithTypeParameterContextParameterAndExtensionReceiverInsideClass() {
+      runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterContextParameterAndExtensionReceiverInsideClass.kt");
+    }
+
+    @Test
     @TestMetadata("funWithTypeParameterInsideClass.kt")
     public void testFunWithTypeParameterInsideClass() {
       runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideClass.kt");
