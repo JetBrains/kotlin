@@ -1,0 +1,80 @@
+Module: main
+// CallableId=test/typeOfX
+FUN name:typeOfX visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+  TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:true
+  VALUE_PARAMETER kind:Regular name:x index:0 type:T1 of test.typeOfX
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun typeOfX <T1> (x: T1 of test.typeOfX): kotlin.reflect.KType [inline] declared in test'
+      CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+        TYPE_ARG T: T1 of test.typeOfX
+// CallableId=test/typeOfPair
+FUN name:typeOfPair visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+  TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:true
+  TYPE_PARAMETER name:T3 index:1 variance: superTypes:[kotlin.Any?] reified:false
+  VALUE_PARAMETER kind:Regular name:x index:0 type:T2 of test.typeOfPair
+  VALUE_PARAMETER kind:Regular name:y index:1 type:kotlin.Any?
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun typeOfPair <T2, T3> (x: T2 of test.typeOfPair, y: kotlin.Any?): kotlin.reflect.KType [inline] declared in test'
+      BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
+        VAR IR_TEMPORARY_VARIABLE name:tmp0 type:test.Pair<T2 of test.typeOfPair, kotlin.Any?> [val]
+          BLOCK type=test.Pair<T2 of test.typeOfPair, kotlin.Any?> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> (x: A of test.Pair, y: B of test.Pair) [primary] declared in test.Pair' type=test.Pair<T2 of test.typeOfPair, kotlin.Any?> origin=null
+              TYPE_ARG (of class) A: T2 of test.typeOfPair
+              TYPE_ARG (of class) B: kotlin.Any?
+              ARG x: GET_VAR 'x: T2 of test.typeOfPair declared in test.typeOfPair' type=T2 of test.typeOfPair origin=null
+              ARG y: GET_VAR 'y: kotlin.Any? declared in test.typeOfPair' type=kotlin.Any? origin=null
+        RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
+          INLINED_BLOCK type=kotlin.reflect.KType origin=null
+            inlinedFunctionSymbol: public final fun typeOfX <T1> (x: T1 of test.typeOfX): kotlin.reflect.KType [inline] declared in test
+            inlinedFunctionFileEntry: FILE_ENTRY path:inNestedInline.kt
+            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:test.Pair<T2 of test.typeOfPair, kotlin.Any?> [val]
+              GET_VAR 'val tmp0: test.Pair<T2 of test.typeOfPair, kotlin.Any?> [val] declared in test.typeOfPair' type=test.Pair<T2 of test.typeOfPair, kotlin.Any?> origin=null
+            RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+                TYPE_ARG T: test.Pair<T2 of test.typeOfPair, T3 of test.typeOfPair>
+// CallableId=test/typeOfPair2
+FUN name:typeOfPair2 visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+  TYPE_PARAMETER name:T4 index:0 variance: superTypes:[kotlin.Any?] reified:false
+  TYPE_PARAMETER name:T5 index:1 variance: superTypes:[kotlin.Any?] reified:false
+  VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Any?
+  VALUE_PARAMETER kind:Regular name:y index:1 type:kotlin.Any?
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun typeOfPair2 <T4, T5> (x: kotlin.Any?, y: kotlin.Any?): kotlin.reflect.KType [inline] declared in test'
+      BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
+        VAR IR_TEMPORARY_VARIABLE name:tmp0 type:test.Pair<kotlin.Any?, kotlin.Any?> [val]
+          BLOCK type=test.Pair<kotlin.Any?, kotlin.Any?> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> (x: A of test.Pair, y: B of test.Pair) [primary] declared in test.Pair' type=test.Pair<kotlin.Any?, kotlin.Any?> origin=null
+              TYPE_ARG (of class) A: kotlin.Any?
+              TYPE_ARG (of class) B: kotlin.Any?
+              ARG x: GET_VAR 'x: kotlin.Any? declared in test.typeOfPair2' type=kotlin.Any? origin=null
+              ARG y: GET_VAR 'y: kotlin.Any? declared in test.typeOfPair2' type=kotlin.Any? origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp2 type:kotlin.Any? [val]
+          BLOCK type=kotlin.Any? origin=null
+            TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+              GET_VAR 'y: kotlin.Any? declared in test.typeOfPair2' type=kotlin.Any? origin=null
+        RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
+          INLINED_BLOCK type=kotlin.reflect.KType origin=null
+            inlinedFunctionSymbol: public final fun typeOfPair <T2, T3> (x: T2 of test.typeOfPair, y: T3 of test.typeOfPair): kotlin.reflect.KType [inline] declared in test
+            inlinedFunctionFileEntry: FILE_ENTRY path:inNestedInline.kt
+            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:test.Pair<kotlin.Any?, kotlin.Any?> [val]
+              GET_VAR 'val tmp0: test.Pair<kotlin.Any?, kotlin.Any?> [val] declared in test.typeOfPair2' type=test.Pair<kotlin.Any?, kotlin.Any?> origin=null
+            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:y type:kotlin.Any? [val]
+              GET_VAR 'val tmp2: kotlin.Any? [val] declared in test.typeOfPair2' type=kotlin.Any? origin=null
+            RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
+                VAR IR_TEMPORARY_VARIABLE name:tmp0 type:test.Pair<test.Pair<kotlin.Any?, kotlin.Any?>, kotlin.Any?> [val]
+                  BLOCK type=test.Pair<test.Pair<kotlin.Any?, kotlin.Any?>, kotlin.Any?> origin=null
+                    CONSTRUCTOR_CALL 'public constructor <init> (x: A of test.Pair, y: B of test.Pair) [primary] declared in test.Pair' type=test.Pair<test.Pair<kotlin.Any?, kotlin.Any?>, kotlin.Any?> origin=null
+                      TYPE_ARG (of class) A: test.Pair<kotlin.Any?, kotlin.Any?>
+                      TYPE_ARG (of class) B: kotlin.Any?
+                      ARG x: GET_VAR 'val x: test.Pair<kotlin.Any?, kotlin.Any?> [val] declared in test.typeOfPair2' type=test.Pair<kotlin.Any?, kotlin.Any?> origin=null
+                      ARG y: GET_VAR 'val y: kotlin.Any? [val] declared in test.typeOfPair2' type=kotlin.Any? origin=null
+                RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
+                  INLINED_BLOCK type=kotlin.reflect.KType origin=null
+                    inlinedFunctionSymbol: public final fun typeOfX <T1> (x: T1 of test.typeOfX): kotlin.reflect.KType [inline] declared in test
+                    inlinedFunctionFileEntry: FILE_ENTRY path:inNestedInline.kt
+                    VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:test.Pair<test.Pair<kotlin.Any?, kotlin.Any?>, kotlin.Any?> [val]
+                      GET_VAR 'val tmp0: test.Pair<test.Pair<kotlin.Any?, kotlin.Any?>, kotlin.Any?> [val] declared in test.typeOfPair2' type=test.Pair<test.Pair<kotlin.Any?, kotlin.Any?>, kotlin.Any?> origin=null
+                    RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                      CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+                        TYPE_ARG T: test.Pair<test.Pair<T4 of test.typeOfPair2, T5 of test.typeOfPair2>, T3 of test.typeOfPair>
