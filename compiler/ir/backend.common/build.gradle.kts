@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend"))
     implementation(project(":compiler:backend-common"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.interpreter"))
