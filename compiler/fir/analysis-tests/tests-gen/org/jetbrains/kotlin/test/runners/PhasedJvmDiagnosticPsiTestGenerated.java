@@ -60370,6 +60370,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("npeInDelegatingConstructorCall.kt")
+      public void testNpeInDelegatingConstructorCall() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/npeInDelegatingConstructorCall.kt");
+      }
+
+      @Test
       @TestMetadata("overriddenFunctionReturningUnit.kt")
       public void testOverriddenFunctionReturningUnit() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/overriddenFunctionReturningUnit.kt");
