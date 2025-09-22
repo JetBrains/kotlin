@@ -61632,6 +61632,202 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/typeErasure")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeErasure {
+      @Test
+      public void testAllFilesPresentInTypeErasure() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeErasure"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameter.kt")
+      public void testFunWithReifiedTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterAndContextParameter.kt")
+      public void testFunWithReifiedTypeParameterAndContextParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterAndContextParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterAndExtensionReceiver.kt")
+      public void testFunWithReifiedTypeParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterContextParameterAndExtensionReceiver.kt")
+      public void testFunWithReifiedTypeParameterContextParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterContextParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass.kt")
+      public void testFunWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt")
+      public void testFunWithReifiedTypeParameterInlinesFunWithThreeTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInlinesFunWithTwoTypeParameters.kt")
+      public void testFunWithReifiedTypeParameterInlinesFunWithTwoTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInlinesFunWithTwoTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInsideClass.kt")
+      public void testFunWithReifiedTypeParameterInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInsideInnerClass.kt")
+      public void testFunWithReifiedTypeParameterInsideInnerClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInsideInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInsideNestedClass.kt")
+      public void testFunWithReifiedTypeParameterInsideNestedClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInsideNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterWithTwoUpperBounds.kt")
+      public void testFunWithReifiedTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterWithUpperBound.kt")
+      public void testFunWithReifiedTypeParameterWithUpperBound() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterWithUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameter.kt")
+      public void testFunWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterAndContextParameter.kt")
+      public void testFunWithTypeParameterAndContextParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterAndContextParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterAndExtensionReceiver.kt")
+      public void testFunWithTypeParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterContextParameterAndExtensionReceiver.kt")
+      public void testFunWithTypeParameterContextParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterContextParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterInsideClass.kt")
+      public void testFunWithTypeParameterInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterInsideInnerClass.kt")
+      public void testFunWithTypeParameterInsideInnerClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterInsideNestedClass.kt")
+      public void testFunWithTypeParameterInsideNestedClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterWithTwoUpperBounds.kt")
+      public void testFunWithTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterWithUpperBound.kt")
+      public void testFunWithTypeParameterWithUpperBound() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterWithUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters.kt")
+      public void testOuterClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter.kt")
+      public void testOuterClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndInlineFunctionWithTypeParameter.kt")
+      public void testOuterClassWithTypeParameterAndInlineFunctionWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndInlineFunctionWithTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndInnerClassWithTypeParameter.kt")
+      public void testOuterClassWithTypeParameterAndInnerClassWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndInnerClassWithTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterWithTwoUpperBounds.kt")
+      public void testOuterClassWithTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds.kt")
+      public void testOuterClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("twoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters.kt")
+      public void testTwoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/twoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("twoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters.kt")
+      public void testTwoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/twoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("twoFunWithTypeParametersInlineFunWithReifiedTypeParameters.kt")
+      public void testTwoFunWithTypeParametersInlineFunWithReifiedTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/twoFunWithTypeParametersInlineFunWithReifiedTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("twoFunWithTypeParametersWithUpperBoundsInlineFunWithReifiedTypeParameters.kt")
+      public void testTwoFunWithTypeParametersWithUpperBoundsInlineFunWithReifiedTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/twoFunWithTypeParametersWithUpperBoundsInlineFunWithReifiedTypeParameters.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/typeInfo")
     @TestDataPath("$PROJECT_ROOT")
     public class TypeInfo {

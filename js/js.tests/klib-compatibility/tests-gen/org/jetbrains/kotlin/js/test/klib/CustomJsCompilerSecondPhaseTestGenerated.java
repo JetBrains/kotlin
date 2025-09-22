@@ -62492,6 +62492,12 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
       }
 
       @Test
+      @TestMetadata("funWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass.kt")
+      public void testFunWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass.kt");
+      }
+
+      @Test
       @TestMetadata("funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt")
       public void testFunWithReifiedTypeParameterInlinesFunWithThreeTypeParameters() {
         runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt");
