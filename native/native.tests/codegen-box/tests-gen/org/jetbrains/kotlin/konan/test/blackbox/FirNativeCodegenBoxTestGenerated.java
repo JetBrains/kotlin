@@ -63984,6 +63984,24 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       public void testFunWithTypeParameterWithUpperBound() {
         runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterWithUpperBound.kt");
       }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters.kt")
+      public void testOuterClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndInnerClassWithTypeParameter.kt")
+      public void testOuterClassWithTypeParameterAndInnerClassWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndInnerClassWithTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterWithTwoUpperBounds.kt")
+      public void testOuterClassWithTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterWithTwoUpperBounds.kt");
+      }
     }
 
     @Nested
