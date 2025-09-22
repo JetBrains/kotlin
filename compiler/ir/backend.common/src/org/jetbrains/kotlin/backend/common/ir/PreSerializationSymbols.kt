@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 
 abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
-    protected val symbolFinder = irBuiltIns.symbolFinder
+    private val symbolFinder = irBuiltIns.symbolFinder
 
     // TODO KT-79436 unify backend specific functions and remove the old ones
     protected fun findSharedVariableBoxClass(primitiveType: PrimitiveType?): PreSerializationKlibSymbols.SharedVariableBoxClassInfo {
@@ -41,7 +41,8 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
     }
 
     // Native
-    protected fun ClassId.classSymbol(): IrClassSymbol = symbolFinder.findClass(this) ?: error("Class $this is not found")
+    protected fun ClassId.classSymbolOrNull(): IrClassSymbol? = symbolFinder.findClass(this)
+    protected fun ClassId.classSymbol(): IrClassSymbol = classSymbolOrNull() ?: error("Class $this is not found")
     protected fun CallableId.propertySymbols(): List<IrPropertySymbol> = symbolFinder.findProperties(this).toList()
     protected fun CallableId.functionSymbols(): List<IrSimpleFunctionSymbol> = symbolFinder.findFunctions(this).toList()
     protected fun ClassId.primaryConstructorSymbol(): Lazy<IrConstructorSymbol> {

@@ -24,60 +24,60 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.getValue
 
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(irBuiltIns) {
-    private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
-        symbolFinder.findClass(name, *packageNameSegments)
-            ?: error("Class '$name' not found in package '${packageNameSegments.joinToString(".")}'")
+    val iterator: IrClassSymbol = irBuiltIns.iteratorClass
 
-    val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
+    val charSequence: IrClassSymbol = irBuiltIns.charSequenceClass
+    val string: IrClassSymbol = irBuiltIns.stringClass
 
-    val charSequence = getClass(Name.identifier("CharSequence"), "kotlin")
-    val string = getClass(Name.identifier("String"), "kotlin")
-
-    val primitiveIteratorsByType = PrimitiveType.entries.associate { type ->
-        val iteratorClass = getClass(Name.identifier(type.typeName.asString() + "Iterator"), "kotlin", "collections")
-        type to iteratorClass
-    }
-
-    private fun progression(name: String) = getClass(Name.identifier(name), "kotlin", "ranges")
-    private fun progressionOrNull(name: String) = symbolFinder.findClass(Name.identifier(name), "kotlin", "ranges")
+    val primitiveIteratorsByType = mapOf(
+        PrimitiveType.BOOLEAN to irBuiltIns.booleanIterator,
+        PrimitiveType.CHAR to irBuiltIns.charIterator,
+        PrimitiveType.BYTE to irBuiltIns.byteIterator,
+        PrimitiveType.SHORT to irBuiltIns.shortIterator,
+        PrimitiveType.INT to irBuiltIns.intIterator,
+        PrimitiveType.FLOAT to irBuiltIns.floatIterator,
+        PrimitiveType.LONG to irBuiltIns.longIterator,
+        PrimitiveType.DOUBLE to irBuiltIns.doubleIterator,
+    )
 
     // The "...OrNull" variants are used for the classes below because the minimal stdlib used in tests do not include those classes.
     // It was not feasible to add them to the JS reduced runtime because all its transitive dependencies also need to be
     // added, which would include a lot of the full stdlib.
-    val uByte = symbolFinder.findClass(Name.identifier("UByte"), "kotlin")
-    val uShort = symbolFinder.findClass(Name.identifier("UShort"), "kotlin")
-    val uInt = symbolFinder.findClass(Name.identifier("UInt"), "kotlin")
-    val uLong = symbolFinder.findClass(Name.identifier("ULong"), "kotlin")
-    val uIntProgression = progressionOrNull("UIntProgression")
-    val uLongProgression = progressionOrNull("ULongProgression")
-    val uIntRange = progressionOrNull("UIntRange")
-    val uLongRange = progressionOrNull("ULongRange")
-    val sequence = symbolFinder.findClass(Name.identifier("Sequence"), "kotlin", "sequences")
+    val uByte: IrClassSymbol? = irBuiltIns.ubyteClass
+    val uShort: IrClassSymbol? = irBuiltIns.ushortClass
+    val uInt: IrClassSymbol? = irBuiltIns.uintClass
+    val uLong: IrClassSymbol? = irBuiltIns.ulongClass
+    val uIntProgression: IrClassSymbol? = ClassIds.UIntProgression.classSymbolOrNull()
+    val uLongProgression: IrClassSymbol? = ClassIds.ULongProgression.classSymbolOrNull()
+    val uIntRange: IrClassSymbol? = ClassIds.UIntRange.classSymbolOrNull()
+    val uLongRange: IrClassSymbol? = ClassIds.ULongRange.classSymbolOrNull()
+    val sequence: IrClassSymbol? = ClassIds.Sequence.classSymbolOrNull()
 
-    val charProgression = progression("CharProgression")
-    val intProgression = progression("IntProgression")
-    val longProgression = progression("LongProgression")
+    val charProgression: IrClassSymbol = ClassIds.CharProgression.classSymbol()
+    val intProgression: IrClassSymbol = ClassIds.IntProgression.classSymbol()
+    val longProgression: IrClassSymbol = ClassIds.LongProgression.classSymbol()
     val progressionClasses = listOfNotNull(charProgression, intProgression, longProgression, uIntProgression, uLongProgression)
 
-    val charRange = progression("CharRange")
-    val intRange = progression("IntRange")
-    val longRange = progression("LongRange")
+    val charRange: IrClassSymbol = ClassIds.CharRange.classSymbol()
+    val intRange: IrClassSymbol = ClassIds.IntRange.classSymbol()
+    val longRange: IrClassSymbol = ClassIds.LongRange.classSymbol()
     val rangeClasses = listOfNotNull(charRange, intRange, longRange, uIntRange, uLongRange)
 
-    val closedRange = progression("ClosedRange")
+    val closedRange: IrClassSymbol = ClassIds.ClosedRange.classSymbol()
 
     abstract val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
-    val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("toUInt")).functionSymbolAssociatedBy {
+    val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableIds.toUIntExtension.functionSymbolAssociatedBy {
         it.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
             ?: error("Expected extension receiver for ${it.render()}")
     }
 
-    val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("toULong")).functionSymbolAssociatedBy {
+    val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableIds.toULongExtension.functionSymbolAssociatedBy {
         it.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
             ?: error("Expected extension receiver for ${it.render()}")
     }
@@ -243,4 +243,28 @@ abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols
         private val String.collectionsCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
         private val contentEquals = "contentEquals".collectionsCallableId
     }
+}
+
+private object ClassIds {
+    private val String.rangesClassId get() = ClassId(StandardNames.RANGES_PACKAGE_FQ_NAME, Name.identifier(this))
+    val CharProgression = "CharProgression".rangesClassId
+    val IntProgression = "IntProgression".rangesClassId
+    val LongProgression = "LongProgression".rangesClassId
+    val CharRange = "CharRange".rangesClassId
+    val IntRange = "IntRange".rangesClassId
+    val LongRange = "LongRange".rangesClassId
+    val ClosedRange = "ClosedRange".rangesClassId
+    val UIntProgression = "UIntProgression".rangesClassId
+    val ULongProgression = "ULongProgression".rangesClassId
+    val UIntRange = "UIntRange".rangesClassId
+    val ULongRange = "ULongRange".rangesClassId
+
+    private val String.sequencesClassId get() = ClassId(StandardClassIds.BASE_SEQUENCES_PACKAGE, Name.identifier(this))
+    val Sequence = "Sequence".sequencesClassId
+}
+
+private object CallableIds {
+    private val String.baseCallableId get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
+    val toUIntExtension = "toUInt".baseCallableId
+    val toULongExtension = "toULong".baseCallableId
 }
