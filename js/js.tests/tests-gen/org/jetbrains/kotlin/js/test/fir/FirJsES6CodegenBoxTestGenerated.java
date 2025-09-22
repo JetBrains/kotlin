@@ -62270,7 +62270,19 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     public void testFunWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass() {
       runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass.kt");
     }
-    
+
+    @Test
+    @TestMetadata("funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt")
+    public void testFunWithReifiedTypeParameterInlinesFunWithThreeTypeParameters() {
+      runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("funWithReifiedTypeParameterInlinesFunWithTwoTypeParameters.kt")
+    public void testFunWithReifiedTypeParameterInlinesFunWithTwoTypeParameters() {
+      runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInlinesFunWithTwoTypeParameters.kt");
+    }
+
     @Test
     @TestMetadata("funWithReifiedTypeParameterInsideClass.kt")
     public void testFunWithReifiedTypeParameterInsideClass() {
@@ -62377,6 +62389,30 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     @TestMetadata("outerClassWithTypeParameterWithTwoUpperBounds.kt")
     public void testOuterClassWithTypeParameterWithTwoUpperBounds() {
       runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterWithTwoUpperBounds.kt");
+    }
+
+    @Test
+    @TestMetadata("twoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters.kt")
+    public void testTwoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters() {
+      runTest("compiler/testData/codegen/box/typeErasure/twoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("twoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters.kt")
+    public void testTwoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters() {
+      runTest("compiler/testData/codegen/box/typeErasure/twoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("twoFunWithTypeParametersInlineFunWithReifiedTypeParameters.kt")
+    public void testTwoFunWithTypeParametersInlineFunWithReifiedTypeParameters() {
+      runTest("compiler/testData/codegen/box/typeErasure/twoFunWithTypeParametersInlineFunWithReifiedTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("twoFunWithTypeParametersWithUpperBoundsInlineFunWithReifiedTypeParameters.kt")
+    public void testTwoFunWithTypeParametersWithUpperBoundsInlineFunWithReifiedTypeParameters() {
+      runTest("compiler/testData/codegen/box/typeErasure/twoFunWithTypeParametersWithUpperBoundsInlineFunWithReifiedTypeParameters.kt");
     }
   }
 

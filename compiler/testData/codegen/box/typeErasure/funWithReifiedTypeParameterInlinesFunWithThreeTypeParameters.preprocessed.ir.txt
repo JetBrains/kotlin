@@ -1,0 +1,65 @@
+Module: main
+// CallableId=/typeOfX
+FUN name:typeOfX visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+  TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?] reified:true
+  VALUE_PARAMETER kind:Regular name:x index:0 type:T1 of <root>.typeOfX
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun typeOfX <T1> (x: T1 of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>'
+      CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+        TYPE_ARG T: T1 of <root>.typeOfX
+// CallableId=/typeOfTriple1
+FUN name:typeOfTriple1 visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+  TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:true
+  TYPE_PARAMETER name:T3 index:1 variance: superTypes:[kotlin.Any?] reified:true
+  TYPE_PARAMETER name:T4 index:2 variance: superTypes:[kotlin.Any?] reified:false
+  VALUE_PARAMETER kind:Regular name:x index:0 type:T2 of <root>.typeOfTriple1
+  VALUE_PARAMETER kind:Regular name:y index:1 type:T3 of <root>.typeOfTriple1
+  VALUE_PARAMETER kind:Regular name:z index:2 type:kotlin.Any?
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun typeOfTriple1 <T2, T3, T4> (x: T2 of <root>.typeOfTriple1, y: T3 of <root>.typeOfTriple1, z: kotlin.Any?): kotlin.reflect.KType [inline] declared in <root>'
+      BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
+        VAR IR_TEMPORARY_VARIABLE name:tmp0 type:<root>.Triple<T2 of <root>.typeOfTriple1, T3 of <root>.typeOfTriple1, kotlin.Any?> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: A of <root>.Triple, y: B of <root>.Triple, z: C of <root>.Triple) [primary] declared in <root>.Triple' type=<root>.Triple<T2 of <root>.typeOfTriple1, T3 of <root>.typeOfTriple1, kotlin.Any?> origin=null
+            TYPE_ARG (of class) A: T2 of <root>.typeOfTriple1
+            TYPE_ARG (of class) B: T3 of <root>.typeOfTriple1
+            TYPE_ARG (of class) C: kotlin.Any?
+            ARG x: GET_VAR 'x: T2 of <root>.typeOfTriple1 declared in <root>.typeOfTriple1' type=T2 of <root>.typeOfTriple1 origin=null
+            ARG y: GET_VAR 'y: T3 of <root>.typeOfTriple1 declared in <root>.typeOfTriple1' type=T3 of <root>.typeOfTriple1 origin=null
+            ARG z: GET_VAR 'z: kotlin.Any? declared in <root>.typeOfTriple1' type=kotlin.Any? origin=null
+        RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
+          INLINED_BLOCK type=kotlin.reflect.KType origin=null
+            inlinedFunctionSymbol: public final fun typeOfX <T1> (x: T1 of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>
+            inlinedFunctionFileEntry: FILE_ENTRY path:funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt
+            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:<root>.Triple<T2 of <root>.typeOfTriple1, T3 of <root>.typeOfTriple1, kotlin.Any?> [val]
+              GET_VAR 'val tmp0: <root>.Triple<T2 of <root>.typeOfTriple1, T3 of <root>.typeOfTriple1, kotlin.Any?> [val] declared in <root>.typeOfTriple1' type=<root>.Triple<T2 of <root>.typeOfTriple1, T3 of <root>.typeOfTriple1, kotlin.Any?> origin=null
+            RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+                TYPE_ARG T: <root>.Triple<T2 of <root>.typeOfTriple1, T3 of <root>.typeOfTriple1, T4 of <root>.typeOfTriple1>
+// CallableId=/typeOfTriple2
+FUN name:typeOfTriple2 visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+  TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?] reified:true
+  TYPE_PARAMETER name:T3 index:1 variance: superTypes:[kotlin.Any?] reified:false
+  TYPE_PARAMETER name:T4 index:2 variance: superTypes:[kotlin.Any?] reified:true
+  VALUE_PARAMETER kind:Regular name:x index:0 type:T2 of <root>.typeOfTriple2
+  VALUE_PARAMETER kind:Regular name:y index:1 type:kotlin.Any?
+  VALUE_PARAMETER kind:Regular name:z index:2 type:T4 of <root>.typeOfTriple2
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun typeOfTriple2 <T2, T3, T4> (x: T2 of <root>.typeOfTriple2, y: kotlin.Any?, z: T4 of <root>.typeOfTriple2): kotlin.reflect.KType [inline] declared in <root>'
+      BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
+        VAR IR_TEMPORARY_VARIABLE name:tmp0 type:<root>.Triple<T2 of <root>.typeOfTriple2, kotlin.Any?, T4 of <root>.typeOfTriple2> [val]
+          CONSTRUCTOR_CALL 'public constructor <init> (x: A of <root>.Triple, y: B of <root>.Triple, z: C of <root>.Triple) [primary] declared in <root>.Triple' type=<root>.Triple<T2 of <root>.typeOfTriple2, kotlin.Any?, T4 of <root>.typeOfTriple2> origin=null
+            TYPE_ARG (of class) A: T2 of <root>.typeOfTriple2
+            TYPE_ARG (of class) B: kotlin.Any?
+            TYPE_ARG (of class) C: T4 of <root>.typeOfTriple2
+            ARG x: GET_VAR 'x: T2 of <root>.typeOfTriple2 declared in <root>.typeOfTriple2' type=T2 of <root>.typeOfTriple2 origin=null
+            ARG y: GET_VAR 'y: kotlin.Any? declared in <root>.typeOfTriple2' type=kotlin.Any? origin=null
+            ARG z: GET_VAR 'z: T4 of <root>.typeOfTriple2 declared in <root>.typeOfTriple2' type=T4 of <root>.typeOfTriple2 origin=null
+        RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
+          INLINED_BLOCK type=kotlin.reflect.KType origin=null
+            inlinedFunctionSymbol: public final fun typeOfX <T1> (x: T1 of <root>.typeOfX): kotlin.reflect.KType [inline] declared in <root>
+            inlinedFunctionFileEntry: FILE_ENTRY path:funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt
+            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:<root>.Triple<T2 of <root>.typeOfTriple2, kotlin.Any?, T4 of <root>.typeOfTriple2> [val]
+              GET_VAR 'val tmp0: <root>.Triple<T2 of <root>.typeOfTriple2, kotlin.Any?, T4 of <root>.typeOfTriple2> [val] declared in <root>.typeOfTriple2' type=<root>.Triple<T2 of <root>.typeOfTriple2, kotlin.Any?, T4 of <root>.typeOfTriple2> origin=null
+            RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+                TYPE_ARG T: <root>.Triple<T2 of <root>.typeOfTriple2, T3 of <root>.typeOfTriple2, T4 of <root>.typeOfTriple2>
