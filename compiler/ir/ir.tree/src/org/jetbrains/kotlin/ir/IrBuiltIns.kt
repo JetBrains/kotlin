@@ -237,20 +237,7 @@ annotation class InternalSymbolFinderAPI
 
 @InternalSymbolFinderAPI
 abstract class SymbolFinder {
-    // TODO: drop variants from segments, add helper from whole fqn
     abstract fun findFunctions(callableId: CallableId): Iterable<IrSimpleFunctionSymbol>
     abstract fun findProperties(callableId: CallableId): Iterable<IrPropertySymbol>
     abstract fun findClass(classId: ClassId): IrClassSymbol?
-
-    fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol> {
-        return findFunctions(CallableId(FqName.fromSegments(listOf(*packageNameSegments)), name))
-    }
-
-    fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol? {
-        return findClass(ClassId(FqName.fromSegments(listOf(*packageNameSegments)), name))
-    }
-
-    fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
-        return findClass(ClassId(packageFqName, name))
-    }
 }
