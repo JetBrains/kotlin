@@ -17,16 +17,14 @@ FUN name:typeOfPair visibility:public modality:FINAL returnType:kotlin.reflect.K
     RETURN type=kotlin.Nothing from='public final fun typeOfPair <F> (<this>: <root>.A<kotlin.CharSequence>, b: F of <root>.typeOfPair): kotlin.reflect.KType [inline] declared in <root>'
       BLOCK type=kotlin.reflect.KType origin=INLINE_ARGS_CONTAINER
         VAR IR_TEMPORARY_VARIABLE name:tmp0 type:<root>.A<kotlin.CharSequence> [val]
-          BLOCK type=<root>.A<kotlin.CharSequence> origin=null
-            GET_VAR '<this>: <root>.A<kotlin.CharSequence> declared in <root>.typeOfPair' type=<root>.A<kotlin.CharSequence> origin=IMPLICIT_ARGUMENT
+          GET_VAR '<this>: <root>.A<kotlin.CharSequence> declared in <root>.typeOfPair' type=<root>.A<kotlin.CharSequence> origin=IMPLICIT_ARGUMENT
         VAR IR_TEMPORARY_VARIABLE name:tmp2 type:<root>.Pair<kotlin.CharSequence, F of <root>.typeOfPair> [val]
-          BLOCK type=<root>.Pair<kotlin.CharSequence, F of <root>.typeOfPair> origin=null
-            CONSTRUCTOR_CALL 'public constructor <init> (x: A of <root>.Pair, y: B of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<kotlin.CharSequence, F of <root>.typeOfPair> origin=null
-              TYPE_ARG (of class) A: kotlin.CharSequence
-              TYPE_ARG (of class) B: F of <root>.typeOfPair
-              ARG x: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.CharSequence origin=GET_PROPERTY
-                ARG <this>: GET_VAR '<this>: <root>.A<kotlin.CharSequence> declared in <root>.typeOfPair' type=<root>.A<kotlin.CharSequence> origin=IMPLICIT_ARGUMENT
-              ARG y: GET_VAR 'b: F of <root>.typeOfPair declared in <root>.typeOfPair' type=F of <root>.typeOfPair origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (x: A of <root>.Pair, y: B of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<kotlin.CharSequence, F of <root>.typeOfPair> origin=null
+            TYPE_ARG (of class) A: kotlin.CharSequence
+            TYPE_ARG (of class) B: F of <root>.typeOfPair
+            ARG x: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.CharSequence origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.A<kotlin.CharSequence> declared in <root>.typeOfPair' type=<root>.A<kotlin.CharSequence> origin=IMPLICIT_ARGUMENT
+            ARG y: GET_VAR 'b: F of <root>.typeOfPair declared in <root>.typeOfPair' type=F of <root>.typeOfPair origin=null
         RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
           INLINED_BLOCK type=kotlin.reflect.KType origin=null
             inlinedFunctionSymbol: public final fun typeOfX <F> (b: F of <root>.A.typeOfX): kotlin.reflect.KType [inline] declared in <root>.A
