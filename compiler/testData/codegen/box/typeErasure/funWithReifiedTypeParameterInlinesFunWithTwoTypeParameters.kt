@@ -1,5 +1,6 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
+// WITH_REFLECT
 // ISSUE: KT-70052
 import kotlin.reflect.typeOf
 
@@ -14,7 +15,9 @@ fun box() : String {
         val pair = typeOfPair("1", arg).toString()
         if (pair != "Pair<kotlin.String, T3>" &&
             // JS_IR, JS_IR_ES6
-            pair != "Pair<String, T3>")
+            pair != "Pair<String, T3>" &&
+            // JVM_IR
+            pair != "Pair<java.lang.String, T3> (Kotlin reflection is not available)")
             return "FAIL: $pair"
     }
     return "OK"

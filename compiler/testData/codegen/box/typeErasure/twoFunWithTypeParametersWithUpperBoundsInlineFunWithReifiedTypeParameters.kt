@@ -13,7 +13,10 @@ fun box(): String {
         after != "kotlin.collections.List<kotlin.collections.List<U>>" &&
         // JS_IR, JS_IR_ES6
         before != "List<List<U>>" &&
-        after != "List<List<U>>")
+        after != "List<List<U>>" &&
+        // JVM_IR
+        before != "java.util.List<java.util.List<U>> (Kotlin reflection is not available)" &&
+        after != "java.util.List<java.util.List<U>> (Kotlin reflection is not available)")
         return "FAIL: $before, $after"
     return "OK"
 }
