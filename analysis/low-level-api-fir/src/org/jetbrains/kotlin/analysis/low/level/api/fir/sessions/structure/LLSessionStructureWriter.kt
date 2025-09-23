@@ -54,8 +54,7 @@ object LLSessionStructureWriter {
             appendLine("""<?xml version="1.0" encoding="UTF-8"?>""")
             appendLine("""<graphml xmlns="http://graphml.graphdrawing.org/xmlns"""")
             appendLine("""         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"""")
-            appendLine("""         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns"""")
-            appendLine("""         http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">""")
+            appendLine("""         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">""")
 
             // Define attributes for nodes
             appendLine("""  <key id="label" for="node" attr.name="label" attr.type="string"/>""")
