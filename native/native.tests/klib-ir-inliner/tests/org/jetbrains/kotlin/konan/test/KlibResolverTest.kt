@@ -77,6 +77,18 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    @DisplayName("Test one-stage compilation (KT-80298)")
+    fun testOneStageCompilation() {
+        val srcDir = File("native/native.tests/testData/oneStageCompilation")
+        val testCase = generateTestCaseWithSingleFile(
+            sourceFile = srcDir.resolve("main.kt"),
+            testKind = TestKind.REGULAR,
+            extras = TestCase.NoTestRunnerExtras("main"),
+        )
+        compileToExecutableInOneStage(testCase).assertSuccess()
+    }
+
+    @Test
     @DisplayName("Test -Xabi-version CLI argument (KT-74467)")
     fun testABIVersionCLIFlag() {
         val module = createModules(Module("a"))
