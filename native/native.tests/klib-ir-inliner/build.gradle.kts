@@ -36,6 +36,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":native:native.tests").isolated, "testData/klib")
     testData(project(":native:native.tests").isolated, "testData/irProvidersMismatch")
+    testData(project(":native:native.tests").isolated, "testData/oneStageCompilation")
 
     nativeTestTask(
         "test",
