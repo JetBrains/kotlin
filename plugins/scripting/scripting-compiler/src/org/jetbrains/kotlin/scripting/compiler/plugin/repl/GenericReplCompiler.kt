@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
@@ -32,13 +33,13 @@ import kotlin.concurrent.write
 
 open class GenericReplCompiler(
     disposable: Disposable,
-    scriptDefinition: KotlinScriptDefinition,
+    scriptDefinition: ScriptDefinition,
     private val compilerConfiguration: CompilerConfiguration,
     messageCollector: MessageCollector
 ) : ReplCompiler {
 
     constructor(
-        scriptDefinition: KotlinScriptDefinition,
+        scriptDefinition: ScriptDefinition,
         compilerConfiguration: CompilerConfiguration,
         messageCollector: MessageCollector
     ) : this(
