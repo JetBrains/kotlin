@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
@@ -18,7 +18,7 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.isDirectory
 
 class Project(
-    val kotlinToolchain: KotlinToolchain,
+    val kotlinToolchain: KotlinToolchains,
     val defaultStrategyConfig: ExecutionPolicy,
     val projectDirectory: Path,
 ) : AutoCloseable {
@@ -58,7 +58,7 @@ class Project(
     }
 }
 
-fun BaseCompilationTest.project(kotlinToolchain: KotlinToolchain, strategyConfig: ExecutionPolicy, action: Project.() -> Unit) {
+fun BaseCompilationTest.project(kotlinToolchain: KotlinToolchains, strategyConfig: ExecutionPolicy, action: Project.() -> Unit) {
     Project(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }

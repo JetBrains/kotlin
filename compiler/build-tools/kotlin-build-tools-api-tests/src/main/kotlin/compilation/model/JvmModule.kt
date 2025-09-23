@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.MODULE_NAME
@@ -31,8 +31,8 @@ import kotlin.io.path.toPath
 import kotlin.io.path.walk
 
 class JvmModule(
-    private val kotlinToolchain: KotlinToolchain,
-    val buildSession: KotlinToolchain.BuildSession,
+    private val kotlinToolchain: KotlinToolchains,
+    val buildSession: KotlinToolchains.BuildSession,
     project: Project,
     moduleName: String,
     moduleDirectory: Path,

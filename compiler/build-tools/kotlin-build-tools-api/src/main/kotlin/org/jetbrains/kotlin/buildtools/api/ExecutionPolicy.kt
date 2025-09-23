@@ -13,7 +13,7 @@ import kotlin.time.Duration
  *
  * This interface is not intended to be implemented by the API consumers.
  *
- * You can obtain an instance of this type from [KotlinToolchain.createInProcessExecutionPolicy] or [KotlinToolchain.createInProcessExecutionPolicy]
+ * You can obtain an instance of this type from [KotlinToolchains.createInProcessExecutionPolicy] or [KotlinToolchains.createInProcessExecutionPolicy]
  *
  * @since 2.3.0
  */

@@ -14,10 +14,11 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.GRANULARITY
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.compilerRunner.btapi.SharedApiClassesClassLoaderProvider
@@ -96,13 +97,13 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
 
         val classLoader = parameters.classLoadersCachingService.get()
             .getClassLoader(parameters.classpath.toList(), SharedApiClassesClassLoaderProvider)
-        val kotlinToolchain = KotlinToolchain.loadImplementation(classLoader)
-        val snapshotOperation = kotlinToolchain.jvm.createClasspathSnapshottingOperation(classpathEntryInputDirOrJar.toPath())
+        val kotlinToolchains = KotlinToolchains.loadImplementation(classLoader)
+        val snapshotOperation = kotlinToolchains.jvm.createClasspathSnapshottingOperation(classpathEntryInputDirOrJar.toPath())
             .apply {
                 this[GRANULARITY] = granularity
                 this[PARSE_INLINED_LOCAL_CLASSES] = parseInlinedLocalClasses
             }
-        val snapshot = kotlinToolchain.createBuildSession().use {
+        val snapshot = kotlinToolchains.createBuildSession().use {
             it.executeOperation(snapshotOperation)
         }
         snapshot.saveSnapshot(snapshotOutputFile)
