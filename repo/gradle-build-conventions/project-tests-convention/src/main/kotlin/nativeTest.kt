@@ -150,7 +150,7 @@ private open class NativeArgsProvider @Inject constructor(
     protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild
 
     @get:Internal
-    protected val customNativeHome: Provider<String?> = providers.testProperty(KOTLIN_NATIVE_HOME)
+    protected val customNativeHome: Provider<String> = providers.testProperty(KOTLIN_NATIVE_HOME)
 
     @get:Classpath
     val customCompilerDependencies: ConfigurableFileCollection = objects.fileCollection()
