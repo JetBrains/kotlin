@@ -39,11 +39,17 @@ fun loadAnnotationsFromMetadataGuarded(
     languageFeature: LanguageFeature,
     useSiteTarget: AnnotationUseSiteTarget? = null,
 ): List<FirAnnotation>? =
-    runIf(session.languageVersionSettings.supportsFeature(languageFeature) && annotations.isNotEmpty()) {
-        loadAnnotationsFromMetadata(session, flags, annotations, nameResolver, useSiteTarget)
+    runIf(session.languageVersionSettings.supportsFeature(languageFeature)) {
+        loadAnnotationsFromMetadataIfNotEmpty(session, flags, annotations, nameResolver, useSiteTarget)
     }
 
-fun loadNonEmptyAnnotationsFromMetadata(
+/**
+ * Loads annotations from metadata only when the given metadata [annotations] list is not empty.
+ * Otherwise, returns null instead of an empty list to signal that the fallback annotation loading function should be called.
+ *
+ * Implemented for handling migration to the new approach of storing annotations both for klib and JVM backends.
+ */
+fun loadAnnotationsFromMetadataIfNotEmpty(
     session: FirSession,
     flags: Int?,
     annotations: List<ProtoBuf.Annotation>,
