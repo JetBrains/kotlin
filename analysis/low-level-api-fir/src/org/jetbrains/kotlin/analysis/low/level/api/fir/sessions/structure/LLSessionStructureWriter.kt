@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.structure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCacheStorage
 import java.io.BufferedWriter
+import kotlin.uuid.ExperimentalUuidApi
 
 /**
  * [LLSessionStructureWriter] writes a GraphML graph of [LLFirSession]s which is used to visualize and analyze the structure of cached
@@ -49,6 +50,7 @@ object LLSessionStructureWriter {
         writeGraph(graph, writer)
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     private fun writeGraph(graph: LLSessionStructureGraph, writer: BufferedWriter) {
         with(writer) {
             appendLine("""<?xml version="1.0" encoding="UTF-8"?>""")
@@ -58,9 +60,11 @@ object LLSessionStructureWriter {
 
             // Define attributes for nodes
             appendLine("""  <key id="label" for="node" attr.name="label" attr.type="string"/>""")
+            appendLine("""  <key id="uuid" for="node" attr.name="uuid" attr.type="string"/>""")
             appendLine("""  <key id="weight" for="node" attr.name="weight" attr.type="long"/>""")
             appendLine("""  <key id="kotlinWeight" for="node" attr.name="kotlinWeight" attr.type="long"/>""")
             appendLine("""  <key id="javaWeight" for="node" attr.name="javaWeight" attr.type="long"/>""")
+            appendLine("""  <key id="lifetime" for="node" attr.name="lifetime" attr.type="double"/>""")
             appendLine("""  <key id="analysisRootDistance" for="node" attr.name="analysisRootDistance" attr.type="int"/>""")
 
             appendLine("""  <graph id="SessionWeightGraph" edgedefault="directed">""")
@@ -70,9 +74,11 @@ object LLSessionStructureWriter {
 
                 appendLine("""    <node id="n${node.id}">""")
                 appendLine("""      <data key="label">${escapeXml(node.label)}</data>""")
+                appendLine("""      <data key="uuid">${escapeXml(node.session.uuid.toHexDashString())}</data>""")
                 appendLine("""      <data key="weight">${node.statistics.weight}</data>""")
                 appendLine("""      <data key="kotlinWeight">${node.statistics.kotlinWeight}</data>""")
                 appendLine("""      <data key="javaWeight">${node.statistics.javaWeight}</data>""")
+                appendLine("""      <data key="lifetime">${node.statistics.lifetime}</data>""")
                 node.analysisRootDistance?.let { distance ->
                     appendLine("""      <data key="analysisRootDistance">$distance</data>""")
                 }

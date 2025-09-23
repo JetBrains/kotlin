@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicLongFieldUpdater
+import kotlin.time.TimeSource
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /**
  * An [LLFirSession] stores all symbols, components, and configuration needed for the resolution of Kotlin code/binaries from a [KaModule].
@@ -55,6 +58,15 @@ abstract class LLFirSession(
         get() = ktModule.project
 
     /**
+     * The session's UUID to identify it for diagnostic purposes.
+     *
+     * For example, the UUID can be used to identify a session across multiple session structure files (see
+     * [LLSessionStructureWriter][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.structure.LLSessionStructureWriter]).
+     */
+    @OptIn(ExperimentalUuidApi::class)
+    val uuid: Uuid = Uuid.random()
+
+    /**
      * Whether the [LLFirSession] is valid. The session should not be used if it is invalid.
      */
     @Volatile
@@ -66,6 +78,11 @@ abstract class LLFirSession(
      */
     var invalidationInformation: String? = null
         internal set
+
+    /**
+     * The time at which the session was created. This is used for diagnostic purposes.
+     */
+    val creationTimeMark: TimeSource.Monotonic.ValueTimeMark = TimeSource.Monotonic.markNow()
 
     /**
      * Creates a [ModificationTracker] which tracks the validity of this session via [isValid].

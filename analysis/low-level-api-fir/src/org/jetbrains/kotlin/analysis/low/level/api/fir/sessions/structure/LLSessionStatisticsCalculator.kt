@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import kotlin.time.DurationUnit
 
 @OptIn(LLStatisticsOnlyApi::class)
 internal object LLSessionStatisticsCalculator {
@@ -55,7 +56,7 @@ internal object LLSessionStatisticsCalculator {
             ?.let { calculateFirElementWeight(it) }
             ?: 0L
 
-        return LLSessionStatistics(kotlinWeight, javaWeight)
+        return LLSessionStatistics(kotlinWeight, javaWeight, session.currentLifetime)
     }
 
     context(_: KotlinObjectSizeCalculator?)
@@ -71,8 +72,11 @@ internal object LLSessionStatisticsCalculator {
             .filterIsInstance<LLFirJavaSymbolProvider>()
             .sumOf { calculateFirElementWeight(it.cachedDeclarations) }
 
-        return LLSessionStatistics(kotlinWeight, javaWeight)
+        return LLSessionStatistics(kotlinWeight, javaWeight, session.currentLifetime)
     }
+
+    private val LLFirSession.currentLifetime: Double
+        get() = creationTimeMark.elapsedNow().toDouble(DurationUnit.SECONDS)
 
     context(objectSizeCalculator: KotlinObjectSizeCalculator?)
     private fun calculateFirElementWeight(firElements: Collection<FirElement>): Long {
