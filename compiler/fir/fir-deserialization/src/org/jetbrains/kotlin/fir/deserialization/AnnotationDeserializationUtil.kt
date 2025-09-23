@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -39,6 +40,17 @@ fun loadAnnotationsFromMetadataGuarded(
     useSiteTarget: AnnotationUseSiteTarget? = null,
 ): List<FirAnnotation>? =
     runIf(session.languageVersionSettings.supportsFeature(languageFeature) && annotations.isNotEmpty()) {
+        loadAnnotationsFromMetadata(session, flags, annotations, nameResolver, useSiteTarget)
+    }
+
+fun loadNonEmptyAnnotationsFromMetadata(
+    session: FirSession,
+    flags: Int?,
+    annotations: List<ProtoBuf.Annotation>,
+    nameResolver: NameResolver,
+    useSiteTarget: AnnotationUseSiteTarget? = null,
+): List<FirAnnotation>? =
+    annotations.ifNotEmpty {
         loadAnnotationsFromMetadata(session, flags, annotations, nameResolver, useSiteTarget)
     }
 
