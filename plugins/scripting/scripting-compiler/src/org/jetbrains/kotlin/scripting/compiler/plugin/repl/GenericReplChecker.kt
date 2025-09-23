@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.messages.ConsoleDiagnosticMessageHolder
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.nio.charset.StandardCharsets
 import kotlin.concurrent.write
@@ -41,17 +42,14 @@ const val KOTLIN_REPL_JVM_TARGET_PROPERTY = "kotlin.repl.jvm.target"
 
 open class GenericReplChecker(
     disposable: Disposable,
-    private val scriptDefinition: KotlinScriptDefinition,
+    private val scriptDefinition: ScriptDefinition,
     private val compilerConfiguration: CompilerConfiguration,
     messageCollector: MessageCollector
 ) : ReplCheckAction {
 
     internal val environment = run {
         compilerConfiguration.apply {
-            val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-                configurationDependencies(JvmDependency(jvmClasspathRoots))
-            }
-            add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, ScriptDefinition.FromLegacy(hostConfiguration, scriptDefinition))
+            add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             this.messageCollector = messageCollector
 
             if (get(JVMConfigurationKeys.JVM_TARGET) == null) {
