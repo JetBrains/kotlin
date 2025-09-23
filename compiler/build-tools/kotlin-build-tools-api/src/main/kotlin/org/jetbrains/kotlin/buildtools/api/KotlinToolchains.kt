@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain.Companion.loadImplementation
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 
 /**
  * The main entry point to the Build Tools API.
  *
  * Allows access to the target-specific toolchains for creating build operations.
- * Currently only the [jvm] toolchain is supported.
+ * Currently only the [JvmPlatformToolchain] is supported.
  *
  * This interface is not intended to be implemented by the API consumers.
  *
@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
  *
  * An example of the basic usage is:
  *  ```
- *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
- *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
+ *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
+ *   val operation = toolchains.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
  *   toolchain.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi
-public interface KotlinToolchain {
+public interface KotlinToolchains {
     public interface Toolchain
 
     public fun <T : Toolchain> getToolchain(type: Class<T>): T
@@ -58,9 +58,9 @@ public interface KotlinToolchain {
      */
     public interface BuildSession : AutoCloseable {
         /**
-         * Access to the [KotlinToolchain] that created this build.
+         * Access to the [KotlinToolchains] that created this build.
          */
-        public val kotlinToolchain: KotlinToolchain
+        public val kotlinToolchains: KotlinToolchains
 
         /**
          * The [ProjectId] that identifies this build.
@@ -87,7 +87,7 @@ public interface KotlinToolchain {
          */
         public fun <R> executeOperation(
             operation: BuildOperation<R>,
-            executionPolicy: ExecutionPolicy = kotlinToolchain.createInProcessExecutionPolicy(),
+            executionPolicy: ExecutionPolicy = kotlinToolchains.createInProcessExecutionPolicy(),
             logger: KotlinLogger? = null,
         ): R
 
@@ -99,26 +99,26 @@ public interface KotlinToolchain {
 
     public companion object {
         /**
-         * Create an instance of [KotlinToolchain] using the given [classLoader].
+         * Create an instance of [KotlinToolchains] using the given [classLoader].
          *
          * Make sure that the classloader has access to a Build Tools API implementation,
          * which usually means that it has the Kotlin compiler and related dependencies in its classpath.
          *
-         * @param classLoader a [ClassLoader] that contains exactly one implementation of KotlinToolchain.
+         * @param classLoader a [ClassLoader] that contains exactly one implementation of [KotlinToolchains].
          * If executing operations using [ExecutionPolicy.WithDaemon], a [java.net.URLClassLoader] must be used here.
          */
         @JvmStatic
-        public fun loadImplementation(classLoader: ClassLoader): KotlinToolchain =
+        public fun loadImplementation(classLoader: ClassLoader): KotlinToolchains =
             try {
-                loadImplementation(KotlinToolchain::class, classLoader)
+                loadImplementation(KotlinToolchains::class, classLoader)
             } catch (_: NoImplementationFoundException) {
-                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainV1Adapter").constructors.first()
-                    .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchain
+                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter").constructors.first()
+                    .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchains
             }
     }
 }
 
 @ExperimentalBuildToolsApi
-public inline fun <reified T : KotlinToolchain.Toolchain> KotlinToolchain.getToolchain(): T {
+public inline fun <reified T : KotlinToolchains.Toolchain> KotlinToolchains.getToolchain(): T {
     return getToolchain(T::class.java)
 }

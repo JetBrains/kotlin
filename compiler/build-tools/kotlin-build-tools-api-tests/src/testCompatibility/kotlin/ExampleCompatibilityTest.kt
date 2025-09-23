@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -17,7 +17,7 @@ class ExampleCompatibilityTest {
     @Test
     @DisplayName("Sample compatibility test that is run as part of each test suit")
     fun testDefaultNonIncrementalSettings() {
-        val config = KotlinToolchain.loadImplementation(ExampleCompatibilityTest::class.java.classLoader).createDaemonExecutionPolicy()
+        val config = KotlinToolchains.loadImplementation(ExampleCompatibilityTest::class.java.classLoader).createDaemonExecutionPolicy()
         config[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = emptyList()
         assertEquals(emptyList<String>(), config[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS])
     }

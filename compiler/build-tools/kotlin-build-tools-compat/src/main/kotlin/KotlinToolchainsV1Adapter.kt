@@ -29,9 +29,9 @@ import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-public class KotlinToolchainV1Adapter(
+public class KotlinToolchainsV1Adapter(
     private val compilationService: CompilationService,
-) : KotlinToolchain {
+) : KotlinToolchains {
     private val jvm: JvmPlatformToolchain by lazy {
         object : JvmPlatformToolchain {
             override fun createJvmCompilationOperation(
@@ -47,7 +47,7 @@ public class KotlinToolchainV1Adapter(
         }
     }
 
-    override fun <T : KotlinToolchain.Toolchain> getToolchain(type: Class<T>): T {
+    override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return when (type) {
             JvmPlatformToolchain::class.java -> jvm
@@ -67,7 +67,7 @@ public class KotlinToolchainV1Adapter(
         return compilationService.getCompilerVersion()
     }
 
-    override fun createBuildSession(): KotlinToolchain.BuildSession {
+    override fun createBuildSession(): KotlinToolchains.BuildSession {
         return BuildSessionV1Adapter(this, RandomProjectUUID(), compilationService)
     }
 }
@@ -319,10 +319,10 @@ private interface ExecutionPolicyV1Adapter {
 }
 
 private class BuildSessionV1Adapter(
-    override val kotlinToolchain: KotlinToolchain,
+    override val kotlinToolchains: KotlinToolchains,
     override val projectId: ProjectId,
     private val compilationService: CompilationService,
-) : KotlinToolchain.BuildSession {
+) : KotlinToolchains.BuildSession {
     override fun <R> executeOperation(operation: BuildOperation<R>): R {
         return executeOperation(operation, logger = null)
     }
@@ -339,7 +339,7 @@ private class BuildSessionV1Adapter(
                 operation.execute(projectId, executionPolicy, logger) as R
             }
             else -> {
-                error("Unsupported operation type with BTA API v1 fallback (compiler version ${kotlinToolchain.getCompilerVersion()}: ${operation::class.simpleName}")
+                error("Unsupported operation type with BTA API v1 fallback (compiler version ${kotlinToolchains.getCompilerVersion()}: ${operation::class.simpleName}")
             }
         }
     }
@@ -349,7 +349,7 @@ private class BuildSessionV1Adapter(
     }
 }
 
-public fun CompilationService.asKotlinToolchain(): KotlinToolchain = KotlinToolchainV1Adapter(this)
+public fun CompilationService.asKotlinToolchains(): KotlinToolchains = KotlinToolchainsV1Adapter(this)
 
 private abstract class BuildOperationImpl<R> : BuildOperation<R> {
     private val options: Options = Options(BuildOperation::class)
