@@ -16,10 +16,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.structure
  *
  * @property kotlinWeight The weight of all *Kotlin* FIR elements in the session.
  * @property javaWeight The weight of all *Java* FIR elements in the session.
+ * @property lifetime The time in seconds since the creation of the session.
  */
 internal class LLSessionStatistics(
     val kotlinWeight: Long,
     val javaWeight: Long,
+    val lifetime: Double,
 ) {
     /**
      * The total weight of the session, combining both [kotlinWeight] and [javaWeight].
@@ -27,6 +29,6 @@ internal class LLSessionStatistics(
     val weight: Long get() = kotlinWeight + javaWeight
 
     companion object {
-        val ZERO = LLSessionStatistics(0, 0)
+        val ZERO = LLSessionStatistics(0, 0, 0.0)
     }
 }
