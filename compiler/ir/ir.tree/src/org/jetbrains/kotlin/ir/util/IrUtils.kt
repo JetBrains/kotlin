@@ -1008,36 +1008,28 @@ fun IrType.remapTypeParameters(
     srcToDstParameterMap: Map<IrTypeParameter, IrTypeParameter>? = null
 ): IrType =
     when (this) {
-        is IrSimpleType -> {
+        is IrSimpleType if (classifier.owner is IrTypeParameter || classifier.owner is IrClass) -> {
             val classifier = classifier.owner
-            when {
-                classifier is IrTypeParameter -> {
-                    val newClassifier =
-                        srcToDstParameterMap?.get(classifier) ?: if (classifier.parent == source)
-                            target.typeParameters[classifier.index]
-                        else
-                            classifier
-                    IrSimpleTypeImpl(newClassifier.symbol, nullability, arguments, annotations)
-                }
+            val newSymbol: IrClassifierSymbol = when (classifier) {
+                is IrTypeParameter if srcToDstParameterMap?.get(classifier) != null -> srcToDstParameterMap[classifier]!!.symbol
+                is IrTypeParameter if classifier.parent == source && target.typeParameters.size > classifier.index -> target.typeParameters[classifier.index].symbol
+                else -> classifier.symbol
+            } as IrClassifierSymbol
 
-                classifier is IrClass ->
-                    IrSimpleTypeImpl(
-                        classifier.symbol,
-                        nullability,
-                        arguments.memoryOptimizedMap {
-                            when (it) {
-                                is IrTypeProjection -> makeTypeProjection(
-                                    it.type.remapTypeParameters(source, target, srcToDstParameterMap),
-                                    it.variance
-                                )
-                                is IrStarProjection -> it
-                            }
-                        },
-                        annotations
-                    )
-
-                else -> this
-            }
+            IrSimpleTypeImpl(
+                newSymbol,
+                nullability,
+                if (classifier is IrClass) arguments.memoryOptimizedMap {
+                    when (it) {
+                        is IrTypeProjection -> makeTypeProjection(
+                            it.type.remapTypeParameters(source, target, srcToDstParameterMap),
+                            it.variance
+                        )
+                        is IrStarProjection -> it
+                    }
+                } else arguments,
+                annotations
+            )
         }
         else -> this
     }
