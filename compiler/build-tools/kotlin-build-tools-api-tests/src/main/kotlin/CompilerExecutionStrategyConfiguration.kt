@@ -5,6 +5,6 @@
 package org.jetbrains.kotlin.buildtools.api.tests
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 
-typealias CompilerExecutionStrategyConfiguration = Pair<KotlinToolchain, ExecutionPolicy>
+typealias CompilerExecutionStrategyConfiguration = Pair<KotlinToolchains, ExecutionPolicy>

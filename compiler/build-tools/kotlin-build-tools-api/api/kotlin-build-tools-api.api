@@ -89,30 +89,30 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger
 	public abstract fun warn (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchain {
-	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain$Companion;
-	public abstract fun createBuildSession ()Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain$BuildSession;
+public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchains {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains$Companion;
+	public abstract fun createBuildSession ()Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains$BuildSession;
 	public abstract fun createDaemonExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 	public abstract fun createInProcessExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$InProcess;
 	public abstract fun getCompilerVersion ()Ljava/lang/String;
-	public abstract fun getToolchain (Ljava/lang/Class;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain$Toolchain;
-	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;
+	public abstract fun getToolchain (Ljava/lang/Class;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain;
+	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchain$BuildSession : java/lang/AutoCloseable {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchains$BuildSession : java/lang/AutoCloseable {
 	public abstract fun close ()V
 	public abstract fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;)Ljava/lang/Object;
 	public abstract fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;)Ljava/lang/Object;
-	public static synthetic fun executeOperation$default (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain$BuildSession;Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;ILjava/lang/Object;)Ljava/lang/Object;
-	public abstract fun getKotlinToolchain ()Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;
+	public static synthetic fun executeOperation$default (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains$BuildSession;Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun getKotlinToolchains ()Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;
 	public abstract fun getProjectId ()Lorg/jetbrains/kotlin/buildtools/api/ProjectId;
 }
 
-public final class org/jetbrains/kotlin/buildtools/api/KotlinToolchain$Companion {
-	public final fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;
+public final class org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Companion {
+	public final fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchain$Toolchain {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ProjectId {
@@ -501,15 +501,15 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmCompi
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchain$Toolchain {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain$Companion;
 	public abstract fun createClasspathSnapshottingOperation (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation;
 	public abstract fun createJvmCompilationOperation (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation;
-	public static fun get (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
+	public static fun get (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain$Companion {
-	public final fun get (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
+	public final fun get (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {

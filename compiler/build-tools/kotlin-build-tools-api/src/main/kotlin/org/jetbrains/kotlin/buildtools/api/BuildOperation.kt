@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
  *
  * This interface is not intended to be implemented by the API consumers.
  *
- * Instances of concrete implementations for operations can be obtained from [KotlinToolchain] and related classes, e.g.
+ * Instances of concrete implementations for operations can be obtained from [KotlinToolchains] and related classes, e.g.
  * [JvmPlatformToolchain.createClasspathSnapshottingOperation] or [JvmPlatformToolchain.createJvmCompilationOperation]
  *
- * @see KotlinToolchain.BuildSession.executeOperation
+ * @see KotlinToolchains.BuildSession.executeOperation
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi

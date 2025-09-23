@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-internal class KotlinToolchainImpl() : KotlinToolchain {
+internal class KotlinToolchainsImpl() : KotlinToolchains {
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
-    val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchain.Toolchain> = ConcurrentHashMap()
+    val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
 
-    override fun <T : KotlinToolchain.Toolchain> getToolchain(type: Class<T>): T {
+    override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return toolchains.computeIfAbsent(type) { type ->
             when(type) {
@@ -38,15 +38,15 @@ internal class KotlinToolchainImpl() : KotlinToolchain {
 
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 
-    override fun createBuildSession(): KotlinToolchain.BuildSession {
+    override fun createBuildSession(): KotlinToolchains.BuildSession {
         return BuildSessionImpl(this, RandomProjectUUID(), buildIdToSessionFlagFile)
     }
 
     private class BuildSessionImpl(
-        override val kotlinToolchain: KotlinToolchain,
+        override val kotlinToolchains: KotlinToolchains,
         override val projectId: ProjectId,
         private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
-    ) : KotlinToolchain.BuildSession {
+    ) : KotlinToolchains.BuildSession {
         override fun <R> executeOperation(operation: BuildOperation<R>): R {
             return executeOperation(operation, logger = null)
         }
