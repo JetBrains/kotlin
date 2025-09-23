@@ -10,13 +10,17 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.extensions
 import com.intellij.core.JavaCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.repl.ReplCompiler
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.GenericReplCompiler
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 import java.net.URLClassLoader
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.configurationDependencies
+import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class JvmStandardReplFactoryExtension : ReplFactoryExtension {
 
@@ -25,20 +29,23 @@ class JvmStandardReplFactoryExtension : ReplFactoryExtension {
         templateClasspath: List<File>,
         baseClassLoader: ClassLoader?,
         configuration: CompilerConfiguration,
-        projectEnvironment: JavaCoreProjectEnvironment
+        projectEnvironment: JavaCoreProjectEnvironment,
     ): ReplCompiler = GenericReplCompiler(
         projectEnvironment.parentDisposable,
-        makeScriptDefinition(templateClasspath, templateClassName, baseClassLoader),
+        makeScriptDefinition(templateClasspath, templateClassName, baseClassLoader, configuration.jvmClasspathRoots),
         configuration,
         configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     )
 
     private fun makeScriptDefinition(
-        templateClasspath: List<File>, templateClassName: String, baseClassLoader: ClassLoader?
-    ): KotlinScriptDefinition = try {
+        templateClasspath: List<File>, templateClassName: String, baseClassLoader: ClassLoader?, jvmClasspathRoots: List<File>,
+    ): ScriptDefinition = try {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassLoader)
         val cls = classloader.loadClass(templateClassName)
-        KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, emptyMap())
+        val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+            configurationDependencies(JvmDependency(jvmClasspathRoots))
+        }
+        ScriptDefinition.FromTemplate(hostConfiguration, cls.kotlin)
     } catch (ex: ClassNotFoundException) {
         throw IllegalStateException("Cannot find script definition template class $templateClassName", ex)
     } catch (ex: Exception) {
