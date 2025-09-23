@@ -446,7 +446,7 @@ configurations {
             isCanBeConsumed = false
         }
         val legacyConfiguration = create("${configurationName}Elements") {
-            isCanBeResolved = false
+            isCanBeResolved = true
             isCanBeConsumed = false
             attributes {
                 attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))

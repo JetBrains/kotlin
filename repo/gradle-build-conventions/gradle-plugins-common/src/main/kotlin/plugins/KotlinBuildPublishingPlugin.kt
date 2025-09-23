@@ -30,7 +30,7 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         apply<MavenPublishPlugin>()
 
         val publishedRuntime = configurations.maybeCreate(RUNTIME_CONFIGURATION).apply {
-            isCanBeConsumed = false
+            isCanBeConsumed = true
             isCanBeResolved = false
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
@@ -38,7 +38,7 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         }
 
         val publishedCompile = configurations.maybeCreate(COMPILE_CONFIGURATION).apply {
-            isCanBeConsumed = false
+            isCanBeConsumed = true
             isCanBeResolved = false
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_API))

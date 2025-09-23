@@ -194,8 +194,8 @@ value class NativeDistributionProperty internal constructor(private val director
     private fun ret(value: Directory): NativeDistribution = NativeDistribution(value)
     private fun retNullable(value: Directory?): NativeDistribution? = value?.let(::NativeDistribution)
     private fun ret(provider: Provider<Directory>): Provider<NativeDistribution> = provider.map(::NativeDistribution)
-    private fun ret(property: Property<Directory>): Property<NativeDistribution> = NativeDistributionProperty(property as DirectoryProperty)
-    private fun ret(property: DirectoryProperty): NativeDistributionProperty = NativeDistributionProperty(property)
+    private fun ret(property: Property<Directory>): Property<NativeDistribution> = objectFactory.newInstance(NativeDistributionProperty::class.java, property as DirectoryProperty)
+    private fun ret(property: DirectoryProperty): NativeDistributionProperty = objectFactory.newInstance(NativeDistributionProperty::class.java, property)
 
     override fun set(value: NativeDistribution?) = fwdNullable(value, DirectoryProperty::set)
     override fun set(provider: Provider<out NativeDistribution>) = fwd(provider, DirectoryProperty::set)
@@ -216,9 +216,6 @@ value class NativeDistributionProperty internal constructor(private val director
     override fun disallowChanges() = fwd(DirectoryProperty::disallowChanges)
     override fun disallowUnsafeRead() = fwd(DirectoryProperty::disallowUnsafeRead)
 
-    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION") // TODO Drop this when updating to Gradle 9.0
-    override fun forUseAtConfigurationTime() = ret(fwd(DirectoryProperty::forUseAtConfigurationTime))
-
     override fun <S : Any> map(transformer: Transformer<out S?, in NativeDistribution>): Provider<S> = directoryProperty.map {
         transformer.transform(NativeDistribution(it))
     }
@@ -235,7 +232,7 @@ value class NativeDistributionProperty internal constructor(private val director
 /**
  * Creates a new [NativeDistributionProperty]. The property has no initial value.
  */
-fun ObjectFactory.nativeDistributionProperty() = NativeDistributionProperty(directoryProperty())
+fun ObjectFactory.nativeDistributionProperty() = newInstance(NativeDistributionProperty::class.java, directoryProperty())
 
 /**
  * Get the default Native distribution location.
