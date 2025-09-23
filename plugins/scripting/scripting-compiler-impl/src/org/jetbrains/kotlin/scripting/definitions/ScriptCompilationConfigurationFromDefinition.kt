@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
+import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import java.io.File
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -79,6 +80,9 @@ class ScriptCompilationConfigurationFromDefinition(
                     }.asSuccess(reports)
                 }
             }
+        }
+        if (scriptDefinition is KotlinScriptDefinitionFromAnnotatedTemplate) {
+            filePathPattern(scriptDefinition.scriptFilePattern.pattern)
         }
     }
 )

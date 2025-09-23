@@ -36,7 +36,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
     val scriptFilePattern by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val pattern =
             takeUnlessError {
-                val ann = template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()
+                val ann = template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()
                 ann?.scriptFilePattern
             }
                 ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern }
@@ -50,11 +50,10 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     private fun resolverFromAnnotation(template: KClass<out Any>): DependenciesResolver? {
         val defAnn = takeUnlessError {
-            template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()
+            template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()
         } ?: return null
 
-        val resolver = instantiateResolver(defAnn.resolver)
-        return when (resolver) {
+        return when (val resolver = instantiateResolver(defAnn.resolver)) {
             is AsyncDependenciesResolver -> AsyncDependencyResolverWrapper(resolver)
             is DependenciesResolver -> resolver
             else -> resolver?.let(::ApiChangeDependencyResolverWrapper)
