@@ -4,14 +4,14 @@
  */
 
 // Later, we can do the same thing for other foreign annotations, too.
-val jakartaAnnotationsClasspath: Configuration by configurations.creating {
+val jakartaAnnotationsClasspath: org.gradle.api.artifacts.Configuration by configurations.creating {
     isCanBeDeclared = true
     isCanBeResolved = false
     isCanBeConsumed = false
     isVisible = false
 }
 
-val jakartaAnnotationsClasspathResolver: Configuration by configurations.creating {
+val jakartaAnnotationsClasspathResolver: org.gradle.api.artifacts.Configuration by configurations.creating {
     isCanBeDeclared = false
     isCanBeResolved = true
     isCanBeConsumed = false
