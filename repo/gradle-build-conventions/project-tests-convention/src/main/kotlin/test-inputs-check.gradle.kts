@@ -143,12 +143,12 @@ tasks.withType<Test>().configureEach {
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read,write";""",
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                     )
-                } else if (file != null) {
+                } else {
                     val parents = parentsReadPermission(file)
                     listOf(
                         """permission java.io.FilePermission "${file.absolutePath}", "read";""",
                     ) + parents
-                } else emptyList()
+                }
             }
 
             val allPermissionsForGradleRoDepCache = System.getenv("GRADLE_RO_DEP_CACHE")?.let {

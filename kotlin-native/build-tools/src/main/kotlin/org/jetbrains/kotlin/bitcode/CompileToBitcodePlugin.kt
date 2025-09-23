@@ -61,7 +61,7 @@ private val SanitizerKind?.description
  * Similar to [NamedDomainObjectContainer.maybeCreate] but with [action] argument that will be applied only if
  * an object is being created.
  */
-private fun <T> NamedDomainObjectContainer<T>.getOrCreate(name: String, action: Action<in T>): T = try {
+private fun <T : Any> NamedDomainObjectContainer<T>.getOrCreate(name: String, action: Action<in T>): T = try {
     this.create(name, action)
 } catch (e: InvalidUserDataException) {
     this.getByName(name)
@@ -400,7 +400,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
              */
             project.moduleCompileBitcodeElements(name, MAIN_SOURCE_SET_NAME) {
                 outgoing {
-                    capability(CppConsumerPlugin.moduleCapability(project, this@Module.name))
+                    capability("${project.group}:${project.name}-${this@Module.name}:${project.version}")
                 }
             }
 
@@ -409,7 +409,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
              */
             project.moduleCompileBitcodeElements(name, TEST_FIXTURES_SOURCE_SET_NAME) {
                 outgoing {
-                    capability(CppConsumerPlugin.moduleTestFixturesCapability(project, this@Module.name))
+                    capability("${project.group}:${project.name}-${this@Module.name}-test-fixtures:${project.version}")
                 }
             }
 
@@ -418,7 +418,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
              */
             project.moduleCompileBitcodeElements(name, TEST_SOURCE_SET_NAME) {
                 outgoing {
-                    capability(CppConsumerPlugin.moduleTestCapability(project, this@Module.name))
+                    capability("${project.group}:${project.name}-${this@Module.name}-test:${project.version}")
                 }
             }
         }
@@ -592,17 +592,17 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             }
             project.dependencies {
                 testsGroup.testLauncherModule.get().let { moduleName ->
-                    testLauncherConfiguration(module(project(project.path), moduleName))
-                    testLauncherConfiguration(moduleTestFixtures(project(project.path), moduleName))
+                    testLauncherConfiguration(module(project(project.path), project.group.toString(), project.name, moduleName))
+                    testLauncherConfiguration(moduleTestFixtures(project(project.path), project.group.toString(), project.name, moduleName))
                 }
                 testsGroup.testedModules.get().forEach { moduleName ->
-                    testsGroupConfiguration(module(project(project.path), moduleName))
-                    testsGroupConfiguration(moduleTestFixtures(project(project.path), moduleName))
-                    testsGroupConfiguration(moduleTest(project(project.path), moduleName))
+                    testsGroupConfiguration(module(project(project.path), project.group.toString(), project.name, moduleName))
+                    testsGroupConfiguration(moduleTestFixtures(project(project.path), project.group.toString(), project.name, moduleName))
+                    testsGroupConfiguration(moduleTest(project(project.path), project.group.toString(), project.name, moduleName))
                 }
                 testsGroup.testSupportModules.get().forEach { moduleName ->
-                    testsGroupConfiguration(module(project(project.path), moduleName))
-                    testsGroupConfiguration(moduleTestFixtures(project(project.path), moduleName))
+                    testsGroupConfiguration(module(project(project.path), project.group.toString(), project.name, moduleName))
+                    testsGroupConfiguration(moduleTestFixtures(project(project.path), project.group.toString(), project.name, moduleName))
                 }
             }
 
