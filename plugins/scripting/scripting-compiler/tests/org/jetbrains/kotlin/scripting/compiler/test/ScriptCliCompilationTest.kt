@@ -111,7 +111,7 @@ class ScriptCliCompilationTest {
 
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        return compileAndExecuteScript(script.toScriptSource(), environment, null, args) to collector
+        return compileAndExecuteScript(script.toScriptSource(), environment, args) to collector
     }
 
     private fun checkRun(

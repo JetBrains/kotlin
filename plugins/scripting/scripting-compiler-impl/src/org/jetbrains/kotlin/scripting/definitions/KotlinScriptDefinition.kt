@@ -69,6 +69,4 @@ open class KotlinScriptDefinition(open val template: KClass<out Any>) : UserData
     }
 }
 
-@Suppress("DEPRECATION")
-object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)
 

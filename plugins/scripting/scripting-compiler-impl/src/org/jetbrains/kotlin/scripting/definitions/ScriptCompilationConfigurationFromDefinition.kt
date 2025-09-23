@@ -3,8 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.scripting.definitions
 
+import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import java.io.File
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -24,7 +27,7 @@ import kotlin.script.experimental.util.PropertiesCollection
 @Suppress("DEPRECATION")
 class ScriptCompilationConfigurationFromDefinition(
     hostConfiguration: ScriptingHostConfiguration,
-    scriptDefinition: KotlinScriptDefinition
+    scriptDefinition: KotlinScriptDefinition,
 ) : ScriptCompilationConfiguration(
     {
         hostConfiguration(hostConfiguration)
@@ -47,41 +50,53 @@ class ScriptCompilationConfigurationFromDefinition(
         }
         if (scriptDefinition.dependencyResolver != DependenciesResolver.NoDependencies) {
             refineConfiguration {
-                onAnnotations(scriptDefinition.acceptedAnnotations.map(::KotlinType)) { context ->
-
-                    val resolveResult: DependenciesResolver.ResolveResult = scriptDefinition.dependencyResolver.resolve(
-                        ScriptContentsFromRefinementContext(context),
-                        context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
-                            it[ScriptingHostConfiguration.getEnvironment]?.invoke()
-                        }.orEmpty()
-                    )
-
-                    val reports = resolveResult.reports.map {
-                        ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, it.message, mapLegacyDiagnosticSeverity(it.severity))
-                    }
-                    val resolvedDeps = (resolveResult as? DependenciesResolver.ResolveResult.Success)?.dependencies
-
-                    if (resolvedDeps == null) ResultWithDiagnostics.Failure(reports)
-                    else ScriptCompilationConfiguration(context.compilationConfiguration) {
-                        if (resolvedDeps.classpath.isNotEmpty()) {
-                            dependencies.append(JvmDependency(resolvedDeps.classpath))
-                        }
-                        defaultImports.append(resolvedDeps.imports)
-                        importScripts.append(resolvedDeps.scripts.map { FileScriptSource(it) })
-                        jvm {
-                            jdkHome.putIfNotNull(resolvedDeps.javaHome) // TODO: check if it is correct to supply javaHome as jdkHome
-                        }
-                        if (resolvedDeps.sources.isNotEmpty()) {
-                            ide {
-                                dependenciesSources.append(JvmDependency(resolvedDeps.sources))
-                            }
-                        }
-                    }.asSuccess(reports)
+                beforeCompiling {
+                    refineWithResolver(scriptDefinition, it)
+                }
+                onAnnotations(scriptDefinition.acceptedAnnotations.map(::KotlinType)) {
+                    refineWithResolver(scriptDefinition, it)
                 }
             }
         }
+        if (scriptDefinition is KotlinScriptDefinitionFromAnnotatedTemplate) {
+            filePathPattern(scriptDefinition.scriptFilePattern.pattern)
+        }
     }
 )
+
+private fun refineWithResolver(
+    scriptDefinition: KotlinScriptDefinition,
+    context: ScriptConfigurationRefinementContext,
+): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    val resolveResult: DependenciesResolver.ResolveResult = scriptDefinition.dependencyResolver.resolve(
+        ScriptContentsFromRefinementContext(context),
+        context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
+            it[ScriptingHostConfiguration.getEnvironment]?.invoke()
+        }.orEmpty()
+    )
+
+    val reports = resolveResult.reports.map {
+        ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, it.message, mapLegacyDiagnosticSeverity(it.severity))
+    }
+    val resolvedDeps = (resolveResult as? DependenciesResolver.ResolveResult.Success)?.dependencies
+
+    return if (resolvedDeps == null) ResultWithDiagnostics.Failure(reports)
+    else ScriptCompilationConfiguration(context.compilationConfiguration) {
+        if (resolvedDeps.classpath.isNotEmpty()) {
+            dependencies.append(JvmDependency(resolvedDeps.classpath))
+        }
+        defaultImports.append(resolvedDeps.imports)
+        importScripts.append(resolvedDeps.scripts.map { FileScriptSource(it) })
+        jvm {
+            jdkHome.putIfNotNull(resolvedDeps.javaHome) // TODO: check if it is correct to supply javaHome as jdkHome
+        }
+        if (resolvedDeps.sources.isNotEmpty()) {
+            ide {
+                dependenciesSources.append(JvmDependency(resolvedDeps.sources))
+            }
+        }
+    }.asSuccess(reports)
+}
 
 private class ScriptContentsFromRefinementContext(val context: ScriptConfigurationRefinementContext) : ScriptContents {
     override val file: File?

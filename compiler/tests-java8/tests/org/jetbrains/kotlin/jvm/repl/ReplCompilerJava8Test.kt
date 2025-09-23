@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jvm.repl
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -25,24 +26,24 @@ import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.GenericReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.KOTLIN_REPL_JVM_TARGET_PROPERTY
-import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.junit.Assert
 import java.io.File
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 private const val library = "inline fun<T> foo(fn: () -> T): T = fn()"
 private const val script = "import foo\nval x = foo { 0 }"
@@ -122,7 +123,12 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {
         val collector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
-        val replCompiler = GenericReplCompiler(testRootDisposable, StandardScriptDefinition, configuration, collector)
+        val replCompiler = GenericReplCompiler(
+            testRootDisposable,
+            ScriptDefinition.FromTemplate(defaultJvmScriptingHostConfiguration, ScriptTemplateWithArgs::class),
+            configuration,
+            collector
+        )
         val state = replCompiler.createState()
 
         return replCompiler.compile(state, ReplCodeLine(0, 0, script))
