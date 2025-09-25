@@ -103,7 +103,8 @@ internal fun Project.nativeDownloadTask(): TaskProvider<KotlinNativeDownloadTask
                     )
                 )
                 val koanDir = kotlinNativeProvider.flatMap { (it as KotlinNativeFromToolchainProvider).actualNativeHomeDirectory }
-                nativeDirectory.set(koanDir.get())
+                konanHome.set(koanDir.get())
+                nativeDirectoryLocation.set(layout.buildDirectory.file("konan.txt"))
             }
         }
     )

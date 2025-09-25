@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -34,8 +35,20 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
     val stdlib = project.files(project.konanDistribution.stdlib)
     kotlin.targets.all { target ->
         target.compilations.all { compilation ->
-            if (compilation is AbstractKotlinNativeCompilation) {
-                launch { compilation.configureStdlibAndPlatformDependencies(stdlib) }
+            if (compilation is KotlinSharedNativeCompilation) {
+                launch {
+                    compilation.configureStdlibAndPlatformDependencies(
+                        stdlib,
+                        AbstractKotlinNativeCompilation::retrievePlatformDependenciesWithNativeDistribution
+                    )
+                }
+            } else if (compilation is AbstractKotlinNativeCompilation) {
+                launch {
+                    compilation.configureStdlibAndPlatformDependencies(
+                        stdlib,
+                        AbstractKotlinNativeCompilation::retrievePlatformDependenciesWithNativeDownloadTask
+                    )
+                }
             }
         }
     }
@@ -43,7 +56,7 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
     launch { kotlin.excludeStdlibFromNativeSourceSetDependencies() }
 }
 
-internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependencies(): FileCollection {
+internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependenciesWithNativeDownloadTask(): FileCollection {
     val commonizerTarget = commonizerTarget.await() ?: return project.files()
     val nativeDependency = project.getNativeDistributionDependenciesWithNativeDownloadTask(
         commonizerTarget,
@@ -64,10 +77,11 @@ internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependencie
 
 private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDependencies(
     stdlib: FileCollection,
+    retrievePlatformDependencies: suspend AbstractKotlinNativeCompilation.() -> FileCollection,
 ) {
     val updatedCompileDependencyFiles = project.files().from(
         stdlib,
-        retrievePlatformDependencies(),
+        retrievePlatformDependencies.invoke(this),
         compileDependencyFiles
     )
 
@@ -127,7 +141,11 @@ private fun Project.getNativeDistributionDependencies(
 }
 
 internal fun Project.getNativeDistributionDependenciesWithNativeDownloadTask(target: CommonizerTarget): FileCollection {
-    return getNativeDistributionDependencies(target) { leafCommonizerTarget -> getOriginalPlatformLibrariesFor(leafCommonizerTarget.konanTarget) }
+    return getNativeDistributionDependencies(target) { leafCommonizerTarget ->
+        getOriginalPlatformLibrariesForTargetWithNativeDownloadTask(
+            leafCommonizerTarget.konanTarget
+        )
+    }
 }
 
 internal fun Project.getNativeDistributionDependenciesWithNativeDistributionProvider(
@@ -135,21 +153,21 @@ internal fun Project.getNativeDistributionDependenciesWithNativeDistributionProv
     target: CommonizerTarget,
 ): FileCollection {
     return getNativeDistributionDependencies(target) { leafCommonizerTarget ->
-        objects.getOriginalPlatformLibrariesFor(
+        objects.getOriginalPlatformLibrariesForTargetWithKonanDistribution(
             konanDistribution,
             leafCommonizerTarget
         )
     }
 }
 
-private fun ObjectFactory.getOriginalPlatformLibrariesFor(
+private fun ObjectFactory.getOriginalPlatformLibrariesForTargetWithKonanDistribution(
     konanDistribution: Provider<KonanDistribution>,
     target: LeafCommonizerTarget,
 ): FileCollection =
-    getOriginalPlatformLibrariesFor(konanDistribution, target.konanTarget)
+    getOriginalPlatformLibrariesForTargetWithKonanDistribution(konanDistribution, target.konanTarget)
 
 
-internal fun Project.getOriginalPlatformLibrariesFor(
+internal fun Project.getOriginalPlatformLibrariesForTargetWithNativeDownloadTask(
     konanTarget: KonanTarget,
 ): FileCollection {
     val kotlinNativeDownloadTask = tasks.named("kotlinNativeDownload", KotlinNativeDownloadTask::class.java)
@@ -159,7 +177,7 @@ internal fun Project.getOriginalPlatformLibrariesFor(
         )
 }
 
-internal fun ObjectFactory.getOriginalPlatformLibrariesFor(
+internal fun ObjectFactory.getOriginalPlatformLibrariesForTargetWithKonanDistribution(
     konanDistribution: Provider<KonanDistribution>,
     konanTarget: KonanTarget,
 ): FileCollection =

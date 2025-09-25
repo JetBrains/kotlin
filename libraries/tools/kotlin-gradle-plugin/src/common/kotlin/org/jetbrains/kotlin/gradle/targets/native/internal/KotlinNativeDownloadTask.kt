@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
@@ -31,12 +34,16 @@ abstract class KotlinNativeDownloadTask : DefaultTask(), UsesKotlinNativeBundleB
         NoopKotlinNativeProvider(project)
     )
 
-    @get:OutputDirectory
-    abstract val nativeDirectory: DirectoryProperty
+    @get:Internal
+    abstract val konanHome: DirectoryProperty
+
+    @get:OutputFile
+    abstract val nativeDirectoryLocation: RegularFileProperty
 
     fun getPlatformDependencies(konanTargetName: String): Provider<Set<File>> {
-        return nativeDirectory.map {
-            KonanDistribution(it.asFile).platformLibsDir.resolve(konanTargetName).listLibraryFiles().toSet()
+        return nativeDirectoryLocation.map {
+            val path = it.asFile.readText().let(::File)
+            KonanDistribution(path).platformLibsDir.resolve(konanTargetName).listLibraryFiles().toSet()
         }
     }
 
@@ -44,5 +51,6 @@ abstract class KotlinNativeDownloadTask : DefaultTask(), UsesKotlinNativeBundleB
     fun taskAction() {
         //force the download of the native bundle
         kotlinNativeProvider.get()
+        nativeDirectoryLocation.get().asFile.writeText(konanHome.get().asFile.canonicalPath)
     }
 }
