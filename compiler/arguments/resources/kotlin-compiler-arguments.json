@@ -372,6 +372,12 @@
             "major": 2,
             "minor": 3,
             "patch": 0
+        },
+        {
+            "name": "2.3.20",
+            "major": 2,
+            "minor": 3,
+            "patch": 20
         }
     ],
     "types": {
@@ -2266,6 +2272,37 @@
                         },
                         "releaseVersionsMetadata": {
                             "introducedVersion": "1.9.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
+                        "name": "Xheader-mode",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enable header compilation mode.\nIn this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be\ncompiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation\nbuild systems where header libraries can be used to replace downstream dependencies for which we only need to\nsee the type names and method signatures required to compile a given translation unit. Inline functions are still kept\nwith bodies.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.3.20",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
                             "removedVersion": null
