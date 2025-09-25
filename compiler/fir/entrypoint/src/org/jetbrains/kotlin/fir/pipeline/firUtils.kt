@@ -23,11 +23,12 @@ import kotlin.reflect.KFunction2
 fun FirSession.buildFirViaLightTree(
     files: Collection<KtSourceFile>,
     diagnosticsReporter: DiagnosticReporter?,
+    headerCompilationMode: Boolean,
     reportFilesAndLines: ((Int, Int) -> Unit)?,
 ): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
     val sourcesToPathsMapper = sourcesToPathsMapper
-    val builder = LightTree2Fir(this, firProvider.kotlinScopeProvider, diagnosticsReporter)
+    val builder = LightTree2Fir(this, headerCompilationMode, firProvider.kotlinScopeProvider, diagnosticsReporter)
     val shouldCountLines = (reportFilesAndLines != null)
     var linesCount = 0
     val firFiles = files.map { file ->
@@ -82,8 +83,9 @@ fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
     diagnosticsReporter: BaseDiagnosticsCollector,
+    headerCompilationMode: Boolean,
     countFilesAndLines: KFunction2<Int, Int, Unit>?
 ): ModuleCompilerAnalyzedOutput {
-    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
+    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, headerCompilationMode, countFilesAndLines)
     return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 }

@@ -38,7 +38,7 @@ class FirAnalyzerFacade(
     private fun buildRawFir() {
         if (firFiles != null) return
         firFiles = when (parser) {
-            FirParser.LightTree -> session.buildFirViaLightTree(lightTreeFiles, diagnosticReporterForLightTree, reportFilesAndLines = null)
+            FirParser.LightTree -> session.buildFirViaLightTree(lightTreeFiles, diagnosticReporterForLightTree, reportFilesAndLines = null, false)
             FirParser.Psi -> session.buildFirFromKtFiles(ktFiles)
         }
     }
