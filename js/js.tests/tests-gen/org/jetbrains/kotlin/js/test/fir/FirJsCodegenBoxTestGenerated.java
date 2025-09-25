@@ -35615,6 +35615,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestDataPath("$PROJECT_ROOT")
     public class Serialization {
       @Test
+      @TestMetadata("actualAnnotationOnFakeOverride.kt")
+      public void testActualAnnotationOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/actualAnnotationOnFakeOverride.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInSerialization() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/serialization"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
@@ -35632,9 +35638,27 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("annotationOnFakeOverrideProperty.kt")
+      public void testAnnotationOnFakeOverrideProperty() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverrideProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationOnFakeOverrideWithJava.kt")
+      public void testAnnotationOnFakeOverrideWithJava() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverrideWithJava.kt");
+      }
+
+      @Test
       @TestMetadata("annotationOnParameterOnFakeOverride.kt")
       public void testAnnotationOnParameterOnFakeOverride() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnParameterOnFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationOnSecondParameterOnFakeOverride.kt")
+      public void testAnnotationOnSecondParameterOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnSecondParameterOnFakeOverride.kt");
       }
 
       @Test
@@ -35653,6 +35677,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       @TestMetadata("annotationWithArray.kt")
       public void testAnnotationWithArray() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithArray.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationWithDefaultValueOnFakeOverride.kt")
+      public void testAnnotationWithDefaultValueOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithDefaultValueOnFakeOverride.kt");
       }
 
       @Test
