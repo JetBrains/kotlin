@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_FRIEND_DEPENDENCY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_REFINES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_SOURCES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_IGNORE_CONST_OPTIMIZATION_ERRORS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INLINE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INTELLIJ_PLUGIN_ROOT
@@ -243,6 +244,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if (X_ALLOW_HOLDSIN_CONTRACT in this) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT)}
     if (X_NAME_BASED_DESTRUCTURING in this) { arguments.nameBasedDestructuring = get(X_NAME_BASED_DESTRUCTURING)}
     if (XX_LANGUAGE in this) { arguments.manuallyConfiguredFeatures = get(XX_LANGUAGE)}
+    if (X_HEADER_MODE in this) { arguments.headerMode = get(X_HEADER_MODE)}
     return arguments
   }
 
@@ -340,6 +342,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     try { this[X_ALLOW_HOLDSIN_CONTRACT] = arguments.allowHoldsinContract } catch (_: NoSuchMethodError) {  }
     try { this[X_NAME_BASED_DESTRUCTURING] = arguments.nameBasedDestructuring } catch (_: NoSuchMethodError) {  }
     try { this[XX_LANGUAGE] = arguments.manuallyConfiguredFeatures } catch (_: NoSuchMethodError) {  }
+    try { this[X_HEADER_MODE] = arguments.headerMode } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
@@ -615,5 +618,8 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
     public val XX_LANGUAGE: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XX_LANGUAGE")
+
+    public val X_HEADER_MODE: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_HEADER_MODE")
   }
 }

@@ -47,6 +47,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS by key<Boolean>("Allow to compile any scripts along with regular Kotlin sources")
     val IGNORE_CONST_OPTIMIZATION_ERRORS by key<Boolean>("Ignore errors from IrConstTransformer")
     val EVALUATED_CONST_TRACKER by key<EvaluatedConstTracker>("Keeps track of all evaluated by IrInterpreter constants")
+    val HEADER_COMPILATION by key<Boolean>("Enable header compilation mode")
 
     val MESSAGE_COLLECTOR_KEY by key<MessageCollector>(
         "message collector",
