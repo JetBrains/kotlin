@@ -21,6 +21,10 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Generate wasm with the updated EH proposal turned on",
     )
 
+    val USE_OLD_EXCEPTION_HANDLING_PROPOSAL by directive(
+        description = "Generate wasm using the old EH proposal",
+    )
+
     val WASM_NO_JS_TAG by directive(
         description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
     )

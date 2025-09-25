@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
@@ -82,7 +83,8 @@ class WasiBoxRunner(
             val testFileText = originalFile.readText()
             val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
-            val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
+            val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(modulesToArtifact.keys.first())
+            val useNewExceptionProposal = configuration.getNotNull(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)
 
             val exceptions = vmsToCheck.mapNotNull { vm ->
                 vm.runWithCaughtExceptions(

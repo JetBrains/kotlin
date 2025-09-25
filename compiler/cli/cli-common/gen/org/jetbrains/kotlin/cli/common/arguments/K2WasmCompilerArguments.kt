@@ -103,7 +103,7 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         value = "-Xwasm-use-new-exception-proposal",
         description = "Use an updated version of the exception proposal with try_table.",
     )
-    var wasmUseNewExceptionProposal: Boolean = false
+    var wasmUseNewExceptionProposal: Boolean? = null
         set(value) {
             checkFrozen()
             field = value

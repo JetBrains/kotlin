@@ -6853,12 +6853,24 @@
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
+                                                "current": true,
+                                                "valueInVersions": [
+                                                    {
+                                                        "minReleaseVersion": "2.1.20",
+                                                        "maxReleaseVersion": "2.2.20",
+                                                        "value": false
+                                                    }
+                                                ]
                                             },
                                             "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
+                                                "current": null,
+                                                "valueInVersions": [
+                                                    {
+                                                        "minReleaseVersion": "2.1.20",
+                                                        "maxReleaseVersion": "2.2.20",
+                                                        "value": false
+                                                    }
+                                                ]
                                             }
                                         },
                                         "valueDescription": {
