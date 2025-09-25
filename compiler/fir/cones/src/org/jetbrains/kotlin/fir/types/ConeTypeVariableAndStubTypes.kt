@@ -114,3 +114,5 @@ open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMa
         return defaultType.toString()
     }
 }
+
+fun TypeVariableMarker.asCone(): ConeTypeVariable = this as ConeTypeVariable

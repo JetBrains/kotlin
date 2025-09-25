@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstr
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
@@ -155,8 +155,8 @@ class PostponedArgumentsAnalyzer(
     ) {
         atom.analyzed = true
 
-        val substitutor = topLevelCandidate.csBuilder.buildCurrentSubstitutor(emptyMap()) as ConeSubstitutor
-        val substitutedExpectedType = substitutor.safeSubstitute(topLevelCandidate.csBuilder, atom.expectedType) as ConeKotlinType
+        val substitutor = topLevelCandidate.csBuilder.buildCurrentSubstitutor(emptyMap()).asCone()
+        val substitutedExpectedType = substitutor.safeSubstitute(topLevelCandidate.csBuilder, atom.expectedType).asCone()
 
         if (!runContextSensitiveResolutionAndApplyResultsIfSuccessful(atom, topLevelCandidate, substitutedExpectedType)) {
             ArgumentCheckingProcessor.resolveArgumentExpression(
@@ -225,7 +225,7 @@ class PostponedArgumentsAnalyzer(
         val unitType = components.session.builtinTypes.unitType.coneType
         val currentSubstitutor = c.buildCurrentSubstitutor(inferenceSession.semiFixedVariables)
 
-        fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType
+        fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type).asCone()
 
         val receiver = lambda.receiverType?.let(::substitute)
         val contextParameters = lambda.contextParameterTypes.map(::substitute)
@@ -412,7 +412,7 @@ class PostponedArgumentsAnalyzer(
     private fun PostponedArgumentsAnalyzerContext.createSubstituteFunctorForLambdaAnalysis(): (ConeKotlinType) -> ConeKotlinType {
         val stubsForPostponedVariables = bindingStubsForPostponedVariables()
         val currentSubstitutor = buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(this) })
-        return { currentSubstitutor.safeSubstitute(this, it) as ConeKotlinType }
+        return { currentSubstitutor.safeSubstitute(this, it).asCone() }
     }
 }
 
@@ -422,7 +422,7 @@ fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     expectedType: ConeKotlinType? = null,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null,
 ): ConeResolvedLambdaAtom {
-    val fixedExpectedType = (csBuilder.buildCurrentSubstitutor() as ConeSubstitutor)
+    val fixedExpectedType = csBuilder.buildCurrentSubstitutor().asCone()
         .substituteOrSelf(expectedType ?: this.expectedType)
     val resolvedAtom = ArgumentCheckingProcessor.createResolvedLambdaAtomDuringCompletion(
         candidateOfOuterCall, csBuilder, ConeResolutionAtomWithPostponedChild(expression), fixedExpectedType,

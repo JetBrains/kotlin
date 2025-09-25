@@ -378,7 +378,7 @@ internal object ArgumentCheckingProcessor {
 
         val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
             it.kind == ConstraintKind.EQUALITY && it.position.from is ConeExplicitTypeParameterConstraintPosition
-        }?.type as ConeKotlinType?
+        }?.type?.asCone()
 
         if (explicitTypeArgument != null && explicitTypeArgument.typeArguments.isEmpty()) {
             return false

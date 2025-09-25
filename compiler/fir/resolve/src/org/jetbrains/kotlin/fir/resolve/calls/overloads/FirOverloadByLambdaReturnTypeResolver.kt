@@ -15,9 +15,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -108,7 +107,7 @@ class FirOverloadByLambdaReturnTypeResolver(
 
             val semiFixedVariables = inferenceSession.semiFixedVariables
             val inputTypesAreSame = lambdas.entries.same { (candidate, lambda) ->
-                val substitutor = candidate.system.buildCurrentSubstitutor(semiFixedVariables) as ConeSubstitutor
+                val substitutor = candidate.system.buildCurrentSubstitutor(semiFixedVariables).asCone()
                 lambda.inputTypes.map { substitutor.substituteOrSelf(it) }
             }
             if (!inputTypesAreSame) return null
@@ -135,7 +134,7 @@ class FirOverloadByLambdaReturnTypeResolver(
             while (iterator.hasNext()) {
                 val (candidate, atom) = iterator.next()
                 call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
-                val substitutor = candidate.system.buildCurrentSubstitutor(semiFixedVariables) as ConeSubstitutor
+                val substitutor = candidate.system.buildCurrentSubstitutor(semiFixedVariables).asCone()
                 postponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem(
                     candidate.system,
                     atom,

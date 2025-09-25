@@ -20,6 +20,8 @@ sealed class ConeTypeProjection : TypeArgumentMarker {
     }
 }
 
+fun TypeArgumentMarker.asCone(): ConeTypeProjection = this as ConeTypeProjection
+
 object ConeStarProjection : ConeTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.STAR

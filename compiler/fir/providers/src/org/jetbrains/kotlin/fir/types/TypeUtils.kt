@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -58,7 +59,7 @@ fun ConeInferenceContext.commonSuperTypeOrNull(types: List<ConeKotlinType>): Con
         0 -> null
         1 -> types.first()
         else -> with(NewCommonSuperTypeCalculator) {
-            commonSuperType(types) as ConeKotlinType
+            commonSuperType(types).asCone()
         }
     }
 }
@@ -119,16 +120,17 @@ fun ConeDynamicType.Companion.create(
     session.builtinTypes.nullableAnyType.coneType.withAttributes(attributes),
 )
 
-fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
+fun <T : ConeKotlinType> T.makeConeTypeDefinitelyNotNullOrNotNull(
     typeContext: ConeTypeContext,
     avoidComprehensiveCheck: Boolean = false,
     preserveAttributes: Boolean = false,
-): ConeKotlinType {
+): T {
     // It's necessary to properly handling the situation like `typealias Foo = Any?`
     // NB: It's not related to actual type aliases since they can't refer nullable types
     fullyExpandedType(typeContext.session).let { expandedType ->
         if (expandedType !== this) {
-            return expandedType.makeConeTypeDefinitelyNotNullOrNotNull(
+            @Suppress("UNCHECKED_CAST")
+            return (expandedType as T).makeConeTypeDefinitelyNotNullOrNotNull(
                 typeContext,
                 avoidComprehensiveCheck,
                 preserveAttributes
@@ -136,13 +138,26 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
         }
     }
 
-    if (this is ConeIntersectionType) {
-        return ConeIntersectionType(intersectedTypes.map {
+    @Suppress("UNCHECKED_CAST")
+    return if (this is ConeIntersectionType) {
+        ConeIntersectionType(intersectedTypes.map {
             it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext, avoidComprehensiveCheck)
         })
-    }
-    return ConeDefinitelyNotNullType.create(this, typeContext, avoidComprehensiveCheck)
-        ?: this.withNullability(nullable = false, typeContext, preserveAttributes = preserveAttributes)
+    } else {
+        ConeDefinitelyNotNullType.create(this, typeContext, avoidComprehensiveCheck)
+            ?: this.withNullability(nullable = false, typeContext, preserveAttributes = preserveAttributes)
+    } as T
+}
+
+@Deprecated(message = "Please never use this function on ConeSimpleKotlinType", level = DeprecationLevel.ERROR)
+fun ConeSimpleKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
+    typeContext: ConeTypeContext,
+    avoidComprehensiveCheck: Boolean = false,
+    preserveAttributes: Boolean = false,
+): ConeSimpleKotlinType {
+    return (this as ConeRigidType).makeConeTypeDefinitelyNotNullOrNotNull(
+        typeContext, avoidComprehensiveCheck, preserveAttributes
+    ) as ConeSimpleKotlinType
 }
 
 fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>): T {
@@ -541,7 +556,7 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
     }
 
     val substitution = (0 until argumentsCount).associate { index ->
-        (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).symbol to (newArguments[index])
+        typeConstructor.getParameter(index).asCone().symbol to (newArguments[index])
     }
     val substitutor = substitutorByMap(substitution, session)
 
@@ -653,7 +668,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
             capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
             intersectTypes(
                 replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
-            ).withNullability(type.canBeNull(session)) as ConeKotlinType
+            ).withNullability(type.canBeNull(session)).asCone()
         }
         is ConeSimpleKotlinType -> {
             captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
@@ -935,7 +950,7 @@ private fun SimpleTypeMarker.eraseArgumentsDeeply(
             erasedType
         else
             erasedType.toTypeProjection(ProjectionKind.OUT)
-    } as ConeKotlinType
+    }.asCone()
 }
 
 private fun ConeKotlinType.eraseAsUpperBound(

@@ -15,6 +15,7 @@ data class ConeTypeParameterLookupTag(
     override val name: Name get() = typeParameterSymbol.name
     override val symbol: FirTypeParameterSymbol
         get() = typeParameterSymbol
-
 }
+
+fun TypeParameterMarker.asCone(): ConeTypeParameterLookupTag = this as ConeTypeParameterLookupTag
 

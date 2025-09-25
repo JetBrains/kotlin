@@ -966,7 +966,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 c.session.typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
                 containerOfFakeOverride,
                 containerOfOriginalCallable
-            ).firstOrNull() as ConeKotlinType? ?: return defaultType
+            ).firstOrNull()?.asCone() ?: return defaultType
             return correspondingSupertype.toIrType()
         }
 

@@ -334,7 +334,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                         this@makeConeFlexibleTypeWithNotNullableLowerBound
                     } else {
                         ConeFlexibleType(
-                            lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(typeContext) as ConeRigidType,
+                            lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(typeContext),
                             upperBound,
                             isTrivial = false,
                         )
@@ -343,8 +343,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 is ConeIntersectionType -> ConeIntersectionType(
                     intersectedTypes.map { it.makeConeFlexibleTypeWithNotNullableLowerBound(typeContext) }
                 )
-                is ConeSimpleKotlinType -> ConeFlexibleType(
-                    makeConeTypeDefinitelyNotNullOrNotNull(typeContext) as ConeRigidType,
+                is ConeRigidType -> ConeFlexibleType(
+                    makeConeTypeDefinitelyNotNullOrNotNull(typeContext),
                     this@makeConeFlexibleTypeWithNotNullableLowerBound,
                     isTrivial = false,
                 )

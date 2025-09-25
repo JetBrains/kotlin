@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
@@ -589,7 +590,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return classId.asSingleFqName().toUnsafe()
     }
 
-    override fun TypeParameterMarker.getName(): Name = (this as ConeTypeParameterLookupTag).name
+    override fun TypeParameterMarker.getName(): Name = this.asCone().name
 
     override fun TypeParameterMarker.isReified(): Boolean {
         require(this is ConeTypeParameterLookupTag)

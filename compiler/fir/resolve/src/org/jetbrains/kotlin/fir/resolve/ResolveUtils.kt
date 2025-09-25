@@ -658,7 +658,7 @@ fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotl
 fun ConeKotlinType.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
     val system = candidate.system
     val resultingSubstitutor = system.buildCurrentSubstitutor()
-    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(this)) as ConeKotlinType
+    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(this)).asCone()
 }
 
 /**

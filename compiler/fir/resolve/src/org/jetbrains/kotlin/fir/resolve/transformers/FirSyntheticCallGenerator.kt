@@ -325,7 +325,7 @@ class FirSyntheticCallGenerator(
 
         anonymousFunction.replaceTypeRef(
             anonymousFunction.typeRef.withReplacedConeType(
-                substitutor.safeSubstitute(components.session.typeContext, argumentTypeMismatchOnWholeLambda.actualType) as ConeKotlinType
+                substitutor.safeSubstitute(components.session.typeContext, argumentTypeMismatchOnWholeLambda.actualType).asCone()
             )
         )
 

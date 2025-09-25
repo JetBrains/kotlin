@@ -1161,7 +1161,7 @@ class FirElementSerializer private constructor(
                 assert(approximatedType != type && approximatedType is ConeKotlinType) {
                     "Approximation failed: ${type.renderForDebugging()}"
                 }
-                return typeProto(approximatedType as ConeKotlinType)
+                return typeProto(approximatedType!!.asCone())
             }
             is ConeIntegerLiteralType -> {
                 throw IllegalStateException("Integer literal types should not persist up to the serializer: ${type.renderForDebugging()}")

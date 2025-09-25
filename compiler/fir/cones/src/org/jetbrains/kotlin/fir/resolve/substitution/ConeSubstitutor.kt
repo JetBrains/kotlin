@@ -31,6 +31,8 @@ abstract class ConeSubstitutor : TypeSubstitutorMarker {
     }
 }
 
+fun TypeSubstitutorMarker.asCone(): ConeSubstitutor = this as ConeSubstitutor
+
 fun ConeSubstitutor.substituteOrNull(type: ConeKotlinType?): ConeKotlinType? {
     return type?.let { substituteOrNull(it) }
 }

@@ -40,6 +40,8 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
     abstract override fun hashCode(): Int
 }
 
+fun KotlinTypeMarker.asCone(): ConeKotlinType = this as ConeKotlinType
+
 /**
  * Normally should represent a type with one related constructor, see [getConstructor],
  * but still can require unwrapping, as [ConeDefinitelyNotNullType].
@@ -51,6 +53,8 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
  *
  */
 sealed class ConeRigidType : ConeKotlinType(), RigidTypeMarker
+
+fun RigidTypeMarker.asCone(): ConeRigidType = this as ConeRigidType
 
 /**
  * Normally should represent a type with one related constructor that does not require unwrapping.

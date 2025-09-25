@@ -920,7 +920,7 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                     InferredEmptyIntersectionDiagnostic(
                         upperTypes as List<ConeKotlinType>,
                         emptyIntersectionTypeInfo.casingTypes.toList() as List<ConeKotlinType>,
-                        variableWithConstraints.typeVariable as ConeTypeVariable,
+                        variableWithConstraints.typeVariable.asCone(),
                         emptyIntersectionTypeInfo.kind,
                         isError = context.session.languageVersionSettings.supportsFeature(
                             LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
@@ -1134,6 +1134,6 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
     private fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.hasFunctionTypeConstraint(csBuilder: NewConstraintSystemImpl): Boolean {
         val typeConstructor = expectedType.typeConstructor(context.typeContext)
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[typeConstructor] ?: return false
-        return variableWithConstraints.constraints.any { (it.type as ConeKotlinType).isSomeFunctionType(context.session) }
+        return variableWithConstraints.constraints.any { it.type.asCone().isSomeFunctionType(context.session) }
     }
 }
