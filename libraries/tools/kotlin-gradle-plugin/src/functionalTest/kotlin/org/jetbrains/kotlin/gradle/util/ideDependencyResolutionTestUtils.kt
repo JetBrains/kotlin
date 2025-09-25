@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
-import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependenciesWithNativeDistribution
 
 /**
