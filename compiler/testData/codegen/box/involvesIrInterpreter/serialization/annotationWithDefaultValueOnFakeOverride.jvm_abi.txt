@@ -1,0 +1,9 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Ljava/lang/String;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(x: kotlin/String /* = ... */)
+					K2
+						(x: kotlin/String = "123")
