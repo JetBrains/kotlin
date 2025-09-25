@@ -737,5 +737,19 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<String?> =
         CommonCompilerArgument("X_NAME_BASED_DESTRUCTURING", KotlinKotlinVersion(2, 3, 0))
+
+    /**
+     * Enable header compilation mode.
+     * In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
+     * compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
+     * build systems where header libraries can be used to replace downstream dependencies for which we only need to
+     * see the type names and method signatures required to compile a given translation unit.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_HEADER_MODE: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_HEADER_MODE", KotlinKotlinVersion(2, 3, 0))
   }
 }
