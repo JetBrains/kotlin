@@ -51,6 +51,6 @@ abstract class KotlinNativeDownloadTask : DefaultTask(), UsesKotlinNativeBundleB
     fun taskAction() {
         //force the download of the native bundle
         kotlinNativeProvider.get()
-        nativeDirectoryLocation.get().asFile.writeText(konanHome.get().asFile.canonicalPath)
+        nativeDirectoryLocation.get().asFile.writeText(konanHome.get().asFile.absolutePath)
     }
 }
