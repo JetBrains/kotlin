@@ -263,6 +263,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":library:transformCommonMainDependenciesMetadata",
                     ":library:transformLinuxMainDependenciesMetadata",
                     ":library:transformNativeMainDependenciesMetadata",
+                    ":library:kotlinNativeDownload",
                 )
                 val thisProjectTasks = setOf(
                     ":kmpPartiallyResolvedDependenciesChecker",
@@ -289,6 +290,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":transformLinuxTestDependenciesMetadata",
                     ":transformNativeMainDependenciesMetadata",
                     ":transformNativeTestDependenciesMetadata",
+                    ":kotlinNativeDownload"
                 )
                 assertExactTasksInGraph(
                     if (localRepository != null) {
