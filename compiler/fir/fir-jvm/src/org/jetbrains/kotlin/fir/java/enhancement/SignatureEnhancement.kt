@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.deferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1089,21 +1090,21 @@ private class EnhancementSignatureParts(
     override fun FirAnnotation.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean = this is FirJavaExternalAnnotation
 
     override val KotlinTypeMarker.annotations: Iterable<FirAnnotation>
-        get() = (this as ConeKotlinType).typeAnnotations
+        get() = this.asCone().typeAnnotations
 
     override val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
-        get() = (this as? ConeKotlinType)?.classId?.asSingleFqName()?.toUnsafe()
+        get() = this.asCone().classId?.asSingleFqName()?.toUnsafe()
 
-    override val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
-        get() = (this as ConeKotlinType).enhancedTypeForWarning
+    override val KotlinTypeMarker.enhancedForWarnings: ConeKotlinType?
+        get() = this.asCone().enhancedTypeForWarning
 
     override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
         AbstractTypeChecker.equalTypes(session.typeContext, this, other)
 
-    override fun KotlinTypeMarker.isArrayOrPrimitiveArray(): Boolean = (this as ConeKotlinType).isArrayOrPrimitiveArray
+    override fun KotlinTypeMarker.isArrayOrPrimitiveArray(): Boolean = this.asCone().isArrayOrPrimitiveArray
 
     override val TypeParameterMarker.isFromJava: Boolean
-        get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin is FirDeclarationOrigin.Java
+        get() = this.asCone().symbol.fir.origin is FirDeclarationOrigin.Java
 
     override val KotlinTypeMarker.shouldPropagateBoundNullness: Boolean
         // If 'annotations' is empty or any annotation should propagate nullability, the type should propagate bound nullness.

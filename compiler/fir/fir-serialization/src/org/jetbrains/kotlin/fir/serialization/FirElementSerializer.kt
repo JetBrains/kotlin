@@ -1159,10 +1159,13 @@ class FirElementSerializer private constructor(
                 } else {
                     typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
                 }
-                assert(approximatedType != type && approximatedType is ConeKotlinType) {
+                require(approximatedType is ConeKotlinType) {
                     "Approximation failed: ${type.renderForDebugging()}"
                 }
-                return typeProto(approximatedType as ConeKotlinType)
+                assert(approximatedType != type) {
+                    "Approximation failed: ${type.renderForDebugging()}"
+                }
+                return typeProto(approximatedType)
             }
             is ConeIntegerLiteralType -> {
                 throw IllegalStateException("Integer literal types should not persist up to the serializer: ${type.renderForDebugging()}")

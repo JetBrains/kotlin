@@ -606,6 +606,8 @@ abstract class AbstractTypeApproximator(
         } else this
     }
 
+    // In fact is used only as dummy argument of createStarProjection,
+    // can never be found as a property value etc.
     private object TypeParameterMarkerStubForK2StarProjection : TypeParameterMarker
 
     context(conf: TypeApproximatorConfiguration, _: Cache)

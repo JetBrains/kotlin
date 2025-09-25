@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -58,7 +59,7 @@ fun ConeInferenceContext.commonSuperTypeOrNull(types: List<ConeKotlinType>): Con
         0 -> null
         1 -> types.first()
         else -> with(NewCommonSuperTypeCalculator) {
-            commonSuperType(types) as ConeKotlinType
+            commonSuperType(types).asCone()
         }
     }
 }
@@ -144,6 +145,15 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
     return ConeDefinitelyNotNullType.create(this, typeContext, avoidComprehensiveCheck)
         ?: this.withNullability(nullable = false, typeContext, preserveAttributes = preserveAttributes)
 }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun ConeRigidType.makeConeTypeDefinitelyNotNullOrNotNull(
+    typeContext: ConeTypeContext,
+    avoidComprehensiveCheck: Boolean = false,
+    preserveAttributes: Boolean = false,
+): ConeRigidType = (this as ConeKotlinType).makeConeTypeDefinitelyNotNullOrNotNull(
+    typeContext, avoidComprehensiveCheck, preserveAttributes
+) as ConeRigidType
 
 fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>): T {
     if (this.typeArguments === arguments) {
@@ -541,7 +551,7 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
     }
 
     val substitution = (0 until argumentsCount).associate { index ->
-        (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).symbol to (newArguments[index])
+        typeConstructor.getParameter(index).asCone().symbol to (newArguments[index])
     }
     val substitutor = substitutorByMap(substitution, session)
 
@@ -653,7 +663,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
             capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
             intersectTypes(
                 replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
-            ).withNullability(type.canBeNull(session)) as ConeKotlinType
+            ).withNullability(type.canBeNull(session)).asCone()
         }
         is ConeSimpleKotlinType -> {
             captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
@@ -935,7 +945,7 @@ private fun SimpleTypeMarker.eraseArgumentsDeeply(
             erasedType
         else
             erasedType.toTypeProjection(ProjectionKind.OUT)
-    } as ConeKotlinType
+    }.asCone()
 }
 
 private fun ConeKotlinType.eraseAsUpperBound(

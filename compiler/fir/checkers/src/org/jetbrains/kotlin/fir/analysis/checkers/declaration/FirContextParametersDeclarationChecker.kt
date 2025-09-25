@@ -149,10 +149,10 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
     fun checkSubTypes(types: List<ConeKotlinType>): Boolean {
         fun replaceTypeParametersByStarProjections(type: ConeClassLikeType): ConeClassLikeType {
             return type.withArguments(type.typeArguments.map {
-                when {
-                    it.isStarProjection -> it
-                    it.type!! is ConeTypeParameterType -> ConeStarProjection
-                    it.type!! is ConeClassLikeType -> replaceTypeParametersByStarProjections(it.type as ConeClassLikeType)
+                when (val type = it.type) {
+                    null -> it // isStarProjection
+                    is ConeTypeParameterType -> ConeStarProjection
+                    is ConeClassLikeType -> replaceTypeParametersByStarProjections(type)
                     else -> it
                 }
             }.toTypedArray())

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
@@ -118,7 +119,7 @@ class FirCallCompleter(
                 checkStorageConstraintsAfterFullCompletion(readOnlyConstraintStorage)
 
                 val finalSubstitutor = readOnlyConstraintStorage
-                    .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
+                    .buildAbstractResultingSubstitutor(session.typeContext).asCone()
                 call.transformSingle(
                     createCompletionResultsWriter(finalSubstitutor),
                     null
@@ -145,7 +146,7 @@ class FirCallCompleter(
                     // Frankly speaking, this is some sort of hack, which currently I don't know how to resolve properly.
                     val storage = candidate.system.currentStorage()
                     val finalSubstitutor = storage
-                        .buildCurrentSubstitutor(session.typeContext, emptyMap()) as ConeSubstitutor
+                        .buildCurrentSubstitutor(session.typeContext, emptyMap()).asCone()
                     call.transformSingle(
                         createCompletionResultsWriter(finalSubstitutor),
                         null

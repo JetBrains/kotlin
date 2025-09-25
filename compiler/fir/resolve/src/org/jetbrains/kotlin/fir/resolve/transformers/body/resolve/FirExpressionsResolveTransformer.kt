@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.calls.findTypesForSuperCandidates
 import org.jetbrains.kotlin.fir.resolve.calls.stages.mapArguments
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentEffects
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
@@ -834,7 +834,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             // After KT-45503, non-assign flavor of operator is checked more strictly: the return type must be assignable to the variable.
             val operatorCallReturnType = resolvedOperatorCall.resolvedType
             val substitutor = candidate.system.currentStorage()
-                .buildAbstractResultingSubstitutor(candidate.system.typeSystemContext) as ConeSubstitutor
+                .buildAbstractResultingSubstitutor(candidate.system.typeSystemContext).asCone()
             return AbstractTypeChecker.isSubtypeOf(
                 session.typeContext,
                 substitutor.substituteOrSelf(operatorCallReturnType),

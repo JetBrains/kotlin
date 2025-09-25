@@ -41,6 +41,18 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
 }
 
 /**
+ * Make a transformation from marker interface to cone-based type
+ *
+ * In K2 frontend context such a transformation is normally safe,
+ * as K1-based types and IR-based types cannot occur here.
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun KotlinTypeMarker.asCone(): ConeKotlinType = this as ConeKotlinType
+
+@Deprecated(message = "This call is redundant, please just drop it", level = DeprecationLevel.ERROR)
+fun ConeKotlinType.asCone(): ConeKotlinType = this
+
+/**
  * Normally should represent a type with one related constructor, see [getConstructor],
  * but still can require unwrapping, as [ConeDefinitelyNotNullType].
  *
@@ -51,6 +63,15 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
  *
  */
 sealed class ConeRigidType : ConeKotlinType(), RigidTypeMarker
+
+/**
+ * Make a transformation from marker interface to cone-based type
+ *
+ * In K2 frontend context such a transformation is normally safe,
+ * as K1-based types and IR-based types cannot occur here.
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun RigidTypeMarker.asCone(): ConeRigidType = this as ConeRigidType
 
 /**
  * Normally should represent a type with one related constructor that does not require unwrapping.

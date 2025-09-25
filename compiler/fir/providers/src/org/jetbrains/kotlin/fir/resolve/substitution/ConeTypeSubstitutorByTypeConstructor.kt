@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 
 fun createTypeSubstitutorByTypeConstructor(
@@ -24,7 +23,7 @@ private class ConeTypeSubstitutorByTypeConstructor(
     private val map: Map<TypeConstructorMarker, ConeKotlinType>,
     typeContext: ConeTypeContext,
     private val approximateIntegerLiterals: Boolean
-) : AbstractConeSubstitutor(typeContext), TypeSubstitutorMarker {
+) : AbstractConeSubstitutor(typeContext) {
 
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeLookupTagBasedType && type !is ConeStubType && type !is ConeTypeVariableType) return null

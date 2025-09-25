@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
+import org.jetbrains.kotlin.fir.types.asCone
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
@@ -249,7 +250,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         argument: PostponedAtomWithRevisableExpectedType,
     ): Boolean = with(c) {
         val revisedExpectedType = argument.revisedExpectedType
-            ?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() } as ConeKotlinType?
+            ?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }?.asCone()
             ?: return false
 
         when (argument) {

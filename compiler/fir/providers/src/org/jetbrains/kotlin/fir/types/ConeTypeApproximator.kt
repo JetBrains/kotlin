@@ -16,16 +16,16 @@ class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersi
     AbstractTypeApproximator(inferenceContext, languageVersionSettings) {
     fun approximateToSuperType(type: ConeKotlinType, conf: TypeApproximatorConfiguration): ConeKotlinType? {
         if (type.fastPathSkipApproximation(conf)) return null
-        return super.approximateToSuperType(type, conf, caches = null) as ConeKotlinType?
+        return super.approximateToSuperType(type, conf, caches = null)?.asCone()
     }
 
     fun approximateToSubType(type: ConeKotlinType, conf: TypeApproximatorConfiguration): ConeKotlinType? {
         if (type.fastPathSkipApproximation(conf)) return null
-        return super.approximateToSubType(type, conf, caches = null) as ConeKotlinType?
+        return super.approximateToSubType(type, conf, caches = null)?.asCone()
     }
 
     override fun KotlinTypeMarker.renderForDebugInfo(): String = buildString {
-        ConeTypeRendererForDebugInfo(this, renderCapturedDetails = true).render(this@renderForDebugInfo as ConeKotlinType)
+        ConeTypeRendererForDebugInfo(this, renderCapturedDetails = true).render(this@renderForDebugInfo.asCone())
     }
 
     private fun ConeKotlinType.fastPathSkipApproximation(conf: TypeApproximatorConfiguration): Boolean {
@@ -57,7 +57,7 @@ class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersi
         // If the approximation configuration is designed to approximate something beside ILT/captured types, let it doing that.
         if (conf !is TypeApproximatorConfiguration.AbstractCapturedTypesAndILTApproximation) return false
 
-        return !contains { mightNeedApproximation(it as ConeKotlinType, conf) }
+        return !contains { mightNeedApproximation(it.asCone(), conf) }
     }
 
     private fun mightNeedApproximation(

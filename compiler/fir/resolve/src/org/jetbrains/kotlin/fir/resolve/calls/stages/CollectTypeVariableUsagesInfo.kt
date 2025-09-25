@@ -142,7 +142,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
                     if (constraint.type.typeConstructor() != variable) {
                         val suitableUpperBound = upperBounds.find { upperBound ->
                             upperBound.type.contains { it.typeConstructor() == variable }
-                        }?.type as ConeKotlinType?
+                        }?.type?.asCone()
 
                         if (suitableUpperBound != null) typeConstructor to suitableUpperBound else null
                     } else typeConstructor to null

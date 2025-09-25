@@ -185,7 +185,7 @@ fun createSubstitutionForScope(
     session: FirSession
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
     val capturedOrType = session.typeContext.captureFromArguments(type, CaptureStatus.FROM_EXPRESSION) ?: type
-    val capturedTypeArguments = (capturedOrType as ConeClassLikeType).typeArguments
+    val capturedTypeArguments = capturedOrType.asCone().typeArguments
 
     return typeParameters.withIndex().mapNotNull { (index, typeParameter) ->
         val capturedTypeArgument = capturedTypeArguments.getOrNull(index) ?: return@mapNotNull null

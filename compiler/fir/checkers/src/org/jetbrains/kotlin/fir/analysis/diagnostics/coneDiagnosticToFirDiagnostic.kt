@@ -33,9 +33,10 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -799,18 +800,18 @@ private fun ConstraintSystemError.toDiagnostic(
         is NotEnoughInformationForTypeParameter<*> -> if (candidate.symbol is FirConstructorSymbol &&
             candidate.callInfo.callSite is FirDelegatedConstructorCall
         ) {
-            val originalTypeParameter = (this.typeVariable as ConeTypeVariable).typeConstructor.originalTypeParameter
-            if (originalTypeParameter is ConeTypeParameterLookupTag) {
+            val lookupTag = this.typeVariable.asCone().typeConstructor.originalTypeParameter?.asCone()
+            if (lookupTag != null) {
                 FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
                     source,
-                    originalTypeParameter.typeParameterSymbol,
+                    lookupTag.typeParameterSymbol,
                     session
                 )
             } else null
         } else null
 
         is InferredEmptyIntersection -> {
-            val typeVariable = typeVariable as ConeTypeVariable
+            val typeVariable = typeVariable.asCone()
             val narrowedSource = candidate.sourceOfCallToSymbolWith(typeVariable)
 
             @Suppress("UNCHECKED_CAST")
@@ -834,7 +835,7 @@ private fun ConstraintSystemError.toDiagnostic(
         }
 
         is AnonymousFunctionBasedMultiLambdaBuilderInferenceRestriction -> {
-            val typeParameterSymbol = (typeParameter as ConeTypeParameterLookupTag).typeParameterSymbol
+            val typeParameterSymbol = typeParameter.asCone().typeParameterSymbol
             FirErrors.BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION.createOn(
                 anonymous.source ?: source,
                 typeParameterSymbol.name,
@@ -855,7 +856,7 @@ private fun ConeKotlinType.substituteTypeVariableTypes(
     typeContext: ConeTypeContext,
 ): ConeKotlinType {
     val nonErrorSubstitutionMap = candidate.system.asReadOnlyStorage().fixedTypeVariables.filterValues { it !is ConeErrorType }
-    val substitutor = typeContext.typeSubstitutorByTypeConstructor(nonErrorSubstitutionMap) as ConeSubstitutor
+    val substitutor = typeContext.typeSubstitutorByTypeConstructor(nonErrorSubstitutionMap).asCone()
 
     return substitutor.substituteOrSelf(this).removeTypeVariableTypes(typeContext, TypeVariableReplacement.ErrorType)
 }
@@ -909,8 +910,8 @@ private fun reportInferredIntoEmptyIntersection(
     return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText, session)
 }
 
-private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
-private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
+private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType.asCone()
+private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType.asCone()
 
 private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnosticFactory0 {
     return when (kind) {

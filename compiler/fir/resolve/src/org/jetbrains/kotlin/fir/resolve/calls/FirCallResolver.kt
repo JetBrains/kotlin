@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.copyAsImplicitInvokeCall
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.references.builder.FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -36,7 +34,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.addNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
@@ -468,7 +466,7 @@ class FirCallResolver(
         val callableReferenceAccess = resolvedCallableReferenceAtom.expression
         val calleeReference = callableReferenceAccess.calleeReference
         val lhs = resolvedCallableReferenceAtom.lhs
-        val coneSubstitutor = containingCallCS.buildCurrentSubstitutor() as ConeSubstitutor
+        val coneSubstitutor = containingCallCS.buildCurrentSubstitutor().asCone()
         val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
 
         val info = createCallableReferencesInfoForLHS(
@@ -616,23 +614,15 @@ class FirCallResolver(
         return selectDelegatingConstructorCall(delegatedConstructorCall, callInfo.name, result, callInfo)
     }
 
-    private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {
-        is ConeStarProjection -> buildStarProjection()
-        else -> {
-            val type = when (this) {
-                is ConeKotlinTypeProjectionIn -> type
-                is ConeKotlinTypeProjectionOut -> type
-                is ConeStarProjection -> throw IllegalStateException()
-                else -> this as ConeKotlinType
-            }
-            buildTypeProjectionWithVariance {
-                typeRef = buildResolvedTypeRef { this.coneType = type }
-                variance = when (kind) {
-                    ProjectionKind.IN -> Variance.IN_VARIANCE
-                    ProjectionKind.OUT -> Variance.OUT_VARIANCE
-                    ProjectionKind.INVARIANT -> Variance.INVARIANT
-                    ProjectionKind.STAR -> throw IllegalStateException()
-                }
+    private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (val type = type) {
+        null -> buildStarProjection()
+        else -> buildTypeProjectionWithVariance {
+            typeRef = buildResolvedTypeRef { this.coneType = type }
+            variance = when (kind) {
+                ProjectionKind.IN -> Variance.IN_VARIANCE
+                ProjectionKind.OUT -> Variance.OUT_VARIANCE
+                ProjectionKind.INVARIANT -> Variance.INVARIANT
+                ProjectionKind.STAR -> throw IllegalStateException()
             }
         }
     }

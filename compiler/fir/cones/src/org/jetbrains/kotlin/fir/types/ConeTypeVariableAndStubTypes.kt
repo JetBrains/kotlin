@@ -114,3 +114,15 @@ open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMa
         return defaultType.toString()
     }
 }
+
+/**
+ * Make a transformation from marker interface to cone-based type
+ *
+ * In K2 frontend context such a transformation is normally safe,
+ * as K1-based types and IR-based types cannot occur here.
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun TypeVariableMarker.asCone(): ConeTypeVariable = this as ConeTypeVariable
+
+@Deprecated(message = "This call is redundant, please just drop it", level = DeprecationLevel.ERROR)
+fun ConeTypeVariable.asCone(): ConeTypeVariable = this

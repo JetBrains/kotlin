@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeSemiFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -144,7 +145,7 @@ class FirPCLAInferenceSession(
 
         // Here we still use additionalBinding instead of semiFixedVariables.
         // A replacement here changes the behavior (in fact, only types inside diagnostics) of some PCLA tests
-        val substitutor = system.buildCurrentSubstitutor(additionalBinding) as ConeSubstitutor
+        val substitutor = system.buildCurrentSubstitutor(additionalBinding).asCone()
         val updatedType = substitutor.substituteOrNull(resolvedType)
 
         if (updatedType != null) {
@@ -194,7 +195,7 @@ class FirPCLAInferenceSession(
                     inferenceComponents.resultTypeResolver.findResultIfThereIsEqualsConstraint(
                         variableWithConstraints,
                         isStrictMode = true,
-                    ) as ConeKotlinType?
+                    )?.asCone()
                 }?.let { appropriateResultType ->
                     return Pair(coneTypeVariableTypeConstructor, appropriateResultType)
                 }
@@ -208,7 +209,7 @@ class FirPCLAInferenceSession(
                 inferenceComponents.resultTypeResolver.findResultType(
                     variableWithConstraints,
                     TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-                ) as ConeKotlinType
+                ).asCone()
             } ?: return null
             val variable = variableWithConstraints.typeVariable
             addEqualityConstraint(variable.defaultType(), resultType, ConeSemiFixVariableConstraintPosition(variable))
