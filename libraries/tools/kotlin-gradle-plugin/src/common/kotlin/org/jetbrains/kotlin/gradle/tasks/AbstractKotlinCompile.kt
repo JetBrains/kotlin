@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.CompilerExecutionSettings
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.UsesCompilerSystemPropertiesService
+import org.jetbrains.kotlin.compilerRunner.btapi.UsesBuildSessionService
 import org.jetbrains.kotlin.compilerRunner.createGradleCompilerRunner
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
@@ -61,6 +62,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     UsesClassLoadersCachingBuildService,
     UsesKotlinToolingDiagnostics,
     UsesBuildIdProviderService,
+    UsesBuildSessionService,
     UsesBuildFusService,
     BaseKotlinCompile {
 
@@ -201,6 +203,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                     classLoadersCachingService,
                                     buildFinishedListenerService,
                                     buildIdService,
+                                    buildSessionService,
                                     buildFusService.orNull?.getFusMetricsConsumer(),
                                     this
                                 )

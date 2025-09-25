@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.CompositeKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.ExceptionReportingKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.logging.logCompilerArgumentsMessage
 import org.jetbrains.kotlin.gradle.logging.reportToIde
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
@@ -70,6 +69,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
 ) :
     WorkAction<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters> {
     internal interface BuildToolsApiCompilationParameters : WorkParameters {
+        val buildSessionService: Property<BuildSessionService>
         val buildIdService: Property<BuildIdService>
         val buildFinishedListenerService: Property<BuildFinishedListenerService>
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
@@ -94,14 +94,11 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     @OptIn(ExperimentalCompilerArgument::class)
     private fun performCompilation(executionStrategy: KotlinCompilerExecutionStrategy, log: KotlinLogger): CompilationResult {
         try {
-            val classLoader = parameters.classLoadersCachingService.get()
-                .getClassLoader(workArguments.compilerFullClasspath, SharedApiClassesClassLoaderProvider)
-            val compilationService = KotlinToolchains.loadImplementation(classLoader)
-            val buildId = ProjectId.ProjectUUID(parameters.buildIdService.get().buildId)
-            val build = compilationService.createBuildSession()
-            parameters.buildFinishedListenerService.get().onCloseOnceByKey(buildId.toString()) {
-                build.close()
-            }
+            val buildSession = parameters.buildSessionService.get().getOrCreateBuildSession(
+                parameters.classLoadersCachingService.get(),
+                workArguments.compilerFullClasspath
+            )
+            val compilationService = buildSession.kotlinToolchains
 
             val args = parseCommandLineArguments<K2JVMCompilerArguments>(workArguments.compilerArgs.toList())
             val jvmCompilationOperation = compilationService.jvm.createJvmCompilationOperation(
@@ -169,7 +166,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             }
 
             return metrics.measure(GradleBuildTime.RUN_COMPILATION) {
-                build.executeOperation(jvmCompilationOperation, executionConfig, log)
+                buildSession.executeOperation(jvmCompilationOperation, executionConfig, log)
             }.also { extractMetrics(jvmCompilationOperation) }
         } catch (e: Throwable) {
             wrapAndRethrowCompilationException(executionStrategy, e)

@@ -31,6 +31,7 @@ internal class GradleBuildToolsApiCompilerRunner(
     private val cachedClassLoadersService: Provider<ClassLoadersCachingBuildService>,
     private val buildFinishedListenerService: Provider<BuildFinishedListenerService>,
     private val buildIdService: Provider<BuildIdService>,
+    private val buildSessionService: Provider<BuildSessionService>,
     fusMetricsConsumer: StatisticsValuesConsumer?,
 ) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics, fusMetricsConsumer) {
 
@@ -46,6 +47,7 @@ internal class GradleBuildToolsApiCompilerRunner(
             params.classLoadersCachingService.set(cachedClassLoadersService)
             params.buildFinishedListenerService.set(buildFinishedListenerService)
             params.buildIdService.set(buildIdService)
+            params.buildSessionService.set(buildSessionService)
             if (taskOutputsBackup != null) {
                 params.taskOutputsToRestore.set(taskOutputsBackup.outputsToRestore)
                 params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)

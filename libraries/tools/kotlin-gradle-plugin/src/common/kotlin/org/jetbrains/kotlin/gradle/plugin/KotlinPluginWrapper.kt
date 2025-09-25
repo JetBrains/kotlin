@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
@@ -77,6 +78,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
         BuildFinishedListenerService.registerIfAbsent(project)
+        BuildSessionService.registerIfAbsent(project)
 
         val buildUidService = BuildUidService.registerIfAbsent(project.gradle)
         BuildFusService.registerIfAbsent(project, pluginVersion, buildUidService)

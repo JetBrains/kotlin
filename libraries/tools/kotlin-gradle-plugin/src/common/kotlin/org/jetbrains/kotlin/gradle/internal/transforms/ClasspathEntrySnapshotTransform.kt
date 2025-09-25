@@ -14,18 +14,16 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.GRANULARITY
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
-import org.jetbrains.kotlin.compilerRunner.btapi.SharedApiClassesClassLoaderProvider
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.TransformActionUsingKotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.utils.use
 import java.io.File
 
 /** Transform to create a snapshot of a classpath entry (directory or jar). */
@@ -60,6 +58,9 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
 
         @get:Input
         abstract val parseInlinedLocalClasses: Property<Boolean>
+
+        @get:Internal
+        abstract val buildSessionService: Property<BuildSessionService>
     }
 
     @get:Classpath
@@ -95,17 +96,18 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
         )
         val parseInlinedLocalClasses = parameters.parseInlinedLocalClasses.get()
 
-        val classLoader = parameters.classLoadersCachingService.get()
-            .getClassLoader(parameters.classpath.toList(), SharedApiClassesClassLoaderProvider)
-        val kotlinToolchains = KotlinToolchains.loadImplementation(classLoader)
+        val buildSession = parameters.buildSessionService.get().getOrCreateBuildSession(
+            parameters.classLoadersCachingService.get(),
+            parameters.classpath.toList()
+        )
+        val kotlinToolchains = buildSession.kotlinToolchains
+
         val snapshotOperation = kotlinToolchains.jvm.createClasspathSnapshottingOperation(classpathEntryInputDirOrJar.toPath())
             .apply {
                 this[GRANULARITY] = granularity
                 this[PARSE_INLINED_LOCAL_CLASSES] = parseInlinedLocalClasses
             }
-        val snapshot = kotlinToolchains.createBuildSession().use {
-            it.executeOperation(snapshotOperation)
-        }
+        val snapshot = buildSession.executeOperation(snapshotOperation)
         snapshot.saveSnapshot(snapshotOutputFile)
     }
 
