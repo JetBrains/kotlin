@@ -424,12 +424,6 @@ public abstract class org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchain$Toolchain {
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/js/WasmPlatformToolchain {
-}
-
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/AccessibleClassSnapshot : org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshot {
 	public abstract fun getClassAbiHash ()J
 }
@@ -589,9 +583,6 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompila
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/knative/NativePlatformToolchain {
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/trackers/BuildMetricsCollector {
