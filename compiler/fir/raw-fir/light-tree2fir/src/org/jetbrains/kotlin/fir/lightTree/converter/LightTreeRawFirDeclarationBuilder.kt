@@ -62,9 +62,10 @@ class LightTreeRawFirDeclarationBuilder(
     internal val baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context<LighterASTNode> = Context(),
+    val headerCompilationMode: Boolean,
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
 
-    private val expressionConverter = LightTreeRawFirExpressionBuilder(session, tree, this, context)
+    private val expressionConverter = LightTreeRawFirExpressionBuilder(session, tree, this, context, headerCompilationMode)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]

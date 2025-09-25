@@ -63,6 +63,7 @@ class LightTreeRawFirExpressionBuilder(
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     private val declarationBuilder: LightTreeRawFirDeclarationBuilder,
     context: Context<LighterASTNode> = Context(),
+    val headerCompilationMode: Boolean,
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
 
     internal inline fun <reified R : FirExpression> getAsFirExpression(

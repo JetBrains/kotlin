@@ -135,6 +135,7 @@ abstract class FirAbstractInvalidationTest(
             incrementalDataProvider = null,
             lookupTracker = null,
             useWasmPlatform = false,
+            headerCompilationMode = false,
         )
 
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)

@@ -111,7 +111,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
         val firProvider = session.firProvider as FirProviderImpl
 
         val firFiles = if (USE_LIGHT_TREE) {
-            val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticsReporter = null)
+            val lightTree2Fir = LightTree2Fir(session, false, firProvider.kotlinScopeProvider, diagnosticsReporter = null)
             bench.buildFiles(lightTree2Fir, sourceFiles)
         } else {
             val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
