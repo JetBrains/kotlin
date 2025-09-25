@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -246,10 +247,30 @@ class MemoizedInlineClassReplacements(
             val resolved = (function as? IrSimpleFunction)?.resolveFakeOverrideMaybeAbstractOrFail()
             if (resolved?.parentClassId?.let { classFileContainsMethod(it, replacement, context) } == false) {
                 return buildReplacementInner(function, replacementOrigin, noFakeOverride, true, body)
+            } else if (function.isDurationInline()) {
+                throw IllegalStateException(
+                    "Somehow found new mangling scheme in stdlib\n" +
+                            "function = ${function.dump()}" +
+                            "replacement = ${replacement.dump()}" +
+                            "resolved = ${resolved?.dump()}" +
+                            "parent = ${function.parentClassId?.asString()}"
+                )
             }
+        } else if (!useOldManglingScheme && function.isDurationInline()) {
+            throw IllegalStateException(
+                "Failed to use old mangling scheme for Duration Companion's inline properties\n" +
+                        "function = ${function.dump()}" +
+                        "useOldManglingScheme = $useOldManglingScheme\n" +
+                        "replacement = ${replacement.dump()}" +
+                        "parent = ${function.parentClassId?.asString()}"
+            )
         }
         return replacement
     }
+
+    private fun IrFunction.isDurationInline(): Boolean =
+        (parent as? IrClass)?.fqNameWhenAvailable == FqName("kotlin.time.Duration.Companion") &&
+                isInline
 
     private fun buildReplacementInner(
         function: IrFunction,
