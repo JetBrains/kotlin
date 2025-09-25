@@ -4944,14 +4944,7 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<T>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -4966,14 +4959,7 @@ public fun ByteArray.take(n: Int): List<Byte> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<Byte>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -4988,14 +4974,7 @@ public fun ShortArray.take(n: Int): List<Short> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<Short>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -5010,14 +4989,7 @@ public fun IntArray.take(n: Int): List<Int> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<Int>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -5032,14 +5004,7 @@ public fun LongArray.take(n: Int): List<Long> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<Long>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -5054,14 +5019,7 @@ public fun FloatArray.take(n: Int): List<Float> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<Float>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -5076,14 +5034,7 @@ public fun DoubleArray.take(n: Int): List<Double> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<Double>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -5098,14 +5049,7 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<Boolean>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
@@ -5120,14 +5064,7 @@ public fun CharArray.take(n: Int): List<Char> {
     if (n == 0) return emptyList()
     if (n >= size) return toList()
     if (n == 1) return listOf(this[0])
-    var count = 0
-    val list = ArrayList<Char>(n)
-    for (item in this) {
-        list.add(item)
-        if (++count == n)
-            break
-    }
-    return list
+    return copyOfRange(0, n).asList()
 }
 
 /**
