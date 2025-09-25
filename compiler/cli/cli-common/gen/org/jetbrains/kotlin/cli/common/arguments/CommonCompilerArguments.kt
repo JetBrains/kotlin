@@ -491,6 +491,21 @@ The argument should be used only if the new compilation scheme is enabled with -
         }
 
     @Argument(
+        value = "-Xheader-mode",
+        description = """Enable header compilation mode.
+In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
+compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
+build systems where header libraries can be used to replace downstream dependencies for which we only need to
+see the type names and method signatures required to compile a given translation unit. Inline functions are still kept
+with bodies.""",
+    )
+    var headerMode: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xignore-const-optimization-errors",
         description = "Ignore all compilation exceptions while optimizing some constant expressions.",
     )
