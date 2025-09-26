@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
@@ -65,6 +66,7 @@ class LightTreeRawFirDeclarationBuilder(
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
 
     private val expressionConverter = LightTreeRawFirExpressionBuilder(session, tree, this, context)
+    private val headerCompilationMode = session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -96,7 +98,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
                 IMPORT_LIST -> importList += convertImportDirectives(child)
                 CLASS -> firDeclarationList += convertClass(child)
-                FUN -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
+                FUN -> firDeclarationList += convertFunctionDeclaration(child, headerCompilationMode) as FirDeclaration
                 KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(child)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
                 OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
@@ -1922,7 +1924,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunction
      */
-    fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirStatement {
+    fun convertFunctionDeclaration(functionDeclaration: LighterASTNode, generateHeaders: Boolean = false): FirStatement {
         var modifiers: ModifierList? = null
         var identifier: String? = null
         var valueParametersList: LighterASTNode? = null
@@ -1938,6 +1940,8 @@ class LightTreeRawFirDeclarationBuilder(
         functionDeclaration.getChildNodeByType(IDENTIFIER)?.let {
             identifier = it.asText
         }
+
+        var headerMode = generateHeaders
 
         val isLocal = isCallableLocal(functionDeclaration) { getParent() }
         val functionSource = functionDeclaration.toFirSourceElement()
@@ -1969,6 +1973,11 @@ class LightTreeRawFirDeclarationBuilder(
             }
 
             val calculatedModifiers = modifiers ?: ModifierList()
+
+            if (calculatedModifiers.hasInline()) {
+                // We need to disable header mode for inline functions.
+                headerMode = false
+            }
 
             if (returnType == null) {
                 returnType =
@@ -2065,7 +2074,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                     val allowLegacyContractDescription = outerContractDescription == null
                     val bodyWithContractDescription = withForcedLocalContext {
-                        convertFunctionBody(block, expression, allowLegacyContractDescription)
+                        convertFunctionBody(block, expression, allowLegacyContractDescription, headerMode)
                     }
                     this.body = bodyWithContractDescription.first
                     val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
@@ -2102,11 +2111,12 @@ class LightTreeRawFirDeclarationBuilder(
     private fun convertFunctionBody(
         blockNode: LighterASTNode?,
         expression: LighterASTNode?,
-        allowLegacyContractDescription: Boolean
+        allowLegacyContractDescription: Boolean,
+        generateHeaders: Boolean = false,
     ): Pair<FirBlock?, FirContractDescription?> {
         return when {
             blockNode != null -> {
-                val block = convertBlock(blockNode)
+                val block = convertBlock(blockNode) // We might be able to process only the contract statement in the body.
                 val contractDescription = runIf(allowLegacyContractDescription) {
                     val blockSource = block.source
                     val diagnostic = when {
@@ -2116,7 +2126,11 @@ class LightTreeRawFirDeclarationBuilder(
                     }
                     processLegacyContractDescription(block, diagnostic)
                 }
-                block to contractDescription
+                if (generateHeaders) {
+                    null to contractDescription // We want to preserve the contract info when processing as headers.
+                } else {
+                    block to contractDescription
+                }
             }
             expression != null -> FirSingleExpressionBlock(
                 expressionConverter.getAsFirExpression<FirExpression>(expression, "Function has no body (but should)").toReturn()
