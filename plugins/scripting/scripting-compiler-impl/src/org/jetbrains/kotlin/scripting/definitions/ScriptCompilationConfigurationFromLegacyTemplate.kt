@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.scripting.definitions
 
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.scripting.resolve.ApiChangeDependencyResolverWrapper
+import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import kotlin.reflect.KClass
@@ -25,17 +26,17 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
+import kotlin.script.experimental.impl.fromLegacyTemplate
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
+import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.experimental.location.ScriptExpectedLocations
-import kotlin.script.experimental.util.PropertiesCollection
 import kotlin.script.templates.AcceptedAnnotations
-import kotlin.script.templates.DEFAULT_SCRIPT_FILE_PATTERN
+import kotlin.script.templates.ScriptTemplateAdditionalCompilerArguments
 import kotlin.script.templates.ScriptTemplateDefinition
 
 @Deprecated("Use 'ScriptDefinition' instead", level = DeprecationLevel.WARNING)
@@ -51,33 +52,9 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
             null
         }
 
-        fun resolverFromAnnotation(template: KClass<out Any>): DependenciesResolver? {
-            val defAnn = takeUnlessError {
-                template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()
-            } ?: return null
+        val dependencyResolver: DependenciesResolver = resolverFromAnnotation(template)
 
-            return when (val resolver = instantiateResolver(defAnn.resolver)) {
-                is AsyncDependenciesResolver -> AsyncDependencyResolverWrapper(resolver)
-                is DependenciesResolver -> resolver
-                else -> resolver?.let(::ApiChangeDependencyResolverWrapper)
-            }
-        }
-
-        val dependencyResolver: DependenciesResolver = resolverFromAnnotation(template) ?: DependenciesResolver.NoDependencies
-
-        fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
-            left.name == right.name && left.parameters.size == right.parameters.size && left.parameters.zip(right.parameters).all {
-                it.first.kind == KParameter.Kind.INSTANCE || it.first.name == it.second.name
-            }
-
-        val acceptedAnnotations = dependencyResolver.unwrap()::class.memberFunctions.asSequence()
-            .filter { function -> getResolveFunctions().any { sameSignature(function, it) } }.flatMap { it.annotations }
-            .filterIsInstance<AcceptedAnnotations>().flatMap { it.supportedAnnotationClasses.toList() }.distinctBy { it.qualifiedName }
-            .map(::KotlinType).toList()
-
-        val scriptExpectedLocations = takeUnlessError {
-            template.annotations.firstIsInstanceOrNull<ScriptExpectedLocations>()
-        }?.value?.map {
+        val scriptExpectedLocations = template.annotations.firstIsInstanceOrNull<ScriptExpectedLocations>()?.value?.map {
             when (it) {
                 ScriptExpectedLocation.SourcesOnly -> ScriptAcceptedLocation.Sources
                 ScriptExpectedLocation.TestsOnly -> ScriptAcceptedLocation.Tests
@@ -90,12 +67,13 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         )
 
         val additionalCompilerArguments = takeUnlessError {
-            template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateAdditionalCompilerArguments>()?.let {
+            template.annotations.firstIsInstanceOrNull<ScriptTemplateAdditionalCompilerArguments>()?.let {
                 it.provider.primaryConstructor?.call(it.arguments.asIterable())
             }
         }?.getAdditionalCompilerArguments(
-            hostConfiguration[ScriptingHostConfiguration.environment]?.invoke().orEmpty()
+            hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty()
         )
+        fromLegacyTemplate(true)
         platform("JVM")
         hostConfiguration(hostConfiguration)
         displayName(template.simpleName!!)
@@ -105,19 +83,17 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         ide {
             acceptedLocations.put(scriptExpectedLocations)
         }
+        asyncDependenciesResolver(dependencyResolver is AsyncDependenciesResolver || dependencyResolver is LegacyResolverWrapper)
         if (dependencyResolver != DependenciesResolver.NoDependencies) {
             refineConfiguration {
-                beforeCompiling {
-                    refineWithResolver(dependencyResolver, it)
-                }
-                onAnnotations(acceptedAnnotations) {
-                    refineWithResolver(dependencyResolver, it)
+                onAnnotations(dependencyResolver.acceptedAnnotations.map(::KotlinType)) { context ->
+                    refineWithResolver(dependencyResolver, context)
                 }
             }
         }
-        filePathPattern(takeUnlessError {
-            template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern
-        } ?: DEFAULT_SCRIPT_FILE_PATTERN)
+        template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern?.let {
+            @Suppress("DEPRECATION_ERROR") fileNamePattern(it)
+        }
     })
 
 
@@ -162,12 +138,19 @@ private fun refineWithResolver(
     dependencyResolver: DependenciesResolver,
     context: ScriptConfigurationRefinementContext,
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val resolveResult: DependenciesResolver.ResolveResult = dependencyResolver.resolve(
-        ScriptContentsFromRefinementContext(context), emptyMap()
-    )
+    val environment = context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
+        it[ScriptingHostConfiguration.getEnvironment]?.invoke()
+    }.orEmpty()
+    val resolveResult = dependencyResolver.resolve(ScriptContentsFromRefinementContext(context), environment)
 
     val reports = resolveResult.reports.map {
-        ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, it.message, mapLegacyDiagnosticSeverity(it.severity))
+        ScriptDiagnostic(
+            ScriptDiagnostic.unspecifiedError,
+            it.message,
+            mapLegacyDiagnosticSeverity(it.severity),
+            context.script.locationId,
+            mapLegacyScriptPosition(it.position)
+        )
     }
     val resolvedDeps = (resolveResult as? DependenciesResolver.ResolveResult.Success)?.dependencies
 
@@ -189,6 +172,30 @@ private fun refineWithResolver(
     }.asSuccess(reports)
 }
 
+fun resolverFromAnnotation(template: KClass<out Any>): DependenciesResolver {
+    val defAnn = template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>() ?: return DependenciesResolver.NoDependencies
+
+    return when (val resolver = instantiateResolver(defAnn.resolver)) {
+        is AsyncDependenciesResolver -> AsyncDependencyResolverWrapper(resolver)
+        is DependenciesResolver -> resolver
+        else -> resolver?.let(::ApiChangeDependencyResolverWrapper)
+    } ?: DependenciesResolver.NoDependencies
+}
+
+val DependenciesResolver.acceptedAnnotations: List<KClass<out Annotation>>
+    get() {
+        fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
+            left.name == right.name && left.parameters.size == right.parameters.size && left.parameters.zip(right.parameters).all {
+                it.first.kind == KParameter.Kind.INSTANCE || it.first.name == it.second.name
+            }
+
+        val resolveFunctions = getResolveFunctions()
+
+        return this.unwrap()::class.memberFunctions.asSequence().filter { function -> resolveFunctions.any { sameSignature(function, it) } }
+            .flatMap { it.annotations }.filterIsInstance<AcceptedAnnotations>().flatMap { it.supportedAnnotationClasses.toList() }
+            .distinctBy { it.qualifiedName }.toList()
+    }
+
 interface DependencyResolverWrapper<T : ScriptDependenciesResolver> {
     val delegate: T
 }
@@ -196,7 +203,6 @@ interface DependencyResolverWrapper<T : ScriptDependenciesResolver> {
 fun ScriptDependenciesResolver.unwrap(): ScriptDependenciesResolver {
     return if (this is DependencyResolverWrapper<*>) delegate.unwrap() else this
 }
-
 
 // wraps AsyncDependenciesResolver to provide implementation for synchronous DependenciesResolver::resolve
 class AsyncDependencyResolverWrapper(
@@ -206,16 +212,9 @@ class AsyncDependencyResolverWrapper(
     override fun resolve(
         scriptContents: ScriptContents, environment: Environment,
     ): DependenciesResolver.ResolveResult =
-        @Suppress("DEPRECATION_ERROR")
-        internalScriptingRunSuspend { delegate.resolveAsync(scriptContents, environment) }
+        @Suppress("DEPRECATION_ERROR") internalScriptingRunSuspend { delegate.resolveAsync(scriptContents, environment) }
 
     override suspend fun resolveAsync(
         scriptContents: ScriptContents, environment: Environment,
     ): DependenciesResolver.ResolveResult = delegate.resolveAsync(scriptContents, environment)
 }
-
-val ScriptCompilationConfigurationKeys.annotationsForSamWithReceivers by PropertiesCollection.key<List<KotlinType>>()
-
-val ScriptCompilationConfigurationKeys.platform by PropertiesCollection.key<String>()
-
-val ScriptingHostConfigurationKeys.environment by PropertiesCollection.key<() -> Environment?>()

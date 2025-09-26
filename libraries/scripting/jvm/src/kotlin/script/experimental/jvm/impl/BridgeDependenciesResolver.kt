@@ -6,77 +6,15 @@
 package kotlin.script.experimental.jvm.impl
 
 import java.io.File
-import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
-import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportPosition
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
-
-class BridgeDependenciesResolver(
-    val scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    val onConfigurationUpdated: (SourceCode, ScriptCompilationConfiguration) -> Unit = { _, _ -> },
-    val getScriptSource: (ScriptContents) -> SourceCode? = { null }
-) : AsyncDependenciesResolver {
-
-    override fun resolve(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult =
-        @Suppress("DEPRECATION_ERROR")
-        internalScriptingRunSuspend {
-            resolveAsync(scriptContents, environment)
-        }
-
-    override suspend fun resolveAsync(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult {
-        try {
-
-            val diagnostics = arrayListOf<ScriptReport>()
-            val processedScriptData = ScriptCollectedData(
-                mapOf(
-                    ScriptCollectedData.foundAnnotations to scriptContents.annotations
-                )
-            )
-
-            val script = getScriptSource(scriptContents) ?: scriptContents.toScriptSource()
-
-            val refineResults =
-                scriptCompilationConfiguration.refineOnAnnotations(script, processedScriptData).onSuccess {
-                    it.refineBeforeCompiling(script, processedScriptData)
-                }
-
-            val refinedConfiguration = when (refineResults) {
-                is ResultWithDiagnostics.Failure ->
-                    return DependenciesResolver.ResolveResult.Failure(refineResults.reports.mapScriptReportsToDiagnostics())
-                is ResultWithDiagnostics.Success -> {
-                    diagnostics.addAll(refineResults.reports.mapScriptReportsToDiagnostics())
-                    refineResults.value
-                }
-            }
-
-            if (refinedConfiguration != scriptCompilationConfiguration) {
-                onConfigurationUpdated(script, refinedConfiguration)
-            }
-
-            val newClasspath = refinedConfiguration[ScriptCompilationConfiguration.dependencies]
-                ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
-
-            return DependenciesResolver.ResolveResult.Success(
-                // TODO: consider returning only increment from the initial config
-                refinedConfiguration.toDependencies(newClasspath),
-                diagnostics
-            )
-        } catch (e: Throwable) {
-            return DependenciesResolver.ResolveResult.Failure(
-                ScriptReport(e.message ?: "unknown error $e")
-            )
-        }
-    }
-}
 
 fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): ScriptDependencies {
     val defaultImports = this[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
@@ -88,9 +26,6 @@ fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): Script
         scripts = this[ScriptCompilationConfiguration.importScripts].toFilesOrEmpty()
     )
 }
-
-internal fun List<ScriptDiagnostic>.mapScriptReportsToDiagnostics() =
-    map { ScriptReport(it.message, mapToLegacyScriptReportSeverity(it.severity), mapToLegacyScriptReportPosition(it.location)) }
 
 internal fun ScriptContents.toScriptSource(): SourceCode = when {
     file != null -> FileScriptSource(file!!, text?.toString())

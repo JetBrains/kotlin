@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
+import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
+import kotlin.script.experimental.api.KotlinType
+import kotlin.script.experimental.api.with
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.extensions.SamWithReceiverAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
@@ -28,7 +31,9 @@ abstract class AbstractSamWithReceiverScriptTest : AbstractDiagnosticsTest() {
             ScriptCompilationConfigurationFromLegacyTemplate(
                 defaultJvmScriptingHostConfiguration,
                 ScriptForSamWithReceivers::class
-            ),
+            ).with {
+                annotationsForSamWithReceivers(KotlinType("SamWithReceiver1"), KotlinType("SamWithReceiver2"))
+            },
             ScriptEvaluationConfigurationFromHostConfiguration(
                 defaultJvmScriptingHostConfiguration
             )

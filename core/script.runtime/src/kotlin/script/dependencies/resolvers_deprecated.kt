@@ -28,10 +28,11 @@ interface ScriptDependenciesResolver {
 
     enum class ReportSeverity { FATAL, ERROR, WARNING, INFO, DEBUG }
 
-    fun resolve(script: ScriptContents,
-                environment: Environment?,
-                report: (ReportSeverity, String, ScriptContents.Position?) -> Unit,
-                previousDependencies: KotlinScriptExternalDependencies?
+    fun resolve(
+        script: ScriptContents,
+        environment: Environment?,
+        report: (ReportSeverity, String, ScriptContents.Position?) -> Unit,
+        previousDependencies: KotlinScriptExternalDependencies?,
     ): Future<KotlinScriptExternalDependencies?> = PseudoFuture(null)
 }
 
@@ -39,9 +40,9 @@ class BasicScriptDependenciesResolver : ScriptDependenciesResolver
 
 fun KotlinScriptExternalDependencies?.asFuture(): PseudoFuture<KotlinScriptExternalDependencies?> = PseudoFuture(this)
 
-class PseudoFuture<T>(private val value: T): Future<T> {
+class PseudoFuture<T>(private val value: T) : Future<T> {
     override fun get(): T = value
-    override fun get(p0: Long, p1: TimeUnit): T  = value
+    override fun get(p0: Long, p1: TimeUnit): T = value
     override fun cancel(p0: Boolean): Boolean = false
     override fun isDone(): Boolean = true
     override fun isCancelled(): Boolean = false

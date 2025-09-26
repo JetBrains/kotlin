@@ -40,7 +40,7 @@ class ScriptingCompilerConfigurationExtension(
                 )
             }
             val hostConfiguration = ScriptingHostConfiguration(baseHostConfiguration) {
-                environment {
+                getEnvironment {
                     configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
                 }
             }
