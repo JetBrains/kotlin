@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.samWithReceiver
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
@@ -10,10 +12,9 @@ import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.extensions.SamWithReceiverAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
@@ -24,9 +25,9 @@ abstract class AbstractSamWithReceiverScriptTest : AbstractDiagnosticsTest() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         val def = ScriptDefinition.FromConfigurations(
             defaultJvmScriptingHostConfiguration,
-            ScriptCompilationConfigurationFromDefinition(
+            ScriptCompilationConfigurationFromLegacyTemplate(
                 defaultJvmScriptingHostConfiguration,
-                KotlinScriptDefinitionFromAnnotatedTemplate(ScriptForSamWithReceivers::class)
+                ScriptForSamWithReceivers::class
             ),
             ScriptEvaluationConfigurationFromHostConfiguration(
                 defaultJvmScriptingHostConfiguration

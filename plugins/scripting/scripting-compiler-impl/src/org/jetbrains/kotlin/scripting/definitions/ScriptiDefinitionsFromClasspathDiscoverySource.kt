@@ -305,12 +305,9 @@ private fun loadScriptDefinition(
         } else if (ann.name == ScriptTemplateDefinition::class.java.simpleName) {
             val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
             val compilationConfiguration: ScriptCompilationConfiguration =
-                ScriptCompilationConfigurationFromDefinition(
+                ScriptCompilationConfigurationFromLegacyTemplate(
                     hostConfiguration,
-                    LegacyKotlinScriptDefinitionFromAnnotatedTemplate(
-                        templateClass,
-                        hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty()
-                    )
+                    templateClass
                 )
 
             def = ScriptDefinition.FromConfigurations(

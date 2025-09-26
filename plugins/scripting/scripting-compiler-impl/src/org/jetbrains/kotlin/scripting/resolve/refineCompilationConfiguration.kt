@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.scripting.scriptFileName
@@ -31,13 +30,9 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
-import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.host.*
-import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.compat.mapToDiagnostics
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 import kotlin.script.experimental.jvm.impl.toDependencies
 import kotlin.script.experimental.util.PropertiesCollection

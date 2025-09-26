@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
@@ -139,9 +138,5 @@ open class GenericReplCompiler(
                 null
             )
         }
-    }
-
-    companion object {
-        private const val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
     }
 }
