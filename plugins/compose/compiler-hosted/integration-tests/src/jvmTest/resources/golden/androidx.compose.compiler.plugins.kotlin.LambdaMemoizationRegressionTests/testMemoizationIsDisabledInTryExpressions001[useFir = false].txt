@@ -57,7 +57,7 @@ fun Test(%composer: Composer?, %changed: Int) {
           foo {
           }
         }
-      } catch() {
+      } catch (ignored: Exception) {
         if (true) {
           foo {
           }
@@ -72,7 +72,7 @@ fun Test(%composer: Composer?, %changed: Int) {
         foo {
         }
       }
-    } catch() {
+    } catch (ignored: Exception) {
       if (true) {
         foo {
         }

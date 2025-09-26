@@ -159,4 +159,24 @@ class LambdaMemoizationRegressionTests(useFir: Boolean) : AbstractIrTransformTes
             }
     """
     )
+
+    @Test
+    fun testMemoizationIsDisabledInTryExpressions004() = verifyGoldenComposeIrTransform(
+        extra = """
+            fun foo(block: () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            fun test() {
+                val f = @Composable {
+                    try {
+                        repeat (3) {
+                            if (true) foo(block = {})
+                        }
+                    } finally {}
+                }
+            }
+    """
+    )
 }
