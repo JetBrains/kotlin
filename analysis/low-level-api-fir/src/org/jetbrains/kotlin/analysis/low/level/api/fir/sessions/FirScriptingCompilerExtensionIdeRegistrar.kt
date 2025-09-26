@@ -21,6 +21,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
  * outside the compiler context. Difference lies in its constructor parameters, namely in
  * [org.jetbrains.kotlin.config.CompilerConfiguration] replaced with a pair of explicit [scriptDefinitionSources] and [scriptDefinitions].
  */
+@Suppress("DEPRECATION")
 internal class FirScriptingCompilerExtensionIdeRegistrar(
     private val project: Project,
     private val hostConfiguration: ScriptingHostConfiguration,
