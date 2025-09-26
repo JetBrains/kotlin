@@ -79,6 +79,8 @@ data class Fir2IrActualizedResult(
 fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
     val platformModule = this.last()
     val session = platformModule.session
+    // Skip checkers in header mode.
+    if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) return
     val scopeSession = platformModule.scopeSession
 
     val allFiles = this.flatMap { it.fir }
