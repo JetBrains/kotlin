@@ -35,11 +35,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 ) : KotlinScriptDefinition(template) {
     val scriptFilePattern by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val pattern =
-            takeUnlessError {
-                val ann = template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()
-                ann?.scriptFilePattern
-            }
-                ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern }
+            takeUnlessError { template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern }
                 ?: DEFAULT_SCRIPT_FILE_PATTERN
         Regex(pattern)
     }

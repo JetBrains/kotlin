@@ -20,7 +20,6 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     @Suppress("DEPRECATION")
     @Deprecated("Use configurations instead")
-    abstract val legacyDefinition: KotlinScriptDefinition
     abstract val hostConfiguration: ScriptingHostConfiguration
     abstract val compilationConfiguration: ScriptCompilationConfiguration
     abstract val evaluationConfiguration: ScriptEvaluationConfiguration?
@@ -50,71 +49,11 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     abstract val compilerOptions: Iterable<String>
     abstract val annotationsForSamWithReceivers: List<String>
 
-    @Suppress("DEPRECATION")
-    inline fun <reified T : KotlinScriptDefinition> asLegacyOrNull(): T? =
-        if (this is FromLegacy) legacyDefinition as? T else null
-
     override fun toString(): String {
         return "ScriptDefinition($name)"
     }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-    open class FromLegacy(
-        override val hostConfiguration: ScriptingHostConfiguration,
-        override val legacyDefinition: KotlinScriptDefinition,
-    ) : ScriptDefinition() {
-
-        override val compilationConfiguration: ScriptCompilationConfiguration by lazy {
-            ScriptCompilationConfigurationFromDefinition(
-                hostConfiguration,
-                legacyDefinition
-            )
-        }
-
-        override val evaluationConfiguration by lazy {
-            ScriptEvaluationConfigurationFromHostConfiguration(
-                hostConfiguration
-            )
-        }
-
-        override fun isScript(script: SourceCode): Boolean = script.name?.let { legacyDefinition.isScript(it) } ?: isDefault
-
-        override val fileExtension: String get() = legacyDefinition.fileExtension
-
-        override val name: String get() = legacyDefinition.name
-
-        override val definitionId: String get() = legacyDefinition::class.qualifiedName ?: "unknown"
-
-        override val platform: String
-            get() = legacyDefinition.platform
-
-        override val contextClassLoader: ClassLoader?
-            get() = legacyDefinition.template.java.classLoader
-
-        override val baseClassType: KotlinType
-            get() = KotlinType(legacyDefinition.template)
-
-        override val compilerOptions: Iterable<String>
-            get() = legacyDefinition.additionalCompilerArguments ?: emptyList()
-
-        override val annotationsForSamWithReceivers: List<String>
-            get() = legacyDefinition.annotationsForSamWithReceivers
-
-        override fun equals(other: Any?): Boolean = this === other || legacyDefinition == (other as? FromLegacy)?.legacyDefinition
-
-        override fun hashCode(): Int = legacyDefinition.hashCode()
-    }
-
     abstract class FromConfigurationsBase : ScriptDefinition() {
-
-        @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-        override val legacyDefinition by lazy {
-            KotlinScriptDefinitionAdapterFromNewAPI(
-                compilationConfiguration,
-                hostConfiguration
-            )
-        }
-
         val filePathPattern by lazy {
             compilationConfiguration[ScriptCompilationConfiguration.filePathPattern]?.takeIf { it.isNotBlank() }
         }
