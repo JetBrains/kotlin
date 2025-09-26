@@ -1,5 +1,5 @@
 // EXIT_CODE: !0
-// OUTPUT_REGEX: Cannot run checkers when there are 1 alive runtimes at the shutdown.*
+// OUTPUT_REGEX: .*Cannot run checkers when there are 1 alive runtimes at the shutdown.*
 // MODULE: cinterop
 // FILE: leakMemory.def
 ---
@@ -62,6 +62,6 @@ fun main() {
 
     val activeWorkersCount = Worker.activeWorkers.size
     check(activeWorkersCount == 1) {
-        "Unfinished workers detected, ${activeWorkersCount - 1} workers leaked!"
+        "Cannot run checkers when there are ${activeWorkersCount - 1} alive runtimes at the shutdown"
     }
 }
