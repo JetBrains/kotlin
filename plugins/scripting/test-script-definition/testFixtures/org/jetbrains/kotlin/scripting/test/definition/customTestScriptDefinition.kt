@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.scripting.test.definition
 
 import kotlin.script.experimental.annotations.KotlinScript
-import org.jetbrains.kotlin.scripting.definitions.environment
+import org.jetbrains.kotlin.scripting.definitions.getEnvironment
 import org.jetbrains.kotlin.scripting.test.definition.gradleLike.CompiledKotlinBuildScript
 import org.jetbrains.kotlin.scripting.test.definition.gradleLike.Project
 import kotlin.script.experimental.api.*
@@ -23,7 +23,7 @@ class ConfigurableTestScriptConfiguration : ScriptCompilationConfiguration(
         refineConfiguration {
             beforeCompiling { ctx ->
                 val hostConfiguration = ctx.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]!!
-                val env = hostConfiguration[ScriptingHostConfiguration.environment]?.invoke()
+                val env = hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke()
                 if (env == null) makeFailureResult("Unable to retrieve environment for the custom test script")
                 else
                     ScriptCompilationConfiguration(ctx.compilationConfiguration) {

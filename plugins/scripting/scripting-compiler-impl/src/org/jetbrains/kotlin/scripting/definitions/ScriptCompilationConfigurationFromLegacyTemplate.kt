@@ -35,7 +35,6 @@ import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.experimental.location.ScriptExpectedLocations
 import kotlin.script.experimental.util.PropertiesCollection
 import kotlin.script.templates.AcceptedAnnotations
-import kotlin.script.templates.DEFAULT_SCRIPT_FILE_PATTERN
 import kotlin.script.templates.ScriptTemplateDefinition
 
 @Deprecated("Use 'ScriptDefinition' instead", level = DeprecationLevel.WARNING)
@@ -94,7 +93,7 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
                 it.provider.primaryConstructor?.call(it.arguments.asIterable())
             }
         }?.getAdditionalCompilerArguments(
-            hostConfiguration[ScriptingHostConfiguration.environment]?.invoke().orEmpty()
+            hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty()
         )
         platform("JVM")
         hostConfiguration(hostConfiguration)
@@ -107,17 +106,17 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         }
         if (dependencyResolver != DependenciesResolver.NoDependencies) {
             refineConfiguration {
-                beforeCompiling {
-                    refineWithResolver(dependencyResolver, it)
-                }
+//                beforeCompiling {
+//                    refineWithResolver(dependencyResolver, it)
+//                }
                 onAnnotations(acceptedAnnotations) {
                     refineWithResolver(dependencyResolver, it)
                 }
             }
         }
-        filePathPattern(takeUnlessError {
-            template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern
-        } ?: DEFAULT_SCRIPT_FILE_PATTERN)
+        template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern?.let {
+            filePathPattern(it)
+        }
     })
 
 
@@ -218,4 +217,4 @@ val ScriptCompilationConfigurationKeys.annotationsForSamWithReceivers by Propert
 
 val ScriptCompilationConfigurationKeys.platform by PropertiesCollection.key<String>()
 
-val ScriptingHostConfigurationKeys.environment by PropertiesCollection.key<() -> Environment?>()
+val ScriptingHostConfigurationKeys.getEnvironment by PropertiesCollection.key<() -> Environment?>()
