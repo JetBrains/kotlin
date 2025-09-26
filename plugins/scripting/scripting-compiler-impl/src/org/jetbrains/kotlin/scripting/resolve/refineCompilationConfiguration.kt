@@ -42,25 +42,6 @@ import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 import kotlin.script.experimental.jvm.impl.toDependencies
 import kotlin.script.experimental.util.PropertiesCollection
 
-internal fun VirtualFile.loadAnnotations(
-    acceptedAnnotations: List<KClass<out Annotation>>,
-    project: Project,
-    classLoader: ClassLoader?
-): List<Annotation> =
-// TODO_R: report error on failure to load annotation class
-    ApplicationManager.getApplication().runReadAction<List<Annotation>> {
-        this.getAnnotationEntries(project)
-            .construct(classLoader, acceptedAnnotations, project)
-            .map { it.first }
-    }
-
-internal fun VirtualFile.getAnnotationEntries(project: Project): Iterable<KtAnnotationEntry> {
-    val psiFile: PsiFile = PsiManager.getInstance(project).findFile(this)
-        ?: throw IllegalArgumentException("Unable to load PSI from $canonicalPath")
-    return (psiFile as? KtFile)?.annotationEntries
-        ?: throw IllegalArgumentException("Unable to extract kotlin annotations from $name (${fileType.name})")
-}
-
 /**
  * The implementation of the SourceCode for a script located in a virtual file
  */
