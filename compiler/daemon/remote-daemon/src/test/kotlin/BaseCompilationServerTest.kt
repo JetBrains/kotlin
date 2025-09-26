@@ -1,86 +1,89 @@
-import client.grpc.GrpcRemoteCompilationServiceClient
-import common.FixedSizeChunkingStrategy
-import common.RemoteCompilationService
-import common.SERVER_COMPILATION_WORKSPACE_DIR
-import common.computeSha256
-import io.grpc.ManagedChannel
-import io.grpc.Server
-import io.grpc.ServerInterceptors
-import io.grpc.inprocess.InProcessChannelBuilder
-import io.grpc.inprocess.InProcessServerBuilder
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import server.core.CacheHandler
-import server.grpc.GrpcRemoteCompilationService
-import server.core.InProcessCompilerService
-import server.auth.BasicHTTPAuthServer
-import server.core.RemoteCompilationServiceImpl
-import server.core.WorkspaceManager
-import server.grpc.AuthServerInterceptor
-import server.grpc.LoggingServerInterceptor
-import java.io.File
-
-/*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
-abstract class BaseCompilationCompilationTest {
-
-    protected val projectName = "testProject"
-    protected val sourceFile = this::class.java.getResource("/TestInput.kt")
-        ?.toURI()
-        ?.let { File(it) }
-        ?: throw IllegalStateException("Resource /TestInput.kt not found")
-    // TODO: change to yours
-    protected val sourceFileFingerprint = computeSha256(sourceFile)
-
-    protected val stdLibFilePath = "/Users/michal.svec/Desktop/jars/kotlin-stdlib-2.2.0.jar"
-    protected val stdLibFileFingerprint = computeSha256(File(stdLibFilePath))
-
-    protected val fileChunkingStrategy = FixedSizeChunkingStrategy()
-
-    companion object {
-        protected const val SERVER_NAME = "test-kotlin-daemon-server"
-        protected lateinit var server: Server
-        protected lateinit var channel: ManagedChannel
-        protected val cacheHandler = CacheHandler()
-    }
-
-    fun getGrpcClient(): RemoteCompilationService {
-        return GrpcRemoteCompilationServiceClient(logging = true, channel)
-    }
-
-    @BeforeEach
-    fun setup() {
-        server = InProcessServerBuilder
-            .forName(SERVER_NAME)
-            .addService(
-                ServerInterceptors
-                    .intercept(
-                        GrpcRemoteCompilationService(
-                            RemoteCompilationServiceImpl(
-                                cacheHandler,
-                                WorkspaceManager(),
-                                FixedSizeChunkingStrategy(),
-                                InProcessCompilerService(),
-                            )
-                        ),
-                        LoggingServerInterceptor(),
-                        AuthServerInterceptor(BasicHTTPAuthServer())
-                    )
-            )
-            .build()
-            .start()
-        channel = InProcessChannelBuilder.forName(SERVER_NAME).build()
-        println("server started, ${server.port}")
-    }
-
-    @AfterEach
-    fun cleanup() {
-        cacheHandler.cleanup()
-        SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
-        server.shutdownNow()
-        channel.shutdownNow()
-    }
-}
+//import client.grpc.GrpcRemoteCompilationServiceClient
+//import common.FixedSizeChunkingStrategy
+//import common.RemoteCompilationService
+//import common.SERVER_COMPILATION_WORKSPACE_DIR
+//import common.computeSha256
+//import io.grpc.ManagedChannel
+//import io.grpc.Server
+//import io.grpc.ServerInterceptors
+//import io.grpc.inprocess.InProcessChannelBuilder
+//import io.grpc.inprocess.InProcessServerBuilder
+//import org.junit.jupiter.api.AfterEach
+//import org.junit.jupiter.api.BeforeEach
+//import server.core.CacheHandler
+//import server.grpc.GrpcRemoteCompilationService
+//import server.core.InProcessCompilerService
+//import server.auth.BasicHTTPAuthServer
+//import server.core.RemoteCompilationServiceImpl
+//import server.core.WorkspaceManager
+//import server.grpc.AuthServerInterceptor
+//import server.grpc.LoggingServerInterceptor
+//import java.io.File
+//
+///*
+// * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+// * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+// */
+//
+// TODO, these tests were used during the development process and they are not up to date
+// IMO, the best thing would be to test it on a real project because the compilation is very complex
+// and it difficult to come up with scenarios that cover that all
+//abstract class BaseCompilationCompilationTest {
+//
+//    protected val projectName = "testProject"
+//    protected val sourceFile = this::class.java.getResource("/TestInput.kt")
+//        ?.toURI()
+//        ?.let { File(it) }
+//        ?: throw IllegalStateException("Resource /TestInput.kt not found")
+//
+//    protected val sourceFileFingerprint = computeSha256(sourceFile)
+//
+//    protected val stdLibFilePath = "/Users/michal.svec/Desktop/jars/kotlin-stdlib-2.2.0.jar"
+//    protected val stdLibFileFingerprint = computeSha256(File(stdLibFilePath))
+//
+//    protected val fileChunkingStrategy = FixedSizeChunkingStrategy()
+//
+//    companion object {
+//        protected const val SERVER_NAME = "test-kotlin-daemon-server"
+//        protected lateinit var server: Server
+//        protected lateinit var channel: ManagedChannel
+//        protected val cacheHandler = CacheHandler()
+//    }
+//
+//    fun getGrpcClient(): RemoteCompilationService {
+//        return GrpcRemoteCompilationServiceClient(logging = true, channel)
+//    }
+//
+//    @BeforeEach
+//    fun setup() {
+//        server = InProcessServerBuilder
+//            .forName(SERVER_NAME)
+//            .addService(
+//                ServerInterceptors
+//                    .intercept(
+//                        GrpcRemoteCompilationService(
+//                            RemoteCompilationServiceImpl(
+//                                cacheHandler,
+//                                WorkspaceManager(),
+//                                FixedSizeChunkingStrategy(),
+//                                InProcessCompilerService(),
+//                            )
+//                        ),
+//                        LoggingServerInterceptor(),
+//                        AuthServerInterceptor(BasicHTTPAuthServer())
+//                    )
+//            )
+//            .build()
+//            .start()
+//        channel = InProcessChannelBuilder.forName(SERVER_NAME).build()
+//        println("server started, ${server.port}")
+//    }
+//
+//    @AfterEach
+//    fun cleanup() {
+//        cacheHandler.cleanup()
+//        SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
+//        server.shutdownNow()
+//        channel.shutdownNow()
+//    }
+//}
