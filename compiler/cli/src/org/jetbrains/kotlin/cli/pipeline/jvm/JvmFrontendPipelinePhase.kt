@@ -266,9 +266,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 true -> session.buildFirViaLightTree(sources, diagnosticsCollector, configuration.headerCompilation, countFilesAndLines)
                 else -> session.buildFirFromKtFiles(sources.asKtFilesList())
             }
-            resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)
+            resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector, configuration.headerCompilation)
         }
-        outputs.runPlatformCheckers(diagnosticsCollector)
+        outputs.runPlatformCheckers(diagnosticsCollector, configuration.headerCompilation)
 
         val kotlinPackageUsageIsFine = when (configuration.useLightTree) {
             true -> outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }

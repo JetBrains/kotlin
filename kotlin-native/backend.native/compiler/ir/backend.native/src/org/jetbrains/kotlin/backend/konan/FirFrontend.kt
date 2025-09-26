@@ -75,7 +75,7 @@ internal inline fun <F> PhaseContext.firFrontend(
         }
     }
 
-    outputs.runPlatformCheckers(diagnosticsReporter)
+    outputs.runPlatformCheckers(diagnosticsReporter, configuration.headerCompilation)
 
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
     return if (syntaxErrors || diagnosticsReporter.hasErrors) {
@@ -100,7 +100,7 @@ internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirO
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
             buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
+                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter, configuration.headerCompilation)
             },
     )
 }

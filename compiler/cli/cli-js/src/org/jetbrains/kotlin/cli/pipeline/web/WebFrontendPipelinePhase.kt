@@ -129,6 +129,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 lookupTracker = lookupTracker,
                 useWasmPlatform = isWasm,
+                headerCompilationMode = configuration.headerCompilation
             )
         }
 
@@ -152,6 +153,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         incrementalDataProvider: IncrementalDataProvider?,
         lookupTracker: LookupTracker?,
         useWasmPlatform: Boolean,
+        headerCompilationMode: Boolean
     ): AnalyzedFirWithPsiOutput {
         for (ktFile in ktFiles) {
             AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, diagnosticsReporter)
@@ -166,11 +168,11 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
+                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter, headerCompilationMode)
             },
             useWasmPlatform = useWasmPlatform,
         )
-        output.runPlatformCheckers(diagnosticsReporter)
+        output.runPlatformCheckers(diagnosticsReporter, headerCompilationMode)
         return AnalyzedFirWithPsiOutput(output, ktFiles)
     }
 
@@ -201,7 +203,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             },
             useWasmPlatform = useWasmPlatform,
         )
-        output.runPlatformCheckers(diagnosticsReporter)
+        output.runPlatformCheckers(diagnosticsReporter, headerCompilationMode)
         return AnalyzedFirOutput(output)
     }
 

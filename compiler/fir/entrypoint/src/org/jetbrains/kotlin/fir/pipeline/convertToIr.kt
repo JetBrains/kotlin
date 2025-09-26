@@ -76,7 +76,8 @@ data class Fir2IrActualizedResult(
     val symbolTable: SymbolTable,
 )
 
-fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
+fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector, headerCompilationMode: Boolean) {
+    if (headerCompilationMode) return
     val platformModule = this.last()
     val session = platformModule.session
     val scopeSession = platformModule.scopeSession

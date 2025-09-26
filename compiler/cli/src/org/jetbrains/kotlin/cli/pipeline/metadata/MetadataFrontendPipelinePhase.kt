@@ -114,7 +114,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
                 val firFiles = session.buildFirViaLightTree(files, diagnosticsReporter, configuration.headerCompilation) { files, lines ->
                     perfManager?.addSourcesStats(files, lines)
                 }
-                resolveAndCheckFir(session, firFiles, diagnosticsReporter)
+                resolveAndCheckFir(session, firFiles, diagnosticsReporter, configuration.headerCompilation)
             }
         } else {
             val projectEnvironment = VfsBasedProjectEnvironment(
@@ -150,11 +150,11 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
 
             sessionsWithSources.map { (session, files) ->
                 val firFiles = session.buildFirFromKtFiles(files)
-                resolveAndCheckFir(session, firFiles, diagnosticsReporter)
+                resolveAndCheckFir(session, firFiles, diagnosticsReporter, configuration.headerCompilation)
             }
         }
 
-        outputs.runPlatformCheckers(diagnosticsReporter)
+        outputs.runPlatformCheckers(diagnosticsReporter, configuration.headerCompilation)
 
         when (configuration.useLightTree) {
             true -> outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }

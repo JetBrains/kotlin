@@ -99,7 +99,7 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
         val outputs = sessionsWithSources.map { (session, sources) ->
             buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, configuration.headerCompilation, countFilesAndLines)
         }
-        outputs.runPlatformCheckers(diagnosticsReporter)
+        outputs.runPlatformCheckers(diagnosticsReporter, configuration.headerCompilation)
         FirResult(outputs)
     }
 }
