@@ -62,16 +62,8 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/diagnostics") {
-            testClass<AbstractDiagnosticsWasmTest> {
-                model("wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-
             testClass<AbstractDiagnosticsFirWasmTest> {
                 model("wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-
-            testClass<AbstractDiagnosticsWasmWasiTest> {
-                model("wasmWasiTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
             testClass<AbstractDiagnosticsFirWasmWasiTest> {
