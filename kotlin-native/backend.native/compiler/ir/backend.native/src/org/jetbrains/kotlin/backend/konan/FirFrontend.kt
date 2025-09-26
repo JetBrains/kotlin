@@ -100,7 +100,7 @@ internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirO
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
             buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
+                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter, configuration.headerCompilation)
             },
     )
 }
