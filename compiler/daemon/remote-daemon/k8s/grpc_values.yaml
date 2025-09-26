@@ -117,10 +117,10 @@ ingress:
   annotations:
     #kubernetes.io/ingress.class: internal-nginx
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-    nginx.ingress.kubernetes.io/grpc-backend: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: 1g
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
 
 # Turn on oauth2 for the service, please contact #sre before turning on
 # Enabling require adding url and redirect to the application
@@ -140,7 +140,7 @@ resources:
      memory: 16Gi
    limits:
      cpu: 8000m
-     memory: 40Gi
+     memory: 32Gi
 
 # Added specifically for choosing GPU model - can be used for other things
 # Example usage: cloud.google.com/gke-accelerator: nvidia-tesla-t4
@@ -167,7 +167,7 @@ service:
 #     size: 1Gi
 #     mountPath: /data
 pvc:
-  compilation-storage:
+  compilation-storage-grpc:
     size: 50Gi
     mountPath: /storage
 

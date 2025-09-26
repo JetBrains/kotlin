@@ -6,7 +6,6 @@ package main.kotlin.server
 
 import benchmark.RemoteCompilationServiceImplType
 import common.getServerEnv
-import kotlinx.rpc.krpc.serialization.cbor.cbor
 import kotlinx.rpc.krpc.serialization.protobuf.protobuf
 import kotlinx.serialization.ExperimentalSerializationApi
 import server.core.Server
@@ -53,7 +52,7 @@ class RemoteCompilationServer(
 fun main() {
     try {
         val port = 8000
-        val implEnv = System.getenv("IMPL_TYPE") ?: "WEB_SOCKETS"
+        val implEnv = System.getenv("IMPL_TYPE") ?: "GRPC"
         val loggingEnv = (System.getenv("LOGGING") ?: "false").toBoolean()
         val implType = when (implEnv) {
             "GRPC" -> RemoteCompilationServiceImplType.GRPC

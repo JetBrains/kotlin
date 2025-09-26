@@ -24,12 +24,10 @@ import java.security.MessageDigest
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-
 fun computeSha256(file: File): String {
     // TODO: in a real world scenario we should use something more robust
     // maybe we could use a special library for hashing
-    // double check the hashing of directories, there is not a single approach
-    // how to hash directories
+    // double check the hashing of directories, there is not a single approach how to hash directories
     // for example, in the current implementation, the same path with forward slashes and back slashes
     // will be hashed differently and that's and issue
     val digest = MessageDigest.getInstance("SHA-256")

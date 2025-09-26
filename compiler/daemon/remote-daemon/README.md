@@ -272,7 +272,7 @@ Few useful commands:
 When building image using [Dockerfile2](Dockerfile2), remember to build again the `.jar` before with the latest changes. It is a common source of issues.
 
 ### Kubernetes deployment
-[Intellij Console](https://console.intellij.net/) offers three ways how to deploy apps to Kubernetes, namely `Google JIB`, `Skaffold + kubectl apply`, `Pure Skaffold`. As I did not want to deal with `Skaffold` and `TeamCity` stuff I decided to deploy directly from my local machine only using `Helm`. I did it with the help of this [guide](https://github.com/JetBrains/kotlin-native/blob/master/samples/remote-daemon/README.md).
+[Intellij Console](https://console.intellij.net/) offers three ways how to deploy apps to Kubernetes, namely `Google JIB`, `Skaffold + kubectl apply`, `Pure Skaffold`. As I did not want to deal with `Skaffold` and `TeamCity` stuff I decided to deploy directly from my local machine only using `Helm`. I did it with the help of this [guide](https://youtrack.jetbrains.com/articles/SRE-A-305/How-to-deploy-from-your-local-machine).
 
 The existing helm chart included in the guide has one flaw. The `imagePullPolicy` is set to `IfNotPresent` which means that `k8s` deployment would not pull the image from the registry even when newer image is available.
 
@@ -291,7 +291,7 @@ Useful commands for deployment using customized `Helm` chart:
     - `helm uninstall remote-kotlin-daemon-websockets`
 
 In case any configuration is not working because a client cannot connect to the server, this port-forwarding command might help:
-`kubectl port-forward svc/remote-kotlin-daemon-websockets 8080:8000 -n remote-compilation-ns`.
+`kubectl port-forward svc/remote-kotlin-daemon-websockets 8000:8000 -n remote-compilation-ns`.
 
 Sometimes the connection does not work right away after deployment because of some `DNS` related issues. Probably it just takes some time to propagate the changes.
 

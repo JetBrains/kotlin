@@ -145,7 +145,7 @@ resources:
     memory: 16Gi
   limits:
     cpu: 8000m
-    memory: 40Gi
+    memory: 32Gi
 
 # Added specifically for choosing GPU model - can be used for other things
 # Example usage: cloud.google.com/gke-accelerator: nvidia-tesla-t4
@@ -172,7 +172,7 @@ service:
 #     size: 1Gi
 #     mountPath: /data
 pvc:
-  compilation-storage:
+  compilation-storage-ws:
     size: 50Gi
     mountPath: /storage
 
