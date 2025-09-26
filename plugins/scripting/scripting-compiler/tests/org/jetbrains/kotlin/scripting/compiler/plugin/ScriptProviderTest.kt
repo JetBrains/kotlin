@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
 import java.io.File
@@ -19,7 +18,9 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 import kotlin.test.Test
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ScriptProviderTest {
 
@@ -78,7 +79,7 @@ class ScriptProviderTest {
 }
 
 private open class FakeScriptDefinition(val suffix: String = ".kts") :
-    ScriptDefinition.FromLegacy(defaultJvmScriptingHostConfiguration, KotlinScriptDefinition(ScriptTemplateWithArgs::class)) {
+    ScriptDefinition.FromTemplate(defaultJvmScriptingHostConfiguration, ScriptTemplateWithArgs::class) {
     val matchCounter = AtomicInteger()
     override fun isScript(script: SourceCode): Boolean {
         val path = script.locationId ?: return false
