@@ -46,6 +46,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.name
 import kotlin.io.path.writeLines
+import org.jetbrains.kotlin.backend.konan.hair.GenerateHairPhase
 
 private fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc").toFile()
 
@@ -558,11 +559,12 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     module.files.forEach {
         runAndMeasurePhase(CoroutinesVarSpillingPhase, it)
     }
+    val hair = runAndMeasurePhase(GenerateHairPhase, module)
     runAndMeasurePhase(CreateLLVMDeclarationsPhase, module)
     runAndMeasurePhase(GHAPhase, module, disable = !runGlobalOptimizations || context.config.produce.isCache)
     runAndMeasurePhase(RTTIPhase, RTTIInput(module, dceResult))
     val lifetimes = runAndMeasurePhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !runGlobalOptimizations)
-    runAndMeasurePhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes))
+    runAndMeasurePhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes, hair))
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {

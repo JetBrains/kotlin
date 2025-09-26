@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.cValuesOf
-import kotlinx.cinterop.toKString
+import hair.compilation.FunctionCompilation
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
+import org.jetbrains.kotlin.backend.konan.hair.HairToBitcode
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
 import org.jetbrains.kotlin.backend.konan.lower.*
@@ -119,7 +120,7 @@ internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, refe
 /**
  * Defines how to generate context-dependent operations.
  */
-private interface CodeContext {
+internal interface CodeContext {
 
     /**
      * Generates `return` [value] operation.
@@ -215,7 +216,8 @@ private interface CodeContext {
 internal class CodeGeneratorVisitor(
         val generationState: NativeGenerationState,
         val irBuiltins: IrBuiltIns,
-        val lifetimes: Map<IrElement, Lifetime>
+        val lifetimes: Map<IrElement, Lifetime>,
+        val hair: Map<IrFunction, FunctionCompilation>,
 ) : IrVisitorVoid() {
     private val context = generationState.context
     private val llvm = generationState.llvm
@@ -223,6 +225,8 @@ internal class CodeGeneratorVisitor(
         get() = generationState.debugInfo
 
     val codegen = CodeGenerator(generationState)
+
+    val hairToBit = HairToBitcode(generationState, codegen)
 
     // TODO: consider eliminating mutable state
     private var currentCodeContext: CodeContext = TopLevelCodeContext
@@ -299,12 +303,12 @@ internal class CodeGeneratorVisitor(
     /**
      * The [CodeContext] which can define some operations and delegate other ones to [outerContext]
      */
-    private abstract class InnerScope(val outerContext: CodeContext) : CodeContext by outerContext
+    internal abstract class InnerScope(val outerContext: CodeContext) : CodeContext by outerContext
 
     /**
      * Convenient [InnerScope] implementation that is bound to the [currentCodeContext].
      */
-    private abstract inner class InnerScopeImpl : InnerScope(currentCodeContext)
+    internal abstract inner class InnerScopeImpl : InnerScope(currentCodeContext)
     /**
      * Executes [block] with [codeContext] substituted as [currentCodeContext].
      */
@@ -600,7 +604,7 @@ internal class CodeGeneratorVisitor(
     /**
      * The [CodeContext] enclosing the entire function body.
      */
-    private inner class FunctionScope private constructor(
+    internal inner class FunctionScope private constructor(
             val functionGenerationContext: FunctionGenerationContext,
             val declaration: IrSimpleFunction?,
             val llvmFunction: LlvmCallable) : InnerScopeImpl() {
@@ -747,10 +751,15 @@ internal class CodeGeneratorVisitor(
                     val parameterScope = ParameterScope(declaration, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
-                            when (body) {
-                                is IrBlockBody -> body.statements.forEach { generateStatement(it) }
-                                is IrExpressionBody -> compilationException("IrExpressionBody should've been lowered", declaration)
-                                is IrSyntheticBody -> compilationException("Synthetic body ${body.kind} has not been lowered", declaration)
+                            val hairComp = hair[declaration]
+                            if (hairComp != null) {
+                                hairToBit.generateFunctionBody(currentCodeContext, declaration, hairComp)
+                            } else {
+                                when (body) {
+                                    is IrBlockBody -> body.statements.forEach { generateStatement(it) }
+                                    is IrExpressionBody -> compilationException("IrExpressionBody should've been lowered", declaration)
+                                    is IrSyntheticBody -> compilationException("Synthetic body ${body.kind} has not been lowered", declaration)
+                                }
                             }
                         }
                     }
