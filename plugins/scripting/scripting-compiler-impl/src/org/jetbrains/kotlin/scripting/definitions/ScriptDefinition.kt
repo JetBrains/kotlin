@@ -88,6 +88,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
         override val definitionId: String get() = compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!.typeName
 
+        @Suppress("DEPRECATION")
         override val contextClassLoader: ClassLoader? by lazy {
             compilationConfiguration[ScriptCompilationConfiguration.baseClass]?.fromClass?.java?.classLoader
                 ?: hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
@@ -114,6 +115,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     }
 
     open class FromConfigurations(
+        @Deprecated("Use configurations instead")
         override val hostConfiguration: ScriptingHostConfiguration,
         override val compilationConfiguration: ScriptCompilationConfiguration,
         override val evaluationConfiguration: ScriptEvaluationConfiguration?,
@@ -123,6 +125,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         private val baseHostConfiguration: ScriptingHostConfiguration,
         private val definition: kotlin.script.experimental.host.ScriptDefinition,
     ) : FromConfigurationsBase() {
+        @Deprecated("Use configurations instead")
         override val hostConfiguration: ScriptingHostConfiguration
             get() = definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: baseHostConfiguration
 
