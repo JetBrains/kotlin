@@ -12,7 +12,9 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.createScriptDefinitionFromTemplate
 import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 // Transitional class/implementation - migrating to the new API
 // TODO: name could be confused with KotlinScriptDefinition, discuss naming
@@ -140,11 +142,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     companion object {
         fun getDefault(hostConfiguration: ScriptingHostConfiguration) =
-            object : FromConfigurations(
-                hostConfiguration,
-                ScriptCompilationConfigurationFromDefinition(hostConfiguration, StandardScriptDefinition),
-                ScriptEvaluationConfigurationFromHostConfiguration(hostConfiguration)
-            ) {
+            object : FromTemplate(hostConfiguration, ScriptTemplateWithArgs::class) {
                 override val isDefault = true
             }
     }

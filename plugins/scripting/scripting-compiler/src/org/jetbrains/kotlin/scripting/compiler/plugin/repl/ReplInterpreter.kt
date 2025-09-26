@@ -35,11 +35,12 @@ import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.renderError
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ReplInterpreter(
     projectEnvironment: JavaCoreProjectEnvironment,
     private val configuration: CompilerConfiguration,
-    private val replConfiguration: ReplConfiguration
+    private val replConfiguration: ReplConfiguration,
 ) {
     private val hostConfiguration: ScriptingHostConfiguration
     private val compilationConfiguration: ScriptCompilationConfiguration
@@ -48,10 +49,10 @@ class ReplInterpreter(
     private val replState: JvmReplCompilerState<*>
 
     companion object {
-        private val REPL_LINE_AS_SCRIPT_DEFINITION = object : KotlinScriptDefinition(Any::class) {
-            override val name = "Kotlin REPL"
-        }
-
+        private val REPL_LINE_AS_SCRIPT_DEFINITION =
+            object : ScriptDefinition.FromTemplate(defaultJvmScriptingHostConfiguration, ScriptTemplateWithArgs::class) {
+                override val name = "Kotlin REPL"
+            }
     }
 
     init {
@@ -67,7 +68,7 @@ class ReplInterpreter(
 
         val context =
             createCompilationContextFromEnvironment(
-                ScriptCompilationConfigurationFromDefinition(hostConfiguration, REPL_LINE_AS_SCRIPT_DEFINITION),
+                REPL_LINE_AS_SCRIPT_DEFINITION.compilationConfiguration,
                 environment,
                 ScriptDiagnosticsMessageCollector(environment.messageCollector)
             )
@@ -192,7 +193,12 @@ class ReplInterpreter(
                             is ResultWithDiagnostics.Success -> {
                                 when (val evalValue = evalResult.value.get().result) {
                                     is ResultValue.Unit -> ReplEvalResult.UnitResult()
-                                    is ResultValue.Value -> ReplEvalResult.ValueResult(evalValue.name, evalValue.value, evalValue.type, evalValue.scriptInstance)
+                                    is ResultValue.Value -> ReplEvalResult.ValueResult(
+                                        evalValue.name,
+                                        evalValue.value,
+                                        evalValue.type,
+                                        evalValue.scriptInstance
+                                    )
                                     is ResultValue.Error -> ReplEvalResult.Error.Runtime(evalValue.renderError())
                                     else -> ReplEvalResult.Error.Runtime("Error: snippet is not evaluated")
                                 }
