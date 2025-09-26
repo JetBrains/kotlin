@@ -584,11 +584,8 @@ class DurationTest {
         test(-1.days + 15.minutes, "-PT23H45M", "PT-23H-45M", "+PT-24H+15M")
         test(-1.days - 15.minutes, "-PT24H15M", "PT-24H-15M", "-PT25H-45M", "-PT25H-44M-60.0S")
         test(Duration.ZERO, "PT0S", "P1DT-24H", "+PT-1H+60M", "-PT1M-60S", "PT-000000000000000000000000H")
-        /*
-        Will be fixed soon in KT-79791
         test((-1.1).seconds, "-PT1.100S", "PT-1.1S")
         test((-0.5).seconds, "-PT0.500S", "PT-0.5S", "PT-1M+59.5S")
-         */
 
         // nanoseconds rounding
         for (i in 0..4) {
@@ -601,13 +598,10 @@ class DurationTest {
             53375995583.days + 15.hours + 36.minutes + 27.seconds + 902.milliseconds + 999999.nanoseconds,
             "PT1281023894007H36M27.902S", "P53375995583DT15H36M27.9029999994S", "PT4611686018427387.902S"
         )
-        /*
-        Will be fixed soon in KT-79791
         test(
             (-53375995583).days - 15.hours - 36.minutes - 27.seconds - 902.milliseconds - 999999.nanoseconds,
             "-PT1281023894007H36M27.902S", "P-53375995583DT-15H-36M-27.9029999994S", "PT-4611686018427387.902S"
         )
-         */
 
         // infinite
         test(
@@ -626,10 +620,7 @@ class DurationTest {
             "P-999999999999DT1S", "P-999999999999DT-1S", "P1DT-12345678901234567890S", "P-1DT-12345678901234567890S",
             "PT-106751991100H-9223372036854000S", "PT-106751991100H-9223372036854000.1S",
             "P-53375995583DT-15H-36M-28.0S", "PT1H-9223372036854775.0S",
-            /*
-            Will be fixed soon in KT-79791
             "P-53375995583DT-15H-36M-27.9029999995S", "PT-4611686018427387.903S"
-             */
         )
     }
 
@@ -716,11 +707,6 @@ class DurationTest {
         d = -Duration.INFINITE
         test(DurationUnit.NANOSECONDS, "-Infinity", "-Infinity")
     }
-
-    val MILLIS_IN_SECOND = 1000L
-    val MILLIS_IN_MINUTE = MILLIS_IN_SECOND * 60L
-    val MILLIS_IN_HOUR = MILLIS_IN_MINUTE * 60L
-    val MILLIS_IN_DAY = MILLIS_IN_HOUR * 24L
 
     @Test
     fun parseAndFormatDefault() {
