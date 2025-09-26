@@ -15,6 +15,7 @@
 #include "RuntimePrivate.hpp"
 #include "Worker.h"
 #include "KString.h"
+
 #include "mm/cpp/HotReload.hpp"
 
 #include "CrashHandler.hpp"
@@ -115,10 +116,6 @@ NO_INLINE RuntimeState* initRuntime() {
   // Register runtime deinit function at thread cleanup.
   konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
 
-  if (compiler::hotReloadEnabled()) {
-    HotReloader::Init();
-  }
-
   return result;
 }
 
@@ -165,6 +162,9 @@ bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
 #endif
+    if (compiler::hotReloadEnabled()) {
+        HotReloader::InitModule();
+    }
     return true;
 }
 
