@@ -41,6 +41,13 @@ dependencies {
     implementation(project(":compiler:cli:cli-native-klib"))
     implementation(project(":native:native.config"))
 
+    implementation(project(":native:hair:compiler"))
+    implementation(project(":native:hair:sym"))
+    implementation(project(":native:hair:ir"))
+    implementation(project(":native:hair:utils"))
+    implementation(project(":native:hair:ir:generated"))
+    implementation(project(":native:hair:ir:core"))
+
     testImplementation(kotlinTest("junit"))
 }
 

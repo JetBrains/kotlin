@@ -722,6 +722,16 @@ include(
     ":native:native.tests:litmus-tests"
 )
 
+include(
+    "native:hair:utils",
+    "native:hair:sym",
+    "native:hair:ir",
+    "native:hair:ir:core",
+    "native:hair:ir:generated",
+    "native:hair:ir:generator",
+    "native:hair:compiler",
+)
+
 project(":kotlin-stdlib-common").projectDir = File("$rootDir/libraries/stdlib/common")
 project(":kotlin-stdlib").projectDir = File("$rootDir/libraries/stdlib")
 project(":kotlin-dom-api-compat").projectDir = File("$rootDir/libraries/kotlin-dom-api-compat")
