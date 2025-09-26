@@ -17,6 +17,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.extensions.SamWithReceiverAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 
+@Suppress("DEPRECATION")
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractSamWithReceiverScriptTest : AbstractDiagnosticsTest() {
 
