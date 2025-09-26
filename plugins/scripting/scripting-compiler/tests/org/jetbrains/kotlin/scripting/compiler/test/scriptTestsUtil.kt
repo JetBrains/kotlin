@@ -63,7 +63,6 @@ internal fun assertEqualsTrimmed(expected: String, actual: String) =
 internal fun compileScript(
     script: SourceCode,
     environment: KotlinCoreEnvironment,
-    parentClassLoader: ClassLoader?
 ): Pair<KClass<*>?, ExitCode> {
     val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
     val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -74,18 +73,20 @@ internal fun compileScript(
             dependenciesFromCurrentContext(wholeClasspath = true)
         }
     }
-    val compiledScript = scriptCompiler.compile(script, scriptCompilationConfiguration).onSuccess {
+    val compileResult = scriptCompiler.compile(script, scriptCompilationConfiguration)
+    for (report in compileResult.reports) {
+        messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
+    }
+
+    val compiledScript = compileResult.onSuccess {
         runBlocking {
             it.getClass(scriptDefinition.evaluationConfiguration.with {
                 jvm {
-                    baseClassLoader(parentClassLoader)
+                    baseClassLoader(null)
                 }
             })
         }
     }.valueOr {
-        for (report in it.reports) {
-            messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
-        }
         return null to ExitCode.COMPILATION_ERROR
     }
     return compiledScript to ExitCode.OK
@@ -95,10 +96,9 @@ internal fun compileScript(
 internal fun compileAndExecuteScript(
     script: SourceCode,
     environment: KotlinCoreEnvironment,
-    parentClassLoader: ClassLoader?,
     scriptArgs: List<String>
 ): ExitCode {
-    val (compiled, code) = compileScript(script, environment, parentClassLoader)
+    val (compiled, code) = compileScript(script, environment)
 
     if (compiled == null || code != ExitCode.OK) return code
 
