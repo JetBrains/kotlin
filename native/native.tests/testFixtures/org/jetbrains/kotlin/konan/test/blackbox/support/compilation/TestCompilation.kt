@@ -577,6 +577,7 @@ class SwiftCompilation<T : TestCompilationArtifact>(
     expectedArtifact: T,
     swiftExtraOpts: List<String>,
     outputFile: (T) -> File,
+    invokeSystemSwiftInstallation: Boolean = false,
 ) : TestCompilation<T>() {
     override val result: TestCompilationResult<out T> by lazy {
         val configs = testRunSettings.configurables as AppleConfigurables
@@ -585,7 +586,8 @@ class SwiftCompilation<T : TestCompilationArtifact>(
         val optimizationModeFlags = swiftcOptimizationModeFlags(testRunSettings.get<OptimizationMode>())
 
         val args = swiftExtraOpts + optimizationModeFlags + sources.map { it.absolutePath } + listOf(
-            "-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget,
+            "-sdk", (if (invokeSystemSwiftInstallation) testRunSettings.systemSdkPath else configs.absoluteTargetSysRoot),
+            "-target", swiftTarget,
             "-o", outputFile(expectedArtifact).absolutePath,
             "-g", // Xcode seems to pass -g even for optimized builds by default.
             "-Xcc", "-Werror", // To fail compilation on warnings in framework header.
@@ -594,7 +596,7 @@ class SwiftCompilation<T : TestCompilationArtifact>(
         val loggedSwiftCParameters = LoggedData.SwiftCParameters(args, sources)
         val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out T>) = try {
             val (exitCode, swiftcOutput, swiftcOutputHasErrors, duration) =
-                invokeSwiftC(testRunSettings, args)
+                invokeSwiftC(testRunSettings, args, invokeSystemSwiftInstallation)
 
             val loggedSwiftCCall = LoggedData.CompilationToolCall(
                 toolName = "SWIFTC",

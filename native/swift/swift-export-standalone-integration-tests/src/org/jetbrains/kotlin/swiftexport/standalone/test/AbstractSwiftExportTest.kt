@@ -39,6 +39,9 @@ abstract class AbstractSwiftExportTest {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider
 
+    // fixme: TICKET
+    open val useSystemSwift: Boolean = false
+
     /*
     * There are cases in Swift Export usages when we want to test the translation against some prebuilt KLIB. As an example, we want
     * to verify the translation of user code that uses kotlinx.coroutines.
@@ -237,6 +240,7 @@ abstract class AbstractSwiftExportTest {
                 "-package-name", "SwiftExportTests",
             ),
             outputFile = { it.binaryLibrary },
+            invokeSystemSwiftInstallation = useSystemSwift,
         ).result.assertSuccess().resultingArtifact
     }
 

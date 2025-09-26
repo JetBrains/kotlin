@@ -31,6 +31,7 @@ import java.io.File
  */
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryCompilationTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
+    override val useSystemSwift = true
 
     override fun runCompiledTest(
         testPathFull: File,
@@ -90,7 +91,8 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
             ),
             TestCompilationArtifact.Executable(buildDir(testName).resolve("swiftTestExecutable")),
             swiftExtraOpts,
-            outputFile = { executable -> executable.executableFile }
+            outputFile = { executable -> executable.executableFile },
+            invokeSystemSwiftInstallation = useSystemSwift,
         ).result.assertSuccess()
         return TestExecutable(
             success.resultingArtifact,

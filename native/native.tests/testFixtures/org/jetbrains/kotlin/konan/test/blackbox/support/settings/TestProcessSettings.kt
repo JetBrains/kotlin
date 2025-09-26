@@ -321,6 +321,17 @@ internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: K
         "${targetPlatform()}/Developer/Library/Frameworks/"
     }
 
+    val sdkPath: String by lazy {
+        try {
+            runProcess(
+                "/usr/bin/xcrun",
+                "--show-sdk-path"
+            ).stdout.trim()
+        } catch (t: Throwable) {
+            throw IllegalStateException("Failed to run /usr/bin/xcrun process", t)
+        }
+    }
+
     // absent on xcode pre 26, we can drop the optionality as soon as we drop xcode 16
     val toolchainPath: String? by lazy {
         val result = try {
@@ -360,6 +371,7 @@ internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: K
 
 val Settings.systemFrameworksPath: String get() = get<XCTestRunner>().frameworksPath
 val Settings.systemToolchainPath: String? get() = get<XCTestRunner>().toolchainPath
+val Settings.systemSdkPath: String get() = get<XCTestRunner>().sdkPath
 
 /**
  * A custom (i.e., the second, an alternative) distribution of the Kotlin/Native compiler.

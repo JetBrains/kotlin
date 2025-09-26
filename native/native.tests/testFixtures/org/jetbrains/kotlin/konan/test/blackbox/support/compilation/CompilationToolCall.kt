@@ -175,11 +175,12 @@ internal fun invokeCInterop(
 internal fun invokeSwiftC(
     settings: Settings,
     args: List<String>,
+    invokeLocalSwiftInstallation: Boolean,
 ): CompilationToolCallResult {
     val targets = settings.get<KotlinNativeTargets>()
     Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
     val configs = settings.configurables as AppleConfigurables
-    val swiftCompiler = configs.absoluteTargetToolchain + "/bin/swiftc"
+    val swiftCompiler = (if (invokeLocalSwiftInstallation) "/usr" else configs.absoluteTargetToolchain) + "/bin/swiftc"
     val result = try {
         runProcess(swiftCompiler, *args.toTypedArray()) {
             timeout = Duration.parse("5m")
