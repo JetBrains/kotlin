@@ -37,6 +37,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
+import org.jetbrains.kotlin.backend.konan.hair.GenerateHairPhase
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val languageVersion = config.languageVersionSettings.languageVersion
@@ -524,11 +525,12 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     module.files.forEach {
         runPhase(CoroutinesVarSpillingPhase, it)
     }
+    val hair = runPhase(GenerateHairPhase, module)
     runPhase(CreateLLVMDeclarationsPhase, module)
     runPhase(GHAPhase, module, disable = !optimize)
     runPhase(RTTIPhase, RTTIInput(module, dceResult))
     val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
-    runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes))
+    runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes, hair))
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
