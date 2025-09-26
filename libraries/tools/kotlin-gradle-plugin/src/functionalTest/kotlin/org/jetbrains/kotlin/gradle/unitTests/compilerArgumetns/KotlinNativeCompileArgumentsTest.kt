@@ -223,11 +223,7 @@ class KotlinNativeCompileArgumentsTest {
         project.evaluate()
         val nativeCompilation = kotlin.linuxX64().compilations.main
 
-        val expectedPlatformDependencies = listOf("iconv", "posix", "zlib", "linux", "builtin").map {
-            "org.jetbrains.kotlin.native.platform.$it"
-        }.toSet()
-
-        val expectedDependencies = expectedPlatformDependencies + listOf("stdlib")
+        val expectedDependencies = setOf("stdlib", "nativeDependencies")
 
         val actualDependencies = nativeCompilation.compileDependencyFiles
             .map { it.name }
