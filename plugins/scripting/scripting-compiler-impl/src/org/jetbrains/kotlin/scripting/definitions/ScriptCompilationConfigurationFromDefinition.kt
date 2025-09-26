@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import java.io.File
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -25,26 +24,19 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.util.PropertiesCollection
 
 @Suppress("DEPRECATION")
-class ScriptCompilationConfigurationFromDefinition(
+internal class ScriptCompilationConfigurationFromDefinition(
     hostConfiguration: ScriptingHostConfiguration,
-    scriptDefinition: KotlinScriptDefinition,
+    scriptDefinition: LegacyKotlinScriptDefinitionFromAnnotatedTemplate,
 ) : ScriptCompilationConfiguration(
     {
         hostConfiguration(hostConfiguration)
         displayName(scriptDefinition.name)
-        fileExtension(scriptDefinition.fileExtension)
         baseClass(KotlinType(scriptDefinition.template))
-        implicitReceivers.putIfAny(scriptDefinition.implicitReceivers.map(::KotlinType))
-        providedProperties.putIfAny(scriptDefinition.providedProperties.map { it.first to KotlinType(it.second) })
         annotationsForSamWithReceivers.put(scriptDefinition.annotationsForSamWithReceivers.map(::KotlinType))
-        platform(scriptDefinition.platform)
+        platform("JVM")
         @Suppress("DEPRECATION")
         compilerOptions.putIfAny(scriptDefinition.additionalCompilerArguments)
         // TODO: remove this exception when gradle switches to the new definitions and sets the property accordingly
-        // possible gradle script extensions - see PrecompiledScriptTemplates.kt in the gradle repository
-        if (get(fileExtension) in arrayOf("gradle.kts", "init.gradle.kts", "settings.gradle.kts")) {
-            isStandalone(false)
-        }
         ide {
             acceptedLocations.put(scriptDefinition.scriptExpectedLocations.mapLegacyExpectedLocations())
         }
@@ -58,14 +50,12 @@ class ScriptCompilationConfigurationFromDefinition(
                 }
             }
         }
-        if (scriptDefinition is KotlinScriptDefinitionFromAnnotatedTemplate) {
-            filePathPattern(scriptDefinition.scriptFilePattern.pattern)
-        }
+        filePathPattern(scriptDefinition.scriptFilePattern.pattern)
     }
 )
 
 private fun refineWithResolver(
-    scriptDefinition: KotlinScriptDefinition,
+    scriptDefinition: LegacyKotlinScriptDefinitionFromAnnotatedTemplate,
     context: ScriptConfigurationRefinementContext,
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
     val resolveResult: DependenciesResolver.ResolveResult = scriptDefinition.dependencyResolver.resolve(
@@ -103,7 +93,7 @@ private class ScriptContentsFromRefinementContext(val context: ScriptConfigurati
         get() = (context.script as? FileBasedScriptSource)?.file
     override val annotations: Iterable<Annotation>
         get() = context.collectedData?.get(ScriptCollectedData.foundAnnotations) ?: emptyList()
-    override val text: CharSequence?
+    override val text: CharSequence
         get() = context.script.text
 }
 

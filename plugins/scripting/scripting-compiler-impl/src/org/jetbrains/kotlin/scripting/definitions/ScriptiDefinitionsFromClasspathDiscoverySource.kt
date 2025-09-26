@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import java.io.File
 import java.io.IOException
 import java.net.URLClassLoader
@@ -75,7 +74,7 @@ private fun scriptTemplatesDiscoverySequence(
     hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter,
 ): Sequence<ScriptDefinition> {
-    return sequence<ScriptDefinition> {
+    return sequence {
         // for jar files the definition class is expected in the same jar as the discovery file
         // in case of directories, the class output may come separate from the resources, so some candidates should be deffered and processed later
         val defferedDirDependencies = ArrayList<File>()
@@ -308,10 +307,9 @@ private fun loadScriptDefinition(
             val compilationConfiguration: ScriptCompilationConfiguration =
                 ScriptCompilationConfigurationFromDefinition(
                     hostConfiguration,
-                    KotlinScriptDefinitionFromAnnotatedTemplate(
+                    LegacyKotlinScriptDefinitionFromAnnotatedTemplate(
                         templateClass,
-                        hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty(),
-                        classpathWithLoader.classpath
+                        hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty()
                     )
                 )
 
