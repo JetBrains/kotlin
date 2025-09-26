@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.samWithReceiver
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
@@ -17,7 +19,6 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.extensions.SamWithReceiverAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 
-@Suppress("DEPRECATION")
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractSamWithReceiverScriptTest : AbstractDiagnosticsTest() {
 
