@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.scripting.definitions
 
 import java.io.File
@@ -12,6 +10,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClass
 import kotlin.script.experimental.jvm.util.matchMaybeVersionedFile
 
+@Suppress("DEPRECATION") //KT-82551
 class AutoloadedScriptDefinitions(
     private val hostConfiguration: ScriptingHostConfiguration,
     private val baseClassloader: ClassLoader,

@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.script.experimental.api.SourceCode
@@ -93,7 +92,7 @@ private open class FakeScriptDefinition(val suffix: String = ".kts") :
 }
 
 private class TestScriptDefinitionSource(val counter: AtomicInteger, val defGens: Iterable<() -> FakeScriptDefinition>) :
-    ScriptDefinitionsSource {
+    org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource {
     constructor(counter: AtomicInteger, vararg suffixes: String) : this(counter, suffixes.map {
         {
             FakeScriptDefinition(

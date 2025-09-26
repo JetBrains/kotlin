@@ -13,6 +13,8 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.util.jar.JarInputStream
 import kotlin.reflect.KClass
+import kotlin.script.experimental.api.ScriptDependency
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.toContainingJarOrNull
 import kotlin.script.experimental.jvm.impl.toFileOrNull
 import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClass
@@ -466,3 +468,5 @@ object KotlinJars {
             reflectOrNull
         ).filterNotNull()
 }
+
+fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it as? JvmDependency)?.classpath ?: emptyList() } ?: emptyList()

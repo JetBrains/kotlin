@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -38,23 +36,26 @@ import kotlin.script.templates.ScriptTemplateDefinition
 
 class ScriptGenTest : CodegenTestCase() {
     companion object {
+        @Suppress("DEPRECATION")
         private val FIB_SCRIPT_DEFINITION =
             ScriptDefinition.FromConfigurations(
                 defaultJvmScriptingHostConfiguration,
-                ScriptCompilationConfigurationFromDefinition(
+                org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate(
                     defaultJvmScriptingHostConfiguration,
-                    KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class)
+                    ScriptWithIntParam::class
                 ),
                 ScriptEvaluationConfigurationFromHostConfiguration(
                     defaultJvmScriptingHostConfiguration
                 )
             )
+
+        @Suppress("DEPRECATION")
         private val NO_PARAM_SCRIPT_DEFINITION =
             ScriptDefinition.FromConfigurations(
                 defaultJvmScriptingHostConfiguration,
-                ScriptCompilationConfigurationFromDefinition(
+                org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate(
                     defaultJvmScriptingHostConfiguration,
-                    KotlinScriptDefinitionFromAnnotatedTemplate(Any::class)
+                    Any::class
                 ),
                 ScriptEvaluationConfigurationFromHostConfiguration(
                     defaultJvmScriptingHostConfiguration

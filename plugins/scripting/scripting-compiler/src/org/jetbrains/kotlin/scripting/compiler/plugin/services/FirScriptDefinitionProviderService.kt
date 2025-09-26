@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import com.intellij.mock.MockProject
@@ -15,13 +13,12 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefin
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 
 class FirScriptDefinitionProviderService(
     session: FirSession,
     private val makeDefaultDefinitionProvider: () -> ScriptDefinitionProvider,
-    private val makeDefaultConfigurationProvider: () -> ScriptConfigurationsProvider
+    private val makeDefaultConfigurationProvider: () -> ScriptConfigurationsProvider,
 ) : FirExtensionSessionComponent(session) {
 
     // TODO: get rid of project-based implementation, write and use own singleton in K2
@@ -32,7 +29,9 @@ class FirScriptDefinitionProviderService(
             if (_definitionProvider == null) _definitionProvider = makeDefaultDefinitionProvider()
             _definitionProvider
         }
-        set(value) { synchronized(this) { _definitionProvider = value} }
+        set(value) {
+            synchronized(this) { _definitionProvider = value }
+        }
 
     private var _configurationProvider: ScriptConfigurationsProvider? = null
     var configurationProvider: ScriptConfigurationsProvider?
@@ -40,14 +39,17 @@ class FirScriptDefinitionProviderService(
             if (_configurationProvider == null) _configurationProvider = makeDefaultConfigurationProvider()
             _configurationProvider
         }
-        set(value) { synchronized(this) { _configurationProvider = value} }
+        set(value) {
+            synchronized(this) { _configurationProvider = value }
+        }
 
     companion object {
         fun getFactory(
             definitions: List<ScriptDefinition>,
-            definitionSources: List<ScriptDefinitionsSource>,
+            @Suppress("DEPRECATION") //KT-82551
+            definitionSources: List<org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource>,
             definitionProvider: ScriptDefinitionProvider? = null,
-            configurationProvider: ScriptConfigurationsProvider? = null
+            configurationProvider: ScriptConfigurationsProvider? = null,
         ): Factory {
             val makeDefinitionsProvider = definitionProvider?.let { { it } }
                 ?: {

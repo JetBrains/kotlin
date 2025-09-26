@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.scripting.scriptFileName
@@ -31,15 +30,9 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
-import kotlin.script.experimental.dependencies.DependenciesResolver
-import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.host.*
-import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.compat.mapToDiagnostics
-import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
-import kotlin.script.experimental.jvm.impl.toDependencies
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 import kotlin.script.experimental.util.PropertiesCollection
 
 /**
@@ -90,61 +83,35 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
     override fun getCanonicalPath() = path
 }
 
-abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
-    abstract val configuration: ScriptCompilationConfiguration?
-
-    @Deprecated("Use configuration collection instead")
-    abstract val legacyDependencies: ScriptDependencies?
+class ScriptCompilationConfigurationWrapper(
+    val script: SourceCode,
+    val configuration: ScriptCompilationConfiguration?,
+) {
 
     // optimizing most common ops for the IDE
     // TODO: consider dropping after complete migration
-    abstract val dependenciesClassPath: List<File>
-    abstract val dependenciesSources: List<File>
-    abstract val javaHome: File?
-    abstract val defaultImports: List<String>
-    abstract val importedScripts: List<SourceCode>
+    val dependenciesClassPath: List<File> by lazy {
+        configuration?.get(ScriptCompilationConfiguration.dependencies).toClassPathOrEmpty()
+    }
+
+    val dependenciesSources: List<File> by lazy {
+        configuration?.get(ScriptCompilationConfiguration.ide.dependenciesSources).toClassPathOrEmpty()
+    }
+
+    val javaHome: File?
+        get() = configuration?.get(ScriptCompilationConfiguration.jvm.jdkHome)
+
+    val defaultImports: List<String>
+        get() = configuration?.get(ScriptCompilationConfiguration.defaultImports).orEmpty()
+
+    val importedScripts: List<SourceCode>
+        get() = (configuration?.get(ScriptCompilationConfiguration.resolvedImportScripts) ?: configuration?.get(
+            ScriptCompilationConfiguration.importScripts
+        )).orEmpty()
 
     override fun equals(other: Any?): Boolean = script == (other as? ScriptCompilationConfigurationWrapper)?.script
 
     override fun hashCode(): Int = script.hashCode()
-
-    class FromCompilationConfiguration(
-        script: SourceCode,
-        override val configuration: ScriptCompilationConfiguration?
-    ) : ScriptCompilationConfigurationWrapper(script) {
-
-        // TODO: check whether implemented optimization for frequent calls makes sense here
-        override val dependenciesClassPath: List<File> by lazy {
-            configuration?.get(ScriptCompilationConfiguration.dependencies).toClassPathOrEmpty()
-        }
-
-        // TODO: check whether implemented optimization for frequent calls makes sense here
-        override val dependenciesSources: List<File> by lazy {
-            configuration?.get(ScriptCompilationConfiguration.ide.dependenciesSources).toClassPathOrEmpty()
-        }
-
-        override val javaHome: File?
-            get() = configuration?.get(ScriptCompilationConfiguration.jvm.jdkHome)
-
-        override val defaultImports: List<String>
-            get() = configuration?.get(ScriptCompilationConfiguration.defaultImports).orEmpty()
-
-        override val importedScripts: List<SourceCode>
-            get() = (configuration?.get(ScriptCompilationConfiguration.resolvedImportScripts) ?: configuration?.get(ScriptCompilationConfiguration.importScripts)).orEmpty()
-
-        @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
-        override val legacyDependencies: ScriptDependencies?
-            get() = configuration?.toDependencies(dependenciesClassPath)
-
-        override fun equals(other: Any?): Boolean =
-            super.equals(other) && other is FromCompilationConfiguration && configuration == other.configuration
-
-        override fun hashCode(): Int = super.hashCode() + 23 * (configuration?.hashCode() ?: 1)
-
-        override fun toString(): String {
-            return "FromCompilationConfiguration($configuration)"
-        }
-    }
 }
 
 typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCompilationConfigurationWrapper>
@@ -167,7 +134,7 @@ fun refineScriptCompilationConfiguration(
     definition: ScriptDefinition,
     project: Project,
     providedConfiguration: ScriptCompilationConfiguration? = null, // if null - take from definition
-    knownVirtualFileSources: MutableMap<String, VirtualFileScriptSource>? = null
+    knownVirtualFileSources: MutableMap<String, VirtualFileScriptSource>? = null,
 ): ScriptCompilationConfigurationResult {
     // TODO: add location information on refinement errors
     val ktFileSource = script.toKtFileSource(definition, project)
@@ -182,32 +149,23 @@ fun refineScriptCompilationConfiguration(
         }.onSuccess {
             it.resolveImportsToVirtualFiles(knownVirtualFileSources)
         }.onSuccess {
-            ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
+            ScriptCompilationConfigurationWrapper(
                 ktFileSource,
                 it.adjustByDefinition(definition)
             ).asSuccess()
         }
 }
 
-fun ScriptDependencies.adjustByDefinition(definition: ScriptDefinition): ScriptDependencies {
-    val additionalClasspath = additionalClasspath(definition).filterNot { classpath.contains(it) }
-    if (additionalClasspath.isEmpty()) return this
-
-    return copy(classpath = classpath + additionalClasspath)
-}
-
-fun ScriptCompilationConfiguration.adjustByDefinition(definition: ScriptDefinition): ScriptCompilationConfiguration {
-    return this.withUpdatedClasspath(additionalClasspath(definition))
-}
+fun ScriptCompilationConfiguration.adjustByDefinition(definition: ScriptDefinition): ScriptCompilationConfiguration =
+    this.withUpdatedClasspath(additionalClasspath(definition))
 
 private fun additionalClasspath(definition: ScriptDefinition): List<File> {
     return definition.hostConfiguration[ScriptingHostConfiguration.configurationDependencies].toClassPathOrEmpty()
 }
 
 fun ScriptCompilationConfiguration.resolveImportsToVirtualFiles(
-    knownFileBasedSources: MutableMap<String, VirtualFileScriptSource>?
-)
-: ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    knownFileBasedSources: MutableMap<String, VirtualFileScriptSource>?,
+): ResultWithDiagnostics<ScriptCompilationConfiguration> {
     // the resolving is needed while CoreVirtualFS does not cache the files, so attempt to find vf and then PSI by path leads
     // to different PSI files, which breaks mappings needed by script descriptor
     // resolving only to virtual file allows to simplify serialization and maybe a bit more future proof
@@ -281,16 +239,13 @@ fun SourceCode.getKtFile(definition: ScriptDefinition, project: Project): KtFile
     }
 
 fun SourceCode.toKtFileSource(definition: ScriptDefinition, project: Project): KtFileScriptSource =
-    if (this is KtFileScriptSource) this
-    else {
-        KtFileScriptSource(this.getKtFile(definition, project))
-    }
+    this as? KtFileScriptSource ?: KtFileScriptSource(this.getKtFile(definition, project))
 
 fun getScriptCollectedData(
     scriptFile: KtFile,
     compilationConfiguration: ScriptCompilationConfiguration,
     project: Project,
-    contextClassLoader: ClassLoader?
+    contextClassLoader: ClassLoader?,
 ): ScriptCollectedData {
     val hostConfiguration =
         compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
@@ -320,7 +275,7 @@ fun getScriptCollectedData(
 }
 
 private fun Iterable<KtAnnotationEntry>.construct(
-    classLoader: ClassLoader?, acceptedAnnotations: List<KClass<out Annotation>>, project: Project, document: Document?, filePath: String
+    classLoader: ClassLoader?, acceptedAnnotations: List<KClass<out Annotation>>, project: Project, document: Document?, filePath: String,
 ): List<ScriptSourceAnnotation<*>> = construct(classLoader, acceptedAnnotations, project).map { (annotation, psiAnn) ->
     ScriptSourceAnnotation(
         annotation = annotation,
@@ -334,7 +289,7 @@ private fun Iterable<KtAnnotationEntry>.construct(
 }
 
 private fun Iterable<KtAnnotationEntry>.construct(
-    classLoader: ClassLoader?, acceptedAnnotations: List<KClass<out Annotation>>, project: Project
+    classLoader: ClassLoader?, acceptedAnnotations: List<KClass<out Annotation>>, project: Project,
 ): List<Pair<Annotation, KtAnnotationEntry>> =
     mapNotNull { psiAnn ->
         // TODO: consider advanced matching using semantic similar to actual resolving

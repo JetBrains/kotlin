@@ -48,13 +48,6 @@ class ReplInterpreter(
 
     private val replState: JvmReplCompilerState<*>
 
-    companion object {
-        private val REPL_LINE_AS_SCRIPT_DEFINITION =
-            object : ScriptDefinition.FromTemplate(defaultJvmScriptingHostConfiguration, ScriptTemplateWithArgs::class) {
-                override val name = "Kotlin REPL"
-            }
-    }
-
     init {
         hostConfiguration = defaultJvmScriptingHostConfiguration
 
@@ -68,7 +61,12 @@ class ReplInterpreter(
 
         val context =
             createCompilationContextFromEnvironment(
-                REPL_LINE_AS_SCRIPT_DEFINITION.compilationConfiguration,
+                ScriptCompilationConfigurationFromLegacyTemplate(
+                    defaultJvmScriptingHostConfiguration,
+                    Any::class
+                ).with {
+                    displayName("Kotlin REPL")
+                },
                 environment,
                 ScriptDiagnosticsMessageCollector(environment.messageCollector)
             )

@@ -14,13 +14,16 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.GenericReplCompiler
+import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
 import java.io.File
 import java.net.URLClassLoader
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class JvmStandardReplFactoryExtension : ReplFactoryExtension {
 
@@ -45,7 +48,16 @@ class JvmStandardReplFactoryExtension : ReplFactoryExtension {
         val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
             configurationDependencies(JvmDependency(jvmClasspathRoots))
         }
-        ScriptDefinition.FromTemplate(hostConfiguration, cls.kotlin)
+        ScriptDefinition.FromConfigurations(
+            hostConfiguration,
+            ScriptCompilationConfigurationFromLegacyTemplate(
+                hostConfiguration,
+                cls.kotlin
+            ),
+            ScriptEvaluationConfigurationFromHostConfiguration(
+                hostConfiguration
+            )
+        )
     } catch (ex: ClassNotFoundException) {
         throw IllegalStateException("Cannot find script definition template class $templateClassName", ex)
     } catch (ex: Exception) {

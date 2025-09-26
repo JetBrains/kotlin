@@ -35,8 +35,8 @@ interface DependenciesResolver : ScriptDependenciesResolver {
         abstract val reports: List<ScriptReport>
 
         data class Success(
-                override val dependencies: ScriptDependencies,
-                override val reports: List<ScriptReport> = listOf()
+            override val dependencies: ScriptDependencies,
+            override val reports: List<ScriptReport> = listOf(),
         ) : ResolveResult()
 
         data class Failure(override val reports: List<ScriptReport>) : ResolveResult() {

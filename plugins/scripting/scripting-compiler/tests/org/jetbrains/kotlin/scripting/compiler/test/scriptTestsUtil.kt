@@ -63,17 +63,13 @@ internal fun assertEqualsTrimmed(expected: String, actual: String) =
 internal fun compileScript(
     script: SourceCode,
     environment: KotlinCoreEnvironment,
+    parentClassLoader: ClassLoader? = null
 ): Pair<KClass<*>?, ExitCode> {
     val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
     val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val scriptDefinition = ScriptDefinitionProvider.getInstance(environment.project)!!.findDefinition(script)!!
 
-    val scriptCompilationConfiguration = scriptDefinition.compilationConfiguration.with {
-        jvm {
-            dependenciesFromCurrentContext(wholeClasspath = true)
-        }
-    }
-    val compileResult = scriptCompiler.compile(script, scriptCompilationConfiguration)
+    val compileResult = scriptCompiler.compile(script, scriptDefinition.compilationConfiguration)
     for (report in compileResult.reports) {
         messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
     }
@@ -82,7 +78,7 @@ internal fun compileScript(
         runBlocking {
             it.getClass(scriptDefinition.evaluationConfiguration.with {
                 jvm {
-                    baseClassLoader(null)
+                    baseClassLoader(parentClassLoader)
                 }
             })
         }

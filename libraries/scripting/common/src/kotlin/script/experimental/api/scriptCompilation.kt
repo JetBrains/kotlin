@@ -11,6 +11,7 @@ import java.io.File
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.impl.fromLegacyTemplate
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptCompilationConfigurationKeys
@@ -247,7 +248,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
     }
 
     /**
-     * The callback that will be called on the script compilation  immediately before starting the compilation
+     * The callback that will be called on the script compilation immediately before starting the compilation
      * @param handler the callback that will be called
      */
     fun beforeCompiling(handler: RefineScriptCompilationConfigurationHandler) {
@@ -297,15 +298,19 @@ fun ScriptCompilationConfiguration.refineOnAnnotations(
     script: SourceCode,
     collectedData: ScriptCollectedData
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val foundAnnotationNames = collectedData[ScriptCollectedData.foundAnnotations]?.mapTo(HashSet()) { it.annotationClass.java.name }
-    if (foundAnnotationNames.isNullOrEmpty()) return this.asSuccess()
+    val foundAnnotationNames =
+        collectedData[ScriptCollectedData.foundAnnotations]?.mapTo(HashSet()) { it.annotationClass.java.name }.orEmpty()
+
+    @Suppress("DEPRECATION")
+    val isFromLegacy = this[ScriptCompilationConfiguration.fromLegacyTemplate] ?: false
+    if (foundAnnotationNames.isEmpty() && !isFromLegacy) return this.asSuccess()
 
     val thisResult: ResultWithDiagnostics<ScriptCompilationConfiguration> = this.asSuccess()
     return this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
         ?.fold(thisResult) { config, (annotations, handler) ->
             config.onSuccess {
                 // checking that the collected data contains expected annotations
-                if (annotations.none { foundAnnotationNames.contains(it.typeName) }) it.asSuccess()
+                if (annotations.none { foundAnnotationNames.contains(it.typeName) } && !isFromLegacy) it.asSuccess()
                 else handler.invoke(ScriptConfigurationRefinementContext(script, it, collectedData))
             }
         } ?: thisResult
@@ -319,15 +324,21 @@ fun ScriptCompilationConfiguration.refineBeforeCompiling(
         refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
     }
 
-internal inline fun <Configuration: PropertiesCollection, RefineData> Configuration.simpleRefineImpl(
+internal inline fun <Configuration : PropertiesCollection, RefineData> Configuration.simpleRefineImpl(
     key: PropertiesCollection.Key<List<RefineData>>,
     refineFn: (Configuration, RefineData) -> ResultWithDiagnostics<Configuration>
-): ResultWithDiagnostics<Configuration> = (
-        this[key]
-            ?.fold(this) { config, refineData ->
-                refineFn(config, refineData).valueOr { return it }
-            } ?: this
-        ).asSuccess()
+): ResultWithDiagnostics<Configuration> {
+    val diagnostics = mutableListOf<ScriptDiagnostic>()
+
+    val configuration = this[key]
+        ?.fold(this) { config, refineData ->
+            val result = refineFn(config, refineData)
+            diagnostics.addAll(result.reports)
+            result.valueOr { return it }
+        } ?: this
+
+    return configuration.asSuccess(diagnostics)
+}
 
 /**
  * The functional interface to the script compiler

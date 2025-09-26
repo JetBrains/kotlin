@@ -12,7 +12,6 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.createScriptDefinitionFromTemplate
 import kotlin.script.experimental.jvm.baseClassLoader
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
@@ -20,8 +19,6 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 // TODO: name could be confused with KotlinScriptDefinition, discuss naming
 abstract class ScriptDefinition : UserDataHolderBase() {
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Use configurations instead")
     abstract val hostConfiguration: ScriptingHostConfiguration
     abstract val compilationConfiguration: ScriptCompilationConfiguration
     abstract val evaluationConfiguration: ScriptEvaluationConfiguration?
@@ -59,6 +56,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         val filePathPattern by lazy {
             compilationConfiguration[ScriptCompilationConfiguration.filePathPattern]?.takeIf { it.isNotBlank() }
         }
+
         val fileNamePattern by lazy {
             @Suppress("DEPRECATION_ERROR")
             compilationConfiguration[ScriptCompilationConfiguration.fileNamePattern]?.takeIf { it.isNotBlank() }
@@ -141,9 +139,18 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     )
 
     companion object {
-        fun getDefault(hostConfiguration: ScriptingHostConfiguration) =
-            object : FromTemplate(hostConfiguration, ScriptTemplateWithArgs::class) {
-                override val isDefault = true
-            }
+        fun getDefault(hostConfiguration: ScriptingHostConfiguration) = object : FromConfigurations(
+            hostConfiguration,
+            @Suppress("DEPRECATION")
+            ScriptCompilationConfigurationFromLegacyTemplate(
+                hostConfiguration,
+                ScriptTemplateWithArgs::class
+            ),
+            ScriptEvaluationConfigurationFromHostConfiguration(
+                hostConfiguration
+            )
+        ) {
+            override val isDefault = true
+        }
     }
 }

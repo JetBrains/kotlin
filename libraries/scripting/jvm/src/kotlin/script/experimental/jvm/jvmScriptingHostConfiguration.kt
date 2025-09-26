@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.host.*
-import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface JvmScriptingHostConfigurationKeys

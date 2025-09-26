@@ -3,11 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.scripting.definitions
 
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import java.io.File
 import java.io.IOException
 import java.net.URLClassLoader
@@ -23,6 +20,7 @@ const val SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT = ".classname"
 
 typealias MessageReporter = (ScriptDiagnostic.Severity, String) -> Unit
 
+@Suppress("DEPRECATION") //KT-82551
 class ScriptDefinitionsFromClasspathDiscoverySource(
     private val classpath: List<File>,
     private val hostConfiguration: ScriptingHostConfiguration,
@@ -37,25 +35,6 @@ class ScriptDefinitionsFromClasspathDiscoverySource(
             messageReporter
         )
     }
-}
-
-private const val MANIFEST_RESOURCE_NAME = "/META-INF/MANIFEST.MF"
-
-@Suppress("unused") // TODO: remove if really unused
-fun discoverScriptTemplatesInClassLoader(
-    classLoader: ClassLoader,
-    hostConfiguration: ScriptingHostConfiguration,
-    messageReporter: MessageReporter,
-): Sequence<ScriptDefinition> {
-    val classpath = classLoader.getResources(MANIFEST_RESOURCE_NAME).asSequence().mapNotNull {
-        try {
-            File(it.toURI()).takeIf(File::exists)
-        } catch (_: IllegalArgumentException) {
-            null
-        }
-    }
-    val classpathWithLoader = SimpleClasspathWithClassLoader(classpath.toList(), classLoader)
-    return scriptTemplatesDiscoverySequence(classpathWithLoader, hostConfiguration, messageReporter)
 }
 
 fun discoverScriptTemplatesInClasspath(
@@ -75,7 +54,7 @@ private fun scriptTemplatesDiscoverySequence(
     hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter,
 ): Sequence<ScriptDefinition> {
-    return sequence<ScriptDefinition> {
+    return sequence {
         // for jar files the definition class is expected in the same jar as the discovery file
         // in case of directories, the class output may come separate from the resources, so some candidates should be deffered and processed later
         val defferedDirDependencies = ArrayList<File>()
@@ -305,14 +284,12 @@ private fun loadScriptDefinition(
             )
         } else if (ann.name == ScriptTemplateDefinition::class.java.simpleName) {
             val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
+
+            @Suppress("DEPRECATION")
             val compilationConfiguration: ScriptCompilationConfiguration =
-                ScriptCompilationConfigurationFromDefinition(
+                ScriptCompilationConfigurationFromLegacyTemplate(
                     hostConfiguration,
-                    KotlinScriptDefinitionFromAnnotatedTemplate(
-                        templateClass,
-                        hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty(),
-                        classpathWithLoader.classpath
-                    )
+                    templateClass
                 )
 
             def = ScriptDefinition.FromConfigurations(
@@ -350,7 +327,7 @@ private fun loadScriptDefinition(
             "Added script definition $template to configuration: name = ${def.name}"
         )
         return def
-    } catch (ex: ClassNotFoundException) {
+    } catch (_: ClassNotFoundException) {
         // not found - not an error, return null
     } catch (ex: Exception) {
         // other exceptions - might be an error
@@ -366,11 +343,6 @@ private interface ClasspathWithClassLoader {
     val classpath: List<File>
     val classLoader: ClassLoader
 }
-
-private class SimpleClasspathWithClassLoader(
-    override val classpath: List<File>,
-    override val classLoader: ClassLoader,
-) : ClasspathWithClassLoader
 
 private class LazyClasspathWithClassLoader(baseClassLoader: ClassLoader?, getClasspath: () -> List<File>) : ClasspathWithClassLoader {
     override val classpath by lazy { getClasspath() }

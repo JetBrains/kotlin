@@ -19,11 +19,10 @@ import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
 import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -37,14 +36,10 @@ import java.net.URLClassLoader
 import java.util.concurrent.Future
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.*
-import kotlin.script.experimental.api.with
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
-import kotlin.script.experimental.jvm.jvm
 import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -378,9 +373,9 @@ class ScriptTemplateTest {
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 ScriptDefinition.FromConfigurations(
                     defaultJvmScriptingHostConfiguration,
-                    ScriptCompilationConfigurationFromDefinition(
+                    ScriptCompilationConfigurationFromLegacyTemplate(
                         defaultJvmScriptingHostConfiguration,
-                        KotlinScriptDefinitionFromAnnotatedTemplate(scriptTemplate)
+                        scriptTemplate
                     ),
                     ScriptEvaluationConfigurationFromHostConfiguration(
                         defaultJvmScriptingHostConfiguration
@@ -404,6 +399,7 @@ class ScriptTemplateTest {
                 val res = compileScript(
                     File("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath").toScriptSource(),
                     environment,
+                    this::class.java.classLoader.takeUnless { runIsolated }
                 )
                 res.first?.java
             } catch (e: CompilationException) {
