@@ -345,8 +345,6 @@ fun setFunctionNoInline(function: LLVMValueRef) {
 }
 
 fun setFunctionAlwaysInline(function: LLVMValueRef) {
-    // TODO: do we need to check the hot-reload flag here? Probably not, since the module
-    // TODO: is embedded directly into the compiler.
     addLlvmFunctionEnumAttribute(function, LlvmFunctionAttribute.AlwaysInline)
 }
 
