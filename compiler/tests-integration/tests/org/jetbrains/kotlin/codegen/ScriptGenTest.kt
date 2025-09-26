@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
@@ -24,10 +26,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -41,9 +42,9 @@ class ScriptGenTest : CodegenTestCase() {
         private val FIB_SCRIPT_DEFINITION =
             ScriptDefinition.FromConfigurations(
                 defaultJvmScriptingHostConfiguration,
-                ScriptCompilationConfigurationFromDefinition(
+                ScriptCompilationConfigurationFromLegacyTemplate(
                     defaultJvmScriptingHostConfiguration,
-                    KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class)
+                    ScriptWithIntParam::class
                 ),
                 ScriptEvaluationConfigurationFromHostConfiguration(
                     defaultJvmScriptingHostConfiguration
@@ -52,9 +53,9 @@ class ScriptGenTest : CodegenTestCase() {
         private val NO_PARAM_SCRIPT_DEFINITION =
             ScriptDefinition.FromConfigurations(
                 defaultJvmScriptingHostConfiguration,
-                ScriptCompilationConfigurationFromDefinition(
+                ScriptCompilationConfigurationFromLegacyTemplate(
                     defaultJvmScriptingHostConfiguration,
-                    KotlinScriptDefinitionFromAnnotatedTemplate(Any::class)
+                    Any::class
                 ),
                 ScriptEvaluationConfigurationFromHostConfiguration(
                     defaultJvmScriptingHostConfiguration

@@ -23,13 +23,13 @@ import kotlin.script.dependencies.ScriptContents
 
 interface AsyncDependenciesResolver : DependenciesResolver {
     suspend fun resolveAsync(
-            scriptContents: ScriptContents, environment: Environment
+        scriptContents: ScriptContents, environment: Environment,
     ): DependenciesResolver.ResolveResult
 
     /* 'resolve' implementation is supposed to invoke resolveAsync in a blocking manner
     *  To avoid dependency on kotlinx-coroutines-core we leave this method unimplemented
     *     and provide 'resolve' implementation when loading resolver.
     */
-    override fun resolve(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult
-            = /*runBlocking { resolveAsync(scriptContents, environment) } */ throw NotImplementedError()
+    override fun resolve(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult =
+        /*runBlocking { resolveAsync(scriptContents, environment) } */ throw NotImplementedError()
 }

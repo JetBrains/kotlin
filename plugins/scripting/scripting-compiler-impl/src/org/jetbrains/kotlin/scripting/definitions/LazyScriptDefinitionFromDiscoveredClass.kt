@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.scripting.definitions
 
 import java.io.File
@@ -54,6 +56,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         }
     }
 
+    @Deprecated("Use configurations instead")
     override val hostConfiguration: ScriptingHostConfiguration
         get() = definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: baseHostConfiguration
 
@@ -69,7 +72,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 
     override val name: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        annotationsFromAsm.find { it.name == KotlinScript::class.java.simpleName!! }?.args?.find { it.name == "name" }?.value
+        annotationsFromAsm.find { it.name == KotlinScript::class.java.simpleName }?.args?.find { it.name == "name" }?.value
             ?: super.name
     }
 }
