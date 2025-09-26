@@ -41,8 +41,11 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.junit.Assert
 import java.io.File
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 private const val library = "inline fun<T> foo(fn: () -> T): T = fn()"
 private const val script = "import foo\nval x = foo { 0 }"
@@ -122,7 +125,12 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {
         val collector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
-        val replCompiler = GenericReplCompiler(testRootDisposable, StandardScriptDefinition, configuration, collector)
+        val replCompiler = GenericReplCompiler(
+            testRootDisposable,
+            ScriptDefinition.FromTemplate(defaultJvmScriptingHostConfiguration, ScriptTemplateWithArgs::class),
+            configuration,
+            collector
+        )
         val state = replCompiler.createState()
 
         return replCompiler.compile(state, ReplCodeLine(0, 0, script))
