@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
@@ -57,6 +58,8 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
 }
 
 internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependenciesWithNativeDownloadTask(): FileCollection {
+    if (project.kotlinPropertiesProvider.isFunctionalTestMode) return project.files().from("nativeDependencies")
+
     val commonizerTarget = commonizerTarget.await() ?: return project.files()
     val nativeDependency = project.getNativeDistributionDependenciesWithNativeDownloadTask(
         commonizerTarget,
