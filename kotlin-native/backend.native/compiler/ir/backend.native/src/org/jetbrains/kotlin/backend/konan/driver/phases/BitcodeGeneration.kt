@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import hair.compilation.FunctionCompilation
 import llvm.DIFinalize
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.createLlvmDeclarations
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -53,7 +55,8 @@ internal val RTTIPhase = createSimpleNamedCompilerPhase<NativeGenerationState, R
 internal data class CodegenInput(
         val irModule: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
-        val lifetimes: Map<IrElement, Lifetime>
+        val lifetimes: Map<IrElement, Lifetime>,
+        val hair: Map<IrFunction, FunctionCompilation>,
 ) : KotlinBackendIrHolder {
     override val kotlinIr: IrElement
         get() = irModule
@@ -72,7 +75,7 @@ internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState
                     context.objCExportCodeSpec
             )
 
-            input.irModule.acceptVoid(CodeGeneratorVisitor(generationState, input.irBuiltIns, input.lifetimes))
+            input.irModule.acceptVoid(CodeGeneratorVisitor(generationState, input.irBuiltIns, input.lifetimes, input.hair))
 
             if (generationState.hasDebugInfo())
                 DIFinalize(generationState.debugInfo.builder)
