@@ -848,15 +848,15 @@ tasks {
     }
 
     register("wasmCompilerTest") {
-        dependsOn(":wasm:wasm.tests:diagnosticTest")
+        // KTI-2670: TODO: don't invoke this obsolete task in KTI
+    }
+
+    register("wasmFirCompilerTest") {
+        dependsOn(":wasm:wasm.tests:test")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
             dependsOn(":wasm:wasm.ir:test")
         }
-    }
-
-    register("wasmFirCompilerTest") {
-        dependsOn(":wasm:wasm.tests:testFir")
     }
 
     // These tests run Native compiler and will be run in many different compilation modes that the compiler supports:

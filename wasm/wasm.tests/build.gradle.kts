@@ -305,11 +305,9 @@ projectTests {
     }
 
     // Test everything
-    wasmProjectTest("test")
-
-    wasmProjectTest("testFir", skipInLocalBuild = true) {
+    wasmProjectTest("test") {
         dependsOn(generateTypeScriptTests)
-        include("**/Fir*.class")
+        include("**/*.class")
     }
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
