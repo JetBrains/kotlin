@@ -280,8 +280,12 @@ class KotlinNativeCompileArgumentsTest {
         }
 
         compileLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_x64")
+        compileLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
         compileLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_arm64")
+        compileLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
         linkLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_x64")
+        linkLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
         linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_arm64")
+        linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
     }
 }

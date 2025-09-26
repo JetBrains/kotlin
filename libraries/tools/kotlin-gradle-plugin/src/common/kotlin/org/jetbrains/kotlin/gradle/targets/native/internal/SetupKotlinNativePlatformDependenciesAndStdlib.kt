@@ -58,8 +58,6 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
 }
 
 internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependenciesWithNativeDownloadTask(): FileCollection {
-    if (project.kotlinPropertiesProvider.isFunctionalTestMode) return project.files().from("nativeDependencies")
-
     val commonizerTarget = commonizerTarget.await() ?: return project.files()
     val nativeDependency = project.getNativeDistributionDependenciesWithNativeDownloadTask(
         commonizerTarget,
@@ -173,6 +171,8 @@ private fun ObjectFactory.getOriginalPlatformLibrariesForTargetWithKonanDistribu
 internal fun Project.getOriginalPlatformLibrariesForTargetWithNativeDownloadTask(
     konanTarget: KonanTarget,
 ): FileCollection {
+    if (project.kotlinPropertiesProvider.isFunctionalTestMode) return project.files().from("nativeDependencies")
+
     val kotlinNativeDownloadTask = tasks.named("kotlinNativeDownload", KotlinNativeDownloadTask::class.java)
     return objects.fileCollection()
         .from(
