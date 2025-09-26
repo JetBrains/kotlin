@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
@@ -21,7 +23,6 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
  * outside the compiler context. Difference lies in its constructor parameters, namely in
  * [org.jetbrains.kotlin.config.CompilerConfiguration] replaced with a pair of explicit [scriptDefinitionSources] and [scriptDefinitions].
  */
-@Suppress("DEPRECATION")
 internal class FirScriptingCompilerExtensionIdeRegistrar(
     private val project: Project,
     private val hostConfiguration: ScriptingHostConfiguration,
