@@ -140,7 +140,9 @@ constructor(
                 it.versions.value(nodeJsRoot.versions)
                     .disallowChanges()
                 it.executable = nodeJsEnvSpec.executable.get()
-                if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                if (compilation.target.wasmTargetType == KotlinWasmTargetType.WASI) {
+                    it.nodeArgs += "--experimental-wasm-exnref"
+                } else {
                     it.workingDir(npmProject.dir)
                     it.dependsOn(
                         nodeJsRoot.npmInstallTaskProvider,
