@@ -77,7 +77,7 @@ data class KotlinCompilerArgumentsLevel(
                 }
         return KotlinCompilerArgumentsLevel(
             name,
-            arguments + another.arguments,
+            (arguments + another.arguments).sortedBy { it.name }.toSet(),
             mergedNestedLevels
         )
     }

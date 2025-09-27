@@ -12,45 +12,21 @@ import com.intellij.util.xmlb.annotations.Transient
 
 class K2MetadataCompilerArguments : CommonCompilerArguments() {
     @Argument(
-        value = "-d",
-        valueDescription = "<directory|jar>",
-        description = "Destination for generated .kotlin_metadata files.",
-    )
-    var destination: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-classpath",
-        shortName = "-cp",
-        valueDescription = "<path>",
-        description = "List of directories and JAR/ZIP archives to search for user .kotlin_metadata files.",
-    )
-    var classpath: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-module-name",
-        valueDescription = "<name>",
-        description = "Name of the generated .kotlin_module file.",
-    )
-    var moduleName: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xfriend-paths",
         valueDescription = "<path>",
         description = "Paths to output directories for friend modules (modules whose internals should be visible).",
     )
     var friendPaths: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xlegacy-metadata-jar-k2",
+        description = "Produce a legacy metadata jar instead of metadata klib. Suitable only for K2 compilation",
+    )
+    var legacyMetadataJar: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -68,13 +44,37 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xlegacy-metadata-jar-k2",
-        description = "Produce a legacy metadata jar instead of metadata klib. Suitable only for K2 compilation",
+        value = "-classpath",
+        shortName = "-cp",
+        valueDescription = "<path>",
+        description = "List of directories and JAR/ZIP archives to search for user .kotlin_metadata files.",
     )
-    var legacyMetadataJar: Boolean = false
+    var classpath: String? = null
         set(value) {
             checkFrozen()
-            field = value
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-d",
+        valueDescription = "<directory|jar>",
+        description = "Destination for generated .kotlin_metadata files.",
+    )
+    var destination: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-module-name",
+        valueDescription = "<name>",
+        description = "Name of the generated .kotlin_module file.",
+    )
+    var moduleName: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @get:Transient
