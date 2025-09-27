@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
+import org.jetbrains.kotlin.buildtools.internal.Options.Companion.registerOptions
 
-internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
-    private val options: Options = Options(BuildOperation::class)
+internal abstract class BuildOperationImpl<R> : BuildOperation<R>, HasFinalizableValues by HasFinalizableValuesImpl() {
+    private val options: Options = registerOptions(BuildOperation::class)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
@@ -22,7 +23,13 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
         options[key] = value
     }
 
-    abstract fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
+    fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R {
+        finalizeValues()
+        (executionPolicy as? ExecutionPolicyImpl)?.finalizeValues()
+        return executeImpl(projectId, executionPolicy, logger)
+    }
+
+    abstract fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
 
     operator fun <V> get(key: Option<V>): V = options[key]
 

@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.internal.Options.Companion.registerOptions
 import kotlin.time.Duration
 
-internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
+internal abstract class ExecutionPolicyImpl : HasFinalizableValues by HasFinalizableValuesImpl()
 
-internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
+internal object InProcessExecutionPolicyImpl : ExecutionPolicyImpl(), ExecutionPolicy.InProcess
 
-    private val options: Options = Options(ExecutionPolicy.WithDaemon::class)
+internal class DaemonExecutionPolicyImpl : ExecutionPolicyImpl(), ExecutionPolicy.WithDaemon {
+
+    private val options: Options = registerOptions(ExecutionPolicy.WithDaemon::class)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V = options[key.id]

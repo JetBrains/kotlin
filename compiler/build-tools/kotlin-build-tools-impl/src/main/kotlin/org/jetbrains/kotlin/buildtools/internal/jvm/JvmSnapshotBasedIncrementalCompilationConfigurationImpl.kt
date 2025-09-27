@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.buildtools.internal.jvm
 
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
+import org.jetbrains.kotlin.buildtools.internal.HasFinalizableValues
+import org.jetbrains.kotlin.buildtools.internal.HasFinalizableValuesImpl
 import org.jetbrains.kotlin.buildtools.internal.Options
+import org.jetbrains.kotlin.buildtools.internal.Options.Companion.registerOptions
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import java.nio.file.Path
 
-internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshotBasedIncrementalCompilationOptions {
-    private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class)
+internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshotBasedIncrementalCompilationOptions,
+    HasFinalizableValues by HasFinalizableValuesImpl() {
+    private val options: Options = registerOptions(JvmSnapshotBasedIncrementalCompilationOptions::class)
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
