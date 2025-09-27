@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
 import org.jetbrains.kotlin.arguments.description.actualCommonToolsArguments
 import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.description.actualMetadataArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 
@@ -29,7 +30,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xcompiler-plugin")
             drop("Xintellij-plugin-root")
             drop("Xcommon-sources")
-            drop("Xuse-k2")
             drop("Xenable-incremental-compilation")
 
             // KMP related
@@ -41,6 +41,9 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xfragment-dependency")
             drop("Xseparate-kmp-compilation")
             drop("Xdirect-java-actualization")
+        }
+        with(removedCommonCompilerArguments) {
+            drop("Xuse-k2")
         }
     })
     put(actualCommonToolsArguments.name, buildMap {

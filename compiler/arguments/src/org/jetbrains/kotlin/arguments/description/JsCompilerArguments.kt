@@ -10,34 +10,10 @@ import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
-import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Enables
-import org.jetbrains.kotlin.cli.common.arguments.GradleDeprecatedOption
-import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
-import org.jetbrains.kotlin.cli.common.arguments.GradleOption
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 
 val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsArguments) {
-    compilerArgument {
-        name = "output"
-        compilerName = "outputFile"
-        valueType = StringType.defaultNull
-        description = "".asReleaseDependent()
-        valueDescription = "<filepath>".asReleaseDependent()
-
-        additionalAnnotations(
-            Deprecated("It is senseless to use with IR compiler. Only for compatibility."),
-        )
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_0_0,
-            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
-            deprecatedVersion = KotlinReleaseVersion.v2_1_0,
-            removedVersion = KotlinReleaseVersion.v2_2_0,
-        )
-    }
-
     compilerArgument {
         name = "ir-output-dir"
         compilerName = "outputDir"
@@ -460,19 +436,6 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_20,
-        )
-    }
-
-    compilerArgument {
-        name = "Xtyped-arrays"
-        description = """This option does nothing and is left for compatibility with the legacy backend.
-It is deprecated and will be removed in a future release.""".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_1_3,
-            deprecatedVersion = KotlinReleaseVersion.v2_1_0,
-            removedVersion = KotlinReleaseVersion.v2_3_0,
         )
     }
 
