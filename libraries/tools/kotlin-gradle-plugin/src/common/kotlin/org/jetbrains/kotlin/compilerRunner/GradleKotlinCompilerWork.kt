@@ -9,7 +9,6 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -109,9 +108,6 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 kotlinPluginVersion = config.kotlinPluginVersion
             )
             val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(gradleMessageCollector, config.compilerArgumentsLogLevel)
-            if (config.incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
-                config.incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
-            }
             config.errorsFiles?.let {
                 gradleMessageCollector.flush(it)
             }

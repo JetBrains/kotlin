@@ -15,8 +15,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.*
-import org.gradle.api.tasks.compile.AbstractCompile
-import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -408,7 +406,6 @@ abstract class KotlinCompile @Inject constructor(
                 workingDir = taskBuildCacheableOutputDirectory.get().asFile,
                 rootProjectDir = projectRootDir,
                 buildDir = projectLayout.buildDirectory.getFile(),
-                disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings,
                 icFeatures = makeIncrementalCompilationFeatures(),
                 useJvmFirRunner = useFirRunner.get(),
@@ -472,34 +469,6 @@ abstract class KotlinCompile @Inject constructor(
                     )
                 )
             }
-        }
-    }
-
-    @get:Input
-    val disableMultiModuleIC: Boolean by lazy {
-        if (!isIncrementalCompilationEnabled() || !javaOutputDir.isPresent) {
-            false
-        } else {
-
-            var illegalTaskOrNull: AbstractCompile? = null
-            project.tasks.configureEach {
-                if (it is AbstractCompile &&
-                    it !is JavaCompile &&
-                    it !is AbstractKotlinCompile<*> &&
-                    javaOutputDir.get().asFile.isParentOf(it.destinationDirectory.get().asFile)
-                ) {
-                    illegalTaskOrNull = illegalTaskOrNull ?: it
-                }
-            }
-            if (illegalTaskOrNull != null) {
-                val illegalTask = illegalTaskOrNull!!
-                logger.info(
-                    "Kotlin inter-project IC is disabled: " +
-                            "unknown task '$illegalTask' destination dir ${illegalTask.destinationDirectory.get().asFile} " +
-                            "intersects with java destination dir $javaOutputDir"
-                )
-            }
-            illegalTaskOrNull != null
         }
     }
 

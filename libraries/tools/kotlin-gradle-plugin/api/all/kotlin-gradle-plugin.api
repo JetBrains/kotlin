@@ -6269,7 +6269,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompile : org/jetb
 	public abstract fun getClasspathSnapshotProperties ()Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompile$ClasspathSnapshotProperties;
 	public synthetic fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
 	public final fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;
-	public final fun getDisableMultiModuleIC ()Z
 	protected fun getIncrementalProps ()Ljava/util/List;
 	public final fun getJavaPackagePrefix ()Ljava/lang/String;
 	public fun getJavaSources ()Lorg/gradle/api/file/FileCollection;
