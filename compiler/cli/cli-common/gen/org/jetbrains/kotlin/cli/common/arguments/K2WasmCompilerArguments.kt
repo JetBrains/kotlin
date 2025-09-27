@@ -10,30 +10,32 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
     @Argument(
-        value = "-Xwasm",
-        description = "Use the WebAssembly compiler backend.",
+        value = "-Xir-dce-dump-reachability-info-to-file",
+        valueDescription = "<path>",
+        description = "Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.",
     )
-    var wasm: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-target",
-        description = "Set up the Wasm target (wasm-js or wasm-wasi).",
-    )
-    var wasmTarget: String? = null
+    var irDceDumpReachabilityInfoToFile: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
-        value = "-Xwasm-debug-info",
-        description = "Add debug info to the compiled WebAssembly module.",
+        value = "-Xir-dump-declaration-ir-sizes-to-file",
+        valueDescription = "<path>",
+        description = "Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.",
     )
-    var wasmDebug: Boolean = true
+    var irDceDumpDeclarationIrSizesToFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-Xwasm",
+        description = "Use the WebAssembly compiler backend.",
+    )
+    var wasm: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -50,30 +52,20 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-included-module-only",
-        description = "Compile only a module passed using `-include` option.",
+        value = "-Xwasm-debug-info",
+        description = "Add debug info to the compiled WebAssembly module.",
     )
-    var wasmIncludedModuleOnly: Boolean = false
+    var wasmDebug: Boolean = true
         set(value) {
             checkFrozen()
             field = value
         }
 
     @Argument(
-        value = "-Xwasm-generate-wat",
-        description = "Generate a .wat file.",
+        value = "-Xwasm-debugger-custom-formatters",
+        description = "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values",
     )
-    var wasmGenerateWat: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-kclass-fqn",
-        description = "Enable support for 'KClass.qualifiedName'.",
-    )
-    var wasmKClassFqn: Boolean = true
+    var debuggerCustomFormatters: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -100,60 +92,20 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-use-traps-instead-of-exceptions",
-        description = "Use traps instead of throwing exceptions.",
+        value = "-Xwasm-generate-dwarf",
+        description = "Generate DWARF debug information.",
     )
-    var wasmUseTrapsInsteadOfExceptions: Boolean = false
+    var generateDwarf: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
     @Argument(
-        value = "-Xwasm-use-new-exception-proposal",
-        description = "Use an updated version of the exception proposal with try_table.",
+        value = "-Xwasm-generate-wat",
+        description = "Generate a .wat file.",
     )
-    var wasmUseNewExceptionProposal: Boolean? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-no-jstag",
-        description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
-    )
-    var wasmNoJsTag: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-debugger-custom-formatters",
-        description = "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values",
-    )
-    var debuggerCustomFormatters: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-source-map-include-mappings-from-unavailable-sources",
-        description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine.",
-    )
-    var includeUnavailableSourcesIntoSourceMap: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xwasm-preserve-ic-order",
-        description = "Preserve wasm file structure between IC runs.",
-    )
-    var preserveIcOrder: Boolean = false
+    var wasmGenerateWat: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -170,35 +122,83 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-generate-dwarf",
-        description = "Generate DWARF debug information.",
+        value = "-Xwasm-included-module-only",
+        description = "Compile only a module passed using `-include` option.",
     )
-    var generateDwarf: Boolean = false
+    var wasmIncludedModuleOnly: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
     @Argument(
-        value = "-Xir-dce-dump-reachability-info-to-file",
-        valueDescription = "<path>",
-        description = "Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.",
+        value = "-Xwasm-kclass-fqn",
+        description = "Enable support for 'KClass.qualifiedName'.",
     )
-    var irDceDumpReachabilityInfoToFile: String? = null
+    var wasmKClassFqn: Boolean = true
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xwasm-no-jstag",
+        description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
+    )
+    var wasmNoJsTag: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xwasm-preserve-ic-order",
+        description = "Preserve wasm file structure between IC runs.",
+    )
+    var preserveIcOrder: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xwasm-source-map-include-mappings-from-unavailable-sources",
+        description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine.",
+    )
+    var includeUnavailableSourcesIntoSourceMap: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xwasm-target",
+        description = "Set up the Wasm target (wasm-js or wasm-wasi).",
+    )
+    var wasmTarget: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
-        value = "-Xir-dump-declaration-ir-sizes-to-file",
-        valueDescription = "<path>",
-        description = "Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.",
+        value = "-Xwasm-use-new-exception-proposal",
+        description = "Use an updated version of the exception proposal with try_table.",
     )
-    var irDceDumpDeclarationIrSizesToFile: String? = null
+    var wasmUseNewExceptionProposal: Boolean? = null
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
+            field = value
+        }
+
+    @Argument(
+        value = "-Xwasm-use-traps-instead-of-exceptions",
+        description = "Use traps instead of throwing exceptions.",
+    )
+    var wasmUseTrapsInsteadOfExceptions: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
         }
 
 }
