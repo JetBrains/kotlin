@@ -152,12 +152,11 @@ internal class ExternalTool(val path: String) {
         while (true) {
             val line = bufferedStdout.readLine() ?: break
             stdout.appendLine(line)
-            println(line)
         }
 
         val exitValue = process.waitFor()
         if (exitValue != 0) {
-            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"")
+            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"\nOUTPUT:\n$stdout\n---")
         }
 
         return stdout.toString()
