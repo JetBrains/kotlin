@@ -18,7 +18,6 @@ internal class IncrementalCompilationEnvironment(
     val workingDir: File,
     val rootProjectDir: File,
     val buildDir: File,
-    val disableMultiModuleIC: Boolean = false,
     val multiModuleICSettings: MultiModuleICSettings,
     val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     val useJvmFirRunner: Boolean = false,
