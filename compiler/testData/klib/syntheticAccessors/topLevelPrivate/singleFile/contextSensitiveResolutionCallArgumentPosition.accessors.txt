@@ -1,0 +1,12 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=contextSensitiveResolutionCallArgumentPosition.kt */
+
+/* TARGET declaration */ private fun foo(x: MyEnum): MyEnum
+internal inline fun bar(): MyEnum
+    /* ACCESSOR use-site */ access$foo$tContextSensitiveResolutionCallArgumentPositionKt(x = MyEnum.X)
+public fun box(): String
+    val tmp0_subject: MyEnum
+        /* ACCESSOR use-site */ access$foo$tContextSensitiveResolutionCallArgumentPositionKt(x = MyEnum.X)
+/* ACCESSOR declaration */ internal fun access$foo$tContextSensitiveResolutionCallArgumentPositionKt(x: MyEnum): MyEnum
+    /* TARGET use-site */ foo(x = x)
