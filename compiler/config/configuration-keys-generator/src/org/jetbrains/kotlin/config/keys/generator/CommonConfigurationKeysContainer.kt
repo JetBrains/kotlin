@@ -44,6 +44,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val PARALLEL_BACKEND_THREADS by key<Int>("Run codegen phase in parallel with N threads")
     val DUMP_MODEL by key<String>("Dump compilation model")
     val INCREMENTAL_COMPILATION by key<Boolean>("Enable incremental compilation")
+    val HEADER_COMPILATION by key<Boolean>("Enable header compilation mode")
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS by key<Boolean>("Allow to compile any scripts along with regular Kotlin sources")
     val IGNORE_CONST_OPTIMIZATION_ERRORS by key<Boolean>("Ignore errors from IrConstTransformer")
     val EVALUATED_CONST_TRACKER by key<EvaluatedConstTracker>("Keeps track of all evaluated by IrInterpreter constants")

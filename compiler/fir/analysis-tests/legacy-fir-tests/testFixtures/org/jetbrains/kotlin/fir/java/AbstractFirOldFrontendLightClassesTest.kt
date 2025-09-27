@@ -121,7 +121,7 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
     private fun mapKtFilesToFirFiles(session: FirSession, ktFiles: List<KtFile>, firFiles: MutableList<FirFile>, useLightTree: Boolean) {
         val firProvider = (session.firProvider as FirProviderImpl)
         if (useLightTree) {
-            val lightTreeBuilder = LightTree2Fir(session, firProvider.kotlinScopeProvider)
+            val lightTreeBuilder = LightTree2Fir(session, false, firProvider.kotlinScopeProvider)
             ktFiles.mapTo(firFiles) {
                 val firFile =
                     lightTreeBuilder.buildFirFile(
