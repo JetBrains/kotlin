@@ -7,71 +7,26 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.config.LanguageFeature
 
 internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonLanguageFeatures(arguments: CommonCompilerArguments) {
-    if (arguments.multiPlatform) {
-        put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.newInference) {
-        put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
-        put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
-        put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
-        put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.inlineClasses) {
-        put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.consistentDataClassCopyVisibility) {
-        put(LanguageFeature.DataClassCopyRespectsConstructorVisibility, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.unrestrictedBuilderInference) {
-        put(LanguageFeature.UnrestrictedBuilderInference, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.contextReceivers) {
-        put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.contextParameters) {
-        put(LanguageFeature.ContextParameters, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.contextSensitiveResolution) {
-        put(LanguageFeature.ContextSensitiveResolutionUsingExpectedType, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.nonLocalBreakContinue) {
-        put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.dataFlowBasedExhaustiveness) {
-        put(LanguageFeature.DataFlowBasedExhaustiveness, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.explicitBackingFields) {
-        put(LanguageFeature.ExplicitBackingFields, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.directJavaActualization) {
-        put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.multiDollarInterpolation) {
-        put(LanguageFeature.MultiDollarInterpolation, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.allowAnyScriptsInSourceRoots) {
         put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
     }
 
-    if (arguments.whenGuards) {
-        put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
+    if (arguments.allowConditionImpliesReturnsContracts) {
+        put(LanguageFeature.ConditionImpliesReturnsContracts, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.nestedTypeAliases) {
-        put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.ENABLED)
+    if (arguments.allowContractsOnMoreFunctions) {
+        put(LanguageFeature.AllowCheckForErasedTypesInContracts, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.AllowContractsOnSomeOperators, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.AllowContractsOnPropertyAccessors, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowHoldsinContract) {
+        put(LanguageFeature.HoldsInContracts, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowReifiedTypeInCatch) {
+        put(LanguageFeature.AllowReifiedTypeInCatchClause, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.annotationDefaultTarget == "first-only-warn") {
@@ -90,22 +45,44 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.allowReifiedTypeInCatch) {
-        put(LanguageFeature.AllowReifiedTypeInCatchClause, LanguageFeature.State.ENABLED)
+    if (arguments.consistentDataClassCopyVisibility) {
+        put(LanguageFeature.DataClassCopyRespectsConstructorVisibility, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.allowContractsOnMoreFunctions) {
-        put(LanguageFeature.AllowCheckForErasedTypesInContracts, LanguageFeature.State.ENABLED)
-        put(LanguageFeature.AllowContractsOnSomeOperators, LanguageFeature.State.ENABLED)
-        put(LanguageFeature.AllowContractsOnPropertyAccessors, LanguageFeature.State.ENABLED)
+    if (arguments.contextParameters) {
+        put(LanguageFeature.ContextParameters, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.allowConditionImpliesReturnsContracts) {
-        put(LanguageFeature.ConditionImpliesReturnsContracts, LanguageFeature.State.ENABLED)
+    if (arguments.contextReceivers) {
+        put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.allowHoldsinContract) {
-        put(LanguageFeature.HoldsInContracts, LanguageFeature.State.ENABLED)
+    if (arguments.contextSensitiveResolution) {
+        put(LanguageFeature.ContextSensitiveResolutionUsingExpectedType, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.dataFlowBasedExhaustiveness) {
+        put(LanguageFeature.DataFlowBasedExhaustiveness, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.directJavaActualization) {
+        put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.explicitBackingFields) {
+        put(LanguageFeature.ExplicitBackingFields, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.inlineClasses) {
+        put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.multiDollarInterpolation) {
+        put(LanguageFeature.MultiDollarInterpolation, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.multiPlatform) {
+        put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.nameBasedDestructuring == "only-syntax") {
@@ -119,5 +96,28 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
         put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.ENABLED)
         put(LanguageFeature.EnableNameBasedDestructuringShortForm, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.nestedTypeAliases) {
+        put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.newInference) {
+        put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.nonLocalBreakContinue) {
+        put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.unrestrictedBuilderInference) {
+        put(LanguageFeature.UnrestrictedBuilderInference, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.whenGuards) {
+        put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
     }
 }

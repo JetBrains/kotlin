@@ -1,80 +1,77 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xir-keep                  Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
-  -Xir-produce-klib-dir      Generate an unpacked klib into the parent directory of the output JS file.
-  -Xir-produce-klib-file     Generate a packed klib into the directory specified by '-ir-output-dir'.
-  -Xir-produce-js            Generate a JS file using the IR backend.
+  -Xcache-directory=<path>   Path to the cache directory.
+  -Xenable-extension-functions-in-externals
+                             Enable extension function members in external interfaces.
+  -Xes-arrow-functions       Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
+  -Xes-classes               Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
+  -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
+  -Xes-long-as-bigint        Compile Long values as ES2020 bigint instead of object.
+  -Xfake-override-validator  Enable the IR fake override validator.
+  -Xfriend-modules=<path>    Paths to friend modules.
+  -Xfriend-modules-disabled  Disable internal declaration export.
+  -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file.
+  -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
+  -Xinclude=<path>           Path to an intermediate library that should be processed in the same manner as source files.
+  -Xir-build-cache           Use the compiler to build the cache.
   -Xir-dce                   Perform experimental dead code elimination.
-  -Xir-dce-runtime-diagnostic={log|exception}
-                             Enable runtime diagnostics instead of removing declarations when performing DCE.
   -Xir-dce-print-reachability-info
                              Print reachability information about declarations to 'stdout' while performing DCE.
-  -Xir-property-lazy-initialization
-                             Perform lazy initialization for properties.
+  -Xir-dce-runtime-diagnostic={log|exception}
+                             Enable runtime diagnostics instead of removing declarations when performing DCE.
+  -Xir-generate-inline-anonymous-functions
+                             Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.
+  -Xir-keep                  Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
   -Xir-minimized-member-names Minimize the names of members.
   -Xir-module-name=<name>    Specify the name of the compilation module for the IR backend.
+  -Xir-per-file              Generate one .js file per source file.
+  -Xir-per-module            Generate one .js file per module.
+  -Xir-per-module-output-name Add a custom output name to the split .js files.
+  -Xir-produce-js            Generate a JS file using the IR backend.
+  -Xir-produce-klib-dir      Generate an unpacked klib into the parent directory of the output JS file.
+  -Xir-produce-klib-file     Generate a packed klib into the directory specified by '-ir-output-dir'.
+  -Xir-property-lazy-initialization
+                             Perform lazy initialization for properties.
   -Xir-safe-external-boolean Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when accessing external 'Boolean' properties.
-  -Xir-per-module            Generate one .js file per module.
-  -Xir-per-module-output-name Add a custom output name to the split .js files.
-  -Xir-per-file              Generate one .js file per source file.
-  -Xir-generate-inline-anonymous-functions
-                             Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.
-  -Xinclude=<path>           Path to an intermediate library that should be processed in the same manner as source files.
-  -Xcache-directory=<path>   Path to the cache directory.
-  -Xir-build-cache           Use the compiler to build the cache.
-  -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file.
-  -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
-  -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files.
-  -Xes-classes               Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
+  -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
   -Xplatform-arguments-in-main-function
                              JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
-  -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
-  -Xes-arrow-functions       Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
-  -Xes-long-as-bigint        Compile Long values as ES2020 bigint instead of object.
-  -Xfriend-modules-disabled  Disable internal declaration export.
-  -Xfriend-modules=<path>    Paths to friend modules.
-  -Xenable-extension-functions-in-externals
-                             Enable extension function members in external interfaces.
-  -Xfake-override-validator  Enable the IR fake override validator.
-  -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
-  -Xwasm                     Use the WebAssembly compiler backend.
-  -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
-  -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
-  -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
-  -Xwasm-included-module-only Compile only a module passed using `-include` option.
-  -Xwasm-generate-wat        Generate a .wat file.
-  -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
-  -Xwasm-enable-array-range-checks
-                             Turn on range checks for array access functions.
-  -Xwasm-enable-asserts      Turn on asserts.
-  -Xwasm-use-traps-instead-of-exceptions
-                             Use traps instead of throwing exceptions.
-  -Xwasm-use-new-exception-proposal
-                             Use an updated version of the exception proposal with try_table.
-  -Xwasm-no-jstag            Don't use WebAssembly.JSTag for throwing and catching exceptions
-  -Xwasm-debugger-custom-formatters
-                             Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
-  -Xwasm-source-map-include-mappings-from-unavailable-sources
-                             Insert source mappings from libraries even if their sources are unavailable on the end-user machine.
-  -Xwasm-preserve-ic-order   Preserve wasm file structure between IC runs.
-  -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
-  -Xwasm-generate-dwarf      Generate DWARF debug information.
+  -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files.
   -Xir-dce-dump-reachability-info-to-file=<path>
                              Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xir-dump-declaration-ir-sizes-to-file=<path>
                              Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
-  -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
-  -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
-  -Xklib-enable-signature-clash-checks
-                             Enable signature uniqueness checks.
-  -Xpartial-linkage={enable|disable}
-                             Use partial linkage mode.
-  -Xpartial-linkage-loglevel={info|warning|error}
-                             Define the compile-time log level for partial linkage.
+  -Xwasm                     Use the WebAssembly compiler backend.
+  -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
+  -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
+  -Xwasm-debugger-custom-formatters
+                             Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
+  -Xwasm-enable-array-range-checks
+                             Turn on range checks for array access functions.
+  -Xwasm-enable-asserts      Turn on asserts.
+  -Xwasm-generate-dwarf      Generate DWARF debug information.
+  -Xwasm-generate-wat        Generate a .wat file.
+  -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
+  -Xwasm-included-module-only Compile only a module passed using `-include` option.
+  -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
+  -Xwasm-no-jstag            Don't use WebAssembly.JSTag for throwing and catching exceptions
+  -Xwasm-preserve-ic-order   Preserve wasm file structure between IC runs.
+  -Xwasm-source-map-include-mappings-from-unavailable-sources
+                             Insert source mappings from libraries even if their sources are unavailable on the end-user machine.
+  -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
+  -Xwasm-use-new-exception-proposal
+                             Use an updated version of the exception proposal with try_table.
+  -Xwasm-use-traps-instead-of-exceptions
+                             Use traps instead of throwing exceptions.
+  -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
+                             Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
+                             The only observable effect is that a custom ABI version is written to KLIB manifest file.
   -Xklib-duplicated-unique-name-strategy={deny|allow-all-with-warning|allow-first-with-warning}
                              Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.
+  -Xklib-enable-signature-clash-checks
+                             Enable signature uniqueness checks.
   -Xklib-ir-inliner={intra-module|full|disabled|default}
                              Set the mode of the experimental IR inliner on the first compilation stage.
                              - `intra-module` mode enforces inlining of the functions only from the compiled module
@@ -83,19 +80,33 @@ where advanced options include:
                              - `disabled` mode completely disables the IR inliner
                              - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
 
-  -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
-                             Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
-                             The only observable effect is that a custom ABI version is written to KLIB manifest file.
+  -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
+  -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
   -Xklib-zip-file-accessor-cache-limit
                              Maximum number of klibs that can be cached during compilation. Default is 64.
-  -Xrepl                     Run Kotlin REPL (deprecated)
-  -Xno-inline                Disable method inlining.
-  -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
-  -Xskip-prerelease-check    Allow loading pre-release classes.
+  -Xpartial-linkage={enable|disable}
+                             Use partial linkage mode.
+  -Xpartial-linkage-loglevel={info|warning|error}
+                             Define the compile-time log level for partial linkage.
+  -Xallow-any-scripts-in-source-roots
+                             Allow compiling scripts along with regular Kotlin sources.
+  -Xallow-condition-implies-returns-contracts
+                             Allow contracts that specify a limited conditional returns postcondition.
+  -Xallow-contracts-on-more-functions
+                             Allow contracts on some operators and accessors, and allow checks for erased types.
+  -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
   -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
-  -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
-  -Xreport-output-files      Report the source-to-output file mapping.
-  -Xplugin=<path>            Load plugins from the given classpath.
+  -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
+  -Xannotation-default-target=first-only|first-only-warn|param-property
+                             Change the default annotation targets for constructor properties:
+                             -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
+                             -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
+                             -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
+                             default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
+  -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
+  -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
+  -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
+                             They should be a subset of sources passed as free arguments.
   -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
                              Register a compiler plugin.
   -Xcompiler-plugin-order=<pluginId1>><pluginId2>
@@ -103,81 +114,35 @@ where advanced options include:
                              Order constraint can be specified using the 'pluginId' of compiler plugins.
                              The first specified plugin will be executed before the second plugin.
                              Multiple constraints can be specified by repeating this option. Cycles in constraints will cause an error.
-  -Xmulti-platform           Enable language support for multiplatform projects.
-  -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
-  -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
-  -Xnew-inference            Enable the new experimental generic type inference algorithm.
-  -Xinline-classes           Enable experimental inline classes.
-  -Xreport-perf              Report detailed performance statistics.
+  -Xconsistent-data-class-copy-visibility
+                             The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
+  -Xcontext-parameters       Enable experimental context parameters.
+  -Xcontext-receivers        Enable experimental context receivers.
+  -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.
+  -Xdata-flow-based-exhaustiveness
+                             Enable `when` exhaustiveness improvements that rely on data-flow analysis.
   -Xdetailed-perf            Enable more detailed performance statistics (Experimental).
                              For Native, the performance report includes execution time and lines processed per second for every individual lowering.
                              For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+  -Xdirect-java-actualization Enable experimental direct Java actualization support.
+  -Xdisable-default-scripting-plugin
+                             Don't enable the scripting plugin by default.
+  -Xdisable-phases           Disable backend phases.
+  -Xdont-warn-on-error-suppression
+                             Don't report warnings when errors are suppressed. This only affects K2.
+  -Xdump-directory           Dump the backend state into this directory.
+  -Xdump-fqname              Dump the declaration with the given FqName.
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
                              Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.
                              Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.
-  -Xmetadata-version         Change the metadata version of the generated binary files.
-  -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
-                             They should be a subset of sources passed as free arguments.
-  -Xlist-phases              List backend phases.
-  -Xdisable-phases           Disable backend phases.
-  -Xverbose-phases           Be verbose while performing the given backend phases.
-  -Xphases-to-dump-before    Dump the backend's state before these phases.
-  -Xphases-to-dump-after     Dump the backend's state after these phases.
-  -Xphases-to-dump           Dump the backend's state both before and after these phases.
-  -Xdump-directory           Dump the backend state into this directory.
-  -Xdump-fqname              Dump the declaration with the given FqName.
-  -Xphases-to-validate-before Validate the backend's state before these phases.
-  -Xphases-to-validate-after Validate the backend's state after these phases.
-  -Xphases-to-validate       Validate the backend's state both before and after these phases.
-  -Xverify-ir={none|warning|error}
-                             IR verification mode (no verification by default).
-  -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
-  -Xprofile-phases           Profile backend phases.
-  -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
-  -Xuse-fir-experimental-checkers
-                             Enable experimental frontend IR checkers that are not yet ready for production.
-  -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
-                             Warning: This feature is not yet production-ready.
-  -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
-  -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.
-  -Xdisable-default-scripting-plugin
-                             Don't enable the scripting plugin by default.
+  -Xenable-incremental-compilation
+                             Enable incremental compilation.
+  -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
+                             Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
   -Xexplicit-api={strict|warning|disable}
                              Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
                              Use the 'warning' level to issue warnings instead of errors.
-  -Xreturn-value-checker={check|full|disable}
-                             Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
-  -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
-  -Xsuppress-api-version-greater-than-language-version-error
-                             Suppress error about API version greater than language version.
-                             Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
-  -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
-                             Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
-  -Xconsistent-data-class-copy-visibility
-                             The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
-  -Xunrestricted-builder-inference
-                             Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
-  -Xcontext-receivers        Enable experimental context receivers.
-  -Xcontext-parameters       Enable experimental context parameters.
-  -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.
-  -Xnon-local-break-continue Enable experimental non-local break and continue.
-  -Xdata-flow-based-exhaustiveness
-                             Enable `when` exhaustiveness improvements that rely on data-flow analysis.
   -Xexplicit-backing-fields  Enable experimental language support for explicit backing fields.
-  -Xdirect-java-actualization Enable experimental direct Java actualization support.
-  -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
-  -Xenable-incremental-compilation
-                             Enable incremental compilation.
-  -Xrender-internal-diagnostic-names
-                             Render the internal names of warnings and errors.
-  -Xallow-any-scripts-in-source-roots
-                             Allow compiling scripts along with regular Kotlin sources.
-  -Xreport-all-warnings      Report all warnings even if errors are found.
-  -Xfragments=<fragment name> Declare all known fragments of a multiplatform compilation.
-  -Xfragment-sources=<fragment name>:<path>
-                             Add sources to a specific fragment of a multiplatform compilation.
-  -Xfragment-refines=<fromModuleName>:<onModuleName>
-                             Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-dependency=<fragment name>:<path>
                              Declare common klib dependencies for the specific fragment.
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
@@ -188,38 +153,73 @@ where advanced options include:
                              This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
 
-  -Xseparate-kmp-compilation Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
+  -Xfragment-refines=<fromModuleName>:<onModuleName>
+                             Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
+  -Xfragment-sources=<fragment name>:<path>
+                             Add sources to a specific fragment of a multiplatform compilation.
+  -Xfragments=<fragment name> Declare all known fragments of a multiplatform compilation.
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
-  -Xdont-warn-on-error-suppression
-                             Don't report warnings when errors are suppressed. This only affects K2.
-  -Xwhen-guards              Enable experimental language support for when guards.
-  -Xnested-type-aliases      Enable experimental language support for nested type aliases.
-  -Xsuppress-warning=<WARNING_NAME>
-                             Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
-  -Xwarning-level=<WARNING_NAME>:(error|warning|disabled)
-                             Set the severity of the given warning.
-                             - `error` level raises the severity of a warning to error level (similar to -Werror but more granular)
-                             - `disabled` level suppresses reporting of a warning (similar to -nowarn but more granular)
-                             - `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)
-  -Xannotation-default-target=first-only|first-only-warn|param-property
-                             Change the default annotation targets for constructor properties:
-                             -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
-                             -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
-                             -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
-                             default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
-  -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
-  -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
-  -Xallow-contracts-on-more-functions
-                             Allow contracts on some operators and accessors, and allow checks for erased types.
-  -Xallow-condition-implies-returns-contracts
-                             Allow contracts that specify a limited conditional returns postcondition.
-  -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
+  -Xinline-classes           Enable experimental inline classes.
+  -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+  -Xlist-phases              List backend phases.
+  -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.
+  -Xmetadata-version         Change the metadata version of the generated binary files.
+  -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
+  -Xmulti-platform           Enable language support for multiplatform projects.
   -Xname-based-destructuring=only-syntax|name-mismatch|complete
                              Enables the following destructuring features:
                              -Xname-based-destructuring=only-syntax:   Enables syntax for positional destructuring with square brackets and the full form of name-based destructuring with parentheses;
                              -Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
                              -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;
+  -Xnested-type-aliases      Enable experimental language support for nested type aliases.
+  -Xnew-inference            Enable the new experimental generic type inference algorithm.
+  -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
+  -Xno-inline                Disable method inlining.
+  -Xnon-local-break-continue Enable experimental non-local break and continue.
+  -Xphases-to-dump           Dump the backend's state both before and after these phases.
+  -Xphases-to-dump-after     Dump the backend's state after these phases.
+  -Xphases-to-dump-before    Dump the backend's state before these phases.
+  -Xphases-to-validate       Validate the backend's state both before and after these phases.
+  -Xphases-to-validate-after Validate the backend's state after these phases.
+  -Xphases-to-validate-before Validate the backend's state before these phases.
+  -Xplugin=<path>            Load plugins from the given classpath.
+  -Xprofile-phases           Profile backend phases.
+  -Xrender-internal-diagnostic-names
+                             Render the internal names of warnings and errors.
+  -Xrepl                     Run Kotlin REPL (deprecated)
+  -Xreport-all-warnings      Report all warnings even if errors are found.
+  -Xreport-output-files      Report the source-to-output file mapping.
+  -Xreport-perf              Report detailed performance statistics.
+  -Xreturn-value-checker={check|full|disable}
+                             Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
+  -Xseparate-kmp-compilation Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
+  -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
+  -Xskip-prerelease-check    Allow loading pre-release classes.
+  -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
+  -Xsuppress-api-version-greater-than-language-version-error
+                             Suppress error about API version greater than language version.
+                             Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
+  -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
+  -Xsuppress-warning=<WARNING_NAME>
+                             Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
+  -Xunrestricted-builder-inference
+                             Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
+  -Xuse-fir-experimental-checkers
+                             Enable experimental frontend IR checkers that are not yet ready for production.
+  -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
+                             Warning: This feature is not yet production-ready.
+  -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
+  -Xverbose-phases           Be verbose while performing the given backend phases.
+  -Xverify-ir={none|warning|error}
+                             IR verification mode (no verification by default).
+  -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
+  -Xwarning-level=<WARNING_NAME>:(error|warning|disabled)
+                             Set the severity of the given warning.
+                             - `error` level raises the severity of a warning to error level (similar to -Werror but more granular)
+                             - `disabled` level suppresses reporting of a warning (similar to -nowarn but more granular)
+                             - `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)
+  -Xwhen-guards              Enable experimental language support for when guards.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

@@ -7,6 +7,14 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.config.LanguageFeature
 
 internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJvmLanguageFeatures(arguments: K2JVMCompilerArguments) {
+    if (arguments.annotationsInMetadata) {
+        put(LanguageFeature.AnnotationsInMetadata, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.enhanceTypeParameterTypesToDefNotNull) {
+        put(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.jvmExposeBoxed) {
         put(LanguageFeature.ImplicitJvmExposeBoxed, LanguageFeature.State.ENABLED)
     }
@@ -15,15 +23,7 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJvmLang
         put(LanguageFeature.TypeEnhancementImprovementsInStrictMode, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.enhanceTypeParameterTypesToDefNotNull) {
-        put(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.valueClasses) {
         put(LanguageFeature.ValueClasses, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.annotationsInMetadata) {
-        put(LanguageFeature.AnnotationsInMetadata, LanguageFeature.State.ENABLED)
     }
 }
