@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 
 val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonCompilerArguments) {
     compilerArgument {
@@ -532,21 +531,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             introducedVersion = KotlinReleaseVersion.v1_3_40,
         )
     }
-
-
-    compilerArgument {
-        name = "Xuse-k2"
-        description =
-            "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_7_0,
-            deprecatedVersion = KotlinReleaseVersion.v1_9_0,
-            removedVersion = KotlinReleaseVersion.v2_2_0,
-        )
-    }
-
 
     compilerArgument {
         name = "Xuse-fir-experimental-checkers"

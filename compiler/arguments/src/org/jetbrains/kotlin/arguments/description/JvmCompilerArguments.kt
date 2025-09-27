@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
-import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Enables
-import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
-import org.jetbrains.kotlin.cli.common.arguments.GradleOption
 import org.jetbrains.kotlin.config.LanguageFeature
 
 val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
@@ -908,35 +905,12 @@ inside suspend functions and lambdas to distinguish them from user code by debug
     }
 
     compilerArgument {
-        name = "Xir-inliner"
-        compilerName = "enableIrInliner"
-        description = "Inline functions using the IR inliner instead of the bytecode inliner.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_9_0,
-            removedVersion = KotlinReleaseVersion.v2_3_0
-        )
-    }
-
-    compilerArgument {
         name = "Xuse-inline-scopes-numbers"
         description = "Use inline scopes numbers for inline marker variables.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_0,
-        )
-    }
-
-    compilerArgument {
-        name = "Xuse-k2-kapt"
-        description = "Enable the experimental support for K2 KAPT.".asReleaseDependent()
-        valueType = BooleanType.defaultNull
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_0,
-            removedVersion = KotlinReleaseVersion.v2_3_0,
         )
     }
 
