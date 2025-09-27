@@ -60,27 +60,6 @@ public interface CommonToolArguments {
 
   public companion object {
     /**
-     * Display the compiler version.
-     */
-    @JvmField
-    public val VERSION: CommonToolArgument<Boolean> =
-        CommonToolArgument("VERSION", KotlinReleaseVersion(1, 0, 0))
-
-    /**
-     * Enable verbose logging output.
-     */
-    @JvmField
-    public val VERBOSE: CommonToolArgument<Boolean> =
-        CommonToolArgument("VERBOSE", KotlinReleaseVersion(1, 0, 0))
-
-    /**
-     * Don't generate any warnings.
-     */
-    @JvmField
-    public val NOWARN: CommonToolArgument<Boolean> =
-        CommonToolArgument("NOWARN", KotlinReleaseVersion(1, 0, 0))
-
-    /**
      * Report an error if there are any warnings.
      */
     @JvmField
@@ -93,5 +72,26 @@ public interface CommonToolArguments {
     @JvmField
     public val WEXTRA: CommonToolArgument<Boolean> =
         CommonToolArgument("WEXTRA", KotlinReleaseVersion(2, 1, 0))
+
+    /**
+     * Don't generate any warnings.
+     */
+    @JvmField
+    public val NOWARN: CommonToolArgument<Boolean> =
+        CommonToolArgument("NOWARN", KotlinReleaseVersion(1, 0, 0))
+
+    /**
+     * Enable verbose logging output.
+     */
+    @JvmField
+    public val VERBOSE: CommonToolArgument<Boolean> =
+        CommonToolArgument("VERBOSE", KotlinReleaseVersion(1, 0, 0))
+
+    /**
+     * Display the compiler version.
+     */
+    @JvmField
+    public val VERSION: CommonToolArgument<Boolean> =
+        CommonToolArgument("VERSION", KotlinReleaseVersion(1, 0, 0))
   }
 }

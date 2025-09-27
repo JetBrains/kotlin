@@ -61,25 +61,25 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (HELP in this) { arguments.help = get(HELP)}
-    if (X in this) { arguments.extraHelp = get(X)}
-    if (VERSION in this) { arguments.version = get(VERSION)}
-    if (VERBOSE in this) { arguments.verbose = get(VERBOSE)}
-    if (NOWARN in this) { arguments.suppressWarnings = get(NOWARN)}
     if (WERROR in this) { arguments.allWarningsAsErrors = get(WERROR)}
     try { if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: WEXTRA. Current compiler version is: $KC_VERSION}, but the argument was introduced in 2.1.0""").initCause(e) }
+    if (X in this) { arguments.extraHelp = get(X)}
+    if (HELP in this) { arguments.help = get(HELP)}
+    if (NOWARN in this) { arguments.suppressWarnings = get(NOWARN)}
+    if (VERBOSE in this) { arguments.verbose = get(VERBOSE)}
+    if (VERSION in this) { arguments.version = get(VERSION)}
     return arguments
   }
 
   @Suppress("DEPRECATION")
   public fun applyCompilerArguments(arguments: CommonToolArguments) {
-    try { this[HELP] = arguments.help } catch (_: NoSuchMethodError) {  }
-    try { this[X] = arguments.extraHelp } catch (_: NoSuchMethodError) {  }
-    try { this[VERSION] = arguments.version } catch (_: NoSuchMethodError) {  }
-    try { this[VERBOSE] = arguments.verbose } catch (_: NoSuchMethodError) {  }
-    try { this[NOWARN] = arguments.suppressWarnings } catch (_: NoSuchMethodError) {  }
     try { this[WERROR] = arguments.allWarningsAsErrors } catch (_: NoSuchMethodError) {  }
     try { this[WEXTRA] = arguments.extraWarnings } catch (_: NoSuchMethodError) {  }
+    try { this[X] = arguments.extraHelp } catch (_: NoSuchMethodError) {  }
+    try { this[HELP] = arguments.help } catch (_: NoSuchMethodError) {  }
+    try { this[NOWARN] = arguments.suppressWarnings } catch (_: NoSuchMethodError) {  }
+    try { this[VERBOSE] = arguments.verbose } catch (_: NoSuchMethodError) {  }
+    try { this[VERSION] = arguments.version } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
@@ -93,18 +93,18 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val HELP: CommonToolArgument<Boolean> = CommonToolArgument("HELP")
-
-    public val X: CommonToolArgument<Boolean> = CommonToolArgument("X")
-
-    public val VERSION: CommonToolArgument<Boolean> = CommonToolArgument("VERSION")
-
-    public val VERBOSE: CommonToolArgument<Boolean> = CommonToolArgument("VERBOSE")
-
-    public val NOWARN: CommonToolArgument<Boolean> = CommonToolArgument("NOWARN")
-
     public val WERROR: CommonToolArgument<Boolean> = CommonToolArgument("WERROR")
 
     public val WEXTRA: CommonToolArgument<Boolean> = CommonToolArgument("WEXTRA")
+
+    public val X: CommonToolArgument<Boolean> = CommonToolArgument("X")
+
+    public val HELP: CommonToolArgument<Boolean> = CommonToolArgument("HELP")
+
+    public val NOWARN: CommonToolArgument<Boolean> = CommonToolArgument("NOWARN")
+
+    public val VERBOSE: CommonToolArgument<Boolean> = CommonToolArgument("VERBOSE")
+
+    public val VERSION: CommonToolArgument<Boolean> = CommonToolArgument("VERSION")
   }
 }
