@@ -129,8 +129,4 @@ class ModuleChangesCatchingTest {
         return MessageDigest.getInstance(HASH_ALG).digest(this)
     }
 
-    private fun ByteArray.convertToHexString(): String {
-        return this.joinToString("") { "%02x".format(it) }
-    }
-
 }

@@ -239,7 +239,5 @@ private fun compiledScriptUniqueName(script: SourceCode, scriptCompilationConfig
     return digestWrapper.digest().toHexString()
 }
 
-private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
-
 private fun Int.toByteArray() = ByteBuffer.allocate(Int.SIZE_BYTES).also { it.putInt(this) }.array()
 
