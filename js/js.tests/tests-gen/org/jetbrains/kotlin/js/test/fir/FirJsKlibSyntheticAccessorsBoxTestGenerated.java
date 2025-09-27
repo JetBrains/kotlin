@@ -1669,6 +1669,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       }
 
       @Test
+      @TestMetadata("contextSensitiveResolutionCallArgumentPosition.kt")
+      public void testContextSensitiveResolutionCallArgumentPosition() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/contextSensitiveResolutionCallArgumentPosition.kt");
+      }
+
+      @Test
       @TestMetadata("contextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue.kt")
       public void testContextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/contextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue.kt");
@@ -1684,12 +1690,6 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       @TestMetadata("contextSensitiveResolutionTypePositionWithCopyOfDefaultValue.kt")
       public void testContextSensitiveResolutionTypePositionWithCopyOfDefaultValue() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/contextSensitiveResolutionTypePositionWithCopyOfDefaultValue.kt");
-      }
-
-      @Test
-      @TestMetadata("contextSensitiveResolutionСallArgumentPosition.kt")
-      public void testContextSensitiveResolutionСallArgumentPosition() {
-        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/contextSensitiveResolutionСallArgumentPosition.kt");
       }
 
       @Test
