@@ -9,12 +9,14 @@
 #include <fstream>
 #include <sstream>
 
+#include <TypeInfo.h>
+
 #define LOG_FILENAME "/tmp/kn_hot_reload.log"
 #define ENV_LOG_PARAM "HOT_RELOAD_LOG"
 
 namespace kotlin::hot::utility {
 
-static constexpr const char* kTypeNames[] = {
+inline static constexpr const char* kTypeNames[] = {
         "__Invalid",
         "kotlin.Any",
         "kotlin.Char",
@@ -27,7 +29,7 @@ static constexpr const char* kTypeNames[] = {
         "kotlin.Boolean",
         "kotlinx.cinterop.Vector128"};
 
-static constexpr int kRuntimeTypeSize[] = {
+inline static constexpr int kRuntimeTypeSize[] = {
         -1, // INVALID
         sizeof(ObjHeader*), // OBJECT
         1, // INT8
@@ -107,7 +109,7 @@ inline std::string kotlinClassNameAsTypeInfoName(const std::string& className) {
     return "kclass:" + className;
 }
 
-std::string field2String(const char* fieldName, const uint8_t* fieldValue, const Konan_RuntimeType fieldType) {
+inline std::string field2String(const char* fieldName, const uint8_t* fieldValue, const Konan_RuntimeType fieldType) {
     std::stringstream ss;
     ss << fieldName << ":" << kTypeNames[fieldType] << " = ";
 
