@@ -200,11 +200,11 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         }
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
-        return proto.getExtension(JvmProtoBuf.typeAnnotation).map { loadAnnotation(it, nameResolver) }
+        return proto.annotationList.map { loadAnnotation(it, nameResolver) }
     }
 
     override fun loadTypeParameterAnnotations(proto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<A> {
-        return proto.getExtension(JvmProtoBuf.typeParameterAnnotation).map { loadAnnotation(it, nameResolver) }
+        return proto.annotationList.map { loadAnnotation(it, nameResolver) }
     }
 
     protected fun findClassWithAnnotationsAndInitializers(

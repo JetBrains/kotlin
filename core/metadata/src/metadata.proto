@@ -169,7 +169,9 @@ message Type {
    */
   optional int32 flags = 1;
 
-  extensions 100 to 199;
+  repeated Annotation annotation = 100;
+
+  extensions 101 to 199;
 }
 
 message TypeParameter {
@@ -189,7 +191,9 @@ message TypeParameter {
   repeated Type upper_bound = 5;
   repeated int32 upper_bound_id = 6 [packed = true, (type_id_in_table) = true];
 
-  extensions 100 to 999;
+  repeated Annotation annotation = 100;
+
+  extensions 101 to 999;
 }
 
 message Class {

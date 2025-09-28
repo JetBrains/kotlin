@@ -834,14 +834,7 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsTypeParameterUpperBoundId(old, new)) return false
 
-        if (old.getExtensionCount(JvmProtoBuf.typeParameterAnnotation) != new.getExtensionCount(JvmProtoBuf.typeParameterAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JvmProtoBuf.typeParameterAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JvmProtoBuf.typeParameterAnnotation, i), new.getExtension(JvmProtoBuf.typeParameterAnnotation, i))) return false
-            }
-        }
+        if (!checkEqualsTypeParameterAnnotation(old, new)) return false
 
         if (old.getExtensionCount(JsProtoBuf.typeParameterAnnotation) != new.getExtensionCount(JsProtoBuf.typeParameterAnnotation)) {
             return false
@@ -941,14 +934,7 @@ open class ProtoCompareGenerated(
             if (old.flags != new.flags) return false
         }
 
-        if (old.getExtensionCount(JvmProtoBuf.typeAnnotation) != new.getExtensionCount(JvmProtoBuf.typeAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JvmProtoBuf.typeAnnotation, i), new.getExtension(JvmProtoBuf.typeAnnotation, i))) return false
-            }
-        }
+        if (!checkEqualsTypeAnnotation(old, new)) return false
 
         if (old.hasExtension(JvmProtoBuf.isRaw) != new.hasExtension(JvmProtoBuf.isRaw)) return false
         if (old.hasExtension(JvmProtoBuf.isRaw)) {
@@ -1862,11 +1848,31 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsTypeParameterAnnotation(old: ProtoBuf.TypeParameter, new: ProtoBuf.TypeParameter): Boolean {
+        if (old.annotationCount != new.annotationCount) return false
+
+        for(i in 0..old.annotationCount - 1) {
+            if (!checkEquals(old.getAnnotation(i), new.getAnnotation(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsTypeArgument(old: ProtoBuf.Type, new: ProtoBuf.Type): Boolean {
         if (old.argumentCount != new.argumentCount) return false
 
         for(i in 0..old.argumentCount - 1) {
             if (!checkEquals(old.getArgument(i), new.getArgument(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsTypeAnnotation(old: ProtoBuf.Type, new: ProtoBuf.Type): Boolean {
+        if (old.annotationCount != new.annotationCount) return false
+
+        for(i in 0..old.annotationCount - 1) {
+            if (!checkEquals(old.getAnnotation(i), new.getAnnotation(i))) return false
         }
 
         return true
@@ -2553,8 +2559,8 @@ fun ProtoBuf.TypeParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: 
         hashCode = 31 * hashCode + typeById(getUpperBoundId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
-    for(i in 0..getExtensionCount(JvmProtoBuf.typeParameterAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.typeParameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    for(i in 0..annotationCount - 1) {
+        hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..getExtensionCount(JsProtoBuf.typeParameterAnnotation) - 1) {
@@ -2631,8 +2637,8 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
         hashCode = 31 * hashCode + flags
     }
 
-    for(i in 0..getExtensionCount(JvmProtoBuf.typeAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.typeAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    for(i in 0..annotationCount - 1) {
+        hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasExtension(JvmProtoBuf.isRaw)) {

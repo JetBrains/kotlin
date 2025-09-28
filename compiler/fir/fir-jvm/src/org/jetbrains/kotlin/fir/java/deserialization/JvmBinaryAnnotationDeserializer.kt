@@ -99,10 +99,10 @@ class JvmBinaryAnnotationDeserializer(
         loadAnnotationsFromMetadata(session, aliasProto.flags, aliasProto.annotationList, nameResolver)
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> =
-        typeProto.loadAnnotationsFromProtocol(session, JvmProtoBuf.typeAnnotation, null, nameResolver)
+        loadAnnotationsFromMetadata(session, null, typeProto.annotationList, nameResolver)
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
-        typeParameterProto.loadAnnotationsFromProtocol(session, JvmProtoBuf.typeParameterAnnotation, null, nameResolver)
+        loadAnnotationsFromMetadata(session, null, typeParameterProto.annotationList, nameResolver)
 
     override fun loadConstructorAnnotations(
         containerSource: DeserializedContainerSource?,

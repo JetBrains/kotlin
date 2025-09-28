@@ -12,9 +12,7 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.lambdaClassOriginName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.propertySignature);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.flags);
-    registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.isRaw);
-    registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.typeParameterAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.classModuleName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.classLocalVariable);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.anonymousObjectOriginName);
@@ -4045,22 +4043,6 @@ public final class JvmProtoBuf {
         101,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
-  public static final int TYPE_ANNOTATION_FIELD_NUMBER = 100;
-  /**
-   * <code>extend .org.jetbrains.kotlin.metadata.Type { ... }</code>
-   */
-  public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.metadata.ProtoBuf.Type,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> typeAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        100,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
   public static final int IS_RAW_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Type { ... }</code>
@@ -4077,22 +4059,6 @@ public final class JvmProtoBuf {
         101,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.BOOL,
         java.lang.Boolean.class);
-  public static final int TYPE_PARAMETER_ANNOTATION_FIELD_NUMBER = 100;
-  /**
-   * <code>extend .org.jetbrains.kotlin.metadata.TypeParameter { ... }</code>
-   */
-  public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> typeParameterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        100,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
   public static final int CLASS_MODULE_NAME_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
