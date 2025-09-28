@@ -292,7 +292,7 @@ open class IrFileSerializer(
 
     private fun serializeIrSymbol(symbol: IrSymbol, isDeclared: Boolean = false): Long {
         val signature: IdSignature = when {
-            !symbol.isBound && settings.reuseExistingSignaturesForSymbols -> symbol.signature
+            !symbol.isBound -> symbol.signature
                 ?: error("Given symbol is unbound and have no signature: $symbol")
             symbol is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
             else -> {
