@@ -207,6 +207,7 @@ dependencies {
 
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(testFixtures(project(":kotlin-build-common")))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(kotlin("test-junit", coreDepsVersion))
     testImplementation(libs.junit.jupiter.api)
@@ -642,6 +643,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         implementation("org.reflections:reflections:0.10.2")
         implementation(project(":compose-compiler-gradle-plugin"))
         implementation(libs.kotlinx.serialization.json)
+        implementation(intellijPlatformUtil())
     }
 
     tasks.named("check") {
