@@ -67,3 +67,12 @@ fun CompilationOutcome.assertLogDoesNotContainPatterns(logLevel: LogLevel, expec
         """.trimMargin()
     }
 }
+
+fun CompilationOutcome.assertLogContainsSubstringExactlyTimes(logLevel: LogLevel, substring: String, expectedCount: Int) {
+    requireLogLevel(logLevel)
+    val regex = substring.toRegex(RegexOption.LITERAL)
+    val count = logLines.getValue(logLevel).sumOf { line -> regex.findAll(line).count() }
+    assert(count == expectedCount) {
+        "Expected '$substring' to occur $expectedCount times on $logLevel, but found $count"
+    }
+}
