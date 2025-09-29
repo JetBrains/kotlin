@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -24,7 +25,12 @@ object FirSpreadOfNullableChecker : FirFunctionCallChecker(MppCheckerKind.Common
     override fun check(expression: FirFunctionCall) {
         fun checkAndReport(argument: FirExpression, source: KtSourceElement?) {
             val coneType = argument.resolvedType
-            if (argument is FirSpreadArgumentExpression && !argument.isFakeSpread && coneType !is ConeFlexibleType && coneType.canBeNull(context.session)) {
+            if (argument is FirSpreadArgumentExpression
+                && !argument.isFakeSpread
+                && coneType !is ConeFlexibleType
+                && coneType !is ConeErrorType
+                && coneType.canBeNull(context.session)
+            ) {
                 reporter.reportOn(source, FirErrors.SPREAD_OF_NULLABLE)
             }
         }
