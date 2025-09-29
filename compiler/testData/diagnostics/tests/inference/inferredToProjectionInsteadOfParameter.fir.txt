@@ -1,0 +1,13 @@
+FILE: inferredToProjectionInsteadOfParameter.fir.kt
+    public abstract interface Marker<M : R|Marker<M>|> : R|kotlin/Any| {
+    }
+    public final class MyClass<C : R|Marker<C>|> : R|kotlin/Any| {
+        public constructor<C : R|Marker<C>|>(): R|MyClass<C>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    private final fun <F : R|Marker<F>|> myFunction(arg: R|MyClass<F>?|): R|MyClass<F>| {
+        lval result: R|MyClass<out Marker<*>>| = R|<local>/arg| ?: R|/MyClass.MyClass|<R|CapturedType(*)|>()
+        ^myFunction R|<local>/result|
+    }

@@ -1,0 +1,19 @@
+CHOSEN for fixation: TypeVariable(C) --- FORBIDDEN
+     <: Marker<TypeVariable(C)>
+********************************
+CHOSEN for fixation: TypeVariable(C) --- READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+     <: Marker<TypeVariable(C)>
+     = CapturedType(*) (inferred during fixation)
+     <: Marker<CapturedType(*)> (inferred during fixation)
+    FIXED TO: CapturedType(*)
+TypeVariable(K) --- WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+     >: MyClass<F>
+     >: MyClass<CapturedType(*)>
+     = MyClass<out Marker<*>> (inferred during fixation)
+********************************
+CHOSEN for fixation: TypeVariable(K) --- READY_FOR_FIXATION_LOWER
+     >: MyClass<F>
+     >: MyClass<CapturedType(*)>
+     = MyClass<out Marker<*>> (inferred during fixation)
+    FIXED TO: MyClass<out Marker<*>>
+********************************

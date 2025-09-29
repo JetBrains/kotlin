@@ -18532,6 +18532,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("inferredToProjectionInsteadOfParameter.kt")
+      public void testInferredToProjectionInsteadOfParameter() {
+        runTest("compiler/testData/diagnostics/tests/inference/inferredToProjectionInsteadOfParameter.kt");
+      }
+
+      @Test
       @TestMetadata("intersectionTypeMultipleBoundsAsReceiver.kt")
       public void testIntersectionTypeMultipleBoundsAsReceiver() {
         runTest("compiler/testData/diagnostics/tests/inference/intersectionTypeMultipleBoundsAsReceiver.kt");
