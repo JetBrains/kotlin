@@ -11,4 +11,8 @@ class FillNulls0 : AbstractInterpreter<FillNullsApproximation>() {
     }
 }
 
-data class FillNullsApproximation(val schema: PluginDataFrameSchema, val columns: ColumnsResolver, val where: Boolean = false) : UpdateApproximation
+data class FillNullsApproximation(val schema: PluginDataFrameSchema, val columns: ColumnsResolver, val where: Boolean = false) : UpdateApproximation {
+    override fun withWhere(): UpdateApproximation {
+        return copy(where = true)
+    }
+}

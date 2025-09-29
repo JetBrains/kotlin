@@ -283,6 +283,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColLambda
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColMap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColRow
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerRowCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateNotNull
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateNotNullWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols1
@@ -533,6 +535,8 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "ToDataFrameColumn" -> ToDataFrameColumn()
         "FillNulls0" -> FillNulls0()
         "UpdateWith0" -> UpdateWith0()
+        "UpdateNotNull" -> UpdateNotNullWith()
+        "UpdateNotNullDefault" -> UpdateNotNull()
         "Flatten0" -> Flatten0()
         "FlattenDefault" -> FlattenDefault()
         "AddId" -> AddId()
