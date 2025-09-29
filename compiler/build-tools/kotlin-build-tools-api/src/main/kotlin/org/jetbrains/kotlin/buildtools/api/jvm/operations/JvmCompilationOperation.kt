@@ -110,6 +110,12 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
          */
         @JvmField
         public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> = Option("COMPILER_ARGUMENTS_LOG_LEVEL")
+
+        /**
+         * Enables the Compiler Reference Index generation during the compilation.
+         */
+        @JvmField
+        public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX")
     }
 
     public enum class CompilerArgumentsLogLevel {

@@ -62,6 +62,7 @@ open class IncrementalFirJvmCompilerRunner(
     classpathChanges: ClasspathChanges,
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
+    generateCompilerRefIndex: Boolean = false,
 ) : IncrementalJvmCompilerRunner(
     workingDir,
     reporter,
@@ -69,6 +70,7 @@ open class IncrementalFirJvmCompilerRunner(
     classpathChanges,
     kotlinSourceFilesExtensions,
     icFeatures,
+    generateCompilerRefIndex,
 ) {
 
     override fun runCompiler(
