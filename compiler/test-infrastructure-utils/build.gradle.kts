@@ -3,6 +3,7 @@ plugins {
     id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("gradle-plugin-compiler-dependency-configuration")
 }
 
 dependencies {
