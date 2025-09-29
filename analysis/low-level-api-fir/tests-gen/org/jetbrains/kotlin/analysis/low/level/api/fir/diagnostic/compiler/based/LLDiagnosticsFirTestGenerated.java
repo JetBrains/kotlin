@@ -1012,6 +1012,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public void testRequiredAnnotationWithTypealiasedImportedArgument() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/requiredAnnotationWithTypealiasedImportedArgument.kt");
       }
+
+      @Test
+      @TestMetadata("wrongDslMarkerTargets.kt")
+      public void testWrongDslMarkerTargets() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/wrongDslMarkerTargets.kt");
+      }
     }
 
     @Nested
