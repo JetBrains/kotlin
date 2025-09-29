@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.FirAbstractWebCheckerUtils
+import org.jetbrains.kotlin.fir.declarations.utils.isNativeInterface
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 object FirJsWebCheckerUtils : FirAbstractWebCheckerUtils() {
