@@ -5,55 +5,30 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
-import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
-import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonAbstractNativeAnnotationChecker
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.isExtension
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-internal abstract class FirJsAbstractNativeAnnotationChecker(
-    private val requiredAnnotation: ClassId
-) : FirSimpleFunctionChecker(MppCheckerKind.Common) {
-    context(context: CheckerContext)
-    protected fun FirFunction.hasRequiredAnnotation() = hasAnnotation(requiredAnnotation, context.session)
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirSimpleFunction) {
-        val annotation = declaration.getAnnotationByClassId(requiredAnnotation, context.session) ?: return
-
-        val isMember = !context.isTopLevel && declaration.visibility != Visibilities.Local
-        val isExtension = declaration.isExtension
-
-        if (isMember && (isExtension || !declaration.symbol.isNativeObject()) || !isMember && !isExtension) {
-            reporter.reportOn(
-                declaration.source,
-                FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN,
-                annotation.resolvedType
-            )
-        }
-    }
-}
-
-internal object FirJsNativeInvokeChecker : FirJsAbstractNativeAnnotationChecker(JsStandardClassIds.Annotations.JsNativeInvoke)
+internal object FirJsNativeInvokeChecker :
+    FirWebCommonAbstractNativeAnnotationChecker(
+        JsStandardClassIds.Annotations.JsNativeInvoke,
+        FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
+    )
 
 internal abstract class FirJsAbstractNativeIndexerChecker(
     requiredAnnotation: ClassId,
     private val indexerKind: String,
     private val requiredParametersCount: Int,
-) : FirJsAbstractNativeAnnotationChecker(requiredAnnotation) {
+) : FirWebCommonAbstractNativeAnnotationChecker(
+    requiredAnnotation,
+    FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
+) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
         super.check(declaration)
@@ -102,7 +77,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
 internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeGetter, "getter", 1) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
-        if (!declaration.hasRequiredAnnotation()) return
+        if (!hasRequiredAnnotation(declaration)) return
         super.check(declaration)
 
         if (!declaration.returnTypeRef.coneType.isMarkedNullable) {
@@ -114,7 +89,7 @@ internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsS
 internal object FirJsNativeSetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeSetter, "setter", 2) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
-        if (!declaration.hasRequiredAnnotation()) return
+        if (!hasRequiredAnnotation(declaration)) return
         super.check(declaration)
 
         val returnType = declaration.returnTypeRef.coneType
