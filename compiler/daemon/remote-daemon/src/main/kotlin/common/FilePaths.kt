@@ -43,6 +43,3 @@ val AUTH_FILE: Path = Paths.get("src", "main", "kotlin", "server", "auth", "auth
 val UUID_FILE: Path = Paths.get("src", "main", "kotlin", "server", "auth", "uuid.json")
 const val AUTH_KEY = "credential"
 const val FOUR_MB = 4 * 1024 * 1024 - 1024 // minus safety margin
-const val SIXTEEN_MB = 16 * 1024 * 1024 - 1024 // minus safety margin
-const val ONE_MB = 1 * 1024 * 1024 - 1024 // minus safety margin
-const val FOURTH_OF_MB = (1024 * 1024) / 4 - 1024 // minus safety margin

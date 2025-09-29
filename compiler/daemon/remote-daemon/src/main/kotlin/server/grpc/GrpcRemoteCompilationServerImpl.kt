@@ -27,6 +27,7 @@ class GrpcRemoteCompilationServerImpl(
     val server: io.grpc.Server =
         ServerBuilder
             .forPort(port)
+            .maxInboundMessageSize(17 * 1024 * 1024)
             .addService(
                 ServerInterceptors
                     .intercept(
@@ -38,12 +39,13 @@ class GrpcRemoteCompilationServerImpl(
                                 logging = logging,
                             )
                         ),
-//                        listOfNotNull(
-//                            if (logging) LoggingServerInterceptor() else null,
-//                            AuthServerInterceptor(BasicHTTPAuthServer())
-//                        ),
+                        listOfNotNull(
+                            if (logging) LoggingServerInterceptor() else null,
+// auth is turned off             AuthServerInterceptor(BasicHTTPAuthServer())
+                        ),
                     )
-            ).build()
+            )
+            .build()
 
 
     override fun start(block: Boolean) {
