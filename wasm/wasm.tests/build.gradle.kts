@@ -288,7 +288,7 @@ projectTests {
                 setupV8()
             }
             with(nodeJsKotlinBuild) {
-                setupNodeJs()
+                setupNodeJs(nodejsVersion)
             }
             with(binaryenKotlinBuild) {
                 setupBinaryen()
