@@ -11,7 +11,8 @@ dependencies {
     api(project(":core:compiler.common")) { isTransitive = false }
     api(project(":core:util.runtime")) { isTransitive = false }
     api(project(":kotlin-build-common"))
-    api(kotlinStdlib())
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    api(kotlin("stdlib", coreDepsVersion))
 }
 
 sourceSets {

@@ -12,13 +12,13 @@ configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+    compileOnly(kotlin("stdlib", coreDepsVersion))
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     embedded(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(kotlinStdlib())
+    testImplementation(kotlin("stdlib", coreDepsVersion))
     testImplementation(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
 }
 

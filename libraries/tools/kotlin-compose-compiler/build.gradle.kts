@@ -52,10 +52,12 @@ pluginApiReference {
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     testing {
         suites {
+            val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
             val test by getting(JvmTestSuite::class) {
                 useJUnitJupiter(libs.versions.junit5)
                 dependencies {
-                    implementation(project(":kotlin-test"))
+                    implementation("org.jetbrains.kotlin:kotlin-stdlib:${coreDepsVersion}")
+                    implementation("org.jetbrains.kotlin:kotlin-test:${coreDepsVersion}")
                 }
             }
 
@@ -66,7 +68,8 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     implementation(project(":compiler:cli-common"))
                     implementation(platform(libs.junit.bom))
                     implementation(libs.junit.jupiter.api)
-                    implementation(project(":kotlin-test"))
+                    implementation("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+                    implementation("org.jetbrains.kotlin:kotlin-test:$coreDepsVersion")
 
                     runtimeOnly(libs.junit.jupiter.engine)
                 }
