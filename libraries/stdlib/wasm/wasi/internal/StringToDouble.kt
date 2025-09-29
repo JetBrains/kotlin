@@ -7,7 +7,6 @@ package kotlin.wasm.internal
 
 internal actual fun parseDouble(string: String): Double {
     if (string.isEmpty()) numberFormatError(string)
-    if (string.isEmpty()) numberFormatError(string)
 
     var index = 0
 

@@ -6,11 +6,23 @@
 package kotlin.wasm.internal
 
 @OptIn(ExperimentalWasmJsInterop::class)
-@JsFun("(s) => Number(s)")
-private external fun parseJsNumber(string: String): Double
+private fun parseJsNumber(string: String): Double =
+    js("Number(string)")
+
+private fun String.isNaN(): Boolean = when (this) {
+    "NaN", "+NaN", "-NaN" -> true
+    else -> false
+}
 
 internal actual fun parseDouble(string: String): Double {
-    if (string.isEmpty()) numberFormatError(string)
-
-    return parseJsNumber(string)
+    val significantPart = string.trim()
+    if (significantPart.length >= 2 && (significantPart[0] == '0' &&
+                significantPart[1].lowercaseChar() in listOf('x', 'o', 'b'))
+    ) {
+        numberFormatError(string)
+    }
+    val jsNumber = parseJsNumber(significantPart)
+    if (jsNumber.isNaN() && !significantPart.isNaN() || jsNumber == 0.0 && significantPart.isBlank())
+        numberFormatError(string)
+    return jsNumber
 }
