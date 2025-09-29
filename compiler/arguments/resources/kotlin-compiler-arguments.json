@@ -688,6 +688,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "25",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.3.0",
+                        "stabilizedVersion": "2.3.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         },
@@ -4163,7 +4172,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "The target version of the generated JVM bytecode (1.8 and 9–24), with 1.8 as the default.",
+                                    "current": "The target version of the generated JVM bytecode (1.8 and 9–25), with 1.8 as the default.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
@@ -5409,7 +5418,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–24.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version.",
+                                    "current": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
