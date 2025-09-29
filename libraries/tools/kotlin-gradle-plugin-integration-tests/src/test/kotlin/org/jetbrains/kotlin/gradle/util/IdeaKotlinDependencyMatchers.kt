@@ -17,7 +17,6 @@ val kotlinStdlibDependencies = binaryCoordinates(Regex(".*kotlin-stdlib.*"))
 val nativeStdlibDependency = IdeaKotlinDependencyMatcher("Native stdlib") {
     (it is IdeaKotlinResolvedBinaryDependency)
             && it.isNativeStdlib
-            && ("common/stdlib" in it.classpath.single().path)
 }
 
 val jetbrainsAnnotationDependencies = binaryCoordinates(Regex("org\\.jetbrains:annotations:.*"))
