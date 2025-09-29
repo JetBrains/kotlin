@@ -28,6 +28,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":utilities"))
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 }

@@ -113,9 +113,10 @@ open class AbstractFirWasmJsTest(
 }
 
 open class AbstractFirWasmJsCodegenBoxTest(
+    pathToTestDir: String = "compiler/testData/codegen/",
     testGroupOutputDirPrefix: String = "codegen/firBox/"
 ) : AbstractFirWasmJsTest(
-    pathToTestDir = "compiler/testData/",
+    pathToTestDir = pathToTestDir,
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -125,8 +126,10 @@ open class AbstractFirWasmJsCodegenBoxTest(
 }
 
 open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
+    pathToTestDir: String = "compiler/testData/codegen/",
     testGroupOutputDirPrefix: String = "codegen/boxInlKlib/"
 ) : AbstractFirWasmJsCodegenBoxTest(
+    pathToTestDir = pathToTestDir,
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -142,8 +145,16 @@ open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
     }
 }
 
+open class AbstractFirWasmJsSyntheticAccessorsTest(
+    pathToTestDir: String = "compiler/testData/klib/syntheticAccessors",
+    testGroupOutputDirPrefix: String = "codegen/syntheticAccessors/"
+) : AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
+    pathToTestDir = pathToTestDir,
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+)
+
 open class AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest() : AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
-    "codegen/boxSplitted/"
+    testGroupOutputDirPrefix = "codegen/boxSplitted/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
         get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)

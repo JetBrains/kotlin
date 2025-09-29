@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
@@ -53,7 +54,10 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
         )
 
         KlibCompilerInvocationTestUtils.runTest(
-            testStructure = WasmPartialLinkageTestStructureExtractor(buildDir).extractTestStructure(File(testDir).absoluteFile),
+            testStructure = WasmPartialLinkageTestStructureExtractor(buildDir)
+                .extractTestStructure(
+                    ForTestCompileRuntime.transformTestDataPath(testDir)
+                ),
             testConfiguration = configuration,
             artifactBuilder = WasmCompilerInvocationTestArtifactBuilder(configuration),
             binaryRunner = WasmCompilerInvocationTestBinaryRunner,

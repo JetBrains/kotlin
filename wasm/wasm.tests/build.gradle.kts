@@ -412,15 +412,6 @@ fun Test.setupJsc() {
 testsJar {}
 
 projectTests {
-    testData(project(":compiler").isolated, "testData/debug")
-    testData(project(":compiler").isolated, "testData/diagnostics")
-    testData(project(":compiler").isolated, "testData/codegen")
-    testData(project(":compiler").isolated, "testData/ir")
-    testData(project(":compiler").isolated, "testData/klib")
-    testData(project(":js:js.translator").isolated, "testData/box")
-    testData(project(":js:js.translator").isolated, "testData/incremental")
-    testData(project(":js:js.translator").isolated, "testData/typescript-export")
-
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt")
 
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
@@ -432,7 +423,7 @@ projectTests {
             with(d8KotlinBuild) {
                 setupV8()
             }
-            with(nodeJsKotlinBuild) {
+            with(wasmNodeJsKotlinBuild) {
                 setupNodeJs(nodejsVersion)
             }
             with(binaryenKotlinBuild) {
@@ -463,14 +454,14 @@ projectTests {
     }
 
     testData(project(":compiler").isolated, "testData/diagnostics")
-    testData(project(":compiler").isolated, "testData/codegen/box")
-    testData(project(":compiler").isolated, "testData/codegen/boxInline")
-    testData(project(":compiler").isolated, "testData/codegen/boxWasmJsInterop")
-    testData(project(":compiler").isolated, "testData/codegen/boxWasmWasi")
+    testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/debug/stepping")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/loadJava")
     testData(project(":compiler").isolated, "testData/klib/partial-linkage")
     testData(project(":compiler").isolated, "testData/klib/resolve")
     testData(project(":compiler").isolated, "testData/klib/syntheticAccessors")
+    testData(project(":compiler").isolated, "testData/klib/__utils__")
 
     testData(project(":js:js.translator").isolated, "testData/incremental")
     testData(project(":js:js.translator").isolated, "testData/box")

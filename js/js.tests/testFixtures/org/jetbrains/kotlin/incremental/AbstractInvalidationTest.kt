@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
@@ -109,7 +110,7 @@ abstract class AbstractInvalidationTest(
     protected abstract fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration
 
     protected fun runTest(@TestDataFile testPath: String) {
-        val testDirectory = File(testPath)
+        val testDirectory = ForTestCompileRuntime.transformTestDataPath(testPath)
         val testName = testDirectory.name
         val projectInfoFile = getProjectInfoFile(testDirectory)
         val projectInfo = parseProjectInfo(testName, projectInfoFile)

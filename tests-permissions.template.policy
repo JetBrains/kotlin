@@ -46,7 +46,14 @@ grant {
     // com.intellij.openapi.util.registry.EarlyAccessRegistryManager
     permission java.io.FilePermission "some/non/existent/path/early-access-registry.txt", "read";
 
+    // org.jetbrains.kotlin.klib.AbstractKlibLoaderTest
+    permission java.io.FilePermission "non-existing-library2", "read";
+    permission java.io.FilePermission "../non-existing-library3", "read";
+    permission java.io.FilePermission "./non-existing-library4", "read";
+
     {{native}}
+
+    {{wasm}}
 
     // Temp directory
     {{temp_dir}}

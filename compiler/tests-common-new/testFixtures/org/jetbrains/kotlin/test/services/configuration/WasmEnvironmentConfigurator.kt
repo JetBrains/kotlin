@@ -41,8 +41,8 @@ abstract class WasmEnvironmentConfigurator(
             return listOf(stdlibPath(target), kotlinTestPath(target))
         }
 
-        fun kotlinTestPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.kotlin.test.klib.path")!!
-        fun stdlibPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.stdlib.klib.path")!!
+        fun kotlinTestPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.kotlin.test.path")!!
+        fun stdlibPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.stdlib.path")!!
 
         fun getMainModule(testServices: TestServices): TestModule {
             val modules = testServices.moduleStructure.modules
