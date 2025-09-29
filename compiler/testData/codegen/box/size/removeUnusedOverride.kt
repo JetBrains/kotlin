@@ -6,6 +6,8 @@
 // WASM_DCE_EXPECTED_OUTPUT_SIZE: mjs    6_063
 // WASM_OPT_EXPECTED_OUTPUT_SIZE:        3_875
 
+// IGNORE_BACKEND: WASM_WASI
+
 interface I {
     fun foo() = "OK"
 }

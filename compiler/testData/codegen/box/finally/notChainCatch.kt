@@ -1,3 +1,5 @@
+// WASM_FAILS_IN: WasmEdge
+
 fun unsupportedEx() {
     if (true) throw UnsupportedOperationException()
 }
