@@ -1190,7 +1190,8 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            return super.mark(node, startOffset, startOffset + 1, tree)
+            return tree.findChildByType(node, MUL)?.let { markElement(it, startOffset, endOffset, tree, node) }
+                ?: super.mark(node, startOffset, endOffset, tree)
         }
     }
 
