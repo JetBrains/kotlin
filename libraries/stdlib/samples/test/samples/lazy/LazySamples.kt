@@ -58,7 +58,7 @@ class LazySamples {
             println("Thread 2: $answer")
         }
 
-        // It is guaranteed that 'Computing' message will be printed once, but both threads will see 42 as an answer
+        // It is guaranteed that 'Computing' message will be printed once, and both threads will see 42 as an answer
         t1.join()
         t2.join()
     }
