@@ -313,6 +313,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/klib/partial-linkage")
     testData(project(":compiler").isolated, "testData/klib/resolve")
     testData(project(":compiler").isolated, "testData/klib/syntheticAccessors")
+    testData(project(":compiler").isolated, "testData/klib/__utils__")
 
     testData(project(":js:js.translator").isolated, "testData/incremental")
     testData(project(":js:js.translator").isolated, "testData/box")

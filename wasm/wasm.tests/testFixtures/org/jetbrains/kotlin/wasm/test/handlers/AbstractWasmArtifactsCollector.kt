@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.test.backend.handlers.WasmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
@@ -113,7 +114,7 @@ fun TestServices.getWasmTestOutputDirectory(): File {
     val pathToTestDir = allDirectives[WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR].first()
 
     val testGroupOutputDir = File(File(pathToRootOutputDir, "out"), testGroupDirPrefix)
-    val stopFile = File(pathToTestDir).absoluteFile
+    val stopFile = ForTestCompileRuntime.transformTestDataPath(pathToTestDir).absoluteFile
     val parentAbsoluteFile = originalFile.parentFile.absoluteFile
     val fullPathSequence = generateSequence(parentAbsoluteFile) { it.parentFile }.toList()
     val suffixPathSequence = fullPathSequence.takeWhile { it != stopFile }

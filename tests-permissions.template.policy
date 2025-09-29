@@ -3,7 +3,7 @@ grant codeBase "file:{{gradle_user_home}}/-" {
 };
 {{all_permissions_for_gradle_ro_dep_cache}}
 grant {
-    permission java.io.FilePermission "{{gradle_user_home}}/-", "read";
+    permission java.io.FilePermission "{{gradle_user_home}}/-", "read,execute";
     permission java.io.FilePermission "{{gradle_user_home}}", "read";
     permission java.io.FilePermission "/dev/random", "read";
     permission java.io.FilePermission "/dev/urandom", "read";
