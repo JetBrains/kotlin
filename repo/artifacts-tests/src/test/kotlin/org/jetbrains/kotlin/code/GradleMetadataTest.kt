@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.code
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.isTeamCityBuild
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import java.nio.file.Files
 import java.util.stream.Stream
 import kotlin.io.path.absolute
-import kotlin.io.path.name
 import kotlin.streams.asStream
 import kotlin.test.assertTrue
 import kotlin.test.fail
