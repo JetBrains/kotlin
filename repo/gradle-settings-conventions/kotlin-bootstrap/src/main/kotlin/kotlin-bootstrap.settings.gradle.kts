@@ -264,6 +264,11 @@ private fun Settings.applyBootstrapConfiguration(
                         substitute(module("org.jetbrains.kotlin:kotlin-daemon-client"))
                             .using(project(":dependencies:bootstrap:kotlin-daemon-client-bootstrap"))
                     }
+                } else if (path == ":kotlin-tooling-core") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-tooling-core"))
+                            .using(project(":dependencies:bootstrap:kotlin-tooling-core-bootstrap"))
+                    }
                 } else if (path == ":compiler:build-tools:kotlin-build-tools-impl") {
                     resolutionStrategy.dependencySubstitution {
                         substitute(module("org.jetbrains.kotlin:kotlin-build-tools-impl"))
