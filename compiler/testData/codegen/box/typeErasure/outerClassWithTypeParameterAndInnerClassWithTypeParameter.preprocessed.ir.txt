@@ -12,7 +12,9 @@ FUN name:foo visibility:public modality:FINAL returnType:kotlin.Int [inline]
             ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
               ARG <this>: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
                 ARG <this>: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.CharSequence origin=GET_PROPERTY
-                  ARG <this>: CALL 'public final fun access$<outer-this-0> ($this: <root>.A.Inner<I of <root>.A.Inner, T of <root>.A>): <root>.A<T of <root>.A> declared in <root>.A.Inner' type=<root>.A<kotlin.CharSequence> origin=null
+                  ARG <this>: CALL 'public final fun access$<outer-this-0> <I, T> ($this: <root>.A.Inner<I of <root>.A.Inner.access$<outer-this-0>, T of <root>.A.Inner.access$<outer-this-0>>): <root>.A<T of <root>.A.Inner.access$<outer-this-0>> declared in <root>.A.Inner' type=<root>.A<kotlin.CharSequence> origin=null
+                    TYPE_ARG I: kotlin.CharSequence
+                    TYPE_ARG T: kotlin.CharSequence
                     ARG $this: GET_VAR '<this>: <root>.A.Inner<kotlin.CharSequence, kotlin.CharSequence> declared in <root>.foo' type=<root>.A.Inner<kotlin.CharSequence, kotlin.CharSequence> origin=null
               ARG other: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
                 ARG <this>: CALL 'public final fun <get-b> (): T of <root>.A declared in <root>.A.Inner' type=kotlin.CharSequence origin=GET_PROPERTY
