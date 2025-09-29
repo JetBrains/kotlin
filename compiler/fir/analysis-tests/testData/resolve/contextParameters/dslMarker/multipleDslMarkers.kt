@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
-@DslMarker annotation class Dsl
+@DslMarker annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class Dsl<!>
 
 @Dsl class A
 @Dsl class B

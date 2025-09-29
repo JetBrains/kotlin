@@ -1,10 +1,12 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER, -ERROR_SUPPRESSION
 @DslMarker
-annotation class Ann
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class Ann<!>
 
 @Ann
 class A {
+    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    @kotlin.internal.LowPriorityInOverloadResolution
     fun a() = 1
 }
 
@@ -21,11 +23,9 @@ fun test() {
         a()
         bar {
             <!DSL_SCOPE_VIOLATION!>a<!>()
-            this@foo.a()
-            b()
         }
     }
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionalType, integerLiteral,
-lambdaLiteral, thisExpression, typeWithExtension */
+lambdaLiteral, stringLiteral, typeWithExtension */

@@ -4,7 +4,7 @@
 context(ctx: T)
 fun <T> implicit(): T = ctx
 
-@DslMarker annotation class ExampleMarker
+@DslMarker annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class ExampleMarker<!>
 
 @ExampleMarker interface ExampleScope<A> {
     fun exemplify(): A

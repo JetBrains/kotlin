@@ -1030,6 +1030,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DslMarkerPropagatesToMany::class
     }
 
+    interface DslMarkerWithDefaultTargets : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = DslMarkerWithDefaultTargets::class
+    }
+
+    interface WrongDslMarkerTarget : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = WrongDslMarkerTarget::class
+    }
+
     interface JsModuleProhibitedOnVar : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = JsModuleProhibitedOnVar::class
     }

@@ -28,7 +28,7 @@ fun testOnDispatchReceivers() {
 }
 
 @DslMarker
-annotation class Ann2
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class Ann2<!>
 
 @Ann2
 class C

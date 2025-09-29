@@ -264,6 +264,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIVISION_BY_ZERO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_MARKER_PROPAGATES_TO_MANY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_MARKER_WITH_DEFAULT_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE
@@ -869,6 +870,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_CONDITION_SUGGEST_GUARD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_DSL_MARKER_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_EXTENSION_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_EXTENSION_FUNCTION_TYPE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_GETTER_RETURN_TYPE
@@ -1411,6 +1413,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             '@DslMarker' annotation propagates to more than one receiver or context parameter. This often means that none of them can be used.
             Move the '@DslMarker' annotation to the receiver or context parameter whose scope must be limited.
             """.trimIndent(),
+        )
+        map.put(
+            DSL_MARKER_WITH_DEFAULT_TARGETS,
+            "DSL marker annotation class should be annotated with '@Target' and only include annotation targets 'CLASS', 'TYPE', and 'TYPEALIAS'. Applying a DSL marker to a different target does not have any effect.",
+        )
+        map.put(
+            WRONG_DSL_MARKER_TARGET,
+            "The only valid targets for DSL marker annotations are 'CLASS', 'TYPE', and 'TYPEALIAS'. Applying a DSL marker to a different target does not have any effect.",
         )
 
         // OptIn

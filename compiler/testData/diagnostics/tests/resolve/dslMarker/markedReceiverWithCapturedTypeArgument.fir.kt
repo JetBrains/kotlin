@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 @DslMarker
-annotation class AnnMarker
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class AnnMarker<!>
 
 @AnnMarker
 class Inv<T> {

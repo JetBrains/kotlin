@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 @DslMarker
-annotation class MyDsl
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class MyDsl<!>
 
 @MyDsl
 interface Foo<T> {

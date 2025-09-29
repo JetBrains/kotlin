@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 @DslMarker
-annotation class Ann
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class Ann<!>
 
 @Ann
 class A {
@@ -13,13 +13,13 @@ class B {
     fun b() = 2
 }
 
-fun foo(x: A.() -> Unit) {}
-fun bar(x: B.() -> Unit) {}
+fun <T> foo(x: T.() -> Unit) {}
+fun <E> bar(x: E.() -> Unit) {}
 
 fun test() {
-    foo {
+    foo<A> {
         a()
-        bar {
+        bar<B> {
             <!DSL_SCOPE_VIOLATION!>a<!>()
             this@foo.a()
             b()
@@ -28,4 +28,4 @@ fun test() {
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionalType, integerLiteral,
-lambdaLiteral, thisExpression, typeWithExtension */
+lambdaLiteral, nullableType, thisExpression, typeParameter, typeWithExtension */

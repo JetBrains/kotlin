@@ -152,6 +152,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirObjectConstructorChecker,
         FirInlineClassDeclarationChecker,
         FirEnumEntryInitializationChecker,
+        FirDslMarkerTargetChecker,
     )
 
     override val constructorCheckers: Set<FirConstructorChecker> = setOf(

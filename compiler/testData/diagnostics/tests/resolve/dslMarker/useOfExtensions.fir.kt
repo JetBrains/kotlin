@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 @DslMarker
-annotation class Ann
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class Ann<!>
 
 @Ann
 class A

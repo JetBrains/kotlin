@@ -2,7 +2,7 @@
 // ISSUE: KT-77301
 // LANGUAGE: +ContextParameters
 @DslMarker
-annotation class MyMarker
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class MyMarker<!>
 
 @MyMarker
 class DslReceiver

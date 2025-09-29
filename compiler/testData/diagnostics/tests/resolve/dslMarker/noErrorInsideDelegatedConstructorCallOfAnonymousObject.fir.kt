@@ -2,7 +2,7 @@
 // ISSUE: KT-71710
 
 @DslMarker
-annotation class NoriaDsl
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class NoriaDsl<!>
 
 class NoriaState
 

@@ -1,15 +1,18 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 @DslMarker
-annotation class Ann
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class Ann<!>
 
 @Ann
-class A {
+interface Common
+interface C : Common
+interface D : C
+
+class A : C {
     fun a() = 1
 }
 
-@Ann
-class B {
+class B : D {
     fun b() = 2
 }
 
@@ -28,4 +31,4 @@ fun test() {
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionalType, integerLiteral,
-lambdaLiteral, thisExpression, typeWithExtension */
+interfaceDeclaration, lambdaLiteral, thisExpression, typeWithExtension */

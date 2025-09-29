@@ -18,7 +18,7 @@ fun baz() {
 }
 
 @DslMarker
-annotation class MyDsl
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class MyDsl<!>
 
 @MyDsl
 class A

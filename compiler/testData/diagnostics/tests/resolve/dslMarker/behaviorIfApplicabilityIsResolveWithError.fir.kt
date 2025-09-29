@@ -2,7 +2,7 @@
 // ISSUE: KT-60383
 
 @DslMarker
-annotation class Ann
+annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class Ann<!>
 
 @Ann
 class A

@@ -119,7 +119,8 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: KtDiagnost
         "uses modal verb (could, should, ...) with uncertainty",
         setOf(
             FirErrors.VERSION_REQUIREMENT_DEPRECATION.name,
-            FirErrors.NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE.name
+            FirErrors.NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE.name,
+            FirErrors.DSL_MARKER_WITH_DEFAULT_TARGETS.name,
         )
     )
 

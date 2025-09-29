@@ -17,25 +17,25 @@ import kotlin.annotation.AnnotationTarget.FILE
 import kotlin.annotation.AnnotationTarget.TYPEALIAS
 
 @DslMarker
-public annotation class A0
+public annotation <!DSL_MARKER_WITH_DEFAULT_TARGETS!>class A0<!>
 
 @DslMarker
 @Retention(AnnotationRetention.SOURCE)
 @Target(
     CLASS,
-    ANNOTATION_CLASS,
-    TYPE_PARAMETER,
-    PROPERTY,
-    FIELD,
-    LOCAL_VARIABLE,
-    VALUE_PARAMETER,
-    CONSTRUCTOR,
-    FUNCTION,
-    PROPERTY_GETTER,
-    PROPERTY_SETTER,
+    <!WRONG_DSL_MARKER_TARGET!>ANNOTATION_CLASS<!>,
+    <!WRONG_DSL_MARKER_TARGET!>TYPE_PARAMETER<!>,
+    <!WRONG_DSL_MARKER_TARGET!>PROPERTY<!>,
+    <!WRONG_DSL_MARKER_TARGET!>FIELD<!>,
+    <!WRONG_DSL_MARKER_TARGET!>LOCAL_VARIABLE<!>,
+    <!WRONG_DSL_MARKER_TARGET!>VALUE_PARAMETER<!>,
+    <!WRONG_DSL_MARKER_TARGET!>CONSTRUCTOR<!>,
+    <!WRONG_DSL_MARKER_TARGET!>FUNCTION<!>,
+    <!WRONG_DSL_MARKER_TARGET!>PROPERTY_GETTER<!>,
+    <!WRONG_DSL_MARKER_TARGET!>PROPERTY_SETTER<!>,
     TYPE,
-    EXPRESSION,
-    FILE,
+    <!WRONG_DSL_MARKER_TARGET!>EXPRESSION<!>,
+    <!WRONG_DSL_MARKER_TARGET!>FILE<!>,
     TYPEALIAS,
 )
 public annotation class A1
@@ -43,21 +43,23 @@ public annotation class A1
 @DslMarker
 @Retention(AnnotationRetention.SOURCE)
 @Target(
-    AnnotationTarget.CLASS,
-    AnnotationTarget.ANNOTATION_CLASS,
-    AnnotationTarget.TYPE_PARAMETER,
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.FIELD,
-    AnnotationTarget.LOCAL_VARIABLE,
-    AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.CONSTRUCTOR,
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER,
-    AnnotationTarget.TYPE,
-    AnnotationTarget.EXPRESSION,
-    AnnotationTarget.FILE,
-    AnnotationTarget.TYPEALIAS,
+    allowedTargets = [
+        AnnotationTarget.CLASS,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.ANNOTATION_CLASS<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.TYPE_PARAMETER<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.PROPERTY<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.FIELD<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.LOCAL_VARIABLE<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.VALUE_PARAMETER<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.CONSTRUCTOR<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.FUNCTION<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.PROPERTY_GETTER<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.PROPERTY_SETTER<!>,
+        AnnotationTarget.TYPE,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.EXPRESSION<!>,
+        <!WRONG_DSL_MARKER_TARGET!>AnnotationTarget.FILE<!>,
+        AnnotationTarget.TYPEALIAS,
+    ]
 )
 public annotation class A2
 
