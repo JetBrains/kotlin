@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.CCallMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.*
-import org.jetbrains.kotlin.native.interop.tool.CCALL_MODE
 
 internal class MacroConstantStubBuilder(
         override val context: StubsBuildingContext,
@@ -758,11 +757,14 @@ internal class GlobalStubBuilder(
             if (context.configuration.cCallMode != CCallMode.DIRECT) {
                 indirect()
             } else {
-                AnnotationStub.Deprecated(
-                        "Global variables are not yet supported with -$CCALL_MODE ${CCallMode.DIRECT.name.lowercase()}",
-                        replaceWith = "",
-                        level = DeprecationLevel.ERROR
-                )
+                // The trick here is that we generate a symbol name that can't be resolved into anything.
+                // So, if such a declaration is used, the linkage will fail with this string as a message.
+                // This serves two purposes:
+                // 1. Such problems are reported not during compilation but during linkage,
+                //    along with other linkage failures caused by `-Xccall-mode direct`
+                //    (e.g. usages of header-defined functions), allowing a user to collect more problems at once.
+                // 2. If such a declaration is used in unreachable code, it doesn't make the compilation fail.
+                AnnotationStub.CCall.Direct("${global.name} unsupported: https://youtrack.jetbrains.com/issue/KT-79742")
             }
 }
 
