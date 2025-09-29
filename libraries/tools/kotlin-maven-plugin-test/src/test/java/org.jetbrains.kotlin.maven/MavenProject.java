@@ -15,6 +15,12 @@ class MavenProject {
     @NotNull
     private final File workingDir;
 
+    public enum ExecutionStrategy {
+        IN_PROCESS,
+        DAEMON,
+        ;
+    }
+
     MavenProject(@NotNull String name) throws IOException {
         File originalProjectDir = new File("src/test/resources/" + name);
         workingDir = FileUtil.createTempDirectory("maven-test-" + name, null);
@@ -32,7 +38,24 @@ class MavenProject {
     }
 
     MavenExecutionResult exec(String... targets) throws Exception {
+        return exec(null, targets);
+    }
+
+    MavenExecutionResult exec(@Nullable ExecutionStrategy executionStrategy, String... targets) throws Exception {
         List<String> cmd = buildCmd(targets);
+        if (executionStrategy !=  null) { // else use the default strategy
+            boolean daemonEnabled;
+            switch (executionStrategy) {
+                case IN_PROCESS:
+                    daemonEnabled = false;
+                    break;
+                case DAEMON:
+                    daemonEnabled = true;
+                    break;
+                default: throw new IllegalArgumentException("Unknown execution strategy: " + executionStrategy);
+            }
+            cmd.add("-Dkotlin.compiler.daemon=" + daemonEnabled);
+        }
         ProcessBuilder processBuilder = new ProcessBuilder(cmd);
 
         processBuilder.directory(workingDir);
