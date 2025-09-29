@@ -28,7 +28,7 @@ class ManglingConflictsTest(
             }            
         """.trimMargin()
         ) { foo ->
-            val members = translateToObjCExportStub(foo)?.members ?: error("no translated members")
+            val members = translateToObjCExportStub(foo)?.objCClass?.members ?: error("no translated members")
             assertTrue(members.hasPropertiesConflicts())
         }
     }
@@ -43,7 +43,7 @@ class ManglingConflictsTest(
             }            
         """.trimMargin()
         ) { foo ->
-            val stub = translateToObjCExportStub(foo)
+            val stub = translateToObjCExportStub(foo)?.objCClass
             assertTrue(stub?.members?.hasPropertiesConflicts() == false)
         }
     }
@@ -58,7 +58,7 @@ class ManglingConflictsTest(
             }            
         """.trimMargin()
         ) { foo ->
-            val stub = translateToObjCExportStub(foo)
+            val stub = translateToObjCExportStub(foo)?.objCClass
             assertTrue(stub?.members?.hasMethodConflicts() == true)
         }
     }
@@ -73,7 +73,7 @@ class ManglingConflictsTest(
             }            
         """.trimMargin()
         ) { foo ->
-            val stub = translateToObjCExportStub(foo)
+            val stub = translateToObjCExportStub(foo)?.objCClass
             assertTrue(stub?.members?.hasPropertiesConflicts() == false)
         }
     }

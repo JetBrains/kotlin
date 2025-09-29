@@ -11,4 +11,6 @@ internal object ObjCPropertyNames {
 
     @Suppress("unused")
     const val companionObjectPropertyName: String = "companion"
+
+    const val nsEnumPropertyName: String = "nsEnum"
 }

@@ -6,6 +6,7 @@
 package kotlin.native
 
 import kotlin.experimental.ExperimentalNativeApi
+import kotlin.experimental.ExperimentalObjCEnum
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
 
@@ -115,6 +116,20 @@ public actual annotation class CName(actual val externName: String = "", actual 
 @ExperimentalObjCName
 @SinceKotlin("1.8")
 public actual annotation class ObjCName(actual val name: String = "", actual val swiftName: String = "", actual val exact: Boolean = false)
+
+/**
+ * Instructs the Kotlin compiler to generate a NS_ENUM typedef for the annotated enum class. The name of the generated type will
+ * be the name of the enum type with "NSEnum" appended. This name can be overridden with the "name" parameter, which is treated
+ * as an exact name. Additionally, a separate name for Swift can be specified using the swiftName parameter.
+ * The enum literals will be prefixed with the type name, as they live in a global namespace.
+ * Swift naming will remove these disambiguation prefixes. The NSEnum values are accessible via the "nsEnum" property.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@ExperimentalObjCEnum
+@SinceKotlin("2.3")
+public actual annotation class ObjCEnum(actual val name: String = "", actual val swiftName: String = "")
 
 /**
  * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.

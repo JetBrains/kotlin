@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.tooling.core.emptyExtras
 @Suppress("unused")
 typealias Stub<@Suppress("UNUSED_TYPEALIAS_PARAMETER") T> = ObjCExportStub
 
+
 sealed interface ObjCExportStub : HasExtras {
     /**
      * The ObjC name of this entity;
@@ -44,6 +45,24 @@ val ObjCExportStub.psiOrNull
 
 
 abstract class ObjCTopLevel : ObjCExportStub
+
+
+class ObjCNSEnum(
+    override val name: String,
+    val swiftName: String,
+    override val origin: ObjCExportStubOrigin?,
+    val entries: List<Entry>,
+) : ObjCTopLevel() {
+    override val comment: ObjCComment?
+        get() = null
+    override val extras: Extras = emptyExtras()
+
+    class Entry(
+        val swiftName: String,
+        val objCName: String,
+        val value: Int
+    )
+}
 
 sealed class ObjCClass : ObjCTopLevel() {
     abstract val attributes: List<String>

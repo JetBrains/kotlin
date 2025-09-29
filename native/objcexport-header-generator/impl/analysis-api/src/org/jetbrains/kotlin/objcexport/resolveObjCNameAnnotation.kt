@@ -53,11 +53,11 @@ internal fun KaAnnotatedSymbol.resolveObjCNameAnnotation(): ObjCExportObjCNameAn
     )
 }
 
-private fun KaAnnotation.findArgument(name: String): KaNamedAnnotationValue? {
+internal fun KaAnnotation.findArgument(name: String): KaNamedAnnotationValue? {
     return arguments.find { it.name.identifier == name }
 }
 
-private fun KaNamedAnnotationValue.resolveStringConstantValue(): String? {
+internal fun KaNamedAnnotationValue.resolveStringConstantValue(): String? {
     return expression.let { it as? KaAnnotationValue.ConstantValue }?.value
         ?.let { it as? StringValue }
         ?.value

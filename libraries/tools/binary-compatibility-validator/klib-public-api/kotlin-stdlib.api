@@ -53,6 +53,10 @@ open annotation class kotlin.experimental/ExperimentalNativeApi : kotlin/Annotat
     constructor <init>() // kotlin.experimental/ExperimentalNativeApi.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.experimental/ExperimentalObjCEnum : kotlin/Annotation { // kotlin.experimental/ExperimentalObjCEnum|null[0]
+    constructor <init>() // kotlin.experimental/ExperimentalObjCEnum.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.experimental/ExperimentalObjCName : kotlin/Annotation { // kotlin.experimental/ExperimentalObjCName|null[0]
     constructor <init>() // kotlin.experimental/ExperimentalObjCName.<init>|<init>(){}[0]
 }
@@ -9858,6 +9862,16 @@ open annotation class kotlin.native/NoInline : kotlin/Annotation { // kotlin.nat
 }
 
 // Targets: [native]
+open annotation class kotlin.native/ObjCEnum : kotlin/Annotation { // kotlin.native/ObjCEnum|null[0]
+    constructor <init>(kotlin/String = ..., kotlin/String = ...) // kotlin.native/ObjCEnum.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val name // kotlin.native/ObjCEnum.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.native/ObjCEnum.name.<get-name>|<get-name>(){}[0]
+    final val swiftName // kotlin.native/ObjCEnum.swiftName|{}swiftName[0]
+        final fun <get-swiftName>(): kotlin/String // kotlin.native/ObjCEnum.swiftName.<get-swiftName>|<get-swiftName>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlin.native/ObjCName : kotlin/Annotation { // kotlin.native/ObjCName|null[0]
     constructor <init>(kotlin/String = ..., kotlin/String = ..., kotlin/Boolean = ...) // kotlin.native/ObjCName.<init>|<init>(kotlin.String;kotlin.String;kotlin.Boolean){}[0]
 
@@ -13777,6 +13791,16 @@ open annotation class kotlin.native/HiddenFromObjC : kotlin/Annotation { // kotl
 // Targets: [js, wasmJs, wasmWasi]
 open annotation class kotlin.native/HidesFromObjC : kotlin/Annotation { // kotlin.native/HidesFromObjC|null[1]
     constructor <init>() // kotlin.native/HidesFromObjC.<init>|<init>(){}[1]
+}
+
+// Targets: [js, wasmJs, wasmWasi]
+open annotation class kotlin.native/ObjCEnum : kotlin/Annotation { // kotlin.native/ObjCEnum|null[1]
+    constructor <init>(kotlin/String = ..., kotlin/String = ...) // kotlin.native/ObjCEnum.<init>|<init>(kotlin.String;kotlin.String){}[1]
+
+    final val name // kotlin.native/ObjCEnum.name|{}name[1]
+        final fun <get-name>(): kotlin/String // kotlin.native/ObjCEnum.name.<get-name>|<get-name>(){}[1]
+    final val swiftName // kotlin.native/ObjCEnum.swiftName|{}swiftName[1]
+        final fun <get-swiftName>(): kotlin/String // kotlin.native/ObjCEnum.swiftName.<get-swiftName>|<get-swiftName>(){}[1]
 }
 
 // Targets: [js, wasmJs, wasmWasi]

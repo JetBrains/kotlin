@@ -28,7 +28,7 @@ class PropertyManglingTest(
             }            
         """.trimMargin()
         ) { foo ->
-            val properties = translateToObjCExportStub(foo)?.members ?: error("no translated members")
+            val properties = translateToObjCExportStub(foo)?.objCClass?.members ?: error("no translated members")
             val property = mangleObjCProperties(properties).filterIsInstance<ObjCProperty>().first()
 
             assertEquals("bar", property.name)
@@ -46,7 +46,7 @@ class PropertyManglingTest(
             }            
         """.trimMargin()
         ) { foo ->
-            val properties = translateToObjCExportStub(foo)?.members ?: error("no translated members")
+            val properties = translateToObjCExportStub(foo)?.objCClass?.members ?: error("no translated members")
             val property = mangleObjCProperties(properties).filterIsInstance<ObjCProperty>().first()
 
             assertEquals("bar", property.name)
