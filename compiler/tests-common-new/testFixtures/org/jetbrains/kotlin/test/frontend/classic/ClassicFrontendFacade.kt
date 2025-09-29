@@ -77,6 +77,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -358,8 +359,8 @@ class ClassicFrontendFacade(
 
         val runtimeModuleDescriptors = createModuleDescriptorsForKlibs(
             libraryPaths = listOfNotNull(
-                System.getProperty("kotlin.wasm$suffix.stdlib.path")!!,
-                System.getProperty("kotlin.wasm$suffix.kotlin.test.path")!!
+                WasmEnvironmentConfigurator.stdlibPath(wasmTarget),
+                WasmEnvironmentConfigurator.kotlinTestPath(wasmTarget),
             ),
             klibPlatformChecker = KlibPlatformChecker.Wasm(wasmTarget.alias),
             factories = JsFactories,

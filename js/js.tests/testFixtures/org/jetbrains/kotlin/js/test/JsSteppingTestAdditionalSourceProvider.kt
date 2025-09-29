@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.ModuleStructureExtractor
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import java.io.File
 
-open class JsSteppingTestAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
-    protected open val commonTestHelpersFile: String = "$HELPERS_DIR/jsCommonTestHelpers.kt"
-    protected open val minimalTestHelpersLocation: String? = "$HELPERS_DIR/jsMinimalTestHelpers.kt"
-    protected open val withStdlibTestHelpersFile: String? = "$HELPERS_DIR/jsWithStdlibTestHelpers.kt"
+abstract class AbstractWebJsSteppingTestAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+    protected abstract val commonTestHelpersFile: String
+    protected abstract val minimalTestHelpersLocation: String?
+    protected abstract val withStdlibTestHelpersFile: String?
 
     override fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,
@@ -31,18 +30,26 @@ open class JsSteppingTestAdditionalSourceProvider(testServices: TestServices) : 
         // to each module (using JsAdditionalSourceProvider), but the linker doesn't complain.
         // For some reason, it doesn't like _specifically_ the symbols defined in compiler/testData/debug/jsTestHelpers.
         return if (module.name == ModuleStructureExtractor.DEFAULT_MODULE_NAME) {
+            val classLoader = this::class.java.classLoader
             buildList {
                 if (containsDirective(globalDirectives, module, ConfigurationDirectives.WITH_STDLIB))
-                    withStdlibTestHelpersFile?.let { add(File(it).toTestFile()) }
+                    withStdlibTestHelpersFile?.let { add(classLoader.getResource(it)!!.toTestFile()) }
                 else
-                    minimalTestHelpersLocation?.let { add(File(it).toTestFile()) }
-                add(File(commonTestHelpersFile).toTestFile())
+                    minimalTestHelpersLocation?.let { add(classLoader.getResource(it)!!.toTestFile()) }
+                add(classLoader.getResource(commonTestHelpersFile)!!.toTestFile())
             }
         } else
             emptyList()
     }
+}
+
+class JsSteppingTestAdditionalSourceProvider(testServices: TestServices) : AbstractWebJsSteppingTestAdditionalSourceProvider(testServices) {
+    override val commonTestHelpersFile: String = "$HELPERS_DIR/jsCommonTestHelpers.kt"
+    override val minimalTestHelpersLocation: String = "$HELPERS_DIR/jsMinimalTestHelpers.kt"
+    override val withStdlibTestHelpersFile: String = "$HELPERS_DIR/jsWithStdlibTestHelpers.kt"
 
     companion object {
-        private const val HELPERS_DIR = "compiler/testData/debug/jsTestHelpers"
+        // real sources are located inside `compiler/testData/debug/jsTestHelpers`
+        private const val HELPERS_DIR = "debugTestHelpers/jsTestHelpers"
     }
 }
