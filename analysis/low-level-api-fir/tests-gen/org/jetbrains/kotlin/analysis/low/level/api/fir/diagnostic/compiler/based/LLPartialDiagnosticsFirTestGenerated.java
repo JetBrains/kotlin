@@ -9945,6 +9945,18 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldsInEffectivelyPrivateInline.kt")
+        public void testExplicitBackingFieldsInEffectivelyPrivateInline() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInEffectivelyPrivateInline.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldsInInlineAccessors.kt")
+        public void testExplicitBackingFieldsInInlineAccessors() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInInlineAccessors.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldsInInlineWithAnonymousObject.kt")
         public void testExplicitBackingFieldsInInlineWithAnonymousObject() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInInlineWithAnonymousObject.kt");
