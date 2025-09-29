@@ -91,6 +91,7 @@ class GradleMetadataComponent(
         val name: String = url,
         val size: Int = 0,
         // This id is used as a sanity check to avoid overwriting mocks by accident
+        @kotlinx.serialization.Transient
         val mockId: String = UUID.randomUUID().toString(),
         @kotlinx.serialization.Transient
         val type: MockVariantType = MockVariantType.EmptyJar,

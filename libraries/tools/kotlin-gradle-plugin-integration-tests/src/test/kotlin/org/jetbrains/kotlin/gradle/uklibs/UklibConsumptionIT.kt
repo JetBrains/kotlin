@@ -728,14 +728,16 @@ class UklibConsumptionIT : KGPBaseTest() {
             }.buildAndReturn("runJvm")
             assertEquals(
                 listOf<List<String>>(
-                    mutableListOf("kotlin", "jvm", "main",),
-                    mutableListOf("classes", "java", "jvmMain",),
-                    mutableListOf("processedResources", "jvm", "main",),
-                    mutableListOf("transformed", "unzipped_uklib_producer.uklib", "jvmMain"),
-                    mutableListOf("kotlin-stdlib", defaultBuildOptions.kotlinVersion, "kotlin-stdlib-${defaultBuildOptions.kotlinVersion}.jar"),
-                    mutableListOf("annotations", "13.0", "annotations-13.0.jar"),
+                    // classes
+                    mutableListOf("jvm", "main"),
+                    mutableListOf("java", "jvmMain"),
+                    // processedResources
+                    mutableListOf("jvm", "main"),
+                    mutableListOf("unzipped_uklib_producer.uklib", "jvmMain"),
+                    mutableListOf(defaultBuildOptions.kotlinVersion, "kotlin-stdlib-${defaultBuildOptions.kotlinVersion}.jar"),
+                    mutableListOf("13.0", "annotations-13.0.jar"),
                 ).prettyPrinted,
-                runJvmClasspath.toList().relativeTransformationPathComponents(3).prettyPrinted
+                runJvmClasspath.toList().relativeTransformationPathComponents(2).prettyPrinted
             )
         }
     }
