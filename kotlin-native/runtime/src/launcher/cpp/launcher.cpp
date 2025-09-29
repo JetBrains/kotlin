@@ -22,6 +22,9 @@
 #include "KString.h"
 #include "Types.h"
 #include "Worker.h"
+#ifdef KONAN_WINDOWS
+#include <windows.h>
+#endif
 
 #include "launcher.h"
 
@@ -47,10 +50,35 @@ OBJ_GETTER(setupArgs, int argc, const char** argv) {
   return result;
 }
 
+#ifdef KONAN_WINDOWS
+// On Windows, we should use Windows API to avoid encoding issues.
+OBJ_GETTER(setupArgsWindows) {
+  LPWSTR cmdline = GetCommandLineW();
+  RuntimeCheck(cmdline != nullptr, "GetCommandLineW() returned null");
+  int wargc;
+  LPWSTR* wargv = CommandLineToArgvW(cmdline, &wargc);
+  // The count is one less, because we skip argv[0] which is the binary name.
+  ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, std::max(0, wargc - 1), OBJ_RESULT);
+  ArrayHeader* array = result->array();
+  for (int index = 1; index < wargc - 1; index++) {
+    ObjHolder result;
+    CreateStringFromUtf16(wargv[index], result.slot());
+    UpdateHeapRef(ArrayAddressOfElementAt(array, index - 1), result.obj());
+  }
+  LocalFree(wargv);
+  return result;
+}
+#endif
+
 //--- main --------------------------------------------------------------------//
 extern "C" KInt Konan_run_start(int argc, const char** argv) {
     ObjHolder args;
+#ifdef KONAN_WINDOWS
+    setupArgsWindows(args.slow());
+#else
     setupArgs(argc, argv, args.slot());
+#endif
+
     return Konan_start(args.obj());
 }
 
