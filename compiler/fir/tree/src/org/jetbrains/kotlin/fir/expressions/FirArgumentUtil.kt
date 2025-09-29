@@ -42,3 +42,9 @@ object FirEmptyArgumentList : FirAbstractArgumentList() {
     override val source: KtSourceElement?
         get() = null
 }
+
+enum class FirArgumentOrigin(val asString: String) {
+    RegularCall("argument"),
+    CollectionLiteral("collection literal argument"),
+    ArrayAccess("index expression"),
+}

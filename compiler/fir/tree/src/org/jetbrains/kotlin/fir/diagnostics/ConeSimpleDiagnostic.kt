@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.diagnostics
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.fir.expressions.FirArgumentOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -104,9 +105,9 @@ object ConeContextParameterWithDefaultValue : ConeDiagnostic {
     override val reason: String get() = "Context parameters cannot have default values"
 }
 
-object ConeArgumentIsNotProvided : ConeDiagnostic {
+class ConeArgumentIsNotProvided(val argumentOrigin: FirArgumentOrigin) : ConeDiagnostic {
     override val reason: String
-        get() = "Expected an argument"
+        get() = "Expected an ${argumentOrigin.asString}"
 }
 
 enum class DiagnosticKind {

@@ -216,6 +216,16 @@ internal class EmptyArgumentImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.EmptyArgument
 
+internal class EmptyArgumentInArrayAccessImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.EmptyArgumentInArrayAccess
+
+internal class EmptyArgumentInCollectionLiteralImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.EmptyArgumentInCollectionLiteral
+
 internal class TooManyCharactersInCharacterLiteralImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-79116
@@ -12,17 +11,17 @@ fun test() {
     val b = 0
     val c = 0
     val getter = Get()
-    getter[a, <!SYNTAX!>,<!>]
-    getter[a, <!SYNTAX!>,<!><!SYNTAX!><!> ,]
-    <!NO_VALUE_FOR_PARAMETER!>getter[a, <!SYNTAX!>,<!> c]<!>
-    getter[a, b, <!SYNTAX!>,<!>]
-    getter[<!SYNTAX!>,<!><!SYNTAX!><!> ,]
-    getter[<!SYNTAX!>,<!>]
-    getter[<!SYNTAX!>,<!><!SYNTAX!><!> , <!SYNTAX!>,<!>]
-    getter[<!SYNTAX!>,<!><!SYNTAX!><!> , <!SYNTAX!>,<!><!SYNTAX!><!> ,]
-    <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>getter[<!SYNTAX!>,<!> b,]<!>
-    <!NO_VALUE_FOR_PARAMETER!>getter[<!SYNTAX!>,<!> b, c]<!>
-    <!NO_VALUE_FOR_PARAMETER!>getter[<!SYNTAX!>,<!> b, c,]<!>
+    <!NO_VALUE_FOR_PARAMETER!>getter[a, <!ARGUMENT_EXPECTED!><!>,]<!>
+    getter[a, <!ARGUMENT_EXPECTED!><!>, <!ARGUMENT_EXPECTED!><!>,]
+    getter[a, <!ARGUMENT_EXPECTED!><!>, c]
+    getter[a, b, <!ARGUMENT_EXPECTED!><!>,]
+    <!NO_VALUE_FOR_PARAMETER!>getter[<!ARGUMENT_EXPECTED!><!>, <!ARGUMENT_EXPECTED!><!>,]<!>
+    <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>getter[<!ARGUMENT_EXPECTED!><!>,]<!>
+    getter[<!ARGUMENT_EXPECTED!><!>, <!ARGUMENT_EXPECTED!><!>, <!ARGUMENT_EXPECTED!><!>,]
+    getter[<!ARGUMENT_EXPECTED!><!>, <!ARGUMENT_EXPECTED!><!>, <!ARGUMENT_EXPECTED!><!>, <!ARGUMENT_EXPECTED, TOO_MANY_ARGUMENTS!><!>,]
+    <!NO_VALUE_FOR_PARAMETER!>getter[<!ARGUMENT_EXPECTED!><!>, b,]<!>
+    getter[<!ARGUMENT_EXPECTED!><!>, b, c]
+    getter[<!ARGUMENT_EXPECTED!><!>, b, c,]
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, operator,

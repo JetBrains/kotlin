@@ -514,20 +514,16 @@ open class PsiRawFirBuilder(
 
         private fun ValueArgument.toFirExpression(): FirExpression {
             val name = this.getArgumentName()?.asName
+            val argumentOrigin = FirArgumentOrigin.RegularCall
             val firExpression = when (val expression = this.getArgumentExpression()) {
                 is KtConstantExpression, is KtStringTemplateExpression -> {
                     expression.accept(this@Visitor, null) as FirExpression
                 }
 
-                is KtEmptyValueArgument -> {
-                    buildErrorExpression(
-                        source = expression.toFirSourceElement(KtFakeSourceElementKind.ErrorExpression),
-                        diagnostic = ConeArgumentIsNotProvided,
-                    )
-                }
+                is KtEmptyValueArgument -> expression.toArgumentExpression(argumentOrigin)
 
                 else -> {
-                    { expression }.toFirExpression("Argument is absent", sourceWhenInvalidExpression = this.asElement())
+                    { expression }.toFirExpression("Invalid ${argumentOrigin.asString}", sourceWhenInvalidExpression = this.asElement())
                 }
             }
 
@@ -3450,7 +3446,7 @@ open class PsiRawFirBuilder(
                 explicitReceiver = arrayExpression.toFirExpression("No array expression", sourceWhenInvalidExpression = expression)
                 argumentList = buildArgumentList {
                     for (indexExpression in expression.indexExpressions) {
-                        arguments += indexExpression.toFirExpression("Incorrect index expression")
+                        arguments += indexExpression.toArgumentExpression(FirArgumentOrigin.ArrayAccess)
                     }
                     if (setArgument != null) {
                         arguments += setArgument
@@ -3618,7 +3614,7 @@ open class PsiRawFirBuilder(
                 source = expression.toFirSourceElement()
                 argumentList = buildArgumentList {
                     for (innerExpression in expression.getInnerExpressions()) {
-                        arguments += innerExpression.toFirExpression("Incorrect collection literal argument")
+                        arguments += innerExpression.toArgumentExpression(FirArgumentOrigin.CollectionLiteral)
                     }
                 }
             }
@@ -3628,6 +3624,15 @@ open class PsiRawFirBuilder(
             return buildExpressionStub {
                 source = expression.toFirSourceElement()
             }
+        }
+
+        private fun KtExpression.toArgumentExpression(argumentOrigin: FirArgumentOrigin): FirExpression {
+            return if (this is KtEmptyValueArgument)
+                buildErrorExpression(
+                    toFirSourceElement(KtFakeSourceElementKind.ErrorExpression),
+                    ConeArgumentIsNotProvided(argumentOrigin),
+                )
+            else toFirExpression("Incorrect ${argumentOrigin.asString}")
         }
 
         private fun MutableList<FirTypeProjection>.appendTypeArguments(args: List<KtTypeProjection>) {

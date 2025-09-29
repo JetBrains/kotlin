@@ -1,142 +1,142 @@
-/emptyArguments.fir.kt:(342,342): error: Expected an argument.
+/emptyArguments.fir.kt:(342,342): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(367,367): error: Expected an argument.
+/emptyArguments.fir.kt:(367,367): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(384,384): error: Expected an argument.
+/emptyArguments.fir.kt:(384,384): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(401,401): error: Expected an argument.
+/emptyArguments.fir.kt:(401,401): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(403,403): error: Expected an argument.
+/emptyArguments.fir.kt:(403,403): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(405,405): error: Expected an argument.
+/emptyArguments.fir.kt:(405,405): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(419,419): error: Expected an argument.
+/emptyArguments.fir.kt:(419,419): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(421,421): error: Expected an argument.
+/emptyArguments.fir.kt:(421,421): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(421,423): error: No value passed for parameter 'z'.
 
-/emptyArguments.fir.kt:(435,435): error: Expected an argument.
+/emptyArguments.fir.kt:(435,435): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(437,437): error: Expected an argument.
+/emptyArguments.fir.kt:(437,437): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(453,453): error: Expected an argument.
+/emptyArguments.fir.kt:(453,453): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(455,457): error: No value passed for parameter 'z'.
 
-/emptyArguments.fir.kt:(472,472): error: Expected an argument.
+/emptyArguments.fir.kt:(472,472): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(474,474): error: Expected an argument.
+/emptyArguments.fir.kt:(474,474): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(491,491): error: Expected an argument.
+/emptyArguments.fir.kt:(491,491): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(491,493): error: No value passed for parameter 'z'.
 
-/emptyArguments.fir.kt:(505,505): error: Expected an argument.
+/emptyArguments.fir.kt:(505,505): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(507,507): error: Expected an argument.
+/emptyArguments.fir.kt:(507,507): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(509,509): error: Expected an argument.
+/emptyArguments.fir.kt:(509,509): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(511,511): error: Expected an argument.
+/emptyArguments.fir.kt:(511,511): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(511,511): error: Too many arguments for 'fun asFunc(x: Int, y: Int, z: Int): Unit'.
 
-/emptyArguments.fir.kt:(531,531): error: Expected an argument.
+/emptyArguments.fir.kt:(531,531): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(533,533): error: Expected an argument.
+/emptyArguments.fir.kt:(533,533): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(533,533): error: Too many arguments for 'fun asFunc(x: Int, y: Int, z: Int): Unit'.
 
-/emptyArguments.fir.kt:(547,547): error: Expected an argument.
+/emptyArguments.fir.kt:(547,547): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(552,552): error: Expected an argument.
+/emptyArguments.fir.kt:(552,552): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(554,554): error: Expected an argument.
+/emptyArguments.fir.kt:(554,554): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(554,554): error: Too many arguments for 'fun asFunc(x: Int, y: Int, z: Int): Unit'.
 
-/emptyArguments.fir.kt:(575,575): error: Expected an argument.
+/emptyArguments.fir.kt:(575,575): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(600,600): error: Expected an argument.
+/emptyArguments.fir.kt:(600,600): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(629,629): error: Expected an argument.
+/emptyArguments.fir.kt:(629,629): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(651,651): error: Expected an argument.
+/emptyArguments.fir.kt:(651,651): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(653,653): error: Expected an argument.
+/emptyArguments.fir.kt:(653,653): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(676,676): error: Expected an argument.
+/emptyArguments.fir.kt:(676,676): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(678,678): error: Expected an argument.
+/emptyArguments.fir.kt:(678,678): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(680,680): error: Expected an argument.
+/emptyArguments.fir.kt:(680,680): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(700,700): error: Expected an argument.
+/emptyArguments.fir.kt:(700,700): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(702,702): error: Expected an argument.
+/emptyArguments.fir.kt:(702,702): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(704,704): error: Expected an argument.
+/emptyArguments.fir.kt:(704,704): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(706,706): error: Expected an argument.
+/emptyArguments.fir.kt:(706,706): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(726,726): error: Expected an argument.
+/emptyArguments.fir.kt:(726,726): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(749,749): error: Expected an argument.
+/emptyArguments.fir.kt:(749,749): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(774,774): error: Expected an argument.
+/emptyArguments.fir.kt:(774,774): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(801,801): error: Expected an argument.
+/emptyArguments.fir.kt:(801,801): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(823,823): error: Expected an argument.
+/emptyArguments.fir.kt:(823,823): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(825,825): error: Expected an argument.
+/emptyArguments.fir.kt:(825,825): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(825,827): error: No value passed for parameter 'c'.
 
-/emptyArguments.fir.kt:(844,844): error: Expected an argument.
+/emptyArguments.fir.kt:(844,844): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(846,846): error: Expected an argument.
+/emptyArguments.fir.kt:(846,846): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(848,848): error: Expected an argument.
+/emptyArguments.fir.kt:(848,848): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(867,867): error: Expected an argument.
+/emptyArguments.fir.kt:(867,867): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(869,869): error: Expected an argument.
+/emptyArguments.fir.kt:(869,869): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(871,871): error: Expected an argument.
+/emptyArguments.fir.kt:(871,871): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(873,873): error: Expected an argument.
+/emptyArguments.fir.kt:(873,873): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(873,873): error: Too many arguments for 'fun asTypedFunc(a: A, b: B, c: C): Unit'.
 
-/emptyArguments.fir.kt:(892,892): error: Expected an argument.
+/emptyArguments.fir.kt:(892,892): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(894,897): error: No value passed for parameter 'c'.
 
-/emptyArguments.fir.kt:(920,920): error: Expected an argument.
+/emptyArguments.fir.kt:(920,920): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(939,939): error: Expected an argument.
+/emptyArguments.fir.kt:(939,939): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(941,941): error: Expected an argument.
+/emptyArguments.fir.kt:(941,941): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(965,965): error: Expected an argument.
+/emptyArguments.fir.kt:(965,965): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(967,967): error: Expected an argument.
+/emptyArguments.fir.kt:(967,967): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(995,995): error: Expected an argument.
+/emptyArguments.fir.kt:(995,995): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(995,995): error: Too many arguments for 'fun asTypedFunc(a: A, b: B, c: C): Unit'.
 
-/emptyArguments.fir.kt:(1024,1024): error: Expected an argument.
+/emptyArguments.fir.kt:(1024,1024): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(1054,1054): error: Expected an argument.
+/emptyArguments.fir.kt:(1054,1054): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1054,1054): error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
 
 /emptyArguments.fir.kt:(1056,1064): error: No value passed for parameter 'a'.
 
-/emptyArguments.fir.kt:(1081,1081): error: Expected an argument.
+/emptyArguments.fir.kt:(1081,1081): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1083,1084): error: Argument already passed for this parameter.
 
@@ -146,7 +146,7 @@
 
 /emptyArguments.fir.kt:(1092,1095): error: No value passed for parameter 'c'.
 
-/emptyArguments.fir.kt:(1112,1112): error: Expected an argument.
+/emptyArguments.fir.kt:(1112,1112): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1114,1115): error: Argument type mismatch: actual type is 'A', but 'B' was expected.
 
@@ -156,27 +156,27 @@
 
 /emptyArguments.fir.kt:(1126,1128): error: No value passed for parameter 'c'.
 
-/emptyArguments.fir.kt:(1145,1145): error: Expected an argument.
+/emptyArguments.fir.kt:(1145,1145): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1156,1157): error: Argument type mismatch: actual type is 'A', but 'C' was expected.
 
 /emptyArguments.fir.kt:(1159,1160): error: Too many arguments for 'fun asTypedFunc(a: A, b: B, c: C): Unit'.
 
-/emptyArguments.fir.kt:(1187,1187): error: Expected an argument.
+/emptyArguments.fir.kt:(1187,1187): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(1217,1217): error: Expected an argument.
+/emptyArguments.fir.kt:(1217,1217): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(1254,1254): error: Expected an argument.
+/emptyArguments.fir.kt:(1254,1254): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(1285,1285): error: Expected an argument.
+/emptyArguments.fir.kt:(1285,1285): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1285,1287): error: No value passed for parameter 'c'.
 
-/emptyArguments.fir.kt:(1304,1304): error: Expected an argument.
+/emptyArguments.fir.kt:(1304,1304): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1306,1307): error: Argument already passed for this parameter.
 
-/emptyArguments.fir.kt:(1349,1349): error: Expected an argument.
+/emptyArguments.fir.kt:(1349,1349): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1351,1352): error: Argument already passed for this parameter.
 
@@ -188,14 +188,14 @@
 
 /emptyArguments.fir.kt:(1363,1365): error: No value passed for parameter 'c'.
 
-/emptyArguments.fir.kt:(1382,1382): error: Expected an argument.
+/emptyArguments.fir.kt:(1382,1382): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(1384,1384): error: Expected an argument.
+/emptyArguments.fir.kt:(1384,1384): error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1386,1387): error: Argument already passed for this parameter.
 
 /emptyArguments.fir.kt:(1386,1394): error: No value passed for parameter 'c'.
 
-/emptyArguments.fir.kt:(1411,1411): error: Expected an argument.
+/emptyArguments.fir.kt:(1411,1411): error: Expecting an argument.
 
-/emptyArguments.fir.kt:(1413,1413): error: Expected an argument.
+/emptyArguments.fir.kt:(1413,1413): error: Expecting an argument.

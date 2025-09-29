@@ -176,6 +176,8 @@ object FirErrors : KtDiagnosticsContainer() {
     val INCORRECT_CHARACTER_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("INCORRECT_CHARACTER_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val EMPTY_CHARACTER_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("EMPTY_CHARACTER_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val EMPTY_ARGUMENT: KtDiagnosticFactory0 = KtDiagnosticFactory0("EMPTY_ARGUMENT", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val EMPTY_ARGUMENT_IN_ARRAY_ACCESS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EMPTY_ARGUMENT_IN_ARRAY_ACCESS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val EMPTY_ARGUMENT_IN_COLLECTION_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("EMPTY_ARGUMENT_IN_COLLECTION_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val ILLEGAL_ESCAPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_ESCAPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INT_LITERAL_OUT_OF_RANGE: KtDiagnosticFactory0 = KtDiagnosticFactory0("INT_LITERAL_OUT_OF_RANGE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

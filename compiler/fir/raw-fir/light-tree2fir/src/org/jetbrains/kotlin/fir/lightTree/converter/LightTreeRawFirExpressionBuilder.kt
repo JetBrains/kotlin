@@ -1158,7 +1158,7 @@ class LightTreeRawFirExpressionBuilder(
     private fun convertCollectionLiteralExpression(expression: LighterASTNode): FirExpression {
         val firExpressionList = mutableListOf<FirExpression>()
         expression.forEachChildren {
-            if (it.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(it, "Incorrect collection literal argument")
+            if (it.isExpression()) firExpressionList += it.toArgumentExpression(FirArgumentOrigin.CollectionLiteral)
         }
 
         return buildArrayLiteral {
@@ -1175,7 +1175,7 @@ class LightTreeRawFirExpressionBuilder(
     private fun convertIndices(indices: LighterASTNode): List<FirExpression> {
         val firExpressionList: MutableList<FirExpression> = mutableListOf()
         indices.forEachChildren {
-            if (it.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(it, "Incorrect index expression")
+            if (it.isExpression()) firExpressionList += it.toArgumentExpression(FirArgumentOrigin.ArrayAccess)
         }
 
         return firExpressionList
@@ -1661,6 +1661,15 @@ class LightTreeRawFirExpressionBuilder(
         }
     }
 
+    private fun LighterASTNode.toArgumentExpression(argumentOrigin: FirArgumentOrigin): FirExpression {
+        return if (tokenType == EMPTY_VALUE_ARGUMENT)
+            buildErrorExpression(
+                toFirSourceElement(KtFakeSourceElementKind.ErrorExpression),
+                ConeArgumentIsNotProvided(argumentOrigin),
+            )
+        else getAsFirExpression(this, "Incorrect ${argumentOrigin.asString}")
+    }
+
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseValueArgument
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.toFirExpression(org.jetbrains.kotlin.psi.ValueArgument)
@@ -1674,14 +1683,8 @@ class LightTreeRawFirExpressionBuilder(
                 VALUE_ARGUMENT_NAME -> identifier = it.asText
                 MUL -> isSpread = true
                 STRING_TEMPLATE -> firExpression = convertStringTemplate(it)
-                EMPTY_VALUE_ARGUMENT -> {
-                    firExpression = buildErrorExpression(
-                        it.toFirSourceElement(kind = KtFakeSourceElementKind.ErrorExpression),
-                        ConeArgumentIsNotProvided
-                    )
-                }
                 is KtConstantExpressionElementType -> firExpression = convertConstantExpression(it)
-                else if it.isExpression() -> firExpression = getAsFirExpression(it, "Argument is absent")
+                else if it.isExpression() -> firExpression = it.toArgumentExpression(FirArgumentOrigin.RegularCall)
             }
         }
         val calculatedFirExpression =

@@ -275,6 +275,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_UPPER_BOU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ELSE_MISPLACED_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_CHARACTER_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_ARGUMENT_IN_ARRAY_ACCESS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_ARGUMENT_IN_COLLECTION_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_ENTRY_AS_TYPE
@@ -933,7 +935,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NESTED_CLASS_NOT_ALLOWED_IN_LOCAL, "''{0}'' is prohibited here.", TO_STRING)
         map.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal.")
         map.put(EMPTY_CHARACTER_LITERAL, "Empty character literal.")
-        map.put(EMPTY_ARGUMENT, "Expected an argument.")
+        map.put(EMPTY_ARGUMENT, "Expecting an argument.")
+        map.put(EMPTY_ARGUMENT_IN_ARRAY_ACCESS, "Expecting an index element.")
+        map.put(EMPTY_ARGUMENT_IN_COLLECTION_LITERAL, "Expecting an element.")
         map.put(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL, "Too many characters in a character literal.")
         map.put(ILLEGAL_ESCAPE, "Unsupported escape sequence.")
         map.put(INT_LITERAL_OUT_OF_RANGE, "Value out of range.")

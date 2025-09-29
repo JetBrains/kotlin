@@ -956,7 +956,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   ;
      */
     private void parseArrayAccess() {
-        parseAsCollectionLiteralExpression(INDICES, false, "Expecting an index element");
+        parseAsCollectionLiteralExpression(INDICES, false);
     }
 
     /*
@@ -965,10 +965,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   ;
      */
     private void parseCollectionLiteralExpression() {
-        parseAsCollectionLiteralExpression(COLLECTION_LITERAL_EXPRESSION, true, "Expecting an element");
+        parseAsCollectionLiteralExpression(COLLECTION_LITERAL_EXPRESSION, true);
     }
 
-    private void parseAsCollectionLiteralExpression(IElementType nodeType, boolean canBeEmpty, String missingElementErrorMessage) {
+    private void parseAsCollectionLiteralExpression(IElementType nodeType, boolean canBeEmpty) {
         assert _at(LBRACKET);
 
         PsiBuilder.Marker innerExpressions = mark();
@@ -977,10 +977,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         advance(); // LBRACKET
 
         if (!canBeEmpty && at(RBRACKET)) {
-            error(missingElementErrorMessage);
+            PsiBuilder.Marker empty = mark();
+            empty.done(EMPTY_VALUE_ARGUMENT);
         }
         else {
-            parseInnerExpressions(missingElementErrorMessage);
+            parseInnerExpressions();
         }
 
         expect(RBRACKET, "Expecting ']'");
@@ -989,15 +990,18 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         innerExpressions.done(nodeType);
     }
 
-    private void parseInnerExpressions(String missingElementErrorMessage) {
+    private void parseInnerExpressions() {
         while (true) {
-            if (at(COMMA)) errorAndAdvance(missingElementErrorMessage);
-            if (at(RBRACKET)) {
+            if (at(COMMA)) {
+                PsiBuilder.Marker empty = mark();
+                empty.done(EMPTY_VALUE_ARGUMENT);
+            } else if (at(RBRACKET)) {
                 break;
+            } else {
+                parseExpression();
+                if (!at(COMMA)) break;
             }
-            parseExpression();
 
-            if (!at(COMMA)) break;
             advance(); // COMMA
         }
     }

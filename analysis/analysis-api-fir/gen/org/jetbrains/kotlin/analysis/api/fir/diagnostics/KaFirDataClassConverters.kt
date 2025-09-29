@@ -212,6 +212,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EMPTY_ARGUMENT_IN_ARRAY_ACCESS) { firDiagnostic ->
+        EmptyArgumentInArrayAccessImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EMPTY_ARGUMENT_IN_COLLECTION_LITERAL) { firDiagnostic ->
+        EmptyArgumentInCollectionLiteralImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL) { firDiagnostic ->
         TooManyCharactersInCharacterLiteralImpl(
             firDiagnostic as KtPsiDiagnostic,

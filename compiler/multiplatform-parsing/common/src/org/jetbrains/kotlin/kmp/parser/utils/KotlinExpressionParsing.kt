@@ -960,7 +960,7 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseArrayAccess() {
-        parseAsCollectionLiteralExpression(KtNodeTypes.INDICES, false, "Expecting an index element")
+        parseAsCollectionLiteralExpression(KtNodeTypes.INDICES, false)
     }
 
     /*
@@ -969,10 +969,10 @@ internal open class KotlinExpressionParsing(
      *   ;
      */
     private fun parseCollectionLiteralExpression() {
-        parseAsCollectionLiteralExpression(KtNodeTypes.COLLECTION_LITERAL_EXPRESSION, true, "Expecting an element")
+        parseAsCollectionLiteralExpression(KtNodeTypes.COLLECTION_LITERAL_EXPRESSION, true)
     }
 
-    private fun parseAsCollectionLiteralExpression(nodeType: SyntaxElementType, canBeEmpty: Boolean, missingElementErrorMessage: String) {
+    private fun parseAsCollectionLiteralExpression(nodeType: SyntaxElementType, canBeEmpty: Boolean) {
         require(at(KtTokens.LBRACKET))
 
         val innerExpressions = mark()
@@ -981,9 +981,10 @@ internal open class KotlinExpressionParsing(
         advance() // LBRACKET
 
         if (!canBeEmpty && at(KtTokens.RBRACKET)) {
-            error(missingElementErrorMessage)
+            val mark = mark()
+            mark.done(KtNodeTypes.EMPTY_VALUE_ARGUMENT)
         } else {
-            parseInnerExpressions(missingElementErrorMessage)
+            parseInnerExpressions()
         }
 
         expect(KtTokens.RBRACKET, "Expecting ']'")
@@ -992,18 +993,17 @@ internal open class KotlinExpressionParsing(
         innerExpressions.done(nodeType)
     }
 
-    private fun parseInnerExpressions(missingElementErrorMessage: String) {
+    private fun parseInnerExpressions() {
         while (true) {
             if (at(KtTokens.COMMA)) {
-                errorAndAdvance(missingElementErrorMessage)
-            }
-            if (at(KtTokens.RBRACKET)) {
+                val mark = mark()
+                mark.done(KtNodeTypes.EMPTY_VALUE_ARGUMENT)
+            } else if (at(KtTokens.RBRACKET)) {
                 break
-            }
-            parseExpression()
-
-            if (!at(KtTokens.COMMA)) {
-                break
+            } else {
+                parseExpression()
+                if (!at(KtTokens.COMMA))
+                    break
             }
             advance() // COMMA
         }
