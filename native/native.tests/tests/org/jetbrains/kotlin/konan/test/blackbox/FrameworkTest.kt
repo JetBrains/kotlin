@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
-import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
+import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions

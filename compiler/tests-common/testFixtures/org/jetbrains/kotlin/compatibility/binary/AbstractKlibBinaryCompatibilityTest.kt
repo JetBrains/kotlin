@@ -45,7 +45,7 @@ abstract class AbstractKlibBinaryCompatibilityTest : KotlinTestWithEnvironment()
             doTest(filePath, "OK")
         } catch (e: Throwable) {
             if (failFile.exists()) {
-                KotlinTestUtils.assertEqualsToFile(failFile, e.message ?: "")
+                TestDataAssertions.assertEqualsToFile(failFile, e.message ?: "")
             } else {
                 throw e
             }

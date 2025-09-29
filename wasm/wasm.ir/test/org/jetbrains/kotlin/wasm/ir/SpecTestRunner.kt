@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.wasm.ir
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
+import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmBinaryToIR

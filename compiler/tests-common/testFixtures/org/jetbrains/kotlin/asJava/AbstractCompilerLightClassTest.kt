@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.util.KotlinFrontEndException
 import org.junit.Assert
 import java.io.File
@@ -36,7 +37,7 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Kotl
             { fqname -> findLightClass(allowFrontendExceptions, environment, fqname) },
             { LightClassTestCommon.removeEmptyDefaultImpls(it).replace("\$test_module", "\$light_idea_test_case") },
         )
-        KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
+        TestDataAssertions.assertEqualsToFile(expectedFile, actual)
     }
 
     override fun createTestModule(

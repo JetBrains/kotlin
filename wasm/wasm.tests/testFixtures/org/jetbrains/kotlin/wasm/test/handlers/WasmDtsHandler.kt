@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.backend.handlers.WasmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 
 class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
@@ -28,6 +27,6 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
         val generatedDts = info.compilerResult.dts
             ?: error("Can't find generated .d.ts file")
 
-        KotlinTestUtils.assertEqualsToFile(referenceDtsFile, generatedDts)
+        TestDataAssertions.assertEqualsToFile(referenceDtsFile, generatedDts)
     }
 }

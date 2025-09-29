@@ -11,7 +11,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import java.io.File
 import java.nio.file.Path
 import kotlin.test.assertTrue
@@ -75,7 +75,7 @@ internal fun Project.checkDiagnostics(
 
     val sanitizedTest = actualRenderedText.replace(File.separator, "/")
 
-    KotlinTestUtils.assertEqualsToFile(expectedDiagnostics, sanitizedTest)
+    TestDataAssertions.assertEqualsToFile(expectedDiagnostics, sanitizedTest)
 }
 
 // An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.

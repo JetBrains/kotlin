@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -32,6 +32,6 @@ class JsDtsHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         if (JsEnvironmentConfigurationDirectives.UPDATE_REFERENCE_DTS_FILES in globalDirectives)
             referenceDtsFile.writeText(generatedDts)
         else
-            KotlinTestUtils.assertEqualsToFile(referenceDtsFile, generatedDts)
+            TestDataAssertions.assertEqualsToFile(referenceDtsFile, generatedDts)
     }
 }

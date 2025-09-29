@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinBaseTest
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.util.DescriptorValidator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE
@@ -212,7 +212,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         if (shouldCheckDiagnosticsFullText) {
             diagnosticsFullTextCollector.flush()
             diagnosticsFullTextPrintStream.flush()
-            KotlinTestUtils.assertEqualsToFile(
+            TestDataAssertions.assertEqualsToFile(
                 File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".diag.txt"),
                 String(diagnosticsFullTextByteArrayStream.toByteArray())
             )
@@ -232,7 +232,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     }
 
     protected open fun checkDiagnostics(actualText: String, testDataFile: File) {
-        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText)
+        TestDataAssertions.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText)
     }
 
     private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
@@ -328,7 +328,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         }
 
         if (actualText.isNotEmpty() || expectedFile.exists()) {
-            KotlinTestUtils.assertEqualsToFile(expectedFile, actualText.toString())
+            TestDataAssertions.assertEqualsToFile(expectedFile, actualText.toString())
         }
     }
 
@@ -508,7 +508,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     "Such tests are hard to maintain, take long time to execute and are subject to sudden unreviewed changes anyway."
         }
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText)
+        TestDataAssertions.assertEqualsToFile(expectedFile, allPackagesText)
     }
 
 
