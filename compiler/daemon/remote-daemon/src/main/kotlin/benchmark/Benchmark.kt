@@ -6,12 +6,16 @@
 package benchmark
 
 import client.core.RemoteCompilationClient
+import kotlinx.coroutines.delay
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import model.CompilationResultSource
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
+import java.io.File
+import kotlin.time.Duration
+import kotlin.time.TimeSource
 
 enum class RemoteCompilationServiceImplType {
     GRPC,
@@ -19,15 +23,18 @@ enum class RemoteCompilationServiceImplType {
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-class Benchmark {
+class Benchmark(
+    val implType: RemoteCompilationServiceImplType,
+    val host: String,
+    val port: Int
+) {
 
-    suspend fun compileProject(client: RemoteCompilationClient, tasks: List<Task>) {
-//        client.cleanup() // TODO consider removing, this was just fro JMH multiple iterations
+    private suspend fun compileProject(client: RemoteCompilationClient, tasks: List<Task>) {
         val compilationOptions = CompilationOptions(
             compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
             targetPlatform = CompileService.TargetPlatform.JVM,
-            reportSeverity = 0,
-            reportCategories = arrayOf(),
+            reportSeverity = 1,
+            reportCategories = arrayOf(0, 1, 2, 3, 4),
             requestedCompilationResults = arrayOf(),
         )
 
@@ -41,69 +48,63 @@ class Benchmark {
                 compilationOptions,
             )
 
-            println("Compilation number $index finished with exit code ${res.exitCode}")
             if (res.exitCode != 0) {
                 throw IllegalStateException("Thrown: Compilation number $index failed with exit code ${res.exitCode}")
             }
             if (res.compilationResultSource == CompilationResultSource.CACHE) {
                 fromCache++
+                println("Compilation $index finished with exit code ${res.exitCode}, from cache")
             } else {
                 fromCompiler++
-                println("Compilation number $index returned from compiler")
-//                throw IllegalStateException("Thrown: Compilation number $index returned from compiler")
+                println("Compilation $index finished with exit code ${res.exitCode}, from compiler")
             }
         }
         println("${tasks.size} tasks compiled from cache: $fromCache, from compiler: $fromCompiler")
     }
+
+    suspend fun run(
+        iterations: Int,
+        tasks: List<Task>
+    ) {
+        val times = mutableListOf<Duration>()
+
+        for (i in 0..<iterations) {
+            println("run number: $i")
+            val client = RemoteCompilationClient.getClient(implType, host, port)
+            client.cleanup()
+            client.close()
+            val warmupDuration = measureSuspend {
+                val client = RemoteCompilationClient.getClient(implType, host, port)
+                compileProject(client, tasks)
+            }
+            times.add(warmupDuration)
+            println("times: $times")
+            println("average: ${times.reduce { acc, duration -> acc + duration } / (i+1)}")
+            if (times.size > 1)
+                println(
+                    "average without warmup ${
+                        times.subList(1, times.size).reduce { acc, duration -> acc + duration } / i
+                    }")
+        }
+    }
+
+    suspend fun measureSuspend(block: suspend () -> Unit): Duration {
+        val mark = TimeSource.Monotonic.markNow()
+        block()
+        return mark.elapsedNow()
+    }
 }
-// HOW TO RUN
-// 1. add this task to build.gradle of Ktor project
-//tasks.register("assembleAllKotlin") {
-//    allprojects {
-//        dependsOn(tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>())
-//    }
-//}
-//
-// 2. run this command that redirects all output to a file
-// ./gradlew --stop && ./gradlew clean && ./gradlew assembleAllKotlin --no-configuration-cache --rerun --no-build-cache --refresh-dependencies -Pkotlin.internal.compiler.arguments.log.level=warning -Pkotlin.incremental=false > output
-//
-// 3. create a file in this Kotlin project and paste there the generated output from previous step
-//
-// 4. pass the path of the file to getTask function
-//
-// 5. run this command to build required modules for our app
-// ./gradlew :libraries:build && ./gradlew :kotlin-scripting-compiler-impl-embeddable:build && ./gradlew :kotlin-scripting-compiler-impl:build && ./gradlew :kotlin-scripting-compiler-embeddable:build && ./gradlew :kotlinx-serialization-compiler-plugin.embeddable:build
-//
-// 6. swap paths of hardcoded dependencies for yours in CompilerUtils.getMap() function, starting on line 89
-//
-// 7. change CWD of this configuration to /kotlin/compiler/daemon/remote-daemon
-//
-// 8. ready to run the main function
 
 suspend fun main() {
-    val ktorTasks =
-        TasksExtractor.getTasks("/Users/michal.svec/Desktop/ktor/output")
-    println("We have ${ktorTasks.size} tasks to compile")
+    val ktorTasks = TasksExtractor.getTasks("/Users/michal.svec/Desktop/ktor/output").toMutableList()
+    ktorTasks.removeAt(44) // this task requires some compiler plugin incompatible with our compiler version
 
     val localPort = 8000
     val localHost = "localhost"
 
-    val remotePort = 443
+    val remotePort = 443 // because SSL
     val remoteWebsocketsHost = "remote-kotlin-daemon-websockets.labs.jb.gg"
     val remoteGrpcHost = "remote-kotlin-daemon-grpc.labs.jb.gg"
 
-    val implType = RemoteCompilationServiceImplType.GRPC
-//    val server = RemoteCompilationServer.getServer(implType, localPort, logging = true)
-    val client = RemoteCompilationClient.getClient(implType, localHost, localPort)
-
-//    server.start(block = false)
-    val benchmark = Benchmark()
-//    client.cleanup()
-    benchmark.compileProject(client, ktorTasks)
-//    server.stop()
-
-//    SERVER_CACHE_DIR.toFile().deleteRecursively()
-//    SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
-//    CLIENT_TMP_DIR.toFile(ench).deleteRecursively()
-//    CLIENT_COMPILED_DIR.toFile().deleteRecursively()
+    Benchmark(RemoteCompilationServiceImplType.GRPC, remoteGrpcHost, remotePort).run(16, ktorTasks)
 }
