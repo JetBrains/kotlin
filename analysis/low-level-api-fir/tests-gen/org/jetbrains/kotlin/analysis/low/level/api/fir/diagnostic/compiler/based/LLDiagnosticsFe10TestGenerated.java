@@ -543,12 +543,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
-    @TestMetadata("emptyArguments.kt")
-    public void testEmptyArguments() {
-      runTest("compiler/testData/diagnostics/tests/emptyArguments.kt");
-    }
-
-    @Test
     @TestMetadata("emptyLhsClassLiterals.kt")
     public void testEmptyLhsClassLiterals() {
       runTest("compiler/testData/diagnostics/tests/emptyLhsClassLiterals.kt");
@@ -17879,6 +17873,36 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("controlStructuresErrors.kt")
       public void testControlStructuresErrors() {
         runTest("compiler/testData/diagnostics/tests/incompleteCode/controlStructuresErrors.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArguments.kt")
+      public void testEmptyArguments() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArgumentsInArrayAccess.kt")
+      public void testEmptyArgumentsInArrayAccess() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArgumentsInArrayAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArgumentsInArrayLiterals.kt")
+      public void testEmptyArgumentsInArrayLiterals() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArgumentsInArrayLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArgumentsInConstructors.kt")
+      public void testEmptyArgumentsInConstructors() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArgumentsInConstructors.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyNamedAndSpreadArguments.kt")
+      public void testEmptyNamedAndSpreadArguments() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyNamedAndSpreadArguments.kt");
       }
 
       @Test
