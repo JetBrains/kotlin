@@ -148,7 +148,7 @@ fun <T> KotlinTypeFacade.interpret(
                     "'$name' should be ${PluginDataFrameSchema::class.qualifiedName!!}, but plugin expect $expectedReturnType"
                 }
 
-                val objectWithSchema = it.expression.getSchema()
+                val objectWithSchema = context(session) { it.expression.getSchema(isTest) }
                 if (objectWithSchema == null) {
                     reporter.doNotReportInterpretationError()
                     null
@@ -509,22 +509,25 @@ internal fun FirFunctionCall.collectArgumentExpressions(): RefinedArguments {
     return RefinedArguments(refinedArgument)
 }
 
-internal val KotlinTypeFacade.getSchema: FirExpression.() -> ObjectWithSchema? get() = { getSchema(session) }
-
-internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
+context(session: FirSession)
+internal fun FirExpression.getSchema(isTest: Boolean): ObjectWithSchema? {
     return resolvedType.toSymbol(session)?.let {
         val (typeRef: ConeKotlinType, symbol) = if (it is FirTypeAliasSymbol) {
             it.resolvedExpandedTypeRef.coneType to it.resolvedExpandedTypeRef.toClassLikeSymbol(session)!!
         } else {
             resolvedType to it
         }
-        symbol.resolvedAnnotationsWithArguments.firstNotNullOfOrNull {
+        val objectWithSchema = symbol.resolvedAnnotationsWithArguments.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
                 val argumentName = Name.identifier(HasSchema::schemaArg.name)
                 val schemaArg = (it.findArgumentByName(argumentName) as FirLiteralExpression).value
                 ObjectWithSchema((schemaArg as Number).toInt(), typeRef)
             }
-        } ?: error("Annotate $symbol with @HasSchema")
+        }
+        if (objectWithSchema == null && isTest) {
+            error("Annotate $symbol with @HasSchema")
+        }
+        objectWithSchema
     }
 }
 
