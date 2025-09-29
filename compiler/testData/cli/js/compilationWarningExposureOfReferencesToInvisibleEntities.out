@@ -1,3 +1,4 @@
+info: `-Xklib-ir-inliner=full` will trigger setting the `pre-release` flag for the compiled library.
 compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.kt:5:37: warning: public-API inline function references a non Public-API function 'foo'. This could happen as a result of cascaded inlining of the following functions:
 private inline fun privateFun1(): KFunction0<Unit>
 private inline fun privateFun2(): KFunction0<Unit>

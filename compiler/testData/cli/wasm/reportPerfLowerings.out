@@ -1,1 +1,2 @@
+info: `-Xklib-ir-inliner=full` will trigger setting the `pre-release` flag for the compiled library.
 OK
