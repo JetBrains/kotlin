@@ -28,6 +28,7 @@ open class IncrementalJvmCompilerRunner(
     private val classpathChanges: ClasspathChanges,
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
+    generateCompilerRefIndex: Boolean = false,
 ) : IncrementalJvmCompilerRunnerBase(
     workingDir = workingDir,
     reporter = reporter,
@@ -35,6 +36,7 @@ open class IncrementalJvmCompilerRunner(
     outputDirs = outputDirs,
     kotlinSourceFilesExtensions = kotlinSourceFilesExtensions,
     icFeatures = icFeatures,
+    generateCompilerRefIndex = generateCompilerRefIndex,
 ) {
     override val shouldTrackChangesInLookupCache
         get() = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun

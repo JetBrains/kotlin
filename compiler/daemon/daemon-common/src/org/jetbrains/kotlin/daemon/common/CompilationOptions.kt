@@ -34,6 +34,7 @@ open class CompilationOptions(
     /** @See [CompilationResultCategory]] */
     val requestedCompilationResults: Array<Int>,
     val kotlinScriptExtensions: Array<String>? = null,
+    val generateCompilerRefIndex: Boolean = false,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -46,7 +47,8 @@ open class CompilationOptions(
                 "reportCategories=${Arrays.toString(reportCategories)}, " +
                 "reportSeverity=$reportSeverity, " +
                 "requestedCompilationResults=${Arrays.toString(requestedCompilationResults)}, " +
-                "kotlinScriptExtensions=${Arrays.toString(kotlinScriptExtensions)}" +
+                "kotlinScriptExtensions=${Arrays.toString(kotlinScriptExtensions)}, " +
+                "generateCompilerRefIndex=$generateCompilerRefIndex" +
                 ")"
     }
 }
@@ -78,13 +80,15 @@ class IncrementalCompilationOptions(
 
     kotlinScriptExtensions: Array<String>? = null,
     val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
+    generateCompilerRefIndex: Boolean = false,
 ) : CompilationOptions(
     compilerMode,
     targetPlatform,
     reportCategories,
     reportSeverity,
     requestedCompilationResults,
-    kotlinScriptExtensions
+    kotlinScriptExtensions,
+    generateCompilerRefIndex,
 ) {
     companion object {
         const val serialVersionUID: Long = 5
