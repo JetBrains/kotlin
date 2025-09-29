@@ -106,9 +106,11 @@ class VariableFixationFinder(
         READY_FOR_FIXATION_UPPER,
         READY_FOR_FIXATION_LOWER,
 
-        // Currently used in 2.2+ ONLY for self-type based declared upper bounds
-        // Captured types are difficult to manipulate, so with T <: Captured(...)
-        // it's better to fix T earlier than T >: SomeRegularType / T <: SomeRegularType
+        // Currently used in 2.2+ ONLY for self-type based declared upper bounds in particular situations
+        // Captured types are difficult to manipulate, so with T <: Captured(...) AND T <: K
+        // it's better to fix T earlier than K >: SomeRegularType / K <: SomeRegularType,
+        // as otherwise we will have T <: Captured(...) & SomeRegularType
+        // which is often problematic
         // TODO: it would be probably better to use READY_FOR_FIXATION_UPPER here and to have
         // it prioritized in comparison with READY_FOR_FIXATION_LOWER (however, KT-41934 example currently prevents it)
         READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES,
@@ -136,12 +138,16 @@ class VariableFixationFinder(
             // Pre-2.2: might be fixed, but this condition should come earlier than the next one,
             // because self-type-based cases do not have proper constraints, though they assumed to be fixed
             // 2.2+: self-type-based upper bounds are considered captured upper bounds
+            // (update: only in particular situations with another constraint like T <: K available, see KT-80577),
             // and have higher priority as upper/lower (affects e.g. KT-74999)
             // For reified variables we keep old behavior, as captured types aren't usable for their substitutions (see KT-49838, KT-51040)
-            areAllProperConstraintsSelfTypeBased() -> if (!fixationEnhancementsIn22 || isReified()) {
-                TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
-            } else {
-                TypeVariableFixationReadiness.READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+            // See other comments for READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES itself
+            areAllProperConstraintsSelfTypeBased() -> {
+                if (fixationEnhancementsIn22 && !isReified() && hasDirectConstraintToNotFixedRelevantVariable()) {
+                    TypeVariableFixationReadiness.READY_FOR_FIXATION_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+                } else {
+                    TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
+                }
             }
 
             // Prevents from fixation
@@ -163,6 +169,11 @@ class VariableFixationFinder(
             hasLowerNonNothingProperConstraint() -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
             else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
         }
+    }
+
+    context(c: Context)
+    private fun TypeConstructorMarker.hasDirectConstraintToNotFixedRelevantVariable(): Boolean {
+        return c.notFixedTypeVariables[this]?.constraints?.any { it.type.isNotFixedRelevantVariable() } == true
     }
 
     context(c: Context)
