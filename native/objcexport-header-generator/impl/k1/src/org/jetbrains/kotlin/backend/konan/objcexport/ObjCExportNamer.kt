@@ -98,6 +98,17 @@ interface ObjCExportNamer {
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
     fun needsExplicitMethodFamily(name: String): Boolean
 
+    // Null means no NSEnum property.
+    fun getNSEnumTypeName(descriptor: ClassDescriptor): ObjCExportNSEnumTypeName? =
+        descriptor.annotations.findAnnotation(KonanFqNames.objCEnum)?.let {
+            val name = ((it.argumentValue("name")?.value as String?)?.ifEmpty { null })
+                ?: "${getClassOrProtocolName(descriptor).objCName}NSEnum"
+            val swiftName = ((it.argumentValue("swiftName")?.value as String?)?.ifEmpty { null })
+                ?: ((it.argumentValue("name")?.value as String?)?.ifEmpty { null })
+                ?: "${getClassOrProtocolName(descriptor).swiftName}NSEnum"
+            ObjCExportNSEnumTypeName(swiftName = swiftName, objCName = name)
+        }
+
     companion object {
         @InternalKotlinNativeApi
         const val kotlinThrowableAsErrorMethodName: String = "asError"
@@ -107,6 +118,9 @@ interface ObjCExportNamer {
 
         @InternalKotlinNativeApi
         const val companionObjectPropertyName: String = "companion"
+
+        @InternalKotlinNativeApi
+        const val nsEnumPropertyName: String = "nsEnum"
     }
 }
 
