@@ -36,6 +36,7 @@ data class WasmRefType(val heapType: WasmHeapType) : WasmType("ref", -0x1C)
 
 object WasmI31Ref : WasmType("i31ref", -0x14)
 object WasmStructRef : WasmType("structref", -0x15)
+object WasmArrayRef : WasmType("arrayref", -0x16)
 
 sealed class WasmHeapType {
     data class Type(val type: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmHeapType() {

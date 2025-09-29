@@ -475,6 +475,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
         WasmRefNullExternrefType,
         WasmI31Ref,
         WasmStructRef,
+        WasmArrayRef,
     ).associateBy { it.code }
 
     private fun readValueType(): WasmType {
