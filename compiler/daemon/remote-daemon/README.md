@@ -295,6 +295,9 @@ In case any configuration is not working because a client cannot connect to the 
 
 Sometimes the connection does not work right away after deployment because of some `DNS` related issues. Probably it just takes some time to propagate the changes.
 
+#### gRPC Nginx issue
+When doing benchmarks, I noticed that the `gRPC` server is almost twice as slow as the `WebSockets` server. I started investigating this issue, and after exchanging a few messages with a coworker from the `SRE` team, we think the problem likely lies in the `Nginx` configuration. It seems that Nginx might be interfering with the HTTP/2 protocol. The conversation can be followed at this [link](https://jetbrains.slack.com/archives/C01QA0S88N7/p1758800865498599).
+
 ## Cache
 For caching we use a standard filesystem with the following folder structure:
 - `/storage`
