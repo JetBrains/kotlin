@@ -171,11 +171,12 @@ internal object CompilationServiceImpl : CompilationService {
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> {
                 @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
-                val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(
+                val allSources = extractKotlinSourcesFromFreeCompilerArguments(
                     parsedArguments,
                     kotlinFilenameExtensions,
                     includeJavaSources = true
                 ) + sources
+                val javaSources = allSources.filter { it.isJavaFile() }.map { it.absolutePath }
 
                 @Suppress("UNCHECKED_CAST")
                 val classpathChanges =
@@ -211,8 +212,9 @@ internal object CompilationServiceImpl : CompilationService {
                 val rootProjectDir = options.rootProjectDir
                 val buildDir = options.buildDir
                 parsedArguments.incrementalCompilation = true
+                parsedArguments.freeArgs += javaSources
                 incrementalCompiler.compile(
-                    kotlinSources, parsedArguments, loggerAdapter, aggregatedIcConfiguration.sourcesChanges.asChangedFiles,
+                    allSources, parsedArguments, loggerAdapter, aggregatedIcConfiguration.sourcesChanges.asChangedFiles,
                     fileLocations = if (rootProjectDir != null && buildDir != null) {
                         FileLocations(rootProjectDir, buildDir)
                     } else null

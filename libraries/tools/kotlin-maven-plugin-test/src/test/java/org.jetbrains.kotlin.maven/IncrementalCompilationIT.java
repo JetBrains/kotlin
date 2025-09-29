@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.maven;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -21,7 +20,6 @@ public class IncrementalCompilationIT extends MavenITBase {
     }
 
     public IncrementalCompilationIT(MavenProject.ExecutionStrategy executionStrategy) {
-        Assume.assumeFalse("KT-81218", executionStrategy == MavenProject.ExecutionStrategy.IN_PROCESS);
         this.executionStrategy = executionStrategy;
     }
 

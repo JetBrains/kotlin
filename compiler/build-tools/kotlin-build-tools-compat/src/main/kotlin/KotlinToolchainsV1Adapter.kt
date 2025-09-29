@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1
 import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.compat.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.incremental.isJavaFile
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
@@ -181,16 +182,29 @@ private class JvmCompilationOperationV1Adapter(
             )
         }
 
+        val javaSources = kotlinSources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
+        val compilerArguments = compilerArguments.toArgumentStrings().fixForFirCheck() + listOf(
+            "-d",
+            destinationDirectory.absolutePathString()
+        )
         return compilationService.compileJvm(
             projectId,
             executionPolicy.strategyConfiguration,
             config,
             kotlinSources.map { it.toFile() },
-            compilerArguments.toArgumentStrings().fixForFirCheck() + listOf(
-                "-d",
-                destinationDirectory.absolutePathString()
-            ) + kotlinSources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
+            if (compilationService.treatsJavaSourcesProperly()) compilerArguments else compilerArguments + javaSources,
         )
+    }
+
+    /**
+     * It's better to avoid arguments duplication for the versions that contain the fix
+     */
+    private fun CompilationService.treatsJavaSourcesProperly(): Boolean = try {
+        val kotlinCompilerVersion = KotlinToolingVersion(getCompilerVersion())
+        kotlinCompilerVersion >= KotlinToolingVersion(2, 2, 21, null)
+    } catch (_: Exception) {
+        // there might be no getCompilerVersion in older versions
+        false
     }
 
     private class JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter : JvmSnapshotBasedIncrementalCompilationOptions {
