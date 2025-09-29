@@ -215,7 +215,6 @@ internal class BtaImplGenerator(
                         add(maybeGetNullabilitySign(argument))
                         add(".let { it.toInt() }")
                     }
-                    else -> ""
                 }
             }.build(), failOnNoSuchMethod = false)
         }
