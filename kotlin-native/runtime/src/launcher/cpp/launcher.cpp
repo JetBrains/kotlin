@@ -74,7 +74,7 @@ OBJ_GETTER(setupArgsWindows) {
 extern "C" KInt Konan_run_start(int argc, const char** argv) {
     ObjHolder args;
 #ifdef KONAN_WINDOWS
-    setupArgsWindows(args.slow());
+    setupArgsWindows(args.slot());
 #else
     setupArgs(argc, argv, args.slot());
 #endif
