@@ -276,6 +276,8 @@ private fun KotlinTypeFacade.extractValue(
 
             is FirErrorExpression -> null
 
+            is FirLiteralExpression -> result.value
+
             else -> null
         }
         col?.let { Interpreter.Success(it) }

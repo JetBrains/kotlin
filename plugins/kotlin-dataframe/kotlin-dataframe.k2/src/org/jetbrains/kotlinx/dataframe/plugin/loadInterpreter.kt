@@ -182,6 +182,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Implode
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ImplodeDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InnerJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InsertAt
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.IntoStringLambda
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.JoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.LeftJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
@@ -225,6 +226,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameIntoLambda
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameMapping
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameColumn
@@ -412,6 +414,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "Remove0" -> Remove0()
         "Group0" -> Group0()
         "Into0" -> Into0()
+        "IntoStringLambda" -> IntoStringLambda()
         "Ungroup0" -> Ungroup0()
         "DropNulls0" -> DropNulls0()
         "DropNulls1" -> DropNulls1()
@@ -423,6 +426,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "Exclude0" -> Exclude0()
         "Exclude1" -> Exclude1()
         "RenameInto" -> RenameInto()
+        "RenameIntoLambda" -> RenameIntoLambda()
         "DataFrameGroupBy" -> DataFrameGroupBy()
         "AsGroupBy" -> AsGroupBy()
         "AsGroupByDefault" -> AsGroupByDefault()

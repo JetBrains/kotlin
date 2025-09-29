@@ -23,3 +23,12 @@ class Into0 : AbstractSchemaModificationInterpreter() {
         return receiver.df.asDataFrame().group { receiver.columns }.into(column).toPluginDataFrameSchema()
     }
 }
+
+class IntoStringLambda : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: GroupClauseApproximation by arg()
+    val Arguments.column: String by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return receiver.df.asDataFrame().group { receiver.columns }.into(column).toPluginDataFrameSchema()
+    }
+}
