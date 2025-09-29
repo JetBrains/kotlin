@@ -22,6 +22,10 @@ import TestCompilePaths.KOTLIN_THIRDPARTY_ANNOTATIONS_PATH
 import TestCompilePaths.KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH
 import TestCompilePaths.KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH
 import TestCompilePaths.KOTLIN_THIRDPARTY_JSR305_PATH
+import TestCompilePaths.KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH
+import TestCompilePaths.KOTLIN_WASM_JS_STDLIB_KLIB_PATH
+import TestCompilePaths.KOTLIN_WASM_WASI_KOTLIN_TEST_KLIB_PATH
+import TestCompilePaths.KOTLIN_WASM_WASI_STDLIB_KLIB_PATH
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -71,6 +75,23 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
     @get:InputFiles
     @get:Classpath
     abstract val testJsRuntimeForTests: ConfigurableFileCollection
+
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val stdlibWasmJsRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val stdlibWasmWasiRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val testWasmJsRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val testWasmWasiRuntimeForTests: ConfigurableFileCollection
 
     @get:Input
     abstract val testDataMap: MapProperty<String, String>
@@ -138,6 +159,12 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             ifNotEmpty(KOTLIN_JS_STDLIB_KLIB_PATH, stdlibJsRuntimeForTests),
             ifNotEmpty(KOTLIN_JS_REDUCED_STDLIB_PATH, stdlibJsRuntimeForTests),
             ifNotEmpty(KOTLIN_JS_KOTLIN_TEST_KLIB_PATH, testJsRuntimeForTests),
+
+            ifNotEmpty(KOTLIN_WASM_JS_STDLIB_KLIB_PATH, stdlibWasmJsRuntimeForTests),
+            ifNotEmpty(KOTLIN_WASM_WASI_STDLIB_KLIB_PATH, stdlibWasmWasiRuntimeForTests),
+            ifNotEmpty(KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH, testWasmJsRuntimeForTests),
+            ifNotEmpty(KOTLIN_WASM_WASI_KOTLIN_TEST_KLIB_PATH, testWasmWasiRuntimeForTests),
+
             mockJdkRuntimeJar.orNull?.let { "-D$KOTLIN_MOCKJDK_RUNTIME_PATH=${it.asFile.absolutePath}" },
             mockJDKModifiedRuntime.orNull?.let { "-D$KOTLIN_MOCKJDKMODIFIED_RUNTIME_PATH=${it.asFile.absolutePath}" },
             mockJdkAnnotationsJar.orNull?.let { "-D$KOTLIN_MOCKJDK_ANNOTATIONS_PATH=${it.asFile.absolutePath}" },

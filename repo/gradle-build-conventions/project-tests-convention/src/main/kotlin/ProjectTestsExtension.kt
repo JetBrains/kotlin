@@ -61,6 +61,18 @@ abstract class ProjectTestsExtension(val project: Project) {
     val testJsRuntimeForTests: Configuration = project.configurations.create("testJsRuntimeForTests") {
         isTransitive = false
     }
+    val stdlibWasmJsRuntimeForTests: Configuration = project.configurations.create("stdlibWasmJsRuntimeForTests") {
+        isTransitive = false
+    }
+    val stdlibWasmWasiRuntimeForTests: Configuration = project.configurations.create("stdlibWasmWasiRuntimeForTests") {
+        isTransitive = false
+    }
+    val testWasmJsRuntimeForTests: Configuration = project.configurations.create("testWasmJsRuntimeForTests") {
+        isTransitive = false
+    }
+    val testWasmWasiRuntimeForTests: Configuration = project.configurations.create("testWasmWasiRuntimeForTests") {
+        isTransitive = false
+    }
 
     private val noOp = project.kotlinBuildProperties.isInJpsBuildIdeaSync
     private fun add(configuration: Configuration, dependency: DependencyHandler.() -> ProjectDependency) {
@@ -97,6 +109,13 @@ abstract class ProjectTestsExtension(val project: Project) {
 
     fun withTestJsRuntime() {
         add(testJsRuntimeForTests) { project(":kotlin-test", "jsRuntimeElements") }
+    }
+
+    fun withWasmRuntime() {
+        add(stdlibWasmJsRuntimeForTests) { project(":kotlin-stdlib", "wasmJsRuntimeElements") }
+        add(stdlibWasmWasiRuntimeForTests) { project(":kotlin-stdlib", "wasmWasiRuntimeElements") }
+        add(testWasmJsRuntimeForTests) { project(":kotlin-test", "wasmJsRuntimeElements") }
+        add(testWasmWasiRuntimeForTests) { project(":kotlin-test", "wasmWasiRuntimeElements") }
     }
 
     fun withScriptingPlugin() {

@@ -304,3 +304,10 @@ val npmInstall by tasks.getting(NpmTask::class) {
     npmCommand.set(listOf("ci"))
 }
 
+tasks.processTestFixturesResources.configure {
+    from(project.layout.projectDirectory.dir("_additionalFilesForTests"))
+    from(project(":compiler").layout.projectDirectory.dir("testData/debug")) {
+        into("debugTestHelpers")
+        include("jsTestHelpers/")
+    }
+}

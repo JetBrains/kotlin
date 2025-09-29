@@ -63,4 +63,5 @@ grant {
 
     // Allow access to declared input directories
     {{inputs}}
+
 };
