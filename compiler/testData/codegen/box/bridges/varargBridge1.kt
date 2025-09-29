@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 // FILE: O.kt
 
 package example
