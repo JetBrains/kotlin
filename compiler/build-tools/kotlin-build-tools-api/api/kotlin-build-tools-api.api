@@ -450,6 +450,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranular
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/ClasspathEntrySnapshot {
 	public abstract fun getClassSnapshots ()Ljava/util/Map;
 	public abstract fun saveSnapshot (Ljava/io/File;)V
+	public fun saveSnapshot (Ljava/nio/file/Path;)V
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/ClasspathSnapshotBasedIncrementalCompilationApproachParameters : org/jetbrains/kotlin/buildtools/api/jvm/IncrementalCompilationApproachParameters {
