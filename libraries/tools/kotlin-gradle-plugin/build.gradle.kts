@@ -560,7 +560,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     functionalTestCompilation.configurations.pluginConfiguration.dependencies.add(
-        dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable")
+        dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
     )
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
