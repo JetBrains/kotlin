@@ -27,11 +27,16 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
 
     protected fun URL.toTestFile(relativePath: String? = null): TestFile {
         val name = this.file.substringAfterLast("/")
+        val dir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("filesFromResources")
+        val originalContent = this.readText()
+        val realFile = dir.resolve(name).also {
+            it.writeText(originalContent)
+        }
         return TestFile(
             relativePath = relativePath?.let(Paths::get)?.resolve(name)?.toString() ?: name,
-            originalContent = this.readText(),
+            originalContent = originalContent,
             // TODO(KT-76305) add support for resources in jars
-            originalFile = File("resource"),
+            originalFile = realFile,
             startLineNumberInOriginalFile = 0,
             isAdditional = true,
             directives = RegisteredDirectives.Empty

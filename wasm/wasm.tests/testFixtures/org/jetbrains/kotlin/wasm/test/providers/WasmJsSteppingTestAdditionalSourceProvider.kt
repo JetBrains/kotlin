@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.wasm.test.providers
 
-import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
+import org.jetbrains.kotlin.js.test.AbstractWebJsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
 
-class WasmJsSteppingTestAdditionalSourceProvider(testServices: TestServices) : JsSteppingTestAdditionalSourceProvider(testServices) {
-    override val commonTestHelpersFile = "compiler/testData/debug/wasmTestHelpers/coroutineHelpers.kt"
+class WasmJsSteppingTestAdditionalSourceProvider(testServices: TestServices) : AbstractWebJsSteppingTestAdditionalSourceProvider(testServices) {
+    // real sources are located inside `compiler/testData/debug/wasmTestHelpers`
+    override val commonTestHelpersFile = "debugTestHelpers/wasmTestHelpers/coroutineHelpers.kt"
     override val minimalTestHelpersLocation = null
     override val withStdlibTestHelpersFile = null
 }

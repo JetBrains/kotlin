@@ -18,17 +18,17 @@
             </array>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/compiler/testData/debug/stepping">
-          <value>
-            <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/{firStepping,firSteppingWithInlinedFunInKlib,irStepping}/$TEST_DATA_FILE$_v5.js" />
-            </array>
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/compiler/testData/debug/localVariables">
           <value>
             <array>
               <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/localVariables/$TEST_DATA_FILE$_v5.js" />
+            </array>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/compiler/testData/debug/stepping">
+          <value>
+            <array>
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/{firStepping,firSteppingWithInlinedFunInKlib,irStepping}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
@@ -77,6 +77,18 @@
         </entry>
       </map>
     </option>
+    <option name="testDataDirectories">
+      <array>
+        <option value="$PROJECT_DIR$/compiler/testData/klib/partial-linkage" />
+        <option value="$PROJECT_DIR$/jps/jps-plugin/testData" />
+        <option value="$PROJECT_DIR$/js/js.translator/testData/incremental" />
+        <option value="$PROJECT_DIR$/native/native.tests/testData/klib/header-klibs" />
+        <option value="$PROJECT_DIR$/native/swift/swift-export-standalone-integration-tests/simple/testData" />
+        <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData/projects" />
+        <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />
+        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin" />
+      </array>
+    </option>
     <option name="testDataFiles">
       <array>
         <option value="$PROJECT_DIR$/analysis/analysis-api/testData" />
@@ -93,7 +105,6 @@
         <option value="$PROJECT_DIR$/plugins/assign-plugin/testData" />
         <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/compose/compiler-hosted/testData" />
-        <option value="$PROJECT_DIR$/plugins/imports-dumper/testData" />
         <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData" />
         <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />
         <option value="$PROJECT_DIR$/plugins/kapt/kapt-base/testData" />
@@ -110,23 +121,6 @@
         <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData" />
         <option value="$PROJECT_DIR$/plugins/scripting/scripting-tests/testData" />
         <option value="$PROJECT_DIR$/libraries/tools/kotlinp/jvm/testData" />
-      </array>
-    </option>
-    <option name="testDataDirectories">
-      <array>
-        <option value="$PROJECT_DIR$/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo" />
-        <option value="$PROJECT_DIR$/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder" />
-        <option value="$PROJECT_DIR$/compiler/testData/integration/ant" />
-        <option value="$PROJECT_DIR$/compiler/testData/klib/partial-linkage" />
-        <option value="$PROJECT_DIR$/jps/jps-plugin/testData" />
-        <option value="$PROJECT_DIR$/js/js.translator/testData/incremental" />
-        <option value="$PROJECT_DIR$/native/native.tests/testData/klib/header-klibs" />
-        <option value="$PROJECT_DIR$/native/swift/sir-compiler-bridge/testData" />
-        <option value="$PROJECT_DIR$/native/swift/swift-export-standalone-integration-tests/simple/testData" />
-        <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData/projects" />
-        <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />
-        <option value="$PROJECT_DIR$/plugins/kapt/kapt-cli/testData/integration-kapt4" />
-        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin" />
       </array>
     </option>
     <option name="testTags">
@@ -167,14 +161,6 @@
             <array>
               <option value="FIR" />
               <option value="JVM" />
-            </array>
-          </value>
-        </entry>
-        <entry key="FirJs.*BoxCodegen.*">
-          <value>
-            <array>
-              <option value="FIR" />
-              <option value="JS" />
             </array>
           </value>
         </entry>
@@ -232,6 +218,14 @@
             </array>
           </value>
         </entry>
+        <entry key="FirJs.*BoxCodegen.*">
+          <value>
+            <array>
+              <option value="FIR" />
+              <option value="JS" />
+            </array>
+          </value>
+        </entry>
         <entry key="FirJs.*Codegen.*">
           <value>
             <array>
@@ -249,15 +243,6 @@
             </array>
           </value>
         </entry>
-        <entry key="JsIrDeserialization.*">
-          <value>
-            <array>
-              <option value="FIR" />
-              <option value="JS" />
-              <option value="Klib" />
-            </array>
-          </value>
-        </entry>
         <entry key="FirNative.*Codegen.*">
           <value>
             <array>
@@ -267,15 +252,6 @@
           </value>
         </entry>
         <entry key="FirNative.*WithInlined.*">
-          <value>
-            <array>
-              <option value="FIR" />
-              <option value="Native" />
-              <option value="Klib" />
-            </array>
-          </value>
-        </entry>
-        <entry key="NativeIrDeserialization.*">
           <value>
             <array>
               <option value="FIR" />
@@ -323,6 +299,33 @@
             </array>
           </value>
         </entry>
+        <entry key="Js.*BlackBoxCodegenWithSeparateKmpCompilationTestGenerated">
+          <value>
+            <array>
+              <option value="FIR" />
+              <option value="JS" />
+              <option value="HMPP" />
+            </array>
+          </value>
+        </entry>
+        <entry key="JsIrDeserialization.*">
+          <value>
+            <array>
+              <option value="FIR" />
+              <option value="JS" />
+              <option value="Klib" />
+            </array>
+          </value>
+        </entry>
+        <entry key="Jvm.*BlackBoxCodegenWithSeparateKmpCompilationTestGenerated">
+          <value>
+            <array>
+              <option value="FIR" />
+              <option value="JVM" />
+              <option value="HMPP" />
+            </array>
+          </value>
+        </entry>
         <entry key="JvmAbiConsistency.*">
           <value>
             <array>
@@ -358,6 +361,15 @@
             <array>
               <option value="K1" />
               <option value="Native" />
+            </array>
+          </value>
+        </entry>
+        <entry key="NativeIrDeserialization.*">
+          <value>
+            <array>
+              <option value="FIR" />
+              <option value="Native" />
+              <option value="Klib" />
             </array>
           </value>
         </entry>
@@ -405,24 +417,6 @@
           <value>
             <array>
               <option value="FIR" />
-            </array>
-          </value>
-        </entry>
-        <entry key="Jvm.*BlackBoxCodegenWithSeparateKmpCompilationTestGenerated">
-          <value>
-            <array>
-              <option value="FIR" />
-              <option value="JVM" />
-              <option value="HMPP" />
-            </array>
-          </value>
-        </entry>
-        <entry key="Js.*BlackBoxCodegenWithSeparateKmpCompilationTestGenerated">
-          <value>
-            <array>
-              <option value="FIR" />
-              <option value="JS" />
-              <option value="HMPP" />
             </array>
           </value>
         </entry>
