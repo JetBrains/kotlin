@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.typeBinding.TypeArgumentBinding
 import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
+import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.KotlinTestUtils.loadKtFile
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.utils.Printer

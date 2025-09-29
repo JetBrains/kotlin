@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
@@ -78,7 +78,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
         val firFileDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
         val expectedPath = expectedPath(filePath, ".txt")
-        KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
+        TestDataAssertions.assertEqualsToFile(File(expectedPath), firFileDump)
         checkAnnotationOwners(filePath, firFile)
     }
 
@@ -117,7 +117,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
                 }
             }
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
+        TestDataAssertions.assertEqualsToFile(expectedFile, actual)
     }
 
     protected open fun createKtFile(filePath: String): KtFile {

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.toSourceLinesMapping
 import java.io.File
 
@@ -181,7 +181,7 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
         }
 
         val expectedPath = testDataFile.path.replace(".kt", ".txt")
-        KotlinTestUtils.assertEqualsToFile(File(expectedPath), stringBuilder.toString())
+        TestDataAssertions.assertEqualsToFile(File(expectedPath), stringBuilder.toString())
     }
 
     override fun createTestFileFromPath(filePath: String): File {

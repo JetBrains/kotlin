@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.native.executors.NoOpExecutor
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.*
 import java.io.File
 import kotlin.test.assertFalse
@@ -263,7 +263,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         )
         val output = testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath).output
         Assumptions.assumeFalse(testRunSettings.testProcessExecutor is NoOpExecutor) // no output in that case.
-        KotlinTestUtils.assertEqualsToFile(rootDir.resolve("override_main.out"), output)
+        TestDataAssertions.assertEqualsToFile(rootDir.resolve("override_main.out"), output)
     }
 
     @Test
@@ -333,6 +333,6 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         }
         val output = testRunSettings.testProcessExecutor.runProcess(kexe.absolutePath).output
         Assumptions.assumeFalse(testRunSettings.testProcessExecutor is NoOpExecutor) // no output in that case.
-        KotlinTestUtils.assertEqualsToFile(rootDir.resolve("main.out"), output)
+        TestDataAssertions.assertEqualsToFile(rootDir.resolve("main.out"), output)
     }
 }

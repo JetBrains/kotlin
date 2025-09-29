@@ -51,8 +51,8 @@ import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
@@ -762,7 +762,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         val expectedFile = File(getCurrentTestDataRoot(), "expected.txt")
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile, actual.toString())
+        TestDataAssertions.assertEqualsToFile(expectedFile, actual.toString())
     }
 
     fun testJre11() {
@@ -1023,7 +1023,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                 .map { it as CompilerMessage }
                 .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
         val expectedFile = File(getCurrentTestDataRoot(), "errors.txt")
-        KotlinTestUtils.assertEqualsToFile(expectedFile, actualErrors)
+        TestDataAssertions.assertEqualsToFile(expectedFile, actualErrors)
     }
 
     private fun getCurrentTestDataRoot() = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement;
+import org.jetbrains.kotlin.test.TestDataAssertions;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -152,7 +153,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentMa
         }
 
         File expectedInstructionsFile = KotlinTestUtils.replaceExtension(file, getDataFileExtension());
-        KotlinTestUtils.assertEqualsToFile(expectedInstructionsFile, instructionDump.toString());
+        TestDataAssertions.assertEqualsToFile(expectedInstructionsFile, instructionDump.toString());
     }
 
     protected String getDataFileExtension() {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import java.io.File
 
 @OptIn(SymbolInternals::class)
@@ -51,7 +51,7 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
             builder.appendLine()
         }
 
-        KotlinTestUtils.assertEqualsToFile(
+        TestDataAssertions.assertEqualsToFile(
             File(testDataPath),
             builder.toString().trimEnd() + "\n"
         )

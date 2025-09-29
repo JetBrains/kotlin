@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.tests
 
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
 import org.jetbrains.kotlin.backend.konan.testUtils.forwardDeclarationsDir
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.fail
@@ -48,6 +48,6 @@ class ObjCExportForwardDeclarationsTest(
             generatedHeaders.renderClassForwardDeclarations().forEach(this::appendLine)
             generatedHeaders.renderProtocolForwardDeclarations().forEach(this::appendLine)
         }
-        KotlinTestUtils.assertEqualsToFile(root.resolve("!${root.nameWithoutExtension}.h"), renderedForwardDeclarations)
+        TestDataAssertions.assertEqualsToFile(root.resolve("!${root.nameWithoutExtension}.h"), renderedForwardDeclarations)
     }
 }

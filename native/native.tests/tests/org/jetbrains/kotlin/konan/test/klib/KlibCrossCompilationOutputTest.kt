@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.toOutput
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.jupiter.api.Assumptions
@@ -48,7 +48,7 @@ class KlibCrossCompilationOutputTest : AbstractNativeSimpleTest() {
         val compilationResult = compileLibrary(testRunSettings, rootDir.resolve("hello.kt"))
         val expectedOutput = rootDir.resolve("output.txt")
 
-        KotlinTestUtils.assertEqualsToFile(expectedOutput, compilationResult.toOutput().sanitizeCrossCompilationOutput())
+        TestDataAssertions.assertEqualsToFile(expectedOutput, compilationResult.toOutput().sanitizeCrossCompilationOutput())
     }
 
     private fun String.sanitizeCrossCompilationOutput(): String = lines().joinToString(separator = "\n") { line ->

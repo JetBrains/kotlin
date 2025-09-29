@@ -175,7 +175,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             }.toString()
 
             val expectedFile = File(javaFile.absolutePath.replace(".java", ".fir.txt"))
-            KotlinTestUtils.assertEqualsToFile(expectedFile, javaFirDump)
+            TestDataAssertions.assertEqualsToFile(expectedFile, javaFirDump)
         } catch (e: Throwable) {
             if (!hasSkipDirective) throw e
             else return

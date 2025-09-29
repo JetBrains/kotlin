@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.resolve.JvmCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -69,7 +69,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(directory, "module-proto.txt"), result)
+        TestDataAssertions.assertEqualsToFile(File(directory, "module-proto.txt"), result)
     }
 
     fun testSimple() {

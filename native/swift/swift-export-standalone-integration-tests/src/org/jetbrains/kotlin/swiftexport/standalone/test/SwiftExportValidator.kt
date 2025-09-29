@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.assertAll
 import java.io.File
 import kotlin.collections.plus
@@ -36,10 +36,10 @@ interface SwiftExportValidator {
                     val expectedKotlinBridge = expectedFiles / it.name / "${it.name}.kt"
 
                     buildList {
-                        add { KotlinTestUtils.assertEqualsToFile(expectedSwift, files.swiftApi.readText()) }
-                        add { KotlinTestUtils.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText()) }
+                        add { TestDataAssertions.assertEqualsToFile(expectedSwift, files.swiftApi.readText()) }
+                        add { TestDataAssertions.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText()) }
                         if (validateKotlinBridge) {
-                            add { KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText()) }
+                            add { TestDataAssertions.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText()) }
                         }
                     }
                 }
@@ -49,7 +49,7 @@ interface SwiftExportValidator {
                             val expectedFiles = goldenData.toPath() / "golden_result/"
                             val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
 
-                            listOf { KotlinTestUtils.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }
+                            listOf { TestDataAssertions.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }
                         }
                         SwiftExportModule.SwiftOnly.Kind.KotlinRuntimeSupport -> {
                             // No need to verify predefined files.
