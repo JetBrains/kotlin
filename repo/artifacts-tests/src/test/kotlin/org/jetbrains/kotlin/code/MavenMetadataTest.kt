@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.code
 
+import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.isTeamCityBuild
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import java.util.stream.Stream

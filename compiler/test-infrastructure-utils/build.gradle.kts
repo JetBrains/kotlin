@@ -6,6 +6,7 @@ plugins {
 }
 
 dependencies {
+    testFixturesImplementation(libs.opentest4j)
     testFixturesImplementation(project(":compiler:fir:entrypoint"))
     testFixturesImplementation(project(":compiler:cli"))
     testFixturesImplementation(intellijCore())

@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 
 class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -25,7 +25,7 @@ class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(te
         try {
             D8Checker.check(info.classFileFactory)
         } catch (e: Throwable) {
-            if (!testServices.assertions.isTeamCityBuild &&
+            if (!isTeamCityBuild &&
                 !testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
             ) {
                 try {
