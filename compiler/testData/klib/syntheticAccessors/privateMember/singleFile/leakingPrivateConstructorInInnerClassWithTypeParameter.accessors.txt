@@ -9,15 +9,15 @@ public class A
             /* TARGET use-site */ <this>
             /* TARGET use-site */ <this>.Inner<T>(s = "" as T)
         internal inline fun internalInlineMethod(s: T): Inner<T>
-            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
-            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>).Inner<T>(s = s, $constructor_marker = null)
+            /* ACCESSOR use-site */ access$<outer-this-0><T>($this = <this>)
+            /* ACCESSOR use-site */ access$<outer-this-0><T>($this = <this>).Inner<T>(s = s, $constructor_marker = null)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): A
             /* TARGET use-site */ <this>
         /* ACCESSOR declaration */ internal constructor(s: T, $constructor_marker: SyntheticConstructorMarker?)
             /* TARGET use-site */ <this>.Inner<T>(s = s)
-        /* ACCESSOR declaration */ internal /* static */ fun access$<outer-this-0>($this: Inner<T>): A
+        /* ACCESSOR declaration */ internal /* static */ fun <T : Any?> access$<outer-this-0>($this: Inner<T>): A
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: A
 public fun box(): String
-    /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
-    /* ACCESSOR use-site */ access$<outer-this-0>($this = this).Inner<Any?>(s = s, $constructor_marker = null)
+    /* ACCESSOR use-site */ access$<outer-this-0><Any?>($this = this)
+    /* ACCESSOR use-site */ access$<outer-this-0><Any?>($this = this).Inner<Any?>(s = s, $constructor_marker = null)
