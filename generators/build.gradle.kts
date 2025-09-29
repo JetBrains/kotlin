@@ -50,6 +50,7 @@ dependencies {
     interpreterApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     protobufApi(kotlinStdlib())
     protobufCompareApi(testFixtures(project(":kotlin-build-common")))
+    protobufCompareApi(testFixtures(project(":compiler:tests-common")))
     nativeInteropRuntimeApi(kotlinStdlib())
 
     testApi(builtinsSourceSet.output)
