@@ -56,7 +56,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 dependencies {
                     implementation(project())
                     implementation(gradleKotlinDsl())
-                    implementation(project(":compiler:cli-common"))
+                    implementation(project(":compiler:cli-common")) { isTransitive = false }
                     implementation(platform(libs.junit.bom))
                     implementation(libs.junit.jupiter.api)
                     implementation("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
