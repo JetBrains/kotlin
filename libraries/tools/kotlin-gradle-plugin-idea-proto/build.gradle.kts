@@ -25,8 +25,10 @@ dependencies {
     api(project(":kotlin-gradle-plugin-idea"))
     embedded(libs.protobuf.java)
     embedded(libs.protobuf.kotlin)
-    testImplementation(kotlinTest("junit"))
-    testImplementation(kotlin("reflect"))
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    testImplementation(kotlin("stdlib", coreDepsVersion))
+    testImplementation(kotlin("reflect", coreDepsVersion))
+    testImplementation(kotlin("test-junit", coreDepsVersion))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
 }
 

@@ -109,6 +109,8 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     ":wasm:wasm.config", // for k/js task
 )
 
+val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
@@ -207,7 +209,7 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(testFixtures(project(":kotlin-build-common")))
     testImplementation(project(":kotlin-compiler-runner"))
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlin("test-junit", coreDepsVersion))
     testImplementation(libs.junit.jupiter.api)
 
     testImplementation(project(":kotlin-gradle-statistics"))
