@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.test
 
-import junit.framework.TestCase
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
-class ValueAgnosticSanitizerTest : TestCase() {
+class ValueAgnosticSanitizerTest {
     companion object {
         private val INT = ValueAgnosticSanitizer.generatePlaceholder(ValueAgnosticSanitizer.INT_MARKER)
         private val UINT = ValueAgnosticSanitizer.generatePlaceholder(ValueAgnosticSanitizer.UINT_MARKER)
@@ -17,6 +17,7 @@ class ValueAgnosticSanitizerTest : TestCase() {
         private val QUOTED_STRING = ValueAgnosticSanitizer.generatePlaceholder(ValueAgnosticSanitizer.QUOTED_STRING_MAKER)
     }
 
+    @Test
     fun testPlaceholders() {
         assertExpectEqualsActual(
             "$UINT   $UINT   $INT   $REAL   $REAL   $REAL   $QUOTED_STRING   $QUOTED_STRING",
@@ -24,6 +25,7 @@ class ValueAgnosticSanitizerTest : TestCase() {
         )
     }
 
+    @Test
     fun testMismatchedTypes() {
         assertExpectNotEqualsActual(
             "$INT $UINT $REAL $INT $UINT ",
@@ -32,6 +34,7 @@ class ValueAgnosticSanitizerTest : TestCase() {
         )
     }
 
+    @Test
     fun testLiterals() {
         assertExpectEqualsActual(
             """42 0.53 -67 "a\"b" 'c\'d'""",
@@ -39,6 +42,7 @@ class ValueAgnosticSanitizerTest : TestCase() {
         )
     }
 
+    @Test
     fun testMismatchedLiterals() {
         assertExpectNotEqualsActual(
             """5 32.0 -7 "expected_str1" 'expected_str2' 'single_quoted_str' """,
@@ -47,6 +51,7 @@ class ValueAgnosticSanitizerTest : TestCase() {
         )
     }
 
+    @Test
     fun testEmptyExpect() {
         // Generate placeholders on nonexisting/empty expected file
         assertExpectNotEqualsActual(
@@ -56,10 +61,12 @@ class ValueAgnosticSanitizerTest : TestCase() {
         )
     }
 
+    @Test
     fun testUIntInActualMatchesIntInExpect() {
         assertExpectEqualsActual(INT, "123")
     }
 
+    @Test
     fun testSingleQuotedStringDoesntMatchDoubleQuotedString() {
         assertExpectNotEqualsActual(
             """ 'single_quoted_str' """,
@@ -68,6 +75,7 @@ class ValueAgnosticSanitizerTest : TestCase() {
         )
     }
 
+    @Test
     fun testMixedQuotesInStringLiterals() {
         assertExpectNotEqualsActual(
             """ $QUOTED_STRING """,
@@ -76,11 +84,13 @@ class ValueAgnosticSanitizerTest : TestCase() {
         )
     }
 
+    @Test
     fun testQuotedStringMatchingIsNotGreedy() {
         assertExpectEqualsActual(""" $QUOTED_STRING: $QUOTED_STRING """, """ 'kind': 'string' """)
         assertExpectEqualsActual(""" $QUOTED_STRING: $QUOTED_STRING """, """ "kind": "string" """)
     }
 
+    @Test
     fun testMismatchedPlaceholdersAndLiterals() {
         assertExpectNotEqualsActual(
             """
@@ -104,7 +114,7 @@ class ValueAgnosticSanitizerTest : TestCase() {
     }
 }
 
-class NumberAgnosticComparerAlignmentTest : TestCase() {
+class NumberAgnosticComparerAlignmentTest {
     private val standardPaddingCount = 8
     private val numberThatFitsPadding = 123L
     private val numberThatDoesntFitPadding = 12345678901L
@@ -114,44 +124,52 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
     private val incorrectBigPaddingInExpect = 12
 
     // Typical case: a value fits padding count
+    @Test
     fun testRightAlignmentTypical() {
         checkAlignmentTypical(ValueAgnosticSanitizer.Alignment.Right)
     }
 
     // Expect template is incorrect -> it requires increasing/decreasing the number of spaces left to $UINT$ placeholder
+    @Test
     fun testRightAlignmentWhenPaddingSpacesInExpectAreIncorrect() {
         checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectSmallPaddingInExpect, ValueAgnosticSanitizer.Alignment.Right)
         checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectBigPaddingInExpect, ValueAgnosticSanitizer.Alignment.Right)
     }
 
     // A value exceeds padding count -> it requires increasing the number of padding spaces in code that prints this string
+    @Test
     fun testRightAlignmentWhenPrintedStringExceedsPaddingSpaces() {
         checkAlignmentWhenPrintedStringExceedPaddingSpaces(ValueAgnosticSanitizer.Alignment.Right)
     }
 
     // Incorrect marker in expect template -> it requires fixing the marker
+    @Test
     fun testRightAlignmentWhenExpectAlignmentMarkerIsIncorrect() {
         checkAlignmentWhenIncorrectMarkerInExpect(ValueAgnosticSanitizer.Alignment.Right, ValueAgnosticSanitizer.Alignment.Left)
         checkAlignmentWhenIncorrectMarkerInExpect(ValueAgnosticSanitizer.Alignment.Right, ValueAgnosticSanitizer.Alignment.None)
     }
 
     // Typical case: a value fits padding count
+    @Test
     fun testLeftAlignmentTypical() {
         checkAlignmentTypical(ValueAgnosticSanitizer.Alignment.Left)
     }
 
     // Expect template is incorrect -> it requires increasing/decreasing the number of spaces right to $UINT$ placeholder
+    @Test
     fun testLeftAlignmentWhenPaddingSpacesInExpectAreIncorrect() {
         checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectSmallPaddingInExpect, ValueAgnosticSanitizer.Alignment.Left)
         checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectBigPaddingInExpect, ValueAgnosticSanitizer.Alignment.Left)
     }
 
     // A value exceeds padding count -> it requires increasing the number of padding spaces in code that prints this string
+    @Test
     fun testLeftAlignmentWhenPrintedStringExceedsPaddingSpaces() {
         checkAlignmentWhenPrintedStringExceedPaddingSpaces(ValueAgnosticSanitizer.Alignment.Left)
     }
 
     // Incorrect marker in expect template -> it requires fixing the marker
+    @Test
     fun testLeftAlignmentWhenExpectAlignmentMarkerIsIncorrect() {
         checkAlignmentWhenIncorrectMarkerInExpect(ValueAgnosticSanitizer.Alignment.Left, ValueAgnosticSanitizer.Alignment.Right)
         checkAlignmentWhenIncorrectMarkerInExpect(ValueAgnosticSanitizer.Alignment.Left, ValueAgnosticSanitizer.Alignment.None)
