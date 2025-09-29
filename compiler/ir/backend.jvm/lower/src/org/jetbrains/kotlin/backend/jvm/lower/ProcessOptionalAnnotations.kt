@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 /**
  * Records metadata of `@OptionalExpectation`-annotated classes to backend-specific storage, later written to `.kotlin_module`.
  */
-@PhaseDescription(name = "ProcessOptionalAnnotations")
 class ProcessOptionalAnnotations(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         for (declaration in irFile.declarations) {

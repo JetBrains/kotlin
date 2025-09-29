@@ -64,8 +64,6 @@ class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Co
             .withCheckers(IrExpressionBodyInFunctionChecker)
 }
 
-
-@PhaseDescription(name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase")
 class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringContext>(
     context: Context,
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker,

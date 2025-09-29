@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.enclosingMethodOverride
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 /**
  * Finds enclosing methods for objects inside inline and dynamic lambdas.
  */
-@PhaseDescription(name = "RecordEnclosingMethods")
 internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
         irFile.accept(object : IrVisitor<Unit, IrFunction?>() {

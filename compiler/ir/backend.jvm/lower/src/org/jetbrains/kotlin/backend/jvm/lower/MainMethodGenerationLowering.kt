@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -59,7 +58,6 @@ import org.jetbrains.kotlin.types.Variance
  *    }
  *    ```
  */
-@PhaseDescription(name = "MainMethodGeneration")
 @PhasePrerequisites(JvmOverloadsAnnotationLowering::class)
 internal class MainMethodGenerationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {

@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsSymbols
 import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.FunctionWithJsFuncAnnotationInliner
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
@@ -89,7 +87,6 @@ private typealias InlinableLambdaCapturingReporter = (IrExpression, IrValueDecla
  *
  * The outlined functions are inlined again later by [FunctionWithJsFuncAnnotationInliner] during the codegen phase.
  */
-@PhaseDescription("JsCodeOutliningLowering")
 class JsCodeOutliningLowering(
     val loweringContext: LoweringContext,
     val reportInlinableFunctionCaptured: InlinableLambdaCapturingReporter? = null,

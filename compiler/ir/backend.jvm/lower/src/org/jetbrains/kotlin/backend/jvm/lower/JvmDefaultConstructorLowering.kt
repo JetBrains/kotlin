@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.hasMangledParameters
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.ir.util.passTypeArgumentsFrom
  * > parameterless constructor which will use the default values. This makes it easier to use Kotlin with libraries such as Jackson
  * > or JPA that create class instances through parameterless constructors.
  */
-@PhaseDescription(name = "JvmDefaultConstructor")
 @PhasePrerequisites(JvmOverloadsAnnotationLowering::class)
 internal class JvmDefaultConstructorLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {

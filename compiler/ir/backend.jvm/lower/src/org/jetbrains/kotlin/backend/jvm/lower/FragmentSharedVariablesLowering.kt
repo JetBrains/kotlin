@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  *
  * See `FragmentDeclarationGenerator.declareParameter` for the psi2ir half of this logic.
  */
-@PhaseDescription(name = "FragmentSharedVariablesLowering")
 internal class FragmentSharedVariablesLowering(
     val context: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {

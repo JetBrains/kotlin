@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
@@ -52,7 +51,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  *     - Otherwise, for each function in the multi-file part, a new function in the facade class is generated that calls it.
  * - Finally, it updates call sites of functions from parts to point to the corresponding function from the facade.
  */
-@PhaseDescription(name = "GenerateMultifileFacades")
 internal class GenerateMultifileFacades(private val context: JvmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val functionDelegates = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()

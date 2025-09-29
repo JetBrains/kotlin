@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -70,7 +69,6 @@ import kotlin.math.min
  *     CONST Null type=kotlin.Nothing? value=null
  * ```
  */
-@PhaseDescription(name = "FlattenStringConcatenationLowering")
 class FlattenStringConcatenationLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
     companion object {
         // There are two versions of String.plus in the library. One for nullable and one for non-nullable strings.

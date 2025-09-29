@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.ClassFakeOverrideReplacement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createDefaultImplsRedirection
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.ir.util.*
 /**
  * Adds bridge implementations in classes that inherit default implementations from interfaces.
  */
-@PhaseDescription(name = "InheritedDefaultMethodsOnClasses")
 internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (!irClass.isJvmInterface) {

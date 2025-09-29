@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -30,7 +29,6 @@ import java.lang.annotation.ElementType
  * Adds [java.lang.annotation.Documented], [java.lang.annotation.Retention], [java.lang.annotation.Target],
  * [java.lang.annotation.Repeatable] annotations to annotation classes.
  */
-@PhaseDescription(name = "AdditionalClassAnnotation")
 @PhasePrerequisites(RepeatedAnnotationLowering::class)
 internal class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     private val symbols = context.symbols.javaAnnotations

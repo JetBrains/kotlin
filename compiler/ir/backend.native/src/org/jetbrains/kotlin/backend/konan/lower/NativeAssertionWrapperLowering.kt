@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.common.lower.KlibAssertionWrapperLowering
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
-@PhaseDescription("NativeAssertionWrapperLowering")
 class NativeAssertionWrapperLowering(context: LoweringContext) : KlibAssertionWrapperLowering(context) {
     override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol = (context.symbols as PreSerializationNativeSymbols).isAssertionArgumentEvaluationEnabled
 }

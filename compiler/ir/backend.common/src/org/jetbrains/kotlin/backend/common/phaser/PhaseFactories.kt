@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import java.lang.reflect.ParameterizedType
 
-annotation class PhaseDescription(val name: String)
-
 fun <Context : LoweringContext> createFilePhases(
     vararg phases: ((Context) -> FileLoweringPass)?
 ): List<NamedCompilerPhase<Context, IrFile, IrFile>> {
@@ -75,7 +73,7 @@ abstract class LoweringPhase<Context : LoweringContext, Input : IrElement, Pass 
     val loweringClass: Class<out Pass>,
     protected val createLoweringPass: (Context) -> Pass,
 ) : NamedCompilerPhase<Context, Input, Input>(
-    loadPhaseName(loweringClass),
+    loweringClass.simpleName,
     preactions = DEFAULT_IR_ACTIONS,
     postactions = DEFAULT_IR_ACTIONS.map { f ->
         fun(actionState: ActionState, data: Pair<Input, Input>, context: Context) = f(actionState, data.second, context)
@@ -83,7 +81,3 @@ abstract class LoweringPhase<Context : LoweringContext, Input : IrElement, Pass 
 ) {
     override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input): Input = input
 }
-
-private fun loadPhaseName(loweringClass: Class<*>): String =
-    loweringClass.getDeclaredAnnotation(PhaseDescription::class.java)?.name
-        ?: error("Lowering phase is missing the @PhaseDescription annotation: ${loweringClass.name}")

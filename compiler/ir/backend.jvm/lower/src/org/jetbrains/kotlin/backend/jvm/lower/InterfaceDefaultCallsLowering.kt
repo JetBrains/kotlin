@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createDelegatingCallWithPlaceholderTypeArguments
 import org.jetbrains.kotlin.backend.jvm.ir.isSimpleFunctionCompiledToJvmDefault
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 /**
  * Redirects interface calls with default arguments to DefaultImpls (except methods compiled to JVM defaults).
  */
-@PhaseDescription(name = "InterfaceDefaultCalls")
 internal class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     // TODO If there are no default _implementations_ we can avoid generating defaultImpls class entirely by moving default arg dispatchers to the interface class
     override fun lower(irFile: IrFile) {

@@ -8,26 +8,22 @@ package org.jetbrains.kotlin.backend.jvm.lower;
 import org.jetbrains.kotlin.backend.common.lower.InnerClassConstructorCallsLowering
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesLowering
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesMemberBodyLowering
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 
 /**
  * Adds 'outer this' fields to inner classes.
  */
-@PhaseDescription(name = "InnerClasses")
 @PhasePrerequisites(JvmLocalDeclarationsLowering::class)
 internal class JvmInnerClassesLowering(context: JvmBackendContext) : InnerClassesLowering(context)
 
 /**
  * Replaces `this` with 'outer this' field references.
  */
-@PhaseDescription(name = "InnerClassesMemberBody")
 @PhasePrerequisites(JvmInnerClassesLowering::class)
 internal class JvmInnerClassesMemberBodyLowering(context: JvmBackendContext) : InnerClassesMemberBodyLowering(context)
 
 /**
  * Handles constructor calls for inner classes.
  */
-@PhaseDescription(name = "InnerClassConstructorCalls")
 internal class JvmInnerClassConstructorCallsLowering(context: JvmBackendContext) : InnerClassConstructorCallsLowering(context)

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Labels all loops for non-local `break`/`continue`.
  */
-@PhaseDescription(name = "UniqueLoopLabels")
 internal class UniqueLoopLabelsLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrVisitorVoid() {

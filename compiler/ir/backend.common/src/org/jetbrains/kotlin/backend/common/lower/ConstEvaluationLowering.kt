@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.platform.isWasm
 /**
  * Evaluates functions that are annotated with [kotlin.internal.IntrinsicConstEvaluation].
  */
-@PhaseDescription(name = "ConstEvaluationLowering")
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
     private val suppressErrors: Boolean = context.configuration.getBoolean(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS),

@@ -7,18 +7,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringPhase
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 
-@PhaseDescription(name = "JvmValidateIrBeforeLowering")
 internal class JvmK1IrValidationBeforeLoweringPhase(
     context: JvmBackendContext,
 ) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
@@ -31,7 +25,6 @@ internal class JvmK1IrValidationBeforeLoweringPhase(
     }
 }
 
-@PhaseDescription(name = "JvmValidateIrAfterLowering")
 internal class JvmIrValidationAfterLoweringPhase(
     context: JvmBackendContext,
 ) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -94,7 +93,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  *   }
  * ```
  */
-@PhaseDescription(name = "ForLoopsLowering")
 open class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     open val loopBodyTransformer: ForLoopBodyTransformer?
         get() = null

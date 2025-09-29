@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.originalSnippetValueSymbol
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.name.NameUtils
 
 val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier("\$\$eval")
 
-@PhaseDescription(name = "ReplSnippetsToClasses")
 internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val snippets = mutableListOf<IrReplSnippet>()

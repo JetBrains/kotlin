@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  * Moves interface members with default implementations to the associated DefaultImpls classes with bridges. It then performs a traversal
  * of any other code in this interface and redirects calls to the interface to the DefaultImpls, if functions were moved completely.
  */
-@PhaseDescription(name = "Interface")
 @PhasePrerequisites(JvmDefaultParameterInjector::class)
 internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
     private val removedFunctions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()

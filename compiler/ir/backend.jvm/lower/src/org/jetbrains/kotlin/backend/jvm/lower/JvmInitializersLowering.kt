@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.InitializersCleanupLowering
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 /**
  * Merges init blocks and field initializers into constructors.
  */
-@PhaseDescription(name = "Initializers")
 @PhasePrerequisites(
     // Depends on local class extraction, because otherwise local classes in initializers will be copied into each constructor.
     JvmLocalDeclarationPopupLowering::class,
@@ -25,7 +23,6 @@ internal class JvmInitializersLowering(context: JvmBackendContext) : Initializer
 /**
  * Removes non-static anonymous initializers and non-constant non-static field init expressions.
  */
-@PhaseDescription(name = "InitializersCleanup")
 @PhasePrerequisites(JvmInitializersLowering::class)
 internal class JvmInitializersCleanupLowering(context: JvmBackendContext) : InitializersCleanupLowering(
     context,

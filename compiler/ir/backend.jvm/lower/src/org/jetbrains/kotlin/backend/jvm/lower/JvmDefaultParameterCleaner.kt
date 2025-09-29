@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterCleaner
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 
 /**
  * Replaces default values arguments with stubs.
  */
-@PhaseDescription(name = "DefaultParameterCleaner")
 @PhasePrerequisites(JvmDefaultArgumentStubGenerator::class)
 internal class JvmDefaultParameterCleaner(
     context: JvmBackendContext

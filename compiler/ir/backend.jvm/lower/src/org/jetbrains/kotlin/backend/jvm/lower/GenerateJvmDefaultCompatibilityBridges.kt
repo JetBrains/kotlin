@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.ClassFakeOverrideReplacement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  * Generates default compatibility bridges for classes in `-jvm-default=enable/no-compatibility` modes.
  * See [org.jetbrains.kotlin.backend.jvm.ClassFakeOverrideReplacement.DefaultCompatibilityBridge].
  */
-@PhaseDescription(name = "GenerateJvmDefaultCompatibilityBridges")
 class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (!context.config.jvmDefaultMode.isEnabled) return
