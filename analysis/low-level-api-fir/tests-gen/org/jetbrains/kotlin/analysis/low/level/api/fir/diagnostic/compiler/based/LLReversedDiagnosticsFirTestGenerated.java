@@ -5504,6 +5504,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("kt79864.kt")
+      public void testKt79864() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt79864.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaAsReturnStatementOfLambda.kt")
       public void testLambdaAsReturnStatementOfLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdaAsReturnStatementOfLambda.kt");
