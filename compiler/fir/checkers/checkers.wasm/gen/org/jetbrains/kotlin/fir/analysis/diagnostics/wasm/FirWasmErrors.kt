@@ -26,6 +26,7 @@ object FirWasmErrors : KtDiagnosticsContainer() {
     // Annotations
     val JS_MODULE_PROHIBITED_ON_VAR: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_VAR", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_NON_EXTERNAL", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NESTED_JS_MODULE_PROHIBITED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_JS_MODULE_PROHIBITED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
 
     // Externals
