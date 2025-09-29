@@ -10,6 +10,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -498,6 +499,30 @@ class UklibPublicationIT : KGPBaseTest() {
             "META-INF",
             unpackedJar.listDirectoryEntries().single().name,
         )
+    }
+
+    @GradleTest
+    fun `uklib assemble - without sources - doesn't fail build`(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            "empty", gradleVersion
+        ) {
+            buildScriptInjection {
+                project.setUklibPublicationStrategy()
+                project.setUklibResolutionStrategy()
+            }
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    iosArm64()
+                    iosX64()
+                }
+            }
+        }.build("assemble")
     }
 
     // FIXME: Test consumption of jvm variant of a Uklib publication in a java plugin consumer

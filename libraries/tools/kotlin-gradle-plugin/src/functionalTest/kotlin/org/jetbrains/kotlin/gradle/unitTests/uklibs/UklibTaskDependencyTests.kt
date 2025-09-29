@@ -28,7 +28,6 @@ class UklibTaskDependencyTests {
         assertEquals(
             setOf<String>(
                 "allMetadataJar",
-                "archiveUklib",
                 "jvmJar",
             ).prettyPrinted,
             assembleDependencies.prettyPrinted,
