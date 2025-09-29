@@ -204,7 +204,6 @@ dependencies {
     commonCompileOnly("org.bouncycastle:bcpg-jdk18on:1.80")
 
     testCompileOnly(project(":compiler"))
-    testCompileOnly(project(":kotlin-annotation-processing"))
 
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(testFixtures(project(":kotlin-build-common")))
