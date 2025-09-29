@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -28,10 +29,8 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 /**
  * Moves local declarations to classes.
  */
-@PhaseDescription(
-    name = "JvmLocalDeclarations",
-    prerequisite = [FunctionReferenceLowering::class, SharedVariablesLowering::class]
-)
+@PhaseDescription(name = "JvmLocalDeclarations")
+@PhasePrerequisites(FunctionReferenceLowering::class, SharedVariablesLowering::class)
 internal class JvmLocalDeclarationsLowering(override val context: JvmBackendContext) : LocalDeclarationsLowering(
     context,
     JvmVisibilityPolicy,

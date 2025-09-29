@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
@@ -122,10 +123,8 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
 /**
  * Makes [IrGetField]/[IrSetField] to objects' fields point to the static versions.
  */
-@PhaseDescription(
-    name = "RemapObjectFieldAccesses",
-    prerequisite = [JvmPropertiesLowering::class],
-)
+@PhaseDescription(name = "RemapObjectFieldAccesses")
+@PhasePrerequisites(JvmPropertiesLowering::class)
 internal class RemapObjectFieldAccesses(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 

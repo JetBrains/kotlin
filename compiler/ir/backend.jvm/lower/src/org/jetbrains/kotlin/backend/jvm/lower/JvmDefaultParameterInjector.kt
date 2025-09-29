@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterInjector
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
@@ -23,10 +24,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.render
 
-@PhaseDescription(
-    name = "DefaultParameterInjector",
-    prerequisite = [FunctionReferenceLowering::class, JvmInlineCallableReferenceToLambdaPhase::class]
-)
+@PhaseDescription(name = "DefaultParameterInjector")
+@PhasePrerequisites(FunctionReferenceLowering::class, JvmInlineCallableReferenceToLambdaPhase::class)
 internal class JvmDefaultParameterInjector(context: JvmBackendContext) : DefaultParameterInjector<JvmBackendContext>(
     context = context,
     factory = JvmDefaultArgumentFunctionFactory(context),

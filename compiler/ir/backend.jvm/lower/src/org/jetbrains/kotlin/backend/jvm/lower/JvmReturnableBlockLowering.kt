@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
@@ -19,10 +20,8 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
  *
  * @see ReturnableBlockTransformer
  */
-@PhaseDescription(
-    name = "ReturnableBlock",
-    prerequisite = [ArrayConstructorLowering::class, AssertionLowering::class, DirectInvokeLowering::class]
-)
+@PhaseDescription(name = "ReturnableBlock")
+@PhasePrerequisites(ArrayConstructorLowering::class, AssertionLowering::class, DirectInvokeLowering::class)
 internal class JvmReturnableBlockLowering(val context: JvmBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         container.transform(ReturnableBlockTransformer(context, (container as IrSymbolOwner).symbol), null)

@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.originalForReflectiveCall
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
+import org.jetbrains.kotlin.backend.jvm.originalForReflectiveCall
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -58,10 +59,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method
  * Super calls, private or not, are not allowed from outside the class hierarchy of the involved classes, so it's emulated in fragment
  * compilation by the use of `invokespecial` - see [generateInvokeSpecialForCall] below.
  */
-@PhaseDescription(
-    name = "SpecialAccess",
-    prerequisite = [JvmDefaultParameterCleaner::class]
-)
+@PhaseDescription(name = "SpecialAccess")
+@PhasePrerequisites(JvmDefaultParameterCleaner::class)
 internal class SpecialAccessLowering(
     val context: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {

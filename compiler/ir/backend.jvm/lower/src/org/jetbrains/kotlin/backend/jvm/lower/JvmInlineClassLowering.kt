@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
@@ -44,15 +45,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  * We do not unfold inline class types here. Instead, the type mapper will lower inline class
  * types to the types of their underlying field.
  */
-@PhaseDescription(
-    name = "InlineClasses",
-    // forLoopsPhase may produce UInt and ULong which are inline classes.
-    // Standard library replacements are done on the not mangled names for UInt and ULong classes.
+@PhaseDescription(name = "InlineClasses")
+@PhasePrerequisites(
+    // ForLoopsLowering may produce UInt and ULong which are inline classes.
+    ForLoopsLowering::class,
+    // Standard library replacements are done on the non-mangled names for UInt and ULong classes.
+    JvmBuiltInsLowering::class,
     // Collection stubs may require mangling by value class rules.
+    CollectionStubMethodLowering::class,
     // SAM wrappers may require mangling for fun interfaces with value class parameters
-    prerequisite = [
-        ForLoopsLowering::class, JvmBuiltInsLowering::class, CollectionStubMethodLowering::class, JvmSingleAbstractMethodLowering::class
-    ]
+    JvmSingleAbstractMethodLowering::class,
 )
 internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
     override val replacements: MemoizedValueClassAbstractReplacements

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -15,10 +16,8 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 /**
  * Saves serialized IR into a class annotation, if the compiler option `-Xserialize-ir` is enabled.
  */
-@PhaseDescription(
-    name = "SerializeIr",
-    prerequisite = [JvmExpectDeclarationRemover::class],
-)
+@PhaseDescription(name = "SerializeIr")
+@PhasePrerequisites(JvmExpectDeclarationRemover::class)
 internal class SerializeIrPhase(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         context.irSerializer?.let { irSerializer ->

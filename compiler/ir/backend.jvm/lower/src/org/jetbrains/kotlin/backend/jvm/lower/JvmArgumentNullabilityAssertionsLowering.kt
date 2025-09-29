@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.backend.jvm.lower.JvmArgumentNullabilityAssertionsLowering.AssertionScope
@@ -25,10 +26,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 /**
  * Transforms nullability assertions on arguments according to the compiler settings.
  */
-@PhaseDescription(
-    name = "ArgumentNullabilityAssertions",
+@PhaseDescription(name = "ArgumentNullabilityAssertions")
+@PhasePrerequisites(
     // JvmStringConcatenationLowering may remove IMPLICIT_NOTNULL casts.
-    prerequisite = [JvmStringConcatenationLowering::class]
+    JvmStringConcatenationLowering::class,
 )
 internal class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
     IrTransformer<AssertionScope>() {

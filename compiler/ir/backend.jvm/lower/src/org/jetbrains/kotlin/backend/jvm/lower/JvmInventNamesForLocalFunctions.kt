@@ -7,16 +7,15 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.InventNamesForLocalFunctions
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.name.NameUtils.sanitizeAsJavaIdentifier
 
-@PhaseDescription(
-    name = "InventNamesForLocalClasses",
-    prerequisite = [
-        // The tailrec lowering copies the default arguments into the lowered function body.
-        // If such an argument is a lambda, a new local function will appear in the lowered body, which needs a new name.
-        JvmTailrecLowering::class,
-    ],
+@PhaseDescription(name = "InventNamesForLocalClasses")
+@PhasePrerequisites(
+    // The tailrec lowering copies the default arguments into the lowered function body.
+    // If such an argument is a lambda, a new local function will appear in the lowered body, which needs a new name.
+    JvmTailrecLowering::class,
 )
 internal class JvmInventNamesForLocalFunctions(
     val context: JvmBackendContext
