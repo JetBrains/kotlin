@@ -123,7 +123,8 @@ private val indexes = arrayOf(
     WasmRefNullrefType,
     WasmRefNullExternrefType,
     WasmI31Ref,
-    WasmStructRef
+    WasmStructRef,
+    WasmArrayRef,
 )
 
 internal fun encodeIndex(index: ULong): List<WasmStructFieldDeclaration> {

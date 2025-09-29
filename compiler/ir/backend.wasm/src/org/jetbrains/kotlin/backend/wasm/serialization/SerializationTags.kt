@@ -37,6 +37,7 @@ internal object TypeTags {
     const val STRUCT_REF = 17u
     const val UNREACHABLE_TYPE = 18u
     const val V12 = 19u
+    const val ARRAY_REF = 20u
 }
 
 internal object HeapTypeTags {
