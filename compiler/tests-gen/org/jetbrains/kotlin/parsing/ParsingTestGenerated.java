@@ -2682,6 +2682,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/kdoc/AtTags.kt");
       }
 
+      @TestMetadata("CodeBlocks.kt")
+      public void testCodeBlocks() {
+        runTest("compiler/testData/psi/kdoc/CodeBlocks.kt");
+      }
+
       @TestMetadata("DocCommentAtBeginningOfFile1.kt")
       public void testDocCommentAtBeginningOfFile1() {
         runTest("compiler/testData/psi/kdoc/DocCommentAtBeginningOfFile1.kt");
@@ -2745,6 +2750,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       @TestMetadata("MarkdownQualifiedName.kt")
       public void testMarkdownQualifiedName() {
         runTest("compiler/testData/psi/kdoc/MarkdownQualifiedName.kt");
+      }
+
+      @TestMetadata("NestedLists.kt")
+      public void testNestedLists() {
+        runTest("compiler/testData/psi/kdoc/NestedLists.kt");
       }
 
       @TestMetadata("ParamTag.kt")

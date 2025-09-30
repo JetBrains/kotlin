@@ -1,0 +1,53 @@
+ORIGINAL KDOC:
+@see O.with space
+CONTENT:
+space
+
+ORIGINAL KDOC:
+@see O.`with space`
+ * [O.without_space]
+ * [O.`without_space`]
+CONTENT:
+[O.without_space]
+[O.`without_space`]
+
+ORIGINAL KDOC:
+@see O.without_space
+CONTENT:
+
+
+ORIGINAL KDOC:
+@see O.`without_space`
+ *
+ * // Resolve incorrect code for completion
+ * [O.]
+CONTENT:
+// Resolve incorrect code for completion
+[O.]
+
+ORIGINAL KDOC:
+@see O.
+CONTENT:
+
+
+ORIGINAL KDOC:
+*
+ * [`top level`]
+ * [top level]
+ * [O.with space]
+ * [O.`with space`]
+ * @see O.with space
+ * @see O.`with space`
+ * [O.without_space]
+ * [O.`without_space`]
+ * @see O.without_space
+ * @see O.`without_space`
+ *
+ * // Resolve incorrect code for completion
+ * [O.]
+ * @see O.
+CONTENT:
+[`top level`]
+[top level]
+[O.with space]
+[O.`with space`]

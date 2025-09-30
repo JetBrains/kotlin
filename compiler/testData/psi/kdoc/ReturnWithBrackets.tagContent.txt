@@ -1,0 +1,14 @@
+ORIGINAL KDOC:
+@return This is not a reference
+CONTENT:
+This is not a reference
+
+ORIGINAL KDOC:
+@return[x] This is a reference
+CONTENT:
+[x] This is a reference
+
+ORIGINAL KDOC:
+* @return This is not a reference
+ * @return[x] This is a reference
+CONTENT:

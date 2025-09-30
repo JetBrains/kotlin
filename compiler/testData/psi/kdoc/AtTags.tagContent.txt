@@ -1,0 +1,22 @@
+ORIGINAL KDOC:
+@tag
+ * text @notATag
+ * ```
+ * @notATag and some description
+ * ```
+ * @
+CONTENT:
+text @notATag
+```
+@notATag and some description
+```
+@
+
+ORIGINAL KDOC:
+* @tag
+ * text @notATag
+ * ```
+ * @notATag and some description
+ * ```
+ * @
+CONTENT:

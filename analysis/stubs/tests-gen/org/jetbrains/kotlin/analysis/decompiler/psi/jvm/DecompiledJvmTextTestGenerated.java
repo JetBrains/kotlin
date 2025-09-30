@@ -3016,6 +3016,12 @@ public class DecompiledJvmTextTestGenerated extends AbstractDecompiledJvmTextTes
     }
 
     @Test
+    @TestMetadata("CodeBlocks.kt")
+    public void testCodeBlocks() {
+      runTest("compiler/testData/psi/kdoc/CodeBlocks.kt");
+    }
+
+    @Test
     @TestMetadata("DocCommentAtBeginningOfFile1.kt")
     public void testDocCommentAtBeginningOfFile1() {
       runTest("compiler/testData/psi/kdoc/DocCommentAtBeginningOfFile1.kt");
@@ -3091,6 +3097,12 @@ public class DecompiledJvmTextTestGenerated extends AbstractDecompiledJvmTextTes
     @TestMetadata("MarkdownQualifiedName.kt")
     public void testMarkdownQualifiedName() {
       runTest("compiler/testData/psi/kdoc/MarkdownQualifiedName.kt");
+    }
+
+    @Test
+    @TestMetadata("NestedLists.kt")
+    public void testNestedLists() {
+      runTest("compiler/testData/psi/kdoc/NestedLists.kt");
     }
 
     @Test
