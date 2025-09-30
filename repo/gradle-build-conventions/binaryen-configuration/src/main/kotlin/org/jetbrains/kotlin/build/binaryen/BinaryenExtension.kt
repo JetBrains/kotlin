@@ -7,8 +7,10 @@
 
 package org.jetbrains.kotlin.build.binaryen
 
+import SystemPropertyClasspathProvider
 import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 
@@ -24,8 +26,9 @@ abstract class BinaryenExtension(
         }
 
         val binaryenExecutablePath = binaryen.executable
-        doFirst {
-            systemProperty("binaryen.path", binaryenExecutablePath.get())
+        jvmArgumentProviders += this.project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+            classpath.from(binaryenExecutablePath)
+            property.set("binaryen.path")
         }
     }
 }

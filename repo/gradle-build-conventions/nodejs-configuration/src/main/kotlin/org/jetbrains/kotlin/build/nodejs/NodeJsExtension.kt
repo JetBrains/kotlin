@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.build.nodejs
 
+import SystemPropertyClasspathProvider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 
 abstract class NodeJsExtension(
@@ -18,8 +20,9 @@ abstract class NodeJsExtension(
         val nodeJsExecutablePath = project.provider {
             nodeJsRoot.requireConfigured().nodeExecutable
         }
-        doFirst {
-            systemProperty("javascript.engine.path.NodeJs", nodeJsExecutablePath.get())
+        jvmArgumentProviders += this.project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+            classpath.from(nodeJsExecutablePath)
+            property.set("javascript.engine.path.NodeJs")
         }
     }
 }

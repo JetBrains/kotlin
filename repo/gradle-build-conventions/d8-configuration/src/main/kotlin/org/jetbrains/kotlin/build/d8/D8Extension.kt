@@ -9,9 +9,11 @@
 
 package org.jetbrains.kotlin.build.d8
 
+import SystemPropertyClasspathProvider
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec
 
@@ -25,8 +27,9 @@ abstract class D8Extension(
             dependsOn(project.d8SetupTaskProvider)
         }
         val v8ExecutablePath: Provider<String> = d8envSpec.executable
-        doFirst {
-            systemProperty("javascript.engine.path.V8", v8ExecutablePath.get())
+        jvmArgumentProviders += this.project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+            classpath.from(v8ExecutablePath)
+            property.set("javascript.engine.path.V8")
         }
     }
 

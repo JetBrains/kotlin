@@ -240,18 +240,20 @@ val unzipWasmEdge by task<Copy> {
 fun Test.setupSpiderMonkey() {
     dependsOn(unzipJsShell)
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
-    systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+    jvmArgumentProviders += this.project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(jsShellExecutablePath)
+        property.set("javascript.engine.path.SpiderMonkey")
+    }
 }
 
 fun Test.setupWasmEdge() {
-    val wasmEdgeDirectory = unzipWasmEdge
+    val wasmEdgeDirectory: Provider<File> = unzipWasmEdge
         .map { it.destinationDir.resolve("WasmEdge-${wasmEdgeVersion.get()}-$wasmEdgeInnerSuffix") }
 
-    inputs.dir(wasmEdgeDirectory)
-        .withPathSensitivity(PathSensitivity.RELATIVE)
-        .withPropertyName("wasmEdgeDirectory")
-
-    jvmArgumentProviders.add { listOf("-Dwasm.engine.path.WasmEdge=${wasmEdgeDirectory.get().resolve("bin/wasmedge")}") }
+    jvmArgumentProviders += this.project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(wasmEdgeDirectory.map { it.resolve("bin/wasmedge") })
+        property.set("wasm.engine.path.WasmEdge")
+    }
 }
 
 testsJar {}

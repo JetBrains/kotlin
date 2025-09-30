@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase
 import org.jetbrains.kotlin.wasm.test.WasmCompilerInvocationTestConfiguration
@@ -39,10 +41,10 @@ abstract class WasmAbstractInvalidationTest(
     override val outputDirPath = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
 
     override val stdlibKLib: String =
-        File(System.getProperty("kotlin.wasm-js.stdlib.path") ?: error("Please set stdlib path")).canonicalPath
+        File(WasmEnvironmentConfigurator.stdlibPath(WasmTarget.JS)).canonicalPath
 
     override val kotlinTestKLib: String =
-        File(System.getProperty("kotlin.wasm-js.kotlin.test.path") ?: error("Please set kotlin.test path")).canonicalPath
+        File(WasmEnvironmentConfigurator.kotlinTestPath(WasmTarget.JS)).canonicalPath
 
     final override val rootDisposable: TestDisposable =
         TestDisposable("${WasmAbstractInvalidationTest::class.simpleName}.rootDisposable")
