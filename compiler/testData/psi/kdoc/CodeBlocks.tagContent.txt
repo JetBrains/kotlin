@@ -1,0 +1,118 @@
+ORIGINAL KDOC:
+* 1.
+ *    ```
+ *    line 1
+ *    line 2
+ *    ```
+ * 2.
+ *    ```
+ *
+ *
+ *
+ *
+ *    ```
+CONTENT:
+1.
+```
+    line 1
+    line 2
+```
+2.
+```
+
+
+
+
+    ```
+
+ORIGINAL KDOC:
+* ```
+ *    line 1
+ *    line 2
+ *  line 3
+ * line 4
+ * ```
+CONTENT:
+```
+       line 1
+       line 2
+     line 3
+    line 4
+```
+
+ORIGINAL KDOC:
+*   ```
+ *   line
+ *   ```
+ *
+ *   ```
+ *  line
+ *   ```
+ *
+ *  ```
+ *   line
+ *  ```
+CONTENT:
+```
+line
+```
+
+```
+line
+ ```
+
+```
+line
+```
+
+ORIGINAL KDOC:
+* a ``` b ``` c
+ *
+ * a ```
+ * b
+ * ``` c
+ *
+ * ```
+ * a
+ * ``` c
+ *
+ *  ```
+ *  a
+ *  b ```
+CONTENT:
+a ``` b ``` c
+
+a ```
+b
+``` c
+
+```
+a
+``` c
+
+  ```
+a
+b ```
+
+ORIGINAL KDOC:
+*    Indented code block
+ * ```
+ *  Fenced code block
+ * ```
+ *
+ *    Another indented code block
+ *
+ *   ```
+ *      Not well formed code block
+ *   ```
+CONTENT:
+    Indented code block
+```
+Fenced code block
+```
+
+    Another indented code block
+
+```
+    Not well formed code block
+```

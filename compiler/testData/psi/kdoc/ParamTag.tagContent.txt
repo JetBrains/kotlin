@@ -1,0 +1,8 @@
+ORIGINAL KDOC:
+@param a The description of a.
+CONTENT:
+The description of a.
+
+ORIGINAL KDOC:
+* @param a The description of a.
+CONTENT:

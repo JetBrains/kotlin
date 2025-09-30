@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
+import org.jetbrains.kotlin.psi.AbstractKDocTagContentTest
 import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
@@ -148,6 +149,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractKDocLexerTest> {
                 model("lexer/kdoc")
+            }
+
+            testClass<AbstractKDocTagContentTest> {
+                model("psi/kdoc")
             }
 
             testClass<AbstractKotlinLexerTest> {
