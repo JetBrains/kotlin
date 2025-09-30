@@ -22,10 +22,17 @@ object KotlinUsages {
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     const val KOTLIN_METADATA = "kotlin-metadata"
 
+    /**
+     * We publish and request [KOTLIN_UKLIB_API] and [KOTLIN_UKLIB_RUNTIME] variants; however, for disambiguation in the consumer in
+     * [org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.SelectBestMatchingVariantForKmpResolutionUsage] we need to distinguish
+     * between resolving for JVM/non-JVM compilation/runtime to be able to support lenient resolution for Kotlin JVM libraries and
+     * Kotlin Multiplatform libraries with JVM target
+     */
     internal const val KOTLIN_UKLIB_API = "kotlin-uklib-api"
+    internal const val KOTLIN_UKLIB_JAVA_API = "kotlin-uklib-java-api"
     internal const val KOTLIN_UKLIB_RUNTIME = "kotlin-uklib-runtime"
+    internal const val KOTLIN_UKLIB_JAVA_RUNTIME = "kotlin-uklib-java-runtime"
     internal const val KOTLIN_UKLIB_METADATA = "kotlin-uklib-metadata"
-    internal const val KOTLIN_UKLIB_IDE_METADATA = "kotlin-uklib-ide-metadata"
 
     // This type is required to distinguish metadata jar configuration from a psm secondary variant.
     // At the same time, disambiguation and compatibility rules should count them as equivalent

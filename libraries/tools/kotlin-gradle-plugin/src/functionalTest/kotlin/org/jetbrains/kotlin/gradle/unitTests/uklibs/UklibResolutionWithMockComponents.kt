@@ -102,6 +102,84 @@ class UklibResolutionTestsWithMockComponents {
     }
 
     @Test
+    fun `uklib resolution - direct dependency on a kmp jvm only component`() {
+        val repo = generateMockRepository(
+            tmpDir,
+            listOf(
+                GradleComponent(
+                    GradleMetadataComponent(
+                        component = directGradleComponent,
+                        variants = listOf(
+                            kmpJvmApiVariant,
+                            kmpJvmRuntimeVariant,
+                        ),
+                    ),
+                    directMavenComponent(),
+                ),
+            )
+        )
+        val consumer = uklibConsumer(
+            resolutionStrategy = KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs,
+        ) {
+            repositories.maven(repo)
+            kotlin {
+                iosArm64()
+                iosX64()
+                js()
+                sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
+            }
+        }
+
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = kmpJvmApiVariant.name,
+                    artifacts = mutableListOf(
+                        kmpJvmApiVariant.attributes + jarArtifact,
+                    )
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = kmpJvmApiVariant.name,
+                    artifacts = mutableListOf(
+                        kmpJvmApiVariant.attributes + jarArtifact,
+                    )
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.js().compilationResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = kmpJvmRuntimeVariant.name,
+                    artifacts = mutableListOf(
+                        kmpJvmRuntimeVariant.attributes + jarArtifact,
+                    )
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.js().runtimeResolution().prettyPrinted
+        )
+
+        listOf(
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = kmpJvmApiVariant.name,
+                        artifacts = mutableListOf(kmpJvmApiVariant.attributes + jarArtifact)
+                    ),
+                ).prettyPrinted,
+                it.prettyPrinted,
+            )
+        }
+    }
+
+    @Test
     fun `uklib resolution - direct dependency on a jvm + metadata variant - selects metadata as a fallback`() {
         val repo = generateMockRepository(
             tmpDir,
