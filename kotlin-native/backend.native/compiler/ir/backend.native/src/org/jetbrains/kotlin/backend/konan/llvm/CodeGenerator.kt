@@ -333,7 +333,7 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
             val proto = LlvmFunctionProto(
                     name = "$targetName-trampoline",
                     signature = LlvmFunctionSignature(irFunction, this),
-                    origin = null,
+                    origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass),
                     linkage = linkageOf(irFunction)
             )
             if (isExternal(irFunction))
