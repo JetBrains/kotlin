@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/ir/irText")
 @TestDataPath("$PROJECT_ROOT")
-public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrTextTest {
+public class PsiJsIrTextTestGenerated extends AbstractPsiJsIrTextTest {
   @Test
   public void testAllFilesPresentInIrText() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), null, true, "declarations/multiplatform/k1");

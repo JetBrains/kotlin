@@ -365,13 +365,13 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirLightTreeJsIrTextTest> {
+            testClass<AbstractLightTreeJsIrTextTest> {
                 model(
                     excludeDirs = listOf("declarations/multiplatform/k1")
                 )
             }
 
-            testClass<AbstractFirPsiJsIrTextTest> {
+            testClass<AbstractPsiJsIrTextTest> {
                 model(
                     excludeDirs = listOf("declarations/multiplatform/k1")
                 )

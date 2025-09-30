@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 
-abstract class AbstractFirJsIrTextTestBase(
+abstract class AbstractJsIrTextTestBase(
     private val parser: FirParser
 ) : AbstractNonJvmIrTextTest<FirOutputArtifact>(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
 
@@ -78,7 +78,7 @@ abstract class AbstractFirJsIrTextTestBase(
     }
 }
 
-open class AbstractFirLightTreeJsIrTextTest : AbstractFirJsIrTextTestBase(FirParser.LightTree)
+open class AbstractLightTreeJsIrTextTest : AbstractJsIrTextTestBase(FirParser.LightTree)
 
 @FirPsiCodegenTest
-open class AbstractFirPsiJsIrTextTest : AbstractFirJsIrTextTestBase(FirParser.Psi)
+open class AbstractPsiJsIrTextTest : AbstractJsIrTextTestBase(FirParser.Psi)
