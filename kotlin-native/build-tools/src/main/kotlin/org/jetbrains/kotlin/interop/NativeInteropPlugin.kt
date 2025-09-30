@@ -296,6 +296,11 @@ open class NativeInteropPlugin : Plugin<Project> {
                         }
                     }.files.flatMapTo(this) { listOf("-L${it.parentFile.absolutePath}", "-l${libname(it)}") }
                     addAll(linkerArgs)
+
+                    if (HostManager.hostIsMac) {
+                        // Set install_name to a non-absolute path.
+                        add("-Wl,-install_name,@rpath/$library")
+                    }
                 }
                 flags("-shared", "-o", ruleOut(), *ruleInAll(), *ldflags.toTypedArray())
             }
