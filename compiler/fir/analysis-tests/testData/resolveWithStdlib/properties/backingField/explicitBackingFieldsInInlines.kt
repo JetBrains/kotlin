@@ -7,7 +7,7 @@ class Test {
 
     inline fun testPublic(): MutableList<*> = <!RETURN_TYPE_MISMATCH!>numbers<!>
 
-    internal inline fun testInternal(): MutableList<*> = <!RETURN_TYPE_MISMATCH!>numbers<!>
+    internal inline fun testInternal(): MutableList<*> = numbers
 
     protected inline fun testProtected(): MutableList<*> = <!RETURN_TYPE_MISMATCH!>numbers<!>
 
