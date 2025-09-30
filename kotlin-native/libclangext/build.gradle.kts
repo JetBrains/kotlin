@@ -31,7 +31,7 @@ val library = lib("clangext")
 native {
     val isWindows = PlatformInfo.isWindows()
     val obj = if (isWindows) "obj" else "o"
-    val cxxflags = mutableListOf("--std=c++17", "-g",
+    val cxxflags = mutableListOf("--std=c++17",
                           "-Isrc/main/include",
                           "-I$llvmDir/include",
                           "-DLLVM_DISABLE_ABI_BREAKING_CHECKS_ENFORCING=1")
