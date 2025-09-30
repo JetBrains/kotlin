@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // ISSUE: KT-81245
 
@@ -8,20 +8,20 @@ class Test {
 
     var withInlineGetterSetter: Any
         inline get() {
-            a.length
+            a.<!UNRESOLVED_REFERENCE!>length<!>
             return ""
         }
         inline set(value) {
-            a.length
+            a.<!UNRESOLVED_REFERENCE!>length<!>
         }
 
     inline var inlineProperty: Any
         get() {
-            a.length
+            a.<!UNRESOLVED_REFERENCE!>length<!>
             return ""
         }
         set(value) {
-            a.length
+            a.<!UNRESOLVED_REFERENCE!>length<!>
         }
 }
 
