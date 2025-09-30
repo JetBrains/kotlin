@@ -29,6 +29,7 @@ native {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
             flags( *cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
+            flags("-fmacro-prefix-map=$rootDir/=kotlin/")
         }
     }
     sourceSet {

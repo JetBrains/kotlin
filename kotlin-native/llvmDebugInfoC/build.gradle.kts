@@ -41,6 +41,7 @@ native {
         (".cpp" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
             flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
+            flags("-fmacro-prefix-map=$rootDir/=kotlin/")
         }
 
     }
