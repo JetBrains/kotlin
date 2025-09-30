@@ -59,7 +59,7 @@ abstract class UpdatePerCol(name: String) : AbstractSchemaModificationInterprete
     val Arguments.param by ignore(ArgumentName.of(name))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return updateWithImpl(receiver, target = typeArg1)
+        return updateWithImpl(receiver, targetMarkedNullable = typeArg1.type.isMarkedNullable)
     }
 }
 
@@ -73,21 +73,21 @@ class UpdateWith0 : AbstractSchemaModificationInterpreter() {
     val Arguments.target: TypeApproximation by type(ArgumentName.of("expression"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return updateWithImpl(receiver, target)
+        return updateWithImpl(receiver, target.type.isMarkedNullable)
     }
 }
 
-private fun Arguments.updateWithImpl(receiver: UpdateApproximation, target: TypeApproximation): PluginDataFrameSchema {
+private fun Arguments.updateWithImpl(receiver: UpdateApproximation, targetMarkedNullable: Boolean): PluginDataFrameSchema {
     return when (val receiver = receiver) {
         is FillNullsApproximation -> receiver.schema.convert(receiver.columns) { original ->
-            val nullable = original.type.isMarkedNullable && (target.type.isMarkedNullable || receiver.where)
+            val nullable = original.type.isMarkedNullable && (targetMarkedNullable || receiver.where)
             original.type.withNullability(
                 nullable = nullable,
                 session.typeContext
             ).wrap()
         }
         is UpdateApproximationImpl -> receiver.schema.convert(receiver.columns) { original ->
-            val nullable = target.type.isMarkedNullable || (receiver.where && original.type.isMarkedNullable)
+            val nullable = targetMarkedNullable || (receiver.where && original.type.isMarkedNullable)
             original.type.withNullability(
                 nullable = nullable,
                 session.typeContext
@@ -101,7 +101,7 @@ class UpdateNotNullWith : AbstractSchemaModificationInterpreter() {
     val Arguments.target: TypeApproximation by type(ArgumentName.of("expression"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return updateWithImpl(receiver.withWhere(), target)
+        return updateWithImpl(receiver.withWhere(), target.type.isMarkedNullable)
     }
 }
 
@@ -109,5 +109,19 @@ class UpdateNotNull : AbstractInterpreter<UpdateApproximation>() {
     val Arguments.receiver: UpdateApproximation by arg()
     override fun Arguments.interpret(): UpdateApproximation {
         return receiver.withWhere()
+    }
+}
+
+class UpdateWithNull : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: UpdateApproximation by arg()
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return updateWithImpl(receiver, targetMarkedNullable = true)
+    }
+}
+
+class UpdateWithZero : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: UpdateApproximation by arg()
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return updateWithImpl(receiver, targetMarkedNullable = false)
     }
 }
