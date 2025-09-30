@@ -259,10 +259,6 @@ fun Test.setupWasmEdge() {
 testsJar {}
 
 projectTests {
-    testData(project(":compiler").isolated, "testData/codegen")
-    testData(project(":compiler").isolated, "testData/ir")
-//    testData(project(":compiler").isolated, "testData/klib")
-
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt")
 
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
@@ -302,10 +298,7 @@ projectTests {
     }
 
     testData(project(":compiler").isolated, "testData/diagnostics")
-    testData(project(":compiler").isolated, "testData/codegen/box")
-    testData(project(":compiler").isolated, "testData/codegen/boxInline")
-    testData(project(":compiler").isolated, "testData/codegen/boxWasmJsInterop")
-    testData(project(":compiler").isolated, "testData/codegen/boxWasmWasi")
+    testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/debug/stepping")
     testData(project(":compiler").isolated, "testData/klib/partial-linkage")
     testData(project(":compiler").isolated, "testData/klib/resolve")
