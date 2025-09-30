@@ -236,6 +236,14 @@ private fun Configuration.inheritRuntimeDependenciesFromPublishedCompilations(
         it.internal.configurations.runtimeDependencyConfiguration?.let {
             extendsFrom(it)
         }
+        /**
+         * If K/N is one of the published compilations, we must promote its compile dependencies dependencies to runtime
+         *
+         * FIXME: Remove this extendsFrom after OSIP-667
+         */
+        if (it is KotlinNativeCompilation) {
+            extendsFrom(it.internal.configurations.compileDependencyConfiguration)
+        }
     }
 }
 

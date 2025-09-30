@@ -274,6 +274,8 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
                     KOTLIN_RUNTIME,
                     /**
                      * Compatibility with all the Maven POM-only and Gradle JVM producers
+                     *
+                     * FIXME: This compatibility rule is wrong: KT-81349
                      */
                     JAVA_RUNTIME,
                     JAVA_API,
@@ -283,6 +285,8 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
                      KOTLIN_METADATA,
                     /**
                      * Handle pre-HMPP metadata and specifically dom-api-compat
+                     *
+                     * FIXME: Remove this case in KT-81350
                      */
                      KOTLIN_API,
                 ),
@@ -310,7 +314,7 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
                     /**
                      * Handle pre-HMPP metadata and specifically dom-api-compat
                      *
-                     * FIXME: Test against exact pre-HMPP publication metadata instead of dom-api-compat
+                     * FIXME: Remove this case in KT-81350
                      */
                     KOTLIN_API,
                     /**
@@ -367,6 +371,7 @@ internal class SelectBestMatchingVariantForKmpResolutionUsage : AttributeDisambi
                  * If we are looking at a JVM component also take the runtime
                  */
                 JAVA_RUNTIME,
+                // FIXME: Remove in KT-81349
                 JAVA_API,
                 /**
                  * Fallback to metadata if the platform is not available
