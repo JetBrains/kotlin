@@ -344,6 +344,7 @@
 /libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/ "Kotlin Wasm" "Kotlin JS"
 /libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/binaryen/ "Kotlin Wasm"
 /libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/d8/ "Kotlin Wasm" "Kotlin JS"
+/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/web/ "Kotlin Wasm" "Kotlin JS"
 /libraries/tools/kotlin-gradle-plugin-annotations/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-api/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-dsl-codegen/ "Kotlin Build Tools"
