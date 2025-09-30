@@ -1,7 +1,5 @@
-import java.io.File
-import java.io.IOException
-import java.util.HashSet
 import org.gradle.internal.os.OperatingSystem
+import java.io.IOException
 
 dependencies {
     "testImplementation"(project(":compiler:test-security-manager"))
@@ -40,6 +38,15 @@ tasks.withType<Test>().configureEach {
             project.extra.has("konan.data.dir").let { if (it) project.extra["konan.data.dir"] else null } as String?
                 ?: System.getenv("KONAN_DATA_DIR")
                 ?: (System.getProperty("user.home") + File.separator + ".konan")
+
+        @Suppress("UNCHECKED_CAST")
+        val d8Executable = project.extra["javascript.engine.path.V8"] as Provider<String>
+
+        @Suppress("UNCHECKED_CAST")
+        val nodeJsExecutable = project.extra["javascript.engine.path.NodeJs"] as Provider<String>
+
+        @Suppress("UNCHECKED_CAST")
+        val binaryenExecutable = project.extra["binaryen.path"] as Provider<String>
 
         doFirst {
             if (!permissionsTemplateFile.exists()) {
@@ -228,6 +235,15 @@ tasks.withType<Test>().configureEach {
                             "{{debugger_agent_jar}}",
                             debuggerAgentPath?.let { """permission java.io.FilePermission "$it/-", "read";""" } ?: "")
                         .replace("{{inputs}}", inputPermissions.sorted().joinToString("\n    "))
+                        .replace(
+                            "{{wasm}}",
+                            buildString {
+                                append("""permission java.io.FilePermission "${d8Executable.get()}", "execute";""")
+                                append("""permission java.io.FilePermission "${nodeJsExecutable.get()}", "execute";""")
+                                append("""permission java.io.FilePermission "${binaryenExecutable.get()}", "execute";""")
+                            }
+                        )
+
                 )
             } catch (e: IOException) {
                 logger.error("Failed to generate security policy file", e)

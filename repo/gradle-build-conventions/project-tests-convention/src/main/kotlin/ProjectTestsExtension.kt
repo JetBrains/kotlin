@@ -9,6 +9,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -21,9 +22,12 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.build.project.tests.CollectTestDataTask
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import java.io.File
 
 abstract class ProjectTestsExtension(val project: Project) {
@@ -63,15 +67,23 @@ abstract class ProjectTestsExtension(val project: Project) {
     }
     val stdlibWasmJsRuntimeForTests: Configuration = project.configurations.create("stdlibWasmJsRuntimeForTests") {
         isTransitive = false
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
     }
     val stdlibWasmWasiRuntimeForTests: Configuration = project.configurations.create("stdlibWasmWasiRuntimeForTests") {
         isTransitive = false
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
     }
     val testWasmJsRuntimeForTests: Configuration = project.configurations.create("testWasmJsRuntimeForTests") {
         isTransitive = false
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
     }
     val testWasmWasiRuntimeForTests: Configuration = project.configurations.create("testWasmWasiRuntimeForTests") {
         isTransitive = false
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
     }
 
     private val noOp = project.kotlinBuildProperties.isInJpsBuildIdeaSync
