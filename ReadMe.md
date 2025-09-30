@@ -77,7 +77,7 @@ command line parameters on the first run:
     
     ./gradlew -Dhttp.socketTimeout=60000 -Dhttp.connectionTimeout=60000
 
-## Important gradle tasks
+### Important gradle tasks
 
 - `clean` - clean build results
 - `dist` - assembles the compiler distribution into `dist/kotlinc/` folder
