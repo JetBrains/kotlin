@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
+import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -30,9 +31,7 @@ fun FirPropertySymbol.tryAccessExplicitFieldSymbol(
     session: FirSession,
     hasVisibleBackingField: Boolean,
 ): FirBackingFieldSymbol? {
-    val visibilityCheckResult = closestInlineFunction?.visibility?.compareTo(Visibilities.Private)
-
-    if (visibilityCheckResult != null && visibilityCheckResult > 0) {
+    if (closestInlineFunction?.effectiveVisibility?.publicApi == true) {
         return null
     }
 
