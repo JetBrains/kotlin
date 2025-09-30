@@ -19,31 +19,19 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.model.SimpleDirective
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 open class AbstractFirLoadCompiledJvmWithAnnotationsInMetadataKotlinTest : AbstractFirLoadK2CompiledJvmKotlinTest() {
-    override val suppressDirective: SimpleDirective
-        get() = Directives.IGNORE_FIR_METADATA_LOADING_K2_WITH_ANNOTATIONS_IN_METADATA
-
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
             defaultDirectives {
                 LanguageSettingsDirectives.LANGUAGE with "+${LanguageFeature.AnnotationsInMetadata.name}"
             }
-            useDirectives(Directives)
             useConfigurators(::ExtensionRegistrarConfigurator)
         }
-    }
-
-    internal object Directives : SimpleDirectivesContainer() {
-        val IGNORE_FIR_METADATA_LOADING_K2_WITH_ANNOTATIONS_IN_METADATA by directive(
-            description = "Ignore exceptions in AbstractFirLoadCompiledJvmWithAnnotationsInMetadataKotlinTest"
-        )
     }
 }
 

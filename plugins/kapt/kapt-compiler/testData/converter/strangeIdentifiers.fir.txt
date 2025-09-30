@@ -119,6 +119,7 @@ public final class StrangeIdentifiersKt {
  *   public final fun simpleFun(): kotlin/Unit
  *
  *   // signature: simpleFun2(Ljava/lang/String;Ljava/lang/String;)V
+ *   @Anno(size = StrangeEnum.60x60, name = "Woofwoof", A B = "S")
  *   public final fun simpleFun2(a: kotlin/String, b: kotlin/String): kotlin/Unit
  *
  *   // signature: strange!Fun()V

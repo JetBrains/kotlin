@@ -10,6 +10,7 @@ package {
 }
 // X.class
 // ------------------------------------------
+@kotlin/MustUseReturnValues
 public final class X : kotlin/Any {
 
   // signature: <init>()V
@@ -22,6 +23,7 @@ public final class X : kotlin/Any {
 
   // signature: ignorable()Ljava/lang/String;
   // ignorable return value
+  @kotlin/IgnorableReturnValue
   public final fun ignorable(): kotlin/String
 
   // signature: unit()V

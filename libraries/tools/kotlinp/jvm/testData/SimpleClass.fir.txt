@@ -24,6 +24,7 @@ public final class SimpleClass<in T#0 /* A */> : kotlin/Any {
   // setter: SET_X(J)V
   public final var x: kotlin/Long
     public final /* non-default */ external get
+    @kotlin/jvm/JvmName(name = "SET_X")
     public final set
 
   // module name: test-module

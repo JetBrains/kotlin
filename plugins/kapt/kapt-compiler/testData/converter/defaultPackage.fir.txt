@@ -111,6 +111,8 @@ package test;
 @ClassRefAnnotation(value = {RootClass.class})
 @RootAnnotation()
 /**
+ * @test/ClassRefAnnotation(value = [RootClass::class])
+ * @RootAnnotation
  * public final class test/PackedWithAnnotation : kotlin/Any {
  *
  *   // signature: <init>()V
