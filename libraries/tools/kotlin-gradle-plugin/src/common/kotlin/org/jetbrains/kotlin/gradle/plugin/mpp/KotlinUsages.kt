@@ -23,7 +23,9 @@ object KotlinUsages {
     const val KOTLIN_METADATA = "kotlin-metadata"
 
     internal const val KOTLIN_UKLIB_API = "kotlin-uklib-api"
+    internal const val KOTLIN_UKLIB_JAVA_API = "kotlin-uklib-java-api"
     internal const val KOTLIN_UKLIB_RUNTIME = "kotlin-uklib-runtime"
+    internal const val KOTLIN_UKLIB_JAVA_RUNTIME = "kotlin-uklib-java-runtime"
     internal const val KOTLIN_UKLIB_METADATA = "kotlin-uklib-metadata"
     internal const val KOTLIN_UKLIB_IDE_METADATA = "kotlin-uklib-ide-metadata"
 
