@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
 
@@ -44,6 +45,10 @@ native {
               "-L${project(":kotlin-native:libclangext").layout.buildDirectory.get().asFile}",
               "${nativeDependencies.libffiPath}/lib/libffi.$lib",
               "-lclangext")
+
+        if (HostManager.hostIsMac) {
+            flags("-Wl,-install_name,@rpath/$library")
+        }
     }
     tasks.named(library).configure {
         dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
