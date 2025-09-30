@@ -8,6 +8,6 @@ val a : List<String>
 
 val b: Int
     <!REDUNDANT_EXPLICIT_BACKING_FIELD!>field<!> = 1
-    get() = 25
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = 25
 
 /* GENERATED_FIR_TAGS: propertyDeclaration */
