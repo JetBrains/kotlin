@@ -455,6 +455,7 @@ enum class LanguageFeature(
 
     // 2.4
 
+    AnnotationsInMetadata(KOTLIN_2_4, "KT-75736"),
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
     ForbidCaptureInlinableLambdasInJsCode(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-69297"),
     ForbidInitializationBeforeDeclarationInAnonymous(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-290"),
@@ -592,7 +593,6 @@ enum class LanguageFeature(
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = null, enabledInProgressiveMode = true, "KT-73611"),
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, "KT-16768"),
-    AnnotationsInMetadata(sinceVersion = null, "KT-57919"),
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722"),
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722"),
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131"),
