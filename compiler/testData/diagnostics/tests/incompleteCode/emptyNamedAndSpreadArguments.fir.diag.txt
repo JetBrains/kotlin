@@ -1,83 +1,71 @@
 /emptyNamedAndSpreadArguments.fir.kt:(289,291): error: No value passed for parameter 'a'.
 
-/emptyNamedAndSpreadArguments.fir.kt:(300,301): error: Syntax error: Expecting an argument.
+/emptyNamedAndSpreadArguments.fir.kt:(300,300): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(301,301): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(314,314): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(314,314): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(327,327): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(327,327): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(345,345): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(345,345): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(373,373): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(373,374): error: Syntax error: Expecting an argument.
+/emptyNamedAndSpreadArguments.fir.kt:(379,379): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(379,379): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(437,437): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(381,388): error: No value passed for parameter 'aa'.
+/emptyNamedAndSpreadArguments.fir.kt:(443,443): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(437,437): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(449,449): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(443,443): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(465,465): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(449,449): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(471,471): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(465,465): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(477,477): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(471,471): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(493,493): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(477,477): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(499,499): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(493,493): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(523,523): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(499,499): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(529,529): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(523,523): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(546,546): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(529,529): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(552,552): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(546,546): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(554,554): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(552,552): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(568,568): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(554,555): error: Syntax error: Expecting an argument.
+/emptyNamedAndSpreadArguments.fir.kt:(580,580): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(555,555): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(596,596): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(568,568): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(611,611): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(580,580): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(623,623): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(596,596): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(628,628): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(611,611): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(640,640): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(623,624): error: Syntax error: Expecting an argument.
+/emptyNamedAndSpreadArguments.fir.kt:(645,645): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(628,628): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(647,647): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(640,641): error: Syntax error: Expecting an argument.
+/emptyNamedAndSpreadArguments.fir.kt:(659,659): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(645,645): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(664,664): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(647,648): error: Syntax error: Expecting an argument.
+/emptyNamedAndSpreadArguments.fir.kt:(677,677): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(648,648): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(678,678): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(659,660): error: Syntax error: Expecting an argument.
+/emptyNamedAndSpreadArguments.fir.kt:(690,690): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(664,664): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(706,706): error: Syntax error: Expecting an argument.
 
-/emptyNamedAndSpreadArguments.fir.kt:(677,678): error: Syntax error: Expecting an argument.
-
-/emptyNamedAndSpreadArguments.fir.kt:(678,679): error: Syntax error: Expecting an argument.
-
-/emptyNamedAndSpreadArguments.fir.kt:(679,679): error: Syntax error: Expecting an expression.
-
-/emptyNamedAndSpreadArguments.fir.kt:(690,691): error: Syntax error: Expecting an argument.
-
-/emptyNamedAndSpreadArguments.fir.kt:(691,691): error: Syntax error: Expecting an expression.
-
-/emptyNamedAndSpreadArguments.fir.kt:(706,706): error: Syntax error: Expecting an expression.
-
-/emptyNamedAndSpreadArguments.fir.kt:(720,720): error: Syntax error: Expecting an expression.
+/emptyNamedAndSpreadArguments.fir.kt:(720,720): error: Syntax error: Expecting an argument.

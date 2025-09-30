@@ -635,7 +635,7 @@ KtFile: fullPositionBasedDestructuringErrors.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('first')
                   PsiElement(COMMA)(',')
-                  PsiErrorElement:Expecting an expression
+                  PsiErrorElement:Expecting an element
                     <empty list>
                 PsiWhiteSpace(' ')
                 PROPERTY
@@ -664,7 +664,7 @@ KtFile: fullPositionBasedDestructuringErrors.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('first')
                   PsiElement(COMMA)(',')
-                  PsiErrorElement:Expecting an expression
+                  PsiErrorElement:Expecting an element
                     <empty list>
                 PsiWhiteSpace(' ')
                 PROPERTY

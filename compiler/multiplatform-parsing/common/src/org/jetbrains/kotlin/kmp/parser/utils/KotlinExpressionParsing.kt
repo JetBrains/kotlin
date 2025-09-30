@@ -221,9 +221,9 @@ internal open class KotlinExpressionParsing(
      *   // block is syntactically equivalent to a functionLiteral with no parameters
      *   ;
      */
-    fun parseExpression() {
+    fun parseExpression(messageIfNotExpressionFirst: String = "Expecting an expression") {
         if (!atSetWithRemap(EXPRESSION_FIRST)) {
-            error("Expecting an expression")
+            error(messageIfNotExpressionFirst)
             return
         }
 
@@ -994,13 +994,10 @@ internal open class KotlinExpressionParsing(
 
     private fun parseInnerExpressions(missingElementErrorMessage: String) {
         while (true) {
-            if (at(KtTokens.COMMA)) {
-                errorAndAdvance(missingElementErrorMessage)
-            }
             if (at(KtTokens.RBRACKET)) {
                 break
             }
-            parseExpression()
+            parseExpression(missingElementErrorMessage)
 
             if (!at(KtTokens.COMMA)) {
                 break
@@ -1804,9 +1801,6 @@ internal open class KotlinExpressionParsing(
         if (expect(KtTokens.LPAR, "Expecting an argument list", EXPRESSION_FOLLOW)) {
             if (!at(KtTokens.RPAR)) {
                 while (true) {
-                    while (at(KtTokens.COMMA)) {
-                        errorAndAdvance("Expecting an argument")
-                    }
                     parseValueArgument()
                     if (at(KtTokens.COLON) && lookahead(1) === KtTokens.IDENTIFIER) {
                         errorAndAdvance("Unexpected type specification", 2)
@@ -1850,7 +1844,7 @@ internal open class KotlinExpressionParsing(
         if (at(KtTokens.MUL)) {
             advance() // MUL
         }
-        parseExpression()
+        parseExpression("Expecting an argument")
         argument.done(KtNodeTypes.VALUE_ARGUMENT)
     }
 

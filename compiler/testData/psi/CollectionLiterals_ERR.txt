@@ -19,7 +19,8 @@ KtFile: CollectionLiterals_ERR.kt
       COLLECTION_LITERAL_EXPRESSION
         PsiElement(LBRACKET)('[')
         PsiErrorElement:Expecting an element
-          PsiElement(COMMA)(',')
+          <empty list>
+        PsiElement(COMMA)(',')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n    ')
       COLLECTION_LITERAL_EXPRESSION
@@ -33,7 +34,8 @@ KtFile: CollectionLiterals_ERR.kt
       COLLECTION_LITERAL_EXPRESSION
         PsiElement(LBRACKET)('[')
         PsiErrorElement:Expecting an element
-          PsiElement(COMMA)(',')
+          <empty list>
+        PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
@@ -73,7 +75,7 @@ KtFile: CollectionLiterals_ERR.kt
       PsiWhiteSpace('\n    ')
       COLLECTION_LITERAL_EXPRESSION
         PsiElement(LBRACKET)('[')
-        PsiErrorElement:Expecting an expression
+        PsiErrorElement:Expecting an element
           <empty list>
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

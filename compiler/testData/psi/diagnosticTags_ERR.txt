@@ -690,7 +690,7 @@ KtFile: diagnosticTags_ERR.kt
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      PsiErrorElement:Expecting an expression
+                      PsiErrorElement:Expecting an argument
                         <empty list>
                     PsiErrorElement:Expecting ')'
                       PsiElement(LT)('<')
@@ -805,7 +805,7 @@ KtFile: diagnosticTags_ERR.kt
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     VALUE_ARGUMENT
-                      PsiErrorElement:Expecting an expression
+                      PsiErrorElement:Expecting an argument
                         <empty list>
                     PsiErrorElement:Expecting ')'
                       PsiElement(LT)('<')

@@ -8,7 +8,7 @@ fun foo() = true
 
 fun main() {
     val x = foo()
-    val y = foo(<!SYNTAX!>,<!><!SYNTAX!><!>)
+    val y = foo(<!SYNTAX!><!>,)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, vararg */

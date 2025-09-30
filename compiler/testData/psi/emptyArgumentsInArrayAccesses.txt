@@ -31,7 +31,8 @@ KtFile: emptyArgumentsInArrayAccesses.kt
         INDICES
           PsiElement(LBRACKET)('[')
           PsiErrorElement:Expecting an index element
-            PsiElement(COMMA)(',')
+            <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n    ')
       ARRAY_ACCESS_EXPRESSION
@@ -42,9 +43,10 @@ KtFile: emptyArgumentsInArrayAccesses.kt
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
           PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
           PsiErrorElement:Expecting an index element
-            PsiElement(COMMA)(',')
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
           PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n    ')
       ARRAY_ACCESS_EXPRESSION
@@ -53,7 +55,8 @@ KtFile: emptyArgumentsInArrayAccesses.kt
         INDICES
           PsiElement(LBRACKET)('[')
           PsiErrorElement:Expecting an index element
-            PsiElement(COMMA)(',')
+            <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('2')
@@ -65,8 +68,9 @@ KtFile: emptyArgumentsInArrayAccesses.kt
         INDICES
           PsiElement(LBRACKET)('[')
           PsiErrorElement:Expecting an index element
-            PsiElement(COMMA)(',')
-          PsiErrorElement:Expecting an expression
+            <empty list>
+          PsiElement(COMMA)(',')
+          PsiErrorElement:Expecting an index element
             <empty list>
           PsiWhiteSpace(' ')
           PsiElement(COMMA)(',')
@@ -80,9 +84,10 @@ KtFile: emptyArgumentsInArrayAccesses.kt
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
           PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
           PsiErrorElement:Expecting an index element
-            PsiElement(COMMA)(',')
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('3')
