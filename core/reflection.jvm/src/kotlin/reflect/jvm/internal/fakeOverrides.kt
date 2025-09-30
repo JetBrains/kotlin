@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.full.declaredMembers
@@ -89,15 +90,16 @@ private fun KCallable<*>.toCallableSignature(substitutor: KTypeSubstitutor): Cal
         .filter { it.kind != KParameter.Kind.INSTANCE }
         .map { substitutor.substitute(it.type).type ?: starProjectionSupertypesAreNotPossible() }
     val kind = when (this) {
-        is KFunction<*> -> KCallableKind.FUNCTION
-        is KProperty<*> -> KCallableKind.PROPERTY
+        is DescriptorKProperty<*> if this.descriptor is JavaPropertyDescriptor -> CallableSignatureKind.JAVA_FIELD
+        is KFunction<*> -> CallableSignatureKind.FUNCTION
+        is KProperty<*> -> CallableSignatureKind.PROPERTY
         else -> error("Unknown kind for ${this::class}")
     }
     return CallableSignature(kind, name, parameters)
 }
 
-private enum class KCallableKind {
-    FUNCTION, PROPERTY
+private enum class CallableSignatureKind {
+    FUNCTION, PROPERTY, JAVA_FIELD
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -105,7 +107,7 @@ private val KClass<*>.declaredDescriptorKCallableMembers: Collection<DescriptorK
     get() = declaredMembers as Collection<DescriptorKCallable<*>>
 
 private data class CallableSignature(
-    val kind: KCallableKind,
+    val kind: CallableSignatureKind,
     val name: String,
     val parameters: List<KType>,
 )
