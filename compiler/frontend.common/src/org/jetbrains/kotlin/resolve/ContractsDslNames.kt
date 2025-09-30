@@ -10,8 +10,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object ContractsDslNames {
+    // Internal marker-annotation for distinguishing our API
+    val CONTRACTS_DSL_ANNOTATION_FQN = FqName("kotlin.internal.ContractsDsl")
+
     // Types
     val SIMPLE_EFFECT: CallableId = id("SimpleEffect")
+    val EFFECT = id("Effect")
+    val CONDITIONAL_EFFECT = id("ConditionalEffect")
+    val RETURNS_EFFECT = id("Returns")
+    val RETURNS_NOT_NULL_EFFECT = id("ReturnsNotNull")
+    val CALLS_IN_PLACE_EFFECT = id("CallsInPlace")
 
     // Structure-defining calls
     val CONTRACT: CallableId = id("contract")
