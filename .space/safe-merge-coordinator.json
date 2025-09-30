@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "timeout": "10h",
+  "timeout": "3h",
   "builds": [
     {
       "teamcity": {
