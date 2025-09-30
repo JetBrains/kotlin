@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
@@ -74,9 +75,11 @@ fun <
     annotationSerializer: FirAnnotationSerializer,
     proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
     extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
+    addAnnotation: ((ProtoBuf.Annotation) -> Unit)? = null,
+    languageFeature: LanguageFeature? = null,
 ) {
-    if (extension == null) return
-    allRequiredAnnotations(session, additionalMetadataProvider).serializeAnnotations(annotationSerializer, proto, extension)
+    allRequiredAnnotations(session, additionalMetadataProvider)
+        .serializeAnnotations(session, annotationSerializer, proto, extension, addAnnotation, languageFeature)
 }
 
 fun FirAnnotationContainer.allRequiredAnnotations(
@@ -95,25 +98,39 @@ fun <
         MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
         BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
         > List<FirAnnotation>.serializeAnnotations(
+    session: FirSession,
     annotationSerializer: FirAnnotationSerializer,
     proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
     extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
+    addAnnotation: ((ProtoBuf.Annotation) -> Unit)? = null,
+    languageFeature: LanguageFeature? = null,
 ) {
-    if (extension == null) return
+    if (addAnnotation != null && languageFeature != null && session.languageVersionSettings.supportsFeature(languageFeature)) {
+        serializeAnnotationsToMetadata(annotationSerializer, addAnnotation)
+    } else {
+        serializeAnnotationsToExtension(annotationSerializer, proto, extension)
+    }
+}
+
+fun List<FirAnnotation>.serializeAnnotationsToMetadata(
+    annotationSerializer: FirAnnotationSerializer,
+    addAnnotation: (ProtoBuf.Annotation) -> Unit,
+) {
     for (annotation in this) {
-        proto.addExtensionOrNull(extension, annotationSerializer.serializeAnnotation(annotation))
+        addAnnotation(annotationSerializer.serializeAnnotation(annotation) ?: continue)
     }
 }
 
 fun <
         MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
         BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
-        Type,
-        > GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>.addExtensionOrNull(
-    extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<Type>>,
-    value: Type?,
+        > List<FirAnnotation>.serializeAnnotationsToExtension(
+    annotationSerializer: FirAnnotationSerializer,
+    proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+    extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
 ) {
-    if (value != null) {
-        addExtension(extension, value)
+    if (extension == null) return
+    for (annotation in this) {
+        proto.addExtension(extension, annotationSerializer.serializeAnnotation(annotation) ?: continue)
     }
 }
