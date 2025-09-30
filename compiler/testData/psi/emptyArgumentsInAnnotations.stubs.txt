@@ -30,6 +30,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsInAnnotationsK
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
           VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
         CONSTRUCTOR_CALLEE
@@ -38,6 +39,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsInAnnotationsK
               REFERENCE_EXPRESSION[referencedName=Ann]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
+          VALUE_ARGUMENT[isSpread=false]
             COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
         CONSTRUCTOR_CALLEE
@@ -45,6 +47,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsInAnnotationsK
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Ann]
         VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
           VALUE_ARGUMENT[isSpread=false]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
     VALUE_PARAMETER_LIST
@@ -170,6 +173,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsInAnnotationsK
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Ann]
         VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
           VALUE_ARGUMENT[isSpread=true]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
         CONSTRUCTOR_CALLEE

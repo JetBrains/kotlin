@@ -21,11 +21,10 @@ KtFile: emptyArgumentsInAnnotations.kt
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting an argument
-            PsiElement(COMMA)(',')
           VALUE_ARGUMENT
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
@@ -37,11 +36,10 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('Ann')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting an argument
-            PsiElement(COMMA)(',')
           VALUE_ARGUMENT
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
+          PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY
@@ -59,8 +57,10 @@ KtFile: emptyArgumentsInAnnotations.kt
               PsiElement(CLOSING_QUOTE)('"')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting an argument
-            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an argument
+              <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
             STRING_TEMPLATE
@@ -77,8 +77,10 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('Ann')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting an argument
-            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an argument
+              <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
             COLLECTION_LITERAL_EXPRESSION
@@ -95,8 +97,10 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('Ann')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting an argument
-            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an argument
+              <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
             INTEGER_CONSTANT
@@ -133,7 +137,7 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
@@ -154,7 +158,7 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
@@ -178,7 +182,7 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
@@ -197,7 +201,7 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiWhiteSpace(' ')
           PsiElement(COMMA)(',')
@@ -223,7 +227,7 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiWhiteSpace(' ')
           PsiElement(COMMA)(',')
@@ -234,7 +238,7 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('y')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
@@ -253,7 +257,7 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiWhiteSpace(' ')
           PsiElement(COMMA)(',')
@@ -295,7 +299,7 @@ KtFile: emptyArgumentsInAnnotations.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             PsiElement(MUL)('*')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
@@ -316,7 +320,7 @@ KtFile: emptyArgumentsInAnnotations.kt
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
             PsiElement(MUL)('*')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
@@ -331,7 +335,7 @@ KtFile: emptyArgumentsInAnnotations.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             PsiElement(MUL)('*')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
@@ -371,7 +375,7 @@ KtFile: emptyArgumentsInAnnotations.kt
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
             PsiElement(MUL)('*')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
@@ -392,7 +396,7 @@ KtFile: emptyArgumentsInAnnotations.kt
             PsiElement(EQ)('=')
             PsiWhiteSpace(' ')
             PsiElement(MUL)('*')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(COMMA)(',')
           PsiElement(RPAR)(')')
@@ -406,12 +410,14 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('Ann')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting an argument
-            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an argument
+              <empty list>
+          PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
             PsiElement(MUL)('*')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
@@ -430,13 +436,13 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiWhiteSpace(' ')
           PsiElement(COMMA)(',')
           VALUE_ARGUMENT
             PsiElement(MUL)('*')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n')
@@ -451,7 +457,7 @@ KtFile: emptyArgumentsInAnnotations.kt
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             PsiElement(MUL)('*')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
@@ -461,7 +467,7 @@ KtFile: emptyArgumentsInAnnotations.kt
                 PsiElement(IDENTIFIER)('y')
             PsiWhiteSpace(' ')
             PsiElement(EQ)('=')
-            PsiErrorElement:Expecting an expression
+            PsiErrorElement:Expecting an argument
               <empty list>
           PsiElement(RPAR)(')')
     PsiWhiteSpace('\n')

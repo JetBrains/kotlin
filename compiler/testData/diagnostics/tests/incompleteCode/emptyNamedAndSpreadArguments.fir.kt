@@ -17,28 +17,28 @@ fun test() {
     val c = C()
 
     one<!NO_VALUE_FOR_PARAMETER!>()<!>
-    one(<!SYNTAX!>,<!><!SYNTAX!><!>)
+    one(<!SYNTAX!><!>,)
     one(a =<!SYNTAX!><!>)
     one(a =<!SYNTAX!><!>,)
 
     three(aa =<!SYNTAX!><!>, cc = c, bb = b)
-    three(<!SYNTAX!>,<!> bb =<!SYNTAX!><!>, <!NO_VALUE_FOR_PARAMETER!>cc = c)<!>
+    three(<!SYNTAX!><!>, bb =<!SYNTAX!><!>, cc = c)
     three(aa = a, bb = b, cc = c)
     three(aa =<!SYNTAX!><!>, bb =<!SYNTAX!><!>, cc =<!SYNTAX!><!>)
     three(aa =<!SYNTAX!><!>, cc =<!SYNTAX!><!>, bb =<!SYNTAX!><!>)
     three(cc =<!SYNTAX!><!>, aa =<!SYNTAX!><!>, bb = b)
     three(cc =<!SYNTAX!><!>, aa =<!SYNTAX!><!>,)
-    three(cc =<!SYNTAX!><!>, aa =<!SYNTAX!><!>, <!SYNTAX!>,<!><!SYNTAX!><!>)
+    three(cc =<!SYNTAX!><!>, aa =<!SYNTAX!><!>, <!SYNTAX!><!>,)
 
     many(*<!SYNTAX!><!>)
     many(*<!SYNTAX!><!>,)
     many(aa=*<!SYNTAX!><!>)
     many(aa=*<!SYNTAX!><!>,)
-    many(<!SYNTAX!>,<!> aa=<!SYNTAX!><!>,)
-    many(<!SYNTAX!>,<!> aa=<!SYNTAX!><!>, <!SYNTAX!>,<!><!SYNTAX!><!>)
-    many(<!SYNTAX!>,<!> aa=<!SYNTAX!><!>, )
-    many(<!SYNTAX!>,<!><!SYNTAX!>,<!><!SYNTAX!><!>)
-    many(<!SYNTAX!>,<!><!SYNTAX!><!>)
+    many(<!SYNTAX!><!>, aa=<!SYNTAX!><!>,)
+    many(<!SYNTAX!><!>, aa=<!SYNTAX!><!>, <!SYNTAX!><!>,)
+    many(<!SYNTAX!><!>, aa=<!SYNTAX!><!>, )
+    many(<!SYNTAX!><!>,<!SYNTAX!><!>,)
+    many(<!SYNTAX!><!>,)
     many(bb=*<!SYNTAX!><!>)
     many(bb=<!SYNTAX!><!>)
 }
