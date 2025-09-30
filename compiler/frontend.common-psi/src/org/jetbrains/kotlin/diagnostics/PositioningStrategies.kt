@@ -1036,6 +1036,7 @@ object PositioningStrategies {
         }
     }
 
+    @JvmField
     val SPREAD_OPERATOR: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             return super.mark((element as? KtValueArgument)?.getSpreadElement()?.node?.psi ?: element)
