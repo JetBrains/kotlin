@@ -1007,7 +1007,10 @@ class BodyResolveContext(
             withContainer(accessor) {
                 val type = receiverTypeRef?.coneType
                 val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
-                withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
+
+                withInlineFunctionIfApplicable(accessor) {
+                    withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
+                }
             }
         }
     }
