@@ -40,6 +40,7 @@ class JvmModule(
     defaultStrategyConfig: ExecutionPolicy,
     private val snapshotConfig: SnapshotConfig,
     moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+    private val stdlibLocation: List<Path>,
 ) : AbstractModule(
     project,
     moduleName,
@@ -48,15 +49,14 @@ class JvmModule(
     defaultStrategyConfig,
     moduleCompilationConfigAction,
 ) {
-    private val stdlibLocation: Path =
-        KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath() // compile against the provided stdlib
+
 
     /**
      * It won't be a problem to cache [dependencyFiles] and [compileClasspath] currently,
      * but we might add tests where dependencies change between compilations
      */
     private val dependencyFiles: List<Path>
-        get() = dependencies.map { it.location }.plusElement(stdlibLocation)
+        get() = dependencies.map { it.location }.plus(stdlibLocation)
     private val compileClasspath: String
         get() = dependencyFiles.joinToString(File.pathSeparator)
 
