@@ -39,7 +39,7 @@ class JvmTargetConsistency {
         val jvmTargetArg = actualJvmCompilerArguments.arguments.single { it.name == "jvm-target" }
 
         assertEquals(
-            expected = -1717185985,
+            expected = 1330080225,
             actual = jvmTargetArg.description.hashCode(),
             message = "'${jvmTargetArg.name}' description in '${actualJvmCompilerArguments::name}' should be updated. Current value should be moved into new value in 'valueInVersions' map."
         )
@@ -50,7 +50,7 @@ class JvmTargetConsistency {
         val jdkReleaseArg = actualJvmCompilerArguments.arguments.single { it.name == "Xjdk-release" }
 
         assertEquals(
-            expected = 376057521,
+            expected = -819153105,
             actual = jdkReleaseArg.description.hashCode(),
             message = "'${jdkReleaseArg.name}' description in '${actualJvmCompilerArguments::name}' should be updated. Current value should be moved into new value in 'valueInVersions' map."
         )

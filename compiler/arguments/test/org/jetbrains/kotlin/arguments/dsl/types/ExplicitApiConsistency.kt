@@ -28,7 +28,7 @@ class ExplicitApiConsistency {
         val explicitApiArg = actualCommonCompilerArguments.arguments.single { it.name == "Xexplicit-api" }
 
         assertEquals(
-            expected = -1096358733,
+            expected = -312461075,
             actual = explicitApiArg.valueDescription.hashCode(),
             message = "Value description in '${explicitApiArg.name}' should be updated by moving current value to 'oldValues'."
         )
@@ -39,7 +39,7 @@ class ExplicitApiConsistency {
         val explicitApiReturnTypesArg = actualCommonCompilerArguments.arguments.single { it.name == "XXexplicit-return-types" }
 
         assertEquals(
-            expected = -1096358733,
+            expected = -312461075,
             actual = explicitApiReturnTypesArg.valueDescription.hashCode(),
             message = "Value description in '${explicitApiReturnTypesArg.name}' should be updated by moving current value to 'oldValues'."
         )
