@@ -7,9 +7,11 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import java.util.Objects
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.full.declaredMembers
+import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 internal fun getAllMembers_newKotlinReflectImpl(
@@ -106,8 +108,18 @@ private enum class CallableSignatureKind {
 private val KClass<*>.declaredDescriptorKCallableMembers: Collection<DescriptorKCallable<*>>
     get() = declaredMembers as Collection<DescriptorKCallable<*>>
 
-private data class CallableSignature(
+private class CallableSignature(
     val kind: CallableSignatureKind,
     val name: String,
     val parameters: List<KType>,
-)
+) {
+    override fun hashCode(): Int = Objects.hash(kind, name)
+
+    override fun equals(other: Any?): Boolean {
+        val other = other as? CallableSignature ?: return false
+        return kind == other.kind &&
+            name == other.name &&
+            parameters.size == other.parameters.size &&
+            parameters.zip(other.parameters).all { (x, y) -> x.isSubtypeOf(y) && y.isSubtypeOf(x) }
+    }
+}

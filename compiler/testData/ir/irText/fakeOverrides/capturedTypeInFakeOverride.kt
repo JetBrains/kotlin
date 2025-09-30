@@ -1,10 +1,11 @@
 // FIR_IDENTICAL
-// WITH_STDLIB
 
-open class Base<T> {
-    fun foo(t: T) = Unit
+// FILE: Jaba.java
+public class Jaba {
+    public void foo(Object obj) {}
 }
 
-open class Intermediate<S> : Base<S>()
-
-class Foo<R> : Intermediate<R>() {}
+// FILE: main.kt
+class Foo : Jaba() {
+    override fun foo(obj: Any) {}
+}
