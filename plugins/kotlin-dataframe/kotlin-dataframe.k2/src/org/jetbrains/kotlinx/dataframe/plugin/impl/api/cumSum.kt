@@ -1,0 +1,40 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlinx.dataframe.plugin.impl.api
+
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import org.jetbrains.kotlinx.dataframe.math.cumSumTypeConversion
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
+import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
+import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
+
+internal val defaultCumSumSkipNA: Boolean = true
+
+class DataFrameCumSum : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.columns: ColumnsResolver by arg()
+    val Arguments.skipNA: Boolean by arg(defaultValue = Present(defaultCumSumSkipNA))
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val selectedCols = columns.resolve(receiver).mapToSetOrEmpty { it.path.path() }
+        return receiver.map(selectedCols) { _, col ->
+            when (col) {
+                is SimpleDataColumn -> {
+                    val oldConeType = col.type.type()
+                    val oldKType = oldConeType.toKType() ?: return@map col
+                    val newKType = cumSumTypeConversion(oldKType, true)
+                    val newConeType = newKType.toConeKotlinType() ?: return@map col
+                    col.changeType(newConeType.wrap())
+                }
+                else -> col
+            }
+        }
+    }
+}
