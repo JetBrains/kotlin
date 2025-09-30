@@ -56,6 +56,11 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
     public fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation
 
     public companion object {
+        /**
+         * Gets a [JvmPlatformToolchain] instance from [KotlinToolchains].
+         *
+         * Equivalent to `kotlinToolchains.getToolchain<JvmPlatformToolchain>()`
+         */
         @JvmStatic
         @get:JvmName("get")
         public inline val KotlinToolchains.jvm: JvmPlatformToolchain get() = getToolchain<JvmPlatformToolchain>()
