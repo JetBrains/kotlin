@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // ISSUE: KT-81251
 
@@ -7,7 +7,7 @@ private class EffectiveVisibility {
         field: String = ""
 
     public inline fun foo() {
-        a.<!UNRESOLVED_REFERENCE!>length<!>
+        a.length
     }
 }
 
