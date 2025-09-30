@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Companion.loadImplementation
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Toolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 
 /**
@@ -29,11 +30,38 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
  */
 @ExperimentalBuildToolsApi
 public interface KotlinToolchains {
+
+    /**
+     * Represents a toolchain that can be obtained from [KotlinToolchains.getToolchain] and used to create various build operations.
+     *
+     * [JvmPlatformToolchain] used for compiling Kotlin code for the JVM platform is an example of a `Toolchain`,
+     * and other platform-specific toolchains will be available in the future.
+     *
+     * This interface is not intended to be implemented by the API consumers.
+     */
     public interface Toolchain
 
+    /**
+     * Returns a [Toolchain] of the given [type], possibly creating it when accessed for the first time.
+     *
+     * The implementation may return the same instance of a `Toolchain` for subsequent calls.
+     *
+     * @see JvmPlatformToolchain
+     */
     public fun <T : Toolchain> getToolchain(type: Class<T>): T
 
+    /**
+     * Creates an [ExecutionPolicy] that allows executing operations in-process.
+     *
+     * @see BuildSession.executeOperation
+     */
     public fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess
+
+    /**
+     * Creates an [ExecutionPolicy] that allows executing operations using a Kotlin daemon.
+     *
+     * @see BuildSession.executeOperation
+     */
     public fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon
 
     /**
@@ -118,7 +146,14 @@ public interface KotlinToolchains {
     }
 }
 
+/**
+ * Returns a [Toolchain] of the given type [T], possibly creating it when accessed for the first time.
+ *
+ * The implementation may return the same instance of a `Toolchain` for subsequent calls.
+ *
+ * @see JvmPlatformToolchain
+ */
 @ExperimentalBuildToolsApi
-public inline fun <reified T : KotlinToolchains.Toolchain> KotlinToolchains.getToolchain(): T {
+public inline fun <reified T : Toolchain> KotlinToolchains.getToolchain(): T {
     return getToolchain(T::class.java)
 }
