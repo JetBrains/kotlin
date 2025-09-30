@@ -404,3 +404,13 @@ class ConcatWithKeys : AbstractSchemaModificationInterpreter() {
             originalColumns + receiver.keys.columns().filter { it.name !in originalColumns.map { it.name } })
     }
 }
+
+class GroupByCumSum : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver by groupBy()
+    val Arguments.skipNA: Boolean by arg(defaultValue = Present(defaultCumSumSkipNA))
+    val Arguments.columns: ColumnsResolver by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        TODO()
+    }
+}
