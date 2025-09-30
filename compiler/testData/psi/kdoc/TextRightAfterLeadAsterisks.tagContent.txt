@@ -1,0 +1,4 @@
+ORIGINAL KDOC:
+**test
+CONTENT:
+test

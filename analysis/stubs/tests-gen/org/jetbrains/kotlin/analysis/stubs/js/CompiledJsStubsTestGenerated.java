@@ -2850,6 +2850,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("CodeBlocks.kt")
+    public void testCodeBlocks() {
+      runTest("compiler/testData/psi/kdoc/CodeBlocks.kt");
+    }
+
+    @Test
     @TestMetadata("DocCommentAtBeginningOfFile1.kt")
     public void testDocCommentAtBeginningOfFile1() {
       runTest("compiler/testData/psi/kdoc/DocCommentAtBeginningOfFile1.kt");
@@ -2904,6 +2910,30 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("IncompleteCodeBlock.kt")
+    public void testIncompleteCodeBlock() {
+      runTest("compiler/testData/psi/kdoc/IncompleteCodeBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("IncompleteCodeBlockWithoutCode.kt")
+    public void testIncompleteCodeBlockWithoutCode() {
+      runTest("compiler/testData/psi/kdoc/IncompleteCodeBlockWithoutCode.kt");
+    }
+
+    @Test
+    @TestMetadata("IncompleteIndentedCodeBlock.kt")
+    public void testIncompleteIndentedCodeBlock() {
+      runTest("compiler/testData/psi/kdoc/IncompleteIndentedCodeBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("IncompleteIndentedList.kt")
+    public void testIncompleteIndentedList() {
+      runTest("compiler/testData/psi/kdoc/IncompleteIndentedList.kt");
+    }
+
+    @Test
     @TestMetadata("Markdown.kt")
     public void testMarkdown() {
       runTest("compiler/testData/psi/kdoc/Markdown.kt");
@@ -2925,6 +2955,18 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     @TestMetadata("MarkdownQualifiedName.kt")
     public void testMarkdownQualifiedName() {
       runTest("compiler/testData/psi/kdoc/MarkdownQualifiedName.kt");
+    }
+
+    @Test
+    @TestMetadata("MultipleAsterisksOnTheSameLine.kt")
+    public void testMultipleAsterisksOnTheSameLine() {
+      runTest("compiler/testData/psi/kdoc/MultipleAsterisksOnTheSameLine.kt");
+    }
+
+    @Test
+    @TestMetadata("NestedLists.kt")
+    public void testNestedLists() {
+      runTest("compiler/testData/psi/kdoc/NestedLists.kt");
     }
 
     @Test

@@ -1,0 +1,10 @@
+ORIGINAL KDOC:
+* [A.B.C...]
+ * [....]
+ * [A..B..C]
+ * [A.]
+CONTENT:
+[A.B.C...]
+[....]
+[A..B..C]
+[A.]

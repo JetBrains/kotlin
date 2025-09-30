@@ -1,0 +1,10 @@
+ORIGINAL KDOC:
+* [WikiLink]
+ * \[NotALink]
+ * [[DoubleQuotedLink]]
+ * Just \[ and \]
+CONTENT:
+[WikiLink]
+\[NotALink]
+[[DoubleQuotedLink]]
+Just \[ and \]
