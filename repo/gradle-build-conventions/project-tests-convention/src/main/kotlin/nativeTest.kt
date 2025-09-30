@@ -155,8 +155,7 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Classpath
     val customTestDependencies: ConfigurableFileCollection = objects.fileCollection()
 
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Classpath
     @get:Optional
     val customCompilerDist: DirectoryProperty = objects.directoryProperty()
 
