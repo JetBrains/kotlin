@@ -458,6 +458,8 @@ enum class LanguageFeature(
     // Also remove org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext.isInsideAssignmentRhs with this one
     EqualityConstraintForOperatorsUnderAssignments(KOTLIN_2_3, "KT-77008"),
 
+    AnnotationsInMetadata(KOTLIN_2_3, "KT-75736"),
+
     // 2.4
 
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
@@ -563,7 +565,6 @@ enum class LanguageFeature(
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = null, enabledInProgressiveMode = true, "KT-73611"),
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, "KT-16768"),
-    AnnotationsInMetadata(sinceVersion = null, "KT-57919"),
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722"),
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722"),
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131"),
