@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.FirContractsDslNames
 
 abstract class FirAbstractContractResolveTransformerDispatcher(
     session: FirSession,

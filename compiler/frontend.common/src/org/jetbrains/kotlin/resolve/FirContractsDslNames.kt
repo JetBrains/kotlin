@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.transformers.contracts
+package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
@@ -38,7 +38,7 @@ object FirContractsDslNames {
     private fun simpleEffect(name: String): CallableId = id(CONTRACT_PACKAGE, SIMPLE_EFFECT.callableName.asString(), name)
     private fun id(name: String): CallableId = id(CONTRACT_PACKAGE, name)
     private fun id(packageName: String, name: String): CallableId = id(packageName, className = null, name)
-    internal fun id(packageName: String, className: String?, name: String): CallableId {
+    fun id(packageName: String, className: String?, name: String): CallableId {
         return CallableId(
             FqName(packageName),
             className?.let { FqName(it) },
