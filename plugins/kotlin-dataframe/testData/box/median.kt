@@ -55,7 +55,7 @@ fun box(): String {
     val median111: Double? = res11.dependentsCount
 
     // scenario #2: median of values per columns separately
-    val res3 = personsDf.medianFor<_, String> { name and weight and workExperienceYears and dependentsCount and annualIncome }
+    val res3 = personsDf.medianFor { name and weight and workExperienceYears and dependentsCount and annualIncome }
     res3.df().compareSchemas()
 
     val median31: String? = res3.name

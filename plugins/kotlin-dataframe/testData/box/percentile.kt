@@ -55,7 +55,7 @@ fun box(): String {
     val percentile111: Double? = res11.dependentsCount
 
     // scenario #2: percentile of values per columns separately
-    val res3 = personsDf.percentileFor<_, String>(percentile = 30.0){ name and weight and workExperienceYears and dependentsCount and annualIncome }
+    val res3 = personsDf.percentileFor(percentile = 30.0){ name and weight and workExperienceYears and dependentsCount and annualIncome }
     res3.df().compareSchemas()
 
     val percentile31: String? = res3.name

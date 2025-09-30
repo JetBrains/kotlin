@@ -55,7 +55,7 @@ fun box(): String {
     val min111: Byte? = res11.dependentsCount
 
     // scenario #2: min of values per columns separately
-    val res3 = personsDf.minFor<_, String> { name and weight and workExperienceYears and dependentsCount and annualIncome }
+    val res3 = personsDf.minFor { name and weight and workExperienceYears and dependentsCount and annualIncome }
     res3.df().compareSchemas()
 
     val min31: String? = res3.name

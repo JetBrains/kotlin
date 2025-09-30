@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
@@ -69,7 +71,10 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
+import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.returnType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -164,6 +169,19 @@ class FunctionCallTransformer(
     }
 
     override fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall {
+        val allReturnTypesAreValid = call.arguments.filterIsInstance<FirAnonymousFunctionExpression>()
+            .all { expression ->
+                val expectedReturnType = expression.resolvedType
+                    .takeIf { it.isSomeFunctionType(session) }
+                    ?.let { (it as? ConeClassLikeType)?.returnType(session) }
+                    ?: return@all true
+
+                val actualReturnType = expression.anonymousFunction.body?.resolvedType
+                    ?: return@all true
+
+                actualReturnType.isSubtypeOf(expectedReturnType, session)
+            }
+        if (!allReturnTypesAreValid) return call
         return transformers
             .firstNotNullOfOrNull { it.transformOrNull(call, originalSymbol) }
             ?: call
@@ -377,6 +395,7 @@ class FunctionCallTransformer(
             val fSymbol = FirAnonymousFunctionSymbol()
             val target = FirFunctionTarget(null, isLambda = true)
             anonymousFunction = buildAnonymousFunction {
+                source = call.arguments.firstNotNullOfOrNull { it as? FirAnonymousFunctionExpression }?.anonymousFunction?.source
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
