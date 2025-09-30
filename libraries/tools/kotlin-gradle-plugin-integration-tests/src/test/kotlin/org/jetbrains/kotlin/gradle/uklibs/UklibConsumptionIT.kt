@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.tasks.JavaExec
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -26,6 +25,7 @@ import java.io.File
 import java.io.Serializable
 import kotlin.io.path.pathString
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalWasmDsl::class)
 @MppGradlePluginTests
@@ -726,19 +726,34 @@ class UklibConsumptionIT : KGPBaseTest() {
                     }
                 }
             }.buildAndReturn("runJvm")
-            assertEquals(
-                listOf<List<String>>(
-                    // classes
-                    mutableListOf("jvm", "main"),
-                    mutableListOf("java", "jvmMain"),
-                    // processedResources
-                    mutableListOf("jvm", "main"),
-                    mutableListOf("unzipped_uklib_producer.uklib", "jvmMain"),
-                    mutableListOf(defaultBuildOptions.kotlinVersion, "kotlin-stdlib-${defaultBuildOptions.kotlinVersion}.jar"),
-                    mutableListOf("13.0", "annotations-13.0.jar"),
-                ).prettyPrinted,
-                runJvmClasspath.toList().relativeTransformationPathComponents(2).prettyPrinted
+            val matchers = listOf(
+                File("empty/build/classes/kotlin/jvm/main"),
+                File("empty/build/classes/java/jvmMain"),
+                File("empty/build/processedResources/jvm/main"),
+                File("transformed/unzipped_uklib_producer.uklib/jvmMain"),
+                File("kotlin-stdlib/${defaultBuildOptions.kotlinVersion}/kotlin-stdlib-${defaultBuildOptions.kotlinVersion}.jar"),
+                File("annotations-13.0.jar"),
             )
+            assertEquals(
+                runJvmClasspath.size,
+                matchers.size,
+                message = runJvmClasspath.toString()
+            )
+            val unmatchedClasspath = matchers.zip(runJvmClasspath) { matcher, classpathElement ->
+                runCatching {
+                    assertTrue(
+                        classpathElement.endsWith(matcher),
+                        message = "${classpathElement} endsWith ${matcher}"
+                    )
+                }
+            }.mapNotNull {
+                it.exceptionOrNull()
+            }
+            if (!unmatchedClasspath.isEmpty()) {
+                val exception = AssertionError("Unmatched classpath")
+                unmatchedClasspath.forEach(exception::addSuppressed)
+                throw exception
+            }
         }
     }
 
