@@ -16,6 +16,7 @@ import java.nio.file.Paths
 import kotlin.io.path.copyToRecursively
 import kotlin.io.path.createDirectories
 import kotlin.io.path.isDirectory
+import kotlin.io.path.toPath
 
 class Project(
     val kotlinToolchain: KotlinToolchains,
@@ -29,6 +30,7 @@ class Project(
         moduleName: String,
         dependencies: List<Module> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
+        stdlibClasspath: List<Path>? = null,
         moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit = {},
     ): Module {
         val moduleDirectory = projectDirectory.resolve(moduleName)
@@ -42,7 +44,10 @@ class Project(
             dependencies = dependencies,
             defaultStrategyConfig = defaultStrategyConfig,
             snapshotConfig = snapshotConfig,
-            moduleCompilationConfigAction = moduleCompilationConfigAction
+            moduleCompilationConfigAction = moduleCompilationConfigAction,
+            stdlibLocation = stdlibClasspath ?: listOf(
+                KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath() // compile against the provided stdlib
+            )
         )
         module.sourcesDirectory.createDirectories()
         val templatePath = Paths.get("src/main/resources/modules/$moduleName")

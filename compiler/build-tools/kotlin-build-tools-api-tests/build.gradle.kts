@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
@@ -47,21 +49,21 @@ fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsV
     }
 }
 
-fun SourceSet.configureCompatibilitySourceDirectories() {
+fun SourceSet.configureCompatibilitySourceDirectories(testSuiteName: String) {
     java.setSrcDirs(
         listOf(
-            layout.projectDirectory.dir("src/testCompatibility/java"),
+            layout.projectDirectory.dir("src/$testSuiteName/java"),
         )
     )
     kotlin.setSrcDirs(
         listOf(
-            layout.projectDirectory.dir("src/testCompatibility/java"),
-            layout.projectDirectory.dir("src/testCompatibility/kotlin"),
+            layout.projectDirectory.dir("src/$testSuiteName/java"),
+            layout.projectDirectory.dir("src/$testSuiteName/kotlin"),
         )
     )
     resources.setSrcDirs(
         listOf(
-            layout.projectDirectory.dir("src/testCompatibility/resources"),
+            layout.projectDirectory.dir("src/$testSuiteName/resources"),
         )
     )
 }
@@ -85,8 +87,7 @@ testing {
         for (implVersion in compatibilityTestsVersions) {
             register<JvmTestSuite>("testCompatibility${implVersion}") {
                 if (!kotlinBuildProperties.isInIdeaSync || !configuredIdeaSourceSets) {
-                    sources.configureCompatibilitySourceDirectories()
-                    configuredIdeaSourceSets = true
+                    sources.configureCompatibilitySourceDirectories("testCompatibility")
                 }
                 dependencies {
                     runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
@@ -105,27 +106,68 @@ testing {
                     }
                 }
             }
+
+            // in the `testIsolatedCompiler` tests we will need classpaths for the compiler and matching stdlib at runtime
+            configurations.create("isolatedCompilerClasspath$implVersion")
+            configurations.create("isolatedCompilerStdlib$implVersion")
+            dependencies {
+                "isolatedCompilerClasspath$implVersion"(project(":compiler:build-tools:kotlin-build-tools-compat"))
+                if (implVersion.isCurrent) {
+                    "isolatedCompilerClasspath$implVersion"(project(":compiler:build-tools:kotlin-build-tools-impl"))
+                    "isolatedCompilerStdlib$implVersion"(project(":kotlin-stdlib"))
+                } else {
+                    "isolatedCompilerClasspath$implVersion"("org.jetbrains.kotlin:kotlin-build-tools-impl:${implVersion}")
+                    "isolatedCompilerStdlib$implVersion"("org.jetbrains.kotlin:kotlin-stdlib:${implVersion}")
+                }
+            }
+            register<JvmTestSuite>("testIsolatedCompiler${implVersion}") {
+                if (!kotlinBuildProperties.isInIdeaSync || !configuredIdeaSourceSets) {
+                    sources.configureCompatibilitySourceDirectories("testIsolatedCompiler")
+                }
+
+                targets.all {
+                    projectTests {
+                        testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                            systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                            systemProperty(
+                                "kotlin.build-tools-api.test.compilerClasspath",
+                                configurations.named("isolatedCompilerClasspath$implVersion").get().asPath
+                            )
+                            systemProperty(
+                                "kotlin.build-tools-api.test.stdlibClasspath",
+                                configurations.named("isolatedCompilerStdlib$implVersion").get().asPath
+                            )
+                        }
+                    }
+                }
+            }
+            configuredIdeaSourceSets = true
         }
 
         withType<JvmTestSuite>().configureEach configureSuit@{
             val isRegular = this@configureSuit.name in businessLogicTestSuits
+            val isIsolatedClasspath = this@configureSuit.name.startsWith("testIsolatedCompiler")
             dependencies {
                 useJUnitJupiter(libs.versions.junit5.get())
 
                 compileOnly(project()) // propagate stdlib from the main dependencies for compilation, the runtime dependency provides the actual required version
                 implementation(project()) {
-                    isTransitive = false
+                    // for the "testIsolatedCompiler" test suite, we don't bring in the build-tools-impl dependency,
+                    // so we don't have stdlib and other deps either. We need to bring them in explicitly.
+                    isTransitive = isIsolatedClasspath
                 }
                 implementation(project(":kotlin-tooling-core"))
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
-                runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
-                if (isRegular) {
-                    runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
+                if (!isIsolatedClasspath) {
+                    runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
+                    if (isRegular) {
+                        runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
+                    }
                 }
             }
 
             targets.all {
-                if (!testTask.name.startsWith("testCompatibility")) {
+                if (businessLogicTestSuits.any { testTask.name.startsWith(it) }) {
                     projectTests {
                         testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")

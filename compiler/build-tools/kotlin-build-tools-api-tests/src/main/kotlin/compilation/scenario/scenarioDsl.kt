@@ -170,7 +170,7 @@ private class ScenarioDsl(
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, compilationConfigAction)
+            project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
         return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, false)
             ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, false)
     }
@@ -185,7 +185,7 @@ private class ScenarioDsl(
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, compilationConfigAction)
+            project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
         return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, true)
             ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, true)
     }
