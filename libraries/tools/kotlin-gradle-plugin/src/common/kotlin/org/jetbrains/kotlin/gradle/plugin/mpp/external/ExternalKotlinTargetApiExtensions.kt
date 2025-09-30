@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.*
 
 @ExternalKotlinTargetApi
-@Suppress("Deprecation")
+@Suppress("UnusedReceiverParameter", "DEPRECATION")
+@Deprecated(
+    "Accessing the project via the Kotlin extension is no longer supported. Scheduled for removal in Kotlin 2.4.",
+    level = DeprecationLevel.ERROR
+)
 val KotlinTopLevelExtension.project: Project
-    get() = this.project
+    get() = throw UnsupportedOperationException()
