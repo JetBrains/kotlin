@@ -25,12 +25,23 @@ public abstract @interface A {
  * package {
  *
  *   // signature: bar()V
+ *   @A(x = [1])
+ *   @B(x = "x", y = [1], z = "z")
+ *   @C(a = A(x = [1]), b = B(x = "x", y = [1], z = "z"))
  *   public final fun bar(): kotlin/Unit
  *
  *   // signature: baz()V
+ *   @A(x = [1, 2])
+ *   @B(x = "x", y = [1, 2], z = "z")
+ *   @C(a = A(x = [1, 2]), b = B(x = "x", y = [1, 2], z = "z"))
  *   public final fun baz(): kotlin/Unit
  *
  *   // signature: foo()V
+ *   @A(x = [])
+ *   @B(x = "x", y = [], z = "z")
+ *   @C(a = A(x = []), b = B(x = "x", y = [], z = "z"))
+ *   @D
+ *   @E(d = D())
  *   public final fun foo(): kotlin/Unit
  *
  *   // module name: main
