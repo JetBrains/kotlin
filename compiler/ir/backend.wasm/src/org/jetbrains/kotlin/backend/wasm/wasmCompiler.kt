@@ -333,8 +333,8 @@ $referencesToQualifiedAndImportedDeclarations
         // Save WebAssembly.JSTag into a local variable to work around [a problem in JavaScriptCore](https://bugs.webkit.org/show_bug.cgi?id=297126), 
         // which doesn't allow us to check if JSTag is used as a tag inside a wasm module.
         ""
-    }const wasmJsTag = WebAssembly.JSTag;
-    const wasmTag =${if (useJsTag) " wasmJsTag ??" else "" } new WebAssembly.Tag({ parameters: ['externref'] });
+    }const wasmJsTag = ${if (useJsTag) "WebAssembly.JSTag" else "void 0"};
+    const wasmTag = wasmJsTag ?? new WebAssembly.Tag({ parameters: ['externref'] });
 
     const js_code = {
 $jsCodeBodyIndented
