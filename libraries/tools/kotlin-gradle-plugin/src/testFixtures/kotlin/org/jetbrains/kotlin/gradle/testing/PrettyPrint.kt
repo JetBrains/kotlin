@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testing
 
+import java.io.File
 import kotlin.reflect.full.memberProperties
 
 /** Pretty print diffable by text and copypastable collection-like hierarchies */
@@ -45,6 +46,8 @@ class PrettyPrint<T : Any>(
                 if (packageName.startsWith("kotlin.") || packageName.startsWith("java.")) {
                     if (value is String) {
                         arrayOf("\"${value}\"")
+                    } else if (value is File) {
+                        arrayOf("File(\"${value}\")")
                     } else {
                         arrayOf(value.toString())
                     }

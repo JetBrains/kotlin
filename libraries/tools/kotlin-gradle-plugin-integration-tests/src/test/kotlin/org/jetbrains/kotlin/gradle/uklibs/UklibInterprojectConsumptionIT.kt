@@ -310,7 +310,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                     binaryCoordinates(Regex(".*kotlin-dom-api-compat.*")),
                     dependsOnDependency(":consumer/commonMain"),
                     dependsOnDependency(":consumer/webMain"),
-                    projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/producer-js.klib")),
+                    projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/producer/build/classes/kotlin/js/main")),
                 )
             }
         }

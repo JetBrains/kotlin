@@ -1,10 +1,14 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.project
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
@@ -23,6 +27,7 @@ import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.tooling.core.closure
 import org.junit.Test
+import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -707,7 +712,6 @@ class UklibInterprojectResolutionTests {
         ),
         compileKotlinJs = mutableSetOf(
             "producer:compileKotlinJs",
-            "producer:jsJar",
         ),
         transformLinuxMainCInteropDependenciesMetadata = null,
         runJvm = mutableSetOf(
@@ -769,7 +773,6 @@ class UklibInterprojectResolutionTests {
         ),
         compileKotlinJs = mutableSetOf(
             "producer:compileKotlinJs",
-            "producer:jsJar",
         ),
         transformLinuxMainCInteropDependenciesMetadata = mutableSetOf(
             "producer:serializeUklibManifestWithoutCompilationDependency",
@@ -950,6 +953,81 @@ class UklibInterprojectResolutionTests {
         dependencies.assertMatches(
             projectArtifactDependency(IdeaKotlinSourceDependency.Type.Regular, ":producer", FilePathRegex(".*/producer/build/libs/producer.jar")),
             dependsOnDependency(":consumer/commonMain"),
+        )
+    }
+
+    @Test
+    fun `circular dependency between projects with associated compilation doesn't duplicate klibs in test compilations`() {
+        val root = buildProject()
+        val a = projectWithUklibs(root, "a") {
+            kotlin {
+                js()
+                wasmJs()
+                wasmWasi()
+                jvm()
+                linuxArm64()
+            }
+        }
+        val b = projectWithUklibs(root, "b") {
+            kotlin {
+                js()
+                wasmJs()
+                wasmWasi()
+                jvm()
+                linuxArm64()
+            }
+        }
+        a.kotlin {
+            dependencies {
+                testImplementation(project.dependencies.project(":b"))
+            }
+        }
+        b.kotlin {
+            dependencies {
+                api(project.dependencies.project(":a"))
+            }
+        }
+        a.evaluate()
+        b.evaluate()
+
+        assertEquals(
+            setOf<File>(
+                File("a/build/classes/kotlin/js/main"),
+                File("b/build/classes/kotlin/js/main"),
+            ).prettyPrinted,
+            a.multiplatformExtension.js().compilations.getByName("test").compileDependencyFiles.map {
+                it.relativeTo(root.projectDir)
+            }.toSet().prettyPrinted
+        )
+        assertEquals(
+            setOf<File>(
+                File("a/build/classes/kotlin/wasmJs/main"),
+                File("b/build/classes/kotlin/wasmJs/main"),
+            ).prettyPrinted,
+            a.multiplatformExtension.wasmJs().compilations.getByName("test").compileDependencyFiles.map {
+                it.relativeTo(root.projectDir)
+            }.toSet().prettyPrinted
+        )
+        assertEquals(
+            setOf<File>(
+                File("a/build/classes/kotlin/wasmWasi/main"),
+                File("b/build/classes/kotlin/wasmWasi/main"),
+            ).prettyPrinted,
+            a.multiplatformExtension.wasmWasi().compilations.getByName("test").compileDependencyFiles.map {
+                it.relativeTo(root.projectDir)
+            }.toSet().prettyPrinted
+        )
+        assertEquals(
+            setOf<File>(
+                // FIXME: KT-81375 the "a-jvm.jar" is a duplicate of "a/classes"
+                File("a/build/classes/java/jvmMain"),
+                File("a/build/classes/kotlin/jvm/main"),
+                File("a/build/libs/a-jvm.jar"),
+                File("b/build/libs/b-jvm.jar"),
+            ).prettyPrinted,
+            a.multiplatformExtension.jvm().compilations.getByName("test").compileDependencyFiles.map {
+                it.relativeTo(root.projectDir)
+            }.toSet().prettyPrinted
         )
     }
 
