@@ -6,4 +6,5 @@
 package org.jetbrains.kotlin.sir
 
 @DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 annotation class SirBuilderDsl

@@ -4,6 +4,7 @@ import base.toIntUnsigned
 import kotlin.math.min
 
 @DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 annotation class PrettyDslMarker
 
 @PrettyDslMarker

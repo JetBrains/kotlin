@@ -6,6 +6,7 @@
 package templates
 
 @DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 annotation class TemplateDsl
 
 enum class Keyword(val value: String) {

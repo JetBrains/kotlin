@@ -35,4 +35,5 @@ class DefaultsProvider(
 val TestServices.defaultsProvider: DefaultsProvider by TestServices.testServiceAccessor()
 
 @DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 annotation class DefaultsDsl

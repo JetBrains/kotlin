@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 
 @DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 annotation class FirBuilderDsl
 
 fun <T> MutableList<T>?.toMutableOrEmpty(): MutableOrEmptyList<T> =

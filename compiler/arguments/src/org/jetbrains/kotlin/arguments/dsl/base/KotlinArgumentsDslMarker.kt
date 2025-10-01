@@ -6,4 +6,5 @@
 package org.jetbrains.kotlin.arguments.dsl.base
 
 @DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 internal annotation class KotlinArgumentsDslMarker

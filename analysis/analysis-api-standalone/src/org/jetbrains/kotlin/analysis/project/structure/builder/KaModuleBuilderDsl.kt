@@ -6,4 +6,5 @@
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
 @DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 internal annotation class KtModuleBuilderDsl

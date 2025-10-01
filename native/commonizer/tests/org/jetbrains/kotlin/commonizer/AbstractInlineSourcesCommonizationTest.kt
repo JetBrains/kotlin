@@ -36,6 +36,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
 
     @DslMarker
+    @kotlin.annotation.Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
     annotation class InlineSourcesCommonizationTestDsl
 
     @InlineSourcesCommonizationTestDsl
@@ -50,7 +51,6 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             get() = DependencyAwareInlineSourceTestFactory(parentInlineSourceBuilder, dependencies.toTargetDependent())
 
 
-        @InlineSourcesCommonizationTestDsl
         fun outputTarget(vararg targets: String) {
             val outputTargets = outputTargets ?: mutableSetOf()
             targets.forEach { target ->
@@ -59,17 +59,14 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             this.outputTargets = outputTargets
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun target(target: CommonizerTarget, builder: TargetBuilder.() -> Unit) {
             targets = targets + TargetBuilder(target, inlineSourceBuilderFactory[target]).also(builder).build()
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun target(target: String, builder: TargetBuilder.() -> Unit) {
             return target(parseCommonizerTarget(target), builder)
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun registerDependency(vararg targets: CommonizerTarget, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             targets.forEach { target ->
                 val dependenciesList = dependencies.getOrPut(target) { mutableListOf() }
@@ -81,12 +78,10 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             }
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun registerDependency(vararg targets: String, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             registerDependency(targets = targets.map(::parseCommonizerTarget).withAllLeaves().toTypedArray(), builder)
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun simpleSingleSourceTarget(target: CommonizerTarget, @Language("kotlin") sourceContent: String) {
             target(target) {
                 module {
@@ -99,12 +94,10 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             simpleSingleSourceTarget(this, sourceContent)
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun simpleSingleSourceTarget(target: String, @Language("kotlin") sourceCode: String) {
             simpleSingleSourceTarget(parseCommonizerTarget(target), sourceCode)
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun <T : Any> setting(type: CommonizerSettings.Key<T>, value: T) {
             val setting = MapBasedCommonizerSettings.Setting(type, value)
             check(setting.key !in settings.map { it.key }) {
@@ -147,7 +140,6 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
     class TargetBuilder(private val target: CommonizerTarget, private val inlineSourceBuilder: InlineSourceBuilder) {
         private var modules: List<InlineSourceBuilder.Module> = emptyList()
 
-        @InlineSourcesCommonizationTestDsl
         fun module(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             modules = modules + inlineSourceBuilder.createModule(builder)
         }

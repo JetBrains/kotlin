@@ -267,6 +267,7 @@ class InjectionLoader {
 }
 
 @DslMarker
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 annotation class BuildGradleKtsInjectionScope
 
 @BuildGradleKtsInjectionScope
