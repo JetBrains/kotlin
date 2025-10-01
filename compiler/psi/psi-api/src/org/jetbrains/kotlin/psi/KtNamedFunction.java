@@ -44,10 +44,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
         if (stub != null) {
             return stub.getHasTypeParameterListBeforeFunctionName();
         }
-        return hasTypeParameterListBeforeFunctionNameByTree();
-    }
 
-    private boolean hasTypeParameterListBeforeFunctionNameByTree() {
         KtTypeParameterList typeParameterList = getTypeParameterList();
         if (typeParameterList == null) {
             return false;
@@ -69,7 +66,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     }
 
     @Nullable
-    @IfNotParsed // "function" with no "fun" keyword is created by parser for "{...}" on top-level or in class body
+    @IfNotParsed // "function" with no "fun" keyword is created by parser for "{...}" on top-level or in the class body
     public PsiElement getFunKeyword() {
         return findChildByType(KtTokens.FUN_KEYWORD);
     }
@@ -113,10 +110,8 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Nullable
     public KtExpression getBodyExpression() {
         KotlinFunctionStub stub = getGreenStub();
-        if (stub != null) {
-            if (!stub.getHasBody()) {
-                return null;
-            }
+        if (stub != null && !stub.getHasBody()) {
+            return null;
         }
 
         return findChildByClass(KtExpression.class);
@@ -158,19 +153,20 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Nullable
     public KtTypeReference getReceiverTypeReference() {
         KotlinFunctionStub stub = getGreenStub();
-        if (stub != null) {
-            if (!stub.isExtension()) {
-                return null;
-            }
-            List<KtTypeReference> childTypeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
-            if (!childTypeReferences.isEmpty()) {
-                return childTypeReferences.get(0);
-            }
-            else {
-                return null;
-            }
+        if (stub == null) {
+            return getReceiverTypeRefByTree();
         }
-        return getReceiverTypeRefByTree();
+
+        if (!stub.isExtension()) {
+            return null;
+        }
+        List<KtTypeReference> childTypeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
+        if (!childTypeReferences.isEmpty()) {
+            return childTypeReferences.get(0);
+        }
+        else {
+            return null;
+        }
     }
 
     @Nullable
@@ -204,15 +200,16 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Nullable
     public KtTypeReference getTypeReference() {
         KotlinFunctionStub stub = getGreenStub();
-        if (stub != null) {
-            List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
-            int returnTypeIndex = stub.isExtension() ? 1 : 0;
-            if (returnTypeIndex >= typeReferences.size()) {
-                return null;
-            }
-            return typeReferences.get(returnTypeIndex);
+        if (stub == null) {
+            return TypeRefHelpersKt.getTypeReference(this);
         }
-        return TypeRefHelpersKt.getTypeReference(this);
+
+        List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
+        int returnTypeIndex = stub.isExtension() ? 1 : 0;
+        if (returnTypeIndex >= typeReferences.size()) {
+            return null;
+        }
+        return typeReferences.get(returnTypeIndex);
     }
 
     @Override
