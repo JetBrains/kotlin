@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.ktor.http.*
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
+import org.jetbrains.kotlin.gradle.util.buildExecutionDataGson
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.IOException
@@ -96,7 +96,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             validateCall(port) { jsonObject ->
                 val type = jsonObject["type"].asString
                 assertEquals(BuildDataType.TASK_DATA, BuildDataType.valueOf(type))
-                val taskData = Gson().fromJson(jsonObject, GradleCompileStatisticsData::class.java)
+                val taskData = buildExecutionDataGson.fromJson(jsonObject, GradleCompileStatisticsData::class.java)
                 validate(taskData)
             }
         }
@@ -105,7 +105,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             validateCall(port) { jsonObject ->
                 val type = jsonObject["type"].asString
                 assertEquals(BuildDataType.BUILD_DATA, BuildDataType.valueOf(type))
-                val buildData = Gson().fromJson(jsonObject, BuildFinishStatisticsData::class.java)
+                val buildData = buildExecutionDataGson.fromJson(jsonObject, BuildFinishStatisticsData::class.java)
                 validate(buildData)
             }
         }
@@ -322,7 +322,6 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             validateTaskData(port) { taskReport ->
                 assertEquals(commonizerNativeDistributionTask, taskReport.getTaskName())
 
-
                 assertContains(
                     taskReport.getBuildTimesMetrics().keys,
                     NATIVE_IN_EXECUTOR,
@@ -362,7 +361,6 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             }
         }
     }
-
 
     private fun TestProject.setProjectForTest(port: Int) {
         enableStatisticReports(BuildReportType.HTTP, "http://localhost:$port/put")

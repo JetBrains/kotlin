@@ -110,7 +110,7 @@ fun collectCompilerArguments(buildOperationRecord: BuildOperationRecord?): List<
     } else emptyList()
 }
 
-private fun <E : BuildMetric<*>> filterMetrics(
+private fun <E : BuildPerformanceMetric> filterMetrics(
     expectedMetrics: Set<String>?,
     buildTimesMetrics: Map<E, Long>
 ): Map<E, Long> = expectedMetrics?.let { buildTimesMetrics.filterKeys { metric -> it.contains(metric.name) } } ?: buildTimesMetrics

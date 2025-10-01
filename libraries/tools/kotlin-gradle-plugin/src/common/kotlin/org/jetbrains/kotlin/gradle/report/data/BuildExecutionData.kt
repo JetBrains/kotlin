@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 
 data class BuildExecutionData(
+    val metrics: List<BuildPerformanceMetric>,
     val startParameters: BuildStartParameters,
     val failureMessages: List<String?>,
     val buildOperationRecord: Collection<BuildOperationRecord>,
