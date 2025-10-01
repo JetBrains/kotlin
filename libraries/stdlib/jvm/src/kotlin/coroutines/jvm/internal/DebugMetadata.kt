@@ -95,14 +95,16 @@ internal object ModuleNameRetriever {
 private fun BaseContinuationImpl.getDebugMetadataAnnotation(): DebugMetadata? =
     javaClass.getAnnotation(DebugMetadata::class.java)
 
-private fun BaseContinuationImpl.getLabel(): Int =
-    try {
+private fun BaseContinuationImpl.getLabel(): Int {
+    if (this is TailCallBaseContinuationImpl) return 0
+    return try {
         val field = javaClass.getDeclaredField("label")
         field.isAccessible = true
         (field.get(this) as? Int ?: 0) - 1
     } catch (e: Exception) { // NoSuchFieldException, SecurityException, or IllegalAccessException
         -1
     }
+}
 
 /**
  * Returns an array of spilled variable names and continuation's field names where the variable has been spilled.
