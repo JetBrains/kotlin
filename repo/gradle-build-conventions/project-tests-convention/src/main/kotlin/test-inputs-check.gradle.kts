@@ -40,13 +40,19 @@ tasks.withType<Test>().configureEach {
                 ?: (System.getProperty("user.home") + File.separator + ".konan")
 
         @Suppress("UNCHECKED_CAST")
-        val d8Executable = project.extra["javascript.engine.path.V8"] as Provider<String>
+        val d8Executable = if (project.extra.has("javascript.engine.path.V8")) {
+            project.extra["javascript.engine.path.V8"] as Provider<String>
+        } else null
 
         @Suppress("UNCHECKED_CAST")
-        val nodeJsExecutable = project.extra["javascript.engine.path.NodeJs"] as Provider<String>
+        val nodeJsExecutable = if (project.extra.has("javascript.engine.path.NodeJs")) {
+            project.extra["javascript.engine.path.NodeJs"] as Provider<String>
+        } else null
 
         @Suppress("UNCHECKED_CAST")
-        val binaryenExecutable = project.extra["binaryen.path"] as Provider<String>
+        val binaryenExecutable = if (project.extra.has("binaryen.path")) {
+            project.extra["binaryen.path"] as Provider<String>
+        } else null
 
         doFirst {
             if (!permissionsTemplateFile.exists()) {
@@ -238,9 +244,15 @@ tasks.withType<Test>().configureEach {
                         .replace(
                             "{{wasm}}",
                             buildString {
-                                append("""permission java.io.FilePermission "${d8Executable.get()}", "execute";""")
-                                append("""permission java.io.FilePermission "${nodeJsExecutable.get()}", "execute";""")
-                                append("""permission java.io.FilePermission "${binaryenExecutable.get()}", "execute";""")
+                                d8Executable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                                nodeJsExecutable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                                binaryenExecutable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
                             }
                         )
 
