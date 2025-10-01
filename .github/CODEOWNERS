@@ -385,7 +385,7 @@
 /plugins/allopen/ @JetBrains/kotlin-frontend
 /plugins/assign-plugin/ @JetBrains/kotlin-frontend
 /plugins/atomicfu/ @JetBrains/kotlin-libraries
-/plugins/compose/ ashikov@google.com alanv@google.com lelandr@google.com bentrengrove@google.com anbailey@google.com chuckj@google.com
+/plugins/compose/ ashikov@google.com alanv@google.com lelandr@google.com bentrengrove@google.com anbailey@google.com chuckj@google.com derekx@google.com
 /plugins/plugin-sandbox/ @JetBrains/kotlin-frontend
 /plugins/jvm-abi-gen/ @JetBrains/kotlin-jvm
 /plugins/kapt/ @JetBrains/kotlin-jvm
