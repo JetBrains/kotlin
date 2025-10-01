@@ -46,7 +46,7 @@ internal val KotlinJsKlibArtifact = KotlinTargetArtifact { target, apiElements, 
 
     target.createPublishArtifact(jsKlibTask, KLIB_TYPE, apiElements, runtimeElements)
 
-    val klibProducingTask = mainCompilation.compileTaskProvider as TaskProvider<out ProducesKlib>
+    val klibProducingTask = mainCompilation.compileTaskProvider
 
     when (target.project.kotlinPropertiesProvider.kmpPublicationStrategy) {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {
