@@ -74,7 +74,7 @@ open class BuildMetricsReporterImpl<B : BuildTimeMetric, P : BuildPerformanceMet
             gcMetrics = myGcMetrics
         )
 
-    override fun addMetrics(metrics: BuildMetrics<B, P>) {
+    override fun addMetrics(metrics: BuildMetrics<out B, out P>) {
         myBuildAttributes.addAll(metrics.buildAttributes)
         myBuildTimes.addAll(metrics.buildTimes)
         myBuildMetrics.addAll(metrics.buildPerformanceMetrics)

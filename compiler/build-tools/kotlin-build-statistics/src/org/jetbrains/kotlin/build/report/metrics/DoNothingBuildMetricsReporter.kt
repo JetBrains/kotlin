@@ -40,5 +40,5 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter<BuildTimeMetric, Bui
             BuildAttributes()
         )
 
-    override fun addMetrics(metrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>) {}
+    override fun addMetrics(metrics: BuildMetrics<out BuildTimeMetric, out BuildPerformanceMetric>) {}
 }

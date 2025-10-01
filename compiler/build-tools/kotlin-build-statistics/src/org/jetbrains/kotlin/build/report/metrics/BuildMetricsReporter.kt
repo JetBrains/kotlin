@@ -26,7 +26,7 @@ interface BuildMetricsReporter<B : BuildTimeMetric, P : BuildPerformanceMetric> 
     fun addAttribute(attribute: BuildAttribute)
 
     fun getMetrics(): BuildMetrics<B, P>
-    fun addMetrics(metrics: BuildMetrics<B, P>)
+    fun addMetrics(metrics: BuildMetrics<out B, out P>)
 }
 
 inline fun <B : BuildTimeMetric, P : BuildPerformanceMetric, T> BuildMetricsReporter<B, P>.measure(time: B, fn: () -> T): T {

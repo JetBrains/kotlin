@@ -70,7 +70,7 @@ internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCo
         error("Not supported")
     }
 
-    override fun addMetrics(metrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>) {
+    override fun addMetrics(metrics: BuildMetrics<out BuildTimeMetric, out BuildPerformanceMetric>) {
         metrics.buildAttributes.asMap().forEach { (attribute, value) ->
             repeat(value) { addAttribute(attribute) }
         }
