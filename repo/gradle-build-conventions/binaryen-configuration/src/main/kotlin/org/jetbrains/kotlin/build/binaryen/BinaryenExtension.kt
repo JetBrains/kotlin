@@ -31,9 +31,13 @@ abstract class BinaryenExtension(
             dependsOn(project.binaryenSetupTaskProvider)
         }
 
-        jvmArgumentProviders += this.project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
-            classpath.from(binaryenExecutablePath)
-            property.set("binaryen.path")
+        val binaryenExecutablePath = binaryenExecutablePath
+
+        inputs.property("propertyName", "binaryen.path")
+        inputs.property("destinationPath", binaryenExecutablePath)
+
+        doFirst {
+            systemProperty("binaryen.path", binaryenExecutablePath.get())
         }
     }
 }

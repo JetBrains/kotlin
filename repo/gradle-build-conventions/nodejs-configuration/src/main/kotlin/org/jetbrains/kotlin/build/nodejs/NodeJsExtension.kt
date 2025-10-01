@@ -26,10 +26,16 @@ abstract class NodeJsExtension(
         with(nodeJsEnvSpec) {
             dependsOn(project.nodeJsSetupTaskProvider)
         }
+
         nodeJsEnvSpec.version.set(version)
-        jvmArgumentProviders += this.project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
-            classpath.from(nodeJsExecutablePath)
-            property.set("javascript.engine.path.NodeJs")
+
+        val nodeJsExecutablePath = nodeJsExecutablePath
+
+        inputs.property("propertyName", "javascript.engine.path.NodeJs")
+        inputs.property("destinationPath", nodeJsExecutablePath)
+
+        doFirst {
+            systemProperty("javascript.engine.path.NodeJs", nodeJsExecutablePath.get())
         }
     }
 }
