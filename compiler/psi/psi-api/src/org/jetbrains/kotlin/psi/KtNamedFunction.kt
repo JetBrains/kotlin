@@ -2,274 +2,177 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.psi
 
-package org.jetbrains.kotlin.psi;
+import com.intellij.lang.ASTNode
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.psiUtil.isKtFile
+import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
+import org.jetbrains.kotlin.psi.typeRefHelpers.getTypeReference
+import org.jetbrains.kotlin.psi.typeRefHelpers.setTypeReference
 
-import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
-import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
+/**
+ * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
+ */
+open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, KtFunction, KtDeclarationWithInitializer {
+    constructor(node: ASTNode) : super(node)
+    constructor(stub: KotlinFunctionStub) : super(stub, /* nodeType = */ KtStubBasedElementTypes.FUNCTION)
 
-import java.util.Collections;
-import java.util.List;
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
+        visitor.visitNamedFunction(this, data)
 
-import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
+    open fun hasTypeParameterListBeforeFunctionName(): Boolean {
+        greenStub?.let {
+            return it.hasTypeParameterListBeforeFunctionName
+        }
 
-public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunctionStub>
-        implements KtFunction, KtDeclarationWithInitializer {
-    public KtNamedFunction(@NotNull ASTNode node) {
-        super(node);
+        val typeParameterList = typeParameterList ?: return false
+        val nameIdentifier = nameIdentifier ?: return true
+        return nameIdentifier.textOffset > typeParameterList.textOffset
     }
 
-    public KtNamedFunction(@NotNull KotlinFunctionStub stub) {
-        super(stub, KtStubBasedElementTypes.FUNCTION);
+    override fun hasBlockBody(): Boolean {
+        greenStub?.let {
+            return it.hasNoExpressionBody
+        }
+        return equalsToken == null
     }
 
-    @Override
-    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitNamedFunction(this, data);
+    @get:IfNotParsed // "function" with no "fun" keyword is created by parser for "{...}" on top-level or in the class body
+    open val funKeyword: PsiElement?
+        get() = findChildByType(KtTokens.FUN_KEYWORD)
+
+    override fun getEqualsToken(): PsiElement? =
+        findChildByType(KtTokens.EQ)
+
+    override fun getInitializer(): KtExpression? =
+        PsiTreeUtil.getNextSiblingOfType(/* sibling = */ equalsToken, /* aClass = */ KtExpression::class.java)
+
+    override fun hasInitializer(): Boolean =
+        initializer != null
+
+    override fun getPresentation(): ItemPresentation? =
+        ItemPresentationProviders.getItemPresentation(/* element = */ this)
+
+    override fun getValueParameterList(): KtParameterList? =
+        getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
+
+    override fun getValueParameters(): List<KtParameter> =
+        valueParameterList?.parameters.orEmpty()
+
+    override fun getBodyExpression(): KtExpression? {
+        val stub = greenStub
+        if (stub != null && !stub.hasBody) {
+            return null
+        }
+
+        return findChildByClass(KtExpression::class.java)
     }
 
-    public boolean hasTypeParameterListBeforeFunctionName() {
-        KotlinFunctionStub stub = getGreenStub();
+    override fun getBodyBlockExpression(): KtBlockExpression? {
+        val stub = greenStub
         if (stub != null) {
-            return stub.getHasTypeParameterListBeforeFunctionName();
-        }
-
-        KtTypeParameterList typeParameterList = getTypeParameterList();
-        if (typeParameterList == null) {
-            return false;
-        }
-        PsiElement nameIdentifier = getNameIdentifier();
-        if (nameIdentifier == null) {
-            return true;
-        }
-        return nameIdentifier.getTextOffset() > typeParameterList.getTextOffset();
-    }
-
-    @Override
-    public boolean hasBlockBody() {
-        KotlinFunctionStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.getHasNoExpressionBody();
-        }
-        return getEqualsToken() == null;
-    }
-
-    @Nullable
-    @IfNotParsed // "function" with no "fun" keyword is created by parser for "{...}" on top-level or in the class body
-    public PsiElement getFunKeyword() {
-        return findChildByType(KtTokens.FUN_KEYWORD);
-    }
-
-    @Override
-    @Nullable
-    public PsiElement getEqualsToken() {
-        return findChildByType(KtTokens.EQ);
-    }
-
-    @Override
-    @Nullable
-    public KtExpression getInitializer() {
-        return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), KtExpression.class);
-    }
-
-    @Override
-    public boolean hasInitializer() {
-        return getInitializer() != null;
-    }
-
-    @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
-    }
-
-    @Override
-    @Nullable
-    public KtParameterList getValueParameterList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
-    }
-
-    @Override
-    @NotNull
-    public List<KtParameter> getValueParameters() {
-        KtParameterList list = getValueParameterList();
-        return list != null ? list.getParameters() : Collections.emptyList();
-    }
-
-    @Override
-    @Nullable
-    public KtExpression getBodyExpression() {
-        KotlinFunctionStub stub = getGreenStub();
-        if (stub != null && !stub.getHasBody()) {
-            return null;
-        }
-
-        return findChildByClass(KtExpression.class);
-    }
-
-    @Nullable
-    @Override
-    public KtBlockExpression getBodyBlockExpression() {
-        KotlinFunctionStub stub = getGreenStub();
-        if (stub != null) {
-            if (!(stub.getHasNoExpressionBody() && stub.getHasBody())) {
-                return null;
+            if (!(stub.hasNoExpressionBody && stub.hasBody)) {
+                return null
             }
         }
 
-        KtExpression bodyExpression = findChildByClass(KtExpression.class);
-        if (bodyExpression instanceof KtBlockExpression) {
-            return (KtBlockExpression) bodyExpression;
-        }
-
-        return null;
+        return findChildByClass(KtExpression::class.java) as? KtBlockExpression
     }
 
-    @Override
-    public boolean hasBody() {
-        KotlinFunctionStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.getHasBody();
+    override fun hasBody(): Boolean {
+        greenStub?.let {
+            return it.hasBody
         }
-        return getBodyExpression() != null;
+        return bodyExpression != null
     }
 
-    @Override
-    public boolean hasDeclaredReturnType() {
-        return getTypeReference() != null;
+    override fun hasDeclaredReturnType(): Boolean =
+        typeReference != null
+
+    override fun getReceiverTypeReference(): KtTypeReference? {
+        val stub = greenStub ?: return receiverTypeRefByTree
+        if (!stub.isExtension) {
+            return null
+        }
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE).firstOrNull()
     }
 
-    @Override
-    @Nullable
-    public KtTypeReference getReceiverTypeReference() {
-        KotlinFunctionStub stub = getGreenStub();
-        if (stub == null) {
-            return getReceiverTypeRefByTree();
-        }
-
-        if (!stub.isExtension()) {
-            return null;
-        }
-        List<KtTypeReference> childTypeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
-        if (!childTypeReferences.isEmpty()) {
-            return childTypeReferences.get(0);
-        }
-        else {
-            return null;
-        }
-    }
-
-    @Nullable
-    private KtTypeReference getReceiverTypeRefByTree() {
-        PsiElement child = getFirstChild();
-        while (child != null) {
-            IElementType tt = child.getNode().getElementType();
-            if (tt == KtTokens.LPAR || tt == KtTokens.COLON) break;
-            if (child instanceof KtTypeReference) {
-                return (KtTypeReference) child;
+    private val receiverTypeRefByTree: KtTypeReference?
+        get() {
+            var child = firstChild
+            while (child != null) {
+                val tt = child.node.elementType
+                if (tt === KtTokens.LPAR || tt === KtTokens.COLON) break
+                if (child is KtTypeReference) {
+                    return child
+                }
+                child = child.nextSibling
             }
-            child = child.getNextSibling();
+
+            return null
         }
 
-        return null;
+    override fun getContextReceivers(): List<KtContextReceiver> =
+        contextReceiverList?.contextReceivers().orEmpty()
+
+    override fun getTypeReference(): KtTypeReference? {
+        val stub = greenStub ?: return getTypeReference(declaration = this)
+
+        val typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE)
+        val returnTypeIndex = if (stub.isExtension) 1 else 0
+        return if (returnTypeIndex < typeReferences.size) typeReferences[returnTypeIndex] else null
     }
 
-    @NotNull
-    @Override
-    public List<KtContextReceiver> getContextReceivers() {
-        KtContextReceiverList contextReceiverList = getContextReceiverList();
-        if (contextReceiverList != null) {
-            return contextReceiverList.contextReceivers();
-        }
-        else {
-            return Collections.emptyList();
-        }
+    override fun setTypeReference(typeRef: KtTypeReference?): KtTypeReference? =
+        setTypeReference(declaration = this, addAfter = valueParameterList, typeRef = typeRef)
+
+    override fun getColon(): PsiElement? =
+        findChildByType(KtTokens.COLON)
+
+    override fun isLocal(): Boolean {
+        val parent = parent
+        return !(isKtFile(parent) || parent is KtClassBody || parent.parent is KtScript)
     }
 
-    @Override
-    @Nullable
-    public KtTypeReference getTypeReference() {
-        KotlinFunctionStub stub = getGreenStub();
-        if (stub == null) {
-            return TypeRefHelpersKt.getTypeReference(this);
-        }
+    open val isAnonymous: Boolean
+        get() = name == null && isLocal
 
-        List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_REFERENCE);
-        int returnTypeIndex = stub.isExtension() ? 1 : 0;
-        if (returnTypeIndex >= typeReferences.size()) {
-            return null;
-        }
-        return typeReferences.get(returnTypeIndex);
-    }
-
-    @Override
-    @Nullable
-    public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {
-        return TypeRefHelpersKt.setTypeReference(this, getValueParameterList(), typeRef);
-    }
-
-    @Nullable
-    @Override
-    public PsiElement getColon() {
-        return findChildByType(KtTokens.COLON);
-    }
-
-    @Override
-    public boolean isLocal() {
-        PsiElement parent = getParent();
-        return !(isKtFile(parent) || parent instanceof KtClassBody || parent.getParent() instanceof KtScript);
-    }
-
-    public boolean isAnonymous() {
-        return getName() == null && isLocal();
-    }
-
-    public boolean isTopLevel() {
-        KotlinFunctionStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.isTopLevel();
+    open val isTopLevel: Boolean
+        get() {
+            greenStub?.let {
+                return it.isTopLevel
+            }
+            return isKtFile(parent)
         }
 
-        return isKtFile(getParent());
-    }
-
-    @SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins
-    public boolean shouldChangeModificationCount(PsiElement place) {
+    @Suppress("unused") // keep for compatibility with potential plugins
+    open fun shouldChangeModificationCount(place: PsiElement?): Boolean =
         // Suppress Java check for out-of-block
-        return false;
-    }
+        false
 
-    @Override
-    public KtContractEffectList getContractDescription() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST);
-    }
+    override fun getContractDescription(): KtContractEffectList? =
+        getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
 
-    @Override
-    public boolean mayHaveContract() {
-        KotlinFunctionStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.getMayHaveContract();
+    @OptIn(KtImplementationDetail::class)
+    override fun mayHaveContract(): Boolean {
+        greenStub?.let {
+            return it.mayHaveContract
         }
-
-        return KtPsiUtilKt.isLegacyContractPresentPsiCheck(this);
+        return isLegacyContractPresentPsiCheck()
     }
 
-    public boolean mayHaveContract(boolean isAllowedOnMembers) {
-        KotlinFunctionStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.getMayHaveContract();
+    open fun mayHaveContract(isAllowedOnMembers: Boolean): Boolean {
+        greenStub?.let {
+            return it.mayHaveContract
         }
-
-        return KtPsiUtilKt.isContractPresentPsiCheck(this, isAllowedOnMembers);
+        return isContractPresentPsiCheck(isAllowedOnMembers)
     }
 }
