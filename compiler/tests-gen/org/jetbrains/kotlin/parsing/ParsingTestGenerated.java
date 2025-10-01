@@ -1823,6 +1823,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/contextParameters/labelInFunctionTypeContext.kt");
       }
 
+      @TestMetadata("parsingWithLocalDeclarations.kt")
+      public void testParsingWithLocalDeclarations() {
+        runTest("compiler/testData/psi/contextParameters/parsingWithLocalDeclarations.kt");
+      }
+
+      @TestMetadata("parsingWithLocalDeclarationsIncorrect.kt")
+      public void testParsingWithLocalDeclarationsIncorrect() {
+        runTest("compiler/testData/psi/contextParameters/parsingWithLocalDeclarationsIncorrect.kt");
+      }
+
       @TestMetadata("properties.kt")
       public void testProperties() {
         runTest("compiler/testData/psi/contextParameters/properties.kt");

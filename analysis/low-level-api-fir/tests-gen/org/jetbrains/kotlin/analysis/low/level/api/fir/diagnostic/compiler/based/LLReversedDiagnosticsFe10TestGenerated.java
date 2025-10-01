@@ -40146,6 +40146,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("classReferenceInContext.kts")
+      public void testClassReferenceInContext() {
+        runTest("compiler/testData/diagnostics/tests/script/classReferenceInContext.kts");
+      }
+
+      @Test
       @TestMetadata("ComplexScript.kts")
       public void testComplexScript() {
         runTest("compiler/testData/diagnostics/tests/script/ComplexScript.kts");
