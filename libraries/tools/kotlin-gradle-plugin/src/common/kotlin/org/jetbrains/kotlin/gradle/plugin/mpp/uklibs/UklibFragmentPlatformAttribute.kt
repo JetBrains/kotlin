@@ -91,6 +91,7 @@ internal val KotlinTarget.uklibFragmentPlatformAttribute: UklibFragmentPlatformA
                 KotlinPlatformType.wasm -> when (wasmTargetType ?: error("${KotlinJsIrTarget::class} missing wasm type in wasm platform ")) {
                     KotlinWasmTargetType.JS -> UklibTargetFragmentAttribute.wasm_js.name
                     KotlinWasmTargetType.WASI -> UklibTargetFragmentAttribute.wasm_wasi.name
+                    KotlinWasmTargetType.SPEC -> UklibTargetFragmentAttribute.wasm_spec.name
                 }
                 else -> error("${KotlinJsIrTarget::class} unexpected platform type $platformType")
             }
@@ -111,6 +112,7 @@ private enum class UklibTargetFragmentAttribute {
     js_ir,
     wasm_js,
     wasm_wasi,
+    wasm_spec,
     jvm,
     android;
 }

@@ -9,13 +9,15 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
 enum class KotlinWasmTargetType {
     WASI,
-    JS;
+    JS,
+    SPEC;
 }
 
 fun KotlinWasmTargetType.toAttribute(): KotlinWasmTargetAttribute {
     return when(this) {
         KotlinWasmTargetType.WASI -> KotlinWasmTargetAttribute.wasi
         KotlinWasmTargetType.JS -> KotlinWasmTargetAttribute.js
+        KotlinWasmTargetType.SPEC -> KotlinWasmTargetAttribute.spec
     }
 }
 
@@ -23,5 +25,6 @@ fun KotlinWasmTargetType.toCompilerTarget(): WasmTarget {
     return when(this) {
         KotlinWasmTargetType.WASI -> WasmTarget.WASI
         KotlinWasmTargetType.JS -> WasmTarget.JS
+        KotlinWasmTargetType.SPEC -> WasmTarget.SPEC
     }
 }

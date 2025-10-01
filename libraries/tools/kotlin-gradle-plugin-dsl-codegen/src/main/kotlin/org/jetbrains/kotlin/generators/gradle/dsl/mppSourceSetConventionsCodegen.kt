@@ -102,6 +102,7 @@ private val nonNativeSourceSetConventions = listOf(
     PlatformSourceSetConvention("js"),
     PlatformSourceSetConvention("wasmJs", experimentalAnnotation = "@ExperimentalWasmDsl"),
     PlatformSourceSetConvention("wasmWasi", experimentalAnnotation = "@ExperimentalWasmDsl"),
+    PlatformSourceSetConvention("wasmSpec", experimentalAnnotation = "@ExperimentalWasmDsl"),
 )
 
 

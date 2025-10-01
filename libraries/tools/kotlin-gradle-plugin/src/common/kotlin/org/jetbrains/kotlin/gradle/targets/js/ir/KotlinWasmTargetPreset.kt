@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithWasmPresetFunctions.Companion.DEFAULT_WASM_JS_NAME
+import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithWasmPresetFunctions.Companion.DEFAULT_WASM_SPEC_NAME
 import org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithWasmPresetFunctions.Companion.DEFAULT_WASM_WASI_NAME
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -32,7 +33,7 @@ internal class KotlinWasmTargetPreset(
                 when (targetType) {
                     KotlinWasmTargetType.JS -> DEFAULT_WASM_JS_NAME
                     KotlinWasmTargetType.WASI -> DEFAULT_WASM_WASI_NAME
-
+                    KotlinWasmTargetType.SPEC -> DEFAULT_WASM_SPEC_NAME
                 }
             )
         )

@@ -248,6 +248,11 @@ interface KotlinHierarchyBuilder {
     fun withWasmWasi()
 
     /**
+     * Only includes Kotlin's Wasm/Spec targets in this [group].
+     */
+    fun withWasmSpec()
+
+    /**
      * Only includes targets for Kotlin/JVM in this [group].
      */
     fun withJvm()

@@ -55,6 +55,9 @@ internal object PlatformSourceSetConventionsChecker : KotlinGradleProjectChecker
             CheckedPlatformInfo<KotlinJsIrTarget>("wasmWasi") {
                 it.wasmTargetType == KotlinWasmTargetType.WASI
             },
+            CheckedPlatformInfo<KotlinJsIrTarget>("wasmSpec") {
+                it.wasmTargetType == KotlinWasmTargetType.SPEC
+            },
         ).plus(nativeTargetPresets).forEach { checkedPlatformInfo ->
             @Suppress("UNCHECKED_CAST")
             runChecks(checkedPlatformInfo as CheckedPlatformInfo<KotlinTarget>)

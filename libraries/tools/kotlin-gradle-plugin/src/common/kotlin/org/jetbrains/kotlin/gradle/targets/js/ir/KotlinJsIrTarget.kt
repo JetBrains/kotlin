@@ -53,6 +53,7 @@ constructor(
     KotlinJsTargetDsl,
     KotlinWasmJsTargetDsl,
     KotlinWasmWasiTargetDsl,
+    KotlinWasmSpecTargetDsl,
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
 

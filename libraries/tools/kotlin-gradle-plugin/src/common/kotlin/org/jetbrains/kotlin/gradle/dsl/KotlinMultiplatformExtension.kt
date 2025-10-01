@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSpecTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
@@ -111,6 +112,17 @@ internal constructor(
         presetFunctions.configureOrCreate(
             name,
             presetFunctions.presets.getByName("wasmWasi") as KotlinWasmTargetPreset,
+            configure
+        )
+
+    @ExperimentalWasmDsl
+    override fun wasmSpec(
+        name: String,
+        configure: KotlinWasmSpecTargetDsl.() -> Unit,
+    ): KotlinWasmSpecTargetDsl =
+        presetFunctions.configureOrCreate(
+            name,
+            presetFunctions.presets.getByName("wasmSpec") as KotlinWasmTargetPreset,
             configure
         )
 

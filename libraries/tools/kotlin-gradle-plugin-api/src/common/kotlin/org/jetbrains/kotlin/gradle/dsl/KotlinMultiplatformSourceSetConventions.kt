@@ -696,6 +696,54 @@ interface KotlinMultiplatformSourceSetConventions {
     val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsTest: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
+     * Static accessor for the main Kotlin Source Set of wasmSpec target.
+     * Declare wasmSpec target to access this source set.
+     * If wasmSpec target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    wasmSpec() // Target is declared, wasmSpecMain source set is created
+     *
+     *    sourceSets {
+     *      wasmSpecMain.dependencies {
+     *          // Add wasmSpecMain dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    @ExperimentalWasmDsl
+    val NamedDomainObjectContainer<KotlinSourceSet>.wasmSpecMain: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
+     * Static accessor for the test Kotlin Source Set of wasmSpec target.
+     * Declare wasmSpec target to access this source set.
+     * If wasmSpec target wasn't declared, accessing this source set will cause a runtime error during configuration time.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    wasmSpec() // Target is declared, wasmSpecTest source set is created
+     *
+     *    sourceSets {
+     *      wasmSpecTest.dependencies {
+     *          // Add wasmSpecTest dependencies here
+     *      }
+     *    }
+     * }
+     * ```
+     *
+     * @since 2.0.20
+     */
+    @ExperimentalWasmDsl
+    val NamedDomainObjectContainer<KotlinSourceSet>.wasmSpecTest: NamedDomainObjectProvider<KotlinSourceSet>
+
+    /**
      * Static accessor for the main Kotlin Source Set of wasmWasi target.
      * Declare wasmWasi target to access this source set.
      * If wasmWasi target wasn't declared, accessing this source set will cause a runtime error during configuration time.
@@ -1862,4 +1910,5 @@ interface KotlinMultiplatformSourceSetConventions {
         configure: LanguageSettingsBuilder.() -> Unit,
     ): Unit = this { languageSettings(configure) }
 }
+
 

@@ -161,6 +161,10 @@ private class KotlinHierarchyBuilderImpl(
         it.platformType == KotlinPlatformType.wasm && it is KotlinJsIrTarget && it.wasmTargetType == KotlinWasmTargetType.WASI
     }
 
+    override fun withWasmSpec() = withTargets {
+        it.platformType == KotlinPlatformType.wasm && it is KotlinJsIrTarget && it.wasmTargetType == KotlinWasmTargetType.SPEC
+    }
+
     override fun withJvm() = withTargets {
         it is KotlinJvmTarget ||
                 /*

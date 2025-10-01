@@ -83,6 +83,12 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
     override val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsTest by KotlinSourceSetConvention
 
     @ExperimentalWasmDsl
+    override val NamedDomainObjectContainer<KotlinSourceSet>.wasmSpecMain by KotlinSourceSetConvention
+
+    @ExperimentalWasmDsl
+    override val NamedDomainObjectContainer<KotlinSourceSet>.wasmSpecTest by KotlinSourceSetConvention
+
+    @ExperimentalWasmDsl
     override val NamedDomainObjectContainer<KotlinSourceSet>.wasmWasiMain by KotlinSourceSetConvention
 
     @ExperimentalWasmDsl
@@ -186,3 +192,4 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
     override val NamedDomainObjectContainer<KotlinSourceSet>.androidUnitTest by KotlinSourceSetConvention
     override val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest by KotlinSourceSetConvention
 }
+

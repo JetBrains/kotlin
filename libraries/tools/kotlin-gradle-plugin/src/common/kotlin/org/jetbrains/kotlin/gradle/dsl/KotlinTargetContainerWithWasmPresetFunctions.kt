@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSpecTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 
 @KotlinGradlePluginPublicDsl
@@ -48,6 +49,24 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
 
     @ExperimentalWasmDsl
     fun wasmWasi(configure: Action<KotlinWasmWasiTargetDsl>) = wasmWasi { configure.execute(this) }
+
+    @ExperimentalWasmDsl
+    fun wasmSpec(
+        name: String = DEFAULT_WASM_SPEC_NAME,
+        configure: KotlinWasmSpecTargetDsl.() -> Unit = { }
+    ): KotlinWasmSpecTargetDsl
+
+    @ExperimentalWasmDsl
+    fun wasmSpec() = wasmSpec { }
+
+    @ExperimentalWasmDsl
+    fun wasmSpec(name: String) = wasmSpec(name) { }
+
+    @ExperimentalWasmDsl
+    fun wasmSpec(name: String, configure: Action<KotlinWasmSpecTargetDsl>) = wasmSpec(name) { configure.execute(this) }
+
+    @ExperimentalWasmDsl
+    fun wasmSpec(configure: Action<KotlinWasmSpecTargetDsl>) = wasmSpec { configure.execute(this) }
 
     @Deprecated(
         "Use wasmJs instead. Scheduled for removal in Kotlin 2.3.",
@@ -96,5 +115,6 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
     companion object {
         internal const val DEFAULT_WASM_JS_NAME = "wasmJs"
         internal const val DEFAULT_WASM_WASI_NAME = "wasmWasi"
+        internal const val DEFAULT_WASM_SPEC_NAME = "wasmSpec"
     }
 }
