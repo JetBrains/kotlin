@@ -19877,6 +19877,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("anonymousFunctionAsRunArgumentInAssignment.kt")
+        public void testAnonymousFunctionAsRunArgumentInAssignment() {
+          runTest("compiler/testData/diagnostics/tests/inference/completion/anonymousFunctionAsRunArgumentInAssignment.kt");
+        }
+
+        @Test
         @TestMetadata("basic.kt")
         public void testBasic() {
           runTest("compiler/testData/diagnostics/tests/inference/completion/basic.kt");
