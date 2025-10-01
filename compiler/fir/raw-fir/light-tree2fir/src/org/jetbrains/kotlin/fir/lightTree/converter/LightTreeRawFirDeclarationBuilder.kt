@@ -97,7 +97,7 @@ class LightTreeRawFirDeclarationBuilder(
                     packageDirective = convertPackageDirective(child).also { context.packageFqName = it.packageFqName }
                 }
                 IMPORT_LIST -> importList += convertImportDirectives(child)
-                CLASS, OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
+                CLASS, OBJECT_DECLARATION -> firDeclarationList += convertClass(child, headerCompilationMode)
                 FUN -> firDeclarationList += convertFunctionDeclaration(child, headerCompilationMode) as FirDeclaration
                 KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(child)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
@@ -139,11 +139,15 @@ class LightTreeRawFirDeclarationBuilder(
         return convertBlockExpressionWithoutBuilding(block, generateHeaders = generateHeaders).build()
     }
 
-    fun convertBlockExpressionWithoutBuilding(block: LighterASTNode, kind: KtFakeSourceElementKind? = null, generateHeaders: Boolean = false): FirBlockBuilder {
+    fun convertBlockExpressionWithoutBuilding(
+        block: LighterASTNode,
+        kind: KtFakeSourceElementKind? = null,
+        generateHeaders: Boolean = false
+    ): FirBlockBuilder {
         val firStatements = block.forEachChildrenReturnList { node, container ->
             if (!generateHeaders || container.isEmpty()) { // Take only the first statement which could be a contract for header generation.
                 when (node.tokenType) {
-                    CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
+                    CLASS, OBJECT_DECLARATION -> container += convertClass(node, generateHeaders) as FirStatement
                     FUN -> container += convertFunctionDeclaration(node)
                     KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
                     DESTRUCTURING_DECLARATION -> container +=
@@ -460,7 +464,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      */
-    fun convertClass(classNode: LighterASTNode): FirRegularClass {
+    fun convertClass(classNode: LighterASTNode, generateHeaders: Boolean): FirRegularClass {
         var modifiers: ModifierList? = null
         var classKind: ClassKind = ClassKind.CLASS
         var identifier: String? = null
@@ -631,7 +635,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                         //parse declarations
                         classBody?.let {
-                            addDeclarations(convertClassBody(it, classWrapper))
+                            addDeclarations(convertClassBody(it, classWrapper, generateHeaders))
                         }
 
                         //parse data class
@@ -917,10 +921,14 @@ class LightTreeRawFirDeclarationBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassBody
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumClassBody
      */
-    private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper?): List<FirDeclaration> {
+    private fun convertClassBody(
+        classBody: LighterASTNode,
+        classWrapper: ClassWrapper?,
+        generateHeaders: Boolean = false
+    ): List<FirDeclaration> {
         val modifierLists = mutableListOf<LighterASTNode>()
         val firDeclarations = classBody.forEachChildrenReturnList { node, container ->
-            convertDeclarationFromClassBody(node, container, classWrapper, modifierLists)
+            convertDeclarationFromClassBody(node, container, classWrapper, modifierLists, generateHeaders)
         }
 
         convertDanglingModifierListsInClassBody(modifierLists, firDeclarations)
@@ -932,11 +940,12 @@ class LightTreeRawFirDeclarationBuilder(
         container: MutableList<FirDeclaration>,
         classWrapper: ClassWrapper?,
         modifierLists: MutableList<LighterASTNode>,
+        generateHeaders: Boolean = false
     ) {
         when (node.tokenType) {
             ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper!!)
-            CLASS, OBJECT_DECLARATION -> container += convertClass(node)
-            FUN -> container += convertFunctionDeclaration(node) as FirDeclaration
+            CLASS, OBJECT_DECLARATION -> container += convertClass(node, generateHeaders)
+            FUN -> container += convertFunctionDeclaration(node, generateHeaders) as FirDeclaration
             KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
             TYPEALIAS -> container += convertTypeAlias(node)
             CLASS_INITIALIZER -> container += convertAnonymousInitializer(node, classWrapper!!.classBuilder.ownerRegularOrAnonymousObjectSymbol) //anonymousInitializer
