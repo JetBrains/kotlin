@@ -128,7 +128,7 @@ class WasmSecondStageEnvironmentConfigurator(
         )
         configuration.put(
             WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL,
-            USE_NEW_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives
+            wasmTarget == WasmTarget.SPEC || USE_NEW_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives
         )
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, WASM_NO_JS_TAG in registeredDirectives)
         configuration.put(

@@ -159,7 +159,7 @@ fun compileWasm(
     useDebuggerCustomFormatters: Boolean,
     generateDwarf: Boolean
 ): WasmCompilerResult {
-    val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
+    val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) == WasmTarget.JS
 
     val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
         wasmCompiledFileFragments,

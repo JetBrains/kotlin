@@ -378,7 +378,7 @@ class WasmSymbols(
 
 
     private val invokeOnExportedFunctionExitIfWasi =
-        when (configuration.wasmTarget == WasmTarget.WASI) {
+        when (configuration.wasmTarget == WasmTarget.WASI || configuration.wasmTarget == WasmTarget.SPEC) {
             true -> getInternalWasmFunction("invokeOnExportedFunctionExit")
             else -> null
         }

@@ -354,6 +354,7 @@ class ClassicFrontendFacade(
         val suffix = when (wasmTarget) {
             WasmTarget.JS -> "-js"
             WasmTarget.WASI -> "-wasi"
+            WasmTarget.SPEC -> "-spec"
         }
 
         val runtimeModuleDescriptors = createModuleDescriptorsForKlibs(

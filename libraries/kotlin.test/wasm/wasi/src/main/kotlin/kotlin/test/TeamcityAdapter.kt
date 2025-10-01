@@ -9,25 +9,16 @@ import kotlin.wasm.WasmImport
 import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.unsafe.*
 
-/**
- * Read command-line argument data. The size of the array should match that returned by
- * `args_sizes_get`. Each argument is expected to be `\0` terminated.
- */
-@ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "args_get")
-private external fun wasiRawArgsGet(
+private fun wasiRawArgsGet(
     argvPtr: Int,
     argvBuf: Int,
-): Int
+): Int = throw UnsupportedOperationException("Arguments not supported in Wasm Spec")
 
 
-/** Return command-line argument data sizes. */
-@ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "args_sizes_get")
-private external fun wasiRawArgsSizesGet(
+private fun wasiRawArgsSizesGet(
     argumentNumberPtr: Int,
     argumentStringSizePtr: Int,
-): Int
+): Int = throw UnsupportedOperationException("Arguments not supported in Wasm Spec")
 
 @OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { allocator ->

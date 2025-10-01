@@ -29,7 +29,7 @@ internal class KaFirDefaultImportsProvider : KaBaseDefaultImportsProvider() {
         targetPlatform.all { it is NativePlatform } -> NativeDefaultImportsProvider
         targetPlatform.all { it is WasmPlatform } -> when (targetPlatform.getWasmTarget()) {
             WasmTarget.JS -> WasmJsDefaultImportsProvider
-            WasmTarget.WASI -> WasmWasiDefaultImportsProvider
+            WasmTarget.WASI, WasmTarget.SPEC -> WasmWasiDefaultImportsProvider
         }
         else -> CommonDefaultImportsProvider
     }

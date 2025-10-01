@@ -63,6 +63,7 @@ internal fun TestModule.collectDependencies(
             )
         }
         WasmTarget.WASI -> error("WASI target is not yet supported in the first phase of ${CustomWebCompilerFirstPhaseFacade::class.simpleName}")
+        WasmTarget.SPEC -> error("Spec target is not yet supported in the first phase of ${CustomWebCompilerFirstPhaseFacade::class.simpleName}")
     }
 
     val (transitiveLibraries: List<File>, friendLibraries: List<File>) = getTransitivesAndFriends(module = this, testServices)

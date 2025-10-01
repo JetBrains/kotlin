@@ -28,6 +28,26 @@ internal sealed class WasmVM(
         toolArgs: List<String> = emptyList(),
     ): String
 
+    object ReferenceInterpreter : WasmVM("Ref", property = "wasm.engine.path.ReferenceInterpreter", entryPointIsJsFile = false) {
+        override fun run(
+            entryFile: String,
+            jsFiles: List<String>,
+            workingDirectory: File?,
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>,
+        ): String {
+            require(jsFiles.isEmpty())
+            require(useNewExceptionHandling)
+            return tool.run(
+                *toolArgs.toTypedArray(),
+                entryFile,
+                "-e",
+                "(invoke \"_initialize\") (invoke \"startTest\")",
+                workingDirectory = workingDirectory,
+            )
+        }
+    }
+
     object V8 : WasmVM(shortName = "V8", property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,

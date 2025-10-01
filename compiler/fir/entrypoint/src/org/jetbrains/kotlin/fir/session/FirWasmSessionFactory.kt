@@ -50,7 +50,7 @@ object FirWasmSessionFactory : AbstractFirKlibSessionFactory<FirWasmSessionFacto
     fun FirSession.registerWasmComponents(wasmTarget: WasmTarget) {
         val defaultImportsProvider = when (wasmTarget) {
             WasmTarget.JS -> WasmJsDefaultImportsProvider
-            WasmTarget.WASI -> WasmWasiDefaultImportsProvider
+            WasmTarget.WASI, WasmTarget.SPEC -> WasmWasiDefaultImportsProvider
         }
         register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(defaultImportsProvider))
     }

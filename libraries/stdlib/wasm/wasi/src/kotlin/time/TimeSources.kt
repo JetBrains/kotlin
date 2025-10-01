@@ -26,29 +26,10 @@ private const val CLOCK_ID_REALTIME = 0
 private const val CLOCK_ID_MONOTONIC = 1
 
 /**
- * Return the time value of a clock. Note: This is similar to `clock_gettime` in POSIX.
- */
-@ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "clock_time_get")
-private external fun wasiRawClockTimeGet(clockId: Int, precision: Long, resultPtr: Int): Int
-
-/**
  * Returns timestamp of the given clock in nanoseconds.
  */
 @OptIn(ExperimentalWasmInterop::class)
-private fun clockTimeGet(clockId: Int): Long = withScopedMemoryAllocator { allocator ->
-    val rp0 = allocator.allocate(8)
-    val ret = wasiRawClockTimeGet(
-        clockId = clockId,
-        precision = 1,
-        resultPtr = rp0.address.toInt()
-    )
-    if (ret == 0) {
-        rp0.loadLong()
-    } else {
-        throw WasiError(WasiErrorCode.entries[ret])
-    }
-}
+private fun clockTimeGet(clockId: Int): Long = throw UnsupportedOperationException("Clock not supported in Wasm Spec")
 
 @InlineOnly
 internal inline fun realtimeClockTimeGet() = clockTimeGet(CLOCK_ID_REALTIME)

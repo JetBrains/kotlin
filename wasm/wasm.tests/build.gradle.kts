@@ -263,6 +263,10 @@ fun Test.setupWasmEdge() {
     jvmArgumentProviders.add { listOf("-Dwasm.engine.path.WasmEdge=${wasmEdgeDirectory.get().resolve("bin/wasmedge")}") }
 }
 
+fun Test.setupReferenceInterpreter() {
+    systemProperty("wasm.engine.path.ReferenceInterpreter", "/Users/Veronika.Sirotkina/IdeaProjects/stack-switching/interpreter/wasm")
+}
+
 testsJar {}
 
 projectTests {
@@ -295,6 +299,7 @@ projectTests {
             }
             setupSpiderMonkey()
             setupWasmEdge()
+            setupReferenceInterpreter()
             useJUnitPlatform()
             setupWasmStdlib("js")
             setupWasmStdlib("wasi")
@@ -314,5 +319,10 @@ projectTests {
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
         include("**/Diagnostics*.class")
+    }
+
+    wasmProjectTest("testSpec") {
+        dependsOn(generateTypeScriptTests)
+        include("**/FirWasmSpec*.class")
     }
 }
