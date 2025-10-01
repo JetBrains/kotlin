@@ -2498,6 +2498,82 @@ class IrValidatorTest {
     }
 
     @Test
+    fun `elements with invalid offsets are reported`() {
+        val file = createIrFile("test.kt")
+
+        val functionWithTooSmallOffsets = IrFactoryImpl.buildFun {
+            name = Name.identifier("tooSmall")
+            returnType = TestIrBuiltins.unitType
+        }.apply {
+            body = IrFactoryImpl.createBlockBody(
+                startOffset = -3,
+                endOffset = 0,
+            )
+        }
+
+        val functionWithMismatchedNegativeOffsets = IrFactoryImpl.buildFun {
+            name = Name.identifier("mismatchNegatives")
+            returnType = TestIrBuiltins.unitType
+        }.apply {
+            body = IrFactoryImpl.createBlockBody(
+                startOffset = -1,
+                endOffset = 0,
+            )
+        }
+
+        val functionWithStartGreaterThanEnd = IrFactoryImpl.buildFun {
+            name = Name.identifier("startGreater")
+            returnType = TestIrBuiltins.unitType
+        }.apply {
+            body = IrFactoryImpl.createBlockBody(
+                startOffset = 4,
+                endOffset = 2,
+            )
+        }
+
+        file.addChild(functionWithTooSmallOffsets)
+        file.addChild(functionWithMismatchedNegativeOffsets)
+        file.addChild(functionWithStartGreaterThanEnd)
+
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Element has invalid offsets. Offsets must be >= 0, UNDEFINED_OFFSET (-1) or SYNTHETIC_OFFSET (-2). Actual: startOffset=-3, endOffset=0
+                    BLOCK_BODY
+                      inside FUN name:tooSmall visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Element has invalid offsets. UNDEFINED_OFFSET (-1) and SYNTHETIC_OFFSET (-2) can only appear simultaneously in both startOffset and endOffset. Actual: startOffset=-1, endOffset=0
+                    BLOCK_BODY
+                      inside FUN name:mismatchNegatives visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Element has invalid offsets. startOffset must not be greater than endOffset Actual: startOffset=4, endOffset=2
+                    BLOCK_BODY
+                      inside FUN name:startGreater visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 1, 5, null),
+                ),
+            ),
+        )
+    }
+
+    @Test
     fun `unbound symbols are reported`() {
         val file = createIrFile("test.kt")
 
