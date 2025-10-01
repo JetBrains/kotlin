@@ -1,4 +1,4 @@
-# Compose compiler plugin
+## Compose compiler plugin
 
 Refer to the [Compose documentation](https://developer.android.com/develop/ui/compose/documentation) to get started with Compose.
 
