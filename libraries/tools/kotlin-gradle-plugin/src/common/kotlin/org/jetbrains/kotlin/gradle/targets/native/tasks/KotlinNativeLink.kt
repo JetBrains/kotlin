@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
-import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheOrchestration
 import org.jetbrains.kotlin.compilerRunner.getKonanParallelThreads
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
@@ -136,9 +135,8 @@ constructor(
     @get:Internal
     val languageSettings: LanguageSettings = compilation.defaultSourceSet.languageSettings
 
-    @Suppress("unused")
     @get:Input
-    internal val konanCacheKind: Provider<NativeCacheKind> = project.getKonanCacheKind(konanTarget)
+    internal val konanCacheKind: Provider<NativeCacheKind> = konanPropertiesService.map { it.defaultCacheKindForTarget(konanTarget) }
 
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(
@@ -224,12 +222,11 @@ constructor(
     @get:Internal
     internal val externalDependenciesBuildCompilerArgs: ListProperty<String> = objectFactory.listProperty<String>().empty()
 
-    private val konanCacheDir = project.getKonanCacheKind(konanTarget)
     private val gradleUserHomeDir = project.gradle.gradleUserHomeDir
     private val cacheBuilderSettings by lazy {
         CacheBuilder.Settings(
             konanHome = kotlinNativeProvider.flatMap { it.bundleDirectory }.map { File(it) },
-            konanCacheKind = konanCacheDir,
+            konanCacheKind = konanCacheKind,
             gradleUserHomeDir = gradleUserHomeDir,
             konanTarget = konanTarget,
             toolOptions = toolOptions,
@@ -244,7 +241,6 @@ constructor(
 
     private class CacheSettings(
         val orchestration: NativeCacheOrchestration,
-        val kind: NativeCacheKind,
         val icEnabled: Boolean,
         val threads: Int,
         val gradleUserHomeDir: File,
@@ -253,7 +249,6 @@ constructor(
 
     private val cacheSettings = CacheSettings(
         project.getKonanCacheOrchestration(),
-        project.getKonanCacheKind(konanTarget).get(),
         project.isKonanIncrementalCompilationEnabled(),
         project.getKonanParallelThreads(),
         project.gradle.gradleUserHomeDir,
@@ -440,7 +435,7 @@ constructor(
                 addAll(externalDependenciesBuildCompilerArgs.get())
                 when (cacheSettings.orchestration) {
                     NativeCacheOrchestration.Compiler -> {
-                        if (cacheSettings.kind != NativeCacheKind.NONE
+                        if (konanCacheKind.get() != NativeCacheKind.NONE
                             && !optimized
                             && konanPropertiesService.get().cacheWorksFor(konanTarget)
                         ) {
