@@ -267,6 +267,17 @@ internal constructor(
     @Internal
     var generateConfigOnly: Boolean = false
 
+    /**
+     * Temporary value holder used to capture specific information
+     * set by users in
+     * [org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl.commonWebpackConfig].
+     *
+     * Specifically created to handle changes to
+     * [org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.outputFileName]
+     * to support a request from Compose (KT-79921).
+     *
+     * KT-77145 Workaround because [KotlinWebpackConfig] doesn't use Provider API.
+     */
     private val fakeWebpackConfig: KotlinWebpackConfig = KotlinWebpackConfig(
         rules = project.objects.webpackRulesContainer()
     )
