@@ -6,19 +6,19 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
-import java.util.Objects
+import java.util.*
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
+import kotlin.reflect.jvm.javaField
 
 internal fun getAllMembers_newKotlinReflectImpl(
     kClass: KClassImpl<*>,
     memberKind: MemberKind,
 ): List<DescriptorKCallable<*>> {
-    val isKotlin = kClass.jClass.getAnnotation(Metadata::class.java) != null
+    val isKotlin = kClass.jClass.isKotlin
     // Kotlin doesn't have statics (unless it's enum), and it never inherits statics from Java
     if (kClass.classKind != ClassKind.ENUM_CLASS && memberKind == MemberKind.STATIC && isKotlin) return emptyList()
     val out = ArrayList<DescriptorKCallable<*>>()
@@ -92,8 +92,8 @@ private fun KCallable<*>.toCallableSignature(substitutor: KTypeSubstitutor): Cal
         .filter { it.kind != KParameter.Kind.INSTANCE }
         .map { substitutor.substitute(it.type).type ?: starProjectionSupertypesAreNotPossible() }
     val kind = when (this) {
-        is DescriptorKProperty<*> if this.descriptor is JavaPropertyDescriptor -> CallableSignatureKind.JAVA_FIELD
         is KFunction<*> -> CallableSignatureKind.FUNCTION
+        is KProperty<*> if javaField?.declaringClass?.isKotlin == false -> CallableSignatureKind.FIELD_IN_JAVA
         is KProperty<*> -> CallableSignatureKind.PROPERTY
         else -> error("Unknown kind for ${this::class}")
     }
@@ -101,8 +101,10 @@ private fun KCallable<*>.toCallableSignature(substitutor: KTypeSubstitutor): Cal
 }
 
 private enum class CallableSignatureKind {
-    FUNCTION, PROPERTY, JAVA_FIELD
+    FUNCTION, PROPERTY, FIELD_IN_JAVA
 }
+
+private val Class<*>.isKotlin: Boolean get() = getAnnotation(Metadata::class.java) != null
 
 @Suppress("UNCHECKED_CAST")
 private val KClass<*>.declaredDescriptorKCallableMembers: Collection<DescriptorKCallable<*>>
@@ -113,13 +115,20 @@ private class CallableSignature(
     val name: String,
     val parameters: List<KType>,
 ) {
+    init {
+        check(kind != CallableSignatureKind.FIELD_IN_JAVA || parameters.isEmpty())
+    }
+
     override fun hashCode(): Int = Objects.hash(kind, name)
 
     override fun equals(other: Any?): Boolean {
         val other = other as? CallableSignature ?: return false
-        return kind == other.kind &&
-            name == other.name &&
-            parameters.size == other.parameters.size &&
-            parameters.zip(other.parameters).all { (x, y) -> x.isSubtypeOf(y) && y.isSubtypeOf(x) }
+        if (kind != other.kind || name != other.name || parameters.size != other.parameters.size) return false
+        for (i in parameters.indices) {
+            val x = parameters[i]
+            val y = other.parameters[i]
+            if (!x.isSubtypeOf(y) || !y.isSubtypeOf(x)) return false
+        }
+        return true
     }
 }

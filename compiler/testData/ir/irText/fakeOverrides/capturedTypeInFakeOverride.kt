@@ -2,10 +2,10 @@
 
 // FILE: Jaba.java
 public class Jaba {
-    public void foo(Object obj) {}
+    public int foo = 42;
 }
 
 // FILE: main.kt
 class Foo : Jaba() {
-    override fun foo(obj: Any) {}
+    // var foo = 42
 }
