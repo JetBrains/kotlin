@@ -1,3 +1,6 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -20,8 +23,10 @@ dependencies {
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-runner"))
-    runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
-    runtimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
+    embedded(project(":kotlin-scripting-compiler-embeddable")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-compiler-impl-embeddable")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-common")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
 }
 
 publish()
@@ -29,6 +34,22 @@ publish()
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler {
     from(mainSourceSet.output)
 })
+
+tasks.named<ShadowJar>(EMBEDDABLE_COMPILER_TASK_NAME) {
+    relocate("org.jetbrains.kotlin.scripting", "org.jetbrains.kotlin.buildtools.internal.scripting")
+    relocate("kotlin.script.experimental", "org.jetbrains.kotlin.buildtools.internal.scripting")
+
+    transform(DontIncludeResourceTransformer::class.java) {
+        resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor"
+    }
+    transform(DontIncludeResourceTransformer::class.java) {
+        resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
+    }
+    transform(DontIncludeResourceTransformer::class.java) {
+        resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar"
+    }
+}
+
 sourcesJar()
 javadocJar()
 
