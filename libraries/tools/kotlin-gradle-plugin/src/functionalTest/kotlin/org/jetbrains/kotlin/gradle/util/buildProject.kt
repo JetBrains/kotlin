@@ -7,30 +7,16 @@ package org.jetbrains.kotlin.gradle.util
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
-import org.gradle.api.problems.Problem
-import org.gradle.api.problems.ProblemId
-import org.gradle.api.problems.ProblemReporter
-import org.gradle.api.problems.ProblemSpec
-import org.gradle.api.problems.internal.AdditionalDataBuilderFactory
-import org.gradle.api.problems.internal.InternalProblem
-import org.gradle.api.problems.internal.InternalProblemBuilder
-import org.gradle.api.problems.internal.InternalProblemReporter
-import org.gradle.api.problems.internal.InternalProblemSpec
-import org.gradle.api.problems.internal.InternalProblems
-import org.gradle.api.problems.internal.ProblemsInfrastructure
-import org.gradle.api.problems.internal.ProblemsProgressEventEmitterHolder
-import org.gradle.internal.operations.OperationIdentifier
-import org.gradle.internal.reflect.Instantiator
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testing.base.TestingExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
@@ -62,7 +48,7 @@ fun buildProject(
 fun buildProjectWithMPP(
     projectBuilder: ProjectBuilder.() -> Unit = { },
     preApplyCode: Project.() -> Unit = {},
-    code: Project.() -> Unit = {}
+    code: Project.() -> Unit = {},
 ) = buildProject(projectBuilder) {
     preApplyCode()
     project.applyMultiplatformPlugin()
@@ -72,18 +58,19 @@ fun buildProjectWithMPP(
 fun buildProjectWithJvm(
     projectBuilder: ProjectBuilder.() -> Unit = {},
     preApplyCode: Project.() -> Unit = {},
-    code: Project.() -> Unit = {}
+    code: Project.() -> Unit = {},
 ) = buildProject(projectBuilder) {
     preApplyCode()
     project.applyKotlinJvmPlugin()
     code()
 }
 
-fun buildProjectWithCocoapods(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
-    project.applyMultiplatformPlugin()
-    project.applyCocoapodsPlugin()
-    code()
-}
+fun buildProjectWithCocoapods(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Project.() -> Unit = {}) =
+    buildProject(projectBuilder) {
+        project.applyMultiplatformPlugin()
+        project.applyCocoapodsPlugin()
+        code()
+    }
 
 fun Project.applyKotlinJvmPlugin() {
     project.plugins.apply(KotlinPluginWrapper::class.java)
@@ -207,7 +194,10 @@ fun Project.enableNonPackedKlibsUsage(enabled: Boolean = true) {
 }
 
 fun Project.enableEagerUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {
-    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC, enabled.toString())
+    project.propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC,
+        enabled.toString()
+    )
 }
 
 fun Project.enableUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {
