@@ -2104,6 +2104,18 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("parsingWithLocalDeclarations.kt")
+    public void testParsingWithLocalDeclarations() {
+      runTest("compiler/testData/psi/contextParameters/parsingWithLocalDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("parsingWithLocalDeclarationsIncorrect.kt")
+    public void testParsingWithLocalDeclarationsIncorrect() {
+      runTest("compiler/testData/psi/contextParameters/parsingWithLocalDeclarationsIncorrect.kt");
+    }
+
+    @Test
     @TestMetadata("properties.kt")
     public void testProperties() {
       runTest("compiler/testData/psi/contextParameters/properties.kt");

@@ -1,0 +1,29 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarationsIncorrectKt]]
+  facadeFqName: ParsingWithLocalDeclarationsIncorrectKt
+  partSimpleName: "ParsingWithLocalDeclarationsIncorrectKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=kotlin.reflect.KClass, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=reflect]
+        REFERENCE_EXPRESSION[referencedName=KClass]
+  FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
+    VALUE_PARAMETER_LIST
+    FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      MODIFIER_LIST[suspend]
+        CONTEXT_RECEIVER_LIST
+      VALUE_PARAMETER_LIST
+    FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      MODIFIER_LIST[]
+        CONTEXT_RECEIVER_LIST
+      VALUE_PARAMETER_LIST
+  FUN[fqName=contextFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun]
+    MODIFIER_LIST[]
+      CONTEXT_RECEIVER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Any]
+    VALUE_PARAMETER_LIST
