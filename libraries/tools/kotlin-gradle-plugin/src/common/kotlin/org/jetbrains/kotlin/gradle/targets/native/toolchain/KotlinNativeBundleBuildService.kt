@@ -19,11 +19,10 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.konanTargets
-import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
@@ -174,8 +173,8 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         }
     }
 
-    internal fun getNativeCacheKind(project: Project, konanTargets: KonanTarget) =
-        project.nativeProperties.getKonanCacheKind(konanTargets, parameters.konanPropertiesBuildService)
+    internal fun defaultCacheKindForTarget(konanTarget: KonanTarget) =
+        parameters.konanPropertiesBuildService.map { it.defaultCacheKindForTarget(konanTarget) }
 
     private inner class DependencyExtractor : ArchiveExtractor {
 

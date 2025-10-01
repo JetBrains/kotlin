@@ -154,7 +154,7 @@ internal class KotlinNativeFromToolchainProvider(
     @get:Internal
     internal val konanTargetsWithNativeCacheKind: Map<KonanTarget, Provider<NativeCacheKind>> =
         konanTargets.associateWith { konanTarget ->
-            kotlinNativeBundleBuildService.flatMap { it.getNativeCacheKind(project, konanTarget) }
+            kotlinNativeBundleBuildService.flatMap { it.defaultCacheKindForTarget(konanTarget) }
         }
 
     @get:Internal

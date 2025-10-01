@@ -34,6 +34,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty("kotlin.mpp.androidGradlePluginCompatibility.nowarn"), // Since 2.1.0
         DeprecatedProperty("kotlin.experimental.swift-export.enabled"),
         DeprecatedProperty(
+            "kotlin.native.cacheKind",
+            "This property is deprecated. If you still need to disable the native cache, then use a new DSL." +
+                    " It was removed in 2.3.0, see https://kotl.in/disable-native-cache for details."
+        ), // Since 2.3.0
+        DeprecatedProperty(
             "kotlin.native.useEmbeddableCompilerJar",
             "This property is no longer needed. The embeddable compiler jar is always used for Kotlin/Native projects." +
                     " It was removed in 2.2.20, see https://kotl.in/KT-51301 for details."
