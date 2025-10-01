@@ -252,7 +252,10 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     private CompilationService getCompilationService() throws MojoExecutionException {
         try {
             Set<Artifact> artifacts =
-                    kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-build-tools-impl", getMavenPluginVersion());
+                    Stream.concat(
+                            kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-build-tools-impl", getMavenPluginVersion()).stream(),
+                            kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable", getMavenPluginVersion()).stream()
+                    ).collect(Collectors.toCollection(LinkedHashSet::new));
             URL[] urls = artifacts.stream().map(artifact -> {
                 File file = artifact.getFile();
                 try {

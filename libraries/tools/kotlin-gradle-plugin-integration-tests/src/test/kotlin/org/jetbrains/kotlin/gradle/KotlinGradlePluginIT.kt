@@ -840,7 +840,6 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @Disabled("KT-73090")
     @DisplayName("KT-73090: BTA does not break Gradle convention plugins compilation")
     @GradleTest
     fun testConventionPlugins(gradleVersion: GradleVersion) {
