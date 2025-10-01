@@ -14,17 +14,12 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.types.asSimpleType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.coroutines.Continuation
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.calls.getMfvcUnboxMethods
 import kotlin.reflect.jvm.internal.types.DescriptorKType
-import kotlin.reflect.jvm.javaType
-import kotlin.reflect.jvm.jvmErasure
-import java.lang.reflect.Array as ReflectArray
 
 internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R>, KTypeParameterOwnerImpl {
     abstract val descriptor: CallableMemberDescriptor
@@ -133,163 +128,13 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R>, KTypeP
     override val isAbstract: Boolean
         get() = descriptor.modality == Modality.ABSTRACT
 
-    protected val isAnnotationConstructor: Boolean
-        get() = name == "<init>" && container.jClass.isAnnotation
+    private val _absentArguments = ReflectProperties.lazySoft(::computeAbsentArguments)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun call(vararg args: Any?): R = reflectionCall {
-        return caller.call(args) as R
-    }
+    override fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
 
-    override fun callBy(args: Map<KParameter, Any?>): R {
-        return if (isAnnotationConstructor) callAnnotationConstructor(args) else callDefaultMethod(args, null)
-    }
-
-    private val _absentArguments = ReflectProperties.lazySoft {
-        val parameters = parameters
-        val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
-        val flattenedParametersSize =
-            if (parametersNeedMFVCFlattening.value) {
-                parameters.sumOf {
-                    if (it.kind == KParameter.Kind.VALUE) getParameterTypeSize(it) else 0
-                }
-            } else {
-                parameters.count { it.kind == KParameter.Kind.VALUE }
-            }
-        val maskSize = (flattenedParametersSize + Integer.SIZE - 1) / Integer.SIZE
-
-        // Array containing the actual function arguments, masks, and +1 for DefaultConstructorMarker or MethodHandle.
-        val arguments = arrayOfNulls<Any?>(parameterSize + maskSize + 1)
-
-        // Set values of primitive (and inline class) arguments to the boxed default values (such as 0, 0.0, false) instead of nulls.
-        parameters.forEach { parameter ->
-            if (parameter.isOptional && !parameter.type.isInlineClassType) {
-                // For inline class types, the javaType refers to the underlying type of the inline class,
-                // but we have to pass null in order to mark the argument as absent for ValueClassAwareCaller.
-                arguments[parameter.index] = defaultPrimitiveValue(parameter.type.javaType)
-            } else if (parameter.isVararg) {
-                arguments[parameter.index] = defaultEmptyArray(parameter.type)
-            }
-        }
-
-        for (i in 0 until maskSize) {
-            arguments[parameterSize + i] = 0
-        }
-
-        arguments
-    }
-
-    private fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
-
-    // See ArgumentGenerator#generate
-    override fun callDefaultMethod(args: Map<KParameter, Any?>, continuationArgument: Continuation<*>?): R {
-        val parameters = parameters
-
-        // Optimization for functions without value/receiver parameters.
-        if (parameters.isEmpty()) {
-            @Suppress("UNCHECKED_CAST")
-            return reflectionCall {
-                caller.call(if (isSuspend) arrayOf(continuationArgument) else emptyArray()) as R
-            }
-        }
-
-        val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
-
-        val arguments = getAbsentArguments().apply {
-            if (isSuspend) {
-                this[parameters.size] = continuationArgument
-            }
-        }
-
-        var valueParameterIndex = 0
-        var anyOptional = false
-
-        val hasMfvcParameters = parametersNeedMFVCFlattening.value
-        for (parameter in parameters) {
-            val parameterTypeSize = if (hasMfvcParameters) getParameterTypeSize(parameter) else 1
-            when {
-                args.containsKey(parameter) -> {
-                    arguments[parameter.index] = args[parameter]
-                }
-                parameter.isOptional -> {
-                    if (hasMfvcParameters) {
-                        for (valueSubParameterIndex in valueParameterIndex until (valueParameterIndex + parameterTypeSize)) {
-                            val maskIndex = parameterSize + (valueSubParameterIndex / Integer.SIZE)
-                            arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueSubParameterIndex % Integer.SIZE))
-                        }
-                    } else {
-                        val maskIndex = parameterSize + (valueParameterIndex / Integer.SIZE)
-                        arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueParameterIndex % Integer.SIZE))
-                    }
-                    anyOptional = true
-                }
-                parameter.isVararg -> {}
-                else -> {
-                    throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
-                }
-            }
-
-            if (parameter.kind == KParameter.Kind.VALUE) {
-                valueParameterIndex += parameterTypeSize
-            }
-        }
-
-        if (!anyOptional) {
-            @Suppress("UNCHECKED_CAST")
-            return reflectionCall {
-                caller.call(arguments.copyOf(parameterSize)) as R
-            }
-        }
-
-        val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $descriptor")
-
-        @Suppress("UNCHECKED_CAST")
-        return reflectionCall {
-            caller.call(arguments) as R
-        }
-    }
-
-    private val parametersNeedMFVCFlattening = lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val parametersNeedMFVCFlattening: Lazy<Boolean> = lazy(LazyThreadSafetyMode.PUBLICATION) {
         parameters.any { it.type.needsMultiFieldValueClassFlattening }
     }
-
-    private fun getParameterTypeSize(parameter: KParameter): Int {
-        require(parametersNeedMFVCFlattening.value) { "Check if parametersNeedMFVCFlattening is true before" }
-        return if (parameter.type.needsMultiFieldValueClassFlattening) {
-            val type = (parameter.type as DescriptorKType).type.asSimpleType()
-            getMfvcUnboxMethods(type)!!.size
-        } else {
-            1
-        }
-    }
-
-    private fun callAnnotationConstructor(args: Map<KParameter, Any?>): R {
-        val arguments = parameters.map { parameter ->
-            when {
-                args.containsKey(parameter) -> {
-                    args[parameter] ?: throw IllegalArgumentException("Annotation argument value cannot be null ($parameter)")
-                }
-                parameter.isOptional -> null
-                parameter.isVararg -> defaultEmptyArray(parameter.type)
-                else -> throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
-            }
-        }
-
-        val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $descriptor")
-
-        @Suppress("UNCHECKED_CAST")
-        return reflectionCall {
-            caller.call(arguments.toTypedArray()) as R
-        }
-    }
-
-    private fun defaultEmptyArray(type: KType): Any =
-        type.jvmErasure.java.run {
-            if (isArray) ReflectArray.newInstance(componentType, 0)
-            else throw KotlinReflectionInternalError(
-                "Cannot instantiate the default empty array of type $simpleName, because it is not an array type"
-            )
-        }
 
     private fun extractContinuationArgument(): Type? {
         if (isSuspend) {
