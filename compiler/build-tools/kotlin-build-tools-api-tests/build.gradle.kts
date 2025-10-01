@@ -162,6 +162,7 @@ testing {
                     runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
                     if (isRegular) {
                         runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
+                        runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
                     }
                 }
             }

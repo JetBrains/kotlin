@@ -429,6 +429,42 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnVal
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriFileIdToPathDataDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriLookupDataDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriSubtypeDataDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/cri/CriToolchain$Companion;
+	public abstract fun createCriFileIdToPathDataDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/cri/CriFileIdToPathDataDeserializationOperation;
+	public abstract fun createCriLookupDataDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/cri/CriLookupDataDeserializationOperation;
+	public abstract fun createCriSubtypeDataDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/cri/CriSubtypeDataDeserializationOperation;
+	public static fun get (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/cri/CriToolchain;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/cri/CriToolchain$Companion {
+	public final fun get (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/cri/CriToolchain;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/FileIdToPathEntry {
+	public abstract fun getFileId ()Ljava/lang/Integer;
+	public abstract fun getPath ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/LookupEntry {
+	public abstract fun getFileIds ()Ljava/util/Collection;
+	public abstract fun getKey ()Ljava/lang/Long;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/SubtypeEntry {
+	public abstract fun getClassName ()Ljava/lang/String;
+	public abstract fun getSubtypes ()Ljava/util/Collection;
+}
+
 public abstract class org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getId ()Ljava/lang/String;
