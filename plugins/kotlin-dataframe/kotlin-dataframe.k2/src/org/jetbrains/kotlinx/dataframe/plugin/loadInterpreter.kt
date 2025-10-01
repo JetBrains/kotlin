@@ -62,6 +62,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroupInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslNamedGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
@@ -546,6 +548,8 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "AddId" -> AddId()
         "AddDslStringInvoke" -> AddDslStringInvoke()
         "AddDslNamedGroup" -> AddDslNamedGroup()
+        "AddDslAddGroup" -> AddDslAddGroup()
+        "AddDslAddGroupInto" -> AddDslAddGroupInto()
         "MapToFrame" -> MapToFrame()
         "Move0" -> Move0()
         "ToTop" -> ToTop()
