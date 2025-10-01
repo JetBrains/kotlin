@@ -13,6 +13,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.asReflectCallable
+import kotlin.reflect.jvm.internal.callDefaultMethod
 
 /**
  * Returns a parameter representing the `this` instance needed to call this callable,
