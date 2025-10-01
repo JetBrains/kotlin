@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.toKtPsiSourceElement
@@ -155,6 +156,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                     }
                     variance = Variance.INVARIANT
                 }
+                coneTypeOrNull = argument.resolvedType
             }
         }
 

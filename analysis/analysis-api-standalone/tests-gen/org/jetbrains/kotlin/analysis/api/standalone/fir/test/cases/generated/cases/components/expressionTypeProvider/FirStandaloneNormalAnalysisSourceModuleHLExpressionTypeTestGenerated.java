@@ -389,6 +389,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("suspendLambda.kt")
+  public void testSuspendLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/suspendLambda.kt");
+  }
+
+  @Test
   @TestMetadata("thisExpression_plusAssign_this.kt")
   public void testThisExpression_plusAssign_this() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/thisExpression_plusAssign_this.kt");
