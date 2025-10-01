@@ -28,7 +28,7 @@ internal val KotlinJvmJarArtifact = KotlinTargetArtifact { target, apiElements, 
         jar.from(mainCompilation.output.allOutputs)
     }
 
-    target.createPublishArtifact(jvmJarTask, JAR_TYPE, apiElements, runtimeElements)
+    val artifact = target.createPublishArtifact(jvmJarTask, JAR_TYPE, apiElements, runtimeElements)
 
     when (target.project.kotlinPropertiesProvider.kmpPublicationStrategy) {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {
@@ -39,14 +39,8 @@ internal val KotlinJvmJarArtifact = KotlinTargetArtifact { target, apiElements, 
             ).forEach {
                 it.outgoing.variants {
                     val variant = it.maybeCreate(uklibAttribute)
-                    variant.artifacts.addAllLater(target.project.provider {
-                        mainCompilation.output.allOutputs.map {
-                            target.project.artifacts.add(ARCHIVES_CONFIGURATION, it) { artifact ->
-                                artifact.type = "jar"
-                                artifact.builtBy(mainCompilation.output.allOutputs)
-                            }
-                        }
-                    })
+                    // FIXME: Use .jar for JPMS support in interproject UKlib. Review this in KT-81375
+                    variant.artifacts.add(artifact)
                     variant.attributes {
                         it.attribute(uklibStateAttribute, uklibStateDecompressed)
                         it.attribute(uklibViewAttribute, uklibAttribute)
