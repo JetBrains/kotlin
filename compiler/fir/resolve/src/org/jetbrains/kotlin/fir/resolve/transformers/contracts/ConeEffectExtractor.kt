@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.FirContractsDslNames
+import org.jetbrains.kotlin.resolve.ContractsDslNames
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -38,9 +38,9 @@ class ConeEffectExtractor(
     private val valueAndContextParameters: List<FirValueParameter>
 ) : FirDefaultVisitor<ConeContractDescriptionElement, Nothing?>(), SessionHolder {
     companion object {
-        private val BOOLEAN_AND = FirContractsDslNames.id("kotlin", "Boolean", "and")
-        private val BOOLEAN_OR = FirContractsDslNames.id("kotlin", "Boolean", "or")
-        private val BOOLEAN_NOT = FirContractsDslNames.id("kotlin", "Boolean", "not")
+        private val BOOLEAN_AND = ContractsDslNames.id("kotlin", "Boolean", "and")
+        private val BOOLEAN_OR = ContractsDslNames.id("kotlin", "Boolean", "or")
+        private val BOOLEAN_NOT = ContractsDslNames.id("kotlin", "Boolean", "not")
 
         private val LAMBDA_ARGUMENT_NAME = Name.identifier("lambda")
         private val OTHER_ARGUMENT_NAME = Name.identifier("other")
@@ -60,13 +60,13 @@ class ConeEffectExtractor(
             ?: return ConeContractDescriptionError.UnresolvedCall(functionCall.calleeReference.name).asElement()
 
         return when (resolvedId) {
-            FirContractsDslNames.IMPLIES -> {
+            ContractsDslNames.IMPLIES -> {
                 val effect = functionCall.explicitReceiver?.asContractElement() as? ConeEffectDeclaration ?: noReceiver(resolvedId)
                 val condition = functionCall.argument.asContractElement() as? ConeBooleanExpression ?: noArgument(resolvedId)
                 ConeConditionalEffectDeclaration(effect, condition)
             }
 
-            FirContractsDslNames.RETURNS -> {
+            ContractsDslNames.RETURNS -> {
                 val argument = functionCall.arguments.firstOrNull()
                 val value = if (argument == null) {
                     ConeContractConstantValues.WILDCARD
@@ -80,11 +80,11 @@ class ConeEffectExtractor(
                 KtReturnsEffectDeclaration(value as ConeConstantReference)
             }
 
-            FirContractsDslNames.RETURNS_NOT_NULL -> {
+            ContractsDslNames.RETURNS_NOT_NULL -> {
                 ConeReturnsEffectDeclaration(ConeContractConstantValues.NOT_NULL)
             }
 
-            FirContractsDslNames.CALLS_IN_PLACE -> {
+            ContractsDslNames.CALLS_IN_PLACE -> {
                 val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(LAMBDA_ARGUMENT_NAME)
                 when (val argument = functionCall.arguments.getOrNull(1)) {
                     null -> ConeCallsEffectDeclaration(reference, EventOccurrencesRange.UNKNOWN)
@@ -95,7 +95,7 @@ class ConeEffectExtractor(
                 }
             }
 
-            FirContractsDslNames.IMPLIES_BUILDER -> {
+            ContractsDslNames.IMPLIES_BUILDER -> {
                 if (LanguageFeature.ConditionImpliesReturnsContracts.isEnabled()) {
                     val condition = functionCall.explicitReceiver?.asContractElement() as? ConeBooleanExpression ?: noReceiver(resolvedId)
                     when (val argument = functionCall.arguments.getOrNull(0)) {
@@ -109,7 +109,7 @@ class ConeEffectExtractor(
                 }
             }
 
-            FirContractsDslNames.HOLDS_IN -> {
+            ContractsDslNames.HOLDS_IN -> {
                 if (LanguageFeature.HoldsInContracts.isEnabled()) {
                     val condition = functionCall.explicitReceiver?.asContractElement() as? ConeBooleanExpression ?: noReceiver(resolvedId)
                     val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(LAMBDA_ARGUMENT_NAME)
@@ -268,10 +268,10 @@ class ConeEffectExtractor(
         if (this !is FirQualifiedAccessExpression) return null
         val resolvedId = toResolvedCallableSymbol(session)?.callableId ?: return null
         return when (resolvedId) {
-            FirContractsDslNames.EXACTLY_ONCE_KIND -> EventOccurrencesRange.EXACTLY_ONCE
-            FirContractsDslNames.AT_LEAST_ONCE_KIND -> EventOccurrencesRange.AT_LEAST_ONCE
-            FirContractsDslNames.AT_MOST_ONCE_KIND -> EventOccurrencesRange.AT_MOST_ONCE
-            FirContractsDslNames.UNKNOWN_KIND -> EventOccurrencesRange.UNKNOWN
+            ContractsDslNames.EXACTLY_ONCE_KIND -> EventOccurrencesRange.EXACTLY_ONCE
+            ContractsDslNames.AT_LEAST_ONCE_KIND -> EventOccurrencesRange.AT_LEAST_ONCE
+            ContractsDslNames.AT_MOST_ONCE_KIND -> EventOccurrencesRange.AT_MOST_ONCE
+            ContractsDslNames.UNKNOWN_KIND -> EventOccurrencesRange.UNKNOWN
             else -> null
         }
     }

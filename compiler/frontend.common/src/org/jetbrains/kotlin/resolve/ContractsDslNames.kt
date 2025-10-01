@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-object FirContractsDslNames {
+object ContractsDslNames {
     // Types
     val SIMPLE_EFFECT: CallableId = id("SimpleEffect")
 
