@@ -27,28 +27,33 @@ internal fun <T> wrapContinuation(
 }
 
 // FILE: test.kt
+import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-import helpers.*
 
-var result = "Fail"
-
-class Wrapper(val action: suspend () -> Unit) {
-    init {
-        action.startCoroutine(Continuation(EmptyCoroutineContext) { it.getOrThrow() })
-    }
+private suspend fun foo(): Int {
+    suspendThere()
+    //Breakpoint!
+    return 42
 }
 
-suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
+suspend fun first(): Int { // tail-call opt, no state machine, wrapContinuation is invoked
+    return foo()
+}
+
+suspend fun suspendThere(): Unit = suspendCoroutineUninterceptedOrReturn { x ->
     TailCallOptimizationChecker.saveStackTrace(x)
-    result = v
-    x.resume(v)
+    COROUTINE_SUSPENDED
 }
 
-suspend fun some(a: String = "OK") = suspendThere(a)
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(EmptyContinuation)
+}
 
 fun box(): String {
-    Wrapper(::some)
-    TailCallOptimizationChecker.checkStateMachineIn("box\$some")
-    return result
+    builder {
+        first()
+    }
+    TailCallOptimizationChecker.checkStateMachineIn("first")
+    return "OK"
 }

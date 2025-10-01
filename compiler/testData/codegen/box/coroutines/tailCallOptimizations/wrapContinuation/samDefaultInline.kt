@@ -21,30 +21,14 @@ import kotlin.coroutines.*
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 internal fun <T> wrapContinuation(
     declaringClass: String, methodName: String, fileName: String, lineNumber: Int,
+    spilledVariables: Array<Any?>,
     continuation: T,
 ): T where T : Continuation<Any?>, T : CoroutineStackFrame {
-    val result =  object : Continuation<Any?>, CoroutineStackFrame {
-        override val context: CoroutineContext
-            get() = continuation.context
-
-        override fun resumeWith(result: Result<Any?>) {
-            continuation.resumeWith(result)
-        }
-
-        override val callerFrame: CoroutineStackFrame?
-            get() = continuation
-
-        override fun getStackTraceElement(): StackTraceElement? {
-            val moduleName = ModuleNameRetriever.getModuleName(this)
-            val moduleAndClass = if (moduleName == null) declaringClass else "$moduleName/${declaringClass}"
-            return StackTraceElement(moduleAndClass, methodName, fileName, lineNumber)
-        }
-
-        override fun toString(): String =
-            "Continuation at ${getStackTraceElement() ?: this::class.java.name}"
-    } as T
-    return result
+    return TailCallBaseContinuationImpl(
+        declaringClass, methodName, fileName, lineNumber, spilledVariables, continuation
+    ) as T
 }
+
 
 // FILE: test.kt
 import kotlin.coroutines.*

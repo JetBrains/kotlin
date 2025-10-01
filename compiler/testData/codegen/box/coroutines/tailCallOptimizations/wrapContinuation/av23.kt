@@ -3,7 +3,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_TAIL_CALL_OPTIMIZATION
-// API_VERSION: LATEST
+// API_VERSION: 2.3
 
 import helpers.*
 import kotlin.coroutines.*
@@ -33,5 +33,4 @@ fun box(): String {
 }
 
 // CHECK_BYTECODE_TEXT
-// One in suspendHere, one in suspendThere and one in TailCallOptimizationCheckerClass.saveStackTrace
-// 3 INVOKESTATIC kotlin/coroutines/jvm/internal/TailCallAsyncStackTraceEntryKt.wrapContinuation.*
+// 0 INVOKESTATIC kotlin/coroutines/jvm/internal/TailCallAsyncStackTraceEntryKt.wrapContinuation.*
