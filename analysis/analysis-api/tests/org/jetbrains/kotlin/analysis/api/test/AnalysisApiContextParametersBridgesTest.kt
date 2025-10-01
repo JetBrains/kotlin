@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.analysis.api.test
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseValidationTest
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -90,7 +90,7 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiCodebaseValid
             bridges.joinTo(this, prefix = "\n", separator = "\n\n")
         }
 
-        KotlinTestUtils.assertEqualsToFile(file, actualText)
+        TestDataAssertions.assertEqualsToFile(file, actualText)
     }
 
     private val KtDeclaration.hasBridgeMarker: Boolean
