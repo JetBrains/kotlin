@@ -2498,6 +2498,37 @@ class IrValidatorTest {
     }
 
     @Test
+    fun `elements with invalid offsets are reported`() {
+        val file = createIrFile("test.kt")
+        val functionWithInvalidBodyOffsets = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }.apply {
+            body = IrFactoryImpl.createBlockBody(
+                startOffset = 4,
+                endOffset = 2,
+            )
+        }
+        file.addChild(functionWithInvalidBodyOffsets)
+        testValidation(
+            IrVerificationMode.WARNING,
+            file,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Element has invalid offsets: startOffset=4, endOffset=2
+                    BLOCK_BODY
+                      inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                        inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 1, 5, null),
+                ),
+            ),
+        )
+    }
+
+    @Test
     fun `unbound symbols are reported`() {
         val file = createIrFile("test.kt")
 
