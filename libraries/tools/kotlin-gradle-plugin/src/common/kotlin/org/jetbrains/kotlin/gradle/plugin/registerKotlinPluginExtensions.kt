@@ -188,6 +188,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, AndroidPublicationNotConfiguredChecker)
         register(project, KonanHomeConflictDeclarationChecker)
         register(project, KmpPartiallyResolvedDependenciesChecker)
+        register(project, TestApiDependenciesChecker)
 
         if (isMultiplatform) {
             register(project, NativeVersionChecker)
