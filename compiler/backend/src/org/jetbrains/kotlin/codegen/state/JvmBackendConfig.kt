@@ -109,7 +109,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.JvmNullOutSpilledCoroutineLocals)
 
-    val wrapContinuationForTailCallFunctions: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
+    val wrapContinuationForTailCallFunctions: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_4
 
     val whenGenerationScheme: JvmWhenGenerationScheme =
         if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)
