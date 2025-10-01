@@ -16891,21 +16891,33 @@ public class JsCodegenSplittingInlineWithInlinedFunInKlibTestGenerated extends A
           }
 
           @Test
-          @TestMetadata("av22.kt")
-          public void testAv22() {
-            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av22.kt");
-          }
-
-          @Test
           @TestMetadata("av23.kt")
           public void testAv23() {
             runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av23.kt");
           }
 
           @Test
-          @TestMetadata("av23_wrapped.kt")
-          public void testAv23_wrapped() {
-            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av23_wrapped.kt");
+          @TestMetadata("av24.kt")
+          public void testAv24() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av24.kt");
+          }
+
+          @Test
+          @TestMetadata("av24_wrapped.kt")
+          public void testAv24_wrapped() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av24_wrapped.kt");
+          }
+
+          @Test
+          @TestMetadata("correctContinuation.kt")
+          public void testCorrectContinuation() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/correctContinuation.kt");
+          }
+
+          @Test
+          @TestMetadata("locals.kt")
+          public void testLocals() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/locals.kt");
           }
 
           @Test

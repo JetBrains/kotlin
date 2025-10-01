@@ -20,6 +20,7 @@ import kotlin.coroutines.CoroutineContext
 @Suppress("UNUSED_PARAMETER", "unused")
 internal fun <T> wrapContinuation(
     declaringClass: String, methodName: String, fileName: String, lineNumber: Int,
+    spilledVariables: Array<Any?>,
     continuation: T,
 ): T where T : Continuation<Any?>, T : CoroutineStackFrame {
     return continuation
@@ -34,26 +35,51 @@ internal fun <T> wrapContinuation(
 @Suppress("UNCHECKED_CAST", "unused")
 internal fun <T> wrapContinuationReal(
     declaringClass: String, methodName: String, fileName: String, lineNumber: Int,
+    spilledVariables: Array<Any?>,
     continuation: T,
 ): T where T : Continuation<Any?>, T : CoroutineStackFrame {
-    return object : Continuation<Any?>, CoroutineStackFrame {
-        override val context: CoroutineContext
-            get() = continuation.context
+    return TailCallBaseContinuationImpl(
+        declaringClass, methodName, fileName, lineNumber, spilledVariables, continuation
+    ) as T
+}
 
-        override fun resumeWith(result: Result<Any?>) {
-            continuation.resumeWith(result)
-        }
+/**
+ * This is a fictitious continuation for tail-call suspend functions, which is being allocated only during debug.
+ *
+ * Its purpose is to store all the information, which is usually stored in continuations
+ *  - stack trace elements (stored in @DebugMetadata annotation)
+ *  - spilled variables (in fields).
+ *
+ * This way, from the point of view of a user, there is no difference between
+ * tail-call and non-tail-call suspend functions during debug, but we still benefit from tail-call optimizations.
+ */
+@PublishedApi
+internal class TailCallBaseContinuationImpl(
+    val declaringClass: String,
+    val methodName: String,
+    val fileName: String,
+    val lineNumber: Int,
+    /**
+     * Unlike usual continuations, we cannot spill variables to fields. Instead, we store them in
+     * an array.
+     *
+     * Names of the variables occupy 2n'th indices,
+     * their values - (2n+1)'st indices, similar to [getSpilledVariableFieldMapping]
+     */
+    val spilledVariables: Array<Any?>,
+    private val continuation: Continuation<Any?>,
+) : BaseContinuationImpl(continuation) {
+    override fun invokeSuspend(result: Result<Any?>): Any? {
+        // Nothing to do - the function is tail-call
+        return result.getOrThrow()
+    }
 
-        override val callerFrame: CoroutineStackFrame?
-            get() = continuation
+    override fun getStackTraceElement(): StackTraceElement {
+        val moduleName = ModuleNameRetriever.getModuleName(this)
+        val moduleAndClass = if (moduleName == null) declaringClass else "$moduleName/${declaringClass}"
+        return StackTraceElement(moduleAndClass, methodName, fileName, lineNumber)
+    }
 
-        override fun getStackTraceElement(): StackTraceElement? {
-            val moduleName = ModuleNameRetriever.getModuleName(this)
-            val moduleAndClass = if (moduleName == null) declaringClass else "$moduleName/${declaringClass}"
-            return StackTraceElement(moduleAndClass, methodName, fileName, lineNumber)
-        }
-
-        override fun toString(): String =
-            "Continuation at ${getStackTraceElement() ?: this::class.java.name}"
-    } as T
+    override val context: CoroutineContext
+        get() = continuation.context
 }
