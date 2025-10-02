@@ -202,6 +202,11 @@ class UklibPublicationIT : KGPBaseTest() {
                         it.compileStubSourceWithSourceSetName()
                     }
                 }
+                project.tasks.configureEach {
+                    if (it is ArchiveUklibTask) {
+                        it.checkForBamboosInUklib.set(true)
+                    }
+                }
             }
 
             val iosAttributes = setOf("ios_arm64", "ios_x64")

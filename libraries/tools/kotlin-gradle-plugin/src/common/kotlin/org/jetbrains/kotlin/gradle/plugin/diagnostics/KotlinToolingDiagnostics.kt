@@ -89,7 +89,8 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object UklibSourceSetStructureUnderRefinementViolation : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    // FIXME: This check was demoved to warning. Figure out proper handling in KT-77005
+    object UklibSourceSetStructureUnderRefinementViolation : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(sourceSet: KotlinSourceSet, missingRefinements: List<KotlinSourceSet>) = build {
             title("Uklib Incompatible Source Set Structure")
                 .description(

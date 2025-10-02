@@ -101,7 +101,12 @@ internal val KotlinTarget.uklibFragmentPlatformAttribute: UklibFragmentPlatformA
             return UklibFragmentPlatformAttribute.ConsumeInPlatformAndMetadataCompilationsAndPublishInUmanifest(supportedUklibTarget)
         }
 
-        return UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndPublishInUmanifest(targetName)
+        // FIXME: This is a temporary (KT-81394) workaround before proper external target support (KT-77074)
+        if (targetName == "android") {
+            return UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndPublishInUmanifest(targetName)
+        } else {
+            return UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndFailOnPublication(targetName)
+        }
     }
 
 /**
