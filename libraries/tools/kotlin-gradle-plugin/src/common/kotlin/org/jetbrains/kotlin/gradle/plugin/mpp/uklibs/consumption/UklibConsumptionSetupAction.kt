@@ -67,6 +67,7 @@ private fun Project.setupUklibConsumption() {
     allowPSMBasedKMPToResolveLenientlyAndSelectBestMatchingVariant()
     allowPlatformCompilationsToResolvePlatformCompilationArtifactFromUklib(targets)
     workaroundLegacySkikoResolutionKT77539()
+    workaroundKotlinTestJsResolutionKT____()
 }
 
 private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifactFromUklib(
@@ -265,6 +266,25 @@ private fun Project.workaroundLegacySkikoResolutionKT77539() {
         }
         it.withVariant("awtApiElements-published") { configureJvmEnvironment(it) }
         it.withVariant("awtRuntimeElements-published") { configureJvmEnvironment(it) }
+    }
+}
+
+private fun Project.workaroundKotlinTestJsResolutionKT____() {
+    dependencies.components.withModule("org.jetbrains.kotlin:kotlin-test-js") {
+        it.addVariant("stubKotlinTestJsFallback") {
+            it.attributes.attribute(
+                USAGE_ATTRIBUTE,
+                project.objects.named(KOTLIN_METADATA),
+            )
+            it.attributes.attribute(
+                Category.CATEGORY_ATTRIBUTE,
+                project.categoryByName(Category.LIBRARY),
+            )
+            it.attributes.attribute(
+                KotlinPlatformType.attribute,
+                common,
+            )
+        }
     }
 }
 
