@@ -161,7 +161,8 @@ KtCallExpression(150,190): 'take {'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<Unresolved qualified name: Foo.Bar.Baz, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<#1, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected. Where:
+        #1 = Unresolved qualified name: Foo.Bar.Baz>
     isInBestCandidates = true
 
 KtNameReferenceExpression(150,154): 'take'
@@ -201,7 +202,8 @@ KtNameReferenceExpression(150,154): 'take'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<Unresolved qualified name: Foo.Bar.Baz, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<#1, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected. Where:
+        #1 = Unresolved qualified name: Foo.Bar.Baz>
     isInBestCandidates = true
 
 KtLambdaArgument(155,190): '{'
