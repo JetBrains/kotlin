@@ -73,7 +73,9 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
-            //.withVisibilityChecks() // TODO: Enable checking visibilities (KT-69516)
+            .applyIf(context.configuration.enableIrVisibilityChecks) {
+                withCheckers(IrVisibilityChecker.Strict)
+            }
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             .applyIf(context.configuration.enableIrVarargTypesChecks) {
                 withVarargChecks()
