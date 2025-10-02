@@ -15,13 +15,18 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 open class ConeTypeRendererForReadability(
     private val preRenderedConstructors: Map<TypeConstructorMarker, String>? = null,
+    private val startErrorTypeIndex: Int = 0,
     private val idRendererCreator: () -> ConeIdRenderer,
 ) : ConeTypeRendererForDebugInfo(coneAttributeRendererForReadability = ConeAttributeRenderer.None) {
+
+    val typeConstructorReadableDescriptions: MutableList<String> = mutableListOf()
+
     constructor(
         builder: StringBuilder,
         preRenderedConstructors: Map<TypeConstructorMarker, String>? = null,
+        startErrorTypeIndex: Int = 0,
         idRendererCreator: () -> ConeIdRenderer,
-    ) : this(preRenderedConstructors, idRendererCreator) {
+    ) : this(preRenderedConstructors, startErrorTypeIndex, idRendererCreator) {
         this.builder = builder
         this.idRenderer = idRendererCreator()
         idRenderer.builder = builder
@@ -46,7 +51,7 @@ open class ConeTypeRendererForReadability(
     }
 
     private fun renderBound(bound: ConeKotlinType): String {
-        val renderer = ConeTypeRendererForReadability(StringBuilder(), preRenderedConstructors, idRendererCreator)
+        val renderer = ConeTypeRendererForReadability(StringBuilder(), preRenderedConstructors = preRenderedConstructors, idRendererCreator = idRendererCreator)
         renderer.render(bound)
         return renderer.builder.toString()
     }
@@ -77,6 +82,7 @@ open class ConeTypeRendererForReadability(
     }
 
     override fun renderDiagnostic(diagnostic: ConeDiagnostic, prefix: String, suffix: String): String {
-        return diagnostic.readableDescriptionAsTypeConstructor
+        typeConstructorReadableDescriptions += diagnostic.readableDescriptionAsTypeConstructor
+        return "#${startErrorTypeIndex + typeConstructorReadableDescriptions.size}"
     }
 }

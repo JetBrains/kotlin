@@ -18,7 +18,7 @@ internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
     val SYMBOL_RENDERER = Renderer<FirBasedSymbol<*>> {
         val idRendererCreator = { ConeIdShortRenderer() }
         FirRenderer(
-            typeRenderer = ConeTypeRendererForReadability(null, idRendererCreator),
+            typeRenderer = ConeTypeRendererForReadability(null, idRendererCreator = idRendererCreator),
             idRenderer = idRendererCreator(),
             classMemberRenderer = null,
             bodyRenderer = null,

@@ -35,4 +35,4 @@ KtCallExpression(86,92): 'foo(x)'
           T -> (ERROR CLASS: Cannot infer argument for type parameter T)
         }
     ]
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T : Unresolved qualified name: NonExistent> foo(x: Int): T>
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T : #1> foo(x: Int): T>

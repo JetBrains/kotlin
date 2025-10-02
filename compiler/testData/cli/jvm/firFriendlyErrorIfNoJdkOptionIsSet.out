@@ -1,7 +1,8 @@
 compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.kt:2:11: error: unresolved reference 'NullPointerException'.
     throw NullPointerException()
           ^^^^^^^^^^^^^^^^^^^^
-compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.kt:2:11: error: type mismatch: inferred type is 'Unresolved name: NullPointerException', but 'Throwable' was expected.
+compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.kt:2:11: error: type mismatch: inferred type is '#1', but 'Throwable' was expected. Where:
+    #1 = Unresolved name: NullPointerException
     throw NullPointerException()
           ^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

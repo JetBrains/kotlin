@@ -252,9 +252,27 @@ object FirDiagnosticRenderers {
         list.reversed().joinToString(".")
     }
 
-    val RENDER_TYPE = ContextDependentRenderer { t: ConeKotlinType, ctx ->
-        // TODO, KT-59811: need a way to tune granuality, e.g., without parameter names in functional types.
-        ctx[ADAPTIVE_RENDERED_TYPES].getValue(t)
+    val RENDER_TYPE: DiagnosticParameterRenderer<ConeKotlinType> = AdaptiveTypeRenderer()
+
+    private class AdaptiveTypeRenderer() : DiagnosticParameterRenderer<ConeKotlinType> {
+        private var tail: List<String>? = null
+
+        override fun render(obj: ConeKotlinType, renderingContext: RenderingContext): String {
+            // TODO, KT-59811: need a way to tune granularity, e.g., without parameter names in functional types.
+            val representation = renderingContext[ADAPTIVE_RENDERED_TYPES]
+            tail = representation.descriptions.takeIf { it.isNotEmpty() }
+            return representation[obj]
+        }
+
+        override fun renderTail(renderingContext: RenderingContext): String {
+            if (tail == null) return ""
+            return buildString {
+                appendLine(" Where:")
+                tail?.forEachIndexed { i, it ->
+                    append("    #${i + 1} = $it")
+                }
+            }
+        }
     }
 
     val RENDER_FQ_NAME_WITH_PREFIX = Renderer { symbol: FirBasedSymbol<*> ->
@@ -265,9 +283,13 @@ object FirDiagnosticRenderers {
         }
     }
 
-    private val ADAPTIVE_RENDERED_TYPES: RenderingContext.Key<Map<ConeKotlinType, String>> =
-        object : RenderingContext.Key<Map<ConeKotlinType, String>>("ADAPTIVE_RENDERED_TYPES") {
-            override fun compute(objectsToRender: Collection<Any?>): Map<ConeKotlinType, String> {
+    private class AdaptiveTypesRepresentation(val strings: Map<ConeKotlinType, String>, val descriptions: List<String>) {
+        operator fun get(type: ConeKotlinType) = strings.getValue(type)
+    }
+
+    private val ADAPTIVE_RENDERED_TYPES: RenderingContext.Key<AdaptiveTypesRepresentation> =
+        object : RenderingContext.Key<AdaptiveTypesRepresentation>("ADAPTIVE_RENDERED_TYPES") {
+            override fun compute(objectsToRender: Collection<Any?>): AdaptiveTypesRepresentation {
                 val coneTypes = objectsToRender.filterIsInstance<ConeKotlinType>() +
                         objectsToRender.filterIsInstance<Iterable<*>>().flatMap { it.filterIsInstance<ConeKotlinType>() }
 
@@ -283,8 +305,15 @@ object FirDiagnosticRenderers {
                     }
                 }
 
+                val errorTypeDescriptions = mutableListOf<String>()
                 val simpleRepresentationsByConstructor: Map<TypeConstructorMarker, String> = constructors.associateWith {
-                    buildString { ConeTypeRendererForReadability(this) { ConeIdShortRenderer() }.renderConstructor(it.delegatedConstructorOrSelf()) }
+                    buildString {
+                        val renderer = ConeTypeRendererForReadability(
+                            this, startErrorTypeIndex = errorTypeDescriptions.size
+                        ) { ConeIdShortRenderer() }
+                        renderer.renderConstructor(it.delegatedConstructorOrSelf())
+                        errorTypeDescriptions += renderer.typeConstructorReadableDescriptions
+                    }
                 }
 
                 val constructorsByRepresentation: Map<String, List<TypeConstructorMarker>> =
@@ -334,9 +363,12 @@ object FirDiagnosticRenderers {
                     }
                 }
 
-                return coneTypes.associateWith {
-                    it.renderReadableWithFqNames(finalRepresentationsByConstructor)
-                }
+                return AdaptiveTypesRepresentation(
+                    coneTypes.associateWith {
+                        it.renderReadableWithFqNames(finalRepresentationsByConstructor)
+                    },
+                    errorTypeDescriptions
+                )
             }
 
             private fun TypeConstructorMarker.delegatedConstructorOrSelf(): TypeConstructorMarker {

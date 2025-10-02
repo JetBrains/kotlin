@@ -68,7 +68,7 @@ class FirDiagnosticCodeMetaRenderConfiguration(
 
         val renderer = diagnostic.factory.ktRenderer
         if (renderer is AbstractKtDiagnosticWithParametersRenderer) {
-            renderer.renderParameters(diagnostic).mapTo(params) {
+            renderer.renderParameters(diagnostic).parameters.mapTo(params) {
                 it.toString().replace("\"", "\\\"")
             }
         }

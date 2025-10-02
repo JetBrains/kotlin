@@ -6,6 +6,7 @@
 
 /module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(181,209): error: Cannot access class 'InaccessibleType'. Check your module classpath for missing or conflicting dependencies.
 
-/module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(210,211): error: Argument type mismatch: actual type is 'Box<CapturedType(out Inconsistent type: InaccessibleType<kotlin/Any?> (parameters.size = 0, arguments.size = 1))>', but 'Box<InaccessibleType<Any?>>' was expected.
+/module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(210,211): error: Argument type mismatch: actual type is 'Box<CapturedType(out #1)>', but 'Box<InaccessibleType<Any?>>' was expected. Where:
+    #1 = Inconsistent type: InaccessibleType<kotlin/Any?> (parameters.size = 0, arguments.size = 1)
 
 /module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(210,211): error: Cannot access class 'InaccessibleType'. Check your module classpath for missing or conflicting dependencies.

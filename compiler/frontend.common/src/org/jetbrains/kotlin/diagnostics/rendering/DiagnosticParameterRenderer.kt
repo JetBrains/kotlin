@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 interface DiagnosticParameterRenderer<in O> {
     fun render(obj: O, renderingContext: RenderingContext): String
+
+    fun renderTail(renderingContext: RenderingContext): String = ""
 }
 
 interface ContextIndependentParameterRenderer<in O> : DiagnosticParameterRenderer<O> {
@@ -36,3 +38,14 @@ fun <O> ContextDependentRenderer(block: (O, RenderingContext) -> String) = objec
 
 fun <P> renderParameter(parameter: P, renderer: DiagnosticParameterRenderer<P>?, context: RenderingContext): Any? =
     renderer?.render(parameter, context) ?: parameter
+
+fun renderTail(renderer: DiagnosticParameterRenderer<*>?, context: RenderingContext): String? =
+    renderer?.renderTail(context)?.takeIf { it.isNotEmpty()}
+
+fun renderNonEmptyTailIfAny(context: RenderingContext, vararg renderers: DiagnosticParameterRenderer<*>?): String {
+    for (renderer in renderers) {
+        val tail = renderTail(renderer, context) ?: continue
+        return tail
+    }
+    return ""
+}
