@@ -7096,6 +7096,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("reifiedWithoutUpperBound.kt")
+      public void testReifiedWithoutUpperBound() {
+        runTest("compiler/testData/diagnostics/tests/classLiteral/reifiedWithoutUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("reifiedWithoutUpperBoundAfter.kt")
+      public void testReifiedWithoutUpperBoundAfter() {
+        runTest("compiler/testData/diagnostics/tests/classLiteral/reifiedWithoutUpperBoundAfter.kt");
+      }
+
+      @Test
       @TestMetadata("simpleClassLiteral.kt")
       public void testSimpleClassLiteral() {
         runTest("compiler/testData/diagnostics/tests/classLiteral/simpleClassLiteral.kt");
