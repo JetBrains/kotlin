@@ -20,5 +20,6 @@ fun box(): String {
     df.group.a
     df.group1.b
     df.group2.c
+    df.compareSchemas(strict = true)
     return "OK"
 }
