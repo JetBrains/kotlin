@@ -371,21 +371,27 @@ class UklibPublicationIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             val dependency = project("empty", gradleVersion) {
                 buildScriptInjection {
+                    project.setUklibPublicationStrategy()
+                    project.setUklibResolutionStrategy()
+                    project.plugins.apply("maven-publish")
                     project.group = "dependencyGroup"
                     project.version = "2.0"
                     project.applyMultiplatform {
                         linuxArm64()
                         linuxX64()
-                        sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
+                        jvm()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             }
             val publisher = project("empty", gradleVersion) {
                 buildScriptInjection {
                     project.setUklibPublicationStrategy()
+                    project.setUklibResolutionStrategy()
                     project.applyMultiplatform {
                         linuxArm64()
                         linuxX64()
+                        jvm()
                         sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                         sourceSets.commonMain.dependencies {
                             implementation(project(":dependency"))
