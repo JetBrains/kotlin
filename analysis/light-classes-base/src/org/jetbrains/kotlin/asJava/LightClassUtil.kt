@@ -160,12 +160,12 @@ object LightClassUtil {
         getWrappingClasses(declaration).flatMap { it.methods.asSequence() }
             .filterIsInstance<KtLightMethod>()
             .filter(nameFilter)
-            .filter { it -> it.kotlinOrigin === declaration || it.navigationElement === declaration || declaration.isConstrictorOf(it) }
+            .filter { it.kotlinOrigin === declaration || declaration.isConstrictorOf(it) }
 
     private fun KtDeclaration.isConstrictorOf(lightMethod: KtLightMethod): Boolean {
         if (this is KtPrimaryConstructor && lightMethod.isConstructor) {
             val containingClass = containingClass()
-            return lightMethod.kotlinOrigin === containingClass || lightMethod.navigationElement === containingClass
+            return lightMethod.kotlinOrigin === containingClass
         }
         return false
     }
