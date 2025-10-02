@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.copyAsImplicitInvokeCall
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
@@ -650,7 +651,11 @@ class FirCallResolver(
                     explicitReceiver = null
                 )
             } else {
-                buildReferenceWithErrorCandidate(callInfo, ConeNoConstructorError, reference.source)
+                buildReferenceWithErrorCandidate(
+                    callInfo,
+                    if (annotationClassSymbol.isExpect) ConeNoImplicitDefaultConstructorOnExpectAnnotationClass else ConeNoConstructorError,
+                    reference.source
+                )
             }
         } else {
             annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent))
