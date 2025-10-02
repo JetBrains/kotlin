@@ -6060,6 +6060,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("localTypeAliasesDisabled.kt")
+      public void testLocalTypeAliasesDisabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/localTypeAliasesDisabled.kt");
+      }
+
+      @Test
       @TestMetadata("overrides.kt")
       public void testOverrides() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/overrides.kt");

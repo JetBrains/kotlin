@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-79185
-// LANGUAGE: +NestedTypeAliases
+// LANGUAGE: +NestedTypeAliases +LocalTypeAliases
 
 // MODULE: lib
 
