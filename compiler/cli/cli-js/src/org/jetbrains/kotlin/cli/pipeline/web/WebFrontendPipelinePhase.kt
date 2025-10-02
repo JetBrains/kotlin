@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.headerCompilation
 import org.jetbrains.kotlin.config.lookupTracker
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
@@ -101,6 +102,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 lookupTracker = lookupTracker,
                 useWasmPlatform = isWasm,
+                configuration.headerCompilation,
             ).also {
                 kotlinPackageUsageIsFine = it.output.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
             }
@@ -127,6 +129,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 lookupTracker = lookupTracker,
                 useWasmPlatform = isWasm,
+                headerCompilationMode = configuration.headerCompilation
             )
         }
 
@@ -150,6 +153,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         incrementalDataProvider: IncrementalDataProvider?,
         lookupTracker: LookupTracker?,
         useWasmPlatform: Boolean,
+        headerCompilationMode: Boolean
     ): AnalyzedFirWithPsiOutput {
         for (ktFile in ktFiles) {
             AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, diagnosticsReporter)
@@ -164,7 +168,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
+                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter, headerCompilationMode)
             },
             useWasmPlatform = useWasmPlatform,
         )
@@ -183,6 +187,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         incrementalDataProvider: IncrementalDataProvider?,
         lookupTracker: LookupTracker?,
         useWasmPlatform: Boolean,
+        headerCompilationMode: Boolean,
     ): AnalyzedFirOutput {
         val output = compileModuleToAnalyzedFir(
             moduleStructure,
@@ -194,7 +199,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, performanceManager?.let { it::addSourcesStats })
+                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, headerCompilationMode, performanceManager?.let { it::addSourcesStats })
             },
             useWasmPlatform = useWasmPlatform,
         )

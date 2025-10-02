@@ -43,6 +43,7 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
     put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
+    put(CommonConfigurationKeys.HEADER_COMPILATION, arguments.headerMode)
 
     val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
         IrVerificationMode.resolveMode(verifyIrString).also {

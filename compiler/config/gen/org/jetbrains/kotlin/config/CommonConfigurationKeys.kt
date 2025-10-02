@@ -98,6 +98,9 @@ object CommonConfigurationKeys {
     val EVALUATED_CONST_TRACKER = CompilerConfigurationKey.create<EvaluatedConstTracker>("Keeps track of all evaluated by IrInterpreter constants")
 
     @JvmField
+    val HEADER_COMPILATION = CompilerConfigurationKey.create<Boolean>("Enable header compilation mode")
+
+    @JvmField
     val MESSAGE_COLLECTOR_KEY = CompilerConfigurationKey.create<MessageCollector>("message collector")
 
     @JvmField
@@ -229,6 +232,10 @@ var CompilerConfiguration.ignoreConstOptimizationErrors: Boolean
 var CompilerConfiguration.evaluatedConstTracker: EvaluatedConstTracker?
     get() = get(CommonConfigurationKeys.EVALUATED_CONST_TRACKER)
     set(value) { put(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.headerCompilation: Boolean
+    get() = getBoolean(CommonConfigurationKeys.HEADER_COMPILATION)
+    set(value) { put(CommonConfigurationKeys.HEADER_COMPILATION, value) }
 
 var CompilerConfiguration.messageCollector: MessageCollector
     get() = get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
