@@ -51,6 +51,7 @@ fastutil = "8.5.14-jb1"
 rwmutex-idea = "0.0.7"
 # Wasm specific
 wasmedge = "0.14.0"
+wasmtime = "38.0.3"
 jscSequoia = "299490"
 jscLinux = "299491"
 jscWindows = "299491"

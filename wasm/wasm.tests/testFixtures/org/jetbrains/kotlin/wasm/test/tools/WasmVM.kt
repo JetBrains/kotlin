@@ -97,6 +97,25 @@ internal sealed class WasmVM(
             )
     }
 
+    object Wasmtime : WasmVM(shortName = "Wasmtime", property = "wasm.engine.path.Wasmtime", entryPointIsJsFile = false) {
+        override fun run(
+            entryFile: String,
+            jsFiles: List<String>,
+            workingDirectory: File?,
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>,
+        ) =
+            tool.run(
+                *toolArgs.toTypedArray(),
+                "-W",
+                "gc,function-references,exceptions",
+                "--invoke",
+                "startTest",
+                entryFile,
+                workingDirectory = workingDirectory,
+            )
+    }
+
     object NodeJs : WasmVM(shortName = "NodeJs", property = "javascript.engine.path.NodeJs", entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,
