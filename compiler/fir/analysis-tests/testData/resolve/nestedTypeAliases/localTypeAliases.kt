@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +LocalTypeAliases
 // ISSUE: KT-79185
 
 open class Generic<T>

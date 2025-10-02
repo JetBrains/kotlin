@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +LocalTypeAliases
 // SKIP_FIR_DUMP
 
 open class Generic<T>
