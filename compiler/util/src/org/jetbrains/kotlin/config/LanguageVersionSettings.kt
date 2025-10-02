@@ -478,6 +478,7 @@ enum class LanguageFeature(
     ForbidTypeAliasToCompilerRequiredAnnotation(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79369"),
     ForbidArrayLiteralsInNonAnnotationContexts(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-369"),
     LocalTypeAliases(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KT-81404"),
+    ForbidClassLiteralWithPotentiallyNullableReifiedLhs(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-81385"),
 
     // 2.5
 
