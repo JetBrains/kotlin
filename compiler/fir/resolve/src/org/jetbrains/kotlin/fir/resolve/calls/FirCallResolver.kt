@@ -639,17 +639,19 @@ class FirCallResolver(
 
             val callInfo = toCallInfo(annotation, reference)
 
-            val resolutionResult = constructorSymbol
-                ?.let { runResolutionForGivenSymbol(callInfo, it) }
-                ?: ResolutionResult(callInfo, CandidateApplicability.HIDDEN, emptyList())
-            createResolvedNamedReference(
-                reference,
-                reference.name,
-                callInfo,
-                resolutionResult.candidates,
-                resolutionResult.applicability,
-                explicitReceiver = null
-            )
+            if (constructorSymbol != null) {
+                val resolutionResult = runResolutionForGivenSymbol(callInfo, constructorSymbol)
+                createResolvedNamedReference(
+                    reference,
+                    reference.name,
+                    callInfo,
+                    resolutionResult.candidates,
+                    resolutionResult.applicability,
+                    explicitReceiver = null
+                )
+            } else {
+                buildReferenceWithErrorCandidate(callInfo, ConeNoConstructorError, reference.source)
+            }
         } else {
             annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent))
 
