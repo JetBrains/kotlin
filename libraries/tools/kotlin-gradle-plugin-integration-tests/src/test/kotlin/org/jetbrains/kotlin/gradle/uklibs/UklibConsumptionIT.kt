@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.*
@@ -1141,6 +1143,84 @@ class UklibConsumptionIT : KGPBaseTest() {
                 }
             }.buildAndReturn("assemble").prettyPrinted
         )
+    }
+
+    @GradleTest
+    fun `uklib consumption - linkage with cinterops`(version: GradleVersion) {
+        val producer = project(
+            "empty",
+            version,
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                // Commonizer is not supported yet which will be captured by this test
+                project.extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, true)
+                project.setUklibPublicationStrategy()
+                project.applyMultiplatform {
+                    listOf(
+                        linuxArm64(),
+                        linuxX64(),
+                    ).forEach {
+                        val foo = project.layout.projectDirectory.file("foo.def")
+                        val bar = project.layout.projectDirectory.file("bar.def")
+
+                        foo.asFile.writeText(
+                            """
+                                language = C
+                                ---
+                                void foo(void);
+                            """.trimIndent()
+                        )
+                        bar.asFile.writeText(
+                            """
+                                language = C
+                                ---
+                                void bar(void);
+                            """.trimIndent()
+                        )
+
+                        it.compilations.getByName("main").cinterops.create("foo") {
+                            it.definitionFile.set(foo)
+                        }
+                        it.compilations.getByName("main").cinterops.create("bar") {
+                            it.definitionFile.set(bar)
+                        }
+                    }
+
+                    sourceSets.commonMain.get().compileSource("class Common")
+                }
+            }
+        }.publish()
+
+        project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(producer)
+            buildScriptInjection {
+                project.setUklibResolutionStrategy()
+                project.applyMultiplatform {
+                    linuxArm64 {
+                        binaries.staticLib {  }
+                    }
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        @file:OptIn(ExperimentalForeignApi::class)
+
+                        import kotlinx.cinterop.ExperimentalForeignApi
+
+                        fun consumeCinterops() { 
+                            bar.bar()
+                            foo.foo()
+                        }
+                        """.trimIndent()
+                    )
+                    sourceSets.commonMain.get().dependencies {
+                        api(producer.rootCoordinate)
+                    }
+                }
+            }
+
+            build("linkDebugStaticLinuxArm64")
+        }
     }
 
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs
 
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import java.io.File
@@ -29,4 +30,7 @@ internal data class UklibFragment(
         attributes,
         listOf(file),
     )
+
+    @get:Internal
+    val singleExpectedFileFromModularUklib: File get() = files.single()
 }

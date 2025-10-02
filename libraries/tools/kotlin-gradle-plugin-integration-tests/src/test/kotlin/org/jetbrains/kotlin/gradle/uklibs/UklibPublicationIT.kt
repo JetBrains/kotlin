@@ -15,9 +15,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.mpp.resources.unzip
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.ArchiveUklibTask
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.MavenModule
 import org.jetbrains.kotlin.gradle.util.parsePom
 import org.junit.jupiter.api.DisplayName
@@ -183,6 +186,84 @@ class UklibPublicationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `uklib contents - publication with cinterops`(
+        gradleVersion: GradleVersion,
+    ) {
+        val project = project(
+            "empty",
+            gradleVersion,
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                // Commonizer is not supported yet which will be captured by this test
+                project.extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, true)
+                project.setUklibPublicationStrategy()
+                project.applyMultiplatform {
+                    listOf(
+                        linuxArm64(),
+                        linuxX64(),
+                    ).forEach {
+                        val foo = project.layout.projectDirectory.file("foo.def")
+                        val bar = project.layout.projectDirectory.file("bar.def")
+
+                        foo.asFile.writeText(
+                            """
+                                language = C
+                                ---
+                                void foo(void);
+                            """.trimIndent()
+                        )
+                        bar.asFile.writeText(
+                            """
+                                language = C
+                                ---
+                                void bar(void);
+                            """.trimIndent()
+                        )
+
+                        it.compilations.getByName("main").cinterops.create("foo") {
+                            it.definitionFile.set(foo)
+                        }
+                        it.compilations.getByName("main").cinterops.create("bar") {
+                            it.definitionFile.set(bar)
+                        }
+                    }
+
+                    sourceSets.commonMain.get().compileSource("class Common")
+                }
+            }
+        }
+
+        val publication = project.publish()
+        assertPublishedFragments(
+            setOf(
+                Fragment(
+                    identifier = "commonMain", targets = mutableListOf("linux_arm64", "linux_x64"),
+                ),
+                Fragment(
+                    identifier = "linuxArm64Main", targets = mutableListOf("linux_arm64"),
+                ),
+                Fragment(
+                    identifier = "linuxArm64Main_cinterop_bar", targets = mutableListOf("linux_arm64"),
+                ),
+                Fragment(
+                    identifier = "linuxArm64Main_cinterop_foo", targets = mutableListOf("linux_arm64"),
+                ),
+                Fragment(
+                    identifier = "linuxX64Main", targets = mutableListOf("linux_x64"),
+                ),
+                Fragment(
+                    identifier = "linuxX64Main_cinterop_bar", targets = mutableListOf("linux_x64"),
+                ),
+                Fragment(
+                    identifier = "linuxX64Main_cinterop_foo", targets = mutableListOf("linux_x64"),
+                ),
+            ),
+            readProducedUklib(publication)
+        )
+    }
+
+    @GradleTest
     fun `uklib contents - bamboo metadata publication`(
         gradleVersion: GradleVersion,
     ) {
@@ -268,14 +349,14 @@ class UklibPublicationIT : KGPBaseTest() {
         publisher: ProducedUklib,
     ) {
         assertEquals(
-            Umanifest(expectedFragments),
-            publisher.umanifest,
+            Umanifest(expectedFragments).prettyPrinted,
+            publisher.umanifest.prettyPrinted,
         )
         assertEquals(
-            expectedFragments.map { it.identifier }.toSet(),
+            expectedFragments.map { it.identifier }.toSet().prettyPrinted,
             publisher.uklibContents.listDirectoryEntries().map {
                 it.name
-            }.filterNot { it == Uklib.UMANIFEST_FILE_NAME }.toSet(),
+            }.filterNot { it == Uklib.UMANIFEST_FILE_NAME }.toSet().prettyPrinted,
         )
     }
 

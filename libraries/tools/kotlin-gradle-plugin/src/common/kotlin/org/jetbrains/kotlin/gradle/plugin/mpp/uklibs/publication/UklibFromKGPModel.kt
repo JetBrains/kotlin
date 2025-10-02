@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFragmentsChecker
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.named
 import java.io.File
 
 internal data class KGPUklibFragment(
@@ -57,6 +60,17 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
                 val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
                 val file = mainCompilation.compileTaskProvider.map { it.klibOutput.get() }
                 fragments.add(kgpUklibFragment(mainCompilation, file))
+                mainCompilation.cinterops.forEach {
+                    fragments.add(
+                        kgpUklibFragment(
+                            mainCompilation,
+                            project.tasks.named<CInteropProcess>(it.interopProcessingTaskName).map {
+                                it.klibOutput.get()
+                            },
+                            mainCompilation.uklibFragmentIdentifier + "_cinterop_${it.name}"
+                        )
+                    )
+                }
             }
             is KotlinJvmTarget -> {
                 val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
@@ -117,7 +131,7 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
     val allPublishedCompilations = publishedMetadataCompilations + uklibPublishedPlatformCompilations
     if (allPublishedCompilations.size > 1) {
         project.ensureSourceSetStructureIsUklibCompliant(allPublishedCompilations)
-    } else if (publishedMetadataCompilations.isEmpty() && uklibPublishedPlatformCompilations.size == 1 && fragments.size == 1) {
+    } else if (publishedMetadataCompilations.isEmpty() && uklibPublishedPlatformCompilations.size == 1) {
         /**
          * Do not validate anything. Uklib will contain a single platform slice and fragment structure validations don't make sense
          */
@@ -153,8 +167,8 @@ internal suspend fun KotlinMultiplatformExtension.uklibPublishedPlatformCompilat
 private fun kgpUklibFragment(
     mainCompilation: KotlinCompilation<*>,
     fileProvider: Provider<File>,
+    fragmentIdentifier: String = mainCompilation.uklibFragmentIdentifier
 ): KGPUklibFragment {
-    val fragmentIdentifier = mainCompilation.uklibFragmentIdentifier
     val fragmentAttribute = mainCompilation.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()
     return KGPUklibFragment(
         fragment = fileProvider.map {

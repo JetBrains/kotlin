@@ -62,9 +62,7 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
          * Filter out compilations that were skipped. They should be omitted from the umanifest
          */
         val compiledFragments = fragments.get().filter { fragment ->
-            val isMetadata = fragment.attributes.count() > 1
-            val isASkippedMetadataCompilation = isMetadata && !fragment.files.single().exists()
-            !isASkippedMetadataCompilation
+            fragment.singleExpectedFileFromModularUklib.exists()
         }
 
         if (checkForBamboosInUklib.get()) {

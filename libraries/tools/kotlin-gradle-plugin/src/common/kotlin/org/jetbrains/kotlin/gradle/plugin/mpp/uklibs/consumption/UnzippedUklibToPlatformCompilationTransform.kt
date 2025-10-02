@@ -43,10 +43,8 @@ internal abstract class UnzippedUklibToPlatformCompilationTransform :
             return
         }
 
-        if (platformFragments.size > 1) {
-            error("Matched multiple fragments from ${unzippedUklib}, but was expecting to find exactly one. Found fragments: $platformFragments")
+        platformFragments.forEach {
+            outputs.dir(it.files.single())
         }
-
-        outputs.dir(platformFragments.singleOrNull()!!.files.single())
     }
 }

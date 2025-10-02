@@ -103,12 +103,12 @@ private class UklibCompositeMetadataBinary(
     override val checksum: String
         get() = if (computeChecksum) {
             val md5 = MessageDigest.getInstance("MD5")
-            md5.digest(fragment.files.single().path.encodeToByteArray())
+            md5.digest(fragment.singleExpectedFileFromModularUklib.path.encodeToByteArray())
                 .joinToString(separator = "") { byte -> "%02x".format(byte) }
         } else ""
 
     override fun copyTo(file: File): Boolean {
-        val metadataSlice = fragment.files.single()
+        val metadataSlice = fragment.singleExpectedFileFromModularUklib
         if (!metadataSlice.exists()) return false
         return metadataSlice.copyRecursively(
             file,
