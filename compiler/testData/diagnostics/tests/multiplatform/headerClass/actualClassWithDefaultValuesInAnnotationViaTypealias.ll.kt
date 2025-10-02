@@ -11,7 +11,7 @@ expect annotation class Foo5()
 expect annotation class Foo6()
 expect annotation class Foo7()
 
-<!NO_CONSTRUCTOR!>@Foo1<!>
+<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS!>@Foo1<!>
 fun foo() {}
 
 @Foo5

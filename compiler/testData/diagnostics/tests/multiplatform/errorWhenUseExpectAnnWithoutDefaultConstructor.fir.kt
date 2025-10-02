@@ -5,12 +5,12 @@
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> annotation class Ann
 
-<!NO_CONSTRUCTOR!>@Ann<!>
+<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS!>@Ann<!>
 fun commonFoo() {}
 
 // MODULE: m1-jvm()()(m1-common)
 
-<!NO_CONSTRUCTOR!>@Ann<!>
+<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS!>@Ann<!>
 fun platformFoo() {}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, expect, functionDeclaration */
