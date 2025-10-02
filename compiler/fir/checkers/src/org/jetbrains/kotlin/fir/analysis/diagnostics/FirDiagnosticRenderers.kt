@@ -267,8 +267,9 @@ object FirDiagnosticRenderers {
         override fun renderTail(renderingContext: RenderingContext): String {
             if (tail == null) return ""
             return buildString {
-                appendLine(" Where:")
+                append(" Where:")
                 tail?.forEachIndexed { i, it ->
+                    appendLine()
                     append("    #${i + 1} = $it")
                 }
             }
