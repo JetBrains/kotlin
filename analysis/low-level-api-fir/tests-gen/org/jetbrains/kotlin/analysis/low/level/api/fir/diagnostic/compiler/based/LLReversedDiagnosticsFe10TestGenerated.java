@@ -40164,6 +40164,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("localTypealiasInScript.kts")
+      public void testLocalTypealiasInScript() {
+        runTest("compiler/testData/diagnostics/tests/script/localTypealiasInScript.kts");
+      }
+
+      @Test
       @TestMetadata("NestedInnerClass.kts")
       public void testNestedInnerClass() {
         runTest("compiler/testData/diagnostics/tests/script/NestedInnerClass.kts");

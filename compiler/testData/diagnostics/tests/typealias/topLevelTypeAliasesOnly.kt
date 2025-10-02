@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +LocalTypeAliases
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 typealias TopLevel = Any

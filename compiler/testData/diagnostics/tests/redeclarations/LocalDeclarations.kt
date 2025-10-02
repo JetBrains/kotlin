@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +NestedTypeAliases
+// LANGUAGE: +NestedTypeAliases +LocalTypeAliases
 
 fun conflicts() {
     class <!REDECLARATION!>C<!>

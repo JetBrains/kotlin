@@ -32,7 +32,7 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirTypeAlias) {
         if (!context.isTopLevel) {
-            declaration.requireFeatureSupport(LanguageFeature.NestedTypeAliases)
+            declaration.requireFeatureSupport(if (declaration.isLocal) LanguageFeature.LocalTypeAliases else LanguageFeature.NestedTypeAliases)
         }
 
         val expandedTypeRef = declaration.expandedTypeRef
