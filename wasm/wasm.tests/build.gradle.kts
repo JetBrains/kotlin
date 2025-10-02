@@ -300,6 +300,8 @@ projectTests {
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/debug/stepping")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/loadJava")
     testData(project(":compiler").isolated, "testData/klib/partial-linkage")
     testData(project(":compiler").isolated, "testData/klib/resolve")
     testData(project(":compiler").isolated, "testData/klib/syntheticAccessors")
