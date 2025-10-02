@@ -24279,6 +24279,24 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("accessingLessVisibleStaticDeclarations.kt")
+      public void testAccessingLessVisibleStaticDeclarations() {
+        runTest("compiler/testData/diagnostics/tests/inline/accessingLessVisibleStaticDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("accessingPublicFunctionOfPackagePrivateSuperType.kt")
+      public void testAccessingPublicFunctionOfPackagePrivateSuperType() {
+        runTest("compiler/testData/diagnostics/tests/inline/accessingPublicFunctionOfPackagePrivateSuperType.kt");
+      }
+
+      @Test
+      @TestMetadata("accessingPublicValThroughAnonymousObject.kt")
+      public void testAccessingPublicValThroughAnonymousObject() {
+        runTest("compiler/testData/diagnostics/tests/inline/accessingPublicValThroughAnonymousObject.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInInline() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
