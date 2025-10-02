@@ -8,7 +8,6 @@
 package kotlin.native.internal
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.internal.getProgressionLastElement
 import kotlin.reflect.KClass
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -216,19 +215,6 @@ internal external fun createEmptyString(): String
 
 @TypedIntrinsic(IntrinsicType.IS_SUBTYPE)
 internal external fun <T> isSubtype(objTypeInfo: NativePtr): Boolean
-
-internal fun checkProgressionStep(step: Int): Int =
-        if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
-internal fun checkProgressionStep(step: Long): Long =
-        if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
-
-internal fun getProgressionLast(start: Char, end: Char, step: Int): Char =
-        getProgressionLast(start.code, end.code, step).toChar()
-
-internal fun getProgressionLast(start: Int, end: Int, step: Int): Int =
-        getProgressionLastElement(start, end, step)
-internal fun getProgressionLast(start: Long, end: Long, step: Long): Long =
-        getProgressionLastElement(start, end, step)
 
 // Called by the debugger.
 @ExportForCppRuntime
