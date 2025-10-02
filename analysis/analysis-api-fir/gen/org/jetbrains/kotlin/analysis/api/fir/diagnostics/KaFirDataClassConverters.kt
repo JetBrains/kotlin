@@ -1457,6 +1457,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS) { firDiagnostic ->
+        NoImplicitDefaultConstructorOnExpectAnnotationClassImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
         JsModuleProhibitedOnVarImpl(
             firDiagnostic as KtPsiDiagnostic,
