@@ -64,7 +64,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object UklibFragmentFromUnexpectedTarget : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object UklibFragmentFromUnexpectedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(target: String) = build {
             title("Uklib Publication With Unsupported Target")
                 .description("Publication of ${Uklib.UKLIB_NAME} with target '$target' is currently not supported")
