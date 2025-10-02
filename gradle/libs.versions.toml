@@ -50,6 +50,7 @@ opentelemetry-api = "1.41.0"
 fastutil = "8.5.13-jb4"
 # Wasm specific
 wasmedge = "0.14.0"
+wasmtime = "37.0.1"
 jscSequoia = "299490"
 jscLinux = "299491"
 jscWindows = "299491"

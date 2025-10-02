@@ -21,7 +21,7 @@ import java.io.File
 class WasiBoxRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge)
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {

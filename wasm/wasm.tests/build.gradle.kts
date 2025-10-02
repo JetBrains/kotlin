@@ -1,8 +1,15 @@
-import org.gradle.internal.os.OperatingSystem
-import java.net.URI
 import com.github.gradle.node.npm.task.NpmTask
+import org.gradle.internal.os.OperatingSystem
+import org.tukaani.xz.XZInputStream
+import java.net.URI
 import java.nio.file.Files
 import java.util.*
+
+buildscript {
+    dependencies {
+        classpath("org.tukaani:xz:1.10") // to extract `tar.xz`
+    }
+}
 
 plugins {
     kotlin("jvm")
@@ -45,6 +52,14 @@ repositories {
         }
         metadataSources { artifact() }
         content { includeModule("org.jsc", "jsc") }
+    }
+    ivy {
+        url = URI("https://github.com/bytecodealliance/wasmtime/releases/download/")
+        patternLayout {
+            artifact("v[revision]/wasmtime-v[revision]-[classifier].[ext]")
+        }
+        metadataSources { artifact() }
+        content { includeModule("dev.wasmtime", "wasmtime") }
     }
 }
 
@@ -186,6 +201,27 @@ val jsc by configurations.creating {
     isCanBeConsumed = false
 }
 
+val wasmtimeVersion = libs.versions.wasmtime
+val wasmtimePlatformSuffix = when (currentOsType) {
+    OsType(OsName.LINUX, OsArch.X86_64) -> "x86_64-linux"
+    OsType(OsName.MAC, OsArch.X86_64) -> "x86_64-macos"
+    OsType(OsName.MAC, OsArch.ARM64) -> "aarch64-macos"
+    OsType(OsName.WINDOWS, OsArch.X86_32),
+    OsType(OsName.WINDOWS, OsArch.X86_64) -> "x86_64-windows"
+    else -> error("unsupported os type $currentOsType")
+}
+val wasmtimeSuffix = wasmtimePlatformSuffix + "@" + when (currentOsType.name) {
+    OsName.LINUX -> "tar.xz"
+    OsName.MAC -> "tar.xz"
+    OsName.WINDOWS -> "zip"
+    else -> error("unsupported os type $currentOsType")
+}
+
+val wasmtime by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -212,6 +248,12 @@ dependencies {
     implicitDependencies("org.jsc:jsc:${libs.versions.jscSequoia.get()}:sequoia")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscLinux.get()}:linux64")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscWindows.get()}:win64")
+
+    wasmtime("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:$wasmtimeSuffix")
+
+    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-windows@zip")
+    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-linux@tar.xz")
+    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:aarch64-macos@tar.xz")
 }
 
 optInToExperimentalCompilerApi()
@@ -379,6 +421,42 @@ val createJscRunner by task<CreateJscRunner> {
     inputDirectory.fileProvider(unzipJsc.map { it.outputs.files.singleFile })
 }
 
+val wasmtimeArchive by task<Task> {
+    inputs.files(wasmtime)
+
+    val archive = wasmtime.singleFile
+
+    // TODO repack due to issue in Gradle
+    if (archive.extension == "xz") {
+        val tarFile = temporaryDir.resolve("${archive.name}.tar")
+        XZInputStream(archive.inputStream().buffered()).use { xzIn ->
+            tarFile.outputStream().buffered().use { tarOut ->
+                xzIn.copyTo(tarOut)
+            }
+        }
+
+        outputs.file(tarFile)
+    } else {
+        outputs.file(archive)
+    }
+}
+
+val unzipWasmtime by task<Copy> {
+    val wasmtime = wasmtimeArchive.map { it.outputs.files }
+    dependsOn(wasmtime)
+
+    from({
+             val wasmtimeFile = wasmtime.get().files.single()
+             if (wasmtimeFile.extension == "zip") {
+                 zipTree(wasmtimeFile)
+             } else {
+                 tarTree(wasmtimeFile)
+             }
+         })
+
+    into(layout.buildDirectory.dir("tools"))
+}
+
 fun Test.setupSpiderMonkey() {
     val jsShellExecutablePath = unzipJsShell
         .map { it.outputs.files.singleFile }
@@ -411,6 +489,17 @@ fun Test.setupJsc() {
         classpath.from(jscRunnerExecutablePath)
         property.set("javascript.engine.path.JavaScriptCore")
     }
+}
+
+fun Test.setupWasmtime() {
+    dependsOn(unzipWasmtime)
+    val wasmtimeDirectory = unzipWasmtime.map { it.destinationDir.resolve("wasmtime-v${wasmtimeVersion.get()}-$wasmtimePlatformSuffix") }
+
+    inputs.dir(wasmtimeDirectory)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("wasmtimeDirectory")
+
+    jvmArgumentProviders.add { listOf("-Dwasm.engine.path.Wasmtime=${wasmtimeDirectory.get().resolve("wasmtime")}") }
 }
 
 testsJar {}
@@ -446,6 +535,7 @@ projectTests {
             setupSpiderMonkey()
             setupWasmEdge()
             setupJsc()
+            setupWasmtime()
             useJUnitPlatform()
             setupWasmStdlib("js")
             setupWasmStdlib("wasi")
