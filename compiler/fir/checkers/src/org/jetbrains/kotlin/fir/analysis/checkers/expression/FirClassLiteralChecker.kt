@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -16,9 +17,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedTypeParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -52,7 +54,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
                 resolvedFullyExpandedType.isMarkedNullable ||
-                resolvedFullyExpandedType.isNullableTypeParameter(context.session.typeContext)
+                resolvedFullyExpandedType.isNullableTypeParameter(isExpression = !argument.canBeDoubleColonLHSAsType)
         if (isNullable) {
             if (argument.canBeDoubleColonLHSAsType) {
                 reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS)
@@ -64,6 +66,19 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                 )
             }
             return
+        }
+
+        if (!argument.canBeDoubleColonLHSAsType &&
+            !LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isEnabled() &&
+            resolvedFullyExpandedType.toTypeParameterSymbol()?.isReified == true &&
+            !resolvedFullyExpandedType.isMarkedNullable &&
+            resolvedFullyExpandedType.canBeNull(context.session)
+        ) {
+            reporter.reportOn(
+                argument.source,
+                FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS_WARNING,
+                argument.resolvedType
+            )
         }
 
         argument.safeAsTypeParameterSymbol?.let {
@@ -89,14 +104,13 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun ConeKotlinType.isNullableTypeParameter(context: ConeInferenceContext): Boolean {
+    context(context: CheckerContext)
+    private fun ConeKotlinType.isNullableTypeParameter(isExpression: Boolean): Boolean {
         if (this !is ConeTypeParameterType) return false
         val typeParameter = lookupTag.typeParameterSymbol
-        with(context) {
-            return !typeParameter.isReified &&
-                    // E.g., fun <T> f2(t: T): Any = t::class
-                    typeParameter.toConeType().isNullableType()
-        }
+        // E.g., fun <T> f2(t: T): Any = t::class
+        return canBeNull(context.session) &&
+                (!typeParameter.isReified || isExpression && LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isEnabled())
     }
 
     private val FirExpression.canBeDoubleColonLHSAsType: Boolean
