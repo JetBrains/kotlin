@@ -2,11 +2,10 @@
 typealias TopLevelInScript = String
 
 class C {
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias NestedInClass = String<!>
+    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Nested = String<!>
 }
 
-fun foo() {
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Local = String<!>
-}
+val s1: TopLevelInScript = "TopLevelInScript"
+val s2: C.Nested = "C.Nested"
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration, typeAliasDeclaration */
