@@ -29742,6 +29742,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("errorWhenUseExpectAnnWithoutDefaultConstructor.kt")
+      public void testErrorWhenUseExpectAnnWithoutDefaultConstructor() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/errorWhenUseExpectAnnWithoutDefaultConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("expectAbstractToString.kt")
       public void testExpectAbstractToString() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectAbstractToString.kt");
