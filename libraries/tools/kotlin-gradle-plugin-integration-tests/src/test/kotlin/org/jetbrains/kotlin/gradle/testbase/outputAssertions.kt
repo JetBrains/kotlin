@@ -9,6 +9,8 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -285,6 +287,14 @@ fun BuildResult.extractTaskCompilerArguments(
     return taskOutput.lines().first {
         it.contains("Kotlin compiler args:")
     }.substringAfter("Kotlin compiler args:")
+}
+
+inline fun <reified T : CommonToolArguments> BuildResult.extractTaskCompilerArguments(
+    taskPath: String,
+    logLevel: LogLevel = LogLevel.INFO
+): T {
+    val args = extractTaskCompilerArguments(taskPath, logLevel).split(" ")
+    return parseCommandLineArguments<T>(args)
 }
 
 fun BuildResult.extractNativeCompilerTaskArguments(
