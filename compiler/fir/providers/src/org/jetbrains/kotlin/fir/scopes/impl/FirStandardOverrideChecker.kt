@@ -88,7 +88,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
             .all { (aBound, bBound) -> isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor) }
     }
 
-    override fun buildTypeParametersSubstitutorIfCompatible(
+    override fun buildTypeParametersSubstitutorIfCompatible( // cool
         overrideCandidate: FirCallableDeclaration,
         baseDeclaration: FirCallableDeclaration
     ): ConeSubstitutor? {
