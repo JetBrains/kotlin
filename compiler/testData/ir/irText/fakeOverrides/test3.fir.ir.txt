@@ -1,0 +1,1 @@
+FILE fqName:<root> fileName:/test3.kt

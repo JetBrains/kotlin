@@ -1,0 +1,33 @@
+open class Base<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun <A : List<T>> foo1(a: A) {
+    return Unit
+  }
+
+  open fun foo2(a: List<T>) {
+    return Unit
+  }
+
+}
+
+class Der : Base<String> {
+  constructor() /* primary */ {
+    super/*Base*/<String>()
+    /* <init>() */
+
+  }
+
+  override fun <A : List<String>> foo1(a: A) {
+    return Unit
+  }
+
+  override fun foo2(a: List<String>) {
+    return Unit
+  }
+
+}
