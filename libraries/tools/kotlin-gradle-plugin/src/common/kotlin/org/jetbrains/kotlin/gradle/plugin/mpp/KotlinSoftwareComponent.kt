@@ -55,13 +55,7 @@ abstract class KotlinSoftwareComponent(
         return kotlinTargets
             .filter { target ->
                 if (target is KotlinMetadataTarget) return@filter false
-                when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
-                    KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication ->
-                        // Exclude subcomponent pointer from the root component
-                        target !is KotlinJvmTarget
-                    KmpPublicationStrategy.StandardKMPPublication ->
-                        true
-                }
+                true
             }
     }
 

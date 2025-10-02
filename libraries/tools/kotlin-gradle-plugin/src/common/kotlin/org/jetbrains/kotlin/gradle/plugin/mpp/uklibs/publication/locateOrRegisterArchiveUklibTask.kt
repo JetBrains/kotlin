@@ -161,12 +161,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
      * usages here or create them using a shared execution path without the copypasted code below when jvm target is not present
      */
     val jvmTarget = project.multiplatformExtension.awaitTargets().singleOrNull { it is KotlinJvmTarget }
-    if (jvmTarget != null) {
-        val kotlinTargetComponent = jvmTarget.components.single() as KotlinTargetSoftwareComponentImpl
-        // FIXME: KT-76687
-        @Suppress("UNCHECKED_CAST")
-        variants += kotlinTargetComponent.kotlinComponent.internal.usages as Set<DefaultKotlinUsageContext>
-    } else {
+    if (jvmTarget == null) {
         // FIXME: Test that stubJvmVariant inherits dependencies from relevant configurations
         val jar = stubJvmJarTask()
         configurations.createConsumable(UKLIB_JAVA_API_ELEMENTS_STUB_NAME) {

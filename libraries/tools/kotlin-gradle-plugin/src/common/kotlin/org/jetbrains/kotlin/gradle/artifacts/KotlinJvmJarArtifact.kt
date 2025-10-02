@@ -9,6 +9,7 @@ import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.JAR_TYPE
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateDecompressed
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.maybeCreateUkli
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.maybeCreateUklibRuntimeElements
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.utils.registerArtifact
 import org.jetbrains.kotlin.gradle.utils.registerKlibArtifact
 
@@ -46,6 +48,11 @@ internal val KotlinJvmJarArtifact = KotlinTargetArtifact { target, apiElements, 
                         it.attribute(uklibViewAttribute, uklibAttribute)
                     }
                 }
+            }
+
+            target.project.launch {
+                val rootPublication = target.project.kotlinMultiplatformRootPublication.await()
+                rootPublication?.artifact(artifact)
             }
         }
         KmpPublicationStrategy.StandardKMPPublication -> {}
