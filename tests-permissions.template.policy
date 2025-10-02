@@ -14,7 +14,7 @@ grant {
     permission java.util.logging.LoggingPermission "control";
     permission com.sun.jdi.JDIPermission "virtualMachineManager";
     permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
-    permission java.util.PropertyPermission "*", "read,write";
+    permission java.util.PropertyPermission "*", "read";
     permission java.util.PropertyPermission "idea.*", "write";
     permission java.util.PropertyPermission "psi.*", "write";
     permission java.util.PropertyPermission "org.gradle.test.worker", "write";
