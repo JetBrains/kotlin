@@ -16,13 +16,13 @@ expect annotation class MyOverrideInit
 
 class DoesNotOverride : NSAssertionHandler {
     <!CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
-    @<!NO_CONSTRUCTOR!>MyOverrideInit<!>
+    @<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS!>MyOverrideInit<!>
     constructor(x: Int) { }<!>
 }
 
 class OverridesOverriden : NSString {
     <!CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
-    @<!NO_CONSTRUCTOR!>MyOverrideInit<!>
+    @<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS!>MyOverrideInit<!>
     constructor(coder: NSCoder) { }<!>
 
     @Suppress("OVERRIDE_DEPRECATION")
