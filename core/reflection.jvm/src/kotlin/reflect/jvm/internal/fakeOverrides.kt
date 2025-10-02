@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import java.util.*
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
+import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
@@ -22,7 +23,7 @@ internal fun getAllMembers_newKotlinReflectImpl(
     // Kotlin doesn't have statics (unless it's enum), and it never inherits statics from Java
     if (kClass.classKind != ClassKind.ENUM_CLASS && memberKind == MemberKind.STATIC && isKotlin) return emptyList()
     val out = ArrayList<DescriptorKCallable<*>>()
-    val visitedSignatures = HashSet<CallableSignature>()
+    val visitedSignatures = HashSet<EquatableCallableSignature>()
     for (member in kClass.declaredDescriptorKCallableMembers) {
         val isStaticMember = member.instanceReceiverParameter == null
         if (isStaticMember != (memberKind == MemberKind.STATIC)) continue
@@ -54,7 +55,7 @@ private fun starProjectionSupertypesAreNotPossible(): Nothing = error("Star proj
 private data class RecursionContext(
     val receiver: ReceiverParameterDescriptor,
     val visitedClassifiers: HashSet<KClass<*>>,
-    val visitedSignatures: MutableSet<CallableSignature>,
+    val visitedSignatures: MutableSet<EquatableCallableSignature>,
     val isReceiverKotlin: Boolean,
     val memberKind: MemberKind,
 )
@@ -87,21 +88,29 @@ private fun getSuperMembersRecursive(
     }
 }
 
-private fun KCallable<*>.toCallableSignature(substitutor: KTypeSubstitutor): CallableSignature {
-    val parameters = parameters
+private fun KCallable<*>.toCallableSignature(substitutor: KTypeSubstitutor): EquatableCallableSignature {
+    val parameterTypes = parameters
         .filter { it.kind != KParameter.Kind.INSTANCE }
-        .map { substitutor.substitute(it.type).type ?: starProjectionSupertypesAreNotPossible() }
+        .map {
+            // KTypeSubstitutor(mapOf())
+            substitutor.substitute(it.type).type ?: starProjectionSupertypesAreNotPossible()
+        }
     val kind = when (this) {
-        is KFunction<*> -> CallableSignatureKind.FUNCTION
-        is KProperty<*> if javaField?.declaringClass?.isKotlin == false -> CallableSignatureKind.FIELD_IN_JAVA
-        is KProperty<*> -> CallableSignatureKind.PROPERTY
+        is KProperty<*> if javaField?.declaringClass?.isKotlin == false -> SignatureKind.FIELD_IN_JAVA_CLASS
+        is KProperty<*> -> SignatureKind.PROPERTY
+        is KFunction<*> -> SignatureKind.FUNCTION
         else -> error("Unknown kind for ${this::class}")
     }
-    return CallableSignature(kind, name, parameters)
+    val typeParameters = typeParameters
+    // with(ReflectTypeSystemContext) {
+    //     typeParameters.first().starProjectedType
+    // }
+    // KTypeSubstitutor(mapOf())
+    return EquatableCallableSignature(kind, name, typeParameters, parameterTypes)
 }
 
-private enum class CallableSignatureKind {
-    FUNCTION, PROPERTY, FIELD_IN_JAVA
+private enum class SignatureKind {
+    FUNCTION, PROPERTY, FIELD_IN_JAVA_CLASS
 }
 
 private val Class<*>.isKotlin: Boolean get() = getAnnotation(Metadata::class.java) != null
@@ -110,23 +119,32 @@ private val Class<*>.isKotlin: Boolean get() = getAnnotation(Metadata::class.jav
 private val KClass<*>.declaredDescriptorKCallableMembers: Collection<DescriptorKCallable<*>>
     get() = declaredMembers as Collection<DescriptorKCallable<*>>
 
-private class CallableSignature(
-    val kind: CallableSignatureKind,
+// Signatures that you can test for equality
+private data class EquatableCallableSignature(
+    val kind: SignatureKind,
     val name: String,
-    val parameters: List<KType>,
+    val typeParameters: List<KTypeParameter>,
+    val parameterTypes: List<KType>,
 ) {
     init {
-        check(kind != CallableSignatureKind.FIELD_IN_JAVA || parameters.isEmpty())
+        check(kind != SignatureKind.FIELD_IN_JAVA_CLASS || parameterTypes.isEmpty())
     }
 
-    override fun hashCode(): Int = Objects.hash(kind, name)
+    override fun hashCode(): Int = Objects.hash(kind, name, typeParameters.size)
 
     override fun equals(other: Any?): Boolean {
-        val other = other as? CallableSignature ?: return false
-        if (kind != other.kind || name != other.name || parameters.size != other.parameters.size) return false
-        for (i in parameters.indices) {
-            val x = parameters[i]
-            val y = other.parameters[i]
+        if (other !is EquatableCallableSignature) return false
+        if (kind != other.kind) return false
+        if (name != other.name) return false
+        if (typeParameters.size != other.typeParameters.size) return false
+        if (parameterTypes.size != other.parameterTypes.size) return false
+        val substitution = typeParameters.zip(other.typeParameters)
+            .associate { (x, y) -> Pair(x, KTypeProjection.invariant(y.createType())) }
+        val typeParametersEliminator = KTypeSubstitutor(substitution)
+        for (i in parameterTypes.indices) {
+            val x = typeParametersEliminator.substitute(parameterTypes[i]).type
+                ?: starProjectionSupertypesAreNotPossible()
+            val y = other.parameterTypes[i]
             if (!x.isSubtypeOf(y) || !y.isSubtypeOf(x)) return false
         }
         return true

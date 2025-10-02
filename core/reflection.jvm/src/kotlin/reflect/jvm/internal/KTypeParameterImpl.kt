@@ -64,7 +64,7 @@ internal class KTypeParameterImpl private constructor(
     @Volatile
     override lateinit var upperBounds: List<KType>
 
-    private val container: KTypeParameterOwnerImpl
+    internal val container: KTypeParameterOwnerImpl
         get() = _container ?: computeContainer!!()
 
     override fun equals(other: Any?) =
