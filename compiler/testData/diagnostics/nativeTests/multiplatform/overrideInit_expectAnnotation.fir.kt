@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// DIAGNOSTICS: -UNUSED_PARAMETER -UNRESOLVED_REFERENCE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
 // WITH_PLATFORM_LIBS
 
@@ -16,13 +16,13 @@ expect annotation class MyOverrideInit
 
 class DoesNotOverride : NSAssertionHandler {
     <!CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
-    @MyOverrideInit
+    @<!NO_CONSTRUCTOR!>MyOverrideInit<!>
     constructor(x: Int) { }<!>
 }
 
 class OverridesOverriden : NSString {
     <!CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
-    @MyOverrideInit
+    @<!NO_CONSTRUCTOR!>MyOverrideInit<!>
     constructor(coder: NSCoder) { }<!>
 
     @Suppress("OVERRIDE_DEPRECATION")

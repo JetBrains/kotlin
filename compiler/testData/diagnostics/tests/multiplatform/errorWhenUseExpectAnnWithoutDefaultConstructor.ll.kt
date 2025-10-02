@@ -5,12 +5,12 @@
 
 expect annotation class Ann
 
-@<!UNRESOLVED_REFERENCE!>Ann<!>
+<!NO_CONSTRUCTOR!>@Ann<!>
 fun commonFoo() {}
 
 // MODULE: m1-jvm()()(m1-common)
 
-@<!UNRESOLVED_REFERENCE!>Ann<!>
+<!NO_CONSTRUCTOR!>@Ann<!>
 fun platformFoo() {}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, expect, functionDeclaration */
