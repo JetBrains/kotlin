@@ -60,6 +60,7 @@ With the recommended practices, the history should already be compact and descri
 A few specifics apply:
 
 * Avoid force-pushes except for rebase; in that case, let the reviewers know nothing reviewed was overwritten
+    * In particular, if you need to rebase and add some changes, do this in two pushes: one force-push just for rebase and one regular push for the actual changes.
 * When merging, the choice between a squash and rebase is left to the author
     * When squashing, ensure that none of the intermediate commit messages (except for fixups) or YT references are lost.
 
