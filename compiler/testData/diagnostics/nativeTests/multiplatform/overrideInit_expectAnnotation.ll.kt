@@ -2,7 +2,7 @@
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
 // LANGUAGE: +MultiPlatformProjects
-// DIAGNOSTICS: -UNUSED_PARAMETER -UNRESOLVED_REFERENCE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
 // WITH_PLATFORM_LIBS
 
@@ -19,13 +19,13 @@ expect annotation class MyOverrideInit
 
 class DoesNotOverride : NSAssertionHandler {
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
-    @MyOverrideInit
+    @<!NO_CONSTRUCTOR!>MyOverrideInit<!>
     constructor(x: Int) { }
 }
 
 class OverridesOverriden : NSString {
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
-    @MyOverrideInit
+    @<!NO_CONSTRUCTOR!>MyOverrideInit<!>
     constructor(coder: NSCoder) { }
 
     @Suppress("OVERRIDE_DEPRECATION")

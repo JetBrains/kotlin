@@ -11,7 +11,7 @@ expect annotation class Foo5()
 expect annotation class Foo6()
 <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> annotation class Foo7<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>()<!>
 
-@<!UNRESOLVED_REFERENCE!>Foo1<!>
+<!NO_CONSTRUCTOR!>@Foo1<!>
 fun foo() {}
 
 @Foo5
