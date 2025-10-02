@@ -101,7 +101,7 @@ internal val KotlinTarget.uklibFragmentPlatformAttribute: UklibFragmentPlatformA
             return UklibFragmentPlatformAttribute.ConsumeInPlatformAndMetadataCompilationsAndPublishInUmanifest(supportedUklibTarget)
         }
 
-        return UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndFailOnPublication(targetName)
+        return UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndPublishInUmanifest(targetName)
     }
 
 /**
