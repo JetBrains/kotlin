@@ -2782,6 +2782,12 @@ internal class ExpressionOfNullableTypeInClassLiteralLhsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ExpressionOfNullableTypeInClassLiteralLhs
 
+internal class ExpressionOfNullableTypeInClassLiteralLhsWarningImpl(
+    override val lhsType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ExpressionOfNullableTypeInClassLiteralLhsWarning
+
 internal class UnsupportedClassLiteralsWithEmptyLhsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

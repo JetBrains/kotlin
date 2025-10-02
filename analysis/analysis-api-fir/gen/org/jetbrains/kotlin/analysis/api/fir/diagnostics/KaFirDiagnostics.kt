@@ -2320,6 +2320,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val lhsType: KaType
     }
 
+    interface ExpressionOfNullableTypeInClassLiteralLhsWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ExpressionOfNullableTypeInClassLiteralLhsWarning::class
+        val lhsType: KaType
+    }
+
     interface UnsupportedClassLiteralsWithEmptyLhs : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = UnsupportedClassLiteralsWithEmptyLhs::class
     }

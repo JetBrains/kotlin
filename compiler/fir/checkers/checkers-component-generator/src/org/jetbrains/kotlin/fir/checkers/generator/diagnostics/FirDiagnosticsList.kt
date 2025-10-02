@@ -1138,6 +1138,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<PsiElement> {
             parameter<ConeKotlinType>("lhsType")
         }
+        val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS_WARNING by warning<PsiElement> {
+            parameter<ConeKotlinType>("lhsType")
+        }
         val UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS by error<KtElement>()
         val MUTABLE_PROPERTY_WITH_CAPTURED_TYPE by warning<PsiElement>()
     }
