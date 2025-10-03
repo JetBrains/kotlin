@@ -33,6 +33,7 @@ object KotlinUsages {
     internal const val KOTLIN_UKLIB_RUNTIME = "kotlin-uklib-runtime"
     internal const val KOTLIN_UKLIB_JAVA_RUNTIME = "kotlin-uklib-java-runtime"
     internal const val KOTLIN_UKLIB_METADATA = "kotlin-uklib-metadata"
+    internal const val KOTLIN_UKLIB_FALLBACK_VARIANT = "kotlin-uklib-fallback-variant"
 
     // This type is required to distinguish metadata jar configuration from a psm secondary variant.
     // At the same time, disambiguation and compatibility rules should count them as equivalent
