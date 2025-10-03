@@ -71,10 +71,6 @@ internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V> {
     val javaField: Field?
 }
 
-internal interface ReflectKParameter : KParameter {
-    val callable: ReflectKCallable<*>
-}
-
 internal val ReflectKCallable<*>.isBound: Boolean
     get() = rawBoundReceiver !== CallableReference.NO_RECEIVER
 
