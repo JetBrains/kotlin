@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_DEFAULT_MODE: DISABLE
 // WITH_REFLECT
 
 import kotlin.reflect.KProperty

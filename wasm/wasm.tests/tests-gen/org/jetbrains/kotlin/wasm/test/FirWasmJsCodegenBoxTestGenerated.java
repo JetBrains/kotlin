@@ -55683,9 +55683,15 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         }
 
         @Test
-        @TestMetadata("defaultImpls.kt")
-        public void testDefaultImpls() {
-          runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/defaultImpls.kt");
+        @TestMetadata("inInterface.kt")
+        public void testInInterface() {
+          runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("inInterfaceDefaultImpls.kt")
+        public void testInInterfaceDefaultImpls() {
+          runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inInterfaceDefaultImpls.kt");
         }
 
         @Test
