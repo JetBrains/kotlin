@@ -48,6 +48,7 @@ intellij-asm = "9.6.1"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
 fastutil = "8.5.14-jb1"
+rwmutex-idea = "0.0.7"
 # Wasm specific
 wasmedge = "0.14.0"
 jscSequoia = "299490"
@@ -149,6 +150,7 @@ android-gradle-plugin-builder-model = { module = "com.android.tools.build:builde
 android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
 
 intellij-fastutil = { module = "org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil", version.ref = "fastutil" }
+rwmutex-idea = { module = "org.jetbrains.intellij.deps:rwmutex-idea", version.ref = "rwmutex-idea" }
 
 xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 
