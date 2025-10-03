@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 @KaIdeApi
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaReferenceShortener : KaSessionComponent {
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not

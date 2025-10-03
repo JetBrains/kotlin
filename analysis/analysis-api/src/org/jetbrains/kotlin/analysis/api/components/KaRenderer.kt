@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
@@ -22,7 +21,8 @@ import org.jetbrains.kotlin.types.Variance
  * Provides services for rendering [declaration symbols][KaDeclarationSymbol] and [types][KaType] to strings.
  */
 @KaExperimentalApi
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaRenderer : KaSessionComponent {
     /**
      * Renders the given [KaDeclarationSymbol] to a string. The particular rendering strategy is defined by the [renderer].

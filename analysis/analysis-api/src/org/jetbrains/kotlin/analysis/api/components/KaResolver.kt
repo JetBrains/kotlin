@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
@@ -15,7 +14,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
 
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaResolver : KaSessionComponent {
     /**
      * Resolves the given [KtReference] to symbols.

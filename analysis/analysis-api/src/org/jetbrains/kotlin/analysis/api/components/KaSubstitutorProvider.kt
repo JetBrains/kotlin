@@ -18,7 +18,8 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KaExperimentalApi
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaSubstitutorProvider : KaSessionComponent {
     /**
      * Creates a [KaSubstitutor] based on the given [mappings].

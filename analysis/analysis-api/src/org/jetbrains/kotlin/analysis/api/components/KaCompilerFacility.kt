@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 @KaExperimentalApi
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaCompilerFacility : KaSessionComponent {
     @KaExperimentalApi
     public companion object {

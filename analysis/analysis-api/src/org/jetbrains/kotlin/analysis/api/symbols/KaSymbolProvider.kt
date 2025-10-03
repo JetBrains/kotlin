@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.psi.*
  *
  * @see org.jetbrains.kotlin.analysis.api.KaSession
  */
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaSymbolProvider : KaSessionComponent {
     /**
      * A [KaDeclarationSymbol] for the given [KtDeclaration].

@@ -115,7 +115,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
  * ```
  */
 @Suppress("DEPRECATION")
-@OptIn(KaNonPublicApi::class, KaExperimentalApi::class, KaIdeApi::class)
+@OptIn(KaNonPublicApi::class, KaExperimentalApi::class, KaIdeApi::class, KaSessionComponentImplementationDetail::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSession : KaLifetimeOwner,
     KaResolver,

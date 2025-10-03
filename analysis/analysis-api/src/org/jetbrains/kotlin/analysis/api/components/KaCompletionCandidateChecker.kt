@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 @KaIdeApi
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaCompletionCandidateChecker : KaSessionComponent {
     /**
      * Returns an extension applicability checker for the given context [nameExpression].

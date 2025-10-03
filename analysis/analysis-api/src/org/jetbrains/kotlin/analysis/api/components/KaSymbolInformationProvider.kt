@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -17,7 +16,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 @KaExperimentalApi
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaSymbolInformationProvider : KaSessionComponent {
     /**
      * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.
