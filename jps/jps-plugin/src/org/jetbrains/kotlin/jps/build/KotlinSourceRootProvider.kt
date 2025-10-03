@@ -42,7 +42,7 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
         val kotlinSourceRootType = if (target.isTests) TestSourceKotlinRootType else SourceKotlinRootType
         module.getSourceRoots(kotlinSourceRootType).forEach {
             result.add(
-                JavaSourceRootDescriptor(
+                JavaSourceRootDescriptor.createJavaSourceRootDescriptor(
                     it.file,
                     target,
                     false,

@@ -674,7 +674,7 @@ private fun createCommonMappingsDump(project: ProjectDescriptor): String {
         result.pushIndent()
 
         val mapping = project.dataManager.getSourceToOutputMap(target)
-        mapping.sources.sorted().forEach {
+        mapping.sourcesIterator.asSequence().toList().sorted().forEach {
             val outputs = mapping.getOutputs(it)!!.sorted()
             if (outputs.isNotEmpty()) {
                 result.println("source $it -> $outputs")

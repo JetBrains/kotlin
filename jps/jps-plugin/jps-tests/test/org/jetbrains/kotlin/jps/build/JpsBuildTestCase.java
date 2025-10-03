@@ -247,7 +247,7 @@ public abstract class JpsBuildTestCase extends UsefulTestCase {
   }
 
   protected <T extends JpsElement> JpsModule addModule(@NotNull String moduleName,
-                                                       String @NotNull [] srcPaths,
+                                                       @NotNull String[] srcPaths,
                                                        @Nullable String outputPath,
                                                        @Nullable String testOutputPath,
                                                        @Nullable JpsSdk<T> sdk) {
