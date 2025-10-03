@@ -139,7 +139,16 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
 
     override fun isLocal(): Boolean {
         val parent = parent
-        return !(isKtFile(parent) || parent is KtClassBody || parent.parent is KtScript)
+        return when {
+            parent == null -> {
+                // Probably incomplete code, default to non-local
+                false
+            }
+            isKtFile(parent) -> false
+            parent is KtClassBody -> false
+            parent.parent is KtScript -> false
+            else -> true
+        }
     }
 
     open val isAnonymous: Boolean
