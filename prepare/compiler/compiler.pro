@@ -55,6 +55,7 @@
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 -dontwarn org.w3c.dom.ElementTraversal
 -dontwarn org.xerial.snappy.SnappyBundleActivator
+-dontwarn gnu.trove.TObjectHashingStrategy
 
 # Some annotations from intellijCore/annotations.jar are not presented in org.jetbrains.annotations
 -dontwarn org.jetbrains.annotations.*
@@ -401,3 +402,5 @@
 -keep class it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap {
     public java.lang.Object computeIfAbsent(java.lang.Object, it.unimi.dsi.fastutil.objects.Object2ObjectFunction);
 }
+
+-dontwarn kotlinx.coroutines.internal.intellij.IntellijCoroutines
