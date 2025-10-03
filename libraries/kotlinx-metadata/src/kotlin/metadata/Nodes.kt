@@ -231,6 +231,7 @@ public class KmFunction internal constructor(internal var flags: Int, public var
     /**
      * Annotations on the extension receiver of the function, if this is an extension function.
      */
+    @ExperimentalAnnotationsInMetadata
     public val extensionReceiverParameterAnnotations: MutableList<KmAnnotation> = ArrayList(0)
 
     /**
