@@ -136,6 +136,7 @@ projectTests {
             "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
             // the minimal required set of modules to be opened for the intellij platform itself
             "--add-opens=java.desktop/java.awt=ALL-UNNAMED",
+            "--add-opens=java.desktop/java.awt.event=ALL-UNNAMED",
             "--add-opens=java.desktop/sun.awt=ALL-UNNAMED",
             "--add-opens=java.base/java.lang=ALL-UNNAMED",
             "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
