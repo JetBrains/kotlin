@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -41,6 +42,7 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
     val LOCAL_SERIALIZER_USAGE by error1<KtElement, ConeKotlinType>()
     val CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT by error3<KtElement, ConeKotlinType, ConeKotlinType, String>()
     val CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE by error3<KtElement, ConeKotlinType, ConeKotlinType, String>()
+    val CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE by warning2<KtElement, FirClassLikeSymbol<*>, FirClassLikeSymbol<*>>()
 
     val GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED by error0<KtElement>()
     val TRANSIENT_MISSING_INITIALIZER by error0<KtElement>()

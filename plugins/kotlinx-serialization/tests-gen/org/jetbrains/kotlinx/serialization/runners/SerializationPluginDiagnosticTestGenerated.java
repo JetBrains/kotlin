@@ -174,6 +174,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
   }
 
   @Test
+  @TestMetadata("privateSerializer.kt")
+  public void testPrivateSerializer() {
+    runTest("plugins/kotlinx-serialization/testData/diagnostics/privateSerializer.kt");
+  }
+
+  @Test
   @TestMetadata("ProtobufFieldNumbers.kt")
   public void testProtobufFieldNumbers() {
     runTest("plugins/kotlinx-serialization/testData/diagnostics/ProtobufFieldNumbers.kt");
