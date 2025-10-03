@@ -1,0 +1,70 @@
+FILE: extensionPropertyShadowedByVariable.kt
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface MySchema : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_01I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public constructor(): R|<local>/DataFrameOf_01I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01I>|.a: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_01I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class DataFrameOf_01 : R|<local>/DataFrameOf_01I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+
+                public constructor(): R|<local>/DataFrameOf_01|
+
+            }
+
+            ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/Int|>(vararg(Int(42))))))
+        }
+        )
+        lval a: R|kotlin/Int| = Int(123)
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|<local>/DataFrameOf_01|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==(R|<local>/a|, Int(42))
+        }
+        )
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|<local>/DataFrameOf_01|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==((this@R|/box|, R|<local>/it|).R|<local>/Scope0.a|, Int(42))
+        }
+        )
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|<local>/DataFrameOf_01|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==((this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.a|, Int(42))
+        }
+        )
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|MySchema|>().R|org/jetbrains/kotlinx/dataframe/api/filter|<R|MySchema|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==(R|<local>/a|, Int(42))
+        }
+        )
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|MySchema|>().R|org/jetbrains/kotlinx/dataframe/api/filter|<R|MySchema|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==(this@R|special/anonymous|.R|/a|, Int(42))
+        }
+        )
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|MySchema|>().R|org/jetbrains/kotlinx/dataframe/api/filter|<R|MySchema|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==(R|<local>/it|.R|/a|, Int(42))
+        }
+        )
+        ^box String(OK)
+    }
+FILE: /__GENERATED__CALLABLES__.kt
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|.a: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<MySchema>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|

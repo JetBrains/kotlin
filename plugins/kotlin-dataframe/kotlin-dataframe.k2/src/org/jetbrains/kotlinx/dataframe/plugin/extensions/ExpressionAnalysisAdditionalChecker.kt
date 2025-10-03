@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -28,15 +31,19 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableReference
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -53,6 +60,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_DECLARATION_VISIBILITY
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.ERROR
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_EXTENSION_PROPERTY_SHADOWED
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.flatten
 import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
@@ -68,6 +76,7 @@ class ExpressionAnalysisAdditionalChecker(
             Checker(isTest),
             DataFrameFunctionCallTransformationContextChecker,
         )
+        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(ShadowedExtensionPropertyChecker)
     }
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(DataSchemaDeclarationChecker)
@@ -83,6 +92,7 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
     val DATA_SCHEMA_DECLARATION_VISIBILITY by error1<KtElement, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR by error1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val DATAFRAME_EXTENSION_PROPERTY_SHADOWED by warning1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = DataFrameDiagnosticMessages
 }
@@ -96,6 +106,7 @@ object DataFrameDiagnosticMessages : BaseDiagnosticRendererFactory() {
         map.put(DATA_SCHEMA_DECLARATION_VISIBILITY, "{0}", TO_STRING)
         map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR, "{0}", TO_STRING)
         map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE, "{0}", TO_STRING)
+        map.put(DATAFRAME_EXTENSION_PROPERTY_SHADOWED, "{0}", TO_STRING)
     }
 }
 
@@ -234,7 +245,7 @@ private data object DataFramePropertyChecker : FirPropertyChecker(mppKind = MppC
         val typeArgument =
             (declaration.symbol.resolvedReturnType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol() ?: return
         val origin = typeArgument.origin
-        if (declaration.isNonLocal && typeArgument.isLocal && origin is FirDeclarationOrigin.Plugin && origin.key is DataFramePlugin) {
+        if (declaration.isNonLocal && typeArgument.isLocal && origin.isDataFrame) {
             reporter.reportOn(
                 declaration.source,
                 DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE,
@@ -243,3 +254,29 @@ private data object DataFramePropertyChecker : FirPropertyChecker(mppKind = MppC
         }
     }
 }
+
+object ShadowedExtensionPropertyChecker : FirPropertyAccessExpressionChecker(mppKind = MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirPropertyAccessExpression) {
+        val property = expression.toResolvedCallableReference()?.toResolvedPropertySymbol() ?: return
+        if (property.isLocal && !property.origin.isDataFrame) {
+            val schema = context.findClosest<FirAnonymousFunctionSymbol>()
+                ?.resolvedReceiverType?.typeArguments?.getOrNull(0)
+                ?.type?.toRegularClassSymbol()
+                ?: return
+            if (schema.isLocal && schema.origin.isDataFrame || schema.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, context.session)) {
+                schema.unsubstitutedScope().processAllProperties {
+                    if (property.name == it.name) {
+                        reporter.reportOn(
+                            expression.source,
+                            DATAFRAME_EXTENSION_PROPERTY_SHADOWED,
+                            "Extension property with implicit receiver is shadowed by a property with the same name."
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+internal val FirDeclarationOrigin.isDataFrame get() = this is FirDeclarationOrigin.Plugin && this.key == DataFramePlugin
