@@ -48,7 +48,7 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
 
     override fun getOutputRoots(context: CompileContext): Collection<File> {
         val dataManager = context.projectDescriptor.dataManager
-        val storageRoot = dataManager.dataPaths.dataStorageRoot
+        val storageRoot = dataManager.dataPaths.dataStorageDir.toFile()
         return listOf(File(storageRoot, SettingConstants.KOTLIN_DATA_CONTAINER_ID))
     }
 
