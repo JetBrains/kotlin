@@ -140,6 +140,7 @@ class FirTypeIntersectionScopeContext(
             return emptyList()
         }
 
+        // Not correct
         membersByScope.singleOrNull()?.let { (scope, members) ->
             return members.map { ResultOfIntersection.SingleMember(it, MemberWithBaseScope(it, scope)) }
         }
