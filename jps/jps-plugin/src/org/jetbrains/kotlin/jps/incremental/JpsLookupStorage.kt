@@ -60,6 +60,7 @@ class JpsLookupStorageManager(
     private class JpsLookupStorageProvider(
         private val icContext: IncrementalCompilationContext
     ) : StorageProvider<JpsLookupStorage>() {
+        @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION") // KT-81463
         override fun createStorage(targetDataDir: File): JpsLookupStorage =
             JpsLookupStorage(targetDataDir, icContext)
     }

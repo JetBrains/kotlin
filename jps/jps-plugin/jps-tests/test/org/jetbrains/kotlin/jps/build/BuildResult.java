@@ -59,6 +59,7 @@ public final class BuildResult implements MessageHandler {
     myMappingsDump = dump.toString();
   }
 
+  @SuppressWarnings({"deprecation"}) // KT-81463
   private static void dumpSourceToOutputMappings(ProjectDescriptor pd, PrintStream stream) throws IOException {
     List<BuildTarget<?>> targets = new ArrayList<>(pd.getBuildTargetIndex().getAllTargets());
     targets.sort((o1, o2) -> {
@@ -72,7 +73,8 @@ public final class BuildResult implements MessageHandler {
     for (BuildTarget<?> target : targets) {
       stream.println("Begin Of SourceToOutput (target " + getTargetIdWithTypeId(target) + ")");
       SourceToOutputMapping map = pd.dataManager.getSourceToOutputMap(target);
-      List<String> sourcesList = new ArrayList<>(map.getSources());
+      // KT-81463
+      @SuppressWarnings("removal") List<String> sourcesList = new ArrayList<>(map.getSources());
       Collections.sort(sourcesList);
       for (String source : sourcesList) {
         List<String> outputs = new ArrayList<>(ObjectUtils.notNull(map.getOutputs(source), Collections.emptySet()));
@@ -87,8 +89,9 @@ public final class BuildResult implements MessageHandler {
     }
 
 
-    OutputToTargetRegistry registry = pd.dataManager.getOutputToTargetRegistry();
-    List<Integer> keys = new ArrayList<>(registry.getKeys());
+    // KT-81463
+    @SuppressWarnings({"removal", "UnstableApiUsage"}) OutputToTargetRegistry registry = pd.dataManager.getOutputToTargetRegistry();
+    @SuppressWarnings({"removal", "UnstableApiUsage"}) List<Integer> keys = new ArrayList<>(registry.getKeys());
     Collections.sort(keys);
     stream.println("Begin Of OutputToTarget");
     for (Integer key : keys) {
