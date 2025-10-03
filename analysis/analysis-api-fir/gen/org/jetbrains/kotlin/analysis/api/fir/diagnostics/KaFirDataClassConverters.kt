@@ -529,6 +529,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS) { firDiagnostic ->
+        NoImplicitDefaultConstructorOnExpectClassImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.FUNCTION_CALL_EXPECTED) { firDiagnostic ->
         FunctionCallExpectedImpl(
             firDiagnostic.a,
@@ -1453,12 +1459,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.DSL_MARKER_PROPAGATES_TO_MANY) { firDiagnostic ->
         DslMarkerPropagatesToManyImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS) { firDiagnostic ->
-        NoImplicitDefaultConstructorOnExpectAnnotationClassImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

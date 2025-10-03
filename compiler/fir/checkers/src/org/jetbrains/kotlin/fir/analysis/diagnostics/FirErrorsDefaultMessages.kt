@@ -773,7 +773,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_IGNORABLE_WITH_MUST_USE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT
@@ -1426,8 +1426,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             """.trimIndent(),
         )
         map.put(
-            NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS,
-            """No implicit default constructor on expect annotation class."""
+            NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS,
+            """Expect class does not declare any constructors."""
         )
 
         // OptIn

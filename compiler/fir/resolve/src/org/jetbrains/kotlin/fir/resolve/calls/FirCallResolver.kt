@@ -653,7 +653,7 @@ class FirCallResolver(
             } else {
                 buildReferenceWithErrorCandidate(
                     callInfo,
-                    if (annotationClassSymbol.isExpect) ConeNoImplicitDefaultConstructorOnExpectAnnotationClass else ConeNoConstructorError,
+                    if (annotationClassSymbol.isExpect) ConeNoImplicitDefaultConstructorOnExpectClass else ConeNoConstructorError,
                     reference.source
                 )
             }
@@ -844,8 +844,14 @@ class FirCallResolver(
                             explicitReceiver.value?.toString() ?: "",
                             explicitReceiver.resolvedType,
                         )
-                    reference is FirSuperReference && (reference.superTypeRef.firClassLike(session) as? FirClass)?.isInterface == true -> ConeNoConstructorError
-                    else -> ConeUnresolvedNameError(name, operatorToken, explicitReceiver?.resolvedType)
+                    else -> {
+                        val classLikeBySuperRef = (reference as? FirSuperReference)?.superTypeRef?.firClassLike(session) as? FirClass
+                        when {
+                            classLikeBySuperRef?.isInterface == true -> ConeNoConstructorError
+                            classLikeBySuperRef?.isExpect == true -> ConeNoImplicitDefaultConstructorOnExpectClass
+                            else -> ConeUnresolvedNameError(name, operatorToken, explicitReceiver?.resolvedType)
+                        }
+                    }
                 }
             }
 

@@ -5,12 +5,12 @@
 
 expect annotation class Ann
 
-<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS!>@Ann<!>
+<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>@Ann<!>
 fun commonFoo() {}
 
 // MODULE: m1-jvm()()(m1-common)
 
-<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS!>@Ann<!>
+<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>@Ann<!>
 fun platformFoo() {}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, expect, functionDeclaration */
