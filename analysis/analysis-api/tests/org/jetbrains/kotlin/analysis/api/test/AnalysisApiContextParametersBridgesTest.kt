@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.test
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseValidationTest
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.test.TestDataAssertions
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -55,15 +53,9 @@ import java.io.File
  * 3. All context-parameter bridges are annotated with [KaContextParameterApi] and are located
  *    in the same file as the corresponding component after all regular declarations.
  */
-class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiCodebaseValidationTest() {
+class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodebaseValidationTest() {
     @Test
     fun testContextParameterBridges() = doTest()
-
-    override val sourceDirectories = listOf(
-        SourceDirectory.ForValidation(
-            sourcePaths = listOf("analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api"),
-        )
-    )
 
     override fun processFile(file: File, psiFile: PsiFile) {
         if (psiFile !is KtFile) return
@@ -104,33 +96,6 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiCodebaseValid
 
     private val KtDeclaration.hasIgnoreBridgeMarker: Boolean
         get() = hasAnnotation(IGNORE_BRIDGE_ANNOTATION_MARKER)
-
-    private fun KtAnnotated.hasAnnotation(annotationName: String): Boolean = annotationEntries.any { annotation ->
-        annotation.shortName.toString() == annotationName
-    }
-
-    private fun KtFile.findSessionComponent(): KtClassOrObject? {
-        val declarations = declarations
-        val sessionComponent = (declarations.firstOrNull() as? KtClassOrObject)?.takeIf { it.isSessionComponent }
-
-        declarations.asSequence()
-            .drop(1)
-            .filter { it is KtClassOrObject && it.isSessionComponent }
-            .toList()
-            .ifNotEmpty {
-                error(
-                    joinToString(
-                        prefix = "Only one session component on the first declaration position is allowed.\n$virtualFilePath violates this rule for:\n",
-                        separator = "\n"
-                    ) { it.name.toString() }
-                )
-            }
-
-        return sessionComponent
-    }
-
-    private val KtClassOrObject.isSessionComponent: Boolean
-        get() = superTypeListEntries.any { it.textMatches(KA_SESSION_COMPONENT) } || name == KA_SESSION_CLASS
 
     private fun KtClassOrObject.generateBridges(): Sequence<String> = declarations.asSequence()
         .filterIsInstance<KtCallableDeclaration>()
@@ -226,12 +191,10 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiCodebaseValid
         }
     }.toString()
 
-    companion object {
+    private companion object {
         private val BRIDGE_ANNOTATION_MARKER: String = KaContextParameterApi::class.simpleName!!
         private val CUSTOM_BRIDGE_ANNOTATION_MARKER: String = KaCustomContextParameterBridge::class.simpleName!!
         private val IGNORE_BRIDGE_ANNOTATION_MARKER: String = KaNoContextParameterBridgeRequired::class.simpleName!!
-        private val KA_SESSION_COMPONENT: String = KaSessionComponent::class.simpleName!!
-        private val KA_SESSION_CLASS: String = KaSession::class.simpleName!!
         private val DEPRECATED_ANNOTATION: String = Deprecated::class.simpleName!!
         private const val BASE_INDENT_SIZE = 4
     }
