@@ -116,8 +116,8 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
             }
         }
 
-        val lookupsCacheRootPath = dataPaths.getTargetDataRoot(KotlinDataContainerTarget)
-        return CompositeLookupsCacheAttributesManager(lookupsCacheRootPath.toPath(), expectedLookupsCacheComponents)
+        val lookupsCacheRootPath = dataPaths.getTargetDataRootDir(KotlinDataContainerTarget)
+        return CompositeLookupsCacheAttributesManager(lookupsCacheRootPath, expectedLookupsCacheComponents)
     }
 
     private fun loadLookupsCacheStateDiff(): CacheAttributesDiff<CompositeLookupsCacheAttributes> {

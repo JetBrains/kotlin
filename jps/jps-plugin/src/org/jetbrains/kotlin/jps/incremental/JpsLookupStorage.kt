@@ -39,7 +39,7 @@ class JpsLookupStorageManager(
             try {
                 buildDataManager.cleanTargetStorages(KotlinDataContainerTarget)
             } catch (e: IOException) {
-                if (!buildDataManager.dataPaths.getTargetDataRoot(KotlinDataContainerTarget).deleteRecursively()) {
+                if (!buildDataManager.dataPaths.getTargetDataRootDir(KotlinDataContainerTarget).toFile().deleteRecursively()) {
                     log.debug("Could not clear lookup storage caches", e)
                 }
             }

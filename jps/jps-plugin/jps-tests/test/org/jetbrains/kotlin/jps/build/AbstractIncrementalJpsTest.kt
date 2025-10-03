@@ -279,7 +279,9 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun clearCachesRebuildAndCheckOutput(makeOverallResult: MakeResult) {
-        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot)
+        FileUtil.delete(
+            BuildDataPathsImpl(myDataStorageRoot.toPath()).dataStorageDir.toFile()
+        )
 
         rebuildAndCheckOutput(makeOverallResult)
     }

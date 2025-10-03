@@ -15,11 +15,12 @@ import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.build.*
+import org.jetbrains.kotlin.build.BuildMetaInfo
+import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.ExpectActualTrackerImpl
 import org.jetbrains.kotlin.incremental.components.*
@@ -67,7 +68,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     @Suppress("LeakingThis")
     val localCacheVersionManager = localCacheVersionManager(
-        kotlinContext.dataPaths.getTargetDataRoot(jpsModuleBuildTarget).toPath(),
+        kotlinContext.dataPaths.getTargetDataRootDir(jpsModuleBuildTarget),
         isIncrementalCompilationEnabled
     )
 
