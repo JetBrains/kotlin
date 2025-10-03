@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -30,7 +31,7 @@ class BoxSerializerArgless(): KSerializer<Box<Any>> {
 class TestCase(@Serializable(BoxSerializer::class) val box: Box<<!SERIALIZER_NOT_FOUND!>NonSerializable<!>>)
 
 @Serializable
-class TestCase2(@Serializable(BoxSerializerArgless::class) val box: Box<<!SERIALIZER_NOT_FOUND!>NonSerializable<!>>)
+class TestCase2(@Serializable(BoxSerializerArgless::class) val box: Box<NonSerializable>)
 
 @Serializable
 class TestCase3(@Serializable(BoxSerializer::class) val box: Box<List<<!SERIALIZER_NOT_FOUND!>NonSerializable<!>>>)
