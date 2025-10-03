@@ -30,8 +30,6 @@ object IdeaStandaloneExecutionSetup {
         // reading /tmp/build.txt in an attempt to get a build number from there.
         // See intellij platform PluginManagerCore.getBuildNumber.
         System.setProperty("idea.plugins.compatible.build", FALLBACK_IDEA_BUILD_NUMBER)
-
-        System.setProperty("ide.enable.implicit.blocking.context", "false")
     }
 
     /**
