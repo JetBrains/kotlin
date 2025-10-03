@@ -30000,6 +30000,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("noImplicitDefaultConstructorOnExpectClass.kt")
+      public void testNoImplicitDefaultConstructorOnExpectClass() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/noImplicitDefaultConstructorOnExpectClass.kt");
+      }
+
+      @Test
       @TestMetadata("noOverrideClashWithSignatureInMppCommon.kt")
       public void testNoOverrideClashWithSignatureInMppCommon() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/noOverrideClashWithSignatureInMppCommon.kt");
