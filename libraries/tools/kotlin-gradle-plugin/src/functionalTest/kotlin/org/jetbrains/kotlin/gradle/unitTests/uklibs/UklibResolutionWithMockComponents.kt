@@ -517,9 +517,8 @@ class UklibResolutionTestsWithMockComponents {
         }
 
         listOf(
-            consumer.multiplatformExtension.iosArm64().compilationResolution(),
-            consumer.multiplatformExtension.jvm().compilationResolution(),
-            consumer.multiplatformExtension.wasmJs().compilationResolution(),
+            consumer.multiplatformExtension.iosArm64(),
+            consumer.multiplatformExtension.wasmJs(),
         ).forEach {
             assertEquals(
                 mapOf<String, ResolvedComponentWithArtifacts>(
@@ -528,11 +527,13 @@ class UklibResolutionTestsWithMockComponents {
                         artifacts = mutableListOf()
                     ),
                 ).prettyPrinted,
-                it.prettyPrinted,
+                it.compilationResolution().prettyPrinted,
+                message = it.name,
             )
         }
 
         listOf(
+            consumer.multiplatformExtension.jvm().compilationResolution(),
             consumer.multiplatformExtension.jvm().runtimeResolution(),
             consumer.multiplatformExtension.wasmJs().runtimeResolution(),
         ).forEach {
@@ -842,6 +843,149 @@ class UklibResolutionTestsWithMockComponents {
                 it.prettyPrinted
             )
         }
+    }
+
+    @Test
+    fun `uklib resolution - resolution with legacy KMP`() {
+        val consumer = uklibConsumer {
+            repositories.mavenCentral()
+            kotlin {
+                iosArm64()
+                iosX64()
+                jvm()
+                js()
+                wasmWasi()
+                sourceSets.commonMain.dependencies {
+                    implementation("net.mamoe.yamlkt:yamlkt:0.13.0").apply {
+                        (this as ModuleDependency).isTransitive = false
+                    }
+                }
+            }
+        }
+
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "net.mamoe.yamlkt:yamlkt-jvm:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        (kmpJvmApiVariantAttributes + jarArtifact) - "org.gradle.jvm.environment",
+                    ),
+                    configuration = "jvmApiElements-published",
+                ),
+                "net.mamoe.yamlkt:yamlkt:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "jvmApiElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.jvm().compilationResolution().prettyPrinted
+        )
+
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "net.mamoe.yamlkt:yamlkt-jvm:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        (kmpJvmRuntimeVariantAttributes + jarArtifact) - "org.gradle.jvm.environment",
+                    ),
+                    configuration = "jvmRuntimeElements-published",
+                ),
+                "net.mamoe.yamlkt:yamlkt:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "jvmRuntimeElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.jvm().runtimeResolution().prettyPrinted
+        )
+
+        listOf(
+            consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "net.mamoe.yamlkt:yamlkt:0.13.0" to ResolvedComponentWithArtifacts(
+                        configuration = "metadataApiElements",
+                        artifacts = mutableListOf(
+                            (kmpMetadataVariantAttributes + jarArtifact + libraryElementsJar) - "org.gradle.jvm.environment",
+                        )
+                    )
+                ).prettyPrinted,
+                it.prettyPrinted,
+            )
+        }
+
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "net.mamoe.yamlkt:yamlkt-iosarm64:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        (kmpIosArm64KlibVariant.attributes + orgJetbrainsKotlinKlibArtifactType) - "org.gradle.jvm.environment",
+                    ),
+                    configuration = "iosArm64ApiElements-published",
+                ),
+                "net.mamoe.yamlkt:yamlkt:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "iosArm64ApiElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
+        )
+
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "net.mamoe.yamlkt:yamlkt-js:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        (kmpJsApiVariantAttributes + klibArtifact) - "org.gradle.jvm.environment",
+                    ),
+                    configuration = "jsIrApiElements-published",
+                ),
+                "net.mamoe.yamlkt:yamlkt:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "jsIrApiElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.js().compilationResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "net.mamoe.yamlkt:yamlkt-js:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        (kmpJsRuntimeVariantAttributes + klibArtifact) - "org.gradle.jvm.environment",
+                    ),
+                    configuration = "jsIrRuntimeElements-published",
+                ),
+                "net.mamoe.yamlkt:yamlkt:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "jsIrRuntimeElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.js().runtimeResolution().prettyPrinted
+        )
+
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "net.mamoe.yamlkt:yamlkt:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        preHmppKmpAttributes + libraryElementsJar + jarArtifact,
+                    ),
+                    configuration = "commonMainMetadataElements",
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.wasmWasi().compilationResolution().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "net.mamoe.yamlkt:yamlkt:0.13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        (kmpMetadataJarVariant.attributes + jarArtifact + libraryElementsJar) - "org.gradle.jvm.environment",
+                    ),
+                    configuration = "metadataApiElements",
+                ),
+            ).prettyPrinted,
+            consumer.multiplatformExtension.wasmWasi().runtimeResolution().prettyPrinted
+        )
     }
 
     @Test
