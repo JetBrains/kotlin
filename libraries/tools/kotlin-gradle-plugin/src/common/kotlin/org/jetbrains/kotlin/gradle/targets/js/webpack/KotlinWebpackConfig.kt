@@ -115,9 +115,26 @@ data class KotlinWebpackConfig(
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
         var client: Client? = null,
+        private val mutableStatics: MutableList<Static> = mutableListOf(),
     ) : Serializable {
 
-        internal val mutableStatics: MutableList<Static> = mutableListOf()
+        @Deprecated("Use constructor with static list instead", level = DeprecationLevel.HIDDEN)
+        constructor(
+            open: Any = true,
+            port: Int? = null,
+            proxy: MutableList<Proxy>? = null,
+            static: MutableList<String>? = null,
+            contentBase: MutableList<String>? = null,
+            client: Client? = null,
+        ) : this(
+            open,
+            port,
+            proxy,
+            static,
+            contentBase,
+            client,
+            mutableListOf()
+        )
 
         /**
          * Adds a static directory to the devServer configuration.
