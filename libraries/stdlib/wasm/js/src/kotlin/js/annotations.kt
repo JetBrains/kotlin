@@ -135,5 +135,27 @@ public actual annotation class JsModule(actual val import: String)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
 public actual annotation class JsQualifier(actual val value: String)
 
+/**
+ *
+ * Marks a member function of an external declaration as the "invoke operator" of a JavaScript object.
+ * Every call to this function will be translated into a call of the object itself.
+ *
+ * Example:
+ *
+ * ```kotlin
+ * external class A {
+ *   @nativeInvoke
+ *   operator fun invoke()
+ * }
+ *
+ * fun main() {
+ *   val a = A()
+ *   a()
+ * }
+ * ```
+ *
+ */
+@SinceKotlin("2.3")
+@ExperimentalWasmJsInterop
 @Target(FUNCTION)
-public actual annotation class nativeInvoke
+public actual annotation class nativeInvoke()
