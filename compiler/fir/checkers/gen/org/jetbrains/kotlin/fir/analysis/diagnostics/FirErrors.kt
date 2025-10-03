@@ -224,6 +224,7 @@ object FirErrors : KtDiagnosticsContainer() {
     // Call resolution
     val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
     val NO_CONSTRUCTOR: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_CONSTRUCTOR", ERROR, SourceElementPositioningStrategies.VALUE_ARGUMENTS_LIST, PsiElement::class, getRendererFactory())
+    val NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS", ERROR, SourceElementPositioningStrategies.SUPERTYPES_LIST, PsiElement::class, getRendererFactory())
     val FUNCTION_CALL_EXPECTED: KtDiagnosticFactory2<String, Boolean> = KtDiagnosticFactory2("FUNCTION_CALL_EXPECTED", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val ILLEGAL_SELECTOR: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_SELECTOR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NO_RECEIVER_ALLOWED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_RECEIVER_ALLOWED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
@@ -364,7 +365,6 @@ object FirErrors : KtDiagnosticsContainer() {
     val ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED: KtDiagnosticFactory0 = KtDiagnosticFactory0("IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val DSL_MARKER_PROPAGATES_TO_MANY: KtDiagnosticFactory0 = KtDiagnosticFactory0("DSL_MARKER_PROPAGATES_TO_MANY", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
-    val NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
 
     // OptIn
     val OPT_IN_USAGE: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_USAGE", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())

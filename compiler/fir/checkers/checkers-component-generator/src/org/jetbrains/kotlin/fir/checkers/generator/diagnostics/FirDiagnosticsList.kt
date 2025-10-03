@@ -207,6 +207,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
         val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS by error<KtExpression>()
         val NO_CONSTRUCTOR by error<PsiElement>(PositioningStrategy.VALUE_ARGUMENTS_LIST)
+        val NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS by error<PsiElement>(PositioningStrategy.SUPERTYPES_LIST)
         val FUNCTION_CALL_EXPECTED by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("functionName")
             parameter<Boolean>("hasValueParameters")
@@ -485,8 +486,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED by error<KtAnnotationEntry>()
 
         val DSL_MARKER_PROPAGATES_TO_MANY by warning<KtAnnotationEntry>()
-
-        val NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_ANNOTATION_CLASS by error<KtAnnotationEntry>()
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

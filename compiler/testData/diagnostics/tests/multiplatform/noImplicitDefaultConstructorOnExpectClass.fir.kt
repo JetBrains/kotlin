@@ -5,7 +5,7 @@
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> open class A
 
-class C : <!UNRESOLVED_REFERENCE!>A<!>() {
+class C : <!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>A()<!> {
     fun f() {
         <!EXPECT_CLASS_AS_FUNCTION!>A<!>()
     }
@@ -18,7 +18,7 @@ class E : I<!NO_CONSTRUCTOR!>()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 
-class D : <!UNRESOLVED_REFERENCE!>A<!>() {
+class D : <!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>A()<!> {
     fun g() {
         <!EXPECT_CLASS_AS_FUNCTION!>A<!>()
     }
