@@ -30,6 +30,7 @@ interface JpsIncrementalCache : IncrementalCacheCommon, StorageOwner {
     fun addJpsDependentCache(cache: JpsIncrementalCache)
 }
 
+@Suppress("DEPRECATION") // KT-81463
 class JpsIncrementalJvmCache(
     target: ModuleBuildTarget,
     paths: BuildDataPaths,
@@ -58,6 +59,7 @@ private class KotlinIncrementalStorageProvider(
 
     override fun hashCode() = target.hashCode()
 
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION") // KT-81463
     override fun createStorage(targetDataDir: File): JpsIncrementalCache = target.createCacheStorage(paths)
 }
 
