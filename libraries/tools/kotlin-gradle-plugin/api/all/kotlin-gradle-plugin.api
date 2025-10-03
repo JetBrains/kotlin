@@ -4425,16 +4425,18 @@ public final class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackC
 
 public final class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer : java/io/Serializable {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;)V
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;)V
 	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/Object;
 	public final fun component2 ()Ljava/lang/Integer;
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Ljava/util/List;
 	public final fun component5 ()Ljava/util/List;
 	public final fun component6 ()Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;
-	public final fun copy (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;
+	public final fun copy (Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Ljava/lang/Object;Ljava/lang/Integer;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;Ljava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getClient ()Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer$Client;
 	public final fun getContentBase ()Ljava/util/List;
