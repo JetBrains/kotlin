@@ -7,7 +7,7 @@ actual sealed class Base
 compiler/testData/cli/metadata/inheritorOfExpectSealedClass/common-2.kt:1:21: error: base: expect and corresponding actual are declared in the same module.
 actual sealed class Base
                     ^^^^
-compiler/testData/cli/metadata/inheritorOfExpectSealedClass/common-3.kt:1:17: error: unresolved reference '<init>'.
+compiler/testData/cli/metadata/inheritorOfExpectSealedClass/common-3.kt:1:17: error: expect class does not declare any constructors.
 class Derived : Base()
-                ^^^^
+                ^^^^^^
 COMPILATION_ERROR
