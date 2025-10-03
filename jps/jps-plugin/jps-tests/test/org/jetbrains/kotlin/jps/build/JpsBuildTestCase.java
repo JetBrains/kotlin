@@ -193,6 +193,7 @@ public abstract class JpsBuildTestCase extends UsefulTestCase {
     return StringUtil.decapitalize(StringUtil.trimStart(getName(), "test"));
   }
 
+  @SuppressWarnings({"deprecation", "UnstableApiUsage"})
   protected ProjectDescriptor createProjectDescriptor(final BuildLoggingManager buildLoggingManager) {
     try {
       BuildTargetRegistryImpl targetRegistry = new BuildTargetRegistryImpl(myModel);

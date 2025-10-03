@@ -104,6 +104,7 @@ private val JpsModuleSourceRootType<*>.isTestsRootType
         else -> null
     }
 
+@Suppress("DEPRECATION")
 class KotlinIncludedModuleSourceRoot(
     root: File,
     target: ModuleBuildTarget,

@@ -279,6 +279,7 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun clearCachesRebuildAndCheckOutput(makeOverallResult: MakeResult) {
+        @Suppress("UnstableApiUsage")
         FileUtil.delete(
             BuildDataPathsImpl(myDataStorageRoot.toPath()).dataStorageDir.toFile()
         )
