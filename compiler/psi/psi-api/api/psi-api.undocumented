@@ -333,7 +333,6 @@ org.jetbrains.kotlin.psi.KtArrayAccessExpression:getIndicesNode()
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getLeftBracket()
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getRightBracket()
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getTrailingComma()
-org.jetbrains.kotlin.psi.KtBackingField
 org.jetbrains.kotlin.psi.KtBackingField.equalsToken
 org.jetbrains.kotlin.psi.KtBackingField.fieldKeyword
 org.jetbrains.kotlin.psi.KtBackingField.namePlaceholder
@@ -873,7 +872,6 @@ org.jetbrains.kotlin.psi.KtProperty:isMember()
 org.jetbrains.kotlin.psi.KtProperty:isTopLevel()
 org.jetbrains.kotlin.psi.KtProperty:setInitializer(KtExpression)
 org.jetbrains.kotlin.psi.KtProperty:shouldChangeModificationCount(PsiElement)
-org.jetbrains.kotlin.psi.KtPropertyAccessor
 org.jetbrains.kotlin.psi.KtPropertyAccessor.isGetter
 org.jetbrains.kotlin.psi.KtPropertyAccessor.isSetter
 org.jetbrains.kotlin.psi.KtPropertyAccessor.leftParenthesis
