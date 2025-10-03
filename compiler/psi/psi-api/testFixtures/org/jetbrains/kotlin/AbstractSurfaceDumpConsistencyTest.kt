@@ -10,7 +10,7 @@ import java.nio.file.Path
 import java.util.function.Consumer
 import kotlin.io.path.readText
 
-abstract class AbstractSurfaceTest {
+abstract class AbstractSurfaceDumpConsistencyTest {
     private companion object {
         private val CLASS_NAME_REGEX = Regex("class ([\\w/$]+)\\s*[{:]")
     }
