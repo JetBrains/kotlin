@@ -108,9 +108,18 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             .configurations
             .maybeCreateResolvable(COMPILER_CLASSPATH_CONFIGURATION_NAME)
             .defaultDependencies {
-                it.add(
-                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${project.getKotlinPluginVersion()}")
-                )
+                if (project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi.get()) {
+                    it.add(
+                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
+                    )
+                    it.add(
+                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:$pluginVersion")
+                    )
+                } else {
+                    it.add(
+                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${project.getKotlinPluginVersion()}")
+                    )
+                }
             }
         project
             .configurations

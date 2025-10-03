@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
@@ -193,6 +196,41 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
                 assertKotlinDaemonJvmOptions(
                     listOf("-Xmx758m", "--Duser.country=US")
                 )
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Ensures that only one Kotlin compiler daemon is started for both JVM and JavaScript compilation")
+    fun ensureOnlyOneDaemonStartedForJvmAndJsWithBta(gradleVersion: GradleVersion) {
+        ensureOnlyOneDaemonStartedForJvmAndJs(gradleVersion, withBta = true)
+    }
+
+    @GradleTest
+    @DisplayName("Ensures that only one Kotlin compiler daemon is started for both JVM and JavaScript compilation when BTA disabled")
+    fun ensureOnlyOneDaemonStartedForJvmAndJsWithoutBta(gradleVersion: GradleVersion) {
+        ensureOnlyOneDaemonStartedForJvmAndJs(gradleVersion, withBta = false)
+    }
+
+    fun ensureOnlyOneDaemonStartedForJvmAndJs(gradleVersion: GradleVersion, withBta: Boolean) {
+        project("emptyKts", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.js()
+                kotlinMultiplatform.sourceSets.getByName("commonMain").compileSource("class Common")
+            }
+            build(
+                "assemble",
+                buildOptions = buildOptions.copy(
+                    configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                    runViaBuildToolsApi = withBta
+                )
+            ) {
+                assertOutputContains(KotlinCompilerExecutionStrategy.DAEMON.asFinishLogMessage)
+                assertOutputContainsExactlyTimes("starting the daemon as", 1)
             }
         }
     }
