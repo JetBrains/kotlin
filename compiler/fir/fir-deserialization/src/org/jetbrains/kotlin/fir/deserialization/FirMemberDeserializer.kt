@@ -430,8 +430,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
-            annotations +=
-                c.annotationDeserializer.loadPropertyAnnotations(c.containerSource, proto, classProto, local.nameResolver, local.typeTable)
+            if (!isFromAnnotation || c.session.deserializationExtension?.isLoadingOfAnnotationsOnAnnotationPropertiesEnabled != false) {
+                annotations += c.annotationDeserializer.loadPropertyAnnotations(
+                    c.containerSource, proto, classProto, local.nameResolver, local.typeTable
+                )
+            }
             val backingFieldAnnotations = mutableListOf<FirAnnotation>()
             backingFieldAnnotations +=
                 c.annotationDeserializer.loadPropertyBackingFieldAnnotations(

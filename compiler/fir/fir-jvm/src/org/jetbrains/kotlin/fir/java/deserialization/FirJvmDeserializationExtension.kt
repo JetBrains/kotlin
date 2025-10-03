@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationExtension
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -63,6 +65,9 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
         // metadata. So we can only treat value classes without those fields in metadata as MFVC starting from version 1.5.1.
         return binaryClass.classHeader.metadataVersion.isAtLeast(1, 5, 1)
     }
+
+    override val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean
+        get() = session.languageVersionSettings.supportsFeature(LanguageFeature.JvmLoadAnnotationsOnAnnotationProperties)
 
     companion object {
         private val JAVA_IO_SERIALIZABLE = ClassId.topLevel(FqName("java.io.Serializable"))

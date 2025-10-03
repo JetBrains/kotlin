@@ -598,6 +598,7 @@ enum class LanguageFeature(
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131"),
     ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType(sinceVersion = null, enabledInProgressiveMode = true, issue = "KTLC-14"),
     ForbidExposingPackagePrivateInInternal(sinceVersion = null, enabledInProgressiveMode = true, "KTLC-271"),
+    JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463"),
     ;
 
     constructor(

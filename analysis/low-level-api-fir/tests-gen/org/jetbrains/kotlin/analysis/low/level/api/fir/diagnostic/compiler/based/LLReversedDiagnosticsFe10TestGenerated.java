@@ -3198,6 +3198,18 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("LoadAnnotationsOnAnnotationProperties_after.kt")
+      public void testLoadAnnotationsOnAnnotationProperties_after() {
+        runTest("compiler/testData/diagnostics/tests/annotations/LoadAnnotationsOnAnnotationProperties_after.kt");
+      }
+
+      @Test
+      @TestMetadata("LoadAnnotationsOnAnnotationProperties_before.kt")
+      public void testLoadAnnotationsOnAnnotationProperties_before() {
+        runTest("compiler/testData/diagnostics/tests/annotations/LoadAnnotationsOnAnnotationProperties_before.kt");
+      }
+
+      @Test
       @TestMetadata("localAnnotationWithTarget.kt")
       public void testLocalAnnotationWithTarget() {
         runTest("compiler/testData/diagnostics/tests/annotations/localAnnotationWithTarget.kt");
