@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
 
-class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierListOwner, KtDeclarationWithInitializer,
+/**
+ * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
+ */
+open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierListOwner, KtDeclarationWithInitializer,
     KtDeclarationWithReturnType {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinBackingFieldStub) : super(stub, KtStubBasedElementTypes.BACKING_FIELD)
@@ -19,13 +22,13 @@ class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierList
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitBackingField(this, data)
 
-    val equalsToken: PsiElement?
+    open val equalsToken: PsiElement?
         get() = findChildByType(KtTokens.EQ)
 
     override fun getTypeReference(): KtTypeReference? =
         getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
-    val namePlaceholder: PsiElement
+    open val namePlaceholder: PsiElement
         get() = fieldKeyword ?: node.psi
 
     override fun getInitializer(): KtExpression? {
@@ -48,11 +51,11 @@ class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierList
     override fun getTextOffset(): Int =
         namePlaceholder.textRange.startOffset
 
-    val fieldKeyword: PsiElement?
+    open val fieldKeyword: PsiElement?
         get() = findChildByType(KtTokens.FIELD_KEYWORD)
 
     @Suppress("unused")
     @Deprecated("Use typeReference instead", ReplaceWith("typeReference"))
-    val returnTypeReference: KtTypeReference?
+    open val returnTypeReference: KtTypeReference?
         get() = typeReference
 }
