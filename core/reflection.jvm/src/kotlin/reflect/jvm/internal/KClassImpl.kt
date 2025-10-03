@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.compact
 import java.io.Serializable
 import java.lang.reflect.Modifier
-import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.metadata.*
@@ -374,15 +373,6 @@ internal class KClassImpl<T : Any>(
                 staticScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun getLocalProperty(index: Int): PropertyDescriptor? {
-        // TODO: also check that this is a synthetic class (Metadata.k == 3)
-        if (jClass.simpleName == JvmAbi.DEFAULT_IMPLS_CLASS_NAME) {
-            jClass.declaringClass?.let { interfaceClass ->
-                if (interfaceClass.isInterface) {
-                    return (interfaceClass.kotlin as KClassImpl<*>).getLocalProperty(index)
-                }
-            }
-        }
-
         return (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
             descriptor.classProto.getExtensionOrNull(JvmProtoBuf.classLocalVariable, index)?.let { proto ->
                 deserializeToDescriptor(
