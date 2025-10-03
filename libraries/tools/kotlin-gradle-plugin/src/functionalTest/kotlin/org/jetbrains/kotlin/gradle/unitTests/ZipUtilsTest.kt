@@ -63,7 +63,7 @@ class ZipUtilsTest {
 
     private fun zipDirectory(directory: File): File {
         return temporaryFolder.newFile().apply {
-            Compressor.Zip(this).use { compressor -> compressor.addDirectory(directory) }
+            Compressor.Zip(this.toPath()).use { compressor -> compressor.addDirectory(directory.toPath()) }
         }
     }
 
@@ -247,9 +247,9 @@ class ZipUtilsTest {
 
     private fun testWithCompressionLevel(level: Int) {
         val sourceFile = temporaryFolder.newFile()
-        Compressor.Zip(sourceFile)
+        Compressor.Zip(sourceFile.toPath())
             .withLevel(level)
-            .use { compressor -> compressor.addDirectory(zipContentFolder) }
+            .use { compressor -> compressor.addDirectory(zipContentFolder.toPath()) }
 
         val allDirectoriesInZip = ZipFile(sourceFile).use { it.entries().toList().filter { it.isDirectory }.map { it.name } }
 
