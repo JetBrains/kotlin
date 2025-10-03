@@ -441,7 +441,7 @@ internal class SelectBestMatchingVariantForKmpResolutionUsage : AttributeDisambi
          *
          * To make sure our rule is in control, we can try to reshuffle rules in [setAttributeDisambiguationPrecedence]
          */
-        val apiElements = listOf(
+        val nonJvmApiElements = listOf(
             KOTLIN_UKLIB_API,
             /**
              * Prefer platform apiElements if it is available when consuming standard KMP publication for compilation
@@ -449,6 +449,9 @@ internal class SelectBestMatchingVariantForKmpResolutionUsage : AttributeDisambi
              * FIXME: Is this also a compatibility for dom-api-compat
              */
             KOTLIN_API,
+        )
+        val jvmApiElements = listOf(
+            KOTLIN_UKLIB_API,
         )
         val runtimeElements = listOf(
             /**
@@ -461,8 +464,8 @@ internal class SelectBestMatchingVariantForKmpResolutionUsage : AttributeDisambi
             KOTLIN_RUNTIME,
         )
         mapOf(
-            KOTLIN_UKLIB_JAVA_API to apiElements,
-            KOTLIN_UKLIB_API to apiElements,
+            KOTLIN_UKLIB_JAVA_API to jvmApiElements,
+            KOTLIN_UKLIB_API to nonJvmApiElements,
             KOTLIN_UKLIB_JAVA_RUNTIME to runtimeElements,
             KOTLIN_UKLIB_RUNTIME to runtimeElements,
             KOTLIN_UKLIB_METADATA to listOf(
