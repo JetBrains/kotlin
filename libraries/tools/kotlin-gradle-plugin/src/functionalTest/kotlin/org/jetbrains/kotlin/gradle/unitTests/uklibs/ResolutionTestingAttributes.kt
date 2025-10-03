@@ -40,6 +40,12 @@ val uklibTransformationWasmWasiAttributes = mapOf(
     "org.jetbrains.kotlin.uklibState" to "decompressed",
 )
 
+val preHmppKmpAttributes = mapOf(
+    "org.gradle.category" to "library",
+    "org.gradle.usage" to "kotlin-api",
+    "org.jetbrains.kotlin.platform.type" to "common"
+)
+
 val jvmRuntimeAttributes = mapOf(
     "org.gradle.category" to "library",
     "org.gradle.libraryelements" to "jar",
@@ -157,4 +163,7 @@ val uklibArtifact = mapOf(
 )
 val klibCinteropCommonizerType = mapOf(
     "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+)
+val orgJetbrainsKotlinKlibArtifactType = mapOf(
+    "artifactType" to "org.jetbrains.kotlin.klib"
 )
