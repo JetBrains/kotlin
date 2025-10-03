@@ -28,7 +28,18 @@ public final class BinaryFileTypeDecompilers extends FileTypeExtension<BinaryFil
   }
 
   public void notifyDecompilerSetChange() {
-    ApplicationManager.getApplication().invokeLater(() -> FileDocumentManager.getInstance().reloadBinaryFiles(), ModalityState.nonModal());
+    ApplicationManager.getApplication().invokeLater(
+      () -> {
+        // This condition has been added specifically for Kotlin tests
+        // Some of the OldCompileKotlinAgainstCustomBinariesTest tests start failing otherwise because to the point the invocation happens
+        // application is already disposed
+        // Related issues: IJPL-183045 and KT-63650
+        if (ApplicationManager.getApplication() != null) {
+          FileDocumentManager.getInstance().reloadBinaryFiles();
+        }
+      },
+      ModalityState.nonModal()
+    );
   }
 
   public static BinaryFileTypeDecompilers getInstance() {
