@@ -17,13 +17,14 @@ class DifferentVersionsTest {
 
     fun Metadata.changeVersion(newVersion: IntArray) = Metadata(
         kind, newVersion,
-        bytecodeVersion, data1, data2, extraString, packageName, extraInt
+        @Suppress("DEPRECATION") bytecodeVersion,
+        data1, data2, extraString, packageName, extraInt,
     )
 
     fun Metadata.addFlag(flags: Int) = Metadata(
-        kind, metadataVersion, bytecodeVersion, data1, data2,
-        extraString, packageName,
-        extraInt or flags
+        kind, metadataVersion,
+        @Suppress("DEPRECATION") bytecodeVersion,
+        data1, data2, extraString, packageName, extraInt or flags,
     )
 
     @Test
