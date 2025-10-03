@@ -108,7 +108,7 @@ internal sealed class WasmVM(
             tool.run(
                 *toolArgs.toTypedArray(),
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
-                *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
+                *jsFiles.toTypedArray(),
                 entryFile,
                 workingDirectory = workingDirectory
             )
