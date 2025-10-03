@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
 import kotlinx.metadata.klib.*
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.konan.library.impl.KonanLibraryWriterImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.util.toCInteropKlibMetadataVersion
 import java.util.*
 
 fun createInteropLibrary(
@@ -27,12 +28,13 @@ fun createInteropLibrary(
     dependencies: List<KotlinLibrary>,
     nopack: Boolean,
     shortName: String?,
-    staticLibraries: List<String>
+    staticLibraries: List<String>,
+    klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel,
 ) {
     val version = KotlinLibraryVersioning(
-            abiVersion = KotlinAbiVersion.CURRENT,
+            abiVersion = klibAbiCompatibilityLevel.toAbiVersionForManifest(),
             compilerVersion = KotlinCompilerVersion.VERSION,
-            metadataVersion = MetadataVersion.INSTANCE,
+            metadataVersion = klibAbiCompatibilityLevel.toCInteropKlibMetadataVersion(),
     )
     val libFile = File(outputPath)
     val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir("klib")
