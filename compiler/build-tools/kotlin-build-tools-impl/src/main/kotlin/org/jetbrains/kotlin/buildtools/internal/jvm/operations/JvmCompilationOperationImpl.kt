@@ -199,7 +199,7 @@ internal class JvmCompilationOperationImpl(
             clientIsAliveFile,
             sessionIsAliveFlagFile,
             loggerAdapter,
-            false,
+            loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
             daemonJVMOptions = jvmOptions,
             daemonOptions = daemonOptions
         ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
