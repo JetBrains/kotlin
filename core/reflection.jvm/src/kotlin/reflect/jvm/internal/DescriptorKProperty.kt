@@ -14,16 +14,16 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
-import java.lang.reflect.*
+import java.lang.reflect.Field
+import java.lang.reflect.Member
+import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 import kotlin.reflect.jvm.internal.calls.*
-import kotlin.reflect.jvm.isAccessible
 
 internal abstract class DescriptorKProperty<out V> private constructor(
     override val container: KDeclarationContainerImpl,
@@ -44,7 +44,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         CallableReference.NO_RECEIVER,
     )
 
-    val boundReceiver: Any?
+    override val boundReceiver: Any?
         get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
 
     private val _javaField = lazy(PUBLICATION) {
@@ -88,35 +88,6 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         }
         return javaField
     }
-
-    protected fun getDelegateImpl(fieldOrMethod: Member?, receiver1: Any?, receiver2: Any?): Any? =
-        try {
-            if (receiver1 === EXTENSION_PROPERTY_DELEGATE || receiver2 === EXTENSION_PROPERTY_DELEGATE) {
-                if (descriptor.extensionReceiverParameter == null) {
-                    throw RuntimeException(
-                        "'$this' is not an extension property and thus getExtensionDelegate() " +
-                                "is not going to work, use getDelegate() instead"
-                    )
-                }
-            }
-
-            val realReceiver1 = (if (isBound) boundReceiver else receiver1).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
-            val realReceiver2 = (if (isBound) receiver1 else receiver2).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
-            (fieldOrMethod as? AccessibleObject)?.isAccessible = isAccessible
-            when (fieldOrMethod) {
-                null -> null
-                is Field -> fieldOrMethod.get(realReceiver1)
-                is Method -> when (fieldOrMethod.parameterTypes.size) {
-                    0 -> fieldOrMethod.invoke(null)
-                    1 -> fieldOrMethod.invoke(null, realReceiver1 ?: defaultPrimitiveValue(fieldOrMethod.parameterTypes[0]))
-                    2 -> fieldOrMethod.invoke(null, realReceiver1, realReceiver2 ?: defaultPrimitiveValue(fieldOrMethod.parameterTypes[1]))
-                    else -> throw AssertionError("delegate method $fieldOrMethod should take 0, 1, or 2 parameters")
-                }
-                else -> throw AssertionError("delegate field/method $fieldOrMethod neither field nor method")
-            }
-        } catch (e: IllegalAccessException) {
-            throw IllegalPropertyDelegateAccessException(e)
-        }
 
     abstract override val getter: Getter<V>
 
