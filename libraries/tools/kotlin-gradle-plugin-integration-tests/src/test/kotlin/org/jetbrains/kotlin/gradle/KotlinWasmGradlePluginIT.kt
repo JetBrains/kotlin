@@ -593,6 +593,14 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                                 }
                             }
                         }
+
+                        runTask {
+                            it.devServerProperty.set(it.devServerProperty.get().copy())
+
+                            if (it.devServerProperty.get().statics.isEmpty()) {
+                                error("No dev server statics after copying of data class")
+                            }
+                        }
                     }
                 }
 
