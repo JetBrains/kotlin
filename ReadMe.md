@@ -1,11 +1,31 @@
+# Kotlin Programming Language
+
 [![official project](https://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 [![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_KotlinPublic_Compiler.svg)](https://teamcity.jetbrains.com/buildConfiguration/Kotlin_KotlinPublic_Compiler?branch=%3Cdefault%3E&buildTypeTab=overview&mode=builds)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.jetbrains.com/scans?search.rootProjectNames=Kotlin)
 
-# Kotlin Programming Language
+---
 
+## 📌 Table of Contents
+
+- [About](#about)
+- [Kotlin Multiplatform capabilities](#kotlin-multiplatform-capabilities)
+- [Editing Kotlin](#editing-kotlin)
+- [Build environment requirements](#build-environment-requirements)
+- [Building](#building)
+- [Important Gradle tasks](#important-gradle-tasks)
+- [Working with the project in IntelliJ IDEA](#working-with-the-project-in-intellij-idea)
+- [Dependency verification](#dependency-verification)
+- [Using -dev versions](#using--dev-versions)
+- [License](#license)
+- [Contributing](#contributing)
+- [Kotlin Foundation](#kotlin-foundation)
+
+---
+
+## About 
 Welcome to [Kotlin](https://kotlinlang.org/)!   
 Kotlin is a concise multiplatform language developed by [JetBrains](https://www.jetbrains.com/) and [contributors](https://kotlinlang.org/docs/contribute.html).
 
