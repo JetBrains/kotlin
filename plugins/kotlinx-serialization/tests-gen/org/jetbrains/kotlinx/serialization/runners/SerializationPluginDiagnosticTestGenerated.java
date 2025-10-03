@@ -150,6 +150,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
   }
 
   @Test
+  @TestMetadata("NonSerializableInCustom.kt")
+  public void testNonSerializableInCustom() {
+    runTest("plugins/kotlinx-serialization/testData/diagnostics/NonSerializableInCustom.kt");
+  }
+
+  @Test
   @TestMetadata("NullabilityIncompatible.kt")
   public void testNullabilityIncompatible() {
     runTest("plugins/kotlinx-serialization/testData/diagnostics/NullabilityIncompatible.kt");
