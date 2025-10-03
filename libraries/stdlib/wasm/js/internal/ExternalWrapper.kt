@@ -155,7 +155,8 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     //     return
     // }
     // If ref is a wrapped instance of kotlin class -- return it casted to Any
-    if (ref is KotlinJsBox) return ref.unsafeCast<JsReference<Any>>().get()
+    // FIXME change KotlinJsBox to contain only JsReference<Any>
+    if (ref is KotlinJsBox) return unwrapShareable(ref).unsafeCast<JsReference<Any>>().get()
 
     // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,
@@ -168,7 +169,7 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType {
     return if (x is JsExternalBox)
         x.ref
     else
-        x.toJsReference()
+        wrapShareable(x.toJsReference())
 }
 
 internal fun stringLength(x: ExternalInterfaceType): Int =
@@ -403,11 +404,9 @@ internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfac
 }
 
 @ExperimentalWasmJsInterop
-internal external interface JsShareableAny
-
-@ExperimentalWasmJsInterop
 internal external class KotlinJsBox(internal val kotlinObject: JsShareableAny) : JsAny
 
+// FIXME shall depend on the mode - no actions if non-shared one! Make it intrinsic? Or special lowering (to none)?
 @ExperimentalWasmJsInterop
 internal fun wrapShareable(obj: JsShareableAny) : KotlinJsBox = js("new KotlinJsBox(obj)")
 

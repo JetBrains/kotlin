@@ -11,6 +11,12 @@ import kotlin.wasm.internal.unwrapShareable
 import kotlin.wasm.internal.wrapShareable
 
 /**
+ * A JavaScript value that can be shared between threads in "-Xwasm-use-shared-objects" mode.
+ */
+@ExperimentalWasmJsInterop
+public external interface JsShareableAny : JsAny
+
+/**
  * JavaScript value that can serve as a reference for any Kotlin value.
  *
  * In JavaScript, it behaves like an immutable empty object with a null prototype.
@@ -18,14 +24,12 @@ import kotlin.wasm.internal.wrapShareable
  */
 @Suppress("WRONG_JS_INTEROP_TYPE")  // Exception to the rule
 @ExperimentalWasmJsInterop
-public actual sealed external interface JsReference<out T : Any> : JsAny
+public actual sealed external interface JsReference<out T : Any> : JsShareableAny
 
+// TODO maybe inline externalize(!)/internalize(? - more complicated) - unnecessary calls
 @ExperimentalWasmJsInterop
-public actual fun <T : Any> T.toJsReference(): JsReference<T> =
-    wrapShareable(externalize()).unsafeCast()
+public actual fun <T : Any> T.toJsReference(): JsReference<T> = externalize().unsafeCast()
 
 /** Retrieve original Kotlin value from JsReference */
 @ExperimentalWasmJsInterop
-public actual fun <T : Any> JsReference<T>.get(): T {
-    return unwrapShareable(this.unsafeCast()).internalize()
-}
+public actual fun <T : Any> JsReference<T>.get(): T = internalize()

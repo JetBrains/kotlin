@@ -376,7 +376,7 @@ class WasmSymbols(
         val jsCode = getFunction("js", kotlinJsPackageFqName)
 
         val jsReferenceClass by lazy { getIrClass(FqName("kotlin.js.JsReference")) }
-        val jsShareableAnyClass by lazy { getIrClass(FqName("kotlin.wasm.internal.JsShareableAny")) }
+        val jsShareableAnyClass by lazy { getIrClass(FqName("kotlin.js.JsShareableAny")) }
 
         val jsAnyType: IrType by lazy { getIrType("kotlin.js.JsAny") }
         val jsBooleanType: IrType by lazy { getIrType("kotlin.js.JsBoolean") }
