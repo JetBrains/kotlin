@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.tasks.JavaExec
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -737,7 +738,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                 File("empty/build/classes/kotlin/jvm/main"),
                 File("empty/build/classes/java/jvmMain"),
                 File("empty/build/processedResources/jvm/main"),
-                File("transformed/unzipped_uklib_producer.uklib/jvmMain"),
+                File("transformed/uklib_jar_fragment.jar"),
                 File("kotlin-stdlib/${defaultBuildOptions.kotlinVersion}/kotlin-stdlib-${defaultBuildOptions.kotlinVersion}.jar"),
                 File("annotations-13.0.jar"),
             )
@@ -821,7 +822,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     ) to dependency.classpath.map {
                         RelativePath(
                             it.relativeTo(consumer.projectPath.toFile().canonicalFile)
-                                .toPath().toList().takeLast(3).map { it.pathString }
+                                .toPath().toList().takeLast(2).map { it.pathString }
                         )
                     }
                 }
@@ -832,7 +833,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     first = Coordinate("producer", "empty", "1.0", "commonMain"),
                     second = mutableListOf(
                         RelativePath(
-                            mutableListOf("metadata", "kotlinTransformedMetadataLibraries", "uklib-producer-empty-1.0-commonMain-",),
+                            mutableListOf("kotlinTransformedMetadataLibraries", "uklib-producer-empty-1.0-commonMain-",),
                         ),
                     ),
                 ),
@@ -840,7 +841,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     first = Coordinate("producer", "empty", "1.0", "jvm"),
                     second = mutableListOf(
                         RelativePath(
-                            mutableListOf("transformed", "unzipped_uklib_empty.uklib", "jvmMain"),
+                            mutableListOf("transformed", "uklib_jar_fragment.jar"),
                         ),
                     ),
                 ),
@@ -849,7 +850,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     second = mutableListOf(
                         RelativePath(
                             mutableListOf(
-                                "transformed", "unzipped_uklib_empty.uklib", "linuxArm64Main",
+                                "unzipped_uklib_empty.uklib", "linuxArm64Main",
                             ),
                         ),
                     ),
@@ -1146,7 +1147,7 @@ class UklibConsumptionIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `uklib consumption - linkage with cinterops`(version: GradleVersion) {
+    fun `uklib consumption - MR jar`(version: GradleVersion) {
         val producer = project(
             "empty",
             version,
@@ -1154,40 +1155,43 @@ class UklibConsumptionIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 // Commonizer is not supported yet which will be captured by this test
-                project.extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, true)
                 project.setUklibPublicationStrategy()
                 project.applyMultiplatform {
-                    listOf(
-                        linuxArm64(),
-                        linuxX64(),
-                    ).forEach {
-                        val foo = project.layout.projectDirectory.file("foo.def")
-                        val bar = project.layout.projectDirectory.file("bar.def")
-
-                        foo.asFile.writeText(
-                            """
-                                language = C
-                                ---
-                                void foo(void);
-                            """.trimIndent()
-                        )
-                        bar.asFile.writeText(
-                            """
-                                language = C
-                                ---
-                                void bar(void);
-                            """.trimIndent()
-                        )
-
-                        it.compilations.getByName("main").cinterops.create("foo") {
-                            it.definitionFile.set(foo)
+                    jvm {
+                        project.tasks.named(artifactsTaskName, Jar::class.java) {
+                            it.manifest {
+                                it.attributes(mapOf("Multi-Release" to true))
+                            }
+                            it.rename(".*module-info.class.*", "META-INF/versions/9/module-info.class")
                         }
-                        it.compilations.getByName("main").cinterops.create("bar") {
-                            it.definitionFile.set(bar)
+                        compilations.getByName("main").compileJavaTaskProvider?.configure {
+                            it.sourceCompatibility = "9"
+                            it.targetCompatibility = "9"
+                        }
+                        compilerOptions {
+                            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_9)
                         }
                     }
-
-                    sourceSets.commonMain.get().compileSource("class Common")
+                    val jvmSources = project.layout.projectDirectory.file("src/jvmMain/java").asFile
+                    jvmSources.mkdirs()
+                    val producer = jvmSources.resolve("producer/Producer.java")
+                    producer.parentFile.mkdirs()
+                    producer.writeText("""
+                        package producer;
+                        
+                        public class Producer { }
+                    """.trimIndent())
+                    val moduleInfo = jvmSources.resolve("module-info.java")
+                    moduleInfo.parentFile.mkdirs()
+                    moduleInfo.writeText(
+                        """
+                            module producer {
+                                requires transitive kotlin.stdlib;
+                                
+                                exports producer;
+                            }
+                        """.trimIndent()
+                    )
                 }
             }
         }.publish()
@@ -1198,28 +1202,42 @@ class UklibConsumptionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
-                    linuxArm64 {
-                        binaries.staticLib {  }
-                    }
-                    sourceSets.commonMain.get().compileSource(
-                        """
-                        @file:OptIn(ExperimentalForeignApi::class)
-
-                        import kotlinx.cinterop.ExperimentalForeignApi
-
-                        fun consumeCinterops() { 
-                            bar.bar()
-                            foo.foo()
+                    jvm {
+                        compilations.getByName("main").compileJavaTaskProvider?.configure {
+                            it.sourceCompatibility = "9"
+                            it.targetCompatibility = "9"
                         }
+                        compilerOptions {
+                            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_9)
+                        }
+                    }
+                    val jvmSources = project.layout.projectDirectory.file("src/jvmMain/kotlin").asFile
+                    jvmSources.mkdirs()
+
+                    val moduleInfo = jvmSources.resolve("module-info.java")
+                    moduleInfo.parentFile.mkdirs()
+                    moduleInfo.writeText(
+                        """
+                            module consumer {
+                                requires transitive kotlin.stdlib;
+                                requires producer;
+                            }
                         """.trimIndent()
                     )
+
+                    sourceSets.jvmMain.get().compileSource("""
+                        fun consume() {
+                            producer.Producer()
+                        }
+                    """.trimIndent())
+
                     sourceSets.commonMain.get().dependencies {
-                        api(producer.rootCoordinate)
+                        implementation(producer.rootCoordinate)
                     }
                 }
             }
 
-            build("linkDebugStaticLinuxArm64")
+            build("assemble")
         }
     }
 

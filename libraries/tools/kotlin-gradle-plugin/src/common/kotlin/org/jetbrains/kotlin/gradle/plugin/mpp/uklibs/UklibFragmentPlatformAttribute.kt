@@ -112,7 +112,7 @@ internal val KotlinTarget.uklibFragmentPlatformAttribute: UklibFragmentPlatformA
 /**
  * These attribute names will be recorded in and resolved from the Umanifest
  */
-private enum class UklibTargetFragmentAttribute {
+internal enum class UklibTargetFragmentAttribute {
     js_ir,
     wasm_js,
     wasm_wasi,

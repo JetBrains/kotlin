@@ -13,6 +13,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibTargetFragmentAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.deserializeUklibFromDirectory
 import java.io.File
 
@@ -44,7 +45,16 @@ internal abstract class UnzippedUklibToPlatformCompilationTransform :
         }
 
         platformFragments.forEach {
-            outputs.dir(it.files.single())
+            val output = it.files.single()
+            if (output.isDirectory) {
+                outputs.dir(output)
+            } else if (it.attributes.singleOrNull() == UklibTargetFragmentAttribute.jvm.name) {
+                val outputJar = outputs.file("uklib_jar_fragment.jar")
+                output.copyTo(outputJar, overwrite = true)
+                outputs.file(outputJar)
+            } else {
+                outputs.file(output)
+            }
         }
     }
 }
