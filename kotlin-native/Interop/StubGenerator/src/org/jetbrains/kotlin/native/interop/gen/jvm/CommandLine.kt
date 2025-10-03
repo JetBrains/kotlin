@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.native.interop.tool
 
 import kotlinx.cli.*
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.native.interop.gen.jvm.CCallMode
 
 const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "headerFilterAdditionalSearchPrefix"
@@ -35,6 +36,7 @@ const val DISABLE_EXCEPTION_PRETTIFIER = "Xdisable-exception-prettifier"
 const val USER_SETUP_HINT = "Xuser-setup-hint"
 const val KONAN_DATA_DIR = "Xkonan-data-dir"
 const val CCALL_MODE = "Xccall-mode"
+const val KLIB_ABI_COMPATIBILITY_LEVEL = "Xklib-abi-compatibility-level"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -146,6 +148,15 @@ open class CInteropArguments(argParser: ArgParser =
                     "${CCallMode.INDIRECT.name.lowercase()} - generate only @CCall (default), " +
                     "${CCallMode.BOTH.name.lowercase()} - generate both"
     ).default(CCallMode.INDIRECT)
+
+    val klibAbiCompatibilityLevel by argParser.option(
+            type = ArgType.Choice(
+                    choices = KlibAbiCompatibilityLevel.entries,
+                    toVariant = { rawValue -> KlibAbiCompatibilityLevel.entries.first { it.toString() == rawValue } },
+            ),
+            fullName = KLIB_ABI_COMPATIBILITY_LEVEL,
+            description = "Generate a library compatible with the specified KLIB ABI version"
+    ).default(KlibAbiCompatibilityLevel.LATEST_STABLE)
 }
 
 internal fun warn(msg: String) {
