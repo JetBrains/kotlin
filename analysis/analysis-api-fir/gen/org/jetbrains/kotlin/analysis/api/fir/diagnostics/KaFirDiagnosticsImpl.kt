@@ -484,6 +484,11 @@ internal class NoConstructorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NoConstructor
 
+internal class NoImplicitDefaultConstructorOnExpectClassImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NoImplicitDefaultConstructorOnExpectClass
+
 internal class FunctionCallExpectedImpl(
     override val functionName: String,
     override val hasValueParameters: Boolean,
@@ -1252,11 +1257,6 @@ internal class DslMarkerPropagatesToManyImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.DslMarkerPropagatesToMany
-
-internal class NoImplicitDefaultConstructorOnExpectAnnotationClassImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.NoImplicitDefaultConstructorOnExpectAnnotationClass
 
 internal class JsModuleProhibitedOnVarImpl(
     firDiagnostic: KtPsiDiagnostic,

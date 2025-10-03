@@ -92,8 +92,8 @@ object ConeNoConstructorError : ConeDiagnostic {
     override val reason: String get() = "This type does not have a constructor"
 }
 
-object ConeNoImplicitDefaultConstructorOnExpectAnnotationClass : ConeDiagnostic {
-    override val reason: String get() = "No implicit default constructor on expect annotation class"
+object ConeNoImplicitDefaultConstructorOnExpectClass : ConeDiagnostic {
+    override val reason: String get() = "No implicit default constructor on expect class"
 }
 
 object ConeContractShouldBeFirstStatement : ConeDiagnostic {

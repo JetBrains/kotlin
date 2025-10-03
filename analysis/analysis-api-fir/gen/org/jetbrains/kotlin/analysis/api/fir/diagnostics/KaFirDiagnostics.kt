@@ -415,6 +415,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NoConstructor::class
     }
 
+    interface NoImplicitDefaultConstructorOnExpectClass : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NoImplicitDefaultConstructorOnExpectClass::class
+    }
+
     interface FunctionCallExpected : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = FunctionCallExpected::class
         val functionName: String
@@ -1041,10 +1045,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface DslMarkerPropagatesToMany : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = DslMarkerPropagatesToMany::class
-    }
-
-    interface NoImplicitDefaultConstructorOnExpectAnnotationClass : KaFirDiagnostic<KtAnnotationEntry> {
-        override val diagnosticClass get() = NoImplicitDefaultConstructorOnExpectAnnotationClass::class
     }
 
     interface JsModuleProhibitedOnVar : KaFirDiagnostic<KtElement> {
