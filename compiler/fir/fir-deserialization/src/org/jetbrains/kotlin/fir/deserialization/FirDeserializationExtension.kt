@@ -30,6 +30,8 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirComposa
 
     open fun isMaybeMultiFieldValueClass(containerSource: DeserializedContainerSource?): Boolean = false
 
+    open val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean get() = true
+
     @SessionConfiguration
     final override fun createComposed(components: List<FirDeserializationExtension>): Composed {
         return Composed(session, components)
@@ -65,5 +67,8 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirComposa
         override fun isMaybeMultiFieldValueClass(containerSource: DeserializedContainerSource?): Boolean {
             return components.any { it.isMaybeMultiFieldValueClass(containerSource) }
         }
+
+        override val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean
+            get() = components.all { it.isLoadingOfAnnotationsOnAnnotationPropertiesEnabled }
     }
 }
