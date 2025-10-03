@@ -36,7 +36,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LOAD_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SAVE_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD_NAME
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationFqName
 
 val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
@@ -326,6 +325,25 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         checkCustomSerializerIsNotLocal(descriptor.module, descriptor, trace, declaration)
         checkCustomSerializerParameters(descriptor.module, descriptor, descriptor.defaultType, annotationPsi, declaration, trace)
         checkCustomSerializerNotAbstract(descriptor.module, descriptor.defaultType, descriptor, annotationPsi, trace, declaration)
+        checkVisibility(descriptor, declaration, annotationPsi, trace)
+    }
+
+    private fun checkVisibility(
+        classDescriptor: ClassDescriptor,
+        declaration: KtDeclaration,
+        annotationPsi: KtAnnotationEntry?,
+        trace: BindingTrace,
+    ) {
+        val serializerClass = classDescriptor.annotations.serializableWith(classDescriptor.module)?.toClassDescriptor ?: return
+        if (serializerClass.visibility == DescriptorVisibilities.PRIVATE && classDescriptor.visibility != DescriptorVisibilities.PRIVATE) {
+            trace.report(
+                SerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE.on(
+                    annotationPsi ?: declaration,
+                    serializerClass,
+                    classDescriptor
+                )
+            )
+        }
     }
 
     private val ClassDescriptor.isAnonymousObjectOrContained: Boolean

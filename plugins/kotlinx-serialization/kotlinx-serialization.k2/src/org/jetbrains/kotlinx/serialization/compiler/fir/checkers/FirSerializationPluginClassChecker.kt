@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -62,7 +63,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             checkExternalSerializer(classSymbol, reporter)
             checkKeepGeneratedSerializer(classSymbol, reporter)
 
-            if (!canBeSerializedInternally(classSymbol, reporter)) return
+            if (!canBeSerialized(classSymbol)) return
             if (classSymbol !is FirRegularClassSymbol) return
 
             val properties = buildSerializableProperties(classSymbol, reporter) ?: return
@@ -379,7 +380,8 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         }
     }
 
-    private fun CheckerContext.canBeSerializedInternally(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter): Boolean {
+    context(reporter: DiagnosticReporter)
+    private fun CheckerContext.canBeSerialized(classSymbol: FirClassSymbol<*>): Boolean {
         // if enum has meta or SerialInfo annotation on a class or entries and used plugin-generated serializer
         if (session.dependencySerializationInfoProvider.useGeneratedEnumSerializer && classSymbol.isSerializableEnumWithMissingSerializer(session)) {
             reporter.reportOn(
@@ -421,7 +423,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (!classSymbol.hasSerializableOrMetaAnnotationWithoutArgs(session)) {
             // defined custom serializer
-            checkClassWithCustomSerializer(classSymbol, reporter)
+            checkClassWithCustomSerializer(classSymbol)
 
             // if KeepGeneratedSerializer is specified then continue checking
             if (!classSymbol.keepGeneratedSerializer(session)) {
@@ -455,7 +457,8 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         return true
     }
 
-    private fun CheckerContext.checkClassWithCustomSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
+    context(reporter: DiagnosticReporter)
+    private fun CheckerContext.checkClassWithCustomSerializer(classSymbol: FirClassSymbol<*>) {
         val serializerType = classSymbol.getSerializableWith(session)?.fullyExpandedType() ?: return
 
         val serializerForType = serializerType.serializerForType(session)?.fullyExpandedType()
@@ -464,6 +467,20 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         checkCustomSerializerIsNotLocal(source = null, classSymbol, serializerType, reporter)
         checkCustomSerializerParameters(classSymbol, null, serializerType, serializerForType, useSiteType = null, reporter)
         checkCustomSerializerNotAbstract(classSymbol, source = null, serializerType, reporter)
+        checkVisibility(classSymbol, serializerType)
+    }
+
+    context(reporter: DiagnosticReporter)
+    private fun CheckerContext.checkVisibility(classSymbol: FirClassSymbol<*>, customSerializer: ConeKotlinType) {
+        val serializerClass = customSerializer.toRegularClassSymbol() ?: return
+        if (serializerClass.visibility == Visibilities.Private && classSymbol.visibility != Visibilities.Private) {
+            reporter.reportOn(
+                classSymbol.serializableOrMetaAnnotationSource(session),
+                FirSerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE,
+                serializerClass,
+                classSymbol
+            )
+        }
     }
 
     private fun FirClassSymbol<*>.isAnonymousObjectOrInsideIt(c: CheckerContext): Boolean {

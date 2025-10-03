@@ -138,6 +138,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING
         )
         map.put(
+            FirSerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE,
+            "Custom serializer ''{0}'' is private, while the type ''{1}'' is not. This can cause ''serializer not found'' errors on use sites. Consider aligning the visibilities.",
+            FirDiagnosticRenderers.DECLARATION_NAME,
+            FirDiagnosticRenderers.DECLARATION_NAME
+        )
+        map.put(
             FirSerializationErrors.TRANSIENT_MISSING_INITIALIZER,
             "This property is marked as @Transient and therefore must have an initializing expression"
         )
