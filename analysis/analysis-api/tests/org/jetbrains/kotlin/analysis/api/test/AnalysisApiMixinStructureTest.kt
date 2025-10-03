@@ -32,11 +32,19 @@ class AnalysisApiMixinStructureTest : AbstractAnalysisApiSurfaceCodebaseValidati
             it.name == KA_SESSION_CLASS
         } ?: return
 
+        assertNoCompanion(file, sessionComponent)
+
         // OptIn annotation itself
         assertSpecialAnnotation(file, psiFile, sessionComponent, KA_SESSION_COMPONENT_IMPLEMENTATION_DETAIL_ANNOTATION)
 
         // OptIn annotation for subclasses
         assertSpecialAnnotation(file, psiFile, sessionComponent, KA_SESSION_COMPONENT_IMPLEMENTATION_DETAIL_SUBCLASS_ANNOTATION)
+    }
+
+    private fun assertNoCompanion(file: File, sessionComponent: KtClassOrObject) {
+        if (sessionComponent.companionObjects.isNotEmpty()) {
+            error("Session component '${sessionComponent.name}' (${file}) should not have a companion object since it exposes the session component type")
+        }
     }
 
     private fun assertSpecialAnnotation(file: File, psiFile: KtFile, sessionComponent: KtClassOrObject, annotationText: String) {

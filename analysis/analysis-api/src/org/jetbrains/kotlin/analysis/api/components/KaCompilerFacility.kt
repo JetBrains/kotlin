@@ -24,17 +24,6 @@ import java.io.File
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaCompilerFacility : KaSessionComponent {
-    @KaExperimentalApi
-    public companion object {
-        /** Simple class name for the code fragment facade class. */
-        public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey<String>("code fragment class name")
-
-        /** Entry point method name for the code fragment. */
-        public val CODE_FRAGMENT_METHOD_NAME: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey<String>("code fragment method name")
-    }
-
     /**
      * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
      *
@@ -62,6 +51,14 @@ public interface KaCompilerFacility : KaSessionComponent {
         allowedErrorFilter: (KaDiagnostic) -> Boolean,
     ): KaCompilationResult
 }
+
+/** Simple class name for the code fragment facade class. */
+@KaExperimentalApi
+public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> = CompilerConfigurationKey("code fragment class name")
+
+/** Entry point method name for the code fragment. */
+@KaExperimentalApi
+public val CODE_FRAGMENT_METHOD_NAME: CompilerConfigurationKey<String> = CompilerConfigurationKey("code fragment method name")
 
 /**
  * An in-memory compilation result returned from [KaCompilerFacility].
