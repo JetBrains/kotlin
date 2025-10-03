@@ -642,7 +642,13 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                                     )
                                 }
                                 is VariableValue.NullablePredicate -> variableValue.predicate
-                                is VariableValue.BooleanPredicate -> error("Unexpected boolean predicate for ${variable.render()}")
+                                is VariableValue.BooleanPredicate -> {
+                                    // Happens when a bool? variable aliases to a bool variable.
+                                    NullablePredicate(
+                                            ifNull = Predicate.False, // Never happens.
+                                            ifNotNull = Predicate.Empty
+                                    )
+                                }
                             }
 
             fun buildBooleanPredicate(variable: IrValueDeclaration): BooleanPredicate =
