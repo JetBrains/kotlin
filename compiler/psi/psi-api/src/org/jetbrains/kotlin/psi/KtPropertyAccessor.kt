@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
 
-class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDeclarationWithBody, KtModifierListOwner,
+/**
+ * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
+ */
+open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDeclarationWithBody, KtModifierListOwner,
     KtDeclarationWithInitializer, KtDeclarationWithReturnType {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinPropertyAccessorStub) : super(stub, KtStubBasedElementTypes.PROPERTY_ACCESSOR)
@@ -20,7 +23,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDecl
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitPropertyAccessor(this, data)
 
-    val isGetter: Boolean
+    open val isGetter: Boolean
         get() {
             greenStub?.let {
                 return it.isGetter
@@ -28,7 +31,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDecl
             return findChildByType<PsiElement>(KtTokens.GET_KEYWORD) != null
         }
 
-    val isSetter: Boolean
+    open val isSetter: Boolean
         get() {
             greenStub?.let {
                 return !it.isGetter
@@ -36,10 +39,10 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDecl
             return findChildByType<PsiElement>(KtTokens.SET_KEYWORD) != null
         }
 
-    val parameterList: KtParameterList?
+    open val parameterList: KtParameterList?
         get() = getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
 
-    val parameter: KtParameter?
+    open val parameter: KtParameter?
         get() = parameterList?.parameters?.firstOrNull()
 
     override fun getValueParameters(): List<KtParameter> =
@@ -86,7 +89,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDecl
     override fun getTypeReference(): KtTypeReference? =
         getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
-    val namePlaceholder: PsiElement
+    open val namePlaceholder: PsiElement
         get() = findChildByType(KtTokens.GET_KEYWORD) ?: findChildByType(KtTokens.SET_KEYWORD)!!
 
     override fun getInitializer(): KtExpression? =
@@ -95,7 +98,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDecl
     override fun hasInitializer(): Boolean =
         initializer != null
 
-    val property: KtProperty
+    open val property: KtProperty
         get() = parent as KtProperty
 
     override fun getTextOffset(): Int =
@@ -111,16 +114,16 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDecl
 
     @Suppress("unused")
     @Deprecated("Use typeReference instead", ReplaceWith("typeReference"))
-    val returnTypeReference: KtTypeReference?
+    open val returnTypeReference: KtTypeReference?
         get() = typeReference
 
     @Suppress("unused")
     @Deprecated("use `parameterList?.leftParenthesis`", ReplaceWith("parameterList?.leftParenthesis"))
-    val leftParenthesis: PsiElement?
+    open val leftParenthesis: PsiElement?
         get() = parameterList?.leftParenthesis
 
     @Suppress("unused")
     @Deprecated("use `parameterList?.rightParenthesis`", ReplaceWith("parameterList?.rightParenthesis"))
-    val rightParenthesis: PsiElement?
+    open val rightParenthesis: PsiElement?
         get() = parameterList?.rightParenthesis
 }
