@@ -8,8 +8,8 @@
 
 <img width="250" height="250" alt="Microsoft(1)" src="https://github.com/user-attachments/assets/7554978f-82f3-474c-a422-cd401c49068f" />
 
-*Kotlin is a modern, expressive, and statically typed programming language developed by JetBrains. 
-Designed for building robust, maintainable, and performant applications, Kotlin supports multiple platforms including JVM, Android, JavaScript, WebAssembly, and Native (via LLVM), enabling true code sharing across mobile, web, desktop, and server.*
+>*Kotlin is a modern, expressive, and statically typed programming language developed by JetBrains. 
+>Designed for building robust, maintainable, and performant applications, Kotlin supports multiple platforms including JVM, Android, JavaScript, WebAssembly, and Native (via LLVM), enabling true code sharing across mobile, web, desktop, and server.*
 
 
 ---
@@ -241,9 +241,6 @@ Kotlin has a strong, welcoming, and rapidly growing global community. Whether yo
 - **Stack Overflow** – A large Kotlin tag with thousands of answered questions  
   [https://stackoverflow.com/questions/tagged/kotlin](https://stackoverflow.com/questions/tagged/kotlin)
 
-- **Kotlin Reddit** – News, articles, and community discussions  
-  [https://www.reddit.com/r/Kotlin/](https://www.reddit.com/r/Kotlin/)
-
 - **YouTube Channel** – Official Kotlin talks, tutorials, and livestreams  
   [https://www.youtube.com/@kotlin](https://www.youtube.com/@kotlin)
 
@@ -255,12 +252,8 @@ Kotlin has a strong, welcoming, and rapidly growing global community. Whether yo
 - **KotlinConf** – The official Kotlin conference hosted by JetBrains  
   [https://kotlinconf.com](https://kotlinconf.com)
 
-- **JetBrains Events** – Online webinars, livestreams, and meetups  
-  [https://www.jetbrains.com/events/](https://www.jetbrains.com/events/)
-
 - **Community Meetups** – Kotlin user groups and community-run events around the world  
   [https://kotlinlang.org/community/user-groups.html](https://kotlinlang.org/community/user-groups.html)
-
 
 # License
 Kotlin is distributed under the terms of the Apache License (Version 2.0). See [license folder](license/README.md) for details.
