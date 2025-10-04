@@ -372,7 +372,6 @@ org.jetbrains.kotlin.psi.KtCallElement:getTypeArgumentList()
 org.jetbrains.kotlin.psi.KtCallElement:getTypeArguments()
 org.jetbrains.kotlin.psi.KtCallElement:getValueArgumentList()
 org.jetbrains.kotlin.psi.KtCallElement:getValueArguments()
-org.jetbrains.kotlin.psi.KtCallExpression
 org.jetbrains.kotlin.psi.KtCallExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtCallExpression:constructor(KotlinPlaceHolderStub<KtCallExpression>)
 org.jetbrains.kotlin.psi.KtCallableDeclaration
