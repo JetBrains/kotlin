@@ -8,6 +8,9 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
+/**
+ * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
+ */
 open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallExpression>>, KtCallElement, KtReferenceExpression {
     constructor(node: ASTNode) : super(node)
 
