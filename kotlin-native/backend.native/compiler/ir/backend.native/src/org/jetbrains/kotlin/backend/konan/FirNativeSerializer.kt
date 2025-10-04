@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.headerCompilation
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
@@ -58,12 +59,12 @@ internal fun PhaseContext.firSerializerBase(
             dependencies = usedResolvedLibraries?.map { it.library as KonanLibrary }.orEmpty(),
             createModuleSerializer = { irDiagnosticReporter ->
                 KonanIrModuleSerializer(
-                    settings = IrSerializationSettings(
-                        configuration = configuration,
-                        publicAbiOnly = produceHeaderKlib,
-                    ),
-                    diagnosticReporter = irDiagnosticReporter,
-                    irBuiltIns = fir2IrOutput?.fir2irActualizedResult?.irBuiltIns!!,
+                        settings = IrSerializationSettings(
+                                configuration = configuration,
+                                publicAbiOnly = produceHeaderKlib || configuration.headerCompilation,
+                        ),
+                        diagnosticReporter = irDiagnosticReporter,
+                        irBuiltIns = fir2IrOutput?.fir2irActualizedResult?.irBuiltIns!!,
                 )
             },
     )
