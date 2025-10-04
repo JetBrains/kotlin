@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMo
 import org.jetbrains.kotlin.backend.konan.PsiToIrOutput
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -38,15 +39,15 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
     val serializedIr = input.psiToIrOutput?.let {
         val ir = it.irModule
         KonanIrModuleSerializer(
-            settings = IrSerializationSettings(
-                configuration = config.configuration,
-                publicAbiOnly = input.produceHeaderKlib,
-            ),
-            KtDiagnosticReporterWithImplicitIrBasedContext(
-                DiagnosticReporterFactory.createPendingReporter(messageCollector),
-                config.languageVersionSettings
-            ),
-            input.psiToIrOutput.irBuiltIns,
+                settings = IrSerializationSettings(
+                        configuration = config.configuration,
+                        publicAbiOnly = input.produceHeaderKlib || config.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode),
+                ),
+                KtDiagnosticReporterWithImplicitIrBasedContext(
+                        DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                        config.languageVersionSettings
+                ),
+                input.psiToIrOutput.irBuiltIns,
         ).serializedIrModule(ir)
     }
 

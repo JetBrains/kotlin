@@ -541,7 +541,8 @@ fun serializeModuleIntoKlib(
             dependencies = dependencies,
             createModuleSerializer = { irDiagnosticReporter ->
                 JsIrModuleSerializer(
-                    settings = IrSerializationSettings(configuration),
+                    settings = IrSerializationSettings(configuration, publicAbiOnly = configuration.languageVersionSettings.getFlag(
+                            AnalysisFlags.headerMode)),
                     irDiagnosticReporter,
                     irBuiltIns,
                 ) { JsIrFileMetadata(moduleExportedNames[it]?.values?.toSmartList() ?: emptyList()) }
