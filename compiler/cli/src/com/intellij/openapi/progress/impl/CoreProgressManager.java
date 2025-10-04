@@ -22,19 +22,13 @@ import com.intellij.openapi.progress.util.TitledIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
-import com.intellij.platform.diagnostic.telemetry.IJTracer;
-import com.intellij.platform.diagnostic.telemetry.TelemetryManager;
-import com.intellij.platform.diagnostic.telemetry.TracerLevel;
-import com.intellij.platform.diagnostic.telemetry.helpers.TraceKt;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.Java11Shim;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ConcurrentLongObjectMap;
 import com.intellij.util.ui.EDT;
-import io.opentelemetry.api.trace.Span;
 import org.jetbrains.annotations.*;
-import org.jetbrains.annotations.ApiStatus.Obsolete;
 
 import javax.swing.*;
 import java.io.StringWriter;
@@ -51,7 +45,6 @@ import static com.intellij.openapi.progress.impl.ProgressManagerScopeKt.Progress
 
 public class CoreProgressManager extends ProgressManager implements Disposable {
   private static final Logger LOG = Logger.getInstance(CoreProgressManager.class);
-  private static final IJTracer progressManagerTracer = TelemetryManager.getInstance().getTracer(ProgressManagerScope);
 
   @ApiStatus.Internal
   public static final int CHECK_CANCELED_DELAY_MILLIS = 10;
@@ -156,29 +149,7 @@ public class CoreProgressManager extends ProgressManager implements Disposable {
 
   @Override
   protected void doCheckCanceled() throws ProcessCanceledException {
-    if (isInNonCancelableSection()) {
-      CheckCanceledBehavior behavior = ourCheckCanceledBehavior;
-      if (behavior != CheckCanceledBehavior.NONE) {
-        ProgressIndicator indicator = behavior == CheckCanceledBehavior.INDICATOR_PLUS_HOOKS ? getProgressIndicator() : null;
-        runCheckCanceledHooks(indicator);
-      }
-      return;
-    }
-
-    Cancellation.ensureActive();
-
-    CheckCanceledBehavior behavior = ourCheckCanceledBehavior;
-    if (behavior == CheckCanceledBehavior.NONE) return;
-
-    if (behavior == CheckCanceledBehavior.INDICATOR_PLUS_HOOKS) {
-      ProgressIndicator progress = getProgressIndicator();
-      if (progress != null) {
-        progress.checkCanceled();
-      }
-    }
-    else {
-      runCheckCanceledHooks(null);
-    }
+      // Do nothing
   }
 
   @Override
@@ -222,17 +193,7 @@ public class CoreProgressManager extends ProgressManager implements Disposable {
         catch (Throwable e) {
           throw new RuntimeException(e);
         }
-        Span span = startProcessSpan(progress);
-        logProcessIndicator(progress, true);
-        if (span == null) {
-          process.run();
-        }
-        else {
-          TraceKt.use(span, (Span __) -> {
-            process.run();
-            return null;
-          });
-        }
+        process.run();
         logProcessIndicator(progress, false);
       }
       finally {
@@ -259,11 +220,6 @@ public class CoreProgressManager extends ProgressManager implements Disposable {
     if (ApplicationManagerEx.isInIntegrationTest()) {
       LOG.info("Progress indicator:" + (started ? "started" : "finished") + ":" + progressText);
     }
-  }
-
-  private static @Nullable Span startProcessSpan(@Nullable ProgressIndicator progress) {
-    String progressText = getProgressIndicatorText(progress);
-    return progressManagerTracer.spanBuilder("Progress: " + progressText, TracerLevel.DEFAULT).startSpan();
   }
 
   private static void assertNoOtherThreadUnder(@NotNull ProgressIndicator progress) {
@@ -355,6 +311,7 @@ public class CoreProgressManager extends ProgressManager implements Disposable {
   }
 
   // bg; runnables on UI/EDT?
+  @SuppressWarnings({"UnstableApiUsage", "deprecation"})
   @Override
   public void runProcessWithProgressAsynchronously(@NotNull Project project,
                                                    @NotNull @NlsContexts.ProgressTitle String progressTitle,
@@ -480,13 +437,11 @@ public class CoreProgressManager extends ProgressManager implements Disposable {
   }
 
   // from any: bg
-  @Obsolete
   public @NotNull Future<?> runProcessWithProgressAsynchronously(@NotNull Task.Backgroundable task) {
     return runProcessWithProgressAsynchronously(task, createDefaultAsynchronousProgressIndicator(task), null);
   }
 
   // from any: bg
-  @Obsolete
   public @NotNull Future<?> runProcessWithProgressAsynchronously(@NotNull Task.Backgroundable task,
                                                         @NotNull ProgressIndicator progressIndicator,
                                                         @Nullable Runnable continuation) {
@@ -528,7 +483,7 @@ public class CoreProgressManager extends ProgressManager implements Disposable {
   }
 
   // from any: bg, task.finish on "UI/EDT"
-  @Obsolete
+  @SuppressWarnings({"deprecation", "UnstableApiUsage"})
   public @NotNull Future<?> runProcessWithProgressAsynchronously(@NotNull Task.Backgroundable task,
                                                         @NotNull ProgressIndicator progressIndicator,
                                                         @Nullable Runnable continuation,
@@ -581,7 +536,7 @@ public class CoreProgressManager extends ProgressManager implements Disposable {
 
   // ASSERT IS EDT->UI bg or calling if can't
   // NEW: no assert; bg or calling ...
-  @Obsolete
+  @SuppressWarnings("deprecation")
   protected boolean runProcessWithProgressSynchronously(@NotNull Task task) {
     if (LOG.isDebugEnabled()) LOG.debug("CoreProgressManager#runProcessWithProgressSynchronously, " + task, new Throwable());
     Ref<Throwable> exceptionRef = new Ref<>();
@@ -621,7 +576,7 @@ public class CoreProgressManager extends ProgressManager implements Disposable {
            isSynchronous(task.asBackgroundable());
   }
 
-  @Obsolete
+  @SuppressWarnings("deprecation")
   public void runProcessWithProgressInCurrentThread(@NotNull Task task,
                                                     @NotNull ProgressIndicator progressIndicator,
                                                     @NotNull ModalityState modalityState) {
