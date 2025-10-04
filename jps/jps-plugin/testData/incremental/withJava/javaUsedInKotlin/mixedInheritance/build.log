@@ -80,15 +80,6 @@ Exit code: OK
 Compiling files:
   src/BaseClass.java
 End of files
-Cleaning output files:
-  out/production/module/DerivedClass1.class
-  out/production/module/META-INF/module.kotlin_module
-End of files
-Compiling files:
-  src/DerivedClass1.kt
-End of files
-Exit code: OK
-------------------------------------------
 
 ================ Step #6 =================
 
