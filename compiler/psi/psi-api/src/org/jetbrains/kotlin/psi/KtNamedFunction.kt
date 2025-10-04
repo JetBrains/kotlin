@@ -110,7 +110,7 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
             var child = firstChild
             while (child != null) {
                 val tt = child.node.elementType
-                if (tt === KtTokens.LPAR || tt === KtTokens.COLON) break
+                if (tt == KtTokens.LPAR || tt == KtTokens.COLON) break
                 if (child is KtTypeReference) {
                     return child
                 }
