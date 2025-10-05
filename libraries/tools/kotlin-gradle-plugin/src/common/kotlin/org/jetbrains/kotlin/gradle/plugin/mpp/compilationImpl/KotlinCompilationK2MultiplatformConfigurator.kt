@@ -92,7 +92,7 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                 compilation.allKotlinSourceSets
                     .groupBy { it.fragmentName() }
                     .map { (fragmentName, sourceSets) ->
-                        val sourceFiles = sourceSets.map { it.kotlin.asFileTree }
+                        val sourceFiles = sourceSets.map { it.internal.allKotlin.asFileTree }
                             .reduce { acc, fileTree -> acc + fileTree }
                         K2MultiplatformStructure.Fragment(
                             fragmentName,
