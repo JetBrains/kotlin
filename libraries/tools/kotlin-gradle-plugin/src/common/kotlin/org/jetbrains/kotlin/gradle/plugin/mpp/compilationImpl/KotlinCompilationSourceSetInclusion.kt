@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
@@ -97,7 +98,7 @@ internal class KotlinCompilationSourceSetInclusion(
                 taskName = compilation.compileKotlinTaskName,
                 sourceFileExtensions = sourceSet.customSourceFilesExtensions,
                 addAsCommonSources = addAsCommonSources,
-                sources = { sourceSet.kotlin }
+                sources = { sourceSet.internal.allKotlin }
             )
 
             compilation.project.whenKaptEnabled {
@@ -107,7 +108,7 @@ internal class KotlinCompilationSourceSetInclusion(
                     taskName = kaptGenerateStubsTaskName,
                     sourceFileExtensions = sourceSet.customSourceFilesExtensions,
                     addAsCommonSources = addAsCommonSources,
-                    sources = { sourceSet.kotlin }
+                    sources = { sourceSet.internal.allKotlin }
                 )
             }
         }
@@ -115,7 +116,7 @@ internal class KotlinCompilationSourceSetInclusion(
 
     object NativeAddSourcesToCompileTask : AddSourcesToCompileTask {
         override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-            val sourceFiles = { sourceSet.kotlin }
+            val sourceFiles = { sourceSet.internal.allKotlin }
             compilation.project.tasks.withType(KotlinNativeCompile::class.java)
                 .matching { it.name == compilation.compileKotlinTaskName }
                 .configureEach { task ->

@@ -12,6 +12,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.Future
@@ -24,7 +25,7 @@ internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: St
     sourcesJarTask(
         project = compilation.target.project,
         sourceSets = compilation.target.project.future {
-            compilation.internal.awaitAllKotlinSourceSets().associate { it.name to it.kotlin }
+            compilation.internal.awaitAllKotlinSourceSets().associate { it.name to it.internal.allKotlin }
         },
         componentName = componentName,
         artifactNameAppendix = artifactNameAppendix
@@ -73,7 +74,7 @@ internal fun sourcesJarTaskNamed(
 
 internal fun Jar.includeSources(compilation: KotlinCompilation<*>) {
     compilation.internal.allKotlinSourceSets.forAll { sourceSet ->
-        includeSources(sourceSet.name, sourceSet.kotlin)
+        includeSources(sourceSet.name, sourceSet.internal.allKotlin)
     }
 }
 
