@@ -9,8 +9,11 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -41,11 +44,13 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override val runtimeOnlyConfigurationName: String
         get() = disambiguateName(RUNTIME_ONLY)
 
-    override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source")
+    override val kotlin: SourceDirectorySet = project.objects
+        .kotlinSourceDirectorySet(name, "kotlin", "sources")
 
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder(project)
 
-    internal var actualResources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
+    internal var actualResources: SourceDirectorySet = project.objects
+        .kotlinSourceDirectorySet(name, "resources", "resources")
 
     override val resources: SourceDirectorySet get() = actualResources
 
@@ -102,6 +107,22 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     @Deprecated("KT-80897. Keep ABI compatibility with kotlinx-benchmarks", level = DeprecationLevel.ERROR)
     override val implementationMetadataConfigurationName: String
         get() = lowerCamelCaseName(implementationConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
+
+    @ExperimentalKotlinGradlePluginApi
+    override val generatedKotlin: SourceDirectorySet = project.objects
+        .kotlinSourceDirectorySet(name, "generatedKotlin", "generated sources")
+        .apply {
+            destinationDirectory.convention(kotlin.destinationDirectory)
+        }
+
+    override val allKotlin = project.objects.kotlinSourceDirectorySet(name, "allKotlin", "all sources")
+        .apply {
+            source(kotlin)
+            source(generatedKotlin)
+        }
+
+    @ExperimentalKotlinGradlePluginApi
+    override val allKotlinSources: FileCollection get() = allKotlin
 }
 
 internal val defaultSourceSetLanguageSettingsChecker =
@@ -120,8 +141,11 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
     return lowerCamelCaseName(*nameParts.toTypedArray())
 }
 
-internal fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
-    project.objects.sourceDirectorySet(name!!, name)
+private fun ObjectFactory.kotlinSourceDirectorySet(
+    name: String,
+    type: String,
+    typeDescription: String,
+): SourceDirectorySet = sourceDirectorySet(type, "$name Kotlin $typeDescription")
 
 val Iterable<KotlinSourceSet>.dependsOnClosure: Set<KotlinSourceSet>
     get() = flatMap { it.internal.dependsOnClosure }.toSet() - this.toSet()

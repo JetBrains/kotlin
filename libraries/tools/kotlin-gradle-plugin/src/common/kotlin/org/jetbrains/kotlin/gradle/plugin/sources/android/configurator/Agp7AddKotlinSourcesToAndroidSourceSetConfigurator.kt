@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.utils.*
 
-object Agp7AddKotlinSourcesToAndroidSourceSetConfigurator: KotlinAndroidSourceSetConfigurator {
+object Agp7AddKotlinSourcesToAndroidSourceSetConfigurator : KotlinAndroidSourceSetConfigurator {
     override fun configure(
         target: KotlinAndroidTarget,
         kotlinSourceSet: KotlinSourceSet,
