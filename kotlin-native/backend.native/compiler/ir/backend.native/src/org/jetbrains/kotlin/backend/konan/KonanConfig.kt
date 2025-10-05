@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
 import org.jetbrains.kotlin.config.nativeBinaryOptions.AppStateTracking
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
@@ -36,113 +35,25 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeLinkageStrategy
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SourceInfoType
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
-import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.visibleName
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.needSmallBinary
+import org.jetbrains.kotlin.konan.target.supportedSanitizers
+import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
+import org.jetbrains.kotlin.konan.target.supportsObjcInterop
+import org.jetbrains.kotlin.konan.target.supportsSignposts
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
-
-/**
- * This interface exists not because it is a good abstraction. Rather, it emerged
- * from the need to extract src -> klib compilation from the /kotlin-native directory.
- */
-interface AbstractKonanConfig {
-
-    val project: Project
-
-    val configuration: CompilerConfiguration
-
-    val target: KonanTarget
-
-    val resolve: KonanLibrariesResolveSupport
-
-    val resolvedLibraries get() = resolve.resolvedLibraries
-
-    val moduleId: String
-
-    val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
-
-    val metadataKlib get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
-
-    val headerKlibPath get() = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffixIfPresent(".klib")
-
-    val friendModuleFiles: Set<File>
-        get() = configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
-
-    val refinesModuleFiles: Set<File>
-        get() = configuration.get(KonanConfigKeys.REFINES_MODULES)?.map { File(it) }?.toSet().orEmpty()
-
-    val nativeLibraries: List<String>
-        get() = configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
-
-    val includeBinaries: List<String>
-        get() = configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
-
-    val writeDependenciesOfProducedKlibTo
-        get() = configuration.get(KonanConfigKeys.WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)
-
-    val nativeTargetsForManifest
-        get() = configuration.get(KonanConfigKeys.MANIFEST_NATIVE_TARGETS)
-
-    val manifestProperties: Properties?
-
-    val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
-
-    val fullExportedNamePrefix: String
-        get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX)!!
-
-    val shortModuleName: String?
-        get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
-
-    val outputPath: String
-        get() = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
-
-    val languageVersionSettings: LanguageVersionSettings
-        get() = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
-
-    val purgeUserLibs: Boolean
-        get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
-
-    val unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport
-        get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.DEFAULT
-
-    fun librariesWithDependencies(): List<KonanLibrary> {
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
-    }
-}
-
-/**
- * Simpler version of [KonanConfig] which is enough for src -> klib compilation.
- */
-class LightKonanConfig(
-        override val project: Project,
-        override val configuration: CompilerConfiguration,
-        distributionKlibPath: String,
-) : AbstractKonanConfig {
-    override val target: KonanTarget = HostManager().targetManager(configuration.get(KonanConfigKeys.TARGET)).target
-
-    override val resolve: KonanLibrariesResolveSupport = KonanLibrariesResolveSupport(
-            configuration, target, distributionKlibPath, resolveManifestDependenciesLenient = true
-    )
-
-    override val moduleId: String
-        get() = configuration.get(KonanConfigKeys.MODULE_NAME)!!
-
-    override val manifestProperties: Properties? = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
-        File(it).loadProperties()
-    }
-
-    override val fullExportedNamePrefix: String
-        get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX)!!
-}
 
 class KonanConfig(override val project: Project, override val configuration: CompilerConfiguration) : AbstractKonanConfig {
     /**
@@ -178,11 +89,11 @@ class KonanConfig(override val project: Project, override val configuration: Com
         }
 
         Distribution(
-                configuration.get(KonanConfigKeys.KONAN_HOME) ?: KotlinNativePaths.homePath.absolutePath,
-                false,
-                configuration.get(KonanConfigKeys.RUNTIME_FILE),
-                overridenProperties,
-                configuration.get(KonanConfigKeys.KONAN_DATA_DIR)
+            configuration.get(KonanConfigKeys.KONAN_HOME) ?: KotlinNativePaths.homePath.absolutePath,
+            false,
+            configuration.get(KonanConfigKeys.RUNTIME_FILE),
+            overridenProperties,
+            configuration.get(KonanConfigKeys.KONAN_DATA_DIR)
         )
     }
 
@@ -349,14 +260,16 @@ class KonanConfig(override val project: Project, override val configuration: Com
         val mutatorsCooperate = configuration.get(BinaryOptions.gcMutatorsCooperate)
         if (gcMarkSingleThreaded) {
             if (mutatorsCooperate == true) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                        "Mutators cooperation is not supported during single threaded mark")
+                configuration.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "Mutators cooperation is not supported during single threaded mark")
             }
             false
         } else if (gc == GC.CONCURRENT_MARK_AND_SWEEP) {
             if (mutatorsCooperate == true) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                        "Mutators cooperation is not yet supported in CMS GC")
+                configuration.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "Mutators cooperation is not yet supported in CMS GC")
             }
             false
         } else {
@@ -368,8 +281,9 @@ class KonanConfig(override val project: Project, override val configuration: Com
         val auxGCThreads = configuration.get(BinaryOptions.auxGCThreads)
         if (gcMarkSingleThreaded) {
             if (auxGCThreads != null && auxGCThreads != 0U) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                        "Auxiliary GC workers are not supported during single threaded mark")
+                configuration.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "Auxiliary GC workers are not supported during single threaded mark")
             }
             0U
         } else {
@@ -397,7 +311,7 @@ class KonanConfig(override val project: Project, override val configuration: Com
         configuration
                 .get(BinaryOptions.objcExportEntryPointsPath)
                 ?.let { File(it).readObjCEntryPoints() }
-                ?: ObjCEntryPoints.ALL
+                ?: ObjCEntryPoints.Companion.ALL
     }
 
     /**
@@ -463,7 +377,7 @@ class KonanConfig(override val project: Project, override val configuration: Com
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
         if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
-            error("Target ${target.visibleName} is not available for output kind '${produce}' on the ${HostManager.hostName} host")
+            error("Target ${target.visibleName} is not available for output kind '${produce}' on the ${HostManager.Companion.hostName} host")
         }
     }
 
@@ -479,19 +393,28 @@ class KonanConfig(override val project: Project, override val configuration: Com
 
     internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
 
-    override val resolve = KonanLibrariesResolveSupport(
+    private val resolve = KonanLibrariesResolveSupport(
             configuration, target, distribution.klib, resolveManifestDependenciesLenient = true
     )
+
+    override val includedLibraries: List<KonanLibrary>
+        get() = resolve.includedLibraries
+
+    override val resolvedLibraries: KotlinLibraryResolveResult
+        get() = resolve.resolvedLibraries
+
+    override val exportedLibraries: List<KonanLibrary>
+        get() = resolve.includedLibraries
 
     internal val externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File)
 
     internal val userVisibleIrModulesSupport = KonanUserVisibleIrModulesSupport(
-            externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.from(
-                    externalDependenciesFile = externalDependenciesFile,
-                    onMalformedExternalDependencies = { warningMessage ->
-                        configuration.report(CompilerMessageSeverity.STRONG_WARNING, warningMessage)
-                    }),
-            konanKlibDir = File(distribution.klib)
+        externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.from(
+            externalDependenciesFile = externalDependenciesFile,
+            onMalformedExternalDependencies = { warningMessage ->
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, warningMessage)
+            }),
+        konanKlibDir = File(distribution.klib)
     )
 
     override val fullExportedNamePrefix: String
@@ -541,7 +464,7 @@ class KonanConfig(override val project: Project, override val configuration: Com
     internal val entryPointName: String by lazy {
         if (target.family == Family.ANDROID) {
             val androidProgramType = configuration.get(BinaryOptions.androidProgramType)
-                    ?: AndroidProgramType.Default
+                    ?: AndroidProgramType.Companion.Default
             val konanMainOverride = androidProgramType.konanMainOverride
             if (konanMainOverride != null) {
                 return@lazy konanMainOverride
@@ -683,8 +606,9 @@ class KonanConfig(override val project: Project, override val configuration: Com
     internal val omitFrameworkBinary: Boolean by lazy {
         configuration.getBoolean(KonanConfigKeys.OMIT_FRAMEWORK_BINARY).also {
             if (it && produce != CompilerOutputKind.FRAMEWORK) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                        "Trying to disable framework binary compilation when producing ${produce.name.lowercase()} is meaningless.")
+                configuration.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "Trying to disable framework binary compilation when producing ${produce.name.lowercase()} is meaningless.")
             }
         }
     }
@@ -719,8 +643,9 @@ class KonanConfig(override val project: Project, override val configuration: Com
         val path = configuration.get(KonanConfigKeys.SAVE_LLVM_IR_DIRECTORY)
         if (path == null) {
             val tempDir = Files.createTempDirectory(Paths.get(StandardSystemProperty.JAVA_IO_TMPDIR.value()!!), /* prefix= */ null).toFile()
-            configuration.report(CompilerMessageSeverity.WARNING,
-                    "Temporary directory for LLVM IR is ${tempDir.canonicalPath}")
+            configuration.report(
+                CompilerMessageSeverity.WARNING,
+                "Temporary directory for LLVM IR is ${tempDir.canonicalPath}")
             tempDir
         } else {
             java.io.File(path)

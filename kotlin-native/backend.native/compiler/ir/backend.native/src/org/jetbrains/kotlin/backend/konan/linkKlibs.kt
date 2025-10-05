@@ -136,7 +136,7 @@ internal fun LinkKlibsContext.linkKlibs(
 
         val friendModulesMap = (
                 listOf(moduleDescriptor.name.asStringStripSpecialMarkers()) +
-                        config.resolve.includedLibraries.map { it.uniqueName }
+                        config.includedLibraries.map { it.uniqueName }
                 ).associateWith { friendModules }
 
         KonanIrLinker(
