@@ -101,7 +101,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
-    private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun <T: LightPhaseContext> produceKlib(engine: PhaseEngine<T>, config: AbstractKonanConfig, environment: KotlinCoreEnvironment) {
         val serializerOutput = if (environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
             serializeKLibK2(engine, config, environment)
         else
@@ -158,9 +158,9 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         }
     }
 
-    private fun serializeKlibK1(
-            engine: PhaseEngine<PhaseContext>,
-            config: KonanConfig,
+    private fun <T : LightPhaseContext> serializeKlibK1(
+            engine: PhaseEngine<T>,
+            config: AbstractKonanConfig,
             environment: KotlinCoreEnvironment
     ): SerializerOutput? {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return null

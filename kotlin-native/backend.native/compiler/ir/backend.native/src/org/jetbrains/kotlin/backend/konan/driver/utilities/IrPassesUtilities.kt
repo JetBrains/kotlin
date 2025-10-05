@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.backend.konan.driver.utilities
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.backend.common.phaser.getIrDumper
 import org.jetbrains.kotlin.backend.common.phaser.getIrValidator
+import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 
 /**
  * IR dump and verify actions.
  */
-internal fun <Data, Context : PhaseContext> getDefaultIrActions(): Set<Action<Data, Context>> = setOfNotNull(
+internal fun <Data, Context : LightPhaseContext> getDefaultIrActions(): Set<Action<Data, Context>> = setOfNotNull(
         getIrDumper(),
         getIrValidator(checkTypes = true)
 )

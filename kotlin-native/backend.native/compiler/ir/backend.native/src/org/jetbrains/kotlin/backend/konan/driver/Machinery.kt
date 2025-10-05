@@ -45,11 +45,9 @@ internal interface PerformanceManagerContext {
  */
 internal interface LightPhaseContext : LoggingContext, LightConfigChecks, ErrorReportingContext, DisposableContext, PerformanceManagerContext
 
-internal interface PhaseContext : LightPhaseContext, ConfigChecks
-
-internal open class BasicPhaseContext(
-        override val config: KonanConfig,
-) : PhaseContext {
+internal open class BasicLightPhaseContext(
+        override val config: AbstractKonanConfig,
+) : LightPhaseContext {
     override var inVerbosePhase = false
 
     override val messageCollector: MessageCollector
@@ -62,6 +60,12 @@ internal open class BasicPhaseContext(
     override val performanceManager: PerformanceManager?
         get() = config.configuration.perfManager
 }
+
+internal interface PhaseContext : LightPhaseContext, ConfigChecks
+
+internal open class BasicPhaseContext(
+        override val config: KonanConfig,
+) : BasicLightPhaseContext(config), PhaseContext
 
 internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
     val phaserState = PhaserState()

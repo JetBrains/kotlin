@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -47,7 +47,7 @@ internal class PsiToIrOutput(
         get() = irModule
 }
 
-internal interface PsiToIrContext : PhaseContext {
+internal interface PsiToIrContext : LightPhaseContext {
     val symbolTable: SymbolTable?
 
     val reflectionTypes: KonanReflectionTypes

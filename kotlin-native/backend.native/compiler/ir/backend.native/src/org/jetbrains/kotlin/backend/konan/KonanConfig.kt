@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
 import org.jetbrains.kotlin.config.nativeBinaryOptions.AppStateTracking
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
@@ -95,11 +96,27 @@ interface AbstractKonanConfig {
 
     val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
 
+    val fullExportedNamePrefix: String
+        get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX)!!
+
     val shortModuleName: String?
         get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
 
     val outputPath: String
         get() = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
+
+    val languageVersionSettings: LanguageVersionSettings
+        get() = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
+
+    val purgeUserLibs: Boolean
+        get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
+
+    val unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport
+        get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.DEFAULT
+
+    fun librariesWithDependencies(): List<KonanLibrary> {
+        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
+    }
 }
 
 /**
@@ -122,6 +139,9 @@ class LightKonanConfig(
     override val manifestProperties: Properties? = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
         File(it).loadProperties()
     }
+
+    override val fullExportedNamePrefix: String
+        get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX)!!
 }
 
 class KonanConfig(override val project: Project, override val configuration: CompilerConfiguration) : AbstractKonanConfig {
@@ -459,9 +479,6 @@ class KonanConfig(override val project: Project, override val configuration: Com
 
     internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
 
-    internal val purgeUserLibs: Boolean
-        get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
-
     override val resolve = KonanLibrariesResolveSupport(
             configuration, target, distribution.klib, resolveManifestDependenciesLenient = true
     )
@@ -477,15 +494,11 @@ class KonanConfig(override val project: Project, override val configuration: Com
             konanKlibDir = File(distribution.klib)
     )
 
-    val fullExportedNamePrefix: String
+    override val fullExportedNamePrefix: String
         get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
 
     override val moduleId: String
         get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: implicitModuleName
-
-    fun librariesWithDependencies(): List<KonanLibrary> {
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
-    }
 
     private val defaultAllocationMode
         get() = AllocationMode.CUSTOM
@@ -517,9 +530,6 @@ class KonanConfig(override val project: Project, override val configuration: Com
         configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
     }
 
-    internal val languageVersionSettings =
-            configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
-
     private val defaultPropertyLazyInitialization = true
     internal val propertyLazyInitialization: Boolean
         get() = configuration.get(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION)?.also {
@@ -539,9 +549,6 @@ class KonanConfig(override val project: Project, override val configuration: Com
         }
         "Konan_main"
     }
-
-    internal val unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport
-        get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.DEFAULT
 
     internal val testDumpFile: File? = configuration[KonanConfigKeys.TEST_DUMP_OUTPUT_PATH]?.let(::File)
 
