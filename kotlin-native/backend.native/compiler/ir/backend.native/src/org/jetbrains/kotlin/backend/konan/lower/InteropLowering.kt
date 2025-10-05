@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
-import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
+import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.descriptors.ClassKind

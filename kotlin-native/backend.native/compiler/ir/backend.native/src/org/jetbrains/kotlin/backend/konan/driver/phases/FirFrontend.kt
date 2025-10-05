@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.firFrontendWithLightTree
 import org.jetbrains.kotlin.backend.konan.firFrontendWithPsi
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots

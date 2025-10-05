@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols

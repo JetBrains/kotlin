@@ -6,21 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 /**
- * Simpler version of [ConfigChecks] that doesn't require [KonanConfig].
- */
-interface LightConfigChecks {
-    val config: AbstractKonanConfig
-
-    fun shouldExportKDoc() = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC)
-
-    fun shouldVerifyBitCode() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)
-
-    fun shouldPrintBitCode() = config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE)
-
-    fun shouldPrintFiles() = config.configuration.getBoolean(KonanConfigKeys.PRINT_FILES)
-}
-
-/**
  * Convenient methods to check compilation parameters.
  */
 interface ConfigChecks : LightConfigChecks {

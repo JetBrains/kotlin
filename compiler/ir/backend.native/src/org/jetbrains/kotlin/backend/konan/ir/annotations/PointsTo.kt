@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
  *   4      p1.intestines -> p2.intestines
  */
 @JvmInline
-internal value class PointsToKind private constructor(private val value: Int) {
+value class PointsToKind private constructor(private val value: Int) {
     val sourceIsDirect: Boolean
         get() = value < 3
 
@@ -43,7 +43,7 @@ internal value class PointsToKind private constructor(private val value: Int) {
  * A representation of `@PointsTo` annotation.
  */
 @JvmInline
-internal value class PointsTo private constructor(private val elements: IntArray) {
+value class PointsTo private constructor(private val elements: IntArray) {
     constructor(elements: List<Int>, signatureSize: Int) : this(elements.toIntArray()) {
         assertIsValidFor(signatureSize)
     }
@@ -79,7 +79,7 @@ internal value class PointsTo private constructor(private val elements: IntArray
 /**
  * Get `@PointsTo` signature for the function if any.
  */
-internal val IrFunction.pointsTo: PointsTo?
+val IrFunction.pointsTo: PointsTo?
     get() = annotations.findAnnotation(NativeRuntimeNames.Annotations.PointsTo.asSingleFqName())?.run {
         PointsTo((arguments[0]!! as IrVararg).elements.map { (it as IrConst).value as Int }, allParameters.size + 1)
     }
