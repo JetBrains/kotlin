@@ -91,7 +91,7 @@ internal sealed class KotlinCompilationInfo {
             get() = project.filesProvider { origin.compileDependencyFiles }
 
         override val sources: List<SourceDirectorySet>
-            get() = origin.allKotlinSourceSets.map { it.kotlin }
+            get() = origin.allKotlinSourceSets.flatMap { listOf(it.kotlin, it.generatedKotlin) }
 
         override val displayName: String
             get() = "compilation '${compilation.name}' in target '${compilation.target.name}'"

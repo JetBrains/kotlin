@@ -1287,8 +1287,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceS
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet$Companion;
 	public abstract fun addCustomSourceFilesExtensions (Ljava/util/List;)V
 	public abstract fun dependsOn (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)V
+	public abstract fun getAllKotlinSources ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun getCustomSourceFilesExtensions ()Ljava/lang/Iterable;
 	public abstract fun getDependsOn ()Ljava/util/Set;
+	public abstract fun getGeneratedKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
 	public abstract synthetic fun getImplementationMetadataConfigurationName ()Ljava/lang/String;
 	public abstract fun getKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/plugin/LanguageSettingsBuilder;
