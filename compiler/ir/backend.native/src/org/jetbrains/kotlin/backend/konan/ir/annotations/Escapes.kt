@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames.Annotations.EscapesNothing
  * A representation of `@Escapes` and `@Escapes.Nothing` annotations.
  */
 @JvmInline
-internal value class Escapes private constructor(private val mask: Int) {
+value class Escapes private constructor(private val mask: Int) {
     constructor(mask: Int, signatureSize: Int) : this(mask) {
         assertIsValidFor(signatureSize)
     }
@@ -45,7 +45,7 @@ internal value class Escapes private constructor(private val mask: Int) {
 /**
  * Get `@Escapes` signature for the function if any.
  */
-internal val IrFunction.escapes: Escapes?
+val IrFunction.escapes: Escapes?
     get() = annotations.findAnnotation(NativeRuntimeNames.Annotations.Escapes.asSingleFqName())?.run {
         Escapes((arguments[0]!! as IrConst).value as Int, allParameters.size + 1)
     } ?: annotations.findAnnotation(EscapesNothing.asSingleFqName())?.let { Escapes(0, allParameters.size + 1) }

@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.ir.getIntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.isConstantConstructorIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.isTypedIntrinsic
 import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
@@ -18,101 +19,6 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.isInterface
-
-internal enum class IntrinsicType {
-    PLUS,
-    MINUS,
-    TIMES,
-    SIGNED_DIV,
-    SIGNED_REM,
-    INC,
-    DEC,
-    UNARY_PLUS,
-    UNARY_MINUS,
-    SHL,
-    SHR,
-    USHR,
-    AND,
-    OR,
-    XOR,
-    INV,
-    SIGN_EXTEND,
-    ZERO_EXTEND,
-    INT_TRUNCATE,
-    FLOAT_TRUNCATE,
-    FLOAT_EXTEND,
-    SIGNED_TO_FLOAT,
-    UNSIGNED_TO_FLOAT,
-    SIGNED_COMPARE_TO,
-    UNSIGNED_COMPARE_TO,
-    NOT,
-    REINTERPRET,
-    EXTRACT_ELEMENT,
-    ARE_EQUAL_BY_VALUE,
-    IEEE_754_EQUALS,
-    // OBJC
-    OBJC_GET_MESSENGER,
-    OBJC_GET_MESSENGER_STRET,
-    OBJC_GET_OBJC_CLASS,
-    OBJC_CREATE_SUPER_STRUCT,
-    OBJC_INIT_BY,
-    OBJC_GET_SELECTOR,
-    BLOCK_PTR_TO_FUNCTION_OBJECT,
-    // Other
-    CREATE_UNINITIALIZED_INSTANCE,
-    CREATE_UNINITIALIZED_ARRAY,
-    CREATE_EMPTY_STRING,
-    IDENTITY,
-    IMMUTABLE_BLOB,
-    INIT_INSTANCE,
-    IS_SUBTYPE,
-    THE_UNIT_INSTANCE,
-    // Enums
-    ENUM_VALUES,
-    ENUM_VALUE_OF,
-    ENUM_ENTRIES,
-    // Coroutines
-    GET_CONTINUATION,
-    RETURN_IF_SUSPENDED,
-    SAVE_COROUTINE_STATE,
-    RESTORE_COROUTINE_STATE,
-    // Interop
-    INTEROP_READ_BITS,
-    INTEROP_WRITE_BITS,
-    INTEROP_READ_PRIMITIVE,
-    INTEROP_WRITE_PRIMITIVE,
-    INTEROP_GET_POINTER_SIZE,
-    INTEROP_NATIVE_PTR_TO_LONG,
-    INTEROP_NATIVE_PTR_PLUS_LONG,
-    INTEROP_GET_NATIVE_NULL_PTR,
-    INTEROP_CONVERT,
-    INTEROP_BITS_TO_FLOAT,
-    INTEROP_BITS_TO_DOUBLE,
-    INTEROP_SIGN_EXTEND,
-    INTEROP_NARROW,
-    INTEROP_STATIC_C_FUNCTION,
-    INTEROP_FUNPTR_INVOKE,
-    // Worker
-    WORKER_EXECUTE,
-    // Atomics
-    ATOMIC_GET_FIELD,
-    ATOMIC_SET_FIELD,
-    COMPARE_AND_SET_FIELD,
-    COMPARE_AND_EXCHANGE_FIELD,
-    GET_AND_SET_FIELD,
-    GET_AND_ADD_FIELD,
-    COMPARE_AND_SET,
-    COMPARE_AND_EXCHANGE,
-    GET_AND_SET,
-    GET_AND_ADD,
-    // Atomic arrays
-    ATOMIC_GET_ARRAY_ELEMENT,
-    ATOMIC_SET_ARRAY_ELEMENT,
-    COMPARE_AND_EXCHANGE_ARRAY_ELEMENT,
-    COMPARE_AND_SET_ARRAY_ELEMENT,
-    GET_AND_SET_ARRAY_ELEMENT,
-    GET_AND_ADD_ARRAY_ELEMENT
-}
 
 internal enum class ConstantConstructorIntrinsicType {
     KCLASS_IMPL,
@@ -138,23 +44,6 @@ internal interface IntrinsicGeneratorEnvironment {
 
     fun getStaticFieldPointer(field: IrField): LLVMValueRef
 }
-
-internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType? =
-        tryGetIntrinsicType(callSite.symbol.owner)
-
-internal fun tryGetIntrinsicType(function: IrFunction): IntrinsicType? =
-        if (function.isTypedIntrinsic) getIntrinsicType(function) else null
-
-private fun getIntrinsicType(callSite: IrFunctionAccessExpression) = getIntrinsicType(callSite.symbol.owner)
-
-private fun getIntrinsicType(function: IrFunction): IntrinsicType {
-    val annotation = function.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
-    val value = annotation.getAnnotationStringValue()!!
-    return IntrinsicType.valueOf(value)
-}
-
-internal fun tryGetConstantConstructorIntrinsicType(constructor: IrConstructorSymbol): ConstantConstructorIntrinsicType? =
-        if (constructor.owner.isConstantConstructorIntrinsic) getConstantConstructorIntrinsicType(constructor) else null
 
 private fun getConstantConstructorIntrinsicType(constructor: IrConstructorSymbol): ConstantConstructorIntrinsicType {
     val annotation = constructor.owner.annotations.findAnnotation(KonanFqNames.constantConstructorIntrinsic)!!
