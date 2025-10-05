@@ -3281,6 +3281,18 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       }
 
       @Test
+      @TestMetadata("annotationTargetsWithKlibAnnotationsInMetadata.kt")
+      public void testAnnotationTargetsWithKlibAnnotationsInMetadata() {
+        runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/annotationTargetsWithKlibAnnotationsInMetadata.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationTargetsWithoutKlibAnnotationsInMetadata.kt")
+      public void testAnnotationTargetsWithoutKlibAnnotationsInMetadata() {
+        runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/annotationTargetsWithoutKlibAnnotationsInMetadata.kt");
+      }
+
+      @Test
       @TestMetadata("ConstValInMultifileClass.kt")
       public void testConstValInMultifileClass() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/ConstValInMultifileClass.kt");
