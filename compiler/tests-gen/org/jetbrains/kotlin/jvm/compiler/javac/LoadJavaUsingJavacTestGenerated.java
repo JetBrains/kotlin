@@ -4638,6 +4638,16 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/AnnotationInAnnotationArguments.kt");
       }
 
+      @TestMetadata("annotationTargetsWithKlibAnnotationsInMetadata.kt")
+      public void testAnnotationTargetsWithKlibAnnotationsInMetadata() {
+        runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/annotationTargetsWithKlibAnnotationsInMetadata.kt");
+      }
+
+      @TestMetadata("annotationTargetsWithoutKlibAnnotationsInMetadata.kt")
+      public void testAnnotationTargetsWithoutKlibAnnotationsInMetadata() {
+        runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/annotationTargetsWithoutKlibAnnotationsInMetadata.kt");
+      }
+
       @TestMetadata("ConstValInMultifileClass.kt")
       public void testConstValInMultifileClass() {
         runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/ConstValInMultifileClass.kt");
