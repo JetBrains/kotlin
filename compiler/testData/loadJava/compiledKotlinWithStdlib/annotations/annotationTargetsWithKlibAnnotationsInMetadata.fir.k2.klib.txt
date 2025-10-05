@@ -1,0 +1,52 @@
+public final fun R|kotlin/Any|.ff(): R|kotlin/Unit|
+
+field:@PROPERTY_DELEGATE_FIELD:R|test/A|(s = String(delegate)) public final val @RECEIVER:R|test/A|(s = String(property-receiver)) R|kotlin/Any|.pp: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+
+public final fun topLevel(): R|kotlin/Unit|
+
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Repeatable|() public final annotation class A : R|kotlin/Annotation| {
+    public final val s: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(s: R|kotlin/String|): R|test/A|
+
+}
+
+@R|test/A|(s = String(class-1)) @R|test/A|(s = String(class-2)) public final class C<@R|test/A|(s = String(class-type-param)) T> : R|kotlin/Any| {
+    @R|test/A|(s = String(fun)) public final fun <@R|test/A|(s = String(fun-type-param)) T> f(@R|test/A|(s = String(fun-param-1)) @R|test/A|(s = String(fun-param-2)) r: R|kotlin/Any|): R|@R|test/A|(s = String(return-type))  kotlin/Unit|
+
+    @PROPERTY:R|test/A|(s = String(ctor-property)) public final val p: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    @PROPERTY:R|test/A|(s = String(property)) field:@FIELD:R|test/A|(s = String(field)) public final var q: R|kotlin/Int|
+        @PROPERTY_GETTER:R|test/A|(s = String(getter)) public get(): R|kotlin/Int|
+        @PROPERTY_SETTER:R|test/A|(s = String(setter)) public set(@R|test/A|(s = String(setparam-1)) @R|test/A|(s = String(setparam-2)) value: R|kotlin/Int|): R|kotlin/Unit|
+
+    @R|test/A|(s = String(primary-ctor)) public constructor<@R|test/A|(s = String(class-type-param)) T>(@R|test/A|(s = String(ctor-param)) p: R|kotlin/Int|): R|test/C<T>|
+
+    @R|test/A|(s = String(secondary-ctor)) public constructor<@R|test/A|(s = String(class-type-param)) T>(): R|test/C<T>|
+
+    @R|test/A|(s = String(nested-class)) public final class Nested : R|kotlin/Any| {
+        public constructor(): R|test/C.Nested|
+
+    }
+
+}
+
+public final enum class E : R|kotlin/Enum<test/E>| {
+    private constructor(): R|test/E|
+
+    @R|test/A|(s = String(enum-entry)) public final static enum entry ENTRY: R|test/E|
+    public final static fun values(): R|kotlin/Array<test/E>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/E| {
+    }
+
+    public final static val entries: R|kotlin/enums/EnumEntries<test/E>|
+        public get(): R|kotlin/enums/EnumEntries<test/E>|
+
+}
+
+@R|test/A|(s = String(typealias)) public final typealias Z = R|kotlin/String|
