@@ -1,0 +1,48 @@
+package test
+
+@delegate:test.A(s = "delegate") public val @receiver:test.A(s = "property-receiver") kotlin.Any.pp: kotlin.Int
+    public fun @receiver:test.A(s = "property-receiver") kotlin.Any.`<get-pp>`(): kotlin.Int
+public fun topLevel(): kotlin.Unit
+public fun @receiver:test.A(s = "fun-receiver") kotlin.Any.ff(): kotlin.Unit
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Repeatable public final annotation class A : kotlin.Annotation {
+    /*primary*/ public constructor A(/*0*/ s: kotlin.String)
+    public final val s: kotlin.String
+        public final fun `<get-s>`(): kotlin.String
+}
+
+@test.A(s = "class-1") @test.A(s = "class-2") public final class C</*0*/ @test.A(s = "class-type-param") T> {
+    @test.A(s = "secondary-ctor") public constructor C</*0*/ @test.A(s = "class-type-param") T>()
+    /*primary*/ @test.A(s = "primary-ctor") public constructor C</*0*/ @test.A(s = "class-type-param") T>(/*0*/ @test.A(s = "ctor-param") p: kotlin.Int)
+    @test.A(s = "ctor-property") public final val p: kotlin.Int
+        public final fun `<get-p>`(): kotlin.Int
+    @test.A(s = "property") @field:test.A(s = "field") public final var q: kotlin.Int
+        @test.A(s = "getter") public final fun `<get-q>`(): kotlin.Int
+        @test.A(s = "setter") public final fun `<set-q>`(/*0*/ @test.A(s = "setparam-1") @test.A(s = "setparam-2") value: kotlin.Int): kotlin.Unit
+    @test.A(s = "fun") public final fun </*0*/ @test.A(s = "fun-type-param") T> f(/*0*/ @test.A(s = "fun-param-1") @test.A(s = "fun-param-2") r: kotlin.Any): @test.A(s = "return-type") kotlin.Unit
+
+    @test.A(s = "nested-class") public final class Nested {
+        /*primary*/ public constructor Nested()
+    }
+}
+
+public final enum class E : kotlin.Enum<test.E> {
+    @test.A(s = "enum-entry") enum entry ENTRY
+
+    /*primary*/ private constructor E()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.E!>!
+
+    // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.E>
+        public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<test.E>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.E
+    public final /*synthesized*/ fun values(): kotlin.Array<test.E>
+}
+@test.A(s = "typealias") public typealias Z = kotlin.String
