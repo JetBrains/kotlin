@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.checkers.EscapeAnalysisChecker
+import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
@@ -46,7 +47,7 @@ import java.io.File
  * TODO: Should be moved to compiler frontend after K2.
  */
 internal class SpecialBackendChecksTraversal(
-        private val context: PhaseContext,
+        private val context: LightPhaseContext,
         private val symbols: KonanSymbols,
         private val irBuiltIns: IrBuiltIns,
 ) : FileLoweringPass {
@@ -58,7 +59,7 @@ internal class SpecialBackendChecksTraversal(
 }
 
 private class BackendChecker(
-        private val context: PhaseContext,
+        private val context: LightPhaseContext,
         val symbols: KonanSymbols,
         val irBuiltIns: IrBuiltIns,
         private val irFile: IrFile,

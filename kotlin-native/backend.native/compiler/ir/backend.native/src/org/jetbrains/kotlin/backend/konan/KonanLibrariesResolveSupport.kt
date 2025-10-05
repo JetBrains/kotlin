@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.KonanLibraryProperResolver
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.library.validateNoLibrariesWerePassedViaCliByUniqueN
 class KonanLibrariesResolveSupport(
         configuration: CompilerConfiguration,
         target: KonanTarget,
-        distribution: Distribution,
+        distributionKlib: String,
         resolveManifestDependenciesLenient: Boolean
 ) {
     private val includedLibraryFiles =
@@ -34,11 +35,12 @@ class KonanLibrariesResolveSupport(
 
     private val unresolvedLibraries = libraryPaths.toUnresolvedLibraries
 
-    private val resolver = defaultResolver(
-        libraryPaths + includedLibraryFiles.map { it.absolutePath },
-        target,
-        distribution,
-        configuration.getLogger()
+    private val resolver = KonanLibraryProperResolver(
+            libraryPaths + includedLibraryFiles.map { it.absolutePath },
+            target,
+            distributionKlib,
+            logger = configuration.getLogger(),
+            skipCurrentDir = false,
     ).libraryResolver(resolveManifestDependenciesLenient)
 
     // We pass included libraries by absolute paths to avoid repository-based resolution for them.
