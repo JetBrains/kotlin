@@ -6,7 +6,11 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.jetbrains.com/scans?search.rootProjectNames=Kotlin)
 
-<img width="250" height="250" alt="Microsoft(1)" src="https://github.com/user-attachments/assets/7554978f-82f3-474c-a422-cd401c49068f" />
+<img width="400" height="120" alt="Kotlin Full Color Logo on Black RGB" src="https://github.com/user-attachments/assets/5323ca1c-a3ab-4d4f-bc77-cefe4f8a36ff" />
+
+<br>
+<br>
+<br>
 
 >*Kotlin is a modern, expressive, and statically typed programming language developed by JetBrains. 
 >Designed for building robust, maintainable, and performant applications, Kotlin supports multiple platforms including JVM, Android, JavaScript, WebAssembly, and Native (via LLVM), enabling true code sharing across mobile, web, desktop, and server.*
