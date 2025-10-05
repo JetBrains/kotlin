@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -133,7 +133,7 @@ abstract class KotlinSoftwareComponent(
         "sourcesJar",
         name,
         project,
-        project.future { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
+        project.future { allPublishableCommonSourceSets().associate { it.name to it.internal.allKotlin } },
         name.toLowerCaseAsciiOnly()
     )
 
