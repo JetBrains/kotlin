@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
+import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
-internal fun PhaseContext.fir2Ir(
+internal fun LightPhaseContext.fir2Ir(
         input: FirOutput.Full,
 ): Fir2IrOutput {
     var builtInsModule: KotlinBuiltIns? = null
@@ -143,7 +144,7 @@ internal fun PhaseContext.fir2Ir(
     return Fir2IrOutput(input.firResult, symbols, actualizedResult, usedLibraries)
 }
 
-private fun PhaseContext.createKonanSymbols(
+private fun LightPhaseContext.createKonanSymbols(
         irBuiltIns: IrBuiltIns,
 ): KonanSymbols {
     return KonanSymbols(this, irBuiltIns, this.config.configuration)

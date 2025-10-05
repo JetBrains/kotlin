@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.AbstractKonanConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.LightConfigChecks
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.perfManager
@@ -41,7 +43,9 @@ internal interface PerformanceManagerContext {
  * * On the other hand, middle- and bitcode phases are hard to decouple due to the way the code was written many years ago.
  * It will take some time to rewrite it properly.
  */
-internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext, DisposableContext, PerformanceManagerContext
+internal interface LightPhaseContext : LoggingContext, LightConfigChecks, ErrorReportingContext, DisposableContext, PerformanceManagerContext
+
+internal interface PhaseContext : LightPhaseContext, ConfigChecks
 
 internal open class BasicPhaseContext(
         override val config: KonanConfig,

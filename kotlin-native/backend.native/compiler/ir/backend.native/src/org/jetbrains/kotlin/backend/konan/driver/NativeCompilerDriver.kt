@@ -113,9 +113,9 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         }
     }
 
-    private fun serializeKLibK2(
-            engine: PhaseEngine<PhaseContext>,
-            config: KonanConfig,
+    private fun <T : LightPhaseContext> serializeKLibK2(
+            engine: PhaseEngine<T>,
+            config: AbstractKonanConfig,
             environment: KotlinCoreEnvironment
     ): SerializerOutput? {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFirFrontend(environment) }

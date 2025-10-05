@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
 import org.jetbrains.kotlin.backend.konan.fir2IrSerializer
 import org.jetbrains.kotlin.backend.konan.firSerializer
 
@@ -16,27 +16,27 @@ internal data class FirSerializerInput(
     val produceHeaderKlib: Boolean = false,
 )
 
-internal val FirSerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, FirOutput, SerializerOutput?>(
+internal val FirSerializerPhase = createSimpleNamedCompilerPhase(
         "FirSerializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, listOf()) }
-) { context: PhaseContext, input: FirOutput ->
+) { context: LightPhaseContext, input: FirOutput ->
     context.firSerializer(input)
 }
 
-internal val Fir2IrSerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, FirSerializerInput, SerializerOutput>(
+internal val Fir2IrSerializerPhase = createSimpleNamedCompilerPhase(
         "Fir2IrSerializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, listOf()) }
-) { context: PhaseContext, input: FirSerializerInput ->
+) { context: LightPhaseContext, input: FirSerializerInput ->
     context.fir2IrSerializer(input)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runFirSerializer(
+internal fun <T : LightPhaseContext> PhaseEngine<T>.runFirSerializer(
         firOutput: FirOutput
 ): SerializerOutput? {
     return this.runPhase(FirSerializerPhase, firOutput)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runFir2IrSerializer(
+internal fun <T : LightPhaseContext> PhaseEngine<T>.runFir2IrSerializer(
         firSerializerInput: FirSerializerInput
 ): SerializerOutput {
     return this.runPhase(Fir2IrSerializerPhase, firSerializerInput)
