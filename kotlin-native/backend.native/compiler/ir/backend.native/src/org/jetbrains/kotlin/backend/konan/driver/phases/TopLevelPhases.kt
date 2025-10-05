@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
@@ -41,7 +42,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
+internal fun <T: LightPhaseContext> PhaseEngine<T>.runFrontend(config: AbstractKonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val languageVersion = config.languageVersionSettings.languageVersion
     val kotlinSourceRoots = environment.configuration.kotlinSourceRoots
     if (languageVersion.usesK2 && kotlinSourceRoots.isNotEmpty()) {
@@ -52,7 +53,7 @@ internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environm
     return frontendOutput as? FrontendPhaseOutput.Full
 }
 
-internal fun PhaseEngine<PhaseContext>.runPsiToIr(
+internal fun <T: LightPhaseContext> PhaseEngine<T>.runPsiToIr(
         frontendOutput: FrontendPhaseOutput.Full
 ): PsiToIrOutput {
     val config = this.context.config

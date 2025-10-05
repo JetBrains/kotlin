@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
-internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
+internal fun StorageComponentContainer.initContainer(config: AbstractKonanConfig) {
     useImpl<FrontendServices>()
 
     if (!config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE).isNullOrEmpty()) {

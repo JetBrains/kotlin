@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.TopDownAnalyzerFacadeForKonan
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BasicLightPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -31,13 +31,13 @@ sealed class FrontendPhaseOutput {
     ) : FrontendPhaseOutput()
 }
 
-internal interface FrontendContext : PhaseContext {
+internal interface FrontendContext : LightPhaseContext {
     var frontendServices: FrontendServices
 }
 
 internal class FrontendContextImpl(
-        config: KonanConfig
-) : BasicPhaseContext(config), FrontendContext {
+        config: AbstractKonanConfig
+) : BasicLightPhaseContext(config), FrontendContext {
     override lateinit var frontendServices: FrontendServices
 }
 
