@@ -327,6 +327,8 @@ open class AbstractFirWasmSpecCodegenBoxTest(
     }
 }
 
+open class AbstractFirWasmSpecCodegenBoxCoroutineTest : AbstractFirWasmSpecCodegenBoxTest("codegen/spec/coroutines")
+
 open class AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest : AbstractFirWasmWasiCodegenBoxTest(
     testGroupOutputDirPrefix = "codegen/wasiBoxInlKlib/"
 ) {
