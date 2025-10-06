@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VARIABLE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.WHEN_MISSING_CASES
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.prefix
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.suggestIfNotNull
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABBREVIATED_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABBREVIATED_NOTHING_RETURN_TYPE
@@ -883,7 +882,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_TA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
@@ -2244,10 +2242,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NOTHING_TO_OVERRIDE,
             "''{0}'' overrides nothing.{1}",
             DECLARATION_NAME,
-            Renderer { symbols: List<FirCallableSymbol<*>> ->
-                if (symbols.isEmpty()) return@Renderer ""
-                " Potential signatures for overriding:" + SYMBOLS_ON_NEXT_LINES.render(symbols)
-            })
+            FirDiagnosticRenderers.SymbolCollectionRenderer(prefix = " Potential signatures for overriding:\n")
+        )
 
         map.put(
             CANNOT_OVERRIDE_INVISIBLE_MEMBER,
@@ -2336,31 +2332,31 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             ABSTRACT_MEMBER_NOT_IMPLEMENTED,
             "{0} is not abstract and does not implement abstract {1}",
             RENDER_CLASS_OR_OBJECT_QUOTED,
-            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
+            FirDiagnosticRenderers.SymbolCollectionRenderer(prefix = "member:\n", pluralPrefix = "members:\n"),
         )
         map.put(
             ABSTRACT_MEMBER_INCORRECTLY_DELEGATED,
             "{0} is not abstract and implements abstract {1} by delegation to itself.",
             RENDER_CLASS_OR_OBJECT_QUOTED,
-            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
+            FirDiagnosticRenderers.MEMBER_SYMBOL_COLLECTION_RENDERER,
         )
         map.put(
             ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY,
             "{0} does not implement abstract {1}",
             RENDER_ENUM_ENTRY_QUOTED,
-            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
+            FirDiagnosticRenderers.MEMBER_SYMBOL_COLLECTION_RENDERER,
         )
         map.put(
             ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
             "{0} is not abstract and does not implement abstract base class {1}",
             RENDER_CLASS_OR_OBJECT_QUOTED,
-            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
+            FirDiagnosticRenderers.MEMBER_SYMBOL_COLLECTION_RENDERER,
         )
         map.put(
             INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR,
             "''{0}'' inherits invisible abstract {1}",
             DECLARATION_NAME,
-            prefix(singular = "member:", plural = "members:", SYMBOLS_ON_NEXT_LINES),
+            FirDiagnosticRenderers.MEMBER_SYMBOL_COLLECTION_RENDERER,
         )
         map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has an anonymous type. Specify the type explicitly.", NOT_RENDERED)
         map.put(

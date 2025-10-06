@@ -35,81 +35,97 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.text.MessageFormat
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object FirDiagnosticRenderers {
-    val SYMBOL = symbolRenderer(modifierRenderer = ::FirPartialModifierRenderer)
+    val SYMBOL: ContextIndependentParameterRenderer<FirBasedSymbol<*>> = SymbolRenderer(modifierRenderer = ::FirPartialModifierRenderer)
 
-    val SYMBOL_WITH_ALL_MODIFIERS = symbolRenderer()
+    val SYMBOL_WITH_ALL_MODIFIERS: ContextIndependentParameterRenderer<FirBasedSymbol<*>> = SymbolRenderer()
 
-    @OptIn(SymbolInternals::class)
-    private fun symbolRenderer(
-        modifierRenderer: () -> FirModifierRenderer? = ::FirAllModifierRenderer,
-    ) = Renderer { symbol: FirBasedSymbol<*> ->
-        when (symbol) {
-            is FirClassLikeSymbol, is FirCallableSymbol -> FirRenderer(
-                typeRenderer = ConeTypeRendererForReadability { ConeIdShortRenderer() },
-                idRenderer = ConeIdShortRenderer(),
-                classMemberRenderer = FirNoClassMemberRenderer(),
-                bodyRenderer = null,
-                propertyAccessorRenderer = null,
-                callArgumentsRenderer = FirCallNoArgumentsRenderer(),
-                modifierRenderer = modifierRenderer(),
-                callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
-                declarationRenderer = FirDeclarationRenderer("local "),
-                contractRenderer = null,
-                annotationRenderer = null,
-                lineBreakAfterContextParameters = false,
-                renderFieldAnnotationSeparately = false,
-            ).renderElementAsString(symbol.fir, trim = true)
-            is FirTypeParameterSymbol -> symbol.name.asString()
-            else -> "???"
+    private class SymbolRenderer(
+        val useCallableSignatureRenderer: Boolean = true,
+        val useSupertypeRenderer: Boolean = true,
+        val startErrorTypeIndex: Int = 0,
+        val modifierRenderer: () -> FirModifierRenderer? = ::FirAllModifierRenderer,
+    ) : ContextIndependentParameterRenderer<FirBasedSymbol<*>> {
+        override fun render(obj: FirBasedSymbol<*>): String {
+            return renderWithTail(obj).parameter
         }
+
+        @OptIn(SymbolInternals::class)
+        override fun renderWithTail(obj: FirBasedSymbol<*>): ParameterWithTail {
+            var tail: List<String>? = null
+            val result = when (obj) {
+                is FirClassLikeSymbol, is FirCallableSymbol -> {
+                    val renderer = FirRenderer(
+                        typeRenderer = ConeTypeRendererForReadability(startErrorTypeIndex = startErrorTypeIndex) { ConeIdShortRenderer() },
+                        idRenderer = ConeIdShortRenderer(),
+                        classMemberRenderer = FirNoClassMemberRenderer(),
+                        bodyRenderer = null,
+                        propertyAccessorRenderer = null,
+                        callArgumentsRenderer = FirCallNoArgumentsRenderer(),
+                        modifierRenderer = modifierRenderer(),
+                        callableSignatureRenderer = runIf(useCallableSignatureRenderer) { FirCallableSignatureRendererForReadability() },
+                        declarationRenderer = FirDeclarationRenderer("local "),
+                        annotationRenderer = null,
+                        contractRenderer = null,
+                        supertypeRenderer = runIf(useSupertypeRenderer) { FirSupertypeRenderer() },
+                        lineBreakAfterContextParameters = false,
+                        renderFieldAnnotationSeparately = false,
+                    )
+                    renderer.renderElementAsString(obj.fir, trim = true).also {
+                        tail = (renderer.typeRenderer as ConeTypeRendererForReadability).typeConstructorReadableDescriptions.takeIf {
+                            it.isNotEmpty()
+                        }
+                    }
+                }
+                is FirTypeParameterSymbol -> obj.name.asString()
+                else -> "???"
+            }
+            return ParameterWithTail(result, tail)
+        }
+
     }
 
-    @OptIn(SymbolInternals::class)
-    val TYPE_PARAMETER_OWNER_SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
-        when (symbol) {
-            is FirClassLikeSymbol, is FirCallableSymbol -> FirRenderer(
-                typeRenderer = ConeTypeRendererForReadability { ConeIdShortRenderer() },
-                idRenderer = ConeIdShortRenderer(),
-                classMemberRenderer = FirNoClassMemberRenderer(),
-                bodyRenderer = null,
-                propertyAccessorRenderer = null,
-                callArgumentsRenderer = FirCallNoArgumentsRenderer(),
-                modifierRenderer = null,
-                callableSignatureRenderer = null,
-                declarationRenderer = FirDeclarationRenderer("local "),
-                annotationRenderer = null,
-                contractRenderer = null,
-                supertypeRenderer = null,
-                lineBreakAfterContextParameters = false,
-                renderFieldAnnotationSeparately = false,
-            ).renderElementAsString(symbol.fir, trim = true)
-            is FirTypeParameterSymbol -> symbol.name.asString()
-            else -> "???"
-        }
-    }
+    val TYPE_PARAMETER_OWNER_SYMBOL: ContextIndependentParameterRenderer<FirBasedSymbol<*>> =
+        SymbolRenderer(useCallableSignatureRenderer = false, useSupertypeRenderer = false) { null }
 
     /**
      * Adds a line break before the list, then prints one symbol per line.
      */
-    val SYMBOLS_ON_NEXT_LINES = CommonRenderers.onNextLines(SYMBOL)
+    val SYMBOLS_ON_NEXT_LINES = SymbolCollectionRenderer()
 
-    /**
-     * Prepends [singular] or [plural] depending on the elements count.
-     */
-    fun <Q> prefix(
-        singular: String,
-        plural: String,
-        renderer: ContextIndependentParameterRenderer<Collection<Q>>,
-    ): ContextIndependentParameterRenderer<Collection<Q>> {
-        return Renderer { elements ->
-            val decoration = if (elements.size == 1) singular else plural
-            decoration + renderer.render(elements)
+    class SymbolCollectionRenderer(
+        val prefix: String = "\n",
+        val pluralPrefix: String = prefix,
+    ) : ContextIndependentParameterRenderer<Collection<FirBasedSymbol<*>>> {
+        override fun render(obj: Collection<FirBasedSymbol<*>>): String {
+            return renderWithTail(obj).parameter
         }
+
+        override fun renderWithTail(obj: Collection<FirBasedSymbol<*>>): ParameterWithTail {
+            val collectionTail = mutableListOf<String>()
+            val collectionResult = obj.joinToString(
+                separator = "\n",
+                prefix = if (obj.isEmpty()) "" else if (obj.size == 1) prefix else pluralPrefix,
+            ) { symbol ->
+                val symbolRenderer = SymbolRenderer(
+                    startErrorTypeIndex = collectionTail.size,
+                    modifierRenderer = ::FirPartialModifierRenderer
+                )
+
+                symbolRenderer.renderWithTail(symbol).also {
+                    collectionTail += it.tail.orEmpty()
+                }.parameter
+            }
+            return ParameterWithTail(collectionResult, collectionTail)
+        }
+
     }
+
+    val MEMBER_SYMBOL_COLLECTION_RENDERER = SymbolCollectionRenderer(prefix = "member:\n", pluralPrefix = "members:\n")
 
     fun <Q> formatted(message: String, renderer: DiagnosticParameterRenderer<Q>): DiagnosticParameterRenderer<Q> =
         ContextDependentRenderer { value, context ->
@@ -255,25 +271,17 @@ object FirDiagnosticRenderers {
     val RENDER_TYPE: DiagnosticParameterRenderer<ConeKotlinType> = AdaptiveTypeRenderer()
 
     private class AdaptiveTypeRenderer() : DiagnosticParameterRenderer<ConeKotlinType> {
-        private var tail: List<String>? = null
-
         override fun render(obj: ConeKotlinType, renderingContext: RenderingContext): String {
+            return renderWithTail(obj, renderingContext).parameter
+        }
+
+        override fun renderWithTail(obj: ConeKotlinType, renderingContext: RenderingContext): ParameterWithTail {
             // TODO, KT-59811: need a way to tune granularity, e.g., without parameter names in functional types.
             val representation = renderingContext[ADAPTIVE_RENDERED_TYPES]
-            tail = representation.descriptions.takeIf { it.isNotEmpty() }
-            return representation[obj]
+            val tail = representation.descriptions.takeIf { it.isNotEmpty() }
+            return ParameterWithTail(representation[obj], tail)
         }
 
-        override fun renderTail(renderingContext: RenderingContext): String {
-            if (tail == null) return ""
-            return buildString {
-                append(" Where:")
-                tail?.forEachIndexed { i, it ->
-                    appendLine()
-                    append("    #${i + 1} = $it")
-                }
-            }
-        }
     }
 
     val RENDER_FQ_NAME_WITH_PREFIX = Renderer { symbol: FirBasedSymbol<*> ->

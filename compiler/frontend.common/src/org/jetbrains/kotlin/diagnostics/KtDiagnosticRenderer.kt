@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
+import org.jetbrains.kotlin.diagnostics.rendering.ParameterWithTail
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
-import org.jetbrains.kotlin.diagnostics.rendering.renderNonEmptyTailIfAny
 import org.jetbrains.kotlin.diagnostics.rendering.renderParameter
+import org.jetbrains.kotlin.diagnostics.rendering.renderTailsJoined
 import java.text.MessageFormat
 
 sealed class KtDiagnosticRenderer {
@@ -54,6 +55,16 @@ class KtSourcelessDiagnosticRenderer(message: String) : AbstractKtDiagnosticWith
     }
 }
 
+private fun <P> renderAndDispatchParameter(
+    parameter: P,
+    renderer: DiagnosticParameterRenderer<P>?,
+    context: RenderingContext,
+): Pair<Any?, List<String>?> {
+    val rendered = renderParameter(parameter, renderer, context)
+    if (rendered is ParameterWithTail) return (rendered.parameter to rendered.tail)
+    return rendered to null
+}
+
 class KtDiagnosticWithParameters1Renderer<A>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,
@@ -61,10 +72,13 @@ class KtDiagnosticWithParameters1Renderer<A>(
     override fun renderParameters(diagnostic: KtDiagnostic): Parameters {
         require(diagnostic is KtDiagnosticWithParameters1<*>)
         val context = RenderingContext.of(diagnostic.a)
-        @Suppress("UNCHECKED_CAST")
+
+        val (renderedA, tailA) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.a as A, rendererForA, context)
+
         return Parameters(
-            listOf(renderParameter(diagnostic.a as A, rendererForA, context)),
-            renderNonEmptyTailIfAny(context, rendererForA),
+            listOf(renderedA),
+            renderTailsJoined(tailA),
         )
     }
 }
@@ -77,13 +91,16 @@ class KtDiagnosticWithParameters2Renderer<A, B>(
     override fun renderParameters(diagnostic: KtDiagnostic): Parameters {
         require(diagnostic is KtDiagnosticWithParameters2<*, *>)
         val context = RenderingContext.of(diagnostic.a, diagnostic.b)
-        @Suppress("UNCHECKED_CAST")
+
+        val (renderedA, tailA) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.a as A, rendererForA, context)
+
+        val (renderedB, tailB) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.b as B, rendererForB, context)
+
         return Parameters(
-            listOf(
-                renderParameter(diagnostic.a as A, rendererForA, context),
-                renderParameter(diagnostic.b as B, rendererForB, context),
-            ),
-            renderNonEmptyTailIfAny(context, rendererForA, rendererForB),
+            listOf(renderedA, renderedB),
+            renderTailsJoined(tailA, tailB),
         )
     }
 }
@@ -97,14 +114,19 @@ class KtDiagnosticWithParameters3Renderer<A, B, C>(
     override fun renderParameters(diagnostic: KtDiagnostic): Parameters {
         require(diagnostic is KtDiagnosticWithParameters3<*, *, *>)
         val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c)
-        @Suppress("UNCHECKED_CAST")
+
+        val (renderedA, tailA) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.a as A, rendererForA, context)
+
+        val (renderedB, tailB) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.b as B, rendererForB, context)
+
+        val (renderedC, tailC) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.c as C, rendererForC, context)
+
         return Parameters(
-            listOf(
-                renderParameter(diagnostic.a as A, rendererForA, context),
-                renderParameter(diagnostic.b as B, rendererForB, context),
-                renderParameter(diagnostic.c as C, rendererForC, context),
-            ),
-            renderNonEmptyTailIfAny(context, rendererForA, rendererForB, rendererForC),
+            listOf(renderedA, renderedB, renderedC),
+            renderTailsJoined(tailA, tailB, tailC),
         )
     }
 }
@@ -119,15 +141,22 @@ class KtDiagnosticWithParameters4Renderer<A, B, C, D>(
     override fun renderParameters(diagnostic: KtDiagnostic): Parameters {
         require(diagnostic is KtDiagnosticWithParameters4<*, *, *, *>)
         val context = RenderingContext.of(diagnostic.a, diagnostic.b, diagnostic.c, diagnostic.d)
-        @Suppress("UNCHECKED_CAST")
+
+        val (renderedA, tailA) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.a as A, rendererForA, context)
+
+        val (renderedB, tailB) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.b as B, rendererForB, context)
+
+        val (renderedC, tailC) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.c as C, rendererForC, context)
+
+        val (renderedD, tailD) = @Suppress("UNCHECKED_CAST")
+        renderAndDispatchParameter(diagnostic.d as D, rendererForD, context)
+
         return Parameters(
-            listOf(
-                renderParameter(diagnostic.a as A, rendererForA, context),
-                renderParameter(diagnostic.b as B, rendererForB, context),
-                renderParameter(diagnostic.c as C, rendererForC, context),
-                renderParameter(diagnostic.d as D, rendererForD, context),
-            ),
-            renderNonEmptyTailIfAny(context, rendererForA, rendererForB, rendererForC, rendererForD),
+            listOf(renderedA, renderedB, renderedC, renderedD),
+            renderTailsJoined(tailA, tailB, tailC, tailD),
         )
     }
 }

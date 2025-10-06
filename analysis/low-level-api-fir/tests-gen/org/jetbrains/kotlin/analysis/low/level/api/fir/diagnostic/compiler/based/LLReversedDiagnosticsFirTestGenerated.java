@@ -6128,6 +6128,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("errorTypeInBase.kt")
+      public void testErrorTypeInBase() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/errorTypeInBase.kt");
+      }
+
+      @Test
       @TestMetadata("generics.kt")
       public void testGenerics() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/generics.kt");

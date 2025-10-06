@@ -16,16 +16,24 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import java.util.IdentityHashMap
+
+class ParameterWithTail(val parameter: String, val tail: List<String>?)
+
 interface DiagnosticParameterRenderer<in O> {
     fun render(obj: O, renderingContext: RenderingContext): String
 
-    fun renderTail(renderingContext: RenderingContext): String = ""
+    fun renderWithTail(obj: O, renderingContext: RenderingContext): ParameterWithTail? = null
 }
 
 interface ContextIndependentParameterRenderer<in O> : DiagnosticParameterRenderer<O> {
     override fun render(obj: O, renderingContext: RenderingContext): String = render(obj)
 
+    override fun renderWithTail(obj: O, renderingContext: RenderingContext): ParameterWithTail? = renderWithTail(obj)
+
     fun render(obj: O): String
+
+    fun renderWithTail(obj: O): ParameterWithTail? = null
 }
 
 fun <O> Renderer(block: (O) -> String) = object : ContextIndependentParameterRenderer<O> {
@@ -37,15 +45,27 @@ fun <O> ContextDependentRenderer(block: (O, RenderingContext) -> String) = objec
 }
 
 fun <P> renderParameter(parameter: P, renderer: DiagnosticParameterRenderer<P>?, context: RenderingContext): Any? =
-    renderer?.render(parameter, context) ?: parameter
+    renderer?.renderWithTail(parameter, context)
+        ?: renderer?.render(parameter, context)
+        ?: parameter
 
-fun renderTail(renderer: DiagnosticParameterRenderer<*>?, context: RenderingContext): String? =
-    renderer?.renderTail(context)?.takeIf { it.isNotEmpty()}
-
-fun renderNonEmptyTailIfAny(context: RenderingContext, vararg renderers: DiagnosticParameterRenderer<*>?): String {
-    for (renderer in renderers) {
-        val tail = renderTail(renderer, context) ?: continue
-        return tail
+fun renderTailsJoined(vararg tails: List<String>?): String {
+    return buildString {
+        var index = 1
+        // This logic with IdentityHashMap is necessary here, as AdaptiveTypeRenderer uses the same storage for all rendered types
+        // and without this identity filtering we will render
+        val map = IdentityHashMap<List<String>, Boolean>()
+        for (tail in tails) {
+            if (tail.isNullOrEmpty() || tail in map) continue
+            map[tail] = true
+            if (index == 1) {
+                append(" Where:")
+            }
+            tail.forEachIndexed { i, it ->
+                appendLine()
+                append("    #$index = $it")
+                index++
+            }
+        }
     }
-    return ""
 }

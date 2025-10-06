@@ -1,0 +1,23 @@
+/errorTypeInBase.kt:(105,116): error: One type argument expected for interface Base<T> : Any.
+
+/errorTypeInBase.kt:(136,140): error: One type argument expected for interface Base<T> : Any.
+
+/errorTypeInBase.kt:(164,170): error: One type argument expected for interface Base<T> : Any.
+
+/errorTypeInBase.kt:(175,188): error: Class 'Derived' is not abstract and does not implement abstract members:
+fun foo(arg: #1): Unit
+fun bar(arg: #2): Unit
+fun bar(arg: #3): Unit Where:
+    #1 = Wrong number of type arguments
+    #2 = Wrong number of type arguments
+    #3 = Wrong number of type arguments
+
+/errorTypeInBase.kt:(208,216): error: 'foo' overrides nothing. Potential signatures for overriding:
+fun foo(arg: #1): Unit Where:
+    #1 = Wrong number of type arguments
+
+/errorTypeInBase.kt:(247,255): error: 'bar' overrides nothing. Potential signatures for overriding:
+fun bar(arg: #1): Unit
+fun bar(arg: #2): Unit Where:
+    #1 = Wrong number of type arguments
+    #2 = Wrong number of type arguments
