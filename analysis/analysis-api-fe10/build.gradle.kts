@@ -17,7 +17,6 @@ dependencies {
     implementation(project(":compiler:light-classes"))
 
     implementation(project(":compiler:backend"))
-    implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:backend.jvm"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
