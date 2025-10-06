@@ -38,6 +38,22 @@ private const val COROUTINES_METADATA_METHOD_NAME_JVM_NAME = "m"
 private const val COROUTINES_METADATA_CLASS_NAME_JVM_NAME = "c"
 private const val COROUTINES_METADATA_VERSION_JVM_NAME = "v"
 
+private const val WRAP_CONTINUATION_METHOD_DESCRIPTOR = "(" +
+    //    declaringClass: String,
+    "Ljava/lang/String;" +
+    //    methodName: String,
+    "Ljava/lang/String;" +
+    //    fileName: String,
+    "Ljava/lang/String;" +
+    //    lineNumber: Int,
+    "I" +
+    //    spilledVariables: Array<Any?>,
+    "[Ljava/lang/Object;" +
+    //    continuation: T,
+    "Lkotlin/coroutines/Continuation;" +
+    // : T
+    ")Lkotlin/coroutines/Continuation;"
+
 class CoroutineTransformerMethodVisitor(
     delegate: MethodVisitor,
     access: Int,
@@ -226,7 +242,6 @@ class CoroutineTransformerMethodVisitor(
             }
 
             // Otherwise, there is no load before the marker, so, replace the variable
-            // TODO: Also take parameter shifts by inliner into account
             instructions.insertBefore(suspensionPoint.suspensionCallBegin, withInstructionAdapter {
                 callWrapContinuation(name, lineNumber, continuationIndex, visibleLocals)
                 store(continuationIndex, CONTINUATION_ASM_TYPE)
@@ -267,23 +282,7 @@ class CoroutineTransformerMethodVisitor(
         invokestatic(
             "kotlin/coroutines/jvm/internal/TailCallAsyncStackTraceEntryKt",
             "wrapContinuation",
-            buildString {
-                append("(")
-                //    declaringClass: String,
-                append("Ljava/lang/String;")
-                //    methodName: String,
-                append("Ljava/lang/String;")
-                //    fileName: String,
-                append("Ljava/lang/String;")
-                //    lineNumber: Int,
-                append("I")
-                //    spilledVariables: Array<Any?>,
-                append("[Ljava/lang/Object;")
-                //    continuation: T,
-                append("Lkotlin/coroutines/Continuation;")
-                // : T
-                append(")Lkotlin/coroutines/Continuation;")
-            },
+            WRAP_CONTINUATION_METHOD_DESCRIPTOR,
             false
         )
     }
