@@ -563,6 +563,30 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     }
 
     @Test
+    @TestMetadata("declarationsInExportedFileWithExportableSuspendFunctions.kt")
+    public void testDeclarationsInExportedFileWithExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/declarationsInExportedFileWithExportableSuspendFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("declarationsInExportedFileWithoutExportableSuspendFunctions.kt")
+    public void testDeclarationsInExportedFileWithoutExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/declarationsInExportedFileWithoutExportableSuspendFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("declarationsWithExportableSuspendFunctions.kt")
+    public void testDeclarationsWithExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/declarationsWithExportableSuspendFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("declarationsWithoutExportableSuspendFunctions.kt")
+    public void testDeclarationsWithoutExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/declarationsWithoutExportableSuspendFunctions.kt");
+    }
+
+    @Test
     @TestMetadata("expectActualExports.kt")
     public void testExpectActualExports() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/expectActualExports.kt");
