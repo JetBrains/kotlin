@@ -121,6 +121,7 @@ class MavenComponent(
     val packaging: String?,
     val dependencies: List<Dependency>,
     val gradleMetadataMarker: Boolean,
+    val mocks: List<MockArtifactType> = listOf(MockArtifactType.EmptyJar()),
 ) {
     class Dependency(
         val groupId: String?,
@@ -128,6 +129,12 @@ class MavenComponent(
         val version: String?,
         val scope: String?,
     )
+
+    sealed class MockArtifactType(
+        val classifier: String?
+    ) {
+        class EmptyJar(classifier: String? = null) : MockArtifactType(classifier)
+    }
 }
 
 fun generateMockRepository(
@@ -204,10 +211,17 @@ private class MockRepository(
         componentRoot.resolve("${mavenComponent.artifactId}-${mavenComponent.version}.pom").writeText(
             generatePom(mavenComponent)
         )
-        componentRoot.resolve("${mavenComponent.artifactId}-${mavenComponent.version}.jar").also {
-            // Avoid overwriting Gradle variant
-            if (!it.exists()) {
-                ZipOutputStream(FileOutputStream(it)).use {}
+        mavenComponent.mocks.forEach { mock ->
+            val coordinate = listOfNotNull(
+                mavenComponent.artifactId,
+                mavenComponent.version,
+                mock.classifier
+            ).joinToString("-")
+            componentRoot.resolve("${coordinate}.jar").also {
+                // Avoid overwriting Gradle variant
+                if (!it.exists()) {
+                    ZipOutputStream(FileOutputStream(it)).use {}
+                }
             }
         }
     }
