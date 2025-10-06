@@ -157,22 +157,6 @@ internal object UnhandledExceptionHookHolder {
     internal val hook: AtomicReference<ReportUnhandledExceptionHook?> = AtomicReference<ReportUnhandledExceptionHook?>(null)
 }
 
-// TODO: Can be removed only when native-mt coroutines stop using it.
-@ExportForCppRuntime
-@OptIn(ExperimentalNativeApi::class)
-internal fun OnUnhandledException(throwable: Throwable) {
-    val handler = UnhandledExceptionHookHolder.hook.load()
-    if (handler == null) {
-        ReportUnhandledException(throwable);
-        return
-    }
-    try {
-        handler(throwable)
-    } catch (t: Throwable) {
-        ReportUnhandledException(t)
-    }
-}
-
 @ExportForCppRuntime("Kotlin_runUnhandledExceptionHook")
 @OptIn(ExperimentalNativeApi::class)
 internal fun runUnhandledExceptionHook(throwable: Throwable) {
@@ -199,6 +183,7 @@ internal fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
     throw IllegalArgumentException("Invalid enum value name: $name")
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") Array<T?>(values.size)
     for (value in values)
@@ -219,25 +204,14 @@ public external fun initInstance(thiz: Any, constructorCall: Any): Unit
 @InternalForKotlinNative
 public external fun <T> createUninitializedArray(size: Int): T
 
+@UsedFromCompilerGeneratedCode
 @TypedIntrinsic(IntrinsicType.CREATE_EMPTY_STRING)
 @InternalForKotlinNative
 internal external fun createEmptyString(): String
 
+@UsedFromCompilerGeneratedCode
 @TypedIntrinsic(IntrinsicType.IS_SUBTYPE)
 internal external fun <T> isSubtype(objTypeInfo: NativePtr): Boolean
-
-internal fun checkProgressionStep(step: Int): Int =
-        if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
-internal fun checkProgressionStep(step: Long): Long =
-        if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
-
-internal fun getProgressionLast(start: Char, end: Char, step: Int): Char =
-        getProgressionLast(start.code, end.code, step).toChar()
-
-internal fun getProgressionLast(start: Int, end: Int, step: Int): Int =
-        getProgressionLastElement(start, end, step)
-internal fun getProgressionLast(start: Long, end: Long, step: Long): Long =
-        getProgressionLastElement(start, end, step)
 
 // Called by the debugger.
 @ExportForCppRuntime
@@ -261,6 +235,7 @@ internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
     return string.encodeToByteArray()
 }
 
+@UsedFromCompilerGeneratedCode
 @TypedIntrinsic(IntrinsicType.IMMUTABLE_BLOB)
 @Escapes.Nothing
 internal external fun immutableBlobOfImpl(data: String): ImmutableBlob
