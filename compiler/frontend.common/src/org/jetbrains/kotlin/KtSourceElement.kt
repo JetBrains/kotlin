@@ -558,6 +558,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ErrorExpressionForTopLevelLambda : KtFakeSourceElementKind()
 
     /**
+     * To store diagnostics for erroneously resolved top-level collection literals.
+     */
+    object ErrorExpressionForTopLevelCollectionLiteral : KtFakeSourceElementKind()
+
+    /**
      * Arbitrary error expression for which we failed to build the real PSI.
      */
     object ErrorExpression : KtFakeSourceElementKind()
