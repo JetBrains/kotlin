@@ -5,7 +5,8 @@
     #1 = Unknown return lambda parameter type
 
 /returnTypeMismatchOnLambdaInReturnOfLambda.fir.kt:(366,378): error: Return type mismatch: expected 'String', actual 'Function1<#2, #1>'. Where:
-    #1 = Unknown return lambda parameter type    #2 = Unknown return lambda parameter type
+    #1 = Unknown return lambda parameter type
+    #2 = Unknown return lambda parameter type
 
 /returnTypeMismatchOnLambdaInReturnOfLambda.fir.kt:(368,370): error: Cannot infer type for value parameter 'it'. Specify it explicitly.
 
@@ -14,7 +15,8 @@
 /returnTypeMismatchOnLambdaInReturnOfLambda.fir.kt:(467,487): error: Return type mismatch: expected 'String', actual 'Function1<String, String>'.
 
 /returnTypeMismatchOnLambdaInReturnOfLambda.fir.kt:(530,542): error: Return type mismatch: expected 'String', actual 'Function1<#2, #1>'. Where:
-    #1 = Unknown return lambda parameter type    #2 = Unknown return lambda parameter type
+    #1 = Unknown return lambda parameter type
+    #2 = Unknown return lambda parameter type
 
 /returnTypeMismatchOnLambdaInReturnOfLambda.fir.kt:(532,534): error: Cannot infer type for value parameter 'it'. Specify it explicitly.
 

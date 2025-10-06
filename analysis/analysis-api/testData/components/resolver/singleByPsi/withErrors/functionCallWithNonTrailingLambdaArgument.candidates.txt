@@ -193,5 +193,6 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
         O3 -> (kotlin.Int)
       }
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<#2, #1>', but 'String' was expected. Where:
-        #1 = Unknown type for value parameter it    #2 = Unknown type for value parameter s>
+        #1 = Unknown type for value parameter it
+        #2 = Unknown type for value parameter s>
     isInBestCandidates = false
