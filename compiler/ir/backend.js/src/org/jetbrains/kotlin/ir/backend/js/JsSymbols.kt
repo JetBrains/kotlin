@@ -37,14 +37,14 @@ abstract class JsCommonSymbols(
     override val continuationClass = ClassIds.continuation.classSymbol()
     override val coroutineSuspendedGetter by CallableIds.coroutineSuspended.getterSymbol()
 
-    val coroutineImplLabelPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("state")!!.owner }
-    val coroutineImplLabelPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("state")!!.owner }
-    val coroutineImplResultSymbolGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("result")!!.owner }
-    val coroutineImplResultSymbolSetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("result")!!.owner }
-    val coroutineImplExceptionPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exception")!!.owner }
-    val coroutineImplExceptionPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exception")!!.owner }
-    val coroutineImplExceptionStatePropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
-    val coroutineImplExceptionStatePropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
+    val coroutineImplLabelPropertyGetter by CallableIds.coroutineState.getterSymbol()
+    val coroutineImplLabelPropertySetter by CallableIds.coroutineState.setterSymbol()
+    val coroutineImplResultSymbolGetter by CallableIds.coroutineResult.getterSymbol()
+    val coroutineImplResultSymbolSetter by CallableIds.coroutineResult.setterSymbol()
+    val coroutineImplExceptionPropertyGetter by CallableIds.coroutineException.getterSymbol()
+    val coroutineImplExceptionPropertySetter by CallableIds.coroutineException.setterSymbol()
+    val coroutineImplExceptionStatePropertyGetter by CallableIds.coroutineExceptionState.getterSymbol()
+    val coroutineImplExceptionStatePropertySetter by CallableIds.coroutineExceptionState.setterSymbol()
 
     val testFun = CallableIds.test.functionSymbols().singleOrNull()
     val suiteFun = CallableIds.suite.functionSymbols().singleOrNull()
@@ -463,20 +463,9 @@ class JsSymbols(
 
     val jsImplicitExportAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsImplicitExport.classSymbol()
 
-    val charSequenceClassSymbol = StandardClassIds.CharSequence.classSymbol()
-    val charSequenceLengthPropertyGetterSymbol by lazy(LazyThreadSafetyMode.NONE) {
-        with(charSequenceClassSymbol.owner.declarations) {
-            filterIsInstance<IrProperty>().firstOrNull { it.name.asString() == "length" }?.getter
-                ?: filterIsInstance<IrFunction>().first { it.name.asString() == "<get-length>" }
-        }.symbol
-    }
-    val charSequenceGetFunctionSymbol by lazy(LazyThreadSafetyMode.NONE) {
-        charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "get" }.symbol
-    }
-    val charSequenceSubSequenceFunctionSymbol by lazy(LazyThreadSafetyMode.NONE) {
-        charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "subSequence" }.symbol
-    }
-
+    val charSequenceLengthPropertyGetterSymbol by CallableIds.charSequenceClassLength.getterSymbol()
+    val charSequenceGetFunctionSymbol = CallableIds.charSequenceClassGet.functionSymbol()
+    val charSequenceSubSequenceFunctionSymbol = CallableIds.charSequenceClassSubSequence.functionSymbol()
 
     val jsCharSequenceGet = CallableIds.charSequenceGet.functionSymbol()
     val jsCharCodeAt = CallableIds.charCodeAt.functionSymbol()
@@ -777,6 +766,15 @@ private object CallableIds {
     val await = "await".coroutinesCallableId
     val promisify = "promisify".coroutinesCallableId
     val suspendOrReturn = "suspendOrReturn".coroutinesCallableId
+
+    // Custom properties
+    val coroutineState = CallableId(Name.identifier("state")).withClassId(ClassIds.coroutineImpl)
+    val coroutineResult = CallableId(Name.identifier("result")).withClassId(ClassIds.coroutineImpl)
+    val coroutineException = CallableId(Name.identifier("exception")).withClassId(ClassIds.coroutineImpl)
+    val coroutineExceptionState = CallableId(Name.identifier("exceptionState")).withClassId(ClassIds.coroutineImpl)
+    val charSequenceClassLength = CallableId(Name.identifier("length")).withClassId(StandardClassIds.CharSequence)
+    val charSequenceClassGet = CallableId(Name.identifier("get")).withClassId(StandardClassIds.CharSequence)
+    val charSequenceClassSubSequence = CallableId(Name.identifier("subSequence")).withClassId(StandardClassIds.CharSequence)
 
     // Others
     val coroutineSuspended = CallableId(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, StandardNames.COROUTINE_SUSPENDED_NAME)

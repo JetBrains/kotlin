@@ -87,6 +87,15 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
         }
     }
 
+    protected fun CallableId.setterSymbol(): Lazy<IrSimpleFunctionSymbol> {
+        val elements = propertySymbols()
+        require(elements.isNotEmpty()) { "No properties $this found" }
+        require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
+        return lazy {
+            elements.single().owner.setter!!.symbol
+        }
+    }
+
     protected fun CallableId.getterSymbol(extensionReceiverClass: IrClassSymbol?): Lazy<IrSimpleFunctionSymbol> {
         val unfilteredElements = propertySymbols()
         require(unfilteredElements.isNotEmpty()) { "No properties $this found" }

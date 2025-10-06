@@ -47,14 +47,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 class JsSuspendFunctionsLowering(
     ctx: JsCommonBackendContext
 ) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx), BodyLoweringPass {
-    private val coroutineImplExceptionPropertyGetter = ctx.symbols.coroutineImplExceptionPropertyGetter
-    private val coroutineImplExceptionPropertySetter = ctx.symbols.coroutineImplExceptionPropertySetter
-    private val coroutineImplExceptionStatePropertyGetter = ctx.symbols.coroutineImplExceptionStatePropertyGetter
-    private val coroutineImplExceptionStatePropertySetter = ctx.symbols.coroutineImplExceptionStatePropertySetter
-    private val coroutineImplLabelPropertySetter = ctx.symbols.coroutineImplLabelPropertySetter
-    private val coroutineImplLabelPropertyGetter = ctx.symbols.coroutineImplLabelPropertyGetter
-    private val coroutineImplResultSymbolGetter = ctx.symbols.coroutineImplResultSymbolGetter
-    private val coroutineImplResultSymbolSetter = ctx.symbols.coroutineImplResultSymbolSetter
+    private val coroutineImplExceptionPropertyGetter = ctx.symbols.coroutineImplExceptionPropertyGetter.owner
+    private val coroutineImplExceptionPropertySetter = ctx.symbols.coroutineImplExceptionPropertySetter.owner
+    private val coroutineImplExceptionStatePropertyGetter = ctx.symbols.coroutineImplExceptionStatePropertyGetter.owner
+    private val coroutineImplExceptionStatePropertySetter = ctx.symbols.coroutineImplExceptionStatePropertySetter.owner
+    private val coroutineImplLabelPropertySetter = ctx.symbols.coroutineImplLabelPropertySetter.owner
+    private val coroutineImplLabelPropertyGetter = ctx.symbols.coroutineImplLabelPropertyGetter.owner
+    private val coroutineImplResultSymbolGetter = ctx.symbols.coroutineImplResultSymbolGetter.owner
+    private val coroutineImplResultSymbolSetter = ctx.symbols.coroutineImplResultSymbolSetter.owner
 
     override val stateMachineMethodName = Name.identifier("doResume")
 
