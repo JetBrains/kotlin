@@ -30,14 +30,15 @@ internal constructor(
 
     @Deprecated(
         "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.ERROR,
     )
+    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
     constructor(
         target: KotlinJsIrTarget,
     ) : this(
-        target = target,
-        objects = target.project.objects,
-        providers = target.project.providers,
+        target = throw UnsupportedOperationException(),
+        objects = throw UnsupportedOperationException(),
+        providers = throw UnsupportedOperationException(),
     )
 
     private val d8 = D8Plugin.applyWithEnvSpec(project)
