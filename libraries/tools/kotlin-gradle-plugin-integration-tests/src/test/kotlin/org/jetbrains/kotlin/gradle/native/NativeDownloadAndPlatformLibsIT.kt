@@ -264,7 +264,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     }
 
     @DisplayName("Download light Native bundle with maven")
-    @RequiredXCodeVersion(minSupportedMajor = 14, minSupportedMinor = 1)
+    @RequiredXCodeVersion(minSupportedMajor = 26, minSupportedMinor = 0)
     @GradleTest
     fun shouldDownloadLightNativeBundleWithMaven(gradleVersion: GradleVersion) {
         // FIXME: We have to use CURRENT for cinterop generation when testing the light bundle (KT-71419). Always use CURRENT after KTI-1928 is done
