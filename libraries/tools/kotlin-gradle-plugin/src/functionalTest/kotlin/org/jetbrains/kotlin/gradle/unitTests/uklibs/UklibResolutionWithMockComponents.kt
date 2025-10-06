@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWit
 import org.jetbrains.kotlin.gradle.testing.runtimeResolution
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.MockVariantType
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Variant
+import org.jetbrains.kotlin.gradle.unitTests.uklibs.MavenComponent.MockArtifactType
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.junit.Rule
@@ -775,6 +776,87 @@ class UklibResolutionTestsWithMockComponents {
                     )
                 ).prettyPrinted,
                 it.prettyPrinted
+            )
+        }
+    }
+
+    @Test
+    fun `uklib resolution - all configurations can resolve classified POM dependencies - KT-81467`() {
+        val repo = generateMockRepository(
+            tmpDir,
+            mavenComponents = listOf(
+                directMavenComponent(
+                    mocks = listOf(
+                        MockArtifactType.EmptyJar(),
+                        MockArtifactType.EmptyJar(classifier = "foo"),
+                    )
+                )
+            )
+        )
+
+        val consumer = uklibConsumer {
+            repositories.maven(repo)
+            kotlin {
+                iosArm64()
+                iosX64()
+                jvm()
+                js()
+                sourceSets.commonMain.dependencies { implementation("foo:direct:1.0:foo") }
+            }
+        }
+
+        listOf(
+            consumer.multiplatformExtension.iosArm64(),
+            consumer.multiplatformExtension.jvm(),
+            consumer.multiplatformExtension.js(),
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = "compile",
+                        artifacts = mutableListOf(
+                            jvmRuntimeClassifiedAttributes + jarArtifact,
+                        )
+                    )
+                ).prettyPrinted,
+                it.compilationResolution().prettyPrinted,
+                message = it.name
+            )
+        }
+
+        listOf(
+            consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration,
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration,
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = "compile",
+                        artifacts = mutableListOf(
+                            jvmRuntimeClassifiedAttributes + jarArtifact,
+                        )
+                    )
+                ).prettyPrinted,
+                it.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted,
+                message = it.name,
+            )
+        }
+
+        listOf(
+            consumer.multiplatformExtension.jvm(),
+            consumer.multiplatformExtension.js(),
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                        configuration = "runtime",
+                        artifacts = mutableListOf(
+                            jvmRuntimeClassifiedAttributes + jarArtifact,
+                        )
+                    )
+                ).prettyPrinted,
+                it.runtimeResolution().prettyPrinted,
+                message = it.name,
             )
         }
     }
@@ -1542,11 +1624,15 @@ class UklibResolutionTestsWithMockComponents {
         version = "1.0",
     )
 
-    private fun directMavenComponent(packaging: String? = null) = MavenComponent(
+    private fun directMavenComponent(
+        packaging: String? = null,
+        mocks: List<MockArtifactType> = listOf(MockArtifactType.EmptyJar())
+    ) = MavenComponent(
         directGradleComponent.group, directGradleComponent.module, directGradleComponent.version,
         packaging = packaging,
         dependencies = listOf(),
         true,
+        mocks = mocks,
     )
 
     private val uklibMock = GradleMetadataComponent.MockVariantFile(
