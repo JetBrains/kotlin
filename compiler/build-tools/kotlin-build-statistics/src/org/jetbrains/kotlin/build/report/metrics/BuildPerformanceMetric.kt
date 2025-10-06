@@ -11,11 +11,8 @@ sealed class BuildPerformanceMetric(
     val name: String,
     val readableString: String,
     val type: ValueType,
-    val parent: BuildPerformanceMetric?,
+    val parent: BuildPerformanceMetric? = null,
 ) : Serializable {
-
-    constructor(name: String, readableString: String, type: ValueType) : this(name, readableString, type, null)
-
     // Ensure Kotlin object singletons remain singletons after Java deserialization
     private fun readResolve(): Any = this::class.objectInstance ?: this
 }

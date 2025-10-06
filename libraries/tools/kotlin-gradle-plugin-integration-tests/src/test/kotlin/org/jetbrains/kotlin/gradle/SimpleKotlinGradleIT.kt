@@ -326,7 +326,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             subProject("buildSrc").buildScriptInjection {
                 project.dependencies.add("runtimeOnly", "org.jetbrains.kotlin:kotlin-compiler-embeddable:1.7.10")
             }
-            buildAndFail {
+            build {
                 assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilerEmbeddableIsPresentInClasspath)
             }
         }

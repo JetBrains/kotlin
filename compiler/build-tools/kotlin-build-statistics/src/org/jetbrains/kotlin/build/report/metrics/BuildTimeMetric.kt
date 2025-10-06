@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.build.report.metrics
 
-sealed class BuildTimeMetric(name: String, readableString: String, parent: BuildTimeMetric?) :
-    BuildPerformanceMetric(name, readableString, ValueType.NANOSECONDS, parent) {
-
-    constructor(name: String, readableString: String) : this(name, readableString, null)
-}
+sealed class BuildTimeMetric(name: String, readableString: String, parent: BuildTimeMetric? = null) :
+    BuildPerformanceMetric(name, readableString, ValueType.NANOSECONDS, parent)
 
 
 sealed class JpsBuildTimeMetric(parent: JpsBuildTimeMetric? = null, readableString: String, name: String) :
