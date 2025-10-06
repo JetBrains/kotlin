@@ -309,6 +309,10 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
      */
     private fun performCleanup() {
         try {
+            // `performCleanup` might be called from the low-memory watcher's thread even after project disposal. Cleaning the caches of a
+            // disposed project is unnecessary, so we skip invalidation. This also avoids potential exceptions and undefined behavior.
+            if (project.isDisposed) return
+
             analysisSessionStatistics?.lowMemoryCacheCleanupInvocationCounter?.add(1)
 
             val cleanupMs = measureTimeMillis {
