@@ -407,8 +407,9 @@ internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfac
 internal external class KotlinJsBox(internal val kotlinObject: JsShareableAny) : JsAny
 
 // FIXME shall depend on the mode - no actions if non-shared one! Make it intrinsic? Or special lowering (to none)?
+// FIXME maybe chnage types to JsReference to avoid unsafeCast
 @ExperimentalWasmJsInterop
-internal fun wrapShareable(obj: JsShareableAny) : KotlinJsBox = js("new KotlinJsBox(obj)")
+internal fun wrapShareable(obj: JsShareableAny) : JsAny = js("new KotlinJsBox(obj)")
 
 @ExperimentalWasmJsInterop
 internal fun unwrapShareable(box: KotlinJsBox) : JsShareableAny = js("box.kotlinObject")
