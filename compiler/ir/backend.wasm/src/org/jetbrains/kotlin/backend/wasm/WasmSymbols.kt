@@ -394,6 +394,8 @@ class WasmSymbols(
 
         val externRefIsNull = getInternalFunction("wasm_externref_is_null")
 
+        val jsShareableAnyIsNull = getInternalFunction("jsShareableAnyIsNull")
+
         val jsPromise = getIrClass(FqName("kotlin.js.Promise"))
 
         val kExternalClassImpl: IrClassSymbol = getInternalClass("KExternalClassImpl")
