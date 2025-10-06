@@ -3248,9 +3248,10 @@ Since 2.2.20 - we store linenumbers of next statements after suspension points i
 The debugger is expected to use this information to set a breakpoint there when step-over is pressed.
 This way, step-over works even if the suspension point suspends. 
 
-Since 2.2.20 and Api Version 2.3 - the compiler generates calls to `wrapContinuation`, which by default returns its argument.
+Since 2.3.20 and Api Version 2.4 - the compiler generates calls to `wrapContinuation`, which by default returns its argument.
 However, the debugger is expected to replace the function with one, which wraps the continuation with fictitious one, just to hold
-`StackTraceElement` - this way, when debugging coroutines, there will be no gaps in async stack trace because of tail-call functions.
+`StackTraceElement` and local variables, just like usual continuation - this way, when debugging coroutines, there will be no gaps in async
+stack trace because of tail-call functions.
 
 ### Probes
 `kotlin.coroutines.jvm.internal` package contains probe functions replaced by the debugger to show current coroutines (in a broad sense)

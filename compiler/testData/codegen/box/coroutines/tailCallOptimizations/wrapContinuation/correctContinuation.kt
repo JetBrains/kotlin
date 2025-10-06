@@ -18,10 +18,11 @@ import kotlin.coroutines.*
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 internal fun <T> wrapContinuation(
     declaringClass: String, methodName: String, fileName: String, lineNumber: Int,
+    spilledVariables: Array<Any?>,
     continuation: T,
 ): T where T : Continuation<Any?>, T : CoroutineStackFrame {
     return TailCallBaseContinuationImpl(
-        declaringClass, methodName, fileName, lineNumber, continuation
+        declaringClass, methodName, fileName, lineNumber, spilledVariables, continuation
     ) as T
 }
 

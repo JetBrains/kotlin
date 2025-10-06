@@ -15701,6 +15701,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inline.kt")
+        public void testInline() {
+          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/inline.kt");
+        }
+
+        @Test
         @TestMetadata("locals.kt")
         public void testLocals() {
           runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/locals.kt");
