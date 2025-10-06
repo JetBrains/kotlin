@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMess
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.io.File
@@ -81,6 +82,8 @@ internal class YarnPluginApplier(
             project,
             nodeJsRoot,
             yarnSpec,
+            project.objects,
+            project.getExecOperations(),
         )
 
         yarnSpec.initializeYarnEnvSpec(project.objects, yarnRootExtension)
@@ -136,7 +139,10 @@ internal class YarnPluginApplier(
         yarnRootExtension.lockFileDirectory = lockFileDirectory(project.rootDir)
 
         val upgradeYarnLock =
-            project.tasks.register(platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME), YarnLockUpgradeTask::class.java) { task ->
+            project.tasks.register(
+                platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME),
+                YarnLockUpgradeTask::class.java
+            ) { task ->
                 task.dependsOn(kotlinNpmInstall)
                 task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
                 task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
