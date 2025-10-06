@@ -7,8 +7,6 @@ package kotlin.js
 
 import kotlin.wasm.internal.externalize
 import kotlin.wasm.internal.internalize
-import kotlin.wasm.internal.unwrapShareable
-import kotlin.wasm.internal.wrapShareable
 
 /**
  * A JavaScript value that can be shared between threads in "-Xwasm-use-shared-objects" mode.

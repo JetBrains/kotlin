@@ -1200,24 +1200,26 @@ class BodyGenerator(
                 generateInstanceFieldAccess(field, location)
             }
 
-            wasmSymbols.returnArgumentIfItIsKotlinAny -> {
-                body.buildBlock("returnIfAny", WasmAnyRef.maybeShared(useSharedObjects)) { innerLabel ->
-                    body.buildGetLocal(functionContext.referenceLocal(0), location)
-                    body.buildInstr(WasmOp.EXTERN_INTERNALIZE, location)
+            wasmSymbols.returnArgumentIfItIsKotlinAny, wasmSymbols.returnShareableArgumentIfItIsKotlinAny -> {
+                if (!useSharedObjects || function.symbol == wasmSymbols.returnShareableArgumentIfItIsKotlinAny) {
+                    body.buildBlock("returnIfAny", WasmAnyRef.maybeShared(useSharedObjects)) { innerLabel ->
+                        body.buildGetLocal(functionContext.referenceLocal(0), location)
+                        body.buildInstr(WasmOp.EXTERN_INTERNALIZE, location)
 
-                    body.buildBrOnCastInstr(
-                        WasmOp.BR_ON_CAST_FAIL,
-                        innerLabel,
-                        fromIsNullable = true,
-                        toIsNullable = true,
-                        from = WasmHeapType.Simple.Any.maybeShared(useSharedObjects),
-                        to = WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)),
-                        location,
-                    )
+                        body.buildBrOnCastInstr(
+                            WasmOp.BR_ON_CAST_FAIL,
+                            innerLabel,
+                            fromIsNullable = true,
+                            toIsNullable = true,
+                            from = WasmHeapType.Simple.Any.maybeShared(useSharedObjects),
+                            to = WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)),
+                            location,
+                        )
 
-                    body.buildInstr(WasmOp.RETURN, location)
+                        body.buildInstr(WasmOp.RETURN, location)
+                    }
+                    body.buildDrop(location)
                 }
-                body.buildDrop(location)
             }
 
             wasmSymbols.wasmArrayCopy -> {

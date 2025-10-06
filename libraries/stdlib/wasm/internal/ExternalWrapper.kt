@@ -8,7 +8,7 @@ package kotlin.wasm.internal
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 /*
-* Compiler generates inplace next code:
+* Compiler generates inplace next code, expecting externref as the first function parameter:
 * ```
 * block (result anyref) {
 *     local.get 0
@@ -17,8 +17,17 @@ package kotlin.wasm.internal
 *     return
 * }
 * ```
+* In `-Xwasm-use-shared-objects` mode emits no code, as non-shared `externref`s cannot represent shared Kotlin objects.
 */
 internal fun returnArgumentIfItIsKotlinAny(): Unit = implementedAsIntrinsic
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+/*
+ * Same as above, but expects shareable externref as the first parameter, and thus in `-Xwasm-use-shared-objects` mode
+ * emits similar code with shared types: `block (result (ref null (shared any)))`
+ */
+internal fun returnShareableArgumentIfItIsKotlinAny(): Unit = implementedAsIntrinsic
 
 @Target(AnnotationTarget.FUNCTION)
 internal annotation class JsBuiltin(

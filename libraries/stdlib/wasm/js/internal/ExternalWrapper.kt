@@ -8,7 +8,6 @@
 
 package kotlin.wasm.internal
 
-import kotlin.wasm.internal.reftypes.anyref
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 
@@ -147,6 +146,7 @@ internal fun isNullish(ref: ExternalInterfaceType?): Boolean =
 internal fun isNullishShareable(ref: JsShareableAny?): Boolean =
     js("ref == null")
 
+// FIXME add shared version: jsShareableAnyToKotlinAny(ref: JsShareableAny): Any ???
 internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // TODO rewrite it so to get something like:
     // block {
@@ -155,8 +155,11 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     //     return
     // }
     // If ref is a wrapped instance of kotlin class -- return it casted to Any
-    // FIXME change KotlinJsBox to contain only JsReference<Any>
     if (ref is KotlinJsBox) return unwrapShareable(ref).unsafeCast<JsReference<Any>>().get()
+
+
+    // If ref is an instance of kotlin class (and "shared" mode is off) -- return it casted to Any
+    returnArgumentIfItIsKotlinAny()
 
     // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,
@@ -404,15 +407,27 @@ internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfac
 }
 
 @ExperimentalWasmJsInterop
-internal external class KotlinJsBox(internal val kotlinObject: JsShareableAny) : JsAny
+internal external class KotlinJsBox(internal val kotlinObject: JsReference<Any>) : JsAny
 
-// FIXME shall depend on the mode - no actions if non-shared one! Make it intrinsic? Or special lowering (to none)?
-// FIXME maybe chnage types to JsReference to avoid unsafeCast
 @ExperimentalWasmJsInterop
 internal fun wrapShareable(obj: JsShareableAny) : JsAny = js("new KotlinJsBox(obj)")
 
 @ExperimentalWasmJsInterop
 internal fun unwrapShareable(box: KotlinJsBox) : JsShareableAny = js("box.kotlinObject")
+
+@ExperimentalWasmJsInterop
+internal fun jsShareableAnyToJsAnyAdapter(obj: JsShareableAny?) : JsAny? =
+    if (obj == null) null else wrapShareable(obj)
+
+@ExperimentalWasmJsInterop
+internal fun jsAnyToJsShareableAnyAdapter(obj: JsAny?) : JsShareableAny? {
+    if (obj == null)
+        return null
+    else if (obj is KotlinJsBox)
+        return unwrapShareable(obj)
+    else
+        throw ClassCastException("Non-shared references cannot be cast to shared ones")
+}
 
 @WasmOp(WasmOp.EXTERN_EXTERNALIZE)
 @ExperimentalWasmJsInterop
@@ -421,7 +436,7 @@ internal fun <T : Any> T.externalize(): JsShareableAny =
 
 @ExperimentalWasmJsInterop
 internal fun <T : Any> JsShareableAny.internalize(): T {
-    returnArgumentIfItIsKotlinAny()
+    returnShareableArgumentIfItIsKotlinAny()
     throw ClassCastException("JsReference doesn't contain a Kotlin type")
 }
 
