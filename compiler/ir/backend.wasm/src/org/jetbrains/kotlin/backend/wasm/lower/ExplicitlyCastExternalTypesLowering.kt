@@ -7,21 +7,31 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
+import org.jetbrains.kotlin.backend.wasm.utils.isJsShareable
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractValueUsageLowering
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 
 /**
- * Insert casts between external and non-external types
+ * Insert casts between external and non-external types, as well as between shareable and non-shareable external types.
  */
-class ExplicitlyCastExternalTypesLowering(wasmContext: WasmBackendContext) : AbstractValueUsageLowering(wasmContext) {
+class ExplicitlyCastExternalTypesLowering(private val wasmContext: WasmBackendContext) : AbstractValueUsageLowering(wasmContext) {
+
     override fun IrExpression.useExpressionAsType(actualType: IrType, expectedType: IrType): IrExpression {
         val expectedExternal = isExternalType(expectedType)
         val actualExternal = isExternalType(actualType)
 
-        if (expectedExternal != actualExternal) {
+        val castNeeded = when {
+            expectedExternal != actualExternal -> true
+            !expectedExternal -> false
+            expectedType.isJsShareable() != actualType.isJsShareable() -> true
+            else -> false
+        }
+
+        if (castNeeded) {
             return JsIrBuilder.buildImplicitCast(this, toType = expectedType)
         }
 
@@ -33,4 +43,6 @@ class ExplicitlyCastExternalTypesLowering(wasmContext: WasmBackendContext) : Abs
             element.useAs(irBuiltIns.anyNType)
         else
             super.useAsVarargElement(element, expression)
+
+    private fun IrType.isJsShareable() = classOrNull?.owner?.isJsShareable(wasmContext.wasmSymbols) ?: false
 }
