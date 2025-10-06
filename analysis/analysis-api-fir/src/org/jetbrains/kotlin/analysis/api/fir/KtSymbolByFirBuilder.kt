@@ -256,7 +256,7 @@ internal class KtSymbolByFirBuilder constructor(
         }
 
         fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KtFunctionLikeSymbol {
-            return symbolsCache.cache(firSymbol) {
+            return symbolsCache.cache<KtFunctionLikeSymbol>(firSymbol) {
                 if (firSymbol.isGetter) {
                     KtFirPropertyGetterSymbol(firSymbol, firResolveSession, token, this@KtSymbolByFirBuilder)
                 } else {

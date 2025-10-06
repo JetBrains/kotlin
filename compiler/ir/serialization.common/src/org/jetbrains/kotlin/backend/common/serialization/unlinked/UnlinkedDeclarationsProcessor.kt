@@ -136,7 +136,8 @@ internal class UnlinkedDeclarationsProcessor(
             val clazz = parentAsClass
             if (clazz.modality == Modality.ABSTRACT || clazz.modality == Modality.SEALED) return this
 
-            return deepCopyWithImplementedFakeOverrides()
+            @Suppress("UNCHECKED_CAST")
+            return deepCopyWithImplementedFakeOverrides<IrOverridableDeclaration<*>>() as T
         }
 
         /**

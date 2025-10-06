@@ -386,7 +386,7 @@ private class DefaultPeerNpmDependencyExtension(
             directory: File,
             generateExternals: Boolean
         ): NpmDependency =
-            npmDeclarationException(arrayOf(name, directory))
+            npmDeclarationException(arrayOf<Any>(name, directory))
 
         override fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency =
             npmDeclarationException(args)

@@ -179,7 +179,7 @@ private class StringArgsConverter : ArgsConverter<String> {
                 DoubleArray::class -> args.map { it?.toDoubleOrNull() }
                 BooleanArray::class -> args.map { it?.toBoolean() }
                 else -> null
-            }?.toList()?.takeUnless { null in it }?.toTypedArray()
+            }?.toList()?.takeUnless { null in it }?.toTypedArray<Any?>()
 
         val parameterType = parameter.type
         if (parameterType.jvmErasure.java.isArray) {
