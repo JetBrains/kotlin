@@ -56,6 +56,10 @@ val jvmApiAttributes = mapOf(
     "org.gradle.libraryelements" to "jar",
     "org.gradle.usage" to "java-api",
 )
+val jvmRuntimeClassifiedAttributes = mapOf(
+    "org.gradle.libraryelements" to "jar",
+    "org.gradle.usage" to "java-runtime",
+)
 
 val kmpJvmRuntimeVariantAttributes = mapOf(
     "org.gradle.category" to "library",

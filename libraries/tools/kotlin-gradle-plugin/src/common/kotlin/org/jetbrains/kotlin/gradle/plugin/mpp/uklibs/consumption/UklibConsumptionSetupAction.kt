@@ -348,6 +348,10 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
              */
             JAVA_API,
             /**
+             * Classified JVM POM dependencies are synthesized as "java-runtime": KT-81467
+             */
+            JAVA_RUNTIME,
+            /**
              * Fallback to metadata variant to inherit dependencies for lenient interlibrary dependencies. Platform configurations
              * throw away metadata jars in [ThrowAwayMetadataJarsTransform]. GMT now always resolves and special-handles the case
              * when platform configurations resolved into metadata jar.
@@ -423,6 +427,10 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
                      * Compatibility with all the Maven POM-only and Gradle JVM producers for dependency inheritance
                      */
                     JAVA_API,
+                    /**
+                     * Classified JVM POM dependencies are synthesized as "java-runtime": KT-81467
+                     */
+                    JAVA_RUNTIME,
                     KOTLIN_UKLIB_FALLBACK_VARIANT,
                 ),
             )[consumerUsage]?.contains(producerUsage) == true
