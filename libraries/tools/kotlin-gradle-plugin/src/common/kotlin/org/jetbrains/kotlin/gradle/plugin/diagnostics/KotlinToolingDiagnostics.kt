@@ -351,6 +351,27 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object NativeCacheDisabledDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            kotlinVersion: KotlinToolingVersion,
+            target: KonanTarget,
+            reason: String,
+            issueUrl: URI?
+        ) = build {
+            title("Kotlin/Native cache is disabled for Kotlin $kotlinVersion")
+                .description {
+                    "The Kotlin/Native cache has been disabled for target '${target.visibleName}' " +
+                            "due to a configured workaround: $reason"
+                }
+                .solution {
+                    "Caching was disabled intentionally to prevent potential issues with this Kotlin version. " +
+                            "Build times for the '${target.visibleName}' target may be slower as a result. " +
+                            "To re-enable caching and improve performance, investigate whether this issue is resolved in newer versions of Kotlin or relevant third-party libraries."
+                }
+                .documentationLink(issueUrl ?: URI("https://kotl.in/disable-native-cache"))
+        }
+    }
+
     object OldNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(nativeVersion: KotlinToolingVersion?, kotlinVersion: KotlinToolingVersion) = build {
             title("Kotlin/Native and Kotlin Versions Incompatible")
