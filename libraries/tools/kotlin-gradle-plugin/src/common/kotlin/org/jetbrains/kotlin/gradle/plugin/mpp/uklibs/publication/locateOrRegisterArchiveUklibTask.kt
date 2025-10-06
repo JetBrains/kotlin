@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributeValueByName
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
@@ -168,6 +170,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
             attributes.apply {
                 attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))
                 attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.attributeValueByName(TargetJvmEnvironment.STANDARD_JVM))
             }
             inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
         }
@@ -175,6 +178,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
             attributes.apply {
                 attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_RUNTIME))
                 attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.attributeValueByName(TargetJvmEnvironment.STANDARD_JVM))
             }
             inheritRuntimeDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
         }

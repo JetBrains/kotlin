@@ -641,6 +641,7 @@ private val uklibJvmStubVariants = mutableSetOf(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
             "org.gradle.usage" to "java-api",
+            "org.gradle.jvm.environment" to "standard-jvm",
         ),
         availableAt = null,
         files = mutableListOf(
@@ -655,6 +656,7 @@ private val uklibJvmStubVariants = mutableSetOf(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
             "org.gradle.usage" to "java-runtime",
+            "org.gradle.jvm.environment" to "standard-jvm",
         ),
         availableAt = null,
         files = mutableListOf(

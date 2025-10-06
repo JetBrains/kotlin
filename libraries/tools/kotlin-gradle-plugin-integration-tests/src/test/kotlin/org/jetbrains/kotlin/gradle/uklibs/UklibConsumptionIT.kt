@@ -910,6 +910,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
+                            "org.gradle.jvm.environment" to "standard-jvm",
                         ),
                     ),
                     configuration = "javaApiElements",
@@ -969,6 +970,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-runtime",
+                            "org.gradle.jvm.environment" to "standard-jvm",
                         ),
                     ),
                     configuration = "javaRuntimeElements",
@@ -1038,6 +1040,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
+                            "org.gradle.jvm.environment" to "standard-jvm",
                         ),
                     ),
                     configuration = "javaApiElements",
@@ -1096,6 +1099,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-runtime",
+                            "org.gradle.jvm.environment" to "standard-jvm",
                         ),
                     ),
                     configuration = "javaRuntimeElements",
@@ -1371,7 +1375,20 @@ class UklibConsumptionIT : KGPBaseTest() {
 
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
-                "producer:empty:1.0" to ResolvedComponentWithArtifacts(
+                "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "standard-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "jvmApiElements",
+                ),
+                "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
                             "artifactType" to "jar",
@@ -1380,12 +1397,81 @@ class UklibConsumptionIT : KGPBaseTest() {
                             "org.gradle.usage" to "java-api",
                         ),
                     ),
-                    configuration = "javaApiElements",
+                    configuration = "compile",
+                ),
+                "producer:empty-android:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "aar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "android",
+                            "org.gradle.libraryelements" to "aar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "androidApiElements-published",
+                ),
+                "producer:empty:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "androidApiElements-published",
                 ),
             ).prettyPrinted,
             consumer.buildScriptReturn {
                 project.ignoreAccessViolations {
                     project.configurations.getByName("androidCompileClasspath").resolveProjectDependencyComponentsWithArtifacts()
+                }
+            }.buildAndReturn("assemble").prettyPrinted
+        )
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "standard-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-runtime",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "jvmRuntimeElements",
+                ),
+                "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-runtime",
+                        ),
+                    ),
+                    configuration = "runtime",
+                ),
+                "producer:empty-android:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "aar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "android",
+                            "org.gradle.libraryelements" to "aar",
+                            "org.gradle.usage" to "java-runtime",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "androidRuntimeElements-published",
+                ),
+                "producer:empty:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                    ),
+                    configuration = "androidRuntimeElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.buildScriptReturn {
+                project.ignoreAccessViolations {
+                    project.configurations.getByName("androidRuntimeClasspath").resolveProjectDependencyComponentsWithArtifacts()
                 }
             }.buildAndReturn("assemble").prettyPrinted
         )
