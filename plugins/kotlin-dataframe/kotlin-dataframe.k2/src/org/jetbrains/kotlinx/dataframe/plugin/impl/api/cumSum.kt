@@ -52,9 +52,9 @@ class DataFrameCumSum0 : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema = getSchemaAfterCumSum(receiver, columns)
 }
 
-private fun Arguments.getSchemaAfterCumSum(receiver: PluginDataFrameSchema, columns: ColumnsResolver): PluginDataFrameSchema {
-    val selectedCols = columns.resolve(receiver).mapToSetOrEmpty { it.path.path() }
-    return receiver.map(selectedCols) { _, col ->
+internal fun Arguments.getSchemaAfterCumSum(dataSchema: PluginDataFrameSchema, selectedColumns: ColumnsResolver): PluginDataFrameSchema {
+    val selectedCols = selectedColumns.resolve(dataSchema).mapToSetOrEmpty { it.path.path() }
+    return dataSchema.map(selectedCols) { _, col ->
         when (col) {
             is SimpleDataColumn -> {
                 val oldConeType = col.type.type()
