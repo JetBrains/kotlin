@@ -80,12 +80,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
             environmentVariables = EnvironmentalVariables(Pair("KONAN_DATA_DIR", anotherKonanDataDir.absolutePathString()))
         ) {
             build(
-                "linkDebugExecutableNative",
-                buildOptions = defaultBuildOptions.copy(
-                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                        cacheKind = null
-                    )
-                )
+                "linkDebugExecutableNative"
             ) {
                 assertOutputDoesNotContain("w: Failed to build cache")
                 assertTasksExecuted(":linkDebugExecutableNative")

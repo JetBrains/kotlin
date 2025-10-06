@@ -10,7 +10,6 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -158,7 +157,6 @@ data class BuildOptions(
     )
 
     data class NativeOptions(
-        val cacheKind: NativeCacheKind? = NativeCacheKind.NONE,
         val cocoapodsGenerateWrapper: Boolean? = null,
         val cocoapodsPlatform: String? = null,
         val cocoapodsConfiguration: String? = null,
@@ -344,11 +342,6 @@ data class BuildOptions(
     private fun addNativeOptionsToArguments(
         arguments: MutableList<String>,
     ) {
-
-        nativeOptions.cacheKind?.let {
-            arguments.add("-Pkotlin.native.cacheKind=${nativeOptions.cacheKind.name.lowercase()}")
-        }
-
         nativeOptions.cocoapodsGenerateWrapper?.let {
             arguments.add("-Pkotlin.native.cocoapods.generate.wrapper=${it}")
         }
