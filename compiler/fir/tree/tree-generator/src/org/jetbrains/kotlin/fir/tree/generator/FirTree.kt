@@ -67,7 +67,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("resolvePhase", resolvePhaseType) { isParameter = true; }
         +field("resolveState", resolveStateType) {
-            isMutable = true; isVolatile = true; isFinal = true;
+            isMutable = true; isVolatile = true; isFinal = true
             implementationDefaultStrategy = AbstractField.ImplementationDefaultStrategy.Lateinit
             customInitializationCall = "resolvePhase.asResolveState()"
             arbitraryImportables += phaseAsResolveStateExtentionImport
