@@ -218,6 +218,10 @@ open class IrPluginContextImpl(
             declaration.annotations += annotations
         }
 
+        override fun clearAnnotationsForElement(declaration: IrDeclaration) {
+            declaration.annotations = emptyList()
+        }
+
         override fun registerFunctionAsMetadataVisible(irFunction: IrSimpleFunction) {}
 
         override fun registerConstructorAsMetadataVisible(irConstructor: IrConstructor) {}

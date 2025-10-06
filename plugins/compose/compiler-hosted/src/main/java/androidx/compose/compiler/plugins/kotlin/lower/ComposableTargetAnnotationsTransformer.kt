@@ -24,6 +24,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.inference.*
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
@@ -463,11 +465,27 @@ class ComposableTargetAnnotationsTransformer(
                     !it.isComposableInferredTarget
         }
 
-    fun updatedAnnotations(annotations: List<IrConstructorCall>, target: Item) =
-        filteredAnnotations(annotations) + target.toAnnotations()
+    fun addAnnotationToType(type: IrSimpleTypeBuilder, target: Item) {
+        type.annotations = filteredAnnotations(type.annotations) + target.toAnnotations()
+    }
 
-    fun updatedAnnotations(annotations: List<IrConstructorCall>, scheme: Scheme) =
-        filteredAnnotations(annotations) + scheme.toAnnotations()
+    fun addAnnotationToDeclaration(declaration: IrDeclaration, target: Item) {
+        addMetadataVisibleAnnotations(declaration, target.toAnnotations())
+    }
+
+    fun addAnnotationToDeclaration(declaration: IrDeclaration, scheme: Scheme) {
+        addMetadataVisibleAnnotations(declaration, scheme.toAnnotations())
+    }
+
+    private fun addMetadataVisibleAnnotations(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
+        val newAnnotations = filteredAnnotations(declaration.annotations) + annotations
+        if (declaration is IrMetadataSourceOwner && declaration.metadata is FirMetadataSource) {
+            context.metadataDeclarationRegistrar.clearAnnotationsForElement(declaration)
+            context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(declaration, newAnnotations)
+        } else {
+            declaration.annotations = newAnnotations
+        }
+    }
 
     fun inferenceFunctionOf(function: IrFunction) =
         InferenceFunctionDeclaration(this, function)
@@ -558,18 +576,6 @@ sealed class InferenceFunction(
      * unconstrained or insufficiently constrained type parameters.
      */
     open fun isOverlyWide(): Boolean = false
-
-    /**
-     * Helper routine to produce an updated annotations list.
-     */
-    fun updatedAnnotations(annotations: List<IrConstructorCall>, target: Item) =
-        transformer.updatedAnnotations(annotations, target)
-
-    /**
-     * Helper routine to produce an updated annotations list.
-     */
-    fun updatedAnnotations(annotations: List<IrConstructorCall>, scheme: Scheme) =
-        transformer.updatedAnnotations(annotations, scheme)
 }
 
 /**
@@ -598,9 +604,9 @@ class InferenceFunctionDeclaration(
 
     override fun updateScheme(scheme: Scheme) {
         if (scheme.shouldSerialize) {
-            function.annotations = updatedAnnotations(function.annotations, scheme)
+            transformer.addAnnotationToDeclaration(function, scheme)
         } else {
-            function.annotations = updatedAnnotations(function.annotations, scheme.target)
+            transformer.addAnnotationToDeclaration(function, scheme.target)
             parameters().zip(scheme.parameters) { parameter, parameterScheme ->
                 parameter.updateScheme(parameterScheme)
             }
@@ -749,7 +755,7 @@ class InferenceFunctionParameter(
         val type = parameter.type
         if (type is IrSimpleType) {
             val newType = type.toBuilder().apply {
-                annotations = updatedAnnotations(annotations, scheme.target)
+                transformer.addAnnotationToType(this, scheme.target)
             }.buildSimpleType()
             parameter.type = newType
         }
