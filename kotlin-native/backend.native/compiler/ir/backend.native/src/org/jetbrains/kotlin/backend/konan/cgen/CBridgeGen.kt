@@ -703,13 +703,6 @@ private fun CBridgeGenState.getNamedCStructType(kotlinClass: IrClass): CType? {
     return CTypes.simple(name)
 }
 
-// TODO: rework Boolean support.
-// TODO: What should be used on watchOS?
-internal fun cBoolType(target: KonanTarget): CType? = when (target.family) {
-    Family.IOS, Family.TVOS, Family.WATCHOS -> CTypes.C99Bool
-    else -> CTypes.signedChar
-}
-
 private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
         type: IrType,
         variadic: Boolean,

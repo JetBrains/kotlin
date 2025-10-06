@@ -21,12 +21,14 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
+import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 
 /**
  * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
@@ -117,7 +119,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             engine: PhaseEngine<T>,
             config: AbstractKonanConfig,
             environment: KotlinCoreEnvironment
-    ): SerializerOutput? {
+    ): SerializerOutput<KonanLibrary>? {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFirFrontend(environment) }
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
         require(frontendOutput is FirOutput.Full)
@@ -162,7 +164,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             engine: PhaseEngine<T>,
             config: AbstractKonanConfig,
             environment: KotlinCoreEnvironment
-    ): SerializerOutput? {
+    ): SerializerOutput<KonanLibrary>? {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return null
         val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             if (config.metadataKlib) {

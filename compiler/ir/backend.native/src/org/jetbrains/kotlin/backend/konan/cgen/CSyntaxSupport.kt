@@ -1,14 +1,14 @@
 package org.jetbrains.kotlin.backend.konan.cgen
 
-internal interface CType {
+interface CType {
     fun render(name: String): String
 }
 
-internal class CVariable(val type: CType, val name: String) {
+class CVariable(val type: CType, val name: String) {
     override fun toString() = type.render(name)
 }
 
-internal object CTypes {
+object CTypes {
     fun simple(type: String): CType = SimpleCType(type)
     fun pointer(pointee: CType): CType = PointerCType(pointee)
     fun function(returnType: CType, parameterTypes: List<CType>, variadic: Boolean): CType =

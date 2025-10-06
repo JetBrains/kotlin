@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
+import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 
 internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
@@ -26,11 +27,9 @@ internal data class SerializerInput(
         val produceHeaderKlib: Boolean,
 )
 
-typealias SerializerOutput = org.jetbrains.kotlin.backend.common.serialization.SerializerOutput<KonanLibrary>
-
 internal val SerializerPhase = createSimpleNamedCompilerPhase(
         "Serializer",
-        outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, emptyList()) }
+        outputIfNotEnabled = { _, _, _, _ -> SerializerOutput<KonanLibrary>(null, null, emptyList()) }
 ) { context: LightPhaseContext, input: SerializerInput ->
     val config = context.config
     val messageCollector = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -68,7 +67,7 @@ internal fun <T : LightPhaseContext> PhaseEngine<T>.runSerializer(
     moduleDescriptor: ModuleDescriptor,
     psiToIrResult: PsiToIrOutput?,
     produceHeaderKlib: Boolean = false,
-): SerializerOutput {
+): SerializerOutput<KonanLibrary> {
     val input = SerializerInput(moduleDescriptor, psiToIrResult, produceHeaderKlib)
     return this.runPhase(SerializerPhase, input)
 }

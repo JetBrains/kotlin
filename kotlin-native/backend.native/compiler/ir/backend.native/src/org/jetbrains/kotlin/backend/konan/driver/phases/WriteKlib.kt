@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.OutputFiles
@@ -15,13 +16,14 @@ import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.util.*
 
 internal data class KlibWriterInput(
-        val serializerOutput: SerializerOutput,
+        val serializerOutput: SerializerOutput<KonanLibrary>,
         val customOutputPath: String?,
         val produceHeaderKlib: Boolean,
 )
@@ -93,7 +95,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<LightPhaseContext, 
 }
 
 internal fun <T : LightPhaseContext> PhaseEngine<T>.writeKlib(
-        serializationOutput: SerializerOutput,
+        serializationOutput: SerializerOutput<KonanLibrary>,
         customOutputPath: String? = null,
         produceHeaderKlib: Boolean = false,
 ) {
