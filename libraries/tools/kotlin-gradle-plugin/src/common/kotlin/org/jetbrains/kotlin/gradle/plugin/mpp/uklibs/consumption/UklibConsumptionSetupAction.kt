@@ -251,15 +251,15 @@ private fun Project.allowPSMBasedKMPToResolveLenientlyAndSelectBestMatchingVaria
  * longer be necessary
  */
 private fun Project.workaroundLegacySkikoResolutionKT77539() {
-    dependencies.components.withModule("org.jetbrains.skiko:skiko") {
+    dependencies.components.withModule("org.jetbrains.skiko:skiko") { skikoModule ->
         val configureAndroidEnvironment: (VariantMetadata) -> Unit = {
             it.attributes.attribute(
                 TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
                 project.objects.named(TargetJvmEnvironment.ANDROID),
             )
         }
-        it.withVariant("androidApiElements-published") { configureAndroidEnvironment(it) }
-        it.withVariant("androidRuntimeElements-published") { configureAndroidEnvironment(it) }
+        skikoModule.withVariant("androidApiElements-published") { configureAndroidEnvironment(it) }
+        skikoModule.withVariant("androidRuntimeElements-published") { configureAndroidEnvironment(it) }
 
         val configureJvmEnvironment: (VariantMetadata) -> Unit = {
             it.attributes.attribute(
@@ -267,8 +267,55 @@ private fun Project.workaroundLegacySkikoResolutionKT77539() {
                 project.objects.named(TargetJvmEnvironment.STANDARD_JVM),
             )
         }
-        it.withVariant("awtApiElements-published") { configureJvmEnvironment(it) }
-        it.withVariant("awtRuntimeElements-published") { configureJvmEnvironment(it) }
+        skikoModule.withVariant("awtApiElements-published") { configureJvmEnvironment(it) }
+        skikoModule.withVariant("awtRuntimeElements-published") { configureJvmEnvironment(it) }
+
+        // Workaround for KT-81459
+        listOf(
+            "metadataApiElements",
+            "metadataSourcesElements",
+            "iosArm64ApiElements-published",
+            "iosArm64SourcesElements-published",
+            "iosArm64MetadataElements-published",
+            "iosSimulatorArm64ApiElements-published",
+            "iosSimulatorArm64SourcesElements-published",
+            "iosSimulatorArm64MetadataElements-published",
+            "iosX64ApiElements-published",
+            "iosX64SourcesElements-published",
+            "iosX64MetadataElements-published",
+            "jsApiElements-published",
+            "jsRuntimeElements-published",
+            "jsSourcesElements-published",
+            "linuxArm64ApiElements-published",
+            "linuxArm64SourcesElements-published",
+            "linuxX64ApiElements-published",
+            "linuxX64SourcesElements-published",
+            "macosArm64ApiElements-published",
+            "macosArm64SourcesElements-published",
+            "macosArm64MetadataElements-published",
+            "macosX64ApiElements-published",
+            "macosX64SourcesElements-published",
+            "macosX64MetadataElements-published",
+            "tvosArm64ApiElements-published",
+            "tvosArm64SourcesElements-published",
+            "tvosArm64MetadataElements-published",
+            "tvosSimulatorArm64ApiElements-published",
+            "tvosSimulatorArm64SourcesElements-published",
+            "tvosSimulatorArm64MetadataElements-published",
+            "tvosX64ApiElements-published",
+            "tvosX64SourcesElements-published",
+            "tvosX64MetadataElements-published",
+            "wasmJsApiElements-published",
+            "wasmJsRuntimeElements-published",
+            "wasmJsSourcesElements-published",
+        ).forEach { variantName ->
+            skikoModule.withVariant(variantName) {
+                it.attributes.attribute(
+                    TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                    project.objects.named(NON_JVM_ENVIRONMENT),
+                )
+            }
+        }
     }
 }
 

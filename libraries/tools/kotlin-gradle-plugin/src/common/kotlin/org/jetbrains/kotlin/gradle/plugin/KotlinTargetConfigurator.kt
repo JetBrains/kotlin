@@ -56,6 +56,8 @@ internal inline fun <reified T : Named> Project.attributeValueByName(attributeVa
 
 fun Configuration.usesPlatformOf(target: KotlinTarget) = setUsesPlatformOf(target)
 
+internal const val NON_JVM_ENVIRONMENT = "non-jvm"
+
 internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)
 
@@ -73,7 +75,7 @@ internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
          *  Note that this attribute is not published to avoid issues with older Kotlin versions combined with newer Gradle
          *  see [org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext.filterOutNonPublishableAttributes]
          */
-        else -> setJavaTargetEnvironmentAttribute(target.project, "non-jvm")
+        else -> setJavaTargetEnvironmentAttribute(target.project, NON_JVM_ENVIRONMENT)
     }
 
     val publishJsCompilerAttribute = target.project.kotlinPropertiesProvider.publishJsCompilerAttribute
