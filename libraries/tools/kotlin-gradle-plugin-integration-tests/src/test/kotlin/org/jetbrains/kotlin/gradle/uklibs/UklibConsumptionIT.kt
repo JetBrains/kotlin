@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.uklibs
 
 import com.android.build.api.dsl.LibraryExtension
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.kotlin
@@ -1317,6 +1318,77 @@ class UklibConsumptionIT : KGPBaseTest() {
 
             build("linkDebugStaticLinuxArm64")
         }
+    }
+
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88)
+    fun `uklib consumption - KMP androidLibrary with stub JVM variant - KT-81434`(
+        version: GradleVersion,
+        androidVersion: String,
+    ) {
+        val configureAndroidLibrary: KotlinMultiplatformExtension.() -> Unit = {
+            val target = targets.getByName("android")
+            val klass = target::class.java.classLoader.loadClass("com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension")
+            val compileSdk = klass.getMethod("setCompileSdk", Int::class.javaObjectType)
+            compileSdk.invoke(target, 31)
+            val namespace = klass.getMethod("setNamespace", String::class.java)
+            namespace.invoke(target, "foo")
+        }
+        val producer = project(
+            "empty",
+            version,
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addAgpToBuildScriptCompilationClasspath(androidVersion)
+            buildScriptInjection {
+                project.setUklibPublicationStrategy()
+                project.setUklibResolutionStrategy()
+                project.plugins.apply("com.android.kotlin.multiplatform.library")
+                project.applyMultiplatform {
+                    configureAndroidLibrary()
+                    linuxArm64()
+                    sourceSets.commonMain.get().compileSource("class Common")
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
+
+        val consumer = project("empty", version) {
+            addKgpToBuildScriptCompilationClasspath()
+            addAgpToBuildScriptCompilationClasspath(androidVersion)
+            addPublishedProjectToRepositories(producer)
+            buildScriptInjection {
+                project.setUklibResolutionStrategy()
+                project.setUklibPublicationStrategy()
+                project.plugins.apply("com.android.kotlin.multiplatform.library")
+                project.applyMultiplatform {
+                    configureAndroidLibrary()
+                    sourceSets.commonMain.dependencies {
+                        (implementation(producer.rootCoordinate) as ModuleDependency).isTransitive = false
+                    }
+                }
+            }
+        }
+
+        assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
+            mutableMapOf<String, ResolvedComponentWithArtifacts>(
+                "producer:empty:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mutableMapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                        ),
+                    ),
+                    configuration = "javaApiElements",
+                ),
+            ).prettyPrinted,
+            consumer.buildScriptReturn {
+                project.ignoreAccessViolations {
+                    project.configurations.getByName("androidCompileClasspath").resolveProjectDependencyComponentsWithArtifacts()
+                }
+            }.buildAndReturn("assemble").prettyPrinted
+        )
     }
 
 }
