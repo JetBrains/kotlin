@@ -148,6 +148,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCount0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCumSum
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCumSum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMax0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMax1
@@ -600,6 +601,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "GroupByStd0" -> GroupByStd0()
         "GroupByStd1" -> GroupByStd1()
         "GroupByStdOf" -> GroupByStdOf()
+        "GroupByCumSum0" -> GroupByCumSum0()
         "GroupByCumSum" -> GroupByCumSum()
         "DataFrameXs" -> DataFrameXs()
         "GroupByXs" -> GroupByXs()

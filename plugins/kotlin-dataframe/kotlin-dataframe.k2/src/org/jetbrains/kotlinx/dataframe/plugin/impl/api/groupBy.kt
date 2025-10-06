@@ -5,17 +5,44 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.api.remove
+import org.jetbrains.kotlinx.dataframe.api.single
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.impl.*
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Interpreter
+import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.add
+import org.jetbrains.kotlinx.dataframe.plugin.impl.asDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
+import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.groupBy
+import org.jetbrains.kotlinx.dataframe.plugin.impl.ignore
+import org.jetbrains.kotlinx.dataframe.plugin.impl.makeNullable
+import org.jetbrains.kotlinx.dataframe.plugin.impl.simpleColumnOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.toPluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 import org.jetbrains.kotlinx.dataframe.plugin.interpret
 import org.jetbrains.kotlinx.dataframe.plugin.loadInterpreter
 
@@ -405,12 +432,46 @@ class ConcatWithKeys : AbstractSchemaModificationInterpreter() {
     }
 }
 
-class GroupByCumSum : AbstractSchemaModificationInterpreter() {
+/**
+ * Handling `df.groupBy { ... }.cumSum(skipNA) { cols }`
+ */
+class GroupByCumSum : AbstractInterpreter<GroupBy>() {
     val Arguments.receiver by groupBy()
     val Arguments.skipNA: Boolean by arg(defaultValue = Present(defaultCumSumSkipNA))
     val Arguments.columns: ColumnsResolver by arg()
 
-    override fun Arguments.interpret(): PluginDataFrameSchema {
-        TODO()
-    }
+    override fun Arguments.interpret(): GroupBy =
+        GroupBy(
+            keys = receiver.keys,
+            groups = getSchemaAfterCumSum(
+                dataSchema = receiver.groups,
+                selectedColumns = columns,
+            ),
+        )
+}
+
+/**
+ * Handling `df.groupBy { ... }.cumSum(skipNA)`
+ */
+class GroupByCumSum0 : AbstractInterpreter<GroupBy>() {
+    val Arguments.receiver by groupBy()
+    val Arguments.skipNA: Boolean by arg(defaultValue = Present(defaultCumSumSkipNA))
+    val Arguments.columns: ColumnsResolver
+        get() = columnsResolver {
+            colsAtAnyDepth().valueCols().cols {
+                (it.single() as Marker).type.isSubtypeOf(
+                    superType = session.builtinTypes.numberType.coneType.withNullability(true, session.typeContext),
+                    session = session,
+                )
+            }
+        }
+
+    override fun Arguments.interpret(): GroupBy =
+        GroupBy(
+            keys = receiver.keys,
+            groups = getSchemaAfterCumSum(
+                dataSchema = receiver.groups,
+                selectedColumns = columns,
+            ),
+        )
 }
