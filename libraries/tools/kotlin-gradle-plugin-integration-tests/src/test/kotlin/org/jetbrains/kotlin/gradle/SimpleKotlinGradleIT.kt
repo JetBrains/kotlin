@@ -327,9 +327,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
                 project.dependencies.add("runtimeOnly", "org.jetbrains.kotlin:kotlin-compiler-embeddable:1.7.10")
             }
             buildAndFail {
-                // example of incompatibility caused by the problem
-                // if it started to fail, feel free to remove/adjust this assertion
-                assertOutputContains("class org.jetbrains.kotlin.build.report.metrics.GradleBuildTime can not implement org.jetbrains.kotlin.build.report.metrics.BuildTime, because it is not an interface")
                 assertHasDiagnostic(KotlinToolingDiagnostics.KotlinCompilerEmbeddableIsPresentInClasspath)
             }
         }

@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.build.report.metrics.RUN_ENTRY_POINT
 import org.jetbrains.kotlin.build.report.statistics.BuildDataType
 import org.jetbrains.kotlin.build.report.statistics.BuildFinishStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.build.report.statistics.json.buildExecutionDataGson
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
-import org.jetbrains.kotlin.gradle.util.buildExecutionDataGson
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.IOException
