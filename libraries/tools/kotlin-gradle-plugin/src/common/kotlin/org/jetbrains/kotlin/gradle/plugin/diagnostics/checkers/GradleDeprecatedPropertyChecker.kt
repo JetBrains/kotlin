@@ -14,11 +14,20 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.GradleDeprecatedPropertyChecker.DeprecatedProperty
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.presetName
 
 internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
-    private class DeprecatedProperty(
+    private open class DeprecatedProperty(
         val propertyName: String,
         val details: String? = null,
+    )
+
+    private class NativeCacheDeprecatedProperty(presetName: String? = null) : DeprecatedProperty(
+        presetName?.let { "kotlin.native.cacheKind.$presetName" } ?: "kotlin.native.cacheKind",
+        "This property is deprecated. If you still need to disable the native cache, then use a new DSL." +
+                " It was removed in 2.3.20, see https://kotl.in/disable-native-cache for details."
     )
 
     private val warningDeprecatedProperties: List<DeprecatedProperty> = listOf(
@@ -33,11 +42,15 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty("${KotlinJsCompilerType.jsCompilerProperty}.nowarn"),
         DeprecatedProperty("kotlin.mpp.androidGradlePluginCompatibility.nowarn"), // Since 2.1.0
         DeprecatedProperty("kotlin.experimental.swift-export.enabled"),
-        DeprecatedProperty(
-            "kotlin.native.cacheKind",
-            "This property is deprecated. If you still need to disable the native cache, then use a new DSL." +
-                    " It was removed in 2.3.0, see https://kotl.in/disable-native-cache for details."
-        ), // Since 2.3.0
+        NativeCacheDeprecatedProperty(), // Since 2.3.20
+        NativeCacheDeprecatedProperty(KonanTarget.IOS_ARM64.presetName), // Since 2.3.20
+        NativeCacheDeprecatedProperty(KonanTarget.IOS_SIMULATOR_ARM64.presetName), // Since 2.3.20
+        NativeCacheDeprecatedProperty(KonanTarget.IOS_X64.presetName), // Since 2.3.20
+        NativeCacheDeprecatedProperty(KonanTarget.MACOS_ARM64.presetName), // Since 2.3.20
+        NativeCacheDeprecatedProperty(KonanTarget.MACOS_X64.presetName), // Since 2.3.20
+        NativeCacheDeprecatedProperty(KonanTarget.LINUX_X64.presetName), // Since 2.3.20
+        NativeCacheDeprecatedProperty(KonanTarget.LINUX_ARM64.presetName), // Since 2.3.20
+        NativeCacheDeprecatedProperty(KonanTarget.MINGW_X64.presetName), // Since 2.3.20
         DeprecatedProperty(
             "kotlin.native.useEmbeddableCompilerJar",
             "This property is no longer needed. The embeddable compiler jar is always used for Kotlin/Native projects." +
