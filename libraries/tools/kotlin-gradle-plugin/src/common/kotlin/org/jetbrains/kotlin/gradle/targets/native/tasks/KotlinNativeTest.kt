@@ -32,24 +32,22 @@ import javax.inject.Inject
 abstract class KotlinNativeTest
 @Inject
 internal constructor(
-    objects: ObjectFactory?,
-    providers: ProviderFactory?,
-    execOps: ExecOperations?,
+    private val objects: ObjectFactory,
+    private val providers: ProviderFactory,
+    execOps: ExecOperations,
 ) : KotlinTest(execOps) {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
-    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
-    constructor() : this(
-        objects = null,
-        providers = null,
-        execOps = null,
+    @Deprecated(
+        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR,
     )
-
-    // TODO KT-75294 When the deprecated secondary constructor is removed, move `objects` to a non-null constructor property.
-    private val objects: ObjectFactory = objects ?: this.project.objects
-
-    // TODO KT-75294 When the deprecated secondary constructor is removed, move `providers` to a non-null constructor property.
-    private val providers: ProviderFactory = providers ?: this.project.providers
+    // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    @Suppress("UNREACHABLE_CODE")
+    constructor() : this(
+        objects = throw UnsupportedOperationException(),
+        providers = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
+    )
 
     private val processOptions: ProcessLaunchOptions = this.objects.processLaunchOptions {
         environment.putAll(this@KotlinNativeTest.providers.getAllEnvironmentVariables())
@@ -227,9 +225,9 @@ internal constructor(
 abstract class KotlinNativeHostTest
 @Inject
 internal constructor(
-    objects: ObjectFactory?,
-    providers: ProviderFactory?,
-    execOps: ExecOperations?,
+    objects: ObjectFactory,
+    providers: ProviderFactory,
+    execOps: ExecOperations,
 ) : KotlinNativeTest(
     objects = objects,
     providers = providers,
@@ -238,10 +236,11 @@ internal constructor(
 
     @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
     // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    @Suppress("UNREACHABLE_CODE")
     constructor() : this(
-        objects = null,
-        providers = null,
-        execOps = null,
+        objects = throw UnsupportedOperationException(),
+        providers = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
     )
 
     @get:Internal
@@ -266,9 +265,9 @@ internal constructor(
 abstract class KotlinNativeSimulatorTest
 @Inject
 internal constructor(
-    objects: ObjectFactory?,
-    providers: ProviderFactory?,
-    execOps: ExecOperations?,
+    objects: ObjectFactory,
+    providers: ProviderFactory,
+    execOps: ExecOperations,
 ) : KotlinNativeTest(
     objects = objects,
     providers = providers,
@@ -277,10 +276,11 @@ internal constructor(
 
     @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
     // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
+    @Suppress("UNREACHABLE_CODE")
     constructor() : this(
-        objects = null,
-        providers = null,
-        execOps = null,
+        objects = throw UnsupportedOperationException(),
+        providers = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
     )
 
     @Deprecated("Use the property 'device' instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)

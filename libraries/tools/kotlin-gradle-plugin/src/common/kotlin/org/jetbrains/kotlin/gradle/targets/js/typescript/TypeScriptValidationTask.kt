@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.getFile
 import javax.inject.Inject
 
@@ -65,15 +64,15 @@ internal constructor(
 
     @Deprecated(
         "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.ERROR,
     )
-    @Suppress("DEPRECATION")
+    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
     constructor(
         compilation: KotlinJsIrCompilation,
     ) : this(
-        compilation = compilation,
-        objects = compilation.project.objects,
-        execOps = compilation.project.getExecOperations(),
+        compilation = throw UnsupportedOperationException(),
+        objects = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
     )
 
     private val npmProject: NpmProject = compilation.npmProject

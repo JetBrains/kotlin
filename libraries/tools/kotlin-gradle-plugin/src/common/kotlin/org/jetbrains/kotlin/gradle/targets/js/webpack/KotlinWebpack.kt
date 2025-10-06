@@ -54,13 +54,13 @@ internal constructor(
         "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
         level = DeprecationLevel.ERROR
     )
-    @Suppress("DEPRECATION")
+    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
     constructor(
         compilation: KotlinJsIrCompilation,
     ) : this(
-        compilation = compilation,
-        objects = compilation.project.objects,
-        execOps = compilation.project.getExecOperations(),
+        compilation = throw UnsupportedOperationException(),
+        objects = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
     )
 
     @get:Internal

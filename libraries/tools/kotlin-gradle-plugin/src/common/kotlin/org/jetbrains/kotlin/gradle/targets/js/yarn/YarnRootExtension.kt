@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
-import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import javax.inject.Inject
 
 open class YarnRootExtension
@@ -35,16 +34,17 @@ internal constructor(
         "Extending or manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.",
         level = DeprecationLevel.ERROR
     )
+    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
     constructor(
         project: Project,
         nodeJsRoot: NodeJsRootExtension,
         yarnSpec: YarnRootEnvSpec,
     ) : this(
-        project = project,
-        nodeJsRoot = nodeJsRoot,
-        yarnSpec = yarnSpec,
-        objects = project.objects,
-        execOps = @Suppress("DEPRECATION") project.getExecOperations(),
+        project = throw UnsupportedOperationException(),
+        nodeJsRoot = throw UnsupportedOperationException(),
+        yarnSpec = throw UnsupportedOperationException(),
+        objects = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
     )
 
     companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {
