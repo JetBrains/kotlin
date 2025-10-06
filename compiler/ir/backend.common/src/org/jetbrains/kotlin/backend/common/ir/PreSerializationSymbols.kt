@@ -71,10 +71,14 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
         }
     }
 
-    protected inline fun <K> CallableId.functionSymbolAssociatedBy(crossinline getKey: (IrSimpleFunction) -> K): Lazy<Map<K, IrSimpleFunctionSymbol>> {
+    protected inline fun <K> CallableId.functionSymbolAssociatedBy(
+        crossinline condition: (IrSimpleFunction) -> Boolean = { true },
+        crossinline getKey: (IrSimpleFunction) -> K
+    ): Lazy<Map<K, IrSimpleFunctionSymbol>> {
         val unfilteredElements = functionSymbols()
         return lazy {
-            unfilteredElements.associateBy { getKey(it.owner) }
+            val elements = unfilteredElements.filter { condition(it.owner) }
+            elements.associateBy { getKey(it.owner) }
         }
     }
 

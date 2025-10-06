@@ -74,14 +74,10 @@ class JsSymbols(
     override val stringBuilder
         get() = TODO("not implemented")
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private val _arraysContentEquals = CallableIds.contentEquals.functionSymbols().filter {
-        it.descriptor.extensionReceiverParameter?.type?.isMarkedNullable == true
-    }
-
-    // Can't use .owner until ExternalStubGenerator is invoked, hence get() = here.
-    override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
-        get() = _arraysContentEquals.associateBy { it.owner.parameters[0].type.makeNotNull() }
+    override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> by CallableIds.contentEquals.functionSymbolAssociatedBy(
+        condition = { it.hasShape(extensionReceiver = true, regularParameters = 1) && it.parameters[0].type.isNullable() },
+        getKey = { it.parameters[0].type.makeNotNull() }
+    )
 
     override val getContinuation = CallableIds.getContinuation.functionSymbol()
 
@@ -343,12 +339,10 @@ class JsSymbols(
     val jsLongRangeToNumber = CallableIds.longRangeToNumber.functionSymbol()
     val jsLongRangeToLong = CallableIds.longRangeToLong.functionSymbol()
 
-    private val _rangeUntilFunctions = CallableIds.until.functionSymbols()
-    val rangeUntilFunctions: Map<Pair<IrType, IrType>, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-        _rangeUntilFunctions
-            .filter { it.owner.hasShape(extensionReceiver = true, regularParameters = 1) }
-            .associateBy { it.owner.parameters[0].type to it.owner.parameters[1].type }
-    }
+    val rangeUntilFunctions: Map<Pair<IrType, IrType>, IrSimpleFunctionSymbol> by CallableIds.until.functionSymbolAssociatedBy(
+        condition = { it.hasShape(extensionReceiver = true, regularParameters = 1) },
+        getKey = { it.parameters[0].type to it.parameters[1].type }
+    )
 
     val longClassSymbol = irBuiltIns.longClass
 
