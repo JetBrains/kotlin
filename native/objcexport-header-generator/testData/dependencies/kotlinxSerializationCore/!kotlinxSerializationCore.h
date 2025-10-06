@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol SerialFormat
 @required
-@property (readonly) SerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) SerializersModule *serializersModule;
 @end
 
 @protocol BinaryFormat <SerialFormat>
@@ -36,13 +36,13 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol SerializationStrategy
 @required
 - (void)serializeEncoder:(id<Encoder>)encoder value:(id _Nullable)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) id<SerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<SerialDescriptor> descriptor;
 @end
 
 @protocol DeserializationStrategy
 @required
 - (id _Nullable)deserializeDecoder:(id<Decoder>)decoder __attribute__((swift_name("deserialize(decoder:)")));
-@property (readonly) id<SerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<SerialDescriptor> descriptor;
 @end
 
 @protocol KSerializer <SerializationStrategy, DeserializationStrategy>
@@ -60,11 +60,11 @@ __attribute__((objc_subclassing_restricted))
 - (instancetype)initWithSerializableClass:(id<KotlinKClass>)serializableClass fallbackSerializer:(id<KSerializer> _Nullable)fallbackSerializer typeArgumentsSerializers:(KotlinArray<id<KSerializer>> *)typeArgumentsSerializers __attribute__((swift_name("init(serializableClass:fallbackSerializer:typeArgumentsSerializers:)"))) __attribute__((objc_designated_initializer));
 - (T)deserializeDecoder:(id<Decoder>)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(id<Encoder>)encoder value:(T)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) id<SerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<SerialDescriptor> descriptor;
 @end
 
 @interface KotlinThrowable : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -74,16 +74,16 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlin.experimental.ExperimentalNativeApi
 */
-- (KotlinArray<NSString *> *)getStackTrace __attribute__((swift_name("getStackTrace()")));
-- (void)printStackTrace __attribute__((swift_name("printStackTrace()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) KotlinThrowable * _Nullable cause __attribute__((swift_name("cause")));
-@property (readonly) NSString * _Nullable message __attribute__((swift_name("message")));
-- (NSError *)asError __attribute__((swift_name("asError()")));
+- (KotlinArray<NSString *> *)getStackTrace;
+- (void)printStackTrace;
+- (NSString *)description;
+@property (readonly) KotlinThrowable * _Nullable cause;
+@property (readonly) NSString * _Nullable message;
+- (NSError *)asError;
 @end
 
 @interface KotlinException : KotlinThrowable
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -91,7 +91,7 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface KotlinRuntimeException : KotlinException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -99,7 +99,7 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface KotlinIllegalArgumentException : KotlinRuntimeException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -107,7 +107,7 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface SerializationException : KotlinIllegalArgumentException
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer));
@@ -124,12 +124,12 @@ __attribute__((objc_subclassing_restricted))
 - (instancetype)initWithMissingField:(NSString *)missingField serialName:(NSString *)serialName __attribute__((swift_name("init(missingField:serialName:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithMissingFields:(NSArray<NSString *> *)missingFields serialName:(NSString *)serialName __attribute__((swift_name("init(missingFields:serialName:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithMissingFields:(NSArray<NSString *> *)missingFields message:(NSString * _Nullable)message cause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(missingFields:message:cause:)"))) __attribute__((objc_designated_initializer));
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)init __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
 - (instancetype)initWithMessage:(NSString * _Nullable)message __attribute__((swift_name("init(message:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 - (instancetype)initWithCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 - (instancetype)initWithMessage:(NSString * _Nullable)message cause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("init(message:cause:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (readonly) NSArray<NSString *> *missingFields __attribute__((swift_name("missingFields")));
+@property (readonly) NSArray<NSString *> *missingFields;
 @end
 
 
@@ -152,15 +152,15 @@ __attribute__((objc_subclassing_restricted))
 */
 - (id<SerializationStrategy> _Nullable)findPolymorphicSerializerOrNullEncoder:(id<Encoder>)encoder value:(T)value __attribute__((swift_name("findPolymorphicSerializerOrNull(encoder:value:)")));
 - (void)serializeEncoder:(id<Encoder>)encoder value:(T)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) id<KotlinKClass> baseClass __attribute__((swift_name("baseClass")));
+@property (readonly) id<KotlinKClass> baseClass;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface PolymorphicSerializer<T> : AbstractPolymorphicSerializer<T>
 - (instancetype)initWithBaseClass:(id<KotlinKClass>)baseClass __attribute__((swift_name("init(baseClass:)"))) __attribute__((objc_designated_initializer));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) id<KotlinKClass> baseClass __attribute__((swift_name("baseClass")));
-@property (readonly) id<SerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+- (NSString *)description;
+@property (readonly) id<KotlinKClass> baseClass;
+@property (readonly) id<SerialDescriptor> descriptor;
 @end
 
 
@@ -173,8 +173,8 @@ __attribute__((objc_subclassing_restricted))
 - (instancetype)initWithSerialName:(NSString *)serialName baseClass:(id<KotlinKClass>)baseClass subclasses:(KotlinArray<id<KotlinKClass>> *)subclasses subclassSerializers:(KotlinArray<id<KSerializer>> *)subclassSerializers __attribute__((swift_name("init(serialName:baseClass:subclasses:subclassSerializers:)"))) __attribute__((objc_designated_initializer));
 - (id<DeserializationStrategy> _Nullable)findPolymorphicSerializerOrNullDecoder:(id<CompositeDecoder>)decoder klassName:(NSString * _Nullable)klassName __attribute__((swift_name("findPolymorphicSerializerOrNull(decoder:klassName:)")));
 - (id<SerializationStrategy> _Nullable)findPolymorphicSerializerOrNullEncoder:(id<Encoder>)encoder value:(T)value __attribute__((swift_name("findPolymorphicSerializerOrNull(encoder:value:)")));
-@property (readonly) id<KotlinKClass> baseClass __attribute__((swift_name("baseClass")));
-@property (readonly) id<SerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<KotlinKClass> baseClass;
+@property (readonly) id<SerialDescriptor> descriptor;
 @end
 
 @protocol StringFormat <SerialFormat>
@@ -188,10 +188,10 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)longAsStringSerializer __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) LongAsStringSerializer *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) LongAsStringSerializer *shared;
 - (Long *)deserializeDecoder:(id<Decoder>)decoder __attribute__((swift_name("deserialize(decoder:)")));
 - (void)serializeEncoder:(id<Encoder>)encoder value:(Long *)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) id<SerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<SerialDescriptor> descriptor;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -202,14 +202,14 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property NSArray<id<KotlinAnnotation>> *annotations __attribute__((swift_name("annotations")));
+@property NSArray<id<KotlinAnnotation>> *annotations;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property BOOL isNullable __attribute__((swift_name("isNullable"))) __attribute__((unavailable("isNullable inside buildSerialDescriptor is deprecated. Please use SerialDescriptor.nullable extension on a builder result.")));
-@property (readonly) NSString *serialName __attribute__((swift_name("serialName")));
+@property BOOL isNullable __attribute__((unavailable("isNullable inside buildSerialDescriptor is deprecated. Please use SerialDescriptor.nullable extension on a builder result.")));
+@property (readonly) NSString *serialName;
 @end
 
 
@@ -218,8 +218,8 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 @interface SerialKind : Base
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSUInteger)hash;
+- (NSString *)description;
 @end
 
 
@@ -236,7 +236,7 @@ __attribute__((swift_name("PolymorphicKind.OPEN")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)oPEN __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PolymorphicKindOPEN *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PolymorphicKindOPEN *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -245,7 +245,7 @@ __attribute__((swift_name("PolymorphicKind.SEALED")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)sEALED __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PolymorphicKindSEALED *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PolymorphicKindSEALED *shared;
 @end
 
 @interface PrimitiveKind : SerialKind
@@ -257,7 +257,7 @@ __attribute__((swift_name("PrimitiveKind.BOOLEAN")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)bOOLEAN __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PrimitiveKindBOOLEAN *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PrimitiveKindBOOLEAN *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -266,7 +266,7 @@ __attribute__((swift_name("PrimitiveKind.BYTE")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)bYTE __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PrimitiveKindBYTE *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PrimitiveKindBYTE *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -275,7 +275,7 @@ __attribute__((swift_name("PrimitiveKind.CHAR")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)cHAR __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PrimitiveKindCHAR *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PrimitiveKindCHAR *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -284,7 +284,7 @@ __attribute__((swift_name("PrimitiveKind.DOUBLE")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)dOUBLE __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PrimitiveKindDOUBLE *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PrimitiveKindDOUBLE *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -293,7 +293,7 @@ __attribute__((swift_name("PrimitiveKind.FLOAT")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)fLOAT __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PrimitiveKindFLOAT *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PrimitiveKindFLOAT *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -302,7 +302,7 @@ __attribute__((swift_name("PrimitiveKind.INT")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)iNT __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PrimitiveKindINT *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PrimitiveKindINT *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -311,7 +311,7 @@ __attribute__((swift_name("PrimitiveKind.LONG")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)lONG __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PrimitiveKindLONG *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PrimitiveKindLONG *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -320,7 +320,7 @@ __attribute__((swift_name("PrimitiveKind.SHORT")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)sHORT __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PrimitiveKindSHORT *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PrimitiveKindSHORT *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -329,7 +329,7 @@ __attribute__((swift_name("PrimitiveKind.STRING")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)sTRING __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) PrimitiveKindSTRING *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) PrimitiveKindSTRING *shared;
 @end
 
 @protocol SerialDescriptor
@@ -369,32 +369,32 @@ __attribute__((swift_name("PrimitiveKind.STRING")))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) NSArray<id<KotlinAnnotation>> *annotations __attribute__((swift_name("annotations")));
+@property (readonly) NSArray<id<KotlinAnnotation>> *annotations;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) int32_t elementsCount __attribute__((swift_name("elementsCount")));
-@property (readonly) BOOL isInline __attribute__((swift_name("isInline")));
+@property (readonly) int32_t elementsCount;
+@property (readonly) BOOL isInline;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) BOOL isNullable __attribute__((swift_name("isNullable")));
+@property (readonly) BOOL isNullable;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) SerialKind *kind __attribute__((swift_name("kind")));
+@property (readonly) SerialKind *kind;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) NSString *serialName __attribute__((swift_name("serialName")));
+@property (readonly) NSString *serialName;
 @end
 
 
@@ -408,7 +408,7 @@ __attribute__((swift_name("SerialKind.CONTEXTUAL")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)cONTEXTUAL __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) SerialKindCONTEXTUAL *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) SerialKindCONTEXTUAL *shared;
 @end
 
 
@@ -422,7 +422,7 @@ __attribute__((swift_name("SerialKind.ENUM")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)eNUM __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) SerialKindENUM *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) SerialKindENUM *shared;
 @end
 
 
@@ -439,7 +439,7 @@ __attribute__((swift_name("StructureKind.CLASS")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)cLASS __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) StructureKindCLASS *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) StructureKindCLASS *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -448,7 +448,7 @@ __attribute__((swift_name("StructureKind.LIST")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)lIST __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) StructureKindLIST *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) StructureKindLIST *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -457,7 +457,7 @@ __attribute__((swift_name("StructureKind.MAP")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)mAP __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) StructureKindMAP *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) StructureKindMAP *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -466,33 +466,33 @@ __attribute__((swift_name("StructureKind.OBJECT")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)oBJECT __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) StructureKindOBJECT *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) StructureKindOBJECT *shared;
 @end
 
 @protocol Decoder
 @required
 - (id<CompositeDecoder>)beginStructureDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
-- (BOOL)decodeBoolean __attribute__((swift_name("decodeBoolean()")));
-- (int8_t)decodeByte __attribute__((swift_name("decodeByte()")));
-- (unichar)decodeChar __attribute__((swift_name("decodeChar()")));
-- (double)decodeDouble __attribute__((swift_name("decodeDouble()")));
+- (BOOL)decodeBoolean;
+- (int8_t)decodeByte;
+- (unichar)decodeChar;
+- (double)decodeDouble;
 - (int32_t)decodeEnumEnumDescriptor:(id<SerialDescriptor>)enumDescriptor __attribute__((swift_name("decodeEnum(enumDescriptor:)")));
-- (float)decodeFloat __attribute__((swift_name("decodeFloat()")));
+- (float)decodeFloat;
 - (id<Decoder>)decodeInlineDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("decodeInline(descriptor:)")));
-- (int32_t)decodeInt __attribute__((swift_name("decodeInt()")));
-- (int64_t)decodeLong __attribute__((swift_name("decodeLong()")));
+- (int32_t)decodeInt;
+- (int64_t)decodeLong;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (BOOL)decodeNotNullMark __attribute__((swift_name("decodeNotNullMark()")));
+- (BOOL)decodeNotNullMark;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (KotlinNothing * _Nullable)decodeNull __attribute__((swift_name("decodeNull()")));
+- (KotlinNothing * _Nullable)decodeNull;
 
 /**
  * @note annotations
@@ -500,9 +500,9 @@ __attribute__((swift_name("StructureKind.OBJECT")))
 */
 - (id _Nullable)decodeNullableSerializableValueDeserializer:(id<DeserializationStrategy>)deserializer __attribute__((swift_name("decodeNullableSerializableValue(deserializer:)")));
 - (id _Nullable)decodeSerializableValueDeserializer:(id<DeserializationStrategy>)deserializer __attribute__((swift_name("decodeSerializableValue(deserializer:)")));
-- (int16_t)decodeShort __attribute__((swift_name("decodeShort()")));
-- (NSString *)decodeString __attribute__((swift_name("decodeString()")));
-@property (readonly) SerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+- (int16_t)decodeShort;
+- (NSString *)decodeString;
+@property (readonly) SerializersModule *serializersModule;
 @end
 
 @protocol CompositeDecoder
@@ -528,12 +528,12 @@ __attribute__((swift_name("StructureKind.OBJECT")))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (BOOL)decodeSequentially __attribute__((swift_name("decodeSequentially()")));
+- (BOOL)decodeSequentially;
 - (id _Nullable)decodeSerializableElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index deserializer:(id<DeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeSerializableElement(descriptor:index:deserializer:previousValue:)")));
 - (int16_t)decodeShortElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeShortElement(descriptor:index:)")));
 - (NSString *)decodeStringElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeStringElement(descriptor:index:)")));
 - (void)endStructureDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("endStructure(descriptor:)")));
-@property (readonly) SerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) SerializersModule *serializersModule;
 @end
 
 
@@ -542,36 +542,36 @@ __attribute__((swift_name("StructureKind.OBJECT")))
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 @interface AbstractDecoder : Base <Decoder, CompositeDecoder>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id<CompositeDecoder>)beginStructureDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
-- (BOOL)decodeBoolean __attribute__((swift_name("decodeBoolean()")));
+- (BOOL)decodeBoolean;
 - (BOOL)decodeBooleanElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeBooleanElement(descriptor:index:)")));
-- (int8_t)decodeByte __attribute__((swift_name("decodeByte()")));
+- (int8_t)decodeByte;
 - (int8_t)decodeByteElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeByteElement(descriptor:index:)")));
-- (unichar)decodeChar __attribute__((swift_name("decodeChar()")));
+- (unichar)decodeChar;
 - (unichar)decodeCharElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeCharElement(descriptor:index:)")));
-- (double)decodeDouble __attribute__((swift_name("decodeDouble()")));
+- (double)decodeDouble;
 - (double)decodeDoubleElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeDoubleElement(descriptor:index:)")));
 - (int32_t)decodeEnumEnumDescriptor:(id<SerialDescriptor>)enumDescriptor __attribute__((swift_name("decodeEnum(enumDescriptor:)")));
-- (float)decodeFloat __attribute__((swift_name("decodeFloat()")));
+- (float)decodeFloat;
 - (float)decodeFloatElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeFloatElement(descriptor:index:)")));
 - (id<Decoder>)decodeInlineDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("decodeInline(descriptor:)")));
 - (id<Decoder>)decodeInlineElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeInlineElement(descriptor:index:)")));
-- (int32_t)decodeInt __attribute__((swift_name("decodeInt()")));
+- (int32_t)decodeInt;
 - (int32_t)decodeIntElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeIntElement(descriptor:index:)")));
-- (int64_t)decodeLong __attribute__((swift_name("decodeLong()")));
+- (int64_t)decodeLong;
 - (int64_t)decodeLongElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeLongElement(descriptor:index:)")));
-- (BOOL)decodeNotNullMark __attribute__((swift_name("decodeNotNullMark()")));
-- (KotlinNothing * _Nullable)decodeNull __attribute__((swift_name("decodeNull()")));
+- (BOOL)decodeNotNullMark;
+- (KotlinNothing * _Nullable)decodeNull;
 - (id _Nullable)decodeNullableSerializableElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index deserializer:(id<DeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeNullableSerializableElement(descriptor:index:deserializer:previousValue:)")));
 - (id _Nullable)decodeSerializableElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index deserializer:(id<DeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeSerializableElement(descriptor:index:deserializer:previousValue:)")));
 - (id _Nullable)decodeSerializableValueDeserializer:(id<DeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeSerializableValue(deserializer:previousValue:)")));
-- (int16_t)decodeShort __attribute__((swift_name("decodeShort()")));
+- (int16_t)decodeShort;
 - (int16_t)decodeShortElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeShortElement(descriptor:index:)")));
-- (NSString *)decodeString __attribute__((swift_name("decodeString()")));
+- (NSString *)decodeString;
 - (NSString *)decodeStringElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeStringElement(descriptor:index:)")));
-- (id)decodeValue __attribute__((swift_name("decodeValue()")));
+- (id)decodeValue;
 - (void)endStructureDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("endStructure(descriptor:)")));
 @end
 
@@ -593,13 +593,13 @@ __attribute__((swift_name("StructureKind.OBJECT")))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (void)encodeNotNullMark __attribute__((swift_name("encodeNotNullMark()")));
+- (void)encodeNotNullMark;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (void)encodeNull __attribute__((swift_name("encodeNull()")));
+- (void)encodeNull;
 
 /**
  * @note annotations
@@ -609,7 +609,7 @@ __attribute__((swift_name("StructureKind.OBJECT")))
 - (void)encodeSerializableValueSerializer:(id<SerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeSerializableValue(serializer:value:)")));
 - (void)encodeShortValue:(int16_t)value __attribute__((swift_name("encodeShort(value:)")));
 - (void)encodeStringValue:(NSString *)value __attribute__((swift_name("encodeString(value:)")));
-@property (readonly) SerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) SerializersModule *serializersModule;
 @end
 
 @protocol CompositeEncoder
@@ -638,7 +638,7 @@ __attribute__((swift_name("StructureKind.OBJECT")))
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 - (BOOL)shouldEncodeElementDefaultDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("shouldEncodeElementDefault(descriptor:index:)")));
-@property (readonly) SerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) SerializersModule *serializersModule;
 @end
 
 
@@ -647,7 +647,7 @@ __attribute__((swift_name("StructureKind.OBJECT")))
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 @interface AbstractEncoder : Base <Encoder, CompositeEncoder>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id<CompositeEncoder>)beginStructureDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
 - (void)encodeBooleanValue:(BOOL)value __attribute__((swift_name("encodeBoolean(value:)")));
@@ -668,7 +668,7 @@ __attribute__((swift_name("StructureKind.OBJECT")))
 - (void)encodeIntElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index value:(int32_t)value __attribute__((swift_name("encodeIntElement(descriptor:index:value:)")));
 - (void)encodeLongValue:(int64_t)value __attribute__((swift_name("encodeLong(value:)")));
 - (void)encodeLongElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index value:(int64_t)value __attribute__((swift_name("encodeLongElement(descriptor:index:value:)")));
-- (void)encodeNull __attribute__((swift_name("encodeNull()")));
+- (void)encodeNull;
 - (void)encodeNullableSerializableElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index serializer:(id<SerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeNullableSerializableElement(descriptor:index:serializer:value:)")));
 - (void)encodeSerializableElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index serializer:(id<SerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeSerializableElement(descriptor:index:serializer:value:)")));
 - (void)encodeShortValue:(int16_t)value __attribute__((swift_name("encodeShort(value:)")));
@@ -699,7 +699,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) CompositeDecoderCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) CompositeDecoderCompanion *shared;
 @property (readonly) int32_t DECODE_DONE __attribute__((swift_name("DECODE_DONE")));
 @property (readonly) int32_t UNKNOWN_NAME __attribute__((swift_name("UNKNOWN_NAME")));
 @end
@@ -714,7 +714,7 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (Builder _Nullable)builder __attribute__((swift_name("builder()")));
+- (Builder _Nullable)builder;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
@@ -769,7 +769,7 @@ __attribute__((objc_subclassing_restricted))
 @interface ElementMarker : Base
 - (instancetype)initWithDescriptor:(id<SerialDescriptor>)descriptor readIfAbsent:(Boolean *(^)(id<SerialDescriptor>, Int *))readIfAbsent __attribute__((swift_name("init(descriptor:readIfAbsent:)"))) __attribute__((objc_designated_initializer));
 - (void)markIndex:(int32_t)index __attribute__((swift_name("mark(index:)")));
-- (int32_t)nextUnmarkedIndex __attribute__((swift_name("nextUnmarkedIndex()")));
+- (int32_t)nextUnmarkedIndex;
 @end
 
 
@@ -779,8 +779,8 @@ __attribute__((objc_subclassing_restricted))
 */
 @protocol GeneratedSerializer <KSerializer>
 @required
-- (KotlinArray<id<KSerializer>> *)childSerializers __attribute__((swift_name("childSerializers()")));
-- (KotlinArray<id<KSerializer>> *)typeParametersSerializers __attribute__((swift_name("typeParametersSerializers()")));
+- (KotlinArray<id<KSerializer>> *)childSerializers;
+- (KotlinArray<id<KSerializer>> *)typeParametersSerializers;
 @end
 
 
@@ -805,9 +805,9 @@ __attribute__((objc_subclassing_restricted))
 */
 - (void)readElementDecoder:(id<CompositeDecoder>)decoder index:(int32_t)index builder:(MutableDictionary<id, id> *)builder checkIndex:(BOOL)checkIndex __attribute__((swift_name("readElement(decoder:index:builder:checkIndex:)")));
 - (void)serializeEncoder:(id<Encoder>)encoder value:(Collection _Nullable)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) id<SerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
-@property (readonly) id<KSerializer> keySerializer __attribute__((swift_name("keySerializer")));
-@property (readonly) id<KSerializer> valueSerializer __attribute__((swift_name("valueSerializer")));
+@property (readonly) id<SerialDescriptor> descriptor;
+@property (readonly) id<KSerializer> keySerializer;
+@property (readonly) id<KSerializer> valueSerializer;
 @end
 
 
@@ -816,7 +816,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.serialization.InternalSerializationApi
 */
 @interface TaggedDecoder<Tag> : Base <Decoder, CompositeDecoder>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id<CompositeDecoder>)beginStructureDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
 
@@ -824,25 +824,25 @@ __attribute__((objc_subclassing_restricted))
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
 - (void)doCopyTagsToOther:(TaggedDecoder<Tag> *)other __attribute__((swift_name("doCopyTagsTo(other:)")));
-- (BOOL)decodeBoolean __attribute__((swift_name("decodeBoolean()")));
+- (BOOL)decodeBoolean;
 - (BOOL)decodeBooleanElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeBooleanElement(descriptor:index:)")));
-- (int8_t)decodeByte __attribute__((swift_name("decodeByte()")));
+- (int8_t)decodeByte;
 - (int8_t)decodeByteElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeByteElement(descriptor:index:)")));
-- (unichar)decodeChar __attribute__((swift_name("decodeChar()")));
+- (unichar)decodeChar;
 - (unichar)decodeCharElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeCharElement(descriptor:index:)")));
-- (double)decodeDouble __attribute__((swift_name("decodeDouble()")));
+- (double)decodeDouble;
 - (double)decodeDoubleElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeDoubleElement(descriptor:index:)")));
 - (int32_t)decodeEnumEnumDescriptor:(id<SerialDescriptor>)enumDescriptor __attribute__((swift_name("decodeEnum(enumDescriptor:)")));
-- (float)decodeFloat __attribute__((swift_name("decodeFloat()")));
+- (float)decodeFloat;
 - (float)decodeFloatElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeFloatElement(descriptor:index:)")));
 - (id<Decoder>)decodeInlineDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("decodeInline(descriptor:)")));
 - (id<Decoder>)decodeInlineElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeInlineElement(descriptor:index:)")));
-- (int32_t)decodeInt __attribute__((swift_name("decodeInt()")));
+- (int32_t)decodeInt;
 - (int32_t)decodeIntElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeIntElement(descriptor:index:)")));
-- (int64_t)decodeLong __attribute__((swift_name("decodeLong()")));
+- (int64_t)decodeLong;
 - (int64_t)decodeLongElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeLongElement(descriptor:index:)")));
-- (BOOL)decodeNotNullMark __attribute__((swift_name("decodeNotNullMark()")));
-- (KotlinNothing * _Nullable)decodeNull __attribute__((swift_name("decodeNull()")));
+- (BOOL)decodeNotNullMark;
+- (KotlinNothing * _Nullable)decodeNull;
 - (id _Nullable)decodeNullableSerializableElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index deserializer:(id<DeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeNullableSerializableElement(descriptor:index:deserializer:previousValue:)")));
 - (id _Nullable)decodeSerializableElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index deserializer:(id<DeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeSerializableElement(descriptor:index:deserializer:previousValue:)")));
 
@@ -850,9 +850,9 @@ __attribute__((objc_subclassing_restricted))
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
 - (id _Nullable)decodeSerializableValueDeserializer:(id<DeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeSerializableValue(deserializer:previousValue:)")));
-- (int16_t)decodeShort __attribute__((swift_name("decodeShort()")));
+- (int16_t)decodeShort;
 - (int16_t)decodeShortElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeShortElement(descriptor:index:)")));
-- (NSString *)decodeString __attribute__((swift_name("decodeString()")));
+- (NSString *)decodeString;
 - (NSString *)decodeStringElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeStringElement(descriptor:index:)")));
 
 /**
@@ -934,7 +934,7 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (Tag _Nullable)popTag __attribute__((swift_name("popTag()")));
+- (Tag _Nullable)popTag;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
@@ -944,13 +944,13 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note This property has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-@property (readonly) Tag _Nullable currentTag __attribute__((swift_name("currentTag")));
+@property (readonly) Tag _Nullable currentTag;
 
 /**
  * @note This property has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-@property (readonly) Tag _Nullable currentTagOrNull __attribute__((swift_name("currentTagOrNull")));
-@property (readonly) SerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) Tag _Nullable currentTagOrNull;
+@property (readonly) SerializersModule *serializersModule;
 @end
 
 
@@ -959,7 +959,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.serialization.InternalSerializationApi
 */
 @interface NamedValueDecoder : TaggedDecoder<NSString *>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 
 /**
@@ -989,7 +989,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.serialization.InternalSerializationApi
 */
 @interface TaggedEncoder<Tag> : Base <Encoder, CompositeEncoder>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id<CompositeEncoder>)beginStructureDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
 - (void)encodeBooleanValue:(BOOL)value __attribute__((swift_name("encodeBoolean(value:)")));
@@ -1009,8 +1009,8 @@ __attribute__((objc_subclassing_restricted))
 - (void)encodeIntElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index value:(int32_t)value __attribute__((swift_name("encodeIntElement(descriptor:index:value:)")));
 - (void)encodeLongValue:(int64_t)value __attribute__((swift_name("encodeLong(value:)")));
 - (void)encodeLongElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index value:(int64_t)value __attribute__((swift_name("encodeLongElement(descriptor:index:value:)")));
-- (void)encodeNotNullMark __attribute__((swift_name("encodeNotNullMark()")));
-- (void)encodeNull __attribute__((swift_name("encodeNull()")));
+- (void)encodeNotNullMark;
+- (void)encodeNull;
 - (void)encodeNullableSerializableElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index serializer:(id<SerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeNullableSerializableElement(descriptor:index:serializer:value:)")));
 - (void)encodeSerializableElementDescriptor:(id<SerialDescriptor>)descriptor index:(int32_t)index serializer:(id<SerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeSerializableElement(descriptor:index:serializer:value:)")));
 - (void)encodeShortValue:(int16_t)value __attribute__((swift_name("encodeShort(value:)")));
@@ -1102,7 +1102,7 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-- (Tag _Nullable)popTag __attribute__((swift_name("popTag()")));
+- (Tag _Nullable)popTag;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
@@ -1112,13 +1112,13 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note This property has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-@property (readonly) Tag _Nullable currentTag __attribute__((swift_name("currentTag")));
+@property (readonly) Tag _Nullable currentTag;
 
 /**
  * @note This property has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
-@property (readonly) Tag _Nullable currentTagOrNull __attribute__((swift_name("currentTagOrNull")));
-@property (readonly) SerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) Tag _Nullable currentTagOrNull;
+@property (readonly) SerializersModule *serializersModule;
 @end
 
 
@@ -1127,7 +1127,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.serialization.InternalSerializationApi
 */
 @interface NamedValueEncoder : TaggedEncoder<NSString *>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 
 /**
@@ -1221,7 +1221,7 @@ __attribute__((swift_name("KotlinBoolean.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinBooleanCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinBooleanCompanion *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1230,7 +1230,7 @@ __attribute__((swift_name("KotlinByte.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinByteCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinByteCompanion *shared;
 @property (readonly) int8_t MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) int8_t MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 
@@ -1253,7 +1253,7 @@ __attribute__((swift_name("KotlinChar.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinCharCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinCharCompanion *shared;
 
 /**
  * @note annotations
@@ -1322,7 +1322,7 @@ __attribute__((swift_name("KotlinDouble.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinDoubleCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinDoubleCompanion *shared;
 @property (readonly) double MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) double MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 @property (readonly) double NEGATIVE_INFINITY __attribute__((swift_name("NEGATIVE_INFINITY")));
@@ -1348,7 +1348,7 @@ __attribute__((swift_name("KotlinFloat.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinFloatCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinFloatCompanion *shared;
 @property (readonly) float MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) float MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 @property (readonly) float NEGATIVE_INFINITY __attribute__((swift_name("NEGATIVE_INFINITY")));
@@ -1374,7 +1374,7 @@ __attribute__((swift_name("KotlinInt.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinIntCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinIntCompanion *shared;
 @property (readonly) int32_t MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) int32_t MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 
@@ -1397,7 +1397,7 @@ __attribute__((swift_name("KotlinLong.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinLongCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinLongCompanion *shared;
 @property (readonly) int64_t MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) int64_t MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 
@@ -1420,7 +1420,7 @@ __attribute__((swift_name("KotlinShort.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinShortCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinShortCompanion *shared;
 @property (readonly) int16_t MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) int16_t MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 
@@ -1443,7 +1443,7 @@ __attribute__((swift_name("KotlinString.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinStringCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinStringCompanion *shared;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1452,7 +1452,7 @@ __attribute__((swift_name("KotlinUByte.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinUByteCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinUByteCompanion *shared;
 @property (readonly) uint8_t MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) uint8_t MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 @property (readonly) int32_t SIZE_BITS __attribute__((swift_name("SIZE_BITS")));
@@ -1465,7 +1465,7 @@ __attribute__((swift_name("KotlinUInt.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinUIntCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinUIntCompanion *shared;
 @property (readonly) uint32_t MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) uint32_t MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 @property (readonly) int32_t SIZE_BITS __attribute__((swift_name("SIZE_BITS")));
@@ -1478,7 +1478,7 @@ __attribute__((swift_name("KotlinULong.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinULongCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinULongCompanion *shared;
 @property (readonly) uint64_t MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) uint64_t MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 @property (readonly) int32_t SIZE_BITS __attribute__((swift_name("SIZE_BITS")));
@@ -1491,7 +1491,7 @@ __attribute__((swift_name("KotlinUShort.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinUShortCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinUShortCompanion *shared;
 @property (readonly) uint16_t MAX_VALUE __attribute__((swift_name("MAX_VALUE")));
 @property (readonly) uint16_t MIN_VALUE __attribute__((swift_name("MIN_VALUE")));
 @property (readonly) int32_t SIZE_BITS __attribute__((swift_name("SIZE_BITS")));
@@ -1503,8 +1503,8 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)unit __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinUnit *shared __attribute__((swift_name("shared")));
-- (NSString *)description __attribute__((swift_name("description()")));
+@property (class, readonly, getter=shared) KotlinUnit *shared;
+- (NSString *)description;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1513,7 +1513,7 @@ __attribute__((swift_name("KotlinDuration.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinDurationCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinDurationCompanion *shared;
 - (int64_t)days:(double)receiver __attribute__((swift_name("days(_:)")));
 - (int64_t)days_:(int32_t)receiver __attribute__((swift_name("days(__:)")));
 - (int64_t)days__:(int64_t)receiver __attribute__((swift_name("days(___:)")));
@@ -1690,7 +1690,7 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-+ (id<SerialDescriptor>)listSerialDescriptor __attribute__((swift_name("listSerialDescriptor()")));
++ (id<SerialDescriptor>)listSerialDescriptor;
 
 /**
  * @note annotations
@@ -1702,21 +1702,21 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-+ (id<SerialDescriptor>)mapSerialDescriptor __attribute__((swift_name("mapSerialDescriptor()")));
++ (id<SerialDescriptor>)mapSerialDescriptor;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 + (id<SerialDescriptor>)mapSerialDescriptorKeyDescriptor:(id<SerialDescriptor>)keyDescriptor valueDescriptor:(id<SerialDescriptor>)valueDescriptor __attribute__((swift_name("mapSerialDescriptor(keyDescriptor:valueDescriptor:)")));
-+ (id<SerialDescriptor>)serialDescriptor __attribute__((swift_name("serialDescriptor()")));
++ (id<SerialDescriptor>)serialDescriptor;
 + (id<SerialDescriptor>)serialDescriptorType:(id<KotlinKType>)type __attribute__((swift_name("serialDescriptor(type:)")));
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-+ (id<SerialDescriptor>)setSerialDescriptor __attribute__((swift_name("setSerialDescriptor()")));
++ (id<SerialDescriptor>)setSerialDescriptor;
 
 /**
  * @note annotations
@@ -1739,7 +1739,7 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface SerializersKt : Base
-+ (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
++ (id<KSerializer>)serializer;
 
 /**
  * @note annotations
@@ -1782,9 +1782,9 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (int8_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (KotlinByteIterator *)iterator __attribute__((swift_name("iterator()")));
+- (KotlinByteIterator *)iterator;
 - (void)setIndex:(int32_t)index value:(int8_t)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 @protocol KotlinKDeclarationContainer
@@ -1812,8 +1812,8 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.1")
 */
 - (BOOL)isInstanceValue:(id _Nullable)value __attribute__((swift_name("isInstance(value:)")));
-@property (readonly) NSString * _Nullable qualifiedName __attribute__((swift_name("qualifiedName")));
-@property (readonly) NSString * _Nullable simpleName __attribute__((swift_name("simpleName")));
+@property (readonly) NSString * _Nullable qualifiedName;
+@property (readonly) NSString * _Nullable simpleName;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1822,9 +1822,9 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
+- (id<KotlinIterator>)iterator;
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 @protocol KotlinAnnotation
@@ -1837,14 +1837,14 @@ __attribute__((objc_subclassing_restricted))
 
 @protocol KotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 @protocol KotlinMapEntry
 @required
-@property (readonly) id _Nullable key __attribute__((swift_name("key")));
-@property (readonly) id _Nullable value __attribute__((swift_name("value")));
+@property (readonly) id _Nullable key;
+@property (readonly) id _Nullable value;
 @end
 
 @protocol KotlinComparable
@@ -1854,13 +1854,13 @@ __attribute__((objc_subclassing_restricted))
 
 @interface KotlinEnum<E> : Base <KotlinComparable>
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) KotlinEnumCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) KotlinEnumCompanion *companion;
 - (int32_t)compareToOther:(E)other __attribute__((swift_name("compareTo(other:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSString *name __attribute__((swift_name("name")));
-@property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) NSString *name;
+@property (readonly) int32_t ordinal;
 @end
 
 
@@ -1873,15 +1873,15 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) KotlinDurationUnit *nanoseconds __attribute__((swift_name("nanoseconds")));
-@property (class, readonly) KotlinDurationUnit *microseconds __attribute__((swift_name("microseconds")));
-@property (class, readonly) KotlinDurationUnit *milliseconds __attribute__((swift_name("milliseconds")));
-@property (class, readonly) KotlinDurationUnit *seconds __attribute__((swift_name("seconds")));
-@property (class, readonly) KotlinDurationUnit *minutes __attribute__((swift_name("minutes")));
-@property (class, readonly) KotlinDurationUnit *hours __attribute__((swift_name("hours")));
-@property (class, readonly) KotlinDurationUnit *days __attribute__((swift_name("days")));
-+ (KotlinArray<KotlinDurationUnit *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<KotlinDurationUnit *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) KotlinDurationUnit *nanoseconds;
+@property (class, readonly) KotlinDurationUnit *microseconds;
+@property (class, readonly) KotlinDurationUnit *milliseconds;
+@property (class, readonly) KotlinDurationUnit *seconds;
+@property (class, readonly) KotlinDurationUnit *minutes;
+@property (class, readonly) KotlinDurationUnit *hours;
+@property (class, readonly) KotlinDurationUnit *days;
++ (KotlinArray<KotlinDurationUnit *> *)values;
+@property (class, readonly) NSArray<KotlinDurationUnit *> *entries;
 @end
 
 @protocol KotlinKType
@@ -1891,14 +1891,14 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlin.SinceKotlin(version="1.1")
 */
-@property (readonly) NSArray<KotlinKTypeProjection *> *arguments __attribute__((swift_name("arguments")));
+@property (readonly) NSArray<KotlinKTypeProjection *> *arguments;
 
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.1")
 */
-@property (readonly) id<KotlinKClassifier> _Nullable classifier __attribute__((swift_name("classifier")));
-@property (readonly) BOOL isMarkedNullable __attribute__((swift_name("isMarkedNullable")));
+@property (readonly) id<KotlinKClassifier> _Nullable classifier;
+@property (readonly) BOOL isMarkedNullable;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1908,16 +1908,16 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (int32_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (KotlinIntIterator *)iterator __attribute__((swift_name("iterator()")));
+- (KotlinIntIterator *)iterator;
 - (void)setIndex:(int32_t)index value:(int32_t)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 @interface KotlinByteIterator : Base <KotlinIterator>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (Byte *)next __attribute__((swift_name("next()")));
-- (int8_t)nextByte __attribute__((swift_name("nextByte()")));
+- (Byte *)next;
+- (int8_t)nextByte;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1925,7 +1925,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinEnumCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinEnumCompanion *shared;
 @end
 
 
@@ -1936,20 +1936,20 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((objc_subclassing_restricted))
 @interface KotlinKTypeProjection : Base
 - (instancetype)initWithVariance:(KotlinKVariance * _Nullable)variance type:(id<KotlinKType> _Nullable)type __attribute__((swift_name("init(variance:type:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) KotlinKTypeProjectionCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) KotlinKTypeProjectionCompanion *companion;
 - (KotlinKTypeProjection *)doCopyVariance:(KotlinKVariance * _Nullable)variance type:(id<KotlinKType> _Nullable)type __attribute__((swift_name("doCopy(variance:type:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) id<KotlinKType> _Nullable type __attribute__((swift_name("type")));
-@property (readonly) KotlinKVariance * _Nullable variance __attribute__((swift_name("variance")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) id<KotlinKType> _Nullable type;
+@property (readonly) KotlinKVariance * _Nullable variance;
 @end
 
 @interface KotlinIntIterator : Base <KotlinIterator>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (Int *)next __attribute__((swift_name("next()")));
-- (int32_t)nextInt __attribute__((swift_name("nextInt()")));
+- (Int *)next;
+- (int32_t)nextInt;
 @end
 
 
@@ -1962,11 +1962,11 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly) KotlinKVariance *invariant __attribute__((swift_name("invariant")));
-@property (class, readonly) KotlinKVariance *in __attribute__((swift_name("in")));
-@property (class, readonly) KotlinKVariance *out __attribute__((swift_name("out")));
-+ (KotlinArray<KotlinKVariance *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<KotlinKVariance *> *entries __attribute__((swift_name("entries")));
+@property (class, readonly) KotlinKVariance *invariant;
+@property (class, readonly) KotlinKVariance *in;
+@property (class, readonly) KotlinKVariance *out;
++ (KotlinArray<KotlinKVariance *> *)values;
+@property (class, readonly) NSArray<KotlinKVariance *> *entries;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1975,7 +1975,7 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) KotlinKTypeProjectionCompanion *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) KotlinKTypeProjectionCompanion *shared;
 - (KotlinKTypeProjection *)contravariantType:(id<KotlinKType>)type __attribute__((swift_name("contravariant(type:)")));
 - (KotlinKTypeProjection *)covariantType:(id<KotlinKType>)type __attribute__((swift_name("covariant(type:)")));
 - (KotlinKTypeProjection *)invariantType:(id<KotlinKType>)type __attribute__((swift_name("invariant(type:)")));
@@ -2002,63 +2002,63 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 @end
 
 @interface KotlinBooleanCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinByteCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinCharCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinDoubleCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinDurationCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinFloatCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinIntCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinLongCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinShortCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinStringCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinUByteCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinUIntCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinULongCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinUShortCompanion (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface KotlinUnit (Extensions)
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 @end
 
 @interface PolymorphicModuleBuilder (Extensions)
@@ -2081,7 +2081,7 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 - (NSArray<id<SerialDescriptor>> *)getPolymorphicDescriptorsDescriptor:(id<SerialDescriptor>)descriptor __attribute__((swift_name("getPolymorphicDescriptors(descriptor:)")));
 - (SerializersModule *)overwriteWithOther:(SerializersModule *)other __attribute__((swift_name("overwriteWith(other:)")));
 - (SerializersModule *)plusOther:(SerializersModule *)other __attribute__((swift_name("plus(other:)")));
-- (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
+- (id<KSerializer>)serializer;
 - (id<KSerializer>)serializerType:(id<KotlinKType>)type __attribute__((swift_name("serializer(type:)")));
 
 /**

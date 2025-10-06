@@ -25,13 +25,18 @@ fun ObjCExportContext.translateToObjCProperty(symbol: KaPropertySymbol): ObjCPro
 fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
     val propertyName = getObjCPropertyName(symbol)
     val objCName = propertyName.objCName
-    val swiftName = propertyName.swiftName
     val symbolGetter = symbol.getter
     val getterBridge = if (symbolGetter == null) error("KtPropertySymbol.getter is undefined") else getFunctionMethodBridge(symbolGetter)
     val type = mapReturnType(symbolGetter, getterBridge.returnBridge)
     val attributes = mutableListOf<String>()
-    val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName))
-
+    val declarationAttributes = mutableListOf<String>()
+    val privateAttribute = symbol.getSwiftPrivateAttribute()
+    if (privateAttribute != null) {
+        declarationAttributes.add(privateAttribute)
+    }
+    if (propertyName.needsSwiftNameAttribute()) {
+        declarationAttributes.add(swiftNameAttribute(propertyName.swiftName))
+    }
     if (!analysisSession.getBridgeReceiverType(symbol).isInstance) attributes += "class"
 
     if (symbol.setter == null || !analysisSession.isVisibleInObjC(symbol.setter)) {

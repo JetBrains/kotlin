@@ -16,9 +16,27 @@ interface ObjCExportClassOrProtocolName : ObjCExportName {
     val binaryName: String
 }
 
-interface ObjCExportPropertyName : ObjCExportName
+interface ObjCExportPropertyName : ObjCExportName {
+    fun needsSwiftNameAttribute(): Boolean {
+        // As per https://github.com/swiftlang/swift-evolution/blob/main/proposals/0005-objective-c-name-translation.md
+        return (objCName != swiftName) || (objCName[0].isUpperCase())
+    }
+}
 
-interface ObjCExportFunctionName : ObjCExportName
+interface ObjCExportEnumEntryName : ObjCExportName {
+    fun needsSwiftNameAttribute(): Boolean {
+        // As per https://github.com/swiftlang/swift-evolution/blob/main/proposals/0005-objective-c-name-translation.md
+        return (objCName != swiftName) || (objCName[0].isUpperCase())
+    }
+}
+
+interface ObjCExportFunctionName : ObjCExportName {
+    fun needsSwiftNameAttribute(): Boolean {
+        // As per https://github.com/swiftlang/swift-evolution/blob/main/proposals/0005-objective-c-name-translation.md
+        // This is a very simple implementation that could be enhanced significantly to remove more unneeded attributes.
+        return ("$objCName()" != swiftName) || (objCName[0].isUpperCase())
+    }
+}
 
 interface ObjCExportFileName : ObjCExportName
 
@@ -54,6 +72,14 @@ fun ObjCExportFunctionName(
     objCName = objCName
 )
 
+fun ObjCExportEnumEntryName(
+    swiftName: String,
+    objCName: String,
+): ObjCExportEnumEntryName = ObjCExportEnumEntryNameImpl(
+    swiftName = swiftName,
+    objCName = objCName
+)
+
 fun ObjCExportFileName(
     swiftName: String,
     objCName: String,
@@ -71,6 +97,11 @@ private data class ObjCExportFunctionNameImpl(
     override val swiftName: String,
     override val objCName: String,
 ) : ObjCExportFunctionName
+
+private data class ObjCExportEnumEntryNameImpl(
+    override val swiftName: String,
+    override val objCName: String,
+) : ObjCExportEnumEntryName
 
 private data class ObjCExportFileNameImpl(
     override val swiftName: String,

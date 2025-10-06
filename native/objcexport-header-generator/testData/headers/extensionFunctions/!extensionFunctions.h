@@ -24,16 +24,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface ClazzA : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)memberFun __attribute__((swift_name("memberFun()")));
+- (void)memberFun;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface ClazzB : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)memberFun __attribute__((swift_name("memberFun()")));
+- (void)memberFun;
 @end
 
 @protocol InterfaceA
@@ -47,18 +47,18 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
 + (void)extensionFun:(id<InterfaceA>)receiver __attribute__((swift_name("extensionFun(_:)")));
-+ (void)topLevelFunA __attribute__((swift_name("topLevelFunA()")));
-+ (void)topLevelFunB __attribute__((swift_name("topLevelFunB()")));
++ (void)topLevelFunA;
++ (void)topLevelFunB;
 @end
 
 @interface ClazzA (Extensions)
-- (void)extensionFunA1 __attribute__((swift_name("extensionFunA1()")));
-- (void)extensionFunA2 __attribute__((swift_name("extensionFunA2()")));
+- (void)extensionFunA1;
+- (void)extensionFunA2;
 @end
 
 @interface ClazzB (Extensions)
-- (void)extensionFunB1 __attribute__((swift_name("extensionFunB1()")));
-- (void)extensionFunB2 __attribute__((swift_name("extensionFunB2()")));
+- (void)extensionFunB1;
+- (void)extensionFunB2;
 @end
 
 #pragma pop_macro("_Nullable_result")

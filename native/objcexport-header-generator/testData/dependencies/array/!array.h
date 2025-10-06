@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) KotlinArray<Int *> *a __attribute__((swift_name("a")));
+@property (class, readonly) KotlinArray<Int *> *a;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -33,15 +33,15 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (T _Nullable)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (id<KotlinIterator>)iterator __attribute__((swift_name("iterator()")));
+- (id<KotlinIterator>)iterator;
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 @protocol KotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 #pragma pop_macro("_Nullable_result")

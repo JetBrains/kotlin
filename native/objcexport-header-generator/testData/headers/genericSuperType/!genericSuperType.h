@@ -21,13 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @interface Element : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-+ (Element *)getKey __attribute__((swift_name("getKey()")));
++ (Element *)getKey;
 @end
 
 #pragma pop_macro("_Nullable_result")

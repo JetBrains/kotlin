@@ -20,27 +20,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Constructor : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithI:(int32_t)i __attribute__((swift_name("init(i:)"))) __attribute__((objc_designated_initializer));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface ExplicitCallable : Base
-- (int32_t)entryPoint __attribute__((swift_name("entryPoint()")));
+- (int32_t)entryPoint;
 - (int32_t)entryPointI:(int32_t)i __attribute__((swift_name("entryPoint(i:)")));
-@property (readonly, getter=entryPoint_) int32_t entryPoint __attribute__((swift_name("entryPoint")));
+@property (readonly, getter=entryPoint_) int32_t entryPoint;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface ExplicitFunction : Base
-- (int32_t)entryPoint __attribute__((swift_name("entryPoint()")));
+- (int32_t)entryPoint;
 - (int32_t)entryPointI:(int32_t)i __attribute__((swift_name("entryPoint(i:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface ExplicitProperty : Base
-@property (readonly) int32_t entryPoint __attribute__((swift_name("entryPoint")));
+@property (readonly) int32_t entryPoint;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -49,30 +49,30 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface WildcardCallable : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithI:(int32_t)i __attribute__((swift_name("init(i:)"))) __attribute__((objc_designated_initializer));
-- (int32_t)entryPoint1 __attribute__((swift_name("entryPoint1()")));
+- (int32_t)entryPoint1;
 - (int32_t)entryPoint1I:(int32_t)i __attribute__((swift_name("entryPoint1(i:)")));
-- (int32_t)entryPoint2 __attribute__((swift_name("entryPoint2()")));
-@property (getter=entryPoint1_) int32_t entryPoint1 __attribute__((swift_name("entryPoint1")));
-@property (getter=entryPoint2_) int32_t entryPoint2 __attribute__((swift_name("entryPoint2")));
+- (int32_t)entryPoint2;
+@property (getter=entryPoint1_) int32_t entryPoint1;
+@property (getter=entryPoint2_) int32_t entryPoint2;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface WildcardFunction : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithI:(int32_t)i __attribute__((swift_name("init(i:)"))) __attribute__((objc_designated_initializer));
-- (int32_t)entryPoint1 __attribute__((swift_name("entryPoint1()")));
+- (int32_t)entryPoint1;
 - (int32_t)entryPoint1I:(int32_t)i __attribute__((swift_name("entryPoint1(i:)")));
-- (int32_t)entryPoint2 __attribute__((swift_name("entryPoint2()")));
+- (int32_t)entryPoint2;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface WildcardProperty : Base
-@property (readonly) int32_t entryPoint1 __attribute__((swift_name("entryPoint1")));
-@property (readonly) int32_t entryPoint2 __attribute__((swift_name("entryPoint2")));
+@property (readonly) int32_t entryPoint1;
+@property (readonly) int32_t entryPoint2;
 @end
 
 #pragma pop_macro("_Nullable_result")

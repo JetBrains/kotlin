@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) Kotlinx_coroutines_coreCoroutineDispatcherKey * _Nullable key __attribute__((swift_name("key")));
+@property (class, readonly) Kotlinx_coroutines_coreCoroutineDispatcherKey * _Nullable key;
 @end
 
 @protocol KotlinCoroutineContextKey
@@ -53,7 +53,7 @@ __attribute__((swift_name("Kotlinx_coroutines_coreCoroutineDispatcher.Key")))
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(id<KotlinCoroutineContextElement> _Nullable (^)(id<KotlinCoroutineContextElement> element))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)key __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) Kotlinx_coroutines_coreCoroutineDispatcherKey *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) Kotlinx_coroutines_coreCoroutineDispatcherKey *shared;
 @end
 
 
@@ -71,7 +71,7 @@ __attribute__((swift_name("Kotlinx_coroutines_coreCoroutineDispatcher.Key")))
 
 @protocol KotlinCoroutineContextElement <KotlinCoroutineContext>
 @required
-@property (readonly) id<KotlinCoroutineContextKey> key __attribute__((swift_name("key")));
+@property (readonly) id<KotlinCoroutineContextKey> key;
 @end
 
 
@@ -92,14 +92,14 @@ __attribute__((swift_name("Kotlinx_coroutines_coreCoroutineDispatcher.Key")))
 */
 @interface KotlinAbstractCoroutineContextElement : Base <KotlinCoroutineContextElement>
 - (instancetype)initWithKey:(id<KotlinCoroutineContextKey>)key __attribute__((swift_name("init(key:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) id<KotlinCoroutineContextKey> key __attribute__((swift_name("key")));
+@property (readonly) id<KotlinCoroutineContextKey> key;
 @end
 
 @interface Kotlinx_coroutines_coreCoroutineDispatcher : KotlinAbstractCoroutineContextElement <KotlinContinuationInterceptor>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithKey:(id<KotlinCoroutineContextKey>)key __attribute__((swift_name("init(key:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (class, readonly, getter=companion) Kotlinx_coroutines_coreCoroutineDispatcherKey *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) Kotlinx_coroutines_coreCoroutineDispatcherKey *companion;
 - (void)dispatchContext:(id<KotlinCoroutineContext>)context block:(id<Kotlinx_coroutines_coreRunnable>)block __attribute__((swift_name("dispatch(context:block:)")));
 - (void)dispatchYieldContext:(id<KotlinCoroutineContext>)context block:(id<Kotlinx_coroutines_coreRunnable>)block __attribute__((swift_name("dispatchYield(context:block:)")));
 - (id<KotlinContinuation>)interceptContinuationContinuation:(id<KotlinContinuation>)continuation __attribute__((swift_name("interceptContinuation(continuation:)")));
@@ -112,7 +112,7 @@ __attribute__((swift_name("Kotlinx_coroutines_coreCoroutineDispatcher.Key")))
 - (Kotlinx_coroutines_coreCoroutineDispatcher *)limitedParallelismParallelism:(int32_t)parallelism __attribute__((swift_name("limitedParallelism(parallelism:)")));
 - (Kotlinx_coroutines_coreCoroutineDispatcher *)plusOther:(Kotlinx_coroutines_coreCoroutineDispatcher *)other __attribute__((swift_name("plus(other:)"))) __attribute__((unavailable("Operator '+' on two CoroutineDispatcher objects is meaningless. CoroutineDispatcher is a coroutine context element and `+` is a set-sum operator for coroutine contexts. The dispatcher to the right of `+` just replaces the dispatcher to the left.")));
 - (void)releaseInterceptedContinuationContinuation:(id<KotlinContinuation>)continuation __attribute__((swift_name("releaseInterceptedContinuation(continuation:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSString *)description;
 @end
 
 
@@ -123,12 +123,12 @@ __attribute__((swift_name("Kotlinx_coroutines_coreCoroutineDispatcher.Key")))
 @protocol KotlinContinuation
 @required
 - (void)resumeWithResult:(id _Nullable)result __attribute__((swift_name("resumeWith(result:)")));
-@property (readonly) id<KotlinCoroutineContext> context __attribute__((swift_name("context")));
+@property (readonly) id<KotlinCoroutineContext> context;
 @end
 
 @protocol Kotlinx_coroutines_coreRunnable
 @required
-- (void)run __attribute__((swift_name("run()")));
+- (void)run;
 @end
 
 #pragma pop_macro("_Nullable_result")

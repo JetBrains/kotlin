@@ -22,14 +22,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo<Bar> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (int32_t)extensionProperty:(Bar _Nullable)receiver __attribute__((swift_name("extensionProperty(_:)")));
 - (void)extensionFunction:(Bar _Nullable)receiver __attribute__((swift_name("extensionFunction(_:)")));
 @end
 
 @interface Foo (Extensions)
-@property (readonly) int32_t topLevelExtensionProperty __attribute__((swift_name("topLevelExtensionProperty")));
+@property (readonly) int32_t topLevelExtensionProperty;
 @end
 
 #pragma pop_macro("_Nullable_result")

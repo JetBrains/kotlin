@@ -25,11 +25,11 @@ __attribute__((objc_subclassing_restricted))
 - (instancetype)initWithIntValue:(int32_t)intValue intVar:(int32_t)intVar nullableDefaultStringValue:(NSString * _Nullable)nullableDefaultStringValue __attribute__((swift_name("init(intValue:intVar:nullableDefaultStringValue:)"))) __attribute__((objc_designated_initializer));
 - (SimpleDataClass *)doCopyIntValue:(int32_t)intValue intVar:(int32_t)intVar nullableDefaultStringValue:(NSString * _Nullable)nullableDefaultStringValue __attribute__((swift_name("doCopy(intValue:intVar:nullableDefaultStringValue:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t intValue __attribute__((swift_name("intValue")));
-@property int32_t intVar __attribute__((swift_name("intVar")));
-@property (readonly) NSString * _Nullable nullableDefaultStringValue __attribute__((swift_name("nullableDefaultStringValue")));
+- (NSUInteger)hash;
+- (NSString *)description;
+@property (readonly) int32_t intValue;
+@property int32_t intVar;
+@property (readonly) NSString * _Nullable nullableDefaultStringValue;
 @end
 
 #pragma pop_macro("_Nullable_result")

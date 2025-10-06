@@ -56,6 +56,16 @@ interface ObjCExportNamer {
         override val objCName: String,
     ) : ObjCExportPropertyName
 
+    data class FunctionName(
+        override val swiftName: String,
+        override val objCName: String,
+    ) : ObjCExportFunctionName
+
+    data class EnumEntryName(
+        override val swiftName: String,
+        override val objCName: String,
+    ) : ObjCExportEnumEntryName
+
     interface Configuration {
         val topLevelNamePrefix: String
         fun getAdditionalPrefix(module: ModuleDescriptor): String?
@@ -77,13 +87,11 @@ interface ObjCExportNamer {
 
     fun getFileClassName(file: SourceFile): ClassOrProtocolName
     fun getClassOrProtocolName(descriptor: ClassDescriptor): ClassOrProtocolName
-    fun getSelector(method: FunctionDescriptor): String
     fun getParameterName(parameter: ParameterDescriptor): String
-    fun getSwiftName(method: FunctionDescriptor): String
+    fun getFunctionName(method: FunctionDescriptor): FunctionName
     fun getPropertyName(property: PropertyDescriptor): PropertyName
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
-    fun getEnumEntrySelector(descriptor: ClassDescriptor): String
-    fun getEnumEntrySwiftName(descriptor: ClassDescriptor): String
+    fun getEnumEntryName(descriptor: ClassDescriptor) : EnumEntryName
     fun getEnumStaticMemberSelector(descriptor: CallableMemberDescriptor): String
     fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String
 
@@ -543,92 +551,98 @@ class ObjCExportNamerImpl(
 
     override fun getParameterName(parameter: ParameterDescriptor): String = parameter.getObjCName().asString(forSwift = false)
 
-    override fun getSelector(method: FunctionDescriptor): String = methodSelectors.getOrPut(method) {
-        assert(mapper.isBaseMethod(method))
+    override fun getFunctionName(method: FunctionDescriptor): ObjCExportNamer.FunctionName {
+        fun swiftName(method: FunctionDescriptor): String = methodSwiftNames.getOrPut(method) {
+            assert(mapper.isBaseMethod(method))
 
-        getPredefined(method, Predefined.anyMethodSelectors)?.let { return it }
+            getPredefined(method, Predefined.anyMethodSwiftNames)?.let { return it }
 
-        val parameters = mapper.bridgeMethod(method).valueParametersAssociated(method)
+            val parameters = mapper.bridgeMethod(method).valueParametersAssociated(method)
 
-        StringBuilder().apply {
-            append(method.getMangledName(forSwift = false))
+            StringBuilder().apply {
+                append(method.getMangledName(forSwift = true))
+                append("(")
 
-            parameters.forEachIndexed { index, (bridge, it) ->
-                val name = when (bridge) {
-                    is MethodBridgeValueParameter.Mapped -> when {
-                        it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(false) { "" }
-                        method is PropertySetterDescriptor -> when (parameters.size) {
-                            1 -> ""
-                            else -> "value"
+                parameters@ for ((bridge, it) in parameters) {
+                    val label = when (bridge) {
+                        is MethodBridgeValueParameter.Mapped -> when {
+                            it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(true) { "_" }
+                            method is PropertySetterDescriptor -> when (parameters.size) {
+                                1 -> "_"
+                                else -> "value"
+                            }
+                            else -> it!!.getObjCName().asIdentifier(true)
                         }
-                        else -> it!!.getObjCName().asIdentifier(false)
+                        MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
+                        is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
                     }
-                    MethodBridgeValueParameter.ErrorOutParameter -> "error"
-                    is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
+
+                    append(label)
+                    append(":")
                 }
 
-                if (index == 0) {
-                    append(
-                        when {
-                            bridge is MethodBridgeValueParameter.ErrorOutParameter -> "AndReturn"
-                            bridge is MethodBridgeValueParameter.SuspendCompletion -> "With"
-                            method is ConstructorDescriptor -> "With"
-                            else -> ""
+                append(")")
+            }.mangledSequence {
+                // "foo(label:)" -> "foo(label_:)"
+                // "foo()" -> "foo_()"
+                insert(lastIndex - 1, '_')
+            }
+        }
+
+        fun objCName(method: FunctionDescriptor): String = methodSelectors.getOrPut(method) {
+            assert(mapper.isBaseMethod(method))
+
+            getPredefined(method, Predefined.anyMethodSelectors)?.let { return it }
+
+            val parameters = mapper.bridgeMethod(method).valueParametersAssociated(method)
+
+            StringBuilder().apply {
+                append(method.getMangledName(forSwift = false))
+
+                parameters.forEachIndexed { index, (bridge, it) ->
+                    val name = when (bridge) {
+                        is MethodBridgeValueParameter.Mapped -> when {
+                            it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(false) { "" }
+                            method is PropertySetterDescriptor -> when (parameters.size) {
+                                1 -> ""
+                                else -> "value"
+                            }
+                            else -> it!!.getObjCName().asIdentifier(false)
                         }
-                    )
-                    append(name.replaceFirstChar(Char::uppercaseChar))
+                        MethodBridgeValueParameter.ErrorOutParameter -> "error"
+                        is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
+                    }
+
+                    if (index == 0) {
+                        append(
+                            when {
+                                bridge is MethodBridgeValueParameter.ErrorOutParameter -> "AndReturn"
+                                bridge is MethodBridgeValueParameter.SuspendCompletion -> "With"
+                                method is ConstructorDescriptor -> "With"
+                                else -> ""
+                            }
+                        )
+                        append(name.replaceFirstChar(Char::uppercaseChar))
+                    } else {
+                        append(name)
+                    }
+
+                    append(':')
+                }
+            }.mangledSequence {
+                if (parameters.isNotEmpty()) {
+                    // "foo:" -> "foo_:"
+                    insert(lastIndex, '_')
                 } else {
-                    append(name)
+                    // "foo" -> "foo_"
+                    append("_")
                 }
-
-                append(':')
-            }
-        }.mangledSequence {
-            if (parameters.isNotEmpty()) {
-                // "foo:" -> "foo_:"
-                insert(lastIndex, '_')
-            } else {
-                // "foo" -> "foo_"
-                append("_")
             }
         }
-    }
-
-    override fun getSwiftName(method: FunctionDescriptor): String = methodSwiftNames.getOrPut(method) {
-        assert(mapper.isBaseMethod(method))
-
-        getPredefined(method, Predefined.anyMethodSwiftNames)?.let { return it }
-
-        val parameters = mapper.bridgeMethod(method).valueParametersAssociated(method)
-
-        StringBuilder().apply {
-            append(method.getMangledName(forSwift = true))
-            append("(")
-
-            parameters@ for ((bridge, it) in parameters) {
-                val label = when (bridge) {
-                    is MethodBridgeValueParameter.Mapped -> when {
-                        it is ReceiverParameterDescriptor -> it.getObjCName().asIdentifier(true) { "_" }
-                        method is PropertySetterDescriptor -> when (parameters.size) {
-                            1 -> "_"
-                            else -> "value"
-                        }
-                        else -> it!!.getObjCName().asIdentifier(true)
-                    }
-                    MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
-                    is MethodBridgeValueParameter.SuspendCompletion -> "completionHandler"
-                }
-
-                append(label)
-                append(":")
-            }
-
-            append(")")
-        }.mangledSequence {
-            // "foo(label:)" -> "foo(label_:)"
-            // "foo()" -> "foo_()"
-            insert(lastIndex - 1, '_')
-        }
+        return ObjCExportNamer.FunctionName(
+            swiftName = swiftName(method),
+            objCName = objCName(method)
+        )
     }
 
     private fun <T : Any> getPredefined(method: FunctionDescriptor, predefinedForAny: Map<Name, T>): T? {
@@ -677,20 +691,18 @@ class ObjCExportNamerImpl(
         return StringBuilder(name).mangledBySuffixUnderscores()
     }
 
-    override fun getEnumEntrySelector(descriptor: ClassDescriptor): String {
+    override fun getEnumEntryName(descriptor: ClassDescriptor): ObjCExportNamer.EnumEntryName {
         assert(descriptor.kind == ClassKind.ENUM_ENTRY)
 
-        return enumClassSelectors.getOrPut(descriptor) {
-            descriptor.getEnumEntryName(false)
-        }
-    }
+        return ObjCExportNamer.EnumEntryName(
+            swiftName = enumClassSwiftNames.getOrPut(descriptor) {
+                descriptor.getEnumEntryName(true)
+            },
+            objCName = enumClassSwiftNames.getOrPut(descriptor) {
+                descriptor.getEnumEntryName(false)
+            }
 
-    override fun getEnumEntrySwiftName(descriptor: ClassDescriptor): String {
-        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
-
-        return enumClassSwiftNames.getOrPut(descriptor) {
-            descriptor.getEnumEntryName(true)
-        }
+        )
     }
 
     override fun getEnumStaticMemberSelector(descriptor: CallableMemberDescriptor): String {

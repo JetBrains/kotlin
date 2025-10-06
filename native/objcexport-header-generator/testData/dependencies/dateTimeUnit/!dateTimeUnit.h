@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) Kotlinx_datetimeDateTimeUnit * _Nullable foo __attribute__((swift_name("foo")));
+@property (class, readonly) Kotlinx_datetimeDateTimeUnit * _Nullable foo;
 @end
 
 
@@ -33,7 +33,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.serialization.Serializable(with=NormalClass(value=kotlinx/datetime/serializers/DateTimeUnitSerializer))
 */
 @interface Kotlinx_datetimeDateTimeUnit : Base
-@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitCompanion *companion;
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
@@ -53,8 +53,8 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.Companion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitCompanion *shared __attribute__((swift_name("shared")));
-- (id<Kotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitCompanion *shared;
+- (id<Kotlinx_serialization_coreKSerializer>)serializer;
 @property (readonly) Kotlinx_datetimeDateTimeUnitMonthBased *CENTURY __attribute__((swift_name("CENTURY")));
 @property (readonly) Kotlinx_datetimeDateTimeUnitDayBased *DAY __attribute__((swift_name("DAY")));
 @property (readonly) Kotlinx_datetimeDateTimeUnitTimeBased *HOUR __attribute__((swift_name("HOUR")));
@@ -72,13 +72,13 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.Companion")))
 @protocol Kotlinx_serialization_coreSerializationStrategy
 @required
 - (void)serializeEncoder:(id<Kotlinx_serialization_coreEncoder>)encoder value:(id _Nullable)value __attribute__((swift_name("serialize(encoder:value:)")));
-@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor;
 @end
 
 @protocol Kotlinx_serialization_coreDeserializationStrategy
 @required
 - (id _Nullable)deserializeDecoder:(id<Kotlinx_serialization_coreDecoder>)decoder __attribute__((swift_name("deserialize(decoder:)")));
-@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor __attribute__((swift_name("descriptor")));
+@property (readonly) id<Kotlinx_serialization_coreSerialDescriptor> descriptor;
 @end
 
 @protocol Kotlinx_serialization_coreKSerializer <Kotlinx_serialization_coreSerializationStrategy, Kotlinx_serialization_coreDeserializationStrategy>
@@ -92,7 +92,7 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.Companion")))
 */
 __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.DateBased")))
 @interface Kotlinx_datetimeDateTimeUnitDateBased : Kotlinx_datetimeDateTimeUnit
-@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitDateBasedCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitDateBasedCompanion *companion;
 @end
 
 
@@ -104,12 +104,12 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.MonthBased")))
 @interface Kotlinx_datetimeDateTimeUnitMonthBased : Kotlinx_datetimeDateTimeUnitDateBased
 - (instancetype)initWithMonths:(int32_t)months __attribute__((swift_name("init(months:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitMonthBasedCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitMonthBasedCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSUInteger)hash;
 - (Kotlinx_datetimeDateTimeUnitMonthBased *)timesScalar:(int32_t)scalar __attribute__((swift_name("times(scalar:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t months __attribute__((swift_name("months")));
+- (NSString *)description;
+@property (readonly) int32_t months;
 @end
 
 
@@ -121,12 +121,12 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.DayBased")))
 @interface Kotlinx_datetimeDateTimeUnitDayBased : Kotlinx_datetimeDateTimeUnitDateBased
 - (instancetype)initWithDays:(int32_t)days __attribute__((swift_name("init(days:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitDayBasedCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitDayBasedCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSUInteger)hash;
 - (Kotlinx_datetimeDateTimeUnitDayBased *)timesScalar:(int32_t)scalar __attribute__((swift_name("times(scalar:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int32_t days __attribute__((swift_name("days")));
+- (NSString *)description;
+@property (readonly) int32_t days;
 @end
 
 
@@ -138,13 +138,13 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.TimeBased")))
 @interface Kotlinx_datetimeDateTimeUnitTimeBased : Kotlinx_datetimeDateTimeUnit
 - (instancetype)initWithNanoseconds:(int64_t)nanoseconds __attribute__((swift_name("init(nanoseconds:)"))) __attribute__((objc_designated_initializer));
-@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitTimeBasedCompanion *companion __attribute__((swift_name("companion")));
+@property (class, readonly, getter=companion) Kotlinx_datetimeDateTimeUnitTimeBasedCompanion *companion;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSUInteger)hash;
 - (Kotlinx_datetimeDateTimeUnitTimeBased *)timesScalar:(int32_t)scalar __attribute__((swift_name("times(scalar:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) int64_t duration __attribute__((swift_name("duration")));
-@property (readonly) int64_t nanoseconds __attribute__((swift_name("nanoseconds")));
+- (NSString *)description;
+@property (readonly) int64_t duration;
+@property (readonly) int64_t nanoseconds;
 @end
 
 @protocol Kotlinx_serialization_coreEncoder
@@ -165,13 +165,13 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.TimeBased")))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (void)encodeNotNullMark __attribute__((swift_name("encodeNotNullMark()")));
+- (void)encodeNotNullMark;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (void)encodeNull __attribute__((swift_name("encodeNull()")));
+- (void)encodeNull;
 
 /**
  * @note annotations
@@ -181,7 +181,7 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.TimeBased")))
 - (void)encodeSerializableValueSerializer:(id<Kotlinx_serialization_coreSerializationStrategy>)serializer value:(id _Nullable)value __attribute__((swift_name("encodeSerializableValue(serializer:value:)")));
 - (void)encodeShortValue:(int16_t)value __attribute__((swift_name("encodeShort(value:)")));
 - (void)encodeStringValue:(NSString *)value __attribute__((swift_name("encodeString(value:)")));
-@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule;
 @end
 
 @protocol Kotlinx_serialization_coreSerialDescriptor
@@ -221,58 +221,58 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.TimeBased")))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) NSArray<id<KotlinAnnotation>> *annotations __attribute__((swift_name("annotations")));
+@property (readonly) NSArray<id<KotlinAnnotation>> *annotations;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) int32_t elementsCount __attribute__((swift_name("elementsCount")));
-@property (readonly) BOOL isInline __attribute__((swift_name("isInline")));
+@property (readonly) int32_t elementsCount;
+@property (readonly) BOOL isInline;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) BOOL isNullable __attribute__((swift_name("isNullable")));
+@property (readonly) BOOL isNullable;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) Kotlinx_serialization_coreSerialKind *kind __attribute__((swift_name("kind")));
+@property (readonly) Kotlinx_serialization_coreSerialKind *kind;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-@property (readonly) NSString *serialName __attribute__((swift_name("serialName")));
+@property (readonly) NSString *serialName;
 @end
 
 @protocol Kotlinx_serialization_coreDecoder
 @required
 - (id<Kotlinx_serialization_coreCompositeDecoder>)beginStructureDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("beginStructure(descriptor:)")));
-- (BOOL)decodeBoolean __attribute__((swift_name("decodeBoolean()")));
-- (int8_t)decodeByte __attribute__((swift_name("decodeByte()")));
-- (unichar)decodeChar __attribute__((swift_name("decodeChar()")));
-- (double)decodeDouble __attribute__((swift_name("decodeDouble()")));
+- (BOOL)decodeBoolean;
+- (int8_t)decodeByte;
+- (unichar)decodeChar;
+- (double)decodeDouble;
 - (int32_t)decodeEnumEnumDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)enumDescriptor __attribute__((swift_name("decodeEnum(enumDescriptor:)")));
-- (float)decodeFloat __attribute__((swift_name("decodeFloat()")));
+- (float)decodeFloat;
 - (id<Kotlinx_serialization_coreDecoder>)decodeInlineDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("decodeInline(descriptor:)")));
-- (int32_t)decodeInt __attribute__((swift_name("decodeInt()")));
-- (int64_t)decodeLong __attribute__((swift_name("decodeLong()")));
+- (int32_t)decodeInt;
+- (int64_t)decodeLong;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (BOOL)decodeNotNullMark __attribute__((swift_name("decodeNotNullMark()")));
+- (BOOL)decodeNotNullMark;
 
 /**
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (KotlinNothing * _Nullable)decodeNull __attribute__((swift_name("decodeNull()")));
+- (KotlinNothing * _Nullable)decodeNull;
 
 /**
  * @note annotations
@@ -280,9 +280,9 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.TimeBased")))
 */
 - (id _Nullable)decodeNullableSerializableValueDeserializer:(id<Kotlinx_serialization_coreDeserializationStrategy>)deserializer __attribute__((swift_name("decodeNullableSerializableValue(deserializer:)")));
 - (id _Nullable)decodeSerializableValueDeserializer:(id<Kotlinx_serialization_coreDeserializationStrategy>)deserializer __attribute__((swift_name("decodeSerializableValue(deserializer:)")));
-- (int16_t)decodeShort __attribute__((swift_name("decodeShort()")));
-- (NSString *)decodeString __attribute__((swift_name("decodeString()")));
-@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+- (int16_t)decodeShort;
+- (NSString *)decodeString;
+@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -291,8 +291,8 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.DateBasedCompanion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitDateBasedCompanion *shared __attribute__((swift_name("shared")));
-- (id<Kotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitDateBasedCompanion *shared;
+- (id<Kotlinx_serialization_coreKSerializer>)serializer;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -301,8 +301,8 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.MonthBasedCompanion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitMonthBasedCompanion *shared __attribute__((swift_name("shared")));
-- (id<Kotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitMonthBasedCompanion *shared;
+- (id<Kotlinx_serialization_coreKSerializer>)serializer;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -311,8 +311,8 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.DayBasedCompanion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitDayBasedCompanion *shared __attribute__((swift_name("shared")));
-- (id<Kotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitDayBasedCompanion *shared;
+- (id<Kotlinx_serialization_coreKSerializer>)serializer;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -321,8 +321,8 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.TimeBasedCompanion")))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitTimeBasedCompanion *shared __attribute__((swift_name("shared")));
-- (id<Kotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
+@property (class, readonly, getter=shared) Kotlinx_datetimeDateTimeUnitTimeBasedCompanion *shared;
+- (id<Kotlinx_serialization_coreKSerializer>)serializer;
 @end
 
 @protocol Kotlinx_serialization_coreCompositeEncoder
@@ -351,7 +351,7 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.TimeBasedCompanion")))
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 - (BOOL)shouldEncodeElementDefaultDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("shouldEncodeElementDefault(descriptor:index:)")));
-@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule;
 @end
 
 @interface Kotlinx_serialization_coreSerializersModule : Base
@@ -391,8 +391,8 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.TimeBasedCompanion")))
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
 @interface Kotlinx_serialization_coreSerialKind : Base
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSUInteger)hash;
+- (NSString *)description;
 @end
 
 @protocol Kotlinx_serialization_coreCompositeDecoder
@@ -418,12 +418,12 @@ __attribute__((swift_name("Kotlinx_datetimeDateTimeUnit.TimeBasedCompanion")))
  * @note annotations
  *   kotlinx.serialization.ExperimentalSerializationApi
 */
-- (BOOL)decodeSequentially __attribute__((swift_name("decodeSequentially()")));
+- (BOOL)decodeSequentially;
 - (id _Nullable)decodeSerializableElementDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index deserializer:(id<Kotlinx_serialization_coreDeserializationStrategy>)deserializer previousValue:(id _Nullable)previousValue __attribute__((swift_name("decodeSerializableElement(descriptor:index:deserializer:previousValue:)")));
 - (int16_t)decodeShortElementDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeShortElement(descriptor:index:)")));
 - (NSString *)decodeStringElementDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor index:(int32_t)index __attribute__((swift_name("decodeStringElement(descriptor:index:)")));
 - (void)endStructureDescriptor:(id<Kotlinx_serialization_coreSerialDescriptor>)descriptor __attribute__((swift_name("endStructure(descriptor:)")));
-@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
+@property (readonly) Kotlinx_serialization_coreSerializersModule *serializersModule;
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -470,8 +470,8 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.1")
 */
 - (BOOL)isInstanceValue:(id _Nullable)value __attribute__((swift_name("isInstance(value:)")));
-@property (readonly) NSString * _Nullable qualifiedName __attribute__((swift_name("qualifiedName")));
-@property (readonly) NSString * _Nullable simpleName __attribute__((swift_name("simpleName")));
+@property (readonly) NSString * _Nullable qualifiedName;
+@property (readonly) NSString * _Nullable simpleName;
 @end
 
 #pragma pop_macro("_Nullable_result")

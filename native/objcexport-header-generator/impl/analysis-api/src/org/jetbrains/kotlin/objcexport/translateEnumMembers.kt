@@ -22,19 +22,22 @@ internal fun ObjCExportContext.translateEnumMembers(symbol: KaClassSymbol): List
 }
 
 private fun ObjCExportContext.getEnumEntries(symbol: KaClassSymbol): List<ObjCProperty> {
-
     val staticMembers = with(analysisSession) { symbol.staticDeclaredMemberScope }.callables.toList()
     return staticMembers.filterIsInstance<KaEnumEntrySymbol>().map { entry ->
 
         val entryName = getEnumEntryName(entry, false)
         val swiftName = getEnumEntryName(entry, true)
+        val attributes = mutableListOf<String>()
+        if (entryName != swiftName || entryName[0].isUpperCase()) {
+            attributes.add(swiftNameAttribute(swiftName))
+        }
         ObjCProperty(
             name = entryName,
             comment = null,
             origin = null,
             type = mapToReferenceTypeIgnoringNullability(entry.returnType),
             propertyAttributes = listOf("class", "readonly"),
-            declarationAttributes = listOf(swiftNameAttribute(swiftName))
+            declarationAttributes = attributes
         )
     }
 }
@@ -51,7 +54,7 @@ private fun ObjCExportContext.getEnumValuesMethod(symbol: KaClassSymbol): ObjCMe
         returnType = if (returnType == null) ObjCIdType else translateToObjCReferenceType(returnType),
         selectors = listOf("values"),
         parameters = emptyList(),
-        attributes = listOf(swiftNameAttribute("values()")),
+        attributes = emptyList(),
         origin = null
     )
 }
@@ -68,7 +71,7 @@ private fun ObjCExportContext.getEnumEntriesProperty(symbol: KaClassSymbol): Obj
         comment = null,
         type = if (returnType == null) ObjCIdType else translateToObjCReferenceType(returnType),
         propertyAttributes = listOf("class", "readonly"),
-        declarationAttributes = listOf(swiftNameAttribute("entries")),
+        declarationAttributes = emptyList(),
         origin = null,
         setterName = null,
         getterName = null

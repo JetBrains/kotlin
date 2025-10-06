@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-+ (NSString *)foo __attribute__((swift_name("foo()")));
-@property (class, readonly, getter=foo_) int32_t foo __attribute__((swift_name("foo")));
++ (NSString *)foo;
+@property (class, readonly, getter=foo_) int32_t foo;
 @end
 
 #pragma pop_macro("_Nullable_result")

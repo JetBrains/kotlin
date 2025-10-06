@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol A
 @required
-- (id<B>)foo __attribute__((swift_name("foo()")));
+- (id<B>)foo;
 @end
 
 @protocol B

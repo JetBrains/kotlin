@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol Foo
 @required
-- (NSString *)someMethod __attribute__((swift_name("someMethod()")));
-@property (readonly) int32_t someProperty __attribute__((swift_name("someProperty")));
+- (NSString *)someMethod;
+@property (readonly) int32_t someProperty;
 @end
 
 #pragma pop_macro("_Nullable_result")

@@ -21,28 +21,28 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @interface Foo : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface Bar : Foo
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 @interface Bar (Extensions)
-- (void)extFun __attribute__((swift_name("extFun()")));
+- (void)extFun;
 - (void)extFunP0:(BOOL)p0 p1:(NSString *)p1 __attribute__((swift_name("extFun(p0:p1:)")));
-@property (readonly) int32_t propVal __attribute__((swift_name("propVal")));
-@property int32_t propVar __attribute__((swift_name("propVar")));
+@property (readonly) int32_t propVal;
+@property int32_t propVar;
 @end
 
 @interface Foo (Extensions)
-- (void)extFun_ __attribute__((swift_name("extFun_()")));
+- (void)extFun_;
 - (void)extFunP0:(NSString *)p0 p1_:(BOOL)p1 __attribute__((swift_name("extFun(p0:p1_:)")));
-@property (readonly) int32_t propVal_ __attribute__((swift_name("propVal_")));
-@property int32_t propVar_ __attribute__((swift_name("propVar_")));
+@property (readonly) int32_t propVal_;
+@property int32_t propVar_;
 @end
 
 #pragma pop_macro("_Nullable_result")

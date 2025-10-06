@@ -22,9 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol Foo
 @required
-- (id)someMethod __attribute__((swift_name("someMethod()")));
-- (id)someMethodWithCovariantOverwrite __attribute__((swift_name("someMethodWithCovariantOverwrite()")));
-@property (readonly) int32_t someProperty __attribute__((swift_name("someProperty")));
+- (id)someMethod;
+- (id)someMethodWithCovariantOverwrite;
+@property (readonly) int32_t someProperty;
 @end
 
 @protocol Bar <Foo>

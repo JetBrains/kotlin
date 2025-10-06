@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface MutexPool : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)release_ __attribute__((swift_name("release()")));
 - (void)releaseParam:(int32_t)param __attribute__((swift_name("release(param:)")));
