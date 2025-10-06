@@ -3,7 +3,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_TAIL_CALL_OPTIMIZATION
-// API_VERSION: LATEST
+// API_VERSION: 2.4
 
 // Using internal ModuleNameRetriever in stdlib replacement
 // DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
@@ -26,7 +26,7 @@ internal fun <T> wrapContinuation(
     ) as T
 }
 
-// FILE: test.kt
+// FILE: inline.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -37,7 +37,36 @@ suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrRet
     COROUTINE_SUSPENDED
 }
 
-suspend fun suspendHere(): String = suspendThere("OK")
+inline suspend fun inlineMe1(): String {
+    return suspendThere("OK1")
+}
+
+inline suspend fun inlineMe2(c: suspend () -> String): String {
+    return c()
+}
+
+inline suspend fun inlineMe3(crossinline c: suspend () -> String): String {
+    val o = object {
+        suspend fun foo(): String {
+            return c()
+        }
+    }
+    return o.foo()
+}
+
+// FILE: test.kt
+import helpers.*
+import kotlin.coroutines.*
+
+suspend fun suspendHere1(): String = inlineMe1()
+
+suspend fun suspendHere2(): String = inlineMe2 {
+    suspendThere("OK2")
+}
+
+suspend fun suspendHere3(): String = inlineMe3 {
+    suspendThere("OK3")
+}
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
@@ -47,9 +76,21 @@ fun box(): String {
     var result = ""
 
     builder {
-        result = suspendHere()
+        result = suspendHere1()
     }
-    TailCallOptimizationChecker.checkStateMachineIn("suspendHere")
+    TailCallOptimizationChecker.checkStateMachineIn("suspendHere1")
+    if (result != "OK1") return "FAIL 1 $result"
+    builder {
+        result = suspendHere2()
+    }
+    TailCallOptimizationChecker.checkStateMachineIn("suspendHere2")
+    if (result != "OK2") return "FAIL 2 $result"
+    builder {
+        result = suspendHere3()
+    }
+    TailCallOptimizationChecker.checkStateMachineIn("suspendHere3")
+    if (result != "OK3") return "FAIL 3 $result"
 
-    return result
+    return "OK"
 }
+
