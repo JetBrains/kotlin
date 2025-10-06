@@ -25,7 +25,7 @@ __attribute__((objc_subclassing_restricted))
  * @param myPrameter annotations ImportantAnnotation
 */
 - (instancetype)initWithMyPrameter:(NSString *)myPrameter __attribute__((swift_name("init(myPrameter:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) NSString *myPrameter __attribute__((swift_name("myPrameter")));
+@property (readonly) NSString *myPrameter;
 @end
 
 #pragma pop_macro("_Nullable_result")

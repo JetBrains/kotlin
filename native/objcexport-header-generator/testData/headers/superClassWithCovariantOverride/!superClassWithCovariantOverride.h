@@ -21,16 +21,16 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @interface Bar : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (id)foo __attribute__((swift_name("foo()")));
+- (id)foo;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo : Bar
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (NSString *)foo __attribute__((swift_name("foo()")));
+- (NSString *)foo;
 @end
 
 #pragma pop_macro("_Nullable_result")

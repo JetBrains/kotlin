@@ -20,14 +20,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol Bar
 @required
-- (int32_t)someMethodWithDiffReturnType __attribute__((swift_name("someMethodWithDiffReturnType()")));
-- (void)someMethodWithSameReturnType __attribute__((swift_name("someMethodWithSameReturnType()")));
+- (int32_t)someMethodWithDiffReturnType;
+- (void)someMethodWithSameReturnType;
 @end
 
 @protocol Foo
 @required
-- (NSString *)someMethodWithDiffReturnType_ __attribute__((swift_name("someMethodWithDiffReturnType_()")));
-- (void)someMethodWithSameReturnType __attribute__((swift_name("someMethodWithSameReturnType()")));
+- (NSString *)someMethodWithDiffReturnType_;
+- (void)someMethodWithSameReturnType;
 @end
 
 #pragma pop_macro("_Nullable_result")
