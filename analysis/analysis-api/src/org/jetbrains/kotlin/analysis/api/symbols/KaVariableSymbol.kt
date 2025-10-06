@@ -548,7 +548,7 @@ public abstract class KaValueParameterSymbol : KaParameterSymbol() {
     public abstract val isCrossinline: Boolean
 
     /**
-     * Whether the value parameter has a [default value](https://kotlinlang.org/docs/functions.html#default-arguments).
+     * Whether the value parameter has a [default value](https://kotlinlang.org/docs/functions.html#parameters-with-default-values).
      */
     public abstract val hasDefaultValue: Boolean
 
