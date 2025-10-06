@@ -89,7 +89,7 @@ public actual constructor(
 
             var cause = this.cause
             while (cause != null) {
-                val _ = cause.dumpSelfTrace(indent, "Caused by: ")
+                if (!cause.dumpSelfTrace(indent, "Caused by: ")) return
                 cause = cause.cause
             }
         }
