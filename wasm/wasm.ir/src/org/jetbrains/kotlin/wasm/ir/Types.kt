@@ -34,6 +34,8 @@ object WasmNullExnRefType : WasmType("nullexnref", -0x0c) // Shorthand for (ref 
 data class WasmRefNullType(val heapType: WasmHeapType) : WasmType("ref null", -0x1D)
 data class WasmRefType(val heapType: WasmHeapType) : WasmType("ref", -0x1C)
 
+object WasmContType : WasmType("cont", -0x18)
+
 @Suppress("unused")
 object WasmI31Ref : WasmType("i31ref", -0x14)
 
@@ -56,6 +58,8 @@ sealed class WasmHeapType {
         object None : Simple("none", -0x0F)
         object NoFunc : Simple("nofunc", -0x0D)
         object NoExtern : Simple("noextern", -0x0E)
+        object Cont : Simple("cont", -0x18)
+        object NoCont : Simple("nocont", -0x0b)
 
         override fun toString(): String {
             return "Simple:$name(${code.toString(16)})"
@@ -79,6 +83,7 @@ fun WasmType.getHeapType(): WasmHeapType =
         is WasmAnyRef -> WasmHeapType.Simple.Any
         is WasmFuncRef -> WasmHeapType.Simple.Func
         is WasmExternRef -> WasmHeapType.Simple.Extern
+        is WasmContType -> WasmHeapType.Simple.Cont
         else -> error("Unknown heap type for type $this")
     }
 

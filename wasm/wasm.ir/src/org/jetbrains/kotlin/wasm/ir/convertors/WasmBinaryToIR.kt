@@ -440,6 +440,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.HEAP_TYPE -> WasmImmediate.HeapType(readRefType())
                 WasmImmediateKind.LOCAL_DEFS -> TODO()
                 WasmImmediateKind.CATCH_VECTOR -> TODO()
+                WasmImmediateKind.ON_VECTOR -> readContHandleType()
             }
         }
 
@@ -494,6 +495,25 @@ class WasmBinaryToIR(val b: MyByteReader) {
             0x70 -> WasmFuncRef
             0x6F -> WasmExternRef
             else -> error("Unsupported heap type ${code.toString(16)}")
+        }
+    }
+
+    private fun readContHandleType(): WasmImmediate.ContHandle {
+        val code = b.readByte()
+        val contHandleType = WasmImmediate.ContHandle.ContHandleType::entries.get().singleOrNull { it.opcode == code.toInt() }
+        return when (contHandleType) {
+            WasmImmediate.ContHandle.ContHandleType.ON -> WasmImmediate.ContHandle(
+                contHandleType,
+                listOf(
+                    WasmImmediate.TagIdx(b.readVarUInt32AsInt()),
+                    WasmImmediate.LabelIdx(b.readVarUInt32AsInt())
+                )
+            )
+            WasmImmediate.ContHandle.ContHandleType.ON_SWITCH -> WasmImmediate.ContHandle(
+                contHandleType,
+                listOf(WasmImmediate.TagIdx(b.readVarUInt32AsInt()))
+            )
+            null -> error("Unsupported continuation handle type ${code.toString(16)}")
         }
     }
 
