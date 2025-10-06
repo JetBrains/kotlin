@@ -1,29 +1,41 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
+import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
-import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
-import org.jetbrains.kotlin.backend.konan.driver.phases.FirSerializerInput
-import org.jetbrains.kotlin.backend.konan.driver.phases.SerializerOutput
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 
-internal fun LightPhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (input) {
+data class Fir2IrOutput(
+        val firResult: FirResult,
+        val symbols: KonanSymbols,
+        val fir2irActualizedResult: Fir2IrActualizedResult,
+        val usedLibraries: Set<KotlinResolvedLibrary>
+)
+
+fun LightPhaseContext.firSerializer(input: FirOutput): SerializerOutput<KonanLibrary>? = when (input) {
     !is FirOutput.Full -> null
     else -> firSerializerBase(input.firResult, null)
 }
 
-internal fun LightPhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
+data class FirSerializerInput(
+        val firToIrOutput: Fir2IrOutput,
+        val produceHeaderKlib: Boolean = false,
+)
+
+fun LightPhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput<KonanLibrary> {
     return firSerializerBase(input.firToIrOutput.firResult, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
 }
 
@@ -31,7 +43,7 @@ internal fun LightPhaseContext.firSerializerBase(
         firResult: FirResult,
         fir2IrOutput: Fir2IrOutput?,
         produceHeaderKlib: Boolean = false,
-): SerializerOutput {
+): SerializerOutput<KonanLibrary> {
     val configuration = config.configuration
     val usedResolvedLibraries = fir2IrOutput?.let {
         config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder).filter {

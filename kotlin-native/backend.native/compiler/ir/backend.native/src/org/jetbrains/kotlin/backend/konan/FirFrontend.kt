@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.konan.driver.LightPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -104,7 +103,13 @@ internal fun LightPhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment):
     )
 }
 
-internal fun LightPhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutput {
+sealed class FirOutput {
+    object ShouldNotGenerateCode : FirOutput()
+
+    data class Full(val firResult: FirResult) : FirOutput()
+}
+
+fun LightPhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     // FIR

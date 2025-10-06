@@ -255,21 +255,6 @@ internal class BridgeDirections(private val array: Array<BridgeDirection>) {
     }
 }
 
-val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
-    get() {
-        val result = mutableSetOf<IrSimpleFunction>()
-
-        fun traverse(function: IrSimpleFunction) {
-            if (function in result) return
-            result += function
-            function.overriddenSymbols.forEach { traverse(it.owner) }
-        }
-
-        traverse(this)
-
-        return result
-    }
-
 internal fun IrSimpleFunction.bridgeDirectionsTo(overriddenFunction: IrSimpleFunction, policy: BridgesPolicy): BridgeDirections {
     val ourDirections = BridgeDirections(this, overriddenFunction, policy)
 
