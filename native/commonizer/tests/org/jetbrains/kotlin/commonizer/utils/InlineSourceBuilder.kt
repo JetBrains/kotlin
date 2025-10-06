@@ -31,19 +31,16 @@ interface InlineSourceBuilder {
         private var dependencies: List<Module> = emptyList()
 
 
-        @InlineSourcesCommonizationTestDsl
         @ModuleBuilderDsl
         fun source(@Language("kotlin") content: String, name: String = "test.kt") {
             sourceFiles = sourceFiles + SourceFile(name, content)
         }
 
-        @InlineSourcesCommonizationTestDsl
         @ModuleBuilderDsl
         fun dependency(builder: ModuleBuilder.() -> Unit) {
             dependency(ModuleBuilder().also(builder).build())
         }
 
-        @InlineSourcesCommonizationTestDsl
         @ModuleBuilderDsl
         fun dependency(module: Module) {
             this.dependencies += module.copy(name = "${this.name}-dependency-${module.name}-${dependencies.size}")

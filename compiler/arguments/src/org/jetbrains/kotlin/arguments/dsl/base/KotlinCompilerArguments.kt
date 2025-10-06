@@ -70,7 +70,6 @@ internal class KotlinCompilerArgumentsBuilder() {
  *
  * @see KotlinCompilerArgumentBuilder
  */
-@KotlinArgumentsDslMarker
 internal fun compilerArguments(
     config: KotlinCompilerArgumentsBuilder.() -> Unit,
 ): KotlinCompilerArguments {
