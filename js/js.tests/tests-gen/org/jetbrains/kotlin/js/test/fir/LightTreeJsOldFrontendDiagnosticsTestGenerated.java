@@ -575,6 +575,18 @@ public class LightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractLigh
     }
 
     @Test
+    @TestMetadata("exportableSuspendFunctions.kt")
+    public void testExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportableSuspendFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("exportedFileWithExportableSuspendFunctions.kt")
+    public void testExportedFileWithExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportedFileWithExportableSuspendFunctions.kt");
+    }
+
+    @Test
     @TestMetadata("extendingNonExportedType.kt")
     public void testExtendingNonExportedType() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/extendingNonExportedType.kt");
@@ -671,21 +683,15 @@ public class LightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractLigh
     }
 
     @Test
-    @TestMetadata("wrongExportedDeclarationInExportedFileWithExportableSuspendFunctions.kt")
-    public void testWrongExportedDeclarationInExportedFileWithExportableSuspendFunctions() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFileWithExportableSuspendFunctions.kt");
+    @TestMetadata("wrongExportedDeclarationInExportedFileWithNonExportableSuspendFunctions.kt")
+    public void testWrongExportedDeclarationInExportedFileWithNonExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFileWithNonExportableSuspendFunctions.kt");
     }
 
     @Test
-    @TestMetadata("wrongExportedDeclarationWithExportableSuspendFunctions.kt")
-    public void testWrongExportedDeclarationWithExportableSuspendFunctions() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationWithExportableSuspendFunctions.kt");
-    }
-
-    @Test
-    @TestMetadata("wrongExportedDeclarationWithoutExportableSuspendFunctions.kt")
-    public void testWrongExportedDeclarationWithoutExportableSuspendFunctions() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationWithoutExportableSuspendFunctions.kt");
+    @TestMetadata("wrongExportedDeclarationWithNonExportableSuspendFunctions.kt")
+    public void testWrongExportedDeclarationWithNonExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationWithNonExportableSuspendFunctions.kt");
     }
   }
 
