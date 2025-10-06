@@ -13,16 +13,19 @@ fun runBoxTest(): Boolean {
     return isOk
 }
 
+@kotlin.wasm.WasmImport("ssw_util", "proc_exit")
+private external fun wasiProcExit(code: Int)
+
 @kotlin.wasm.WasmExport
 fun startTest() {
     try {
         if (!runBoxTest()) {
-            throw Exception("Tests failed")
+            wasiProcExit(1)
         }
     } catch (e: Throwable) {
         println("Failed with exception!")
         println(e.message)
         println(e.printStackTrace())
-        throw e
+        wasiProcExit(1)
     }
 }

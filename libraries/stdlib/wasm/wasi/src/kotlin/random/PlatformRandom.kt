@@ -5,14 +5,33 @@
 
 package kotlin.random
 
-internal fun randomLong(): Long {
-    return random.nextLong()
+import kotlin.wasm.WasiError
+import kotlin.wasm.WasiErrorCode
+import kotlin.wasm.WasmImport
+import kotlin.wasm.ExperimentalWasmInterop
+import kotlin.wasm.unsafe.withScopedMemoryAllocator
+
+/**
+ * Write high-quality random data into a buffer. This function blocks when the implementation is
+ * unable to immediately provide sufficient high-quality random data. This function may execute
+ * slowly, so when large mounts of random data are required, it's advisable to use this function to
+ * seed a pseudo-random number generator, rather than to provide the random data directly.
+ */
+@ExperimentalWasmInterop
+@WasmImport("ssw_util", "random_get")
+internal external fun wasiRawRandomGet(address: Int, size: Int): Int
+
+@OptIn(ExperimentalWasmInterop::class)
+private fun wasiRandomGet(): Long {
+    withScopedMemoryAllocator { allocator ->
+        val memory = allocator.allocate(Long.SIZE_BYTES)
+        val ret = wasiRawRandomGet(memory.address.toInt(), Long.SIZE_BYTES)
+        return if (ret == 0) {
+            memory.loadLong()
+        } else {
+            throw WasiError(WasiErrorCode.entries[ret])
+        }
+    }
 }
 
-internal fun randomBytes(size: Int): ByteArray {
-    return random.nextBytes(size)
-}
-
-private val random = Random(42)
-
-internal actual fun defaultPlatformRandom(): Random = Random(random.nextLong())
+internal actual fun defaultPlatformRandom(): Random = Random(wasiRandomGet())

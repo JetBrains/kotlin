@@ -15,35 +15,83 @@ import kotlin.wasm.unsafe.withScopedMemoryAllocator
 private const val STDOUT = 1
 private const val STDERR = 2
 
+/**
+ * Write to a file descriptor. Note: This is similar to `writev` in POSIX.
+ */
 @ExperimentalWasmInterop
-@WasmImport("spectest", "print_i32")
-private external fun spectestPrint_i32(value: Int): Unit
+@WasmImport("ssw_util", "fd_write")
+private external fun wasiRawFdWrite(descriptor: Int, scatterPtr: Int, scatterSize: Int, errorPtr: Int): Int
 
-@ExperimentalWasmInterop
-@WasmImport("spectest", "print")
-private external fun spectestPrint(): Unit
+@OptIn(ExperimentalWasmInterop::class)
+internal fun wasiPrintImpl(
+    allocator: MemoryAllocator,
+    data: ByteArray?,
+    newLine: Boolean,
+    useErrorStream: Boolean
+) {
+    val dataSize = data?.size ?: 0
+    val memorySize = dataSize + (if (newLine) 1 else 0)
+    if (memorySize == 0) return
+
+    val ptr = allocator.allocate(memorySize)
+    if (data != null) {
+        var currentPtr = ptr
+        for (el in data) {
+            currentPtr.storeByte(el)
+            currentPtr += 1
+        }
+    }
+    if (newLine) {
+        (ptr + dataSize).storeByte(0x0A)
+    }
+
+    val scatterPtr = allocator.allocate(8)
+    (scatterPtr + 0).storeInt(ptr.address.toInt())
+    (scatterPtr + 4).storeInt(memorySize)
+
+    val rp0 = allocator.allocate(4)
+
+    val ret =
+        wasiRawFdWrite(
+            descriptor = if (useErrorStream) STDERR else STDOUT,
+            scatterPtr = scatterPtr.address.toInt(),
+            scatterSize = 1,
+            errorPtr = rp0.address.toInt()
+        )
+
+    if (ret != 0) {
+        throw WasiError(WasiErrorCode.entries[ret])
+    }
+}
+
+private fun printImpl(message: String?, useErrorStream: Boolean, newLine: Boolean) {
+    withScopedMemoryAllocator { allocator ->
+        wasiPrintImpl(
+            allocator = allocator,
+            data = message?.encodeToByteArray(),
+            newLine = newLine,
+            useErrorStream = useErrorStream,
+        )
+    }
+}
 
 internal actual fun printError(error: String?) {
-    throw UnsupportedOperationException("printError not supported. Use println")
+    printImpl(error, useErrorStream = true, newLine = false)
 }
 
 /** Prints the line separator to the standard output stream. */
-@ExperimentalWasmInterop
 public actual fun println() {
-    spectestPrint()
+    printImpl(null, useErrorStream = false, newLine = true)
 }
 
 /** Prints the given [message] and the line separator to the standard output stream. */
-@ExperimentalWasmInterop
 public actual fun println(message: Any?) {
-    message?.toString()?.forEach { char ->
-        spectestPrint_i32(char.code)
-    }
+    printImpl(message?.toString(), useErrorStream = false, newLine = true)
 }
 
 /** Prints the given [message] to the standard output stream. */
 public actual fun print(message: Any?) {
-    throw UnsupportedOperationException("print not supported. Use println")
+    printImpl(message?.toString(), useErrorStream = false, newLine = false)
 }
 
 @SinceKotlin("1.6")
