@@ -324,6 +324,7 @@ class WasmSymbols(
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalFunction("kotlinToJsStringAdapter")
         val kotlinToJsAnyAdapter = getInternalFunction("kotlinToJsAnyAdapter")
+        val kotlinToJsShareableAnyAdapter = getInternalFunction("kotlinToJsShareableAnyAdapter")
         val numberToDoubleAdapter = getInternalFunction("numberToDoubleAdapter")
 
         val jsCheckIsNullOrUndefinedAdapter = getInternalFunction("jsCheckIsNullOrUndefinedAdapter")
@@ -333,6 +334,7 @@ class WasmSymbols(
         val jsToKotlinAnyAdapter = getInternalFunction("jsToKotlinAnyAdapter")
 
         val jsShareableAnyToJsAnyAdapter = getInternalFunction("jsShareableAnyToJsAnyAdapter")
+        val jsShareableAnyToKotlinAnyAdapter = getInternalFunction("jsShareableAnyToKotlinAnyAdapter")
         val jsAnyToJsShareableAnyAdapter = getInternalFunction("unwrapShareable")
 
         val jsToKotlinByteAdapter = getInternalFunction("jsToKotlinByteAdapter")

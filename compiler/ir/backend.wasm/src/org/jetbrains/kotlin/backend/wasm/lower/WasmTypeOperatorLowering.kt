@@ -44,7 +44,9 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private val builtIns = context.irBuiltIns
     private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
     private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
+    private val kotlinToJsShareableAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsShareableAnyAdapter
     private val jsShareableAnyToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsShareableAnyToJsAnyAdapter
+    private val jsShareableAnyToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsShareableAnyToKotlinAnyAdapter
     private val jsAnyToJsShareableAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsAnyToJsShareableAnyAdapter
     private val useSharedObjects: Boolean = context.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
@@ -265,7 +267,8 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             if (!context.isWasmJsTarget) {
                 TODO("Implement externalize adapter for wasi mode")
             }
-            val narrowingToAny = builder.irCall(jsToKotlinAnyAdapter).also {
+            val toAnyAdapter = if (fromClass.isJsShareable(symbols)) jsShareableAnyToKotlinAnyAdapter else jsToKotlinAnyAdapter
+            val narrowingToAny = builder.irCall( toAnyAdapter).also {
                 it.arguments[0] = value
             }
             // Continue narrowing from Any to expected type
@@ -276,7 +279,8 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             if (!context.isWasmJsTarget) {
                 TODO("Implement internalize adapter for wasi mode")
             }
-            return builder.irCall(kotlinToJsAnyAdapter).also {
+            val toJsAdapter = if (toClass.isJsShareable(symbols)) kotlinToJsShareableAnyAdapter else kotlinToJsAnyAdapter
+            return builder.irCall(toJsAdapter).also {
                 it.arguments[0] = value
             }
         }

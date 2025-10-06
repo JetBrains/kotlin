@@ -317,6 +317,9 @@ internal fun numberToDoubleAdapter(x: Number): Double =
 internal fun kotlinToJsAnyAdapter(x: Any?): ExternalInterfaceType? =
     if (x == null) null else anyToExternRef(x)
 
+internal fun kotlinToJsShareableAnyAdapter(x: Any?): JsShareableAny? =
+    x?.toJsReference()
+
 internal fun jsToKotlinAnyAdapter(x: ExternalInterfaceType?): Any? =
     if (x == null) null else externRefToAny(x)
 
@@ -418,6 +421,10 @@ internal fun unwrapShareable(box: KotlinJsBox) : JsShareableAny = js("box.kotlin
 @ExperimentalWasmJsInterop
 internal fun jsShareableAnyToJsAnyAdapter(obj: JsShareableAny?) : JsAny? =
     if (obj == null) null else wrapShareable(obj)
+
+@ExperimentalWasmJsInterop
+internal fun jsShareableAnyToKotlinAnyAdapter(obj: JsShareableAny?) : Any? =
+    if (obj == null) null else obj.internalize()
 
 @ExperimentalWasmJsInterop
 internal fun jsAnyToJsShareableAnyAdapter(obj: JsAny?) : JsShareableAny? {
