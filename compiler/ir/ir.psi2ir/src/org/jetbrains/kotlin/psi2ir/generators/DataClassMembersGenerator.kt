@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -37,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.codegen.DataClassMethodGenerator
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
@@ -44,7 +43,7 @@ import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
  *
- * This one uses [DataClassMethodGenerator] to determine which members are needed to generate; uses [DataClassMembersGenerator] to generate
+ * This one uses [org.jetbrains.kotlin.resolve.codegen.DataClassMethodGenerator] to determine which members are needed to generate; uses [DataClassMembersGenerator] to generate
  * function bodies; and provides ways to declare functions or parameters based on descriptors and binding context.
  */
 internal class DataClassMembersGenerator(
