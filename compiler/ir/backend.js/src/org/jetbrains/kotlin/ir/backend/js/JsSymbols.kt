@@ -46,8 +46,8 @@ abstract class JsCommonSymbols(
     val coroutineImplExceptionStatePropertyGetter by CallableIds.coroutineExceptionState.getterSymbol()
     val coroutineImplExceptionStatePropertySetter by CallableIds.coroutineExceptionState.setterSymbol()
 
-    val testFun = CallableIds.test.functionSymbols().singleOrNull()
-    val suiteFun = CallableIds.suite.functionSymbols().singleOrNull()
+    val testFun = CallableIds.test.functionSymbolOrNull()
+    val suiteFun = CallableIds.suite.functionSymbolOrNull()
     val enumEntries: IrClassSymbol = ClassIds.EnumEntries.classSymbol()
     val createEnumEntries: IrSimpleFunctionSymbol by CallableIds.enumEntries
         .functionSymbol { it.parameters.firstOrNull()?.type?.isFunctionOrKFunction() == false }
@@ -185,10 +185,10 @@ class JsSymbols(
     val jsBitShiftRU = CallableIds.jsBitShiftRU.functionSymbol()
     val jsBitShiftL = CallableIds.jsBitShiftL.functionSymbol()
 
-    val longAnd = CallableIds.bitwiseAnd(compileLongAsBigint).functionSymbols().singleOrNull()
-    val longOr = CallableIds.bitwiseOr(compileLongAsBigint).functionSymbols().singleOrNull()
-    val longXor = CallableIds.bitwiseXor(compileLongAsBigint).functionSymbols().singleOrNull()
-    val longInv = CallableIds.invert(compileLongAsBigint).functionSymbols().singleOrNull()
+    val longAnd = CallableIds.bitwiseAnd(compileLongAsBigint).functionSymbolOrNull()
+    val longOr = CallableIds.bitwiseOr(compileLongAsBigint).functionSymbolOrNull()
+    val longXor = CallableIds.bitwiseXor(compileLongAsBigint).functionSymbolOrNull()
+    val longInv = CallableIds.invert(compileLongAsBigint).functionSymbolOrNull()
     val longShiftLeft = CallableIds.shiftLeft(compileLongAsBigint).functionSymbol()
     val longShiftRight = CallableIds.shiftRight(compileLongAsBigint).functionSymbol()
     val longShiftRightUnsigned = CallableIds.shiftRightUnsigned(compileLongAsBigint).functionSymbol()
@@ -218,9 +218,9 @@ class JsSymbols(
     val longToInt = CallableIds.convertToInt(compileLongAsBigint).functionSymbol()
     val longToChar = CallableIds.convertToChar(compileLongAsBigint).functionSymbol()
 
-    val longFromTwoInts = CallableIds.longFromTwoInts(compileLongAsBigint).functionSymbols().singleOrNull()
-    val longLowBits = CallableIds.lowBits(compileLongAsBigint).functionSymbols().singleOrNull()
-    val longHighBits = CallableIds.highBits(compileLongAsBigint).functionSymbols().singleOrNull()
+    val longFromTwoInts = CallableIds.longFromTwoInts(compileLongAsBigint).functionSymbolOrNull()
+    val longLowBits = CallableIds.lowBits(compileLongAsBigint).functionSymbolOrNull()
+    val longHighBits = CallableIds.highBits(compileLongAsBigint).functionSymbolOrNull()
 
     // RTTI:
     enum class RuntimeMetadataKind(val namePart: String, val isSpecial: Boolean = false) {
@@ -258,7 +258,7 @@ class JsSymbols(
     val longArrayClass by CallableIds.longArrayClass(compileLongAsBigint).getterSymbol()
     val longCopyOfRange = CallableIds.longCopyOfRange.functionSymbol()
 
-    val longCopyOfRangeForBoxedLong = CallableIds.longCopyOfRange(compileLongAsBigint).functionSymbols().singleOrNull()
+    val longCopyOfRangeForBoxedLong = CallableIds.longCopyOfRange(compileLongAsBigint).functionSymbolOrNull()
 
     val isPrimitiveArray = mapOf(
         PrimitiveType.BOOLEAN to CallableIds.isBooleanArray.functionSymbol(),
@@ -267,7 +267,7 @@ class JsSymbols(
         PrimitiveType.CHAR to CallableIds.isCharArray.functionSymbol(),
         PrimitiveType.INT to CallableIds.isIntArray.functionSymbol(),
         PrimitiveType.FLOAT to CallableIds.isFloatArray.functionSymbol(),
-        PrimitiveType.LONG to CallableIds.isLongArray(compileLongAsBigint).functionSymbols().singleOrNull(),
+        PrimitiveType.LONG to CallableIds.isLongArray(compileLongAsBigint).functionSymbolOrNull(),
         PrimitiveType.DOUBLE to CallableIds.isDoubleArray.functionSymbol()
     )
 
@@ -294,7 +294,7 @@ class JsSymbols(
     val jsEmptyObject = CallableIds.emptyObject.functionSymbol()
     val jsOpenInitializerBox = CallableIds.openInitializerBox.functionSymbol()
 
-    val longEquals = CallableIds.equalsLong(compileLongAsBigint).functionSymbols().singleOrNull()
+    val longEquals = CallableIds.equalsLong(compileLongAsBigint).functionSymbolOrNull()
 
     val jsImul = CallableIds.imul.functionSymbol()
 
@@ -348,7 +348,7 @@ class JsSymbols(
 
     val promiseClassSymbol: IrClassSymbol = JsStandardClassIds.Promise.classSymbol()
 
-    val longCompareToLong: IrSimpleFunctionSymbol? = CallableIds.compare(compileLongAsBigint).functionSymbols().singleOrNull()
+    val longCompareToLong: IrSimpleFunctionSymbol? = CallableIds.compare(compileLongAsBigint).functionSymbolOrNull()
 
     val jsLongToString: IrSimpleFunctionSymbol = CallableIds.jsLongToString.functionSymbol()
     val longToStringImpl: IrSimpleFunctionSymbol = CallableIds.toStringImpl(compileLongAsBigint).functionSymbol()
