@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
 import org.junit.jupiter.api.Disabled
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 @DisplayName("Tests for K/N builds with ir linker issues")
 @NativeGradlePluginTests
@@ -35,9 +33,9 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         OS.MAC,
         architectures = ["aarch64"],
         disabledReason =
-        "Run this test only on macOS x64," +
-                " arm64 requires newer ktor (>=1.6.5) and coroutines (>=1.5.2-native-mt) " +
-                "that compatible to each other and don't fail this way."
+            "Run this test only on macOS x64," +
+                    " arm64 requires newer ktor (>=1.6.5) and coroutines (>=1.5.2-native-mt) " +
+                    "that compatible to each other and don't fail this way."
     )
     fun shouldBuildKtorAndCoroutines(gradleVersion: GradleVersion) {
 
@@ -45,7 +43,6 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             directoryPrefix = null,
             projectName = "native-ir-linker-issues-ktor-and-coroutines",
             localRepo = null,
-            nativeCacheKind = NativeCacheKind.STATIC,
             gradleVersion = gradleVersion
         ) {
             """
@@ -106,7 +103,6 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
 
         buildConflictingLibrariesAndApplication(
             directoryPrefix = "native-ir-linker-issues-gone-declaration",
-            nativeCacheKind = NativeCacheKind.STATIC,
             gradleVersion = gradleVersion,
             localRepo = tempDir
         ) {
@@ -141,7 +137,6 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
     ) {
         buildConflictingLibrariesAndApplication(
             directoryPrefix = "native-ir-linker-issues-gone-declaration",
-            nativeCacheKind = NativeCacheKind.NONE,
             gradleVersion = gradleVersion,
             localRepo = tempDir
         ) {
@@ -177,7 +172,6 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
     ) {
         buildConflictingLibrariesAndApplication(
             directoryPrefix = "native-ir-linker-issues-symbol-mismatch",
-            nativeCacheKind = NativeCacheKind.STATIC,
             gradleVersion = gradleVersion,
             localRepo = tempDir
         ) {
@@ -212,7 +206,6 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
     ) {
         buildConflictingLibrariesAndApplication(
             directoryPrefix = "native-ir-linker-issues-symbol-mismatch",
-            nativeCacheKind = NativeCacheKind.NONE,
             gradleVersion = gradleVersion,
             localRepo = tempDir
         ) {
@@ -232,7 +225,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             |    +--- org.sample:liba (org.sample:liba-native): 1.0 -> 2.0 (*)
             |    |    ^^^ This module contains symbol sample.liba/B|null[0] that is the cause of the conflict.
             |    \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
-            \--- org.jetbrains.kotlin:kotlin-stdlib: ${KOTLIN_VERSION}
+            \--- org.jetbrains.kotlin:kotlin-stdlib: $KOTLIN_VERSION
             
             (*) - dependencies omitted (listed previously)
             """.trimIndent()
@@ -241,7 +234,6 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
 
     private fun buildConflictingLibrariesAndApplication(
         directoryPrefix: String,
-        nativeCacheKind: NativeCacheKind,
         gradleVersion: GradleVersion,
         localRepo: Path,
         expectedErrorMessage: () -> String,
@@ -254,7 +246,6 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
             directoryPrefix = directoryPrefix,
             projectName = "app",
             localRepo = localRepo,
-            nativeCacheKind = nativeCacheKind,
             gradleVersion = gradleVersion,
             expectedErrorMessage = expectedErrorMessage
         )
@@ -264,11 +255,10 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         directoryPrefix: String?,
         projectName: String,
         localRepo: Path?,
-        nativeCacheKind: NativeCacheKind,
         gradleVersion: GradleVersion,
         expectedErrorMessage: () -> String,
     ) {
-        prepareProject(directoryPrefix, projectName, localRepo, nativeCacheKind, gradleVersion) {
+        prepareProject(directoryPrefix, projectName, localRepo, gradleVersion) {
             buildAndFail("linkDebugExecutableNative", buildOptions = this.buildOptions.copy(logLevel = LogLevel.DEBUG)) {
 
                 val errorMessage = ERROR_LINE_REGEX.findAll(getOutputForTask(":linkDebugExecutableNative"))
@@ -289,7 +279,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
     private fun buildAndPublishLibrary(
         directoryPrefix: String, projectName: String, localRepo: Path, gradleVersion: GradleVersion,
     ) {
-        prepareProject(directoryPrefix, projectName, localRepo, nativeCacheKind = NativeCacheKind.STATIC, gradleVersion) {
+        prepareProject(directoryPrefix, projectName, localRepo, gradleVersion) {
             build("publish")
         }
     }
@@ -298,15 +288,12 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         directoryPrefix: String?,
         projectName: String,
         localRepo: Path?,
-        nativeCacheKind: NativeCacheKind,
         gradleVersion: GradleVersion,
         block: TestProject.() -> Unit,
     ) {
         nativeProject(
-            directoryPrefix + "/" + projectName,
+            "$directoryPrefix/$projectName",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                nativeOptions = defaultBuildOptions.nativeOptions.copy(cacheKind = nativeCacheKind)),
             localRepoDir = localRepo
         ) {
             block()
@@ -318,9 +305,5 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         private val KONAN_PLATFORM_LIB_DEPENDENCY_REGEX =
             ".*${KONAN_PLATFORM_LIBS_NAME_PREFIX.replace(".", "\\.")}.*".toRegex()
 
-        private fun findKotlinNativeCompilerVersion(output: String): String? = findParameterInOutput(
-            "for_test_kotlin_native_compiler_version",
-            output
-        )
     }
 }

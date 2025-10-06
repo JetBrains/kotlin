@@ -26,7 +26,6 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         nativeOptions = BuildOptions.NativeOptions(
-            cacheKind = NativeCacheKind.STATIC,
             incremental = true
         )
     )
