@@ -687,6 +687,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       }
 
       @Test
+      @TestMetadata("leakingCapturedTypeParameter.kt")
+      public void testLeakingCapturedTypeParameter() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingCapturedTypeParameter.kt");
+      }
+
+      @Test
       @TestMetadata("leakingCompanionPrivateMethod.kt")
       public void testLeakingCompanionPrivateMethod() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingCompanionPrivateMethod.kt");
