@@ -487,6 +487,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED by error<KtAnnotationEntry>()
 
         val DSL_MARKER_PROPAGATES_TO_MANY by warning<KtAnnotationEntry>()
+
+        val DSL_MARKER_APPLIED_TO_WRONG_TARGET by warning<KtAnnotationEntry> {
+            parameter<FirRegularClassSymbol>("dslMarkerSymbol")
+            parameter<String>("actualTarget")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

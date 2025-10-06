@@ -264,6 +264,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIVISION_BY_ZERO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_MARKER_PROPAGATES_TO_MANY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_MARKER_APPLIED_TO_WRONG_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE
@@ -1429,6 +1430,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS,
             """Expect class does not declare any constructors."""
+        )
+        map.put(
+            DSL_MARKER_APPLIED_TO_WRONG_TARGET,
+            "Applying DSL marker annotation ''{0}'' to target ''{1}'' has no effect. DSL marker annotations must only be applied to types.",
+            DECLARATION_NAME,
+            TO_STRING,
         )
 
         // OptIn

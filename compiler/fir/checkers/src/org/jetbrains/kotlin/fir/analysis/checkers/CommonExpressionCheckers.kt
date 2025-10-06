@@ -14,6 +14,10 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirOptInAnnotationCallChecker,
     )
 
+    override val annotationCheckers: Set<FirAnnotationChecker> = setOf(
+        FirDslMarkerUseSiteChecker,
+    )
+
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
         FirUnderscoreChecker,
         FirExpressionAnnotationChecker,

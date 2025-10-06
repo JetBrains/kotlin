@@ -366,6 +366,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED: KtDiagnosticFactory0 = KtDiagnosticFactory0("IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val DSL_MARKER_PROPAGATES_TO_MANY: KtDiagnosticFactory0 = KtDiagnosticFactory0("DSL_MARKER_PROPAGATES_TO_MANY", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
+    val DSL_MARKER_APPLIED_TO_WRONG_TARGET: KtDiagnosticFactory2<FirRegularClassSymbol, String> = KtDiagnosticFactory2("DSL_MARKER_APPLIED_TO_WRONG_TARGET", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
 
     // OptIn
     val OPT_IN_USAGE: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_USAGE", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())

@@ -1469,6 +1469,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DSL_MARKER_APPLIED_TO_WRONG_TARGET) { firDiagnostic ->
+        DslMarkerAppliedToWrongTargetImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
         JsModuleProhibitedOnVarImpl(
             firDiagnostic as KtPsiDiagnostic,

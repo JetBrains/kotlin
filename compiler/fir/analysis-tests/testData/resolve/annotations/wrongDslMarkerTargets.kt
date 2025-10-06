@@ -61,10 +61,10 @@ public annotation class A1
 )
 public annotation class A2
 
-@A0 @A1 @A2
+<!DSL_MARKER_APPLIED_TO_WRONG_TARGET("A0; top level function")!>@A0<!> <!DSL_MARKER_APPLIED_TO_WRONG_TARGET!>@A1<!> <!DSL_MARKER_APPLIED_TO_WRONG_TARGET!>@A2<!>
 fun foo() {}
 
-@A0 @A1 @A2
+<!DSL_MARKER_APPLIED_TO_WRONG_TARGET("A0; top level property with backing field")!>@A0<!> <!DSL_MARKER_APPLIED_TO_WRONG_TARGET!>@A1<!> <!DSL_MARKER_APPLIED_TO_WRONG_TARGET!>@A2<!>
 val bar = ""
 
 @DslMarker
