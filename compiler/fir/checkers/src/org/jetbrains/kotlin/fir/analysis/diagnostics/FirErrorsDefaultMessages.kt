@@ -788,6 +788,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_VAR_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_LATEINIT
@@ -1654,6 +1655,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE,
             "Nested {0} accessed via instance reference.",
             RENDER_CLASS_OR_OBJECT_NAME_QUOTED,
+        )
+        map.put(
+            UNSUPPORTED_COLLECTION_LITERAL_TYPE,
+            "No 'of' operator is defined for the expected type."
         )
 
         // Context parameters resolution

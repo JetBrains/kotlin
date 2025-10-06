@@ -33,9 +33,10 @@ class FirTowerResolver(
     fun runResolver(
         info: CallInfo,
         context: ResolutionContext,
-        externalCollector: CandidateCollector? = null
+        externalCollector: CandidateCollector? = null,
+        candidateFactory: CandidateFactory = CandidateFactory(context, info),
     ): CandidateCollector {
-        return runResolver(info, context, externalCollector ?: collector, manager)
+        return runResolver(info, context, externalCollector ?: collector, manager, candidateFactory)
     }
 
     fun runResolver(

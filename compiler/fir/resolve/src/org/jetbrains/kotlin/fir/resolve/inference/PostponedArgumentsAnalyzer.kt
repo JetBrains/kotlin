@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
+import org.jetbrains.kotlin.fir.resolve.companionObjectIfDefinedOperatorOf
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
+import org.jetbrains.kotlin.fir.resolve.runCollectionLiteralResolution
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
@@ -84,6 +87,8 @@ class PostponedArgumentsAnalyzer(
             is ConeResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
             is ConeSimpleNameForContextSensitiveResolution ->
                 processSimpleNameForContextSensitiveResolution(argument, candidate)
+            is ConeCollectionLiteralAtom ->
+                processCollectionLiteral(argument, candidate)
         }
     }
 
@@ -200,6 +205,50 @@ class PostponedArgumentsAnalyzer(
         )
 
         return true
+    }
+
+    private fun processCollectionLiteral(
+        atom: ConeCollectionLiteralAtom,
+        topLevelCandidate: Candidate,
+    ) {
+        atom.analyzed = true
+
+        val substitutor = topLevelCandidate.csBuilder.buildCurrentSubstitutor(emptyMap()).asCone()
+        val substitutedExpectedType = atom.expectedType?.let {
+            substitutor.safeSubstitute(topLevelCandidate.csBuilder, it).asCone()
+        }
+
+        if (substitutedExpectedType != null) {
+            runCollectionLiteralResolution(atom, topLevelCandidate, substitutedExpectedType)
+        }
+    }
+
+    private fun runCollectionLiteralResolution(
+        atom: ConeCollectionLiteralAtom,
+        topLevelCandidate: Candidate,
+        substitutedExpectedType: ConeKotlinType,
+    ) {
+        val originalExpression = atom.expression
+
+        val companion = with(resolutionContext) { substitutedExpectedType.companionObjectIfDefinedOperatorOf } ?: return
+        val newExpression =
+            resolutionContext.runCollectionLiteralResolution(
+                atom,
+                companion,
+                topLevelCandidate,
+            )
+
+        atom.containingCallCandidate.setUpdatedCollectionLiteralCall(originalExpression, newExpression)
+
+        ArgumentCheckingProcessor.resolveArgumentExpression(
+            topLevelCandidate,
+            ConeResolutionAtom.createRawAtom(newExpression),
+            substitutedExpectedType,
+            CheckerSinkImpl(topLevelCandidate),
+            context = resolutionContext,
+            isReceiver = false,
+            isDispatch = false,
+        )
     }
 
     fun analyzeLambda(

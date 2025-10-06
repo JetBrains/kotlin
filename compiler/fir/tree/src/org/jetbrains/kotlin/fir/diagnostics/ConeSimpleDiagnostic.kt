@@ -108,6 +108,10 @@ object ConeContextParameterWithDefaultValue : ConeDiagnostic {
     override val reason: String get() = "Context parameters cannot have default values"
 }
 
+object ConeUnsupportedCollectionLiteralType : ConeDiagnostic {
+    override val reason: String get() = "Unsupported collection literal type"
+}
+
 enum class DiagnosticKind {
     ExpressionExpected,
     NotLoopLabel,

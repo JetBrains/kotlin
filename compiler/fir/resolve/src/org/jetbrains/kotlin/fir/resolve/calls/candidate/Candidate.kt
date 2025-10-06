@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -223,22 +224,31 @@ class Candidate(
 
     // ------------------------ Context-sensitively resolved arguments ------------------------------------
 
-    private var _updatedArgumentsFromContextSensitiveResolution: MutableMap<FirElement, FirExpression>? =
+    private var _updatedArguments: MutableMap<FirElement, FirExpression>? =
         null
 
-    fun setUpdatedArgumentFromContextSensitiveResolution(old: FirPropertyAccessExpression, new: FirExpression) {
-        if (_updatedArgumentsFromContextSensitiveResolution == null) {
-            _updatedArgumentsFromContextSensitiveResolution = mutableMapOf()
+    private fun setUpdatedArgument(old: FirExpression, new: FirExpression) {
+        if (_updatedArguments == null) {
+            _updatedArguments = mutableMapOf()
         }
 
-        val existingValue = _updatedArgumentsFromContextSensitiveResolution!!.put(old, new)
+        val existingValue = _updatedArguments!!.put(old, new)
         check(existingValue == null) {
             "We shouldn't put the value for $old twice"
         }
     }
 
-    val contextSensitiveResolutionReplacements: Map<FirElement, FirExpression>?
-        get() = _updatedArgumentsFromContextSensitiveResolution
+    fun setUpdatedArgumentFromContextSensitiveResolution(old: FirPropertyAccessExpression, new: FirExpression) {
+        setUpdatedArgument(old, new)
+    }
+
+    fun setUpdatedCollectionLiteralCall(old: FirCollectionLiteralCall, new: FirExpression) {
+        setUpdatedArgument(old, new)
+    }
+
+    val argumentReplacements: Map<FirElement, FirExpression>?
+        get() = _updatedArguments
+
     // ---------------------------------------- PCLA-related parts ----------------------------------------
 
     val postponedPCLACalls: MutableList<ConeResolutionAtom> = mutableListOf()

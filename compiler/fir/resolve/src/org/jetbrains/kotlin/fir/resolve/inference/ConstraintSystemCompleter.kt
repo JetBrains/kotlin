@@ -368,7 +368,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                             postponedAtom.collectNotFixedVariables()
                         }
                     }
-                    is ConeSimpleNameForContextSensitiveResolution -> {
+                    is ConeSimpleNameForContextSensitiveResolution, is ConeCollectionLiteralAtom -> {
                         // No type variables for yet unresolved reference
                         // And after resolution, the candidate type variables are integrated into
                     }

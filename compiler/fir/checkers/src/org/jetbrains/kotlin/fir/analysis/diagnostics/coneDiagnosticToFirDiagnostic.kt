@@ -250,6 +250,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, FirDynamicUnsupportedChecker.MESSAGE, session)
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source, session)
     is ConeCyclicTypeBound -> null // reported in FirCyclicTypeBoundsChecker
+    is ConeUnsupportedCollectionLiteralType -> FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE.createOn(source, session)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
