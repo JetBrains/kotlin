@@ -331,6 +331,9 @@ class WasmSymbols(
         val jsToKotlinStringAdapter = getInternalFunction("jsToKotlinStringAdapter")
         val jsToKotlinAnyAdapter = getInternalFunction("jsToKotlinAnyAdapter")
 
+        val wrapShareableAdapter = getInternalFunction("wrapShareable")
+        val unwrapShareableAdapter = getInternalFunction("unwrapShareable")
+
         val jsToKotlinByteAdapter = getInternalFunction("jsToKotlinByteAdapter")
         val jsToKotlinShortAdapter = getInternalFunction("jsToKotlinShortAdapter")
         val jsToKotlinCharAdapter = getInternalFunction("jsToKotlinCharAdapter")

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.jsFunctionForExternalAdapterFunction
+import org.jetbrains.kotlin.backend.wasm.utils.isJsShareable
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 
 
 class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -43,6 +43,8 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private val builtIns = context.irBuiltIns
     private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
     private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
+    private val wrapShareableAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.wrapShareableAdapter
+    private val unwrapShareableAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.unwrapShareableAdapter
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -231,7 +233,21 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val fromClass = fromType.erasedUpperBound
         val toClass = toType.erasedUpperBound
 
+        // FIXME shall we check for "shared" mode? Maybe yes even if wrap/unwrap are intrinsics, as there will be extra "narrow" after that
         if (fromClass.isExternal && toClass.isExternal) {
+            val fromIsShareable = fromClass.isJsShareable(symbols)
+            val toIsShareable = toClass.isJsShareable(symbols)
+            if (fromIsShareable && !toIsShareable) {
+                val narrowingToJsAny = builder.irCall(wrapShareableAdapter).also {
+                    it.arguments[0] = value
+                }
+                // Continue narrowing from JsAny to expected type
+                return narrowType(context.irBuiltIns.anyType, toType, narrowingToJsAny)
+            } else if (!fromIsShareable && toIsShareable) {
+                // FIXME unwrap? Shall we check for KotlinJsBox type before that?
+                // TODO("Unwrap shareable type: $fromType -> $toType")
+                return value
+            }
             return value
         }
 
