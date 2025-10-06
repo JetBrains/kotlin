@@ -893,7 +893,7 @@ class Strings {
     }
 
     @Sample
-    fun replaceRangeString() {
+    fun replaceRange() {
         val text = "Hello, world!"
 
         // Replacing the range that corresponds to the "world" substring with "Kotlin"
