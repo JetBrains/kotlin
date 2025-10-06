@@ -62,7 +62,6 @@
 /compiler/android-tests/ "Kotlin JVM"
 /compiler/backend/ "Kotlin JVM"
 /compiler/backend.common.jvm/ "Kotlin JVM"
-/compiler/backend-common/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
 /compiler/build-tools/ "Kotlin Build Tools"
 /compiler/build-tools/kotlin-build-tools-api/gen/ "Kotlin"
 /compiler/build-tools/kotlin-build-tools-impl/gen/ "Kotlin"

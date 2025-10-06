@@ -31,7 +31,6 @@
 /compiler/android-tests/ @JetBrains/kotlin-jvm
 /compiler/backend/ @JetBrains/kotlin-jvm
 /compiler/backend.common.jvm/ @JetBrains/kotlin-jvm
-/compiler/backend-common/ @JetBrains/kotlin-jvm @JetBrains/kotlin-native @JetBrains/kotlin-wasm @JetBrains/kotlin-common-backend @JetBrains/kotlin-js
 /compiler/build-tools/ @JetBrains/kotlin-build-tools
 /compiler/build-tools/kotlin-build-tools-api/gen/ @JetBrains/kotlin
 /compiler/build-tools/kotlin-build-tools-impl/gen/ @JetBrains/kotlin
