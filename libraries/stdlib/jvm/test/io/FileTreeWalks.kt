@@ -210,8 +210,9 @@ class FileTreeWalkTest {
     @Test fun withDirectoryFilter() {
         val basedir = createTestFiles()
         try {
-            // Every directory ended with 3 and its content is filtered out
-            fun filter(file: File): Boolean = !file.name.endsWith("3")
+            // Every directory ended with 3 and its content is filtered out.
+            // The root directory itself may have a name ending with 3, so let's explicitly keep it.
+            fun filter(file: File): Boolean = !file.name.endsWith("3") || basedir.name == file.name
 
             val referenceNames = listOf("", "1", "1/2", "6", "7.txt", "8", "8/9.txt").map { File(it).path }.toSet()
             compareWalkResults(referenceNames, basedir, ::filter)
