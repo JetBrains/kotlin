@@ -2352,6 +2352,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("deeplyGenericTypeMismatch.kt")
+      public void testDeeplyGenericTypeMismatch() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/deeplyGenericTypeMismatch.kt");
+      }
+
+      @Test
       @TestMetadata("expectActualMatch.kt")
       public void testExpectActualMatch() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/expectActualMatch.kt");
