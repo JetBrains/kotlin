@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
-import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.resolve.codegen.CodegenUtil
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor

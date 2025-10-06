@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
+import org.jetbrains.kotlin.resolve.codegen.CodegenUtil
+import org.jetbrains.kotlin.resolve.codegen.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
