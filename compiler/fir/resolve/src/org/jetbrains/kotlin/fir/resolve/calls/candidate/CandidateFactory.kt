@@ -312,7 +312,7 @@ fun PostponedArgumentsAnalyzerContext.addSubsystemFromAtom(atom: ConeResolutionA
 
 internal fun FirResolvable.candidate(): Candidate? {
     return when (val callee = this.calleeReference) {
-        is FirNamedReferenceWithCandidate -> return callee.candidate
+        is FirNamedReferenceWithCandidate -> callee.candidate
         else -> null
     }
 }
