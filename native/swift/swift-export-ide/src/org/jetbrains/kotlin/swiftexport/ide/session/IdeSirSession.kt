@@ -50,6 +50,7 @@ public class IdeSirSession(
     override val visibilityChecker: SirVisibilityChecker = SirVisibilityCheckerImpl(
         sirSession = sirSession,
         unsupportedDeclarationReporter = unsupportedDeclarationReporter,
+        enableCoroutinesSupport = false,
     )
     override val childrenProvider: SirChildrenProvider = SirDeclarationChildrenProviderImpl(
         sirSession = sirSession,

@@ -64,7 +64,8 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
 
         val swiftConfig = SwiftExportConfig(
             outputPath = buildDir(testPath.name).toPath().resolve("swift_export_results"),
-            konanTarget = targets.testTarget
+            konanTarget = targets.testTarget,
+            enableCoroutinesSupport = true,
         )
 
         val swiftExportResult = runSwiftExport(inputModules, swiftConfig).getOrThrow()
