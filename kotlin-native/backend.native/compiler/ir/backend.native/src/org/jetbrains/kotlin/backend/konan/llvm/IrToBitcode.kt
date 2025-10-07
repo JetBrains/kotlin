@@ -1919,7 +1919,7 @@ internal class CodeGeneratorVisitor(
             }
             is IrConstantArray -> {
                 val clazz = value.type.getClass()!!
-                require(clazz.symbol == symbols.array || clazz.symbol in context.irBuiltIns.primitiveTypesToPrimitiveArrays.values) {
+                require(clazz.symbol == context.irBuiltIns.arrayClass || clazz.symbol in context.irBuiltIns.primitiveTypesToPrimitiveArrays.values) {
                     "Statically initialized array should have array type"
                 }
                 codegen.staticData.createConstKotlinArray(

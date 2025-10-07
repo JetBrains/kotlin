@@ -507,7 +507,7 @@ internal class StackLocalsManagerImpl(
 
     private fun clean(stackLocal: StackLocal, refsOnly: Boolean) = with(functionGenerationContext) {
         if (stackLocal.isArray) {
-            if (stackLocal.irClass.symbol == context.symbols.array) {
+            if (stackLocal.irClass.symbol == context.irBuiltIns.arrayClass) {
                 call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
             } else if (!refsOnly) {
                 val arrayType = localArrayType(stackLocal.irClass, stackLocal.arraySize!!)

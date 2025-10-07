@@ -192,7 +192,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
         irBuiltIns.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
-                arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
+                arrayMethods(irBuiltIns.arrayClass.owner.typeParameters.single().symbol, irBuiltIns.arrayClass)
 
     private fun atomicIntrinsicsForJdk8(): List<Pair<Key, IntrinsicMethod>> =
         listOf(

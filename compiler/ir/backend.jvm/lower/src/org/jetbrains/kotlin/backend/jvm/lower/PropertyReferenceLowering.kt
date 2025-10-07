@@ -79,7 +79,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             else property.setter?.let { it.resolveFakeOverride() ?: it }
 
     private val arrayItemGetter =
-        context.symbols.array.owner.functions.single { it.name.asString() == "get" }
+        context.irBuiltIns.arrayClass.owner.functions.single { it.name.asString() == "get" }
 
     private val signatureStringIntrinsic = context.symbols.signatureStringIntrinsic
 
@@ -91,7 +91,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     )
 
     private val kPropertiesFieldType =
-        context.symbols.array.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
+        context.irBuiltIns.arrayClass.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
 
     private val IrClass.isSynthetic
         get() = metadata !is MetadataSource.File && metadata !is MetadataSource.Class && metadata !is MetadataSource.Script

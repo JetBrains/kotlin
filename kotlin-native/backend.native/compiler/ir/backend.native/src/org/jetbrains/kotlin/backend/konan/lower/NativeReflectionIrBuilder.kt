@@ -219,7 +219,7 @@ internal abstract class NativeReflectionIrBuilderBase<E : IrExpression>(
     ): E = irCreateInstance(symbols.kTypeParameterImpl.owner, mapOf(
             "name" to irConstantString(typeParameter.name.asString()),
             "containerFqName" to irConstantString(typeParameter.parentUniqueName),
-            "upperBoundsArray" to irCreateArray(symbols.array.typeWith(symbols.kType.defaultType), upperBounds),
+            "upperBoundsArray" to irCreateArray(context.irBuiltIns.arrayClass.typeWith(symbols.kType.defaultType), upperBounds),
             "varianceId" to irConstantInt(mapVariance(typeParameter.variance)),
             "isReified" to irConstantBoolean(typeParameter.isReified),
     ))

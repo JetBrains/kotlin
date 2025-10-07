@@ -107,7 +107,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     fun unique(kind: UniqueKind): ConstPointer {
         val descriptor = when (kind) {
             UniqueKind.UNIT -> context.irBuiltIns.unitClass.owner
-            UniqueKind.EMPTY_ARRAY -> context.symbols.array.owner
+            UniqueKind.EMPTY_ARRAY -> context.irBuiltIns.arrayClass.owner
         }
         return if (isExternal(descriptor)) {
             constPointer(importGlobal(kind.llvmName, runtime.objHeaderType, descriptor))

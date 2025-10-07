@@ -62,7 +62,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
 
     private fun newArray(size: IrExpression): IrExpression {
         val arrayConstructor = if (unwrappedArrayType.isBoxedArray)
-            builder.irSymbols.arrayOfNulls
+            builder.backendContext.irBuiltIns.arrayOfNulls
         else
             unwrappedArrayType.classOrNull!!.constructors.single { it.owner.hasShape(regularParameters = 1) }
 
@@ -97,7 +97,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
     // Copy a single spread expression, unless it refers to a newly constructed array.
     private fun copyArray(spread: IrExpression): IrExpression {
         if (spread is IrConstructorCall ||
-            (spread is IrFunctionAccessExpression && spread.symbol == builder.irSymbols.arrayOfNulls))
+            (spread is IrFunctionAccessExpression && spread.symbol == builder.backendContext.irBuiltIns.arrayOfNulls))
             return spread
 
         return builder.irBlock {
@@ -139,7 +139,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
                 arguments[0] = irGet(spreadBuilderVar)
                 if (unwrappedArrayType.isBoxedArray) {
                     val size = spreadBuilder.functions.single { it.owner.name.asString() == "size" }
-                    arguments[1] = irCall(builder.irSymbols.arrayOfNulls, arrayType).apply {
+                    arguments[1] = irCall(builder.backendContext.irBuiltIns.arrayOfNulls, arrayType).apply {
                         typeArguments[0] = elementType
                         arguments[0] = irCall(size).apply {
                             arguments[0] = irGet(spreadBuilderVar)
