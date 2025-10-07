@@ -13,6 +13,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.mpp.resources.unzip
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -541,6 +542,37 @@ class UklibPublicationIT : KGPBaseTest() {
             parsePom(publisher.rootComponent.pom).dependencies().filterNot {
                 it.artifactId == "kotlin-stdlib"
             },
+        )
+    }
+
+    @GradleTest
+    fun `uklib POM - kotlin-dom-api-compat with pom type`(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = publishUklib(
+            gradleVersion = gradleVersion,
+            publisherConfig = PublisherConfiguration(group = "dependency")
+        ) {
+            jvm()
+            js()
+            wasmJs()
+            wasmWasi()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+        }.publishedProject
+
+        assertEquals(
+            listOf(
+                MavenModule(
+                    artifactId = "kotlin-dom-api-compat",
+                    groupId = "org.jetbrains.kotlin",
+                    scope = "runtime",
+                    type = "pom",
+                    version = KOTLIN_VERSION,
+                ),
+            ).prettyPrinted,
+            parsePom(producer.rootComponent.pom).dependencies().filterNot {
+                it.artifactId == "kotlin-stdlib"
+            }.prettyPrinted,
         )
     }
 

@@ -19,7 +19,7 @@ class PrettyPrint<T : Any>(
         val nextIndentationDepth = indentation + 2
         val elements: Array<String> = when (value) {
             is Map<*, *> -> arrayOf(
-                "mutableMapOf(",
+                "mapOf(",
                 *value.map { it }.sortedBy { it.key.toString() }.map {
                     "${twoSpaces}${it.key?.prettyPrinted()} to ${it.value?.prettyPrinted(nextIndentationDepth)},"
                 }.toTypedArray(),
@@ -30,12 +30,12 @@ class PrettyPrint<T : Any>(
                 val innerValue = orderedValue.map { "${twoSpaces}${it?.prettyPrinted(nextIndentationDepth)}," }.toTypedArray()
                 when (orderedValue) {
                     is Set<*> -> arrayOf(
-                        "mutableSetOf(",
+                        "setOf(",
                         *innerValue,
                         ")",
                     )
                     else -> arrayOf(
-                        "mutableListOf(",
+                        "listOf(",
                         *innerValue,
                         ")",
                     )
