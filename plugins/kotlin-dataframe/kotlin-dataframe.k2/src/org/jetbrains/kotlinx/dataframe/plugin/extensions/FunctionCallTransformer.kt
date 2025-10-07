@@ -357,7 +357,6 @@ class FunctionCallTransformer(
         val receiverType = explicitReceiver?.resolvedType
         val returnType = call.resolvedType
         val scopeFunction = if (explicitReceiver != null) findLet() else findRun()
-        val originalSource = call.calleeReference.source
 
         // original call is inserted later
         call.transformCalleeReference(object : FirTransformer<Nothing?>() {
@@ -366,6 +365,7 @@ class FunctionCallTransformer(
                     @Suppress("UNCHECKED_CAST")
                     buildResolvedNamedReference {
                         this.name = element.name
+                        this.source = element.source
                         resolvedSymbol = originalSymbol
                     } as E
                 } else {
@@ -495,7 +495,7 @@ class FunctionCallTransformer(
                 linkedMapOf(argument to scopeFunction.valueParameterSymbols[0].fir)
             )
             calleeReference = buildResolvedNamedReference {
-                source = originalSource
+                source = null
                 this.name = scopeFunction.name
                 resolvedSymbol = scopeFunction
             }

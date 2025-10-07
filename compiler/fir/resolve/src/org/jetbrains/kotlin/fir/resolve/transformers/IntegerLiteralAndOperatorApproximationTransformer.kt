@@ -116,11 +116,13 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         call.replaceConeTypeOrNull(typeBeforeConversion)
 
         return buildFunctionCall {
-            source = call.source?.fakeElement(KtFakeSourceElementKind.IntToLongConversion)
+            val fakeSource = call.source?.fakeElement(KtFakeSourceElementKind.IntToLongConversion)
+            source = fakeSource
             coneTypeOrNull = session.builtinTypes.longType.coneType
             explicitReceiver = call
             dispatchReceiver = call
             this.calleeReference = buildResolvedNamedReference {
+                source = fakeSource
                 if (operatorType.isUnsigned) {
                     name = TO_U_LONG
                     resolvedSymbol = toULongSymbol
