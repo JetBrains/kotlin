@@ -141,7 +141,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
     val mutableIterable get() = irBuiltIns.mutableIterableClass
     val mutableIterator get() = irBuiltIns.mutableIteratorClass
     val mutableListIterator get() = irBuiltIns.mutableListIteratorClass
-    val comparable get() = irBuiltIns.comparableClass
 
     open fun functionN(n: Int): IrClassSymbol = irBuiltIns.functionN(n).symbol
     open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunctionN(n).symbol
