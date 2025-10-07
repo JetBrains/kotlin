@@ -154,6 +154,11 @@ class NonLinkingIrInlineFunctionDeserializer(
             deserializedFunctionCache.getOrPut(signature) {
                 val idSigIndex = reversedSignatureIndex[signature] ?: return@getOrPut null
                 val functionProto = fileReader.declaration(idSigIndex)
+
+                // Drop after KT-81470 fix
+                val (s, _) = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(functionProto.irFunction.base.base.symbol)
+                if (s.signature !is IdSignature.CompositeSignature) return@getOrPut null
+
                 val function = declarationDeserializer.deserializeDeclaration(functionProto) as IrSimpleFunction
 
                 val fileEntryProto = fileReader.fileEntry(functionProto.irFunction.preparedInlineFunctionFileEntryId)!!
