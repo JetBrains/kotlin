@@ -73,6 +73,7 @@ private fun checkUpperBoundViolated(
         typeParameterSymbols,
         type.typeArguments.toList(),
         substitutor,
+        isCheckingExpressionArguments = false,
         isReportExpansionError = true,
         isIgnoreTypeParameters,
         fallbackSource,
@@ -104,6 +105,7 @@ fun checkUpperBoundViolated(
     typeParameters: List<FirTypeParameterSymbol>,
     typeArguments: List<ConeTypeProjection>,
     substitutor: ConeSubstitutor,
+    isCheckingExpressionArguments: Boolean,
     isReportExpansionError: Boolean = false,
     isIgnoreTypeParameters: Boolean = false,
     fallbackSource: KtSourceElement?,
@@ -149,10 +151,14 @@ fun checkUpperBoundViolated(
                         val extraMessage =
                             if (upperBound.unwrapToSimpleTypeUsingLowerBound() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
                         when {
-                            !isInsideTypeOperatorOrParameterBounds -> reporter.reportOn(
-                                argumentSource ?: fallbackSource, regularDiagnostic,
-                                upperBound, argumentType, extraMessage
-                            )
+                            !isInsideTypeOperatorOrParameterBounds -> when {
+                                // Errors in type arguments in qualified accesses are reported directly through
+                                // InferenceErrors arising from call resolution.
+                                !isCheckingExpressionArguments -> reporter.reportOn(
+                                    argumentSource ?: fallbackSource, regularDiagnostic,
+                                    upperBound, argumentType, extraMessage
+                                )
+                            }
                             else -> reporter.reportOn(
                                 argumentSource ?: fallbackSource,
                                 FirErrors.UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS,

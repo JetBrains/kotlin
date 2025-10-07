@@ -17,7 +17,7 @@ class A<F> {
         val x2 = foo2(x)
         x2.checkType { _<F>() }
 
-        foo1<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>F?<!>>(y)
+        foo1<<!UPPER_BOUND_VIOLATED!>F?<!>>(y)
         <!CANNOT_INFER_PARAMETER_TYPE!>foo1<!>(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
         foo2<F?>(y)
 
@@ -37,14 +37,14 @@ class A<F> {
         val x5 = foo2(z)
         x4.checkType { _<Z>() }
 
-        foo1<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>W<!>>(w)
+        foo1<<!UPPER_BOUND_VIOLATED!>W<!>>(w)
         <!CANNOT_INFER_PARAMETER_TYPE!>foo1<!>(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
         foo2<W>(w)
 
         val x6 = foo2(w)
         x6.checkType { _<W>() }
 
-        foo1<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>W<!>>(w)
+        foo1<<!UPPER_BOUND_VIOLATED!>W<!>>(w)
     }
 }
 

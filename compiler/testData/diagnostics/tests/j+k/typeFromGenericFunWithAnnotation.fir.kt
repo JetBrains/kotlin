@@ -121,10 +121,10 @@ fun genericFunWithAnnotations(x: GenericFunWithAnnotation) {
 
     x.<!CANNOT_INFER_PARAMETER_TYPE!>foo10<!>(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
     x.foo10<String>(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
-    x.foo10<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>String?<!>>(JavaBox(null))
+    x.foo10<<!UPPER_BOUND_VIOLATED!>String?<!>>(JavaBox(null))
     x.<!CANNOT_INFER_PARAMETER_TYPE!>foo10<!>(null)
     x.foo10<String>(null)
-    x.foo10<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>String?<!>>(null)
+    x.foo10<<!UPPER_BOUND_VIOLATED!>String?<!>>(null)
     x.foo10(JavaBox(""))
     takeString(x.<!CANNOT_INFER_PARAMETER_TYPE!>bar10<!>().a)
 }

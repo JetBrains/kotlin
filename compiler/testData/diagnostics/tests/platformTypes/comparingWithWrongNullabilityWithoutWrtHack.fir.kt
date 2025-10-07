@@ -5,7 +5,7 @@
 import java.util.Comparator;
 
 fun foo() {
-    Comparator.comparing<String?, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Boolean?<!>> <!ARGUMENT_TYPE_MISMATCH!>{
+    Comparator.comparing<String?, <!UPPER_BOUND_VIOLATED!>Boolean?<!>> <!ARGUMENT_TYPE_MISMATCH!>{
         it != ""
     }<!>
 }

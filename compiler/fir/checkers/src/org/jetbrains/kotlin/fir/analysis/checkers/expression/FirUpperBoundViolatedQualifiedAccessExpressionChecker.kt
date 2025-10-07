@@ -74,6 +74,7 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             typeParameters,
             typeArguments,
             substitutor,
+            isCheckingExpressionArguments = true,
             fallbackSource = expression.source,
         )
     }
