@@ -294,7 +294,7 @@ private fun ProviderFactory.testProperty(property: TestProperty) =
 @Suppress("UNCHECKED_CAST")
 fun ProjectTestsExtension.nativeTestTask(
     taskName: String,
-    tag: String?,
+    tag: String? = null,
     requirePlatformLibs: Boolean = false,
     customCompilerDependencies: List<FileCollection> = emptyList(),
     customTestDependencies: List<FileCollection> = emptyList(),
@@ -365,7 +365,7 @@ fun ProjectTestsExtension.nativeTestTask(
         useJUnitPlatform {
             // Note: arbitrary JUnit tag expressions can be used in this property.
             // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
-            val globalTags = findProperty("kotlin.native.tests.tags")?.toString()
+            val globalTags = project.findProperty("kotlin.native.tests.tags")?.toString()
             val testTags = when {
                 tag == null -> globalTags
                 globalTags == null -> tag

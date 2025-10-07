@@ -24,6 +24,7 @@ import java.io.File
  */
 fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
     taskName: String,
+    tag: String? = null,
     requirePlatformLibs: Boolean = false,
     configure: Test.() -> Unit = {}
 ) : TaskProvider<Test> {
@@ -81,6 +82,7 @@ fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
 
     return nativeTestTask(
         taskName = taskName,
+        tag = tag,
         requirePlatformLibs = requirePlatformLibs,
     ) {
         /**
