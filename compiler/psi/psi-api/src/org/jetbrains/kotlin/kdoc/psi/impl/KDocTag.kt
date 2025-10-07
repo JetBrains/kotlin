@@ -104,10 +104,21 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
         }
         for (node in children) {
             val type = node.elementType
+            val nodeText = node.text
+            val isTextIndented = nodeText.isIndented()
+
             if (type == KDocTokens.CODE_BLOCK_TEXT) {
-                //If first line of code block
-                if (!isCodeBlock())
-                    indentedCodeBlock = indentedCodeBlock || node.text.startsWith(indentationWhiteSpaces) || node.text.startsWith("\t")
+                /**
+                 * We have to check whether every single line of the current code block is indented.
+                 * Checking just the first line is not enough since the following case would be considered indented:
+                 * ```
+                 *     line 1
+                 *    line 2
+                 *   line 3
+                 *  line 4
+                 * ```
+                 */
+                indentedCodeBlock = (!isCodeBlock() || indentedCodeBlock) && isTextIndented
                 startCodeBlock()
             } else if (KDocTokens.CONTENT_TOKENS.contains(type)) {
                 flushCodeBlock()
@@ -115,12 +126,23 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
             }
 
             if (KDocTokens.CONTENT_TOKENS.contains(type)) {
-                val isPlainContent = afterAsterisk && !isCodeBlock()
-                // If content not yet started and not part of indented code block
-                // and not inside fenced code block we should trim leading spaces
-                val trimLeadingSpaces = !(contentStarted || indentedCodeBlock) || isPlainContent
+                /**
+                 * One line can contain multiple content tokens.
+                 * `afterAsterisk` indicates that the current token is the first one on the line, so we don't trim middle tokens.
+                 * However, when text is placed right after the KDoc start (after `/`**),
+                 * there is no leading asterisk.
+                 * That's why we also need to check whether the content hasn't started yet, and this is the first content token.
+                 *
+                 * Text in code blocks is handled separately in [trimCommonIndent].
+                 * If the text is indented and not a code block, we shouldn't trim it, as it might be a nested list.
+                 * ```
+                 * - Line1
+                 *      - Line2
+                 * ```
+                 */
+                val trimLeadingSpaces = (!contentStarted || afterAsterisk) && !(isCodeBlock() || isTextIndented)
 
-                targetBuilder.append(if (trimLeadingSpaces) node.text.trimStart() else node.text)
+                targetBuilder.append(if (trimLeadingSpaces) nodeText.trimStart() else nodeText)
                 contentStarted = true
                 afterAsterisk = false
             }
@@ -128,7 +150,7 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
                 afterAsterisk = true
             }
             if (type == TokenType.WHITE_SPACE && contentStarted) {
-                targetBuilder.append("\n".repeat(StringUtil.countNewLines(node.text)))
+                targetBuilder.append("\n".repeat(StringUtil.countNewLines(nodeText)))
             }
             if (type == KDocElementTypes.KDOC_TAG) {
                 break
@@ -141,15 +163,21 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
     }
 
     private fun trimCommonIndent(builder: StringBuilder, prepend4WhiteSpaces: Boolean = false): String {
-        val lines = builder.toString().split('\n')
-        val minIndent = lines.filter { it.trim().isNotEmpty() }.minOfOrNull { it.calcIndent() } ?: 0
-        var processedLines = lines.map { it.drop(minIndent) }
-        if (prepend4WhiteSpaces)
-            processedLines = processedLines.map { if (it.isNotBlank()) it.prependIndent(indentationWhiteSpaces) else it }
+        val lines = builder.lines()
+        val minIndent = lines.filter { it.isNotBlank() }.minOfOrNull { it.calcIndent() } ?: 0
+
+        val processedLines = lines.map { line ->
+            if (line.isNotBlank()) {
+                line.drop(minIndent).let { if (prepend4WhiteSpaces) it.prependIndent(indentationWhiteSpaces) else it }
+            } else {
+                ""
+            }
+        }
         return processedLines.joinToString("\n")
     }
 
     private fun String.calcIndent() = indexOfFirst { !it.isWhitespace() }
+    private fun String.isIndented() = startsWith(indentationWhiteSpaces) || startsWith("\t")
 
     companion object {
         val indentationWhiteSpaces = " ".repeat(4)
