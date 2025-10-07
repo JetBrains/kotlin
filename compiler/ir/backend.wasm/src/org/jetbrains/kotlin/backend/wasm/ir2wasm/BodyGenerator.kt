@@ -1201,6 +1201,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.returnArgumentIfItIsKotlinAny, wasmSymbols.returnShareableArgumentIfItIsKotlinAny -> {
+                // in "-Xwasm-use-shared-objects" mode non-shared externref cannot represent Kotlin objects
                 if (!useSharedObjects || function.symbol == wasmSymbols.returnShareableArgumentIfItIsKotlinAny) {
                     body.buildBlock("returnIfAny", WasmAnyRef.maybeShared(useSharedObjects)) { innerLabel ->
                         body.buildGetLocal(functionContext.referenceLocal(0), location)
@@ -1219,6 +1220,12 @@ class BodyGenerator(
                         body.buildInstr(WasmOp.RETURN, location)
                     }
                     body.buildDrop(location)
+                }
+            }
+
+            wasmSymbols.wrapShareable -> {
+                if (useSharedObjects) {
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.wrapShareableSharedImpl), location)
                 }
             }
 

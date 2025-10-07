@@ -146,7 +146,6 @@ internal fun isNullish(ref: ExternalInterfaceType?): Boolean =
 internal fun isNullishShareable(ref: JsShareableAny?): Boolean =
     js("ref == null")
 
-// FIXME add shared version: jsShareableAnyToKotlinAny(ref: JsShareableAny): Any ???
 internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // TODO rewrite it so to get something like:
     // block {
@@ -412,9 +411,15 @@ internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfac
 @ExperimentalWasmJsInterop
 internal external class KotlinJsBox(internal val kotlinObject: JsReference<Any>) : JsAny
 
+// generates in-place depending on -Xwasm-use-shared-objects mode: either to call of `wrapShareable_sharedImpl` or no-action
 @ExperimentalWasmJsInterop
-internal fun wrapShareable(obj: JsShareableAny) : JsAny = js("new KotlinJsBox(obj)")
+@ExcludedFromCodegen
+internal fun wrapShareable(obj: JsShareableAny) : JsAny = implementedAsIntrinsic
 
+@ExperimentalWasmJsInterop
+internal fun wrapShareable_sharedImpl(obj: JsShareableAny) : JsAny = js("new KotlinJsBox(obj)")
+
+// no mode-depending generation is required for unwrap, as it is invoked only for actual KotlinJsBox (i.e. only in "shared" mode)
 @ExperimentalWasmJsInterop
 internal fun unwrapShareable(box: KotlinJsBox) : JsShareableAny = js("box.kotlinObject")
 

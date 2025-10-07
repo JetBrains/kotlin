@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBackendContext, dceDumpNameCache: DceDumpNameCache) {
     val printReachabilityInfo =
@@ -92,6 +93,9 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     if (context.isWasmJsTarget) {
         add(context.wasmSymbols.jsRelatedSymbols.getKotlinException.owner)
         add(context.wasmSymbols.jsRelatedSymbols.throwValue.owner)
+        if (context.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)) {
+            add(context.wasmSymbols.wrapShareableSharedImpl.owner)
+        }
     }
 
     context.fileContexts.values.forEach { crossFileContext ->

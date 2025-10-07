@@ -259,6 +259,8 @@ class WasmSymbols(
 
     val returnArgumentIfItIsKotlinAny = getInternalFunction("returnArgumentIfItIsKotlinAny")
     val returnShareableArgumentIfItIsKotlinAny = getInternalFunction("returnShareableArgumentIfItIsKotlinAny")
+    val wrapShareable = getInternalFunction("wrapShareable")
+    val wrapShareableSharedImpl = getInternalFunction("wrapShareable_sharedImpl")
 
     val startCoroutineUninterceptedOrReturnIntrinsics =
         (0..2).map { getInternalFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
@@ -335,7 +337,7 @@ class WasmSymbols(
 
         val jsShareableAnyToJsAnyAdapter = getInternalFunction("jsShareableAnyToJsAnyAdapter")
         val jsShareableAnyToKotlinAnyAdapter = getInternalFunction("jsShareableAnyToKotlinAnyAdapter")
-        val jsAnyToJsShareableAnyAdapter = getInternalFunction("unwrapShareable")
+        val jsAnyToJsShareableAnyAdapter = getInternalFunction("jsAnyToJsShareableAnyAdapter")
 
         val jsToKotlinByteAdapter = getInternalFunction("jsToKotlinByteAdapter")
         val jsToKotlinShortAdapter = getInternalFunction("jsToKotlinShortAdapter")
