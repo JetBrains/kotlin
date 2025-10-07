@@ -41,7 +41,7 @@ open class Base2Impl<T> : Base2<T>{
     }
 }
 
-class Test3(val x: Base1<String>) : Base2Impl<Int>(), Base1<String> by x
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class Test3(val x: Base1<String>) : Base2Impl<Int>(), Base1<String> by x<!>
 
 fun test(){
     Test(Base1Impl()).foo(1)

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.originalFunction
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.resolve.MemberComparator
 
@@ -27,14 +28,25 @@ class JvmMethodSignatureClashDetector(
     private val classCodegen: ClassCodegen
 ) : SignatureClashDetector<JvmMemberSignature.Method, IrFunction>() {
 
+    private val overriddenByFakeOverrideBySignature: MutableMap<JvmMemberSignature.Method, MutableSet<IrFunction>> = HashMap()
+
+    private fun overriddenByFakeOverrideWithSignature(signature: JvmMemberSignature.Method): Set<IrFunction> =
+        overriddenByFakeOverrideBySignature[signature] ?: emptySet()
+
     fun trackFakeOverrideMethod(irFunction: IrFunction) {
-        if (irFunction.dispatchReceiverParameter != null) {
-            for (overriddenFunction in getOverriddenFunctions(irFunction as IrSimpleFunction)) {
-                if (!overriddenFunction.isFakeOverride) trackDeclaration(irFunction, mapRawSignature(overriddenFunction))
-            }
-        } else {
+        if (irFunction.dispatchReceiverParameter == null) {
             trackDeclaration(irFunction, mapRawSignature(irFunction))
+        } else {
+            for (overriddenFunction in getOverriddenFunctions(irFunction as IrSimpleFunction)) {
+                if (!overriddenFunction.isFakeOverride) trackFakeOverrideAndOverridden(irFunction, overriddenFunction)
+            }
         }
+    }
+
+    private fun trackFakeOverrideAndOverridden(fakeOverride: IrFunction, overridden: IrFunction) {
+        val signature = mapRawSignature(overridden)
+        trackDeclaration(fakeOverride, signature)
+        overriddenByFakeOverrideBySignature.getOrPut(signature) { mutableSetOf() }.add(overridden)
     }
 
     private fun mapRawSignature(irFunction: IrFunction): JvmMemberSignature.Method {
@@ -78,15 +90,29 @@ class JvmMethodSignatureClashDetector(
 
         val conflictingJvmDeclarationsData = JvmIrConflictingDeclarationsData(signature, declarations)
 
+        fun reportConflictingInheritedJvmDeclarations() =
+            reportJvmSignatureClash(
+                diagnosticReporter,
+                JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
+                listOf(classCodegen.irClass),
+                conflictingJvmDeclarationsData
+            )
+
         when {
+            realMethodsCount == 0 && fakeOverridesCount == 1 && specialOverridesCount == 1 -> {
+                val bridge = declarations.single { it.isSpecialOverride() }
+                val bridgeCallee = bridge.originalFunction.takeIf { bridge.origin == IrDeclarationOrigin.BRIDGE }
+                    ?.let { classCodegen.context.inlineClassReplacements.getReplacementFunction(it) ?: it }
+                if (bridgeCallee is IrSimpleFunction &&
+                    !getOverriddenFunctions(bridgeCallee).containsAll(overriddenByFakeOverrideWithSignature(signature))
+                ) {
+                    reportConflictingInheritedJvmDeclarations()
+                }
+            }
+
             realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
                 if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
-                    reportJvmSignatureClash(
-                        diagnosticReporter,
-                        JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
-                        listOf(classCodegen.irClass),
-                        conflictingJvmDeclarationsData
-                    )
+                    reportConflictingInheritedJvmDeclarations()
                 }
 
             fakeOverridesCount == 0 && specialOverridesCount == 0 -> {
