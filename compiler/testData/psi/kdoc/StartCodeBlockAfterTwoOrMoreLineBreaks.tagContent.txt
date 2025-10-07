@@ -33,8 +33,8 @@ ORIGINAL KDOC:
  *     But it's a code block
 CONTENT:
 Some text
-[X] (Recognize the link because there is only a single line break and it's not a code block, KT-79783)
-[Y] Next Link
+     [X] (Recognize the link because there is only a single line break and it's not a code block, KT-79783)
+       [Y] Next Link
 
     But it's a code block
 
@@ -62,7 +62,7 @@ ORIGINAL KDOC:
  *     - Test [String]
 CONTENT:
 - Test [Number]
-- Test [String]
+     - Test [String]
 
 ORIGINAL KDOC:
 * The instructions are coming from three different places:
@@ -72,5 +72,5 @@ ORIGINAL KDOC:
 CONTENT:
 The instructions are coming from three different places:
 - **A**:
-- Source: [org.company.A], parameterized instructions
-- Completed with variables from the [C] by the [D] when invoking `.doIt()`
+     - Source: [org.company.A], parameterized instructions
+     - Completed with variables from the [C] by the [D] when invoking `.doIt()`

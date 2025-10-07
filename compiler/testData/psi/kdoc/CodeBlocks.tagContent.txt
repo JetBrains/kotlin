@@ -20,24 +20,24 @@ ORIGINAL KDOC:
  *    ```
 CONTENT:
 1.
-```
+    ```
     line 1
     line 2
-```
+    ```
 
 2.
-~~~
+    ~~~
     line 1
     line 2
-~~~
+    ~~~
 
 3.
-```
+    ```
 
 
 
 
-```
+    ```
 
 ORIGINAL KDOC:
 * ```
@@ -54,16 +54,16 @@ ORIGINAL KDOC:
  * ~~~
 CONTENT:
 ```
-       line 1
-       line 2
-     line 3
-    line 4
+   line 1
+   line 2
+ line 3
+line 4
 ```
 ~~~
-       line 1
-       line 2
-     line 3
-    line 4
+   line 1
+   line 2
+ line 3
+line 4
 ~~~
 
 ORIGINAL KDOC:
