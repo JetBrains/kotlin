@@ -73,6 +73,8 @@ IDENTIFIER = {PLAIN_IDENTIFIER} | `[^`\n]+`
 QUALIFIED_NAME = {IDENTIFIER} ([\.] {IDENTIFIER}?)* // Handle incorrect/incomplete qualifiers for correct resolving
 CODE_LINK=\[{QUALIFIED_NAME}\]
 CODE_FENCE_START=("```" | "~~~").*
+// `org.jetbrains.kotlin.kdoc.lexer.KDocLexer` rely on these two types of ending fences.
+// If this set is change, please, update `KDocLexer`s accordingly
 CODE_FENCE_END=("```" | "~~~")
 
 %%

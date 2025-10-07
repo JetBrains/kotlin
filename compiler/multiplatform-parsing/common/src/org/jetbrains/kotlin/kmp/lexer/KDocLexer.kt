@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.kmp.lexer
 
+import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
+import com.intellij.platform.syntax.lexer.Lexer
 import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import com.intellij.platform.syntax.util.lexer.FlexAdapter
 import com.intellij.platform.syntax.util.lexer.MergingLexerAdapter
@@ -19,4 +21,20 @@ class KDocLexer : MergingLexerAdapter(
     companion object {
         val KDOC_TOKENS = syntaxElementTypeSetOf(KDocTokens.TEXT, KDocTokens.CODE_BLOCK_TEXT, SyntaxTokenTypes.WHITE_SPACE)
     }
+
+    override fun merge(tokenType: SyntaxElementType, lexer: Lexer): SyntaxElementType {
+        val nextTokenType = lexer.getTokenType()
+        val nextTokenText = lexer.getTokenText()
+        if (tokenType == KDocTokens.CODE_BLOCK_TEXT && nextTokenType == KDocTokens.TEXT && (nextTokenText == "```" || nextTokenText == "~~~")) {
+            lexer.advance()
+            return KDocTokens.TEXT // Don't treat the trailing line as a part of a code block
+        } else if (tokenType == KDocTokens.CODE_BLOCK_TEXT || tokenType == KDocTokens.TEXT || tokenType == KtTokens.WHITE_SPACE) {
+            while (tokenType == lexer.getTokenType()) {
+                lexer.advance()
+            }
+        }
+
+        return tokenType
+    }
+
 }

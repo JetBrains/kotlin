@@ -16,22 +16,37 @@
 
 package org.jetbrains.kotlin.kdoc.lexer;
 
-import com.intellij.lexer.FlexAdapter;
-import com.intellij.lexer.MergingLexerAdapter;
+import com.intellij.lexer.*;
 import com.intellij.psi.TokenType;
-import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.tree.IElementType;
 
-import java.io.Reader;
-
-public class KDocLexer extends MergingLexerAdapter {
-    private static final TokenSet KDOC_TOKENS = TokenSet.create(KDocTokens.TEXT, KDocTokens.CODE_BLOCK_TEXT, TokenType.WHITE_SPACE);
+public class KDocLexer extends MergingLexerAdapterBase {
+    private final MergeFunction mergeFunction = new KDocLexerMergeFunction();
 
     public KDocLexer() {
-        super(
-                new FlexAdapter(
-                        new _KDocLexer((Reader) null)
-                ),
-                KDOC_TOKENS
-        );
+        super(new FlexAdapter(new _KDocLexer(null)));
+    }
+
+    @Override
+    public MergeFunction getMergeFunction() {
+        return mergeFunction;
+    }
+
+    private static class KDocLexerMergeFunction implements MergeFunction {
+        @Override
+        public IElementType merge(IElementType type, Lexer originalLexer) {
+            IElementType nextTokenType = originalLexer.getTokenType();
+            String nextTokenText = originalLexer.getTokenText();
+            if (type == KDocTokens.CODE_BLOCK_TEXT && nextTokenType == KDocTokens.TEXT && (nextTokenText.equals("```") || nextTokenText.equals("~~~"))) {
+                originalLexer.advance();
+                return KDocTokens.TEXT; // Don't treat the trailing line as a part of a code block
+            } else if (type == KDocTokens.CODE_BLOCK_TEXT || type == KDocTokens.TEXT || type == TokenType.WHITE_SPACE) {
+                while (type == originalLexer.getTokenType()) {
+                    originalLexer.advance();
+                }
+            }
+
+            return type;
+        }
     }
 }
