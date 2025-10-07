@@ -6,20 +6,17 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.*
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.genericPlatformDestination
-import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.gradle.utils.runCommand
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -46,6 +43,16 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
 
     @get:Input
     abstract val configuration: Property<String>
+
+    @get:Input
+    val deploymentTargetSettingName: Property<String> = objectFactory.property<String>().convention(
+        providerFactory.environmentVariable("DEPLOYMENT_TARGET_SETTING_NAME")
+    )
+
+    @get:Internal
+    val deploymentTarget: Provider<String> = deploymentTargetSettingName.flatMap {
+        providerFactory.environmentVariable(it)
+    }
 
     @get:Optional
     @get:Input
@@ -102,10 +109,14 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         )
 
         val swiftModuleName = swiftApiModuleName.get()
+        val deploymentTargetSettingName = deploymentTargetSettingName.get()
+        val deploymentTarget = deploymentTarget.get()
 
         val buildArguments = mapOf(
             "ARCHS" to target.map { it.appleArchitecture }.get(),
             "CONFIGURATION" to configuration.get(),
+            "DEPLOYMENT_TARGET_SETTING_NAME" to deploymentTargetSettingName,
+            deploymentTargetSettingName to deploymentTarget,
 
             /*
             We need to add -public-autolink-library flag because bridge module is imported with @_implementationOnly
@@ -121,7 +132,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             "xcodebuild",
             "-derivedDataPath", derivedData.relativeOrAbsolute(packageRootPath),
             "-scheme", swiftModuleName,
-            "-destination", destination()
+            "-destination", destination(),
         ) + (intermediatesDestination + buildArguments).map { (k, v) -> "$k=$v" }
 
         // FIXME: This will not work with dynamic libraries
