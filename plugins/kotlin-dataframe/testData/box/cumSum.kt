@@ -24,81 +24,84 @@ fun box(): String {
     val personsDf = personsDfNullable.dropNulls { colsAtAnyDepth() }
 
     // scenario #0: all numerical columns
-    val res0n = personsDfNullable.cumSum()
-    res0n.compareSchemas()
+    personsDfNullable.cumSum().let { df ->
+        df.compareSchemas(strict = true)
 
-    val cumSum01n: DataColumn<Int?> = res0n.data.age
-    val cumSum02n: DataColumn<Double> = res0n.weight
-    val cumSum03n: DataColumn<Int?> = res0n.yearsToRetirement
-    val cumSum04n: DataColumn<Int?> = res0n.workExperienceYears
-    val cumSum05n: DataColumn<Int?> = res0n.dependentsCount
-    val cumSum06n: DataColumn<Long?> = res0n.annualIncome
-    val cumSum07n: DataColumn<String?> = res0n.data.name
-    val cumSum08n: DataColumn<String?> = res0n.city
-    val cumSum09n: DataColumn<String?> = res0n.height
+        val cumSum01n: DataColumn<Int?> = df.data.age
+        val cumSum02n: DataColumn<Double> = df.weight
+        val cumSum03n: DataColumn<Int?> = df.yearsToRetirement
+        val cumSum04n: DataColumn<Int?> = df.workExperienceYears
+        val cumSum05n: DataColumn<Int?> = df.dependentsCount
+        val cumSum06n: DataColumn<Long?> = df.annualIncome
+        val cumSum07n: DataColumn<String?> = df.data.name
+        val cumSum08n: DataColumn<String?> = df.city
+        val cumSum09n: DataColumn<String?> = df.height
+    }
+    personsDf.cumSum().let { df ->
+        df.compareSchemas(strict = true)
 
-    val res0 = personsDf.cumSum()
-    res0.compareSchemas()
-
-    val cumSum01: DataColumn<Int> = res0.data.age
-    val cumSum02: DataColumn<Double> = res0.weight
-    val cumSum03: DataColumn<Int> = res0.yearsToRetirement
-    val cumSum04: DataColumn<Int> = res0.workExperienceYears
-    val cumSum05: DataColumn<Int> = res0.dependentsCount
-    val cumSum06: DataColumn<Long> = res0.annualIncome
-    val cumSum07: DataColumn<String> = res0.data.name
-    val cumSum08: DataColumn<String> = res0.city
-    val cumSum09: DataColumn<String> = res0.height
+        val cumSum01: DataColumn<Int> = df.data.age
+        val cumSum02: DataColumn<Double> = df.weight
+        val cumSum03: DataColumn<Int> = df.yearsToRetirement
+        val cumSum04: DataColumn<Int> = df.workExperienceYears
+        val cumSum05: DataColumn<Int> = df.dependentsCount
+        val cumSum06: DataColumn<Long> = df.annualIncome
+        val cumSum07: DataColumn<String> = df.data.name
+        val cumSum08: DataColumn<String> = df.city
+        val cumSum09: DataColumn<String> = df.height
+    }
 
     // scenario #1: particular column
-    val res1n = personsDfNullable.cumSum { data.age }
-    res1n.compareSchemas()
+    personsDfNullable.cumSum { data.age }.let { df ->
+        df.compareSchemas(strict = true)
 
-    val max11n: DataColumn<Int?> = res1n.data.age
+        val max11n: DataColumn<Int?> = df.data.age
+    }
 
-    val res1 = personsDf.cumSum { data.age }
-    res1.compareSchemas()
+    personsDf.cumSum { data.age }.let { df ->
+        df.compareSchemas(strict = true)
 
-    val max11: DataColumn<Int> = res1.data.age
-
+        val max11: DataColumn<Int> = df.data.age
+    }
     // scenario #1.1: particular column with converted type
-    val res11n = personsDfNullable.cumSum { dependentsCount }
-    res11n.compareSchemas()
+    personsDfNullable.cumSum { dependentsCount }.let { df ->
+        df.compareSchemas(strict = true)
 
-    val max111n: DataColumn<Int?> = res11n.dependentsCount
+        val max111n: DataColumn<Int?> = df.dependentsCount
+    }
+    personsDf.cumSum { dependentsCount }.let { df ->
+        df.compareSchemas(strict = true)
 
-    val res11 = personsDf.cumSum { dependentsCount }
-    res11.compareSchemas()
-
-    val max111: DataColumn<Int> = res11.dependentsCount
-
+        val max111: DataColumn<Int> = df.dependentsCount
+    }
     // scenario #1.2: particular column with null -> NaN
-    val res12n = personsDfNullable.cumSum { weight }
-    res12n.compareSchemas()
+    personsDfNullable.cumSum { weight }.let { df ->
+        df.compareSchemas(strict = true)
 
-    val max121n: DataColumn<Double> = res12n.weight
+        val max121n: DataColumn<Double> = df.weight
+    }
 
-    val res12 = personsDf.cumSum { weight }
-    res12.compareSchemas()
+    personsDf.cumSum { weight }.let { df ->
+        df.compareSchemas(strict = true)
 
-    val max121: DataColumn<Double> = res12.weight
-
+        val max121: DataColumn<Double> = df.weight
+    }
     // scenario #2: cumSum of values per columns separately
-    val res3n = personsDfNullable.cumSum { weight and workExperienceYears and dependentsCount and annualIncome }
-    res3n.compareSchemas()
+    personsDfNullable.cumSum { weight and workExperienceYears and dependentsCount and annualIncome }.let { df ->
+        df.compareSchemas(strict = true)
 
-    val max32n: DataColumn<Double> = res3n.weight
-    val max33n: DataColumn<Int?> = res3n.workExperienceYears
-    val max34n: DataColumn<Int?> = res3n.dependentsCount
-    val max35n: DataColumn<Long?> = res3n.annualIncome
+        val max32n: DataColumn<Double> = df.weight
+        val max33n: DataColumn<Int?> = df.workExperienceYears
+        val max34n: DataColumn<Int?> = df.dependentsCount
+        val max35n: DataColumn<Long?> = df.annualIncome
+    }
+    personsDf.cumSum { weight and workExperienceYears and dependentsCount and annualIncome }.let { df ->
+        df.compareSchemas(strict = true)
 
-    val res3 = personsDf.cumSum { weight and workExperienceYears and dependentsCount and annualIncome }
-    res3.compareSchemas()
-
-    val max32: DataColumn<Double> = res3.weight
-    val max33: DataColumn<Int> = res3.workExperienceYears
-    val max34: DataColumn<Int> = res3.dependentsCount
-    val max35: DataColumn<Long> = res3.annualIncome
-
+        val max32: DataColumn<Double> = df.weight
+        val max33: DataColumn<Int> = df.workExperienceYears
+        val max34: DataColumn<Int> = df.dependentsCount
+        val max35: DataColumn<Long> = df.annualIncome
+    }
     return "OK"
 }
