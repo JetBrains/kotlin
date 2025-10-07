@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.MavenModule
 import org.jetbrains.kotlin.gradle.util.parsePom
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
@@ -98,7 +99,8 @@ class PublishingIT : KGPBaseTest() {
                     groupId = jacksonGroup,
                     artifactId = jacksonBomArtifact,
                     version = jacksonVersion,
-                    scope = "import"
+                    scope = "import",
+                    type = "pom",
                 ),
                 MavenModule(
                     groupId = KOTLIN_MODULE_GROUP,
@@ -118,8 +120,8 @@ class PublishingIT : KGPBaseTest() {
                     version = "1.0",
                     scope = null,
                 ),
-            ),
-            pom.dependencyManagementConstraints().toSet(),
+            ).prettyPrinted,
+            pom.dependencyManagementConstraints().toSet().prettyPrinted,
         )
     }
 
@@ -290,8 +292,8 @@ class PublishingIT : KGPBaseTest() {
                     version = "fake-version",
                     scope = "runtime"
                 ),
-            ),
-            jvmComponentPom.dependencies().toSet()
+            ).prettyPrinted,
+            jvmComponentPom.dependencies().toSet().prettyPrinted
         )
 
         assertEquals(
@@ -300,10 +302,11 @@ class PublishingIT : KGPBaseTest() {
                     groupId = "org.springframework.boot",
                     artifactId = "spring-boot-dependencies",
                     version = "3.4.0",
-                    scope = "import"
+                    scope = "import",
+                    type = "pom"
                 )
-            ),
-            jvmComponentPom.dependencyManagementConstraints().toSet()
+            ).prettyPrinted,
+            jvmComponentPom.dependencyManagementConstraints().toSet().prettyPrinted
         )
     }
 
