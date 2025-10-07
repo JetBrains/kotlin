@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.internal.component.resolution.failure.exception.VariantSelectionByAttributesException
 import org.gradle.internal.exceptions.MultiCauseException
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Mock
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Variant
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.MavenComponent.MockArtifactType
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -1405,6 +1408,43 @@ class UklibResolutionTestsWithMockComponents {
     }
 
     @Test
+    fun `uklib resolution - resolvable configuration without attributes prefers JVM variants over fallback - KT-81488`() {
+        val repo = generateMockRepository(
+            tmpDir,
+            listOf(
+                GradleComponent(
+                    GradleMetadataComponent(
+                        component = directGradleComponent,
+                        variants = listOf(
+                            kmpPreHmppAndWithoutCategoryJvmApiVariant,
+                            kmpPreHmppAndWithoutCategoryJvmRuntimeVariant,
+                        ),
+                    ),
+                    directMavenComponent(),
+                ),
+            )
+        )
+
+        val consumer = uklibConsumer {
+            kotlin {
+                jvm()
+            }
+            repositories.maven(repo)
+            configurations.create("empty") {
+                it.isCanBeConsumed = false
+                it.dependencies.add(dependencies.create("foo:direct:1.0"))
+            }
+        }
+
+        assertEquals(
+            listOf("empty", "fallbackVariant_KT-81412"),
+            consumer.configurations.getByName("empty").incoming.resolutionResult.allComponents.map {
+                it.variants.single().displayName
+            }
+        )
+    }
+
+    @Test
     fun `standard kmp resolution - KMP and Uklib variants in a single component`() {
         val repo = generateMockRepository(
             tmpDir,
@@ -1810,6 +1850,19 @@ class UklibResolutionTestsWithMockComponents {
     private val kmpJvmRuntimeVariant = Variant(
         name = "jvmRuntimeElements-published",
         attributes = kmpJvmRuntimeVariantAttributes,
+        files = listOf(kmpJvmMock),
+        dependencies = listOf()
+    )
+
+    private val kmpPreHmppAndWithoutCategoryJvmApiVariant = Variant(
+        name = "jvmApiElements-published",
+        attributes = kmpPreHmppAndWithoutCategoryJvmApiVariantAttributes,
+        files = listOf(kmpJvmMock),
+        dependencies = listOf()
+    )
+    private val kmpPreHmppAndWithoutCategoryJvmRuntimeVariant = Variant(
+        name = "jvmRuntimeElements-published",
+        attributes = kmpPreHmppAndWithoutCategoryJvmRuntimeVariantAttributes,
         files = listOf(kmpJvmMock),
         dependencies = listOf()
     )

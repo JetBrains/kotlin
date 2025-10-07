@@ -76,6 +76,17 @@ val kmpJvmApiVariantAttributes = mapOf(
     "org.jetbrains.kotlin.platform.type" to "jvm",
 )
 
+val kmpPreHmppAndWithoutCategoryJvmRuntimeVariantAttributes = mapOf(
+    "org.gradle.usage" to "java-runtime",
+    "org.gradle.libraryelements" to "jar",
+    "org.jetbrains.kotlin.platform.type" to "jvm",
+)
+val kmpPreHmppAndWithoutCategoryJvmApiVariantAttributes = mapOf(
+    "org.gradle.usage" to "java-api",
+    "org.gradle.libraryelements" to "jar",
+    "org.jetbrains.kotlin.platform.type" to "jvm",
+)
+
 val kmpMetadataVariantAttributes = mapOf(
     "org.gradle.category" to "library",
     "org.gradle.jvm.environment" to "non-jvm",
