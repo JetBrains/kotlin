@@ -70,6 +70,18 @@ internal class KaFirScopeProvider(
         )
     }
 
+    override val KaDeclarationContainerSymbol.possibleMemberCallableNames: Set<Name>
+        get() = withValidityAssertion {
+            val firScope = getFirForScope().unsubstitutedScope(
+                analysisSession.firSession,
+                getScopeSession(),
+                withForcedTypeCalculator = false,
+                // to provide a superset of all callable names, SUPER_TYPES is enough
+                memberRequiredPhase = FirResolvePhase.SUPER_TYPES,
+            )
+            return firScope.getCallableNames()
+        }
+
     override val KaDeclarationContainerSymbol.memberScope: KaScope
         get() = withValidityAssertion {
             val firScope = getFirForScope().unsubstitutedScope(

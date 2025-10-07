@@ -21,12 +21,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaScopeProvider : KaSessionComponent {
+    public val KaDeclarationContainerSymbol.possibleMemberCallableNames: Set<Name> get() = memberScope.getPossibleCallableNames()
+
     /**
      * A [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
      * (classes and objects) of the given [KaDeclarationContainerSymbol]. The scope includes members inherited from the symbol's supertypes,
@@ -509,6 +512,11 @@ public class KaScopeWithKindImpl(
 
     override fun hashCode(): Int = Objects.hash(backingScope, backingKind)
 }
+
+@KaContextParameterApi
+context(s: KaSession)
+public val KaDeclarationContainerSymbol.possibleMemberCallableNames: Set<Name>
+    get() = with(s) { possibleMemberCallableNames }
 
 /**
  * A [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
