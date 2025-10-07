@@ -99,5 +99,5 @@ internal class CharSequenceIndicesHandler(context: CommonBackendContext) : Indic
     }
 
     override val IrType.sizePropertyGetter: IrSimpleFunction
-        get() = context.symbols.charSequence.getPropertyGetter("length")!!.owner
+        get() = context.irBuiltIns.charSequenceClass.getPropertyGetter("length")!!.owner
 }

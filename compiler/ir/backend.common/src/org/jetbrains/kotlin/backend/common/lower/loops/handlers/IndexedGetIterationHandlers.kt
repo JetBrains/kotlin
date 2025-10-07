@@ -121,7 +121,7 @@ internal open class CharSequenceIterationHandler(
     canCacheLast: Boolean = false
 ) : IndexedGetIterationHandler(context, canCacheLast) {
     override fun matchIterable(expression: IrExpression): Boolean =
-        expression.type.isSubtypeOfClass(context.symbols.charSequence)
+        expression.type.isSubtypeOfClass(context.irBuiltIns.charSequenceClass)
 
     // We only want to handle the known extension function for CharSequence in the standard library (top level `kotlin.text.iterator`).
     // The behavior of this iterator is well-defined and can be lowered. CharSequences can have their own iterators, either as a member or
@@ -134,10 +134,10 @@ internal open class CharSequenceIterationHandler(
     }
 
     override val IrType.sizePropertyGetter: IrSimpleFunction
-        get() = context.symbols.charSequence.getPropertyGetter("length")!!.owner
+        get() = context.irBuiltIns.charSequenceClass.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction: IrSimpleFunction
-        get() = context.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
+        get() = context.irBuiltIns.charSequenceClass.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }
 
 /**
