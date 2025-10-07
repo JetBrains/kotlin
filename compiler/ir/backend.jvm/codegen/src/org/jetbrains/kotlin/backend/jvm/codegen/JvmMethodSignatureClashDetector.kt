@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.ir.util.originalFunction
+import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.resolve.MemberComparator
 
@@ -95,19 +95,8 @@ class JvmMethodSignatureClashDetector(
         when {
             realMethodsCount == 0 && fakeOverridesCount == 1 && specialOverridesCount == 1 -> {
                 val bridge = declarations.single { it.isSpecialOverride() }
-                val bridgeCallee = bridge.bridgeCallee.takeIf { bridge.origin == IrDeclarationOrigin.BRIDGE }
-                if (bridgeCallee is IrSimpleFunction &&
-                    !getOverriddenFunctions(bridgeCallee).containsAll(overriddenByFakeOverrideWithSignature(signature))
-                ) {
-                    val diagnosticFactory = JvmBackendErrors.ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD.chooseFactory(
-                        diagnosticReporter.at(classCodegen.irClass)
-                    )
-                    reportJvmSignatureClash(
-                        diagnosticReporter,
-                        diagnosticFactory,
-                        listOf(classCodegen.irClass),
-                        conflictingJvmDeclarationsData,
-                    )
+                bridge.bridgeCallee.takeIf { bridge.origin == IrDeclarationOrigin.BRIDGE }?.let {
+                    reportAccidentalOverrideByBridge(it, signature, diagnosticReporter, conflictingJvmDeclarationsData)
                 }
             }
 
@@ -156,6 +145,44 @@ class JvmMethodSignatureClashDetector(
                 diagnosticReporter, JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods,
                 JvmIrConflictingDeclarationsData(predefinedSignature, methods),
             )
+        }
+    }
+
+    private fun reportAccidentalOverrideByBridge(
+        bridgeCallee: IrFunction,
+        signature: JvmMemberSignature.Method,
+        diagnosticReporter: IrDiagnosticReporter,
+        conflictingJvmDeclarationsData: JvmIrConflictingDeclarationsData,
+    ) {
+        if (bridgeCallee !is IrSimpleFunction) return
+
+        fun doReport(forceError: Boolean) {
+            reportJvmSignatureClash(
+                diagnosticReporter,
+                JvmBackendErrors.ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD.run {
+                    if (forceError) errorFactory
+                    else chooseFactory(diagnosticReporter.at(classCodegen.irClass))
+                },
+                listOf(classCodegen.irClass),
+                conflictingJvmDeclarationsData,
+            )
+        }
+
+        val overriddenByBridgeCallee = getOverriddenFunctions(bridgeCallee)
+        var notOverriddenFound = false
+
+        for (overriddenByFakeOverride in overriddenByFakeOverrideWithSignature(signature)) {
+            if (overriddenByBridgeCallee.contains(overriddenByFakeOverride)) continue
+
+            if (!overriddenByFakeOverride.isOverridable) {
+                doReport(forceError = true)
+                return
+            }
+            notOverriddenFound = true
+        }
+
+        if (notOverriddenFound) {
+            doReport(forceError = false)
         }
     }
 

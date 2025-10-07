@@ -18,7 +18,7 @@ open class Foo {
     }
 }
 
-<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING, ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING!>class Bar : Foo(), RestrictedGeneric<Bar>{
+<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_ERROR, ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING!>class Bar : Foo(), RestrictedGeneric<Bar>{
     override fun accept(obj: Bar): Int = 0
     override fun acceptOpen(obj: Bar) {
     }

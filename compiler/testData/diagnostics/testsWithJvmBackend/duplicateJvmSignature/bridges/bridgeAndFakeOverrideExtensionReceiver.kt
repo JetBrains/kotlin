@@ -11,7 +11,7 @@ open class B1 {
     fun Any.foo() {}
 }
 
-<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING!>class B2 : A<String>, B1() {
+<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_ERROR!>class B2 : A<String>, B1() {
     override fun String.foo() {}
 }<!>
 

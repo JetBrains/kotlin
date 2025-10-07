@@ -13,4 +13,4 @@ interface B<T> {
     }
 }
 
-<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING!>class C : A<String>(), B<String><!>
+<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_ERROR!>class C : A<String>(), B<String><!>

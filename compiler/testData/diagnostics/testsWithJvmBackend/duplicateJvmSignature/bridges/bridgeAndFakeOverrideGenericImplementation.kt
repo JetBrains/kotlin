@@ -15,6 +15,6 @@ open class Foo {
     fun accept(obj: Restrict): Int = 0
 }
 
-<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING!>class Bar<T> : Foo(), RestrictedGeneric<Bar<T>>{
+<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_ERROR!>class Bar<T> : Foo(), RestrictedGeneric<Bar<T>>{
     override fun accept(obj: Bar<T>): Int = 0
 }<!>
