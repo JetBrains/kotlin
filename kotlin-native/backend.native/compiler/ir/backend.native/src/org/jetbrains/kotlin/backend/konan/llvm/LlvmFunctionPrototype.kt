@@ -176,7 +176,7 @@ internal open class LlvmFunctionSignature(
 sealed class FunctionOrigin {
     object FromNativeRuntime : FunctionOrigin()
 
-    class OwnedBy(val declaration: IrDeclaration) : FunctionOrigin()
+    class OwnedBy(val declaration: IrDeclaration, val weak: Boolean = false) : FunctionOrigin()
 }
 
 
