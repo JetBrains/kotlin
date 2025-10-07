@@ -74,8 +74,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
             ?: error("Expected extension receiver for ${it.render()}")
     }
 
-    val unit get() = irBuiltIns.unitClass
-
     val char get() = irBuiltIns.charClass
 
     val byte get() = irBuiltIns.byteClass
