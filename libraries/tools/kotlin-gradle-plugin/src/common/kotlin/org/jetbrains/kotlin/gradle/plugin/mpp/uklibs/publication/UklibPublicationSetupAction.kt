@@ -44,6 +44,7 @@ internal val UklibPublicationSetupAction = KotlinProjectSetupAction {
 
     project.registerOutgoingUklibVariants(kotlinSoftwareComponent)
     project.changeRootComponentPackaging()
+    project.rewritePomForKotlinDomApiCompat()
 
     /**
      * Check that KGP model is compliant with Uklib limitations; this function does validations as a side effect
