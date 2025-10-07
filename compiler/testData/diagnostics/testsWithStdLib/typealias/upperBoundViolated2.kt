@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 class Base<K : List<CharSequence>>
 typealias Alias<T> = Base<List<T>>
