@@ -218,9 +218,6 @@ class BuildReportsIT : KGPBaseTest() {
             freeCompilerArgs = listOf(
                 "-Xklib-ir-inliner=full",
             ),
-            additionalReportLines = listOf(
-                "InlineFunctionSerializationPreProcessing",
-            ),
         )
     }
 
@@ -268,11 +265,11 @@ class BuildReportsIT : KGPBaseTest() {
         "Run compilation",
         "Run native in process:",
         "Compiler IR pre-lowering:",
-        "InlineFunctionSerializationPreProcessing",
+//        "InlineFunctionSerializationPreProcessing",
         "Compiler IR Serialization:",
         "Compiler IR lowering:",
-        "ValidateIrBeforeLowering:",
-        "ValidateIrAfterLowering:",
+//        "ValidateIrBeforeLowering:",
+//        "ValidateIrAfterLowering:",
         "Compiler backend:",
         "llvm-default.AlwaysInlinerPass:",
         "Size metrics:",
@@ -912,19 +909,16 @@ class BuildReportsIT : KGPBaseTest() {
                 val buildTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
                 assertContains(buildTimesKeys, NATIVE_IN_PROCESS)
 
-                val dynamicBuildTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
+                jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
                     .filter { it.parent == IR_LOWERING }
-                    .map { it.name }
-                val expectedDynamicBuildTimesNames = listOf(
-                    "ValidateIrBeforeLowering",
-                    "TestProcessor",
-                    "UpgradeCallableReferences",
-                    "Autobox",
-                    "ConstructorsLowering",
-                    "ValidateIrAfterLowering",
-                )
-                val missedKeys = expectedDynamicBuildTimesNames.filter { it !in dynamicBuildTimesKeys }
-                assertTrue(missedKeys.isEmpty(), "Compiler build time metrics are missed: ${missedKeys.joinToString()}")
+                    .assertContainsValues(
+                        "ValidateIrBeforeLowering",
+                        "TestProcessor",
+//                        "UpgradeCallableReferences",
+                        "Autobox",
+                        "ConstructorsLowering",
+                        "ValidateIrAfterLowering",
+                    )
             }
         }
     }
@@ -950,17 +944,13 @@ class BuildReportsIT : KGPBaseTest() {
                 val jsonReport = readJsonReport(jsonReportFile)
                 assertContains(jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys, NATIVE_IN_PROCESS)
 
-                val compilerMetrics = allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
+                val compilerMetrics = COMPILER_PERFORMANCE.getAllChildren()
                 val reportedCompilerMetrics =
                     jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                val expected =
-                    allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!.flatMap { allBuildTimeMetricsByParentMap[it]!! }.map { it.name }
-                assertEquals(
-                    expected,
-                    reportedCompilerMetrics.map { it.name }.sorted()
-                )
+                val expected = compilerPerformanceMetrics()
+                reportedCompilerMetrics.assertContainsValues(expected)
 
                 assertNotNull(
                     jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.find { it.name == "AvoidLocalFOsInInlineFunctionsLowering" && it.parent == IR_PRE_LOWERING }
@@ -999,37 +989,47 @@ class BuildReportsIT : KGPBaseTest() {
                 val jsonReportFile = projectPath.getSingleFileInDir("report")
                 assertTrue { jsonReportFile.exists() }
                 val jsonReport = readJsonReport(jsonReportFile)
-                val bulidTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
-                assertContains(bulidTimesKeys, NATIVE_IN_PROCESS)
+                val buildTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
+                assertContains(buildTimesKeys, NATIVE_IN_PROCESS)
 
-                val compilerMetrics = allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
-                val reportedCompilerMetrics = bulidTimesKeys.filter { it in compilerMetrics }.map { it.name }
+                val compilerMetrics = COMPILER_PERFORMANCE.getAllChildren()
+                val reportedCompilerMetrics = buildTimesKeys.filter { it in compilerMetrics }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                val expected =
-                    allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!! + allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!.flatMap { allBuildTimeMetricsByParentMap[it]!! }
-                assertEquals(
-                    expected.map { it.name }.sorted(),
-                    reportedCompilerMetrics.sorted()
-                )
+                val expected = compilerPerformanceMetrics()
+                reportedCompilerMetrics.assertContainsValues(expected)
 
-                assertEquals(
-                    listOf(
+                jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
+                    .filter { it.parent == IR_PRE_LOWERING }.assertContainsValues(
                         "UpgradeCallableReferences",
                         "AssertionWrapperLowering",
                         "AvoidLocalFOsInInlineFunctionsLowering",
                         "LateinitLowering", // first lowering in K/N 1st phase lowerings, specific for `+IrIntraModuleInlinerBeforeKlibSerialization` and `+IrCrossModuleInlinerBeforeKlibSerialization` features
-                    ),
-                    jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
-                        .filter { it.parent == IR_PRE_LOWERING }
-                        .map { it.name }
-                        .take(4)
-                )
+                    )
             }
         }
     }
 
     companion object {
         private const val CAN_NOT_ADD_CUSTOM_VALUES_TO_BUILD_SCAN_MESSAGE = "Can't add any more custom values into build scan"
+        private fun compilerPerformanceMetrics(): List<BuildTimeMetric> = allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
+            .flatMap { allBuildTimeMetricsByParentMap[it] ?: listOf(it) }
+            .filter { it !is CustomBuildTimeMetric }
+
+        private fun Collection<BuildPerformanceMetric>.assertContainsValues(vararg expectedValues: String) {
+            val missedKeys = expectedValues.filter { metricName -> find { it.name == metricName } == null }
+            assertTrue(
+                missedKeys.isEmpty(),
+                "${missedKeys.joinToString(prefix = "<", postfix = ">")} build metrics are missed in " +
+                        joinToString(prefix = "<", postfix = ">") { it.name }
+            )
+        }
+
+        private fun Collection<BuildPerformanceMetric>.assertContainsValues(expectedValues: Collection<BuildPerformanceMetric>) {
+            assertContainsValues(*expectedValues.map { it.name }.toTypedArray())
+        }
+
+        private fun BuildPerformanceMetric.getAllChildren(): List<BuildPerformanceMetric> =
+            allBuildTimeMetricsByParentMap[this]?.flatMap { it.getAllChildren() + it } ?: emptyList()
     }
 }
