@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
+import org.jetbrains.kotlin.ir.util.validatedOffsetsOrUndefined
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -183,8 +184,10 @@ private fun List<IrExpression>.toArrayLiteral(context: JsIrBackendContext, type:
         else
             context.intrinsics.arrayLiteral
 
-    val startOffset = firstOrNull()?.startOffset ?: UNDEFINED_OFFSET
-    val endOffset = lastOrNull()?.endOffset ?: UNDEFINED_OFFSET
+    val (startOffset, endOffset) = validatedOffsetsOrUndefined(
+        startOffset = firstOrNull()?.startOffset ?: UNDEFINED_OFFSET,
+        endOffset = lastOrNull()?.endOffset ?: UNDEFINED_OFFSET
+    )
 
     val irVararg = IrVarargImpl(startOffset, endOffset, type, varargElementType, this)
 
