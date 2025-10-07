@@ -44,21 +44,21 @@ object FirDiagnosticRenderers {
 
     val SYMBOL_WITH_ALL_MODIFIERS: ContextIndependentParameterRenderer<FirBasedSymbol<*>> = SymbolRenderer()
 
-    private class SymbolRenderer(
+    private open class SymbolRenderer<T : FirBasedSymbol<*>>(
         val useCallableSignatureRenderer: Boolean = true,
         val useSupertypeRenderer: Boolean = true,
         val startErrorTypeIndex: Int = 0,
         val modifierRenderer: () -> FirModifierRenderer? = ::FirAllModifierRenderer,
-    ) : ContextIndependentParameterRenderer<FirBasedSymbol<*>> {
-        override fun render(obj: FirBasedSymbol<*>): String {
+    ) : ContextIndependentParameterRenderer<T> {
+        override fun render(obj: T): String {
             return renderWithTail(obj).parameter
         }
 
         @OptIn(SymbolInternals::class)
-        override fun renderWithTail(obj: FirBasedSymbol<*>): ParameterWithTail {
+        override fun renderWithTail(obj: T): ParameterWithTail {
             var tail: List<String>? = null
             val result = when (obj) {
-                is FirClassLikeSymbol, is FirCallableSymbol -> {
+                is FirClassLikeSymbol<*>, is FirCallableSymbol<*> -> {
                     val renderer = FirRenderer(
                         typeRenderer = ConeTypeRendererForReadability(startErrorTypeIndex = startErrorTypeIndex) { ConeIdShortRenderer() },
                         idRenderer = ConeIdShortRenderer(),
@@ -89,6 +89,38 @@ object FirDiagnosticRenderers {
 
     }
 
+    val CALLABLE_FQ_NAME: ContextIndependentParameterRenderer<FirCallableSymbol<*>> = SymbolRendererCallableFqName()
+
+    private class SymbolRendererCallableFqName : SymbolRenderer<FirCallableSymbol<*>>(
+        modifierRenderer = ::FirPartialModifierRenderer
+    ) {
+        override fun renderWithTail(obj: FirCallableSymbol<*>): ParameterWithTail {
+            val result = super.renderWithTail(obj)
+            val origin = obj.containingClassLookupTag()?.classId?.asFqNameString()
+            return ParameterWithTail(result.parameter + origin?.let { ", defined in $it" }.orEmpty(), result.tail)
+        }
+    }
+
+    val SYMBOL_WITH_CONTAINING_DECLARATION: ContextIndependentParameterRenderer<FirBasedSymbol<*>> =
+        SymbolRendererWithContainingDeclaration()
+
+    private class SymbolRendererWithContainingDeclaration : SymbolRenderer<FirBasedSymbol<*>>(
+        modifierRenderer = ::FirPartialModifierRenderer
+    ) {
+        override fun renderWithTail(obj: FirBasedSymbol<*>): ParameterWithTail {
+            val result = super.renderWithTail(obj)
+            val containingClassId = when (obj) {
+                is FirCallableSymbol<*> -> obj.callableId?.classId
+                is FirTypeParameterSymbol -> (obj.containingDeclarationSymbol as? FirClassLikeSymbol<*>)?.classId
+                else -> null
+            } ?: return ParameterWithTail("'${result.parameter}'", result.tail)
+            return ParameterWithTail(
+                "'${result.parameter}' defined in ${NAME_OF_DECLARATION_OR_FILE.render(containingClassId)}",
+                result.tail
+            )
+        }
+    }
+
     val TYPE_PARAMETER_OWNER_SYMBOL: ContextIndependentParameterRenderer<FirBasedSymbol<*>> =
         SymbolRenderer(useCallableSignatureRenderer = false, useSupertypeRenderer = false) { null }
 
@@ -111,7 +143,7 @@ object FirDiagnosticRenderers {
                 separator = "\n",
                 prefix = if (obj.isEmpty()) "" else if (obj.size == 1) prefix else pluralPrefix,
             ) { symbol ->
-                val symbolRenderer = SymbolRenderer(
+                val symbolRenderer = SymbolRenderer<FirBasedSymbol<*>>(
                     startErrorTypeIndex = collectionTail.size,
                     modifierRenderer = ::FirPartialModifierRenderer
                 )
@@ -155,11 +187,6 @@ object FirDiagnosticRenderers {
                 }
             }
         }
-    }
-
-    val CALLABLE_FQ_NAME = Renderer { symbol: FirCallableSymbol<*> ->
-        val origin = symbol.containingClassLookupTag()?.classId?.asFqNameString()
-        SYMBOL.render(symbol) + origin?.let { ", defined in $it" }.orEmpty()
     }
 
     val CALLABLES_FQ_NAMES = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
@@ -458,15 +485,6 @@ object FirDiagnosticRenderers {
             ReturnValueStatus.ExplicitlyIgnorable -> "ignorable"
             ReturnValueStatus.Unspecified -> "unspecified (implicitly ignorable)"
         }
-    }
-
-    val SYMBOL_WITH_CONTAINING_DECLARATION = Renderer { symbol: FirBasedSymbol<*> ->
-        val containingClassId = when (symbol) {
-            is FirCallableSymbol<*> -> symbol.callableId?.classId
-            is FirTypeParameterSymbol -> (symbol.containingDeclarationSymbol as? FirClassLikeSymbol<*>)?.classId
-            else -> null
-        } ?: return@Renderer "'${SYMBOL.render(symbol)}'"
-        "'${SYMBOL.render(symbol)}' defined in ${NAME_OF_DECLARATION_OR_FILE.render(containingClassId)}"
     }
 
     val SYMBOL_KIND = Renderer { symbol: FirBasedSymbol<*> ->

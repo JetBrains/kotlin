@@ -6128,6 +6128,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("errorFunctionalTypeInBase.kt")
+      public void testErrorFunctionalTypeInBase() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overrides/errorFunctionalTypeInBase.kt");
+      }
+
+      @Test
       @TestMetadata("errorTypeInBase.kt")
       public void testErrorTypeInBase() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overrides/errorTypeInBase.kt");

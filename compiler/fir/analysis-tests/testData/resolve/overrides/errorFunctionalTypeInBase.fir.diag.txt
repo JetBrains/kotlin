@@ -1,0 +1,4 @@
+/errorFunctionalTypeInBase.kt:(101,103): error: Unresolved reference 'Ay'.
+
+/errorFunctionalTypeInBase.kt:(144,156): error: Type of 'val x: (Int) -> Int' is not a subtype of overridden property 'val x: (String) -> #1' defined in 'A'. Where:
+    #1 = Unresolved qualified name: Ay
