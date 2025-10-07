@@ -61,7 +61,7 @@ private data class RecursionContext(
 )
 
 class PartiallyOrderedNumber private constructor(val prev: PartiallyOrderedNumber?) {
-    fun compareTo(other: PartiallyOrderedNumber): Int? = when {
+    fun compareToOrNullIfNotComparable(other: PartiallyOrderedNumber): Int? = when {
         this == other -> 0
         this.isStricklyBiggerThan(other) -> 1
         other.isStricklyBiggerThan(this) -> -1
@@ -87,7 +87,7 @@ class PartiallyOrderedNumber private constructor(val prev: PartiallyOrderedNumbe
 private object CovariantOverrideComparator : Comparator<TopologicalKCallable<*>> {
     override fun compare(a: TopologicalKCallable<*>, b: TopologicalKCallable<*>): Int {
         if (a === b) return 0
-        a.topologicalLevel.compareTo(b.topologicalLevel)?.let {
+        a.topologicalLevel.compareToOrNullIfNotComparable(b.topologicalLevel)?.let {
             return it
         }
         val typeParametersEliminator = b.callable.typeParameters.substituteTypeParametersInto(a.callable.typeParameters)
@@ -138,10 +138,11 @@ private fun collectVisitedSignaturesForSuperclassRecursively(
 
         val signature = member.toCallableSignature()
         val topologicalMember = TopologicalKCallable(topologicalLevel, member)
-        val potentialOverrideOrSuper = outVisitedSignatures[signature] ?: topologicalMember
+        val existingMember = outVisitedSignatures[signature]
 
-        outVisitedSignatures[signature] =
-            minOf(potentialOverrideOrSuper, topologicalMember, CovariantOverrideComparator)
+        if (existingMember == null || CovariantOverrideComparator.compare(topologicalMember, existingMember) < 0) {
+            outVisitedSignatures[signature] = topologicalMember
+        }
     }
     for (supertype in currentClass.supertypes) {
         collectVisitedSignaturesForSuperclassRecursively(

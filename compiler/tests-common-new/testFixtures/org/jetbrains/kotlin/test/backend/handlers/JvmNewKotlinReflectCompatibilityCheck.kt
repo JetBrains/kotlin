@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
+import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.ref.SoftReference
@@ -30,10 +32,13 @@ import kotlin.reflect.jvm.jvmName
  * Dump testData declarations by using K1 kotlin-reflect, new kotlin-reflect implementation; and compare the dumps
  */
 class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+    private val k1StringBuilder = StringBuilder()
+    private val newStringBuilder = StringBuilder()
+    private var fileDumpsAssertion = false
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         // Running the test is impossible if there are errors in Java code
         if (DISABLE_JAVA_FACADE in module.directives) return
-        if (SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in module.directives) return
         when (module.directives.singleOrZeroValue(JvmEnvironmentConfigurationDirectives.JDK_KIND)) {
             TestJdkKind.MOCK_JDK, TestJdkKind.MODIFIED_MOCK_JDK, TestJdkKind.FULL_JDK, null -> {}
             // Classes for newer JDK can't be loaded into the current old Java runtime (Java 8)
@@ -59,24 +64,41 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             ?.let { RuntimeException("Exception during K1 kotlin-reflect dumping", it) }
         val exceptionNewReflect = newReflectDumpResult.exceptionOrNull()
             ?.let { RuntimeException("Exception during New kotlin-reflect dumping", it) }
-        if (exceptionK1Reflect != null || exceptionNewReflect != null) {
-            val msg = when (exceptionK1Reflect != null && exceptionNewReflect != null) {
-                true -> "Exception during kotlin-reflect dumping in both implementations (K1 and New)"
-                else -> "One of the kotlin-reflects (K1 or New) failed, and another didn't"
+        when {
+            SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in module.directives -> {
+                fileDumpsAssertion = true
+                k1StringBuilder.append(k1ReflectDumpResult.getStringResultOrStacktrace())
+                newStringBuilder.append(newReflectDumpResult.getStringResultOrStacktrace())
             }
-            assertions.failAll(listOfNotNull(exceptionK1Reflect, exceptionNewReflect), msg)
-        } else {
-            val k1ReflectDump = k1ReflectDumpResult.getOrNull()!!
-            val newReflectDump = newReflectDumpResult.getOrNull()!!
-            if (k1ReflectDump != newReflectDump) {
-                val k1ReflectHeader = "// K1 kotlin-reflect dump\n"
-                val newReflectHeader = "// New kotlin-reflect dump\n"
-                assertions.assertEquals(k1ReflectHeader + k1ReflectDump, newReflectHeader + newReflectDump)
+            exceptionK1Reflect != null || exceptionNewReflect != null -> {
+                val msg = when (exceptionK1Reflect != null && exceptionNewReflect != null) {
+                    true -> "Exception during kotlin-reflect dumping in both implementations (K1 and New)"
+                    else -> "One of the kotlin-reflects (K1 or New) failed, and another didn't"
+                }
+                assertions.failAll(listOfNotNull(exceptionK1Reflect, exceptionNewReflect), msg)
+            }
+            else -> {
+                val k1ReflectDump = k1ReflectDumpResult.getOrNull()!!
+                val newReflectDump = newReflectDumpResult.getOrNull()!!
+                if (k1ReflectDump != newReflectDump) {
+                    val k1ReflectHeader = "// K1 kotlin-reflect dump\n"
+                    val newReflectHeader = "// New kotlin-reflect dump\n"
+                    assertions.assertEquals(k1ReflectHeader + k1ReflectDump, newReflectHeader + newReflectDump)
+                }
             }
         }
     }
 
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (fileDumpsAssertion) {
+            val k1ReflectFile =
+                testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-k1.txt")
+            val newReflectFile =
+                testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-new.txt")
+            assertions.assertEqualsToFile(k1ReflectFile, k1StringBuilder.toString())
+            assertions.assertEqualsToFile(newReflectFile, newStringBuilder.toString())
+        }
+    }
 
     companion object {
         // Use SoftReference because it's the way classloaders in KotlinStandardLibrariesPathProvider are implemented.
@@ -100,6 +122,8 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         }
     }
 }
+
+private fun Result<String>.getStringResultOrStacktrace(): String = getOrNull() ?: exceptionOrNull()!!.stackTraceToString()
 
 private fun Class<*>.newInstanceInNewClassloader(parentClassLoader: ClassLoader?): AlienInstance {
     val classLoader = URLClassLoader(arrayOf(protectionDomain.codeSource.location), parentClassLoader)
