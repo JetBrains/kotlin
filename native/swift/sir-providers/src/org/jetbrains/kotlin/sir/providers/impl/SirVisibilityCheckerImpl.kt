@@ -47,6 +47,7 @@ private val speciallyBridgedTypes = listOf(StandardClassIds.List, StandardClassI
 public class SirVisibilityCheckerImpl(
     private val sirSession: SirSession,
     private val unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
+    private val enableCoroutinesSupport: Boolean,
 ) : SirVisibilityChecker {
     @OptIn(KaExperimentalApi::class)
     override fun KaDeclarationSymbol.sirAvailability(): SirAvailability = sirSession.withSessions {
@@ -149,6 +150,10 @@ public class SirVisibilityCheckerImpl(
         }
         if (origin !in SUPPORTED_SYMBOL_ORIGINS) {
             unsupportedDeclarationReporter.report(this@isExported, "${origin.name.lowercase()} origin is not supported yet.")
+            return@withSessions false
+        }
+        if (isSuspend && !enableCoroutinesSupport) {
+            unsupportedDeclarationReporter.report(this@isExported, "suspend functions are not supported yet.")
             return@withSessions false
         }
         if (isInline) {
