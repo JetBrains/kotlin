@@ -15,9 +15,9 @@ class PrettyPrintTest {
     fun testList() {
         assertEquals(
             """
-                mutableListOf(
+                listOf(
                   "1",
-                  mutableListOf(
+                  listOf(
                     1,
                   ),
                 )
@@ -27,7 +27,7 @@ class PrettyPrintTest {
         // Sanity check values are not sorted in a list
         assertEquals(
             """
-                mutableListOf(
+                listOf(
                   "b",
                   "a",
                 )
@@ -40,8 +40,8 @@ class PrettyPrintTest {
     fun testMap() {
         assertEquals(
             """
-                mutableMapOf(
-                  "baz" to mutableMapOf(
+                mapOf(
+                  "baz" to mapOf(
                     "a" to 1,
                   ),
                   "foo" to "bar",
@@ -52,7 +52,7 @@ class PrettyPrintTest {
         // Keys must be sorted for proper diffing
         assertEquals(
             """
-                mutableMapOf(
+                mapOf(
                   "a" to "1",
                   "b" to "2",
                 )
@@ -69,7 +69,7 @@ class PrettyPrintTest {
         // Values must be sorted for proper diffing
         assertEquals(
             """
-                mutableSetOf(
+                setOf(
                   "a",
                   "b",
                 )
@@ -88,12 +88,12 @@ class PrettyPrintTest {
 
         assertEquals(
             """
-                mutableMapOf(
+                mapOf(
                   A(
                   a = 1,
                   b = "1",
                 ) to B(
-                    m = mutableMapOf(
+                    m = mapOf(
                       "baz" to A(
                         a = 2,
                         b = "2",

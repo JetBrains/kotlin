@@ -39,7 +39,8 @@ class PublishedPom(
         childrenWithTag("groupId").singleOrNull()?.textContent,
         childrenWithTag("artifactId").singleOrNull()?.textContent,
         childrenWithTag("version").singleOrNull()?.textContent,
-        childrenWithTag("scope").singleOrNull()?.textContent
+        childrenWithTag("scope").singleOrNull()?.textContent,
+        childrenWithTag("type").singleOrNull()?.textContent,
     )
 
     private fun Element.childrenWithTag(name: String): List<Element> {
@@ -52,4 +53,5 @@ data class MavenModule(
     val artifactId: String?,
     val version: String?,
     val scope: String?,
+    val type: String? = null,
 )
