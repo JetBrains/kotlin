@@ -13,12 +13,7 @@ import org.jetbrains.kotlinx.dataframe.api.single
 import org.jetbrains.kotlinx.dataframe.math.cumSumTypeConversion
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
-import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Arguments
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.Present
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.dataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 internal val defaultCumSumSkipNA: Boolean = true
 
@@ -38,19 +33,20 @@ class DataFrameCumSum : AbstractSchemaModificationInterpreter() {
  */
 class DataFrameCumSum0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.columns: ColumnsResolver
-        get() = columnsResolver {
-            colsAtAnyDepth().valueCols().cols {
-                (it.single() as Marker).type.isSubtypeOf(
-                    superType = session.builtinTypes.numberType.coneType.withNullability(true, session.typeContext),
-                    session = session,
-                )
-            }
-        }
     val Arguments.skipNA: Boolean by arg(defaultValue = Present(defaultCumSumSkipNA))
 
-    override fun Arguments.interpret(): PluginDataFrameSchema = getSchemaAfterCumSum(receiver, columns)
+    override fun Arguments.interpret(): PluginDataFrameSchema = getSchemaAfterCumSum(receiver, cumSumDefaultColumns)
 }
+
+internal val Arguments.cumSumDefaultColumns: ColumnsResolver
+    get() = columnsResolver {
+        colsAtAnyDepth().valueCols().cols {
+            (it.single() as Marker).type.isSubtypeOf(
+                superType = session.builtinTypes.numberType.coneType.withNullability(true, session.typeContext),
+                session = session,
+            )
+        }
+    }
 
 internal fun Arguments.getSchemaAfterCumSum(dataSchema: PluginDataFrameSchema, selectedColumns: ColumnsResolver): PluginDataFrameSchema {
     val selectedCols = selectedColumns.resolve(dataSchema).mapToSetOrEmpty { it.path.path() }
