@@ -591,7 +591,7 @@ class JvmSymbols(
 
     private val progressionUtilClasses by lazy(LazyThreadSafetyMode.PUBLICATION) {
         listOf(
-            "kotlin.internal.ProgressionUtilKt" to listOf(int, long),
+            "kotlin.internal.ProgressionUtilKt" to listOf(irBuiltIns.intClass, irBuiltIns.longClass),
             "kotlin.internal.UProgressionUtilKt" to listOfNotNull(irBuiltIns.uintClass, irBuiltIns.ulongClass)
         ).map { (fqn, types) ->
             createClass(FqName(fqn)) { klass ->
@@ -603,8 +603,8 @@ class JvmSymbols(
                         addValueParameter(
                             "st",
                             when (type) {
-                                irBuiltIns.uintClass -> int.owner.defaultType
-                                irBuiltIns.ulongClass -> long.owner.defaultType
+                                irBuiltIns.uintClass -> irBuiltIns.intClass.defaultType
+                                irBuiltIns.ulongClass -> irBuiltIns.longClass.defaultType
                                 else -> type.owner.defaultType
                             }
                         )
