@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DA
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_REGEX
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
@@ -181,13 +180,6 @@ object TestDirectives : SimpleDirectivesContainer() {
     ) {
         AssertionsMode.fromStringOrNull(it)
     }
-
-    // Similar to NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS, but for K/N test infrastructure
-    val WITH_PLATFORM_LIBS by directive(
-        description = """
-            Add all available Kotlin/Native platform libs for the Kotlin/Native target in effect to the classpath.
-        """.trimIndent()
-    )
 }
 
 // mimics class `JVMAssertionsMode`
@@ -417,8 +409,7 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
         """.trimIndent()
         }
     }
-    val noDefaultLibsArgs = if (WITH_PLATFORM_LIBS in registeredDirectives) emptyList() else listOf("-no-default-libs")
-    return TestCompilerArgs(freeCompilerArgs + noDefaultLibsArgs, freeCInteropArgs, assertionsMode)
+    return TestCompilerArgs(freeCompilerArgs, freeCInteropArgs, assertionsMode)
 }
 
 internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
