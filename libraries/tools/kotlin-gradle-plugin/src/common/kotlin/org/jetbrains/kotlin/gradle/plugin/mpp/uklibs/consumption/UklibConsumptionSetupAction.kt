@@ -71,6 +71,7 @@ private fun Project.setupUklibConsumption() {
     workaroundLegacySkikoResolutionKT77539()
     workaroundKotlinTestJsResolutionKT81387()
     registerGenericFallbackVariantInAllComponentsKT81412()
+    makeConfigurationsWithoutAttributesPreferJvmVariantsInKmpPublicationsWithoutCategoryKT81488()
 }
 
 private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifactFromUklib(
@@ -345,6 +346,23 @@ private fun Project.registerGenericFallbackVariantInAllComponentsKT81412() {
                 USAGE_ATTRIBUTE,
                 project.objects.named(KOTLIN_UKLIB_FALLBACK_VARIANT),
             )
+            it.attributes.attribute(
+                Category.CATEGORY_ATTRIBUTE,
+                project.categoryByName(Category.LIBRARY),
+            )
+        }
+    }
+}
+
+private fun Project.makeConfigurationsWithoutAttributesPreferJvmVariantsInKmpPublicationsWithoutCategoryKT81488() {
+    dependencies.components.all {
+        it.withVariant("jvmApiElements-published") {
+            it.attributes.attribute(
+                Category.CATEGORY_ATTRIBUTE,
+                project.categoryByName(Category.LIBRARY),
+            )
+        }
+        it.withVariant("jvmRuntimeElements-published") {
             it.attributes.attribute(
                 Category.CATEGORY_ATTRIBUTE,
                 project.categoryByName(Category.LIBRARY),
