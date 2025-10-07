@@ -170,8 +170,7 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
         Files.write(file, content.toByteArray(charset))
     }
 
-    @Suppress("DEPRECATION") // TODO migrate to kotlin.io.path.createTempDirectory with languageVersion >= 1.5
-    private fun createTempDir(): File = kotlin.io.createTempDir()
+    private fun createTempDir(): File = Files.createTempDirectory("dokka-test").toFile()
 
     protected fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
         testApi.testRunner.dokkaConfiguration(block)
