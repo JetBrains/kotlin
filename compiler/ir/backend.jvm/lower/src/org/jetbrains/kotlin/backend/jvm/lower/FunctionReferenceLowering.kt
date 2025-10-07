@@ -509,7 +509,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val superType =
             samSuperType
                 ?: when {
-                    isLightweightLambda -> context.symbols.any
+                    isLightweightLambda -> context.irBuiltIns.anyClass
                     isHeavyweightLambda -> context.symbols.lambdaClass
                     isFunInterfaceConstructorReference -> context.symbols.funInterfaceConstructorReferenceClass
                     else -> when {

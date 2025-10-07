@@ -1538,7 +1538,7 @@ internal class CodeGeneratorVisitor(
         val type     = value.typeOperand
         return genInstanceOf(
                 value,
-                type.getClass() ?: context.symbols.any.owner,
+                type.getClass() ?: context.irBuiltIns.anyClass.owner,
                 resultSlot = null,
                 onSuperClassCast = { arg ->
                     if (type.isNullable())

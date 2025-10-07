@@ -199,6 +199,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
 }
 
 internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCodeGenerator(codegen) {
+    val irBuiltIns get() = context.irBuiltIns
     val symbols get() = context.symbols
     val runtime get() = codegen.runtime
     val staticData get() = codegen.staticData
@@ -523,11 +524,11 @@ internal class ObjCExportCodeGenerator(
     // TODO: consider including this into ObjCExportCodeSpec.
     private val objCClassForAny = ObjCClassForKotlinClass(
             namer.kotlinAnyName.binaryName,
-            symbols.any,
+            irBuiltIns.anyClass,
             methods = listOf("equals", "hashCode", "toString").map { nameString ->
                 val name = Name.identifier(nameString)
 
-                val irFunction = symbols.any.owner.simpleFunctions().single { it.name == name }
+                val irFunction = irBuiltIns.anyClass.owner.simpleFunctions().single { it.name == name }
 
                 val descriptor = context.builtIns.any.unsubstitutedMemberScope
                         .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()

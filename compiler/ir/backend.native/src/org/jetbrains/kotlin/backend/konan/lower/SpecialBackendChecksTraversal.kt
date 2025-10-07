@@ -265,7 +265,7 @@ private class BackendChecker(
         if (!hasObjCClassSupertype)
             reportError(irClass, "Kotlin implementation of Objective-C protocol must have Objective-C superclass (e.g. NSObject)")
 
-        val methodsOfAny = symbols.any.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
+        val methodsOfAny = irBuiltIns.anyClass.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
 
         irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isReal }.forEach { method ->
             val overriddenMethodOfAny = method.allOverriddenFunctions.firstOrNull {
