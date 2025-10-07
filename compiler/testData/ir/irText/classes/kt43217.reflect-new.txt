@@ -1,0 +1,54 @@
+KClass: A$b$1
+  members:
+    fun `A$b$1`.equals(kotlin.Any?): kotlin.Boolean
+    fun `A$b$1`.get(): kotlin.Double
+    fun `A$b$1`.hashCode(): kotlin.Int
+    fun `A$b$1`.isEqualTo(kotlin.Double): kotlin.Any!
+    fun `A$b$1`.toString(): kotlin.String
+  declaredMembers:
+    fun `A$b$1`.get(): kotlin.Double
+KClass: ObservableValue
+  members:
+    fun ObservableValue<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun ObservableValue<T>.get(): T!
+    fun ObservableValue<T>.hashCode(): kotlin.Int
+    fun ObservableValue<T>.isEqualTo(T!): kotlin.Any!
+    fun ObservableValue<T>.toString(): kotlin.String
+  declaredMembers:
+    fun ObservableValue<T>.get(): T!
+    fun ObservableValue<T>.isEqualTo(T!): kotlin.Any!
+KClass: ObservableDouble
+  members:
+    fun ObservableDouble.equals(kotlin.Any?): kotlin.Boolean
+    fun ObservableDouble.get(): kotlin.Double!
+    fun ObservableDouble.hashCode(): kotlin.Int
+    fun ObservableDouble.isEqualTo(kotlin.Double): kotlin.Any!
+    fun ObservableDouble.toString(): kotlin.String
+  declaredMembers:
+    fun ObservableDouble.isEqualTo(kotlin.Double): kotlin.Any!
+KClass: DoubleExpression
+  members:
+    fun DoubleExpression.equals(kotlin.Any?): kotlin.Boolean
+    fun DoubleExpression.get(): kotlin.Double!
+    fun DoubleExpression.hashCode(): kotlin.Int
+    fun DoubleExpression.isEqualTo(kotlin.Double): kotlin.Any!
+    fun DoubleExpression.toString(): kotlin.String
+  declaredMembers:
+    fun DoubleExpression.isEqualTo(kotlin.Double): kotlin.Any!
+KClass: A
+  members:
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.hashCode(): kotlin.Int
+    fun A.toString(): kotlin.String
+    val A.b: `A$b$1`
+  declaredMembers:
+    val A.b: `A$b$1`
+KClass: C
+  members:
+    fun C.equals(kotlin.Any?): kotlin.Boolean
+    fun C.get(): kotlin.Double
+    fun C.hashCode(): kotlin.Int
+    fun C.isEqualTo(kotlin.Double): kotlin.Any!
+    fun C.toString(): kotlin.String
+  declaredMembers:
+    fun C.get(): kotlin.Double

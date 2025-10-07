@@ -1,6 +1,9 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 
+// Controversial case. It's unclear if we should consider isEqualTo(double) and isEqualTo(java.lang.Double) different or equal. They are different from different perspectives
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 // FILE: kt43217.kt
 class A {
     private val b =
