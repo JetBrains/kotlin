@@ -22,38 +22,42 @@ fun box(): String {
     )
 
     // scenario #0: all supported numerical columns
-    val res0 = personsDf.mean()
-    res0.df().compareSchemas()
+    personsDf.mean().let { row ->
+        row.df().compareSchemas()
 
-    val mean01: Double = res0.age
-    val mean02: Double = res0.weight
-    val mean03: Double = res0.yearsToRetirement
-    val mean04: Double = res0.workExperienceYears
-    val mean05: Double = res0.dependentsCount
-    val mean06: Double = res0.annualIncome
-    val mean07: BigInteger = res0.bigNumber
+        val mean01: Double = row.age
+        val mean02: Double = row.weight
+        val mean03: Double = row.yearsToRetirement
+        val mean04: Double = row.workExperienceYears
+        val mean05: Double = row.dependentsCount
+        val mean06: Double = row.annualIncome
+        val mean07: BigInteger = row.bigNumber
+    }
 
     // scenario #1: particular column
-    val res1 = personsDf.meanFor { age }
-    res1.df().compareSchemas()
+    personsDf.meanFor { age }.let { row ->
+        row.df().compareSchemas()
 
-    val mean11: Double? = res1.age
+        val mean11: Double? = row.age
+    }
 
     // scenario #1.1: particular column with converted type
-    val res11 = personsDf.meanFor { dependentsCount }
-    res11.df().compareSchemas()
+    personsDf.meanFor { dependentsCount }.let { row ->
+        row.df().compareSchemas()
 
-    val mean111: Double? = res11.dependentsCount
+        val mean111: Double? = row.dependentsCount
+    }
 
     // scenario #2: mean of values per columns separately
-    val res3 = personsDf.meanFor { age and weight and workExperienceYears and dependentsCount and annualIncome }
-    res3.df().compareSchemas()
+    personsDf.meanFor { age and weight and workExperienceYears and dependentsCount and annualIncome }.let { row ->
+        row.df().compareSchemas()
 
-    val mean31: Double? = res3.age
-    val mean32: Double? = res3.weight
-    val mean33: Double? = res3.workExperienceYears
-    val mean34: Double? = res3.dependentsCount
-    val mean35: Double? = res3.annualIncome
+        val mean31: Double? = row.age
+        val mean32: Double? = row.weight
+        val mean33: Double? = row.workExperienceYears
+        val mean34: Double? = row.dependentsCount
+        val mean35: Double? = row.annualIncome
+    }
 
     return "OK"
 }
