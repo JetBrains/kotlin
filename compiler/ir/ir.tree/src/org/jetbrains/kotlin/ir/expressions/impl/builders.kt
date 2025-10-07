@@ -64,7 +64,7 @@ fun IrBranchImpl(
 ) = IrBranchImpl(
     constructorIndicator = null,
     startOffset = condition.startOffset,
-    endOffset = result.endOffset,
+    endOffset = maxOf(condition.endOffset, result.endOffset),
     condition = condition,
     result = result,
 )

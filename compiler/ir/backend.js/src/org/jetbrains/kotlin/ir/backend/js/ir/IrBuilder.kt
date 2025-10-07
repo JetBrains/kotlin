@@ -246,7 +246,7 @@ object JsIrBuilder {
         thenBranch: IrExpression,
         elseBranch: IrExpression? = null,
         thenBranchStartOffset: Int = cond.startOffset,
-        thenBranchEndOffset: Int = thenBranch.endOffset,
+        thenBranchEndOffset: Int = maxOf(cond.endOffset, thenBranch.endOffset),
         elseBranchStartOffset: Int = UNDEFINED_OFFSET,
         elseBranchEndOffset: Int = elseBranch?.endOffset ?: UNDEFINED_OFFSET,
     ): IrWhen =
