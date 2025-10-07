@@ -56,6 +56,7 @@ class TestSirSession(
     override val visibilityChecker: SirVisibilityChecker = SirVisibilityCheckerImpl(
         sirSession = sirSession,
         unsupportedDeclarationReporter = SilentUnsupportedDeclarationReporter,
+        enableCoroutinesSupport = true,
     )
     override val childrenProvider: SirChildrenProvider = SirDeclarationChildrenProviderImpl(
         sirSession = sirSession,

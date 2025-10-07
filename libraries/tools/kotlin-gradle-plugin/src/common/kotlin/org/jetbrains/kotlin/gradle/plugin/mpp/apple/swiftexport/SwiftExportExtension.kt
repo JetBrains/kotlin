@@ -65,6 +65,14 @@ interface SwiftExportAdvancedConfiguration {
     val freeCompilerArgs: ListProperty<String>
 }
 
+/**
+ * Key for the boolean property that turns on coroutines support in Swift Export.
+ *
+ * This API is experimental and may change in future versions.
+ */
+@ExperimentalSwiftExportDsl
+const val SWIFT_EXPORT_COROUTINES_SUPPORT_TURNED_ON = "enableCoroutinesSupport"
+
 internal fun ObjectFactory.SwiftExportExtension(
     dependencies: DependencyHandler,
     projectDependencyAccessor: Provider<ProjectDependencyAccessor.Factory>,

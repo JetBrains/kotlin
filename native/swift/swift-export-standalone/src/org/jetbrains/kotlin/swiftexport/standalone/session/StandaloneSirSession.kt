@@ -27,6 +27,7 @@ internal class StandaloneSirSession(
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     moduleForPackageEnums: SirModule,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
+    enableCoroutinesSupport: Boolean,
     override val moduleProvider: SirModuleProvider,
     val targetPackageFqName: FqName? = null,
     val referencedTypeHandler: SirKaClassReferenceHandler? = null,
@@ -63,7 +64,11 @@ internal class StandaloneSirSession(
         errorTypeStrategy = errorTypeStrategy,
         unsupportedTypeStrategy = unsupportedTypeStrategy
     )
-    override val visibilityChecker = SirVisibilityCheckerImpl(sirSession, unsupportedDeclarationReporter)
+    override val visibilityChecker = SirVisibilityCheckerImpl(
+        sirSession,
+        unsupportedDeclarationReporter = unsupportedDeclarationReporter,
+        enableCoroutinesSupport = enableCoroutinesSupport,
+    )
     override val childrenProvider = SirDeclarationChildrenProviderImpl(sirSession)
 
     override val bridgeProvider: SirBridgeProvider
