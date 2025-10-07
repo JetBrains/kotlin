@@ -110,6 +110,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
+  @TestMetadata("classFunctionsAndFieldsWithCrossModuleInlinerPerFile")
+  public void testClassFunctionsAndFieldsWithCrossModuleInlinerPerFile() {
+    runTest("js/js.translator/testData/incremental/invalidation/classFunctionsAndFieldsWithCrossModuleInlinerPerFile/");
+  }
+
+  @Test
   @TestMetadata("classWithJsExport")
   public void testClassWithJsExport() {
     runTest("js/js.translator/testData/incremental/invalidation/classWithJsExport/");
