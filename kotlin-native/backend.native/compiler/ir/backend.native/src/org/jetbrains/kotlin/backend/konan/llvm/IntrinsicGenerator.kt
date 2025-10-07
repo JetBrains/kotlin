@@ -355,7 +355,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitCreateEmptyString(callSite: IrCall, resultSlot: LLVMValueRef?): LLVMValueRef {
-        val clazz = context.symbols.string.owner
+        val clazz = context.irBuiltIns.stringClass.owner
         val size = llvm.constInt32(runtime.stringHeaderExtraSize / 2).llvm // in Chars
         return allocArray(clazz, size, environment.calculateLifetime(callSite), environment.exceptionHandler, resultSlot)
     }

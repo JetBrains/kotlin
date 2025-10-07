@@ -43,7 +43,7 @@ internal class PreCodegenInliner(
     private val context = generationState.context
     private val symbols = context.symbols
     private val noInline = symbols.noInline
-    private val string = symbols.string
+    private val string = context.irBuiltIns.stringClass
     private val throwable = symbols.throwable
     private val kFunctionImpl = symbols.kFunctionImpl
     private val kSuspendFunctionImpl = symbols.kSuspendFunctionImpl
