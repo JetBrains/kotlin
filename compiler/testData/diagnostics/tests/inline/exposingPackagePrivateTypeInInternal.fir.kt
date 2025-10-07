@@ -15,8 +15,8 @@ fun <T> ignore() {}
 internal inline fun internal() {
     ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>>() // should be an error
     <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>::class
-    Private.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING!>foo<!>
-    Private::<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING!>foo<!>
+    Private.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>
+    Private::<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, inline, nullableType, typeParameter */

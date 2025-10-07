@@ -298,6 +298,12 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val relation = visibility.relationWithMigration(inlineFunEffectiveVisibility)
             return relation == PermissivenessWithMigration.LESS || relation == PermissivenessWithMigration.UNKNOWN || relation == PermissivenessWithMigration.UNKNOW_WITH_MIGRATION
         }
+
+        fun lessVisibleVisibilityOrNull(classLikeSymbol: FirClassLikeSymbol<*>, ignoreLocal: Boolean): EffectiveVisibility? {
+            if (classLikeSymbol.isLocalMember && ignoreLocal) return null
+            val symbolEffectiveVisibility = classLikeSymbol.let { it.publishedApiEffectiveVisibility ?: it.effectiveVisibility }
+            return symbolEffectiveVisibility.takeIf { isLessVisibleThanInlineFunction(it) }
+        }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

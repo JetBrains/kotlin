@@ -57,7 +57,7 @@ private class A {
 }
 
 inline fun internal4() {
-    A.<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>B<!>.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>()// should be an error
+    A.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>B<!>.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>()// should be an error
 }
 
 class C2 {
@@ -92,7 +92,7 @@ private object O {
 }
 
 internal inline fun internal5() {
-    O.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>C<!>()
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>O<!>.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>C<!>()
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,
