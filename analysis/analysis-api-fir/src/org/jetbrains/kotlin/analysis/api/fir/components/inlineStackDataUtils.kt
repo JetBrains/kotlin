@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.isInlinable
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -129,8 +130,26 @@ private fun updateInlineLambdaInfo(
         .firstNotNullOfOrNull { psiElement ->
             psiElement.getOrBuildFir(resolutionFacade) as? FirCall
         } ?: return
+    // Retrieve param->arg mapping from the parameters default values
+    val paramsWithDefaultValues = buildList {
+        if (inlineCall is FirQualifiedAccessExpression) {
+            val callee = inlineCall.calleeReference.toResolvedCallableSymbol()?.fir
+            if (callee is FirFunction) {
+                val defaultValuesMap = callee.valueParameters
+                    .filter { valueParam ->
+                        valueParam.defaultValue != null && valueParam.symbol in unsubstitutedInlineLambdaParameters
+                    }
+                    .associate { valueParam ->
+                        valueParam.symbol to InlineLambdaArgument(valueParam.defaultValue!!, depth - 1)
+                    }
+                inlineLambdaParameterMapping.putAll(defaultValuesMap)
+                addAll(defaultValuesMap.keys)
+            }
+        }
+    }
+    // Retrieve param->arg mapping from the arguments list, overwrite default values
     val paramToExpr = inlineCall.resolvedArgumentMapping?.entries?.associate { (key, value) -> value.symbol to key } ?: return
-    val newlyMapped = paramToExpr.keys.intersect(unsubstitutedInlineLambdaParameters)
+    val newlyMapped = paramToExpr.keys.intersect(unsubstitutedInlineLambdaParameters.union(paramsWithDefaultValues))
     inlineLambdaParameterMapping.putAll(newlyMapped.associateWith { InlineLambdaArgument(paramToExpr[it]!!, depth) })
     unsubstitutedInlineLambdaParameters.removeAll(newlyMapped)
     collectInlineLambdaParameters(inlineCall, unsubstitutedInlineLambdaParameters, resolutionFacade.useSiteFirSession)
