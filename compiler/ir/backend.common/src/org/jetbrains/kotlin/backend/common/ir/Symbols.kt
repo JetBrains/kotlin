@@ -145,23 +145,18 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
     open fun functionN(n: Int): IrClassSymbol = irBuiltIns.functionN(n).symbol
     open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunctionN(n).symbol
 
-    val extensionToString: IrSimpleFunctionSymbol get() = irBuiltIns.extensionToString
-    val memberToString: IrSimpleFunctionSymbol get() = irBuiltIns.memberToString
-    val extensionStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.extensionStringPlus
-    val memberStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.memberStringPlus
-
     fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
         val plusSymbol = when {
             functionSymbol.owner.hasShape(
                 dispatchReceiver = true,
                 regularParameters = 1,
                 parameterTypes = listOf(irBuiltIns.stringType, null)
-            ) -> memberStringPlus
+            ) -> irBuiltIns.memberStringPlus
             functionSymbol.owner.hasShape(
                 extensionReceiver = true,
                 regularParameters = 1,
                 parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), null)
-            ) -> extensionStringPlus
+            ) -> irBuiltIns.extensionStringPlus
             else -> return false
         }
 

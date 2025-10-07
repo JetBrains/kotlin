@@ -151,7 +151,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
             val calleeOrNull = argument.type.classOrNull?.owner?.functions?.singleOrNull {
                 it.name == OperatorNameConventions.TO_STRING && it.nonDispatchParameters.isEmpty()
             }?.symbol
-            val callee = calleeOrNull ?: context.symbols.memberToString  // defaults to `Any.toString()`
+            val callee = calleeOrNull ?: context.irBuiltIns.memberToString  // defaults to `Any.toString()`
             builder
                     .irCall(callee, callee.owner.returnType, typeArgumentsCount = 0)
                     .apply { arguments[0] = argument }
