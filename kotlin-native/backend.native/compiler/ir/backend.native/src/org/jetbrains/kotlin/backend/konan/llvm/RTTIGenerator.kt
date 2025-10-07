@@ -208,9 +208,9 @@ internal class RTTIGenerator(
 
         val superType = when {
             irClass.isAny() -> NullPointer(runtime.typeInfoType)
-            irClass.isKotlinObjCClass() -> context.symbols.any.owner.typeInfoPtr
+            irClass.isKotlinObjCClass() -> context.irBuiltIns.anyClass.owner.typeInfoPtr
             else -> {
-                val superTypeOrAny = irClass.getSuperClassNotAny() ?: context.symbols.any.owner
+                val superTypeOrAny = irClass.getSuperClassNotAny() ?: context.irBuiltIns.anyClass.owner
                 superTypeOrAny.typeInfoPtr
             }
         }
@@ -506,7 +506,7 @@ internal class RTTIGenerator(
 
         val size = LLVMStoreSizeOfType(llvmTargetData, bodyType.llvmBodyType).toInt()
 
-        val superClass = context.symbols.any.owner
+        val superClass = context.irBuiltIns.anyClass.owner
 
         assert(superClass.implementedInterfaces.isEmpty())
         val interfaces = (listOf(irClass) + irClass.implementedInterfaces)
