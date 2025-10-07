@@ -2807,7 +2807,7 @@ internal class CodeGeneratorVisitor(
                                 fileIdProvider.sortedFileIds
                             }
                             is DependenciesTracker.DependencyKind.CertainFiles ->
-                                dependency.kind.files
+                                dependency.kind.files.map { it.name }
                         }
                         files.map { ctorProto(fileCtorName(library.uniqueName, it)) }
                     }

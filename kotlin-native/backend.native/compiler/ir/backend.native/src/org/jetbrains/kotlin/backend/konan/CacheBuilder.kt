@@ -166,8 +166,9 @@ class CacheBuilder(
                             is DependenciesTracker.DependencyKind.WholeModule ->
                                 reversedWholeLibraryDependencies.getOrPut(dependentLibrary) { mutableListOf() }.add(libraryFile)
                             is DependenciesTracker.DependencyKind.CertainFiles ->
-                                kind.files.forEach {
-                                    reversedPerFileDependencies.getOrPut(LibraryFile(dependentLibrary, it)) { mutableListOf() }.add(libraryFile)
+                                kind.files.forEach { (name, weak) ->
+                                    if (!weak)
+                                        reversedPerFileDependencies.getOrPut(LibraryFile(dependentLibrary, name)) { mutableListOf() }.add(libraryFile)
                                 }
                         }
                     }
