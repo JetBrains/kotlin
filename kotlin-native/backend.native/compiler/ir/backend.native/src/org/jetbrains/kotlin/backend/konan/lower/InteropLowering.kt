@@ -471,7 +471,7 @@ private class InteropTransformerPart1(
         require(hasObjCClassSupertype) { renderCompilerError(irClass) }
 
         val methodsOfAny =
-                context.symbols.any.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
+                context.irBuiltIns.anyClass.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
 
         irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isReal }.forEach { method ->
             val overriddenMethodOfAny = method.allOverriddenFunctions.firstOrNull {
