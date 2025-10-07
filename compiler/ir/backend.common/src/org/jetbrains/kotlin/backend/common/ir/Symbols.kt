@@ -145,14 +145,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
     open fun functionN(n: Int): IrClassSymbol = irBuiltIns.functionN(n).symbol
     open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunctionN(n).symbol
 
-    fun kproperty0(): IrClassSymbol = irBuiltIns.kProperty0Class
-    fun kproperty1(): IrClassSymbol = irBuiltIns.kProperty1Class
-    fun kproperty2(): IrClassSymbol = irBuiltIns.kProperty2Class
-
-    fun kmutableproperty0(): IrClassSymbol = irBuiltIns.kMutableProperty0Class
-    fun kmutableproperty1(): IrClassSymbol = irBuiltIns.kMutableProperty1Class
-    fun kmutableproperty2(): IrClassSymbol = irBuiltIns.kMutableProperty2Class
-
     val extensionToString: IrSimpleFunctionSymbol get() = irBuiltIns.extensionToString
     val memberToString: IrSimpleFunctionSymbol get() = irBuiltIns.memberToString
     val extensionStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.extensionStringPlus
