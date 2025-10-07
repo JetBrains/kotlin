@@ -233,7 +233,7 @@ private class Transformer(
             computeComparisonClass(this@Transformer.context.irBuiltIns, lower.type, upper.type, arg.type) ?: return null
         } else {
             assert(headerInfo is ComparableRangeInfo)
-            this@Transformer.context.symbols.comparable.owner
+            this@Transformer.context.irBuiltIns.comparableClass.owner
         }
 
         if (isNumericRange) {
@@ -430,7 +430,7 @@ internal class ComparableRangeToHandler(private val context: CommonBackendContex
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
         return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
-                callee.parameters[0].type.isSubtypeOfClass(context.symbols.comparable) &&
+                callee.parameters[0].type.isSubtypeOfClass(context.irBuiltIns.comparableClass) &&
                 callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}")
     }
 
