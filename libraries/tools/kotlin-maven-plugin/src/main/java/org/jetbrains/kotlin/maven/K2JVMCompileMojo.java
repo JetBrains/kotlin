@@ -48,6 +48,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,6 +102,12 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Parameter(property = "kotlin.compiler.daemon", defaultValue = "true")
     protected boolean useDaemon;
+
+    @Parameter(property = "kotlin.compiler.classloader.cache.timeoutSeconds")
+    @Nullable
+    protected Long classLoaderCacheTimeoutSeconds;
+
+    private static final Duration DEFAULT_CLASSLOADER_CACHE_TIMEOUT = Duration.ofMinutes(30);
 
     @Parameter(property = "kotlin.compiler.daemon.jvmArgs")
     protected List<String> kotlinDaemonJvmArgs;
@@ -260,19 +267,36 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                             kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-build-tools-impl", getMavenPluginVersion()).stream(),
                             kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable", getMavenPluginVersion()).stream()
                     ).collect(Collectors.toCollection(LinkedHashSet::new));
-            URL[] urls = artifacts.stream().map(artifact -> {
-                File file = artifact.getFile();
-                try {
-                    return file.toURI().toURL();
-                }
-                catch (MalformedURLException e) {
-                    throw new RuntimeException("Failed to convert file to URL: " + file, e);
-                }
-            }).toArray(URL[]::new);
-            ClassLoader btaClassLoader = new URLClassLoader(urls, SharedApiClassesClassLoader.newInstance());
+            List<File> files = artifacts.stream().map(Artifact::getFile).collect(Collectors.toList());
+            ClassLoader btaClassLoader = getBtaClassLoader(files);
             return KotlinToolchains.loadImplementation(btaClassLoader);
-        } catch (Exception e) {
-            throw new MojoExecutionException("Failed to load Kotlin Build Tools API implementation", e);
+        } catch (Throwable t) {
+            throw new MojoExecutionException("Failed to load Kotlin Build Tools API implementation", t);
+        }
+    }
+
+    private ClassLoader getBtaClassLoader(List<File> files) {
+        ClassLoaderCache.ClassLoaderCacheKey cacheKey =
+                new ClassLoaderCache.ClassLoaderCacheKey(files, new SharedBuildToolsApiClassesClassLoaderProvider());
+        try {
+            long cacheTimeout = classLoaderCacheTimeoutSeconds == null
+                                ? DEFAULT_CLASSLOADER_CACHE_TIMEOUT.getSeconds()
+                                : classLoaderCacheTimeoutSeconds;
+            return ClassLoaderCache.getCache(cacheTimeout).get(cacheKey, () -> {
+                getLog().debug("Creating classloader for " + cacheKey.getClasspath());
+                URL[] urls = cacheKey.getClasspath().stream().map(file -> {
+                    try {
+                        return file.toURI().toURL();
+                    }
+                    catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).toArray(URL[]::new);
+                return new URLClassLoader(urls, cacheKey.getParentClassLoaderProvider().getClassLoader());
+            });
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 
