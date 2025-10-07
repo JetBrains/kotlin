@@ -33,7 +33,7 @@ class IrFileImpl(
         }
 
     override var endOffset: Int
-        get() = fileEntry.maxOffset
+        get() = maxOf(fileEntry.maxOffset, 0)
         set(value) {
             error("Mutation of endOffset is not supported for this class.")
         }
