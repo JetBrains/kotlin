@@ -48,10 +48,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
     // The "...OrNull" variants are used for the classes below because the minimal stdlib used in tests do not include those classes.
     // It was not feasible to add them to the JS reduced runtime because all its transitive dependencies also need to be
     // added, which would include a lot of the full stdlib.
-    val uByte: IrClassSymbol? = irBuiltIns.ubyteClass
-    val uShort: IrClassSymbol? = irBuiltIns.ushortClass
-    val uInt: IrClassSymbol? = irBuiltIns.uintClass
-    val uLong: IrClassSymbol? = irBuiltIns.ulongClass
     val uIntProgression: IrClassSymbol? = ClassIds.UIntProgression.classSymbolOrNull()
     val uLongProgression: IrClassSymbol? = ClassIds.ULongProgression.classSymbolOrNull()
     val uIntRange: IrClassSymbol? = ClassIds.UIntRange.classSymbolOrNull()
@@ -96,7 +92,10 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
     val integerClasses = listOf(byte, short, int, long)
 
     val progressionElementTypes: Collection<IrType> by lazy {
-        listOfNotNull(byte, short, int, long, char, uByte, uShort, uInt, uLong).map { it.defaultType }
+        listOfNotNull(
+            byte, short, int, long, char,
+            irBuiltIns.ubyteClass, irBuiltIns.ushortClass, irBuiltIns.uintClass, irBuiltIns.ulongClass
+        ).map { it.defaultType }
     }
 
     val arrayOf: IrSimpleFunctionSymbol get() = irBuiltIns.arrayOf
