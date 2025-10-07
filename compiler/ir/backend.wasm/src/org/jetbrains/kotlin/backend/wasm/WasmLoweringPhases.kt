@@ -600,7 +600,7 @@ fun wasmLoweringsOfTheFirstPhase(
 
 fun getWasmLowerings(
     configuration: CompilerConfiguration,
-    isIncremental: Boolean,
+    disableCrossFileOptimisations: Boolean,
 ): List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> {
     val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
 
@@ -695,7 +695,7 @@ fun getWasmLowerings(
         // This doesn't work with IC as of now for accessors within inline functions because
         //  there is no special case for Wasm in the computation of inline function transitive
         //  hashes the same way it's being done with the calculation of symbol hashes.
-        propertyAccessorInlinerLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyCompilation },
+        propertyAccessorInlinerLoweringPhase.takeIf { !disableCrossFileOptimisations && !isDebugFriendlyCompilation },
 
         stringConcatenationLowering,
 
@@ -726,7 +726,7 @@ fun getWasmLowerings(
         autoboxingTransformerPhase,
 
         objectUsageLoweringPhase,
-        purifyObjectInstanceGettersLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyCompilation },
+        purifyObjectInstanceGettersLoweringPhase.takeIf { !disableCrossFileOptimisations && !isDebugFriendlyCompilation },
 
         fieldInitializersLowering,
 
@@ -741,7 +741,7 @@ fun getWasmLowerings(
         staticMembersLoweringPhase,
 
         // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
-        inlineObjectsWithPureInitializationLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyCompilation },
+        inlineObjectsWithPureInitializationLoweringPhase.takeIf { !disableCrossFileOptimisations && !isDebugFriendlyCompilation },
 
         whenBranchOptimiserLoweringPhase,
         validateIrAfterLowering,
