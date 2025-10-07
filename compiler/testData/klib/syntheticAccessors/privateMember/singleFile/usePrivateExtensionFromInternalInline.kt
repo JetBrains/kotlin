@@ -1,3 +1,4 @@
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, WASM
 class A {
     internal inline fun internalInlineMethodA() = privateExtension()
     internal inline fun internalInlineMethodB() = 21.privateExtensionVar
