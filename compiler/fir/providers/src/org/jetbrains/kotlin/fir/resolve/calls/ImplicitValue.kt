@@ -134,8 +134,10 @@ class ImplicitContextParameterValue private constructor(
             : this(boundSymbol, type, originalType = type, mutable = true)
 
     override fun computeOriginalExpression(): FirExpression = buildPropertyAccessExpression {
-        source = boundSymbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
+        val fakeSource = boundSymbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
+        source = fakeSource
         calleeReference = buildResolvedNamedReference {
+            source = fakeSource
             name = boundSymbol.name
             resolvedSymbol = boundSymbol
         }
