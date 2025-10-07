@@ -51,7 +51,7 @@ internal fun resolveCacheBinaries(
         }
 
         list += if (dependency.kind is DependenciesTracker.DependencyKind.CertainFiles && cache is CachedLibraries.Cache.PerFile)
-            dependency.kind.files.map { cache.getFileBinaryPath(it) }
+            dependency.kind.files.map { cache.getFileBinaryPath(it.name) }
         else cache.binariesPaths
     }
     return ResolvedCacheBinaries(static = staticCaches, dynamic = dynamicCaches)
