@@ -167,13 +167,13 @@ internal abstract class UnsignedProgressionType(
 internal class UIntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
-        elementClass = if (allowUnsignedBounds) symbols.uInt!!.owner else symbols.int.owner,
+        elementClass = if (allowUnsignedBounds) irBuiltIns.uintClass!!.owner else symbols.int.owner,
         stepClass = symbols.int.owner,
         minValueAsLong = UInt.MIN_VALUE.toLong(),
         maxValueAsLong = UInt.MAX_VALUE.toLong(),
         // Uses `getProgressionLastElement(UInt, UInt, Int): UInt`
-        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uInt!!],
-        unsignedType = symbols.uInt.defaultType,
+        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[irBuiltIns.uintClass!!],
+        unsignedType = irBuiltIns.uintClass!!.defaultType,
         unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int)
     ) {
 
@@ -183,13 +183,13 @@ internal class UIntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols, all
 internal class ULongProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
-        elementClass = if (allowUnsignedBounds) symbols.uLong!!.owner else symbols.long.owner,
+        elementClass = if (allowUnsignedBounds) irBuiltIns.ulongClass!!.owner else symbols.long.owner,
         stepClass = symbols.long.owner,
         minValueAsLong = ULong.MIN_VALUE.toLong(),
         maxValueAsLong = ULong.MAX_VALUE.toLong(),
         // Uses `getProgressionLastElement(ULong, ULong, Long): ULong`
-        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uLong!!],
-        unsignedType = symbols.uLong.defaultType,
+        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[irBuiltIns.ulongClass!!],
+        unsignedType = irBuiltIns.ulongClass!!.defaultType,
         unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long)
     ) {
 
