@@ -184,7 +184,7 @@ private fun List<IrExpression>.toArrayLiteral(context: JsIrBackendContext, type:
             context.intrinsics.arrayLiteral
 
     val startOffset = firstOrNull()?.startOffset ?: UNDEFINED_OFFSET
-    val endOffset = lastOrNull()?.endOffset ?: UNDEFINED_OFFSET
+    val endOffset = lastOrNull { it.endOffset != UNDEFINED_OFFSET }?.endOffset ?: UNDEFINED_OFFSET
 
     val irVararg = IrVarargImpl(startOffset, endOffset, type, varargElementType, this)
 
