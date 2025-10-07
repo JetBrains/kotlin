@@ -19,6 +19,7 @@ class DocumentableTest {
             name = "TestClass",
             constructors = emptyList(),
             classlikes = emptyList(),
+            typealiases = emptyList(),
             companion = null,
             documentation = emptyMap(),
             expectPresentInSet = null,

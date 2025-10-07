@@ -10,6 +10,7 @@ import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.FunctionalTypeConstructor
 import org.jetbrains.dokka.model.GenericTypeConstructor
 import org.jetbrains.dokka.model.Invariance
+import org.jetbrains.dokka.model.WithTypealiases
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -132,6 +133,35 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
 
                 assertEquals(GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList()),
                     arrTypealias?.underlyingType?.values?.firstOrNull())
+            }
+        }
+    }
+
+    @Test
+    fun `nested typealias with array type`() {
+        testInline(
+            """
+            |/src/main/kotlin/basic/Test.kt
+            |package example
+            |
+            |class Foo {
+            |    typealias arr = Array<Int>
+            |}
+            |
+            |
+        """.trimMargin(),
+            configuration
+        ) {
+            preMergeDocumentablesTransformationStage = {
+                val arrTypealias = (it.firstOrNull()
+                    ?.packages?.firstOrNull()
+                    ?.classlikes?.firstOrNull() as? WithTypealiases)
+                    ?.typealiases?.firstOrNull()
+
+                assertEquals(
+                    GenericTypeConstructor(DRI("kotlin", "IntArray"), emptyList()),
+                    arrTypealias?.underlyingType?.values?.firstOrNull()
+                )
             }
         }
     }
