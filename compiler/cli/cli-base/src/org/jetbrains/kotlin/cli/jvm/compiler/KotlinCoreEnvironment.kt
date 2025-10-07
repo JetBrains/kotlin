@@ -32,10 +32,8 @@ import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.pom.java.InternalPersistentJavaLanguageLevelReaderService
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.JavaClassSupersImpl
-import com.intellij.psi.impl.PsiElementFinderImpl
-import com.intellij.psi.impl.PsiJavaModuleModificationTracker
-import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import com.intellij.psi.PsiNameHelper
+import com.intellij.psi.impl.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.JavaClassSupers
@@ -859,6 +857,9 @@ class KotlinCoreEnvironment private constructor(
                 registerService(JavaElementSourceFactory::class.java, JavaFixedElementSourceFactory::class.java)
                 registerService(PsiJavaModuleModificationTracker::class.java, PsiJavaModuleModificationTracker::class.java)
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
+                if (getService(PsiNameHelper::class.java) == null) {
+                    registerService(PsiNameHelper::class.java, PsiNameHelperImpl::class.java)
+                }
             }
         }
 
