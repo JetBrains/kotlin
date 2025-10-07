@@ -30,7 +30,7 @@ private class InteropCallContext(
 
     fun IrType.isNativePointed() = this.isNativePointed(symbols)
 
-    fun IrType.isSupportedReference() = this.isCStructFieldSupportedReferenceType(symbols)
+    fun IrType.isSupportedReference() = this.isCStructFieldSupportedReferenceType(irBuiltIns)
 
     val irBuiltIns: IrBuiltIns = builder.context.irBuiltIns
 }

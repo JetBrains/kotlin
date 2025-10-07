@@ -90,14 +90,14 @@ fun IrType.isNativePointed(symbols: KonanSymbols): Boolean = isSubtypeOfClass(sy
 
 fun IrType.isCStructFieldTypeStoredInMemoryDirectly(): Boolean = isPrimitiveType() || isUnsigned() || isVector()
 
-fun IrType.isCStructFieldSupportedReferenceType(symbols: KonanSymbols): Boolean =
+fun IrType.isCStructFieldSupportedReferenceType(irBuiltIns: IrBuiltIns): Boolean =
         isObjCObjectType()
                 || getClass()?.isAny() == true
                 || isStringClassType()
-                || classOrNull == symbols.list
-                || classOrNull == symbols.mutableList
-                || classOrNull == symbols.set
-                || classOrNull == symbols.map
+                || classOrNull == irBuiltIns.listClass
+                || classOrNull == irBuiltIns.mutableListClass
+                || classOrNull == irBuiltIns.setClass
+                || classOrNull == irBuiltIns.mapClass
 
 /**
  * Check given function is a getter or setter

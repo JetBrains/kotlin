@@ -44,12 +44,12 @@ private class ExportedCollectionsInfo(context: JsIrBackendContext) {
     )
 
     val exportableSymbols = setOf(
-        context.symbols.list,
-        context.symbols.mutableList,
-        context.symbols.set,
-        context.symbols.mutableSet,
-        context.symbols.map,
-        context.symbols.mutableMap,
+        context.irBuiltIns.listClass,
+        context.irBuiltIns.mutableListClass,
+        context.irBuiltIns.setClass,
+        context.irBuiltIns.mutableSetClass,
+        context.irBuiltIns.mapClass,
+        context.irBuiltIns.mutableMapClass,
     )
 }
 
@@ -92,12 +92,12 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
     }
 
     private val typesToItsFactoryMethods = hashMapOf(
-        context.symbols.list to FactoryMethod("fromJsArray", context.symbols.jsCreateListFrom),
-        context.symbols.mutableList to FactoryMethod("fromJsArray", context.symbols.jsCreateMutableListFrom),
-        context.symbols.set to FactoryMethod("fromJsSet", context.symbols.jsCreateSetFrom),
-        context.symbols.mutableSet to FactoryMethod("fromJsSet", context.symbols.jsCreateMutableSetFrom),
-        context.symbols.map to FactoryMethod("fromJsMap", context.symbols.jsCreateMapFrom),
-        context.symbols.mutableMap to FactoryMethod("fromJsMap", context.symbols.jsCreateMutableMapFrom)
+        context.irBuiltIns.listClass to FactoryMethod("fromJsArray", context.symbols.jsCreateListFrom),
+        context.irBuiltIns.mutableListClass to FactoryMethod("fromJsArray", context.symbols.jsCreateMutableListFrom),
+        context.irBuiltIns.setClass to FactoryMethod("fromJsSet", context.symbols.jsCreateSetFrom),
+        context.irBuiltIns.mutableSetClass to FactoryMethod("fromJsSet", context.symbols.jsCreateMutableSetFrom),
+        context.irBuiltIns.mapClass to FactoryMethod("fromJsMap", context.symbols.jsCreateMapFrom),
+        context.irBuiltIns.mutableMapClass to FactoryMethod("fromJsMap", context.symbols.jsCreateMutableMapFrom)
     )
 
     private fun IrClass.addCompanionWithJsFactoryFunction() {
