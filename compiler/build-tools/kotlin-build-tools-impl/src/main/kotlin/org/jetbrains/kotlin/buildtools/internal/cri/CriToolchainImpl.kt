@@ -9,17 +9,20 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriFileIdToPathDataDeserializatio
 import org.jetbrains.kotlin.buildtools.api.cri.CriLookupDataDeserializationOperation
 import org.jetbrains.kotlin.buildtools.api.cri.CriSubtypeDataDeserializationOperation
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
+import org.jetbrains.kotlin.buildtools.cri.internal.CriDataDeserializerImpl
 
 internal class CriToolchainImpl() : CriToolchain {
+    private val deserializer: CriDataDeserializerImpl = CriDataDeserializerImpl()
+
     override fun createCriLookupDataDeserializationOperation(data: ByteArray): CriLookupDataDeserializationOperation {
-        return CriLookupDataDeserializationOperationImpl(data)
+        return CriLookupDataDeserializationOperationImpl(deserializer, data)
     }
 
     override fun createCriFileIdToPathDataDeserializationOperation(data: ByteArray): CriFileIdToPathDataDeserializationOperation {
-        return CriFileIdToPathDataDeserializationOperationImpl(data)
+        return CriFileIdToPathDataDeserializationOperationImpl(deserializer, data)
     }
 
     override fun createCriSubtypeDataDeserializationOperation(data: ByteArray): CriSubtypeDataDeserializationOperation {
-        return CriSubtypeDataDeserializationOperationImpl(data)
+        return CriSubtypeDataDeserializationOperationImpl(deserializer, data)
     }
 }

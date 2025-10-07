@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.cri.internal.CriDataDeserializerImpl
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 
 internal class CriSubtypeDataDeserializationOperationImpl(
+    private val deserializer: CriDataDeserializerImpl,
     private val data: ByteArray,
 ) : BuildOperationImpl<Collection<SubtypeEntry>>(), CriSubtypeDataDeserializationOperation {
 
@@ -22,6 +23,6 @@ internal class CriSubtypeDataDeserializationOperationImpl(
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
     ): Collection<SubtypeEntry> {
-        return CriDataDeserializerImpl().deserializeSubtypeData(data)
+        return deserializer.deserializeSubtypeData(data)
     }
 }
