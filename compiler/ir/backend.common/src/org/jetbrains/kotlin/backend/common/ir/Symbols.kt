@@ -104,15 +104,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
 
     val array get() = irBuiltIns.arrayClass
 
-    val byteArray get() = irBuiltIns.byteArray
-    val charArray get() = irBuiltIns.charArray
-    val shortArray get() = irBuiltIns.shortArray
-    val intArray get() = irBuiltIns.intArray
-    val longArray get() = irBuiltIns.longArray
-    val floatArray get() = irBuiltIns.floatArray
-    val doubleArray get() = irBuiltIns.doubleArray
-    val booleanArray get() = irBuiltIns.booleanArray
-
     val primitiveTypesToPrimitiveArrays get() = irBuiltIns.primitiveTypesToPrimitiveArrays
     val primitiveArraysToPrimitiveTypes get() = irBuiltIns.primitiveArraysToPrimitiveTypes
     val unsignedTypesToUnsignedArrays get() = irBuiltIns.unsignedTypesToUnsignedArrays

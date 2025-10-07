@@ -455,20 +455,21 @@ internal class StackLocalsManagerImpl(
     }
 
     private val symbols = functionGenerationContext.context.symbols
+    private val irBuiltIns = functionGenerationContext.context.irBuiltIns
     private val llvm = functionGenerationContext.llvm
 
     // TODO: find better place?
     private val arrayToElementType = mapOf(
-            symbols.array to functionGenerationContext.kObjHeaderPtr,
-            symbols.byteArray to llvm.int8Type,
-            symbols.charArray to llvm.int16Type,
-            symbols.string to llvm.int16Type,
-            symbols.shortArray to llvm.int16Type,
-            symbols.intArray to llvm.int32Type,
-            symbols.longArray to llvm.int64Type,
-            symbols.floatArray to llvm.floatType,
-            symbols.doubleArray to llvm.doubleType,
-            symbols.booleanArray to llvm.int8Type
+            irBuiltIns.arrayClass to functionGenerationContext.kObjHeaderPtr,
+            irBuiltIns.byteArray to llvm.int8Type,
+            irBuiltIns.charArray to llvm.int16Type,
+            irBuiltIns.stringClass to llvm.int16Type,
+            irBuiltIns.shortArray to llvm.int16Type,
+            irBuiltIns.intArray to llvm.int32Type,
+            irBuiltIns.longArray to llvm.int64Type,
+            irBuiltIns.floatArray to llvm.floatType,
+            irBuiltIns.doubleArray to llvm.doubleType,
+            irBuiltIns.booleanArray to llvm.int8Type
     )
 
     override fun allocArray(irClass: IrClass, count: LLVMValueRef) = with(functionGenerationContext) {

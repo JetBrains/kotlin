@@ -351,6 +351,7 @@ internal object EscapeAnalysis {
     ) {
 
         private val symbols = context.symbols
+        private val irBuiltIns = context.irBuiltIns
         private val throwable = symbols.throwable.owner
 
         val escapeAnalysisResults = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, FunctionEscapeAnalysisResult>()
@@ -642,15 +643,15 @@ internal object EscapeAnalysis {
         private val pointerSize = generationState.runtime.pointerSize
 
         private fun arrayItemSizeOf(irClass: IrClass): Int? = when (irClass.symbol) {
-            symbols.array -> pointerSize
-            symbols.booleanArray -> 1
-            symbols.byteArray -> 1
-            symbols.charArray -> 2
-            symbols.shortArray -> 2
-            symbols.intArray -> 4
-            symbols.floatArray -> 4
-            symbols.longArray -> 8
-            symbols.doubleArray -> 8
+            irBuiltIns.arrayClass -> pointerSize
+            irBuiltIns.booleanArray -> 1
+            irBuiltIns.byteArray -> 1
+            irBuiltIns.charArray -> 2
+            irBuiltIns.shortArray -> 2
+            irBuiltIns.intArray -> 4
+            irBuiltIns.floatArray -> 4
+            irBuiltIns.longArray -> 8
+            irBuiltIns.doubleArray -> 8
             else -> null
         }
 
