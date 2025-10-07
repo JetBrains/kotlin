@@ -1,4 +1,4 @@
-// TARGET_BACKEND: NATIVE, JS_IR, WASM
+// TARGET_BACKEND: NATIVE, JS_IR, WASM_JS
 // ^^^ JVM has a similar but distinct behavior w.r.t. references to unreferencable callables
 
 // Synthetic accessors are generated only to allow "calling" a declaration, they are not quite sufficient to provide
