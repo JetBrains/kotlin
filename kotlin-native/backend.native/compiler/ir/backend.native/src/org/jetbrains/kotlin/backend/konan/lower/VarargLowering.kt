@@ -167,6 +167,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     }
 
     private val symbols = context.symbols
+    private val irBuiltIns = context.irBuiltIns
     private val intPlusInt = context.irBuiltIns.intPlusSymbol
 
     private fun arrayType(type: IrType): ArrayHandle {
@@ -315,7 +316,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     private val primitiveArrayHandles = PrimitiveType.values().associate { it to PrimitiveArrayHandle(it) }
 
     private val unsignedArrayHandles = UnsignedType.values().mapNotNull { unsignedType ->
-        symbols.unsignedTypesToUnsignedArrays[unsignedType]?.let {
+        irBuiltIns.unsignedTypesToUnsignedArrays[unsignedType]?.let {
             val primitiveType = when (unsignedType) {
                 UnsignedType.UBYTE -> PrimitiveType.BYTE
                 UnsignedType.USHORT -> PrimitiveType.SHORT
