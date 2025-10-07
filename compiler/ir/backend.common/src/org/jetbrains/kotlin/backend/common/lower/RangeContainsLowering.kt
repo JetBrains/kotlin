@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.andand
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -229,7 +230,7 @@ private class Transformer(
         var arg = argument
         val builtIns = context.irBuiltIns
         val comparisonClass = if (isNumericRange) {
-            computeComparisonClass(this@Transformer.context.symbols, lower.type, upper.type, arg.type) ?: return null
+            computeComparisonClass(this@Transformer.context.irBuiltIns, lower.type, upper.type, arg.type) ?: return null
         } else {
             assert(headerInfo is ComparableRangeInfo)
             this@Transformer.context.symbols.comparable.owner
@@ -348,16 +349,16 @@ private class Transformer(
     }
 
     private fun computeComparisonClass(
-        symbols: Symbols,
+        irBuiltIns: IrBuiltIns,
         lowerType: IrType,
         upperType: IrType,
         argumentType: IrType
     ): IrClass? {
-        val commonBoundType = leastCommonPrimitiveNumericType(symbols, lowerType, upperType) ?: return null
-        return leastCommonPrimitiveNumericType(symbols, argumentType, commonBoundType)?.getClass()
+        val commonBoundType = leastCommonPrimitiveNumericType(irBuiltIns, lowerType, upperType) ?: return null
+        return leastCommonPrimitiveNumericType(irBuiltIns, argumentType, commonBoundType)?.getClass()
     }
 
-    private fun leastCommonPrimitiveNumericType(symbols: Symbols, type1: IrType, type2: IrType): IrType? {
+    private fun leastCommonPrimitiveNumericType(irBuiltIns: IrBuiltIns, type1: IrType, type2: IrType): IrType? {
         // In case of type parameters, use their upper bounds instead
         val t1 = (type1 as IrSimpleType).classifier.closestSuperClass()!!.defaultType
         val t2 = (type2 as IrSimpleType).classifier.closestSuperClass()!!.defaultType
@@ -367,13 +368,13 @@ private class Transformer(
         val unsigned2 = t2.getUnsignedType()
 
         return when {
-            primitive1 == PrimitiveType.DOUBLE || primitive2 == PrimitiveType.DOUBLE -> symbols.double
-            primitive1 == PrimitiveType.FLOAT || primitive2 == PrimitiveType.FLOAT -> symbols.float
-            unsigned1 == UnsignedType.ULONG || unsigned2 == UnsignedType.ULONG -> symbols.uLong!!
-            unsigned1.isPromotableToUInt() || unsigned2.isPromotableToUInt() -> symbols.uInt!!
-            primitive1 == PrimitiveType.LONG || primitive2 == PrimitiveType.LONG -> symbols.long
-            primitive1.isPromotableToInt() || primitive2.isPromotableToInt() -> symbols.int
-            primitive1 == PrimitiveType.CHAR || primitive2 == PrimitiveType.CHAR -> symbols.char
+            primitive1 == PrimitiveType.DOUBLE || primitive2 == PrimitiveType.DOUBLE -> irBuiltIns.doubleClass
+            primitive1 == PrimitiveType.FLOAT || primitive2 == PrimitiveType.FLOAT -> irBuiltIns.floatClass
+            unsigned1 == UnsignedType.ULONG || unsigned2 == UnsignedType.ULONG -> irBuiltIns.ulongClass!!
+            unsigned1.isPromotableToUInt() || unsigned2.isPromotableToUInt() -> irBuiltIns.uintClass!!
+            primitive1 == PrimitiveType.LONG || primitive2 == PrimitiveType.LONG -> irBuiltIns.longClass
+            primitive1.isPromotableToInt() || primitive2.isPromotableToInt() -> irBuiltIns.intClass
+            primitive1 == PrimitiveType.CHAR || primitive2 == PrimitiveType.CHAR -> irBuiltIns.charClass
             else -> error("Unexpected types: t1=${t1.render()}, t2=${t2.render()}")
         }.defaultType
     }
