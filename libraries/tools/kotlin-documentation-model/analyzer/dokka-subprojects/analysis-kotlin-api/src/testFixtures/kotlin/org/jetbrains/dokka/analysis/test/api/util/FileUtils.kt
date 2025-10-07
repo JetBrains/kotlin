@@ -7,6 +7,7 @@ package org.jetbrains.dokka.analysis.test.api.util
 import org.jetbrains.dokka.utilities.DokkaLogger
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
 
 /**
  * Converts a file path (like `org/jetbrains/dokka/test/File.kt`) to a fully qualified
@@ -27,8 +28,7 @@ internal fun filePathToPackageName(srcRelativeFilePath: String): String {
  * @throws IOException if the requested temporary directory could not be created or deleted once used.
  */
 internal fun <T> withTempDirectory(logger: DokkaLogger? = null, block: (tempDirectory: File) -> T): T {
-    @Suppress("DEPRECATION") // TODO migrate to kotlin.io.path.createTempDirectory with languageVersion >= 1.5
-    val tempDir = createTempDir()
+    val tempDir = Files.createTempDirectory("dokka-test").toFile()
     try {
         logger?.debug("Created temporary directory $tempDir")
         return block(tempDir)
