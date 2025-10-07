@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaTypeParameterRendererFilter {
     public fun filter(
         analysisSession: KaSession,

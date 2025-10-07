@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.renderer.render
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaDeclarationNameRenderer {
     public fun renderName(
         analysisSession: KaSession,

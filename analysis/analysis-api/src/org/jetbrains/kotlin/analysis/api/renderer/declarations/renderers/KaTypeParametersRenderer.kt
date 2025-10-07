@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaTypeParametersRenderer {
     public fun renderTypeParameters(
         analysisSession: KaSession,

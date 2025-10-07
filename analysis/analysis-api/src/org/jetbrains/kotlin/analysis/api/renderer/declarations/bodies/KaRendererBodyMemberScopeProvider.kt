@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaRendererBodyMemberScopeProvider {
     public fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol>
 

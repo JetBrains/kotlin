@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaRendererBodyMemberScopeSorter {
     public fun sortMembers(
         analysisSession: KaSession,
