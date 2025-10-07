@@ -48,31 +48,39 @@ public class ExtensionExtractorTransformer : DocumentableTransformer {
             ?.classlikes
             ?.map { async { it.addExtensionInformation(classGraph, extensionMap) } }
             .orEmpty()
+        val newTypealiases = (this@addExtensionInformation as? WithTypealiases)
+            ?.typealiases
+            ?.map { async { it.addExtensionInformation(classGraph, extensionMap) } }
+            .orEmpty()
 
         @Suppress("UNCHECKED_CAST")
         when (this@addExtensionInformation) {
-            is DPackage -> {
-                val newTypealiases = typealiases.map { async { it.addExtensionInformation(classGraph, extensionMap) } }
-                copy(classlikes = newClasslikes.awaitAll(), typealiases = newTypealiases.awaitAll())
-            }
+            is DPackage -> copy(
+                classlikes = newClasslikes.awaitAll(),
+                typealiases = newTypealiases.awaitAll(),
+            )
 
             is DClass -> copy(
                 classlikes = newClasslikes.awaitAll(),
+                typealiases = newTypealiases.awaitAll(),
                 extra = extra + findExtensions(classGraph, extensionMap)
             )
 
             is DEnum -> copy(
                 classlikes = newClasslikes.awaitAll(),
+                typealiases = newTypealiases.awaitAll(),
                 extra = extra + findExtensions(classGraph, extensionMap)
             )
 
             is DInterface -> copy(
                 classlikes = newClasslikes.awaitAll(),
+                typealiases = newTypealiases.awaitAll(),
                 extra = extra + findExtensions(classGraph, extensionMap)
             )
 
             is DObject -> copy(
                 classlikes = newClasslikes.awaitAll(),
+                typealiases = newTypealiases.awaitAll(),
                 extra = extra + findExtensions(classGraph, extensionMap)
             )
 
@@ -133,7 +141,8 @@ public class ExtensionExtractorTransformer : DocumentableTransformer {
         is DefinitelyNonNullable -> findReceiverDRIs(bound.inner)
         is TypeParameter ->
             if (this is DFunction && bound.dri == this.dri)
-                generics.find { it.name == bound.name }?.bounds?.asSequence()?.flatMap { findReceiverDRIs(it) }.orEmpty()
+                generics.find { it.name == bound.name }?.bounds?.asSequence()?.flatMap { findReceiverDRIs(it) }
+                    .orEmpty()
             else
                 emptySequence()
 
@@ -152,7 +161,10 @@ public class ExtensionExtractorTransformer : DocumentableTransformer {
 
 public data class CallableExtensions(val extensions: Set<Callable>) : ExtraProperty<Documentable> {
     public companion object Key : ExtraProperty.Key<Documentable, CallableExtensions> {
-        override fun mergeStrategyFor(left: CallableExtensions, right: CallableExtensions): MergeStrategy<Documentable> =
+        override fun mergeStrategyFor(
+            left: CallableExtensions,
+            right: CallableExtensions
+        ): MergeStrategy<Documentable> =
             MergeStrategy.Replace(CallableExtensions(left.extensions + right.extensions))
     }
 

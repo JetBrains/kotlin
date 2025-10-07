@@ -48,10 +48,11 @@ public abstract class SuppressedByConditionDocumentableFilterTransformer(
 
         val functions = classlike.functions.map { processMember(it) }
         val classlikes = classlike.classlikes.map { processClassLike(it) }
+        val typealiases = (classlike as? WithTypealiases)?.typealiases?.map { processMember(it) }.orEmpty()
         val properties = classlike.properties.map { processProperty(it) }
         val companion = (classlike as? WithCompanion)?.companion?.let { processClassLike(it) }
 
-        val wasClasslikeChanged = (functions + classlikes + properties).any { it.changed } || companion?.changed == true
+        val wasClasslikeChanged = (functions + classlikes + properties + typealiases).any { it.changed } || companion?.changed == true
         return when (classlike) {
             is DClass -> {
                 val constructors = classlike.constructors.map { processMember(it) }
@@ -60,6 +61,7 @@ public abstract class SuppressedByConditionDocumentableFilterTransformer(
                 (classlike.takeIf { !wasClassChange } ?: classlike.copy(
                     functions = functions.mapNotNull { it.documentable },
                     classlikes = classlikes.mapNotNull { it.documentable },
+                    typealiases = typealiases.mapNotNull { it.documentable },
                     properties = properties.mapNotNull { it.documentable },
                     constructors = constructors.mapNotNull { it.documentable },
                     companion = companion?.documentable as? DObject
@@ -68,12 +70,14 @@ public abstract class SuppressedByConditionDocumentableFilterTransformer(
             is DInterface -> (classlike.takeIf { !wasClasslikeChanged } ?: classlike.copy(
                 functions = functions.mapNotNull { it.documentable },
                 classlikes = classlikes.mapNotNull { it.documentable },
+                typealiases = typealiases.mapNotNull { it.documentable },
                 properties = properties.mapNotNull { it.documentable },
                 companion = companion?.documentable as? DObject
             )).let { DocumentableWithChanges(it, wasClasslikeChanged) }
             is DObject -> (classlike.takeIf { !wasClasslikeChanged } ?: classlike.copy(
                 functions = functions.mapNotNull { it.documentable },
                 classlikes = classlikes.mapNotNull { it.documentable },
+                typealiases = typealiases.mapNotNull { it.documentable },
                 properties = properties.mapNotNull { it.documentable },
             )).let { DocumentableWithChanges(it, wasClasslikeChanged) }
             is DAnnotation -> {
@@ -98,6 +102,7 @@ public abstract class SuppressedByConditionDocumentableFilterTransformer(
                     classlikes = classlikes.mapNotNull { it.documentable },
                     properties = properties.mapNotNull { it.documentable },
                     constructors = constructors.mapNotNull { it.documentable },
+                    typealiases = typealiases.mapNotNull { it.documentable },
                     companion = companion?.documentable as? DObject,
                     entries = entries.mapNotNull { it.documentable }
                 )).let { DocumentableWithChanges(it, wasClassChange) }

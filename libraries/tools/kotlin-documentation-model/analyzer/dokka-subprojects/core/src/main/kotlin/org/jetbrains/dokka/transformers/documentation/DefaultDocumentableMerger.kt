@@ -100,6 +100,11 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
                                 sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
                             )
                         )
+                        is DTypeAlias -> documentable.copy(
+                            extra = documentable.extra + ClashingDriIdentifier(
+                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            )
+                        )
                         else -> documentable
                     }
                 }
@@ -194,6 +199,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
         functions = mergeExpectActual(functions + other.functions) { f1, f2 -> f1.mergeWith(f2) },
         properties = mergeExpectActual(properties + other.properties) { p1, p2 -> p1.mergeWith(p2) },
         classlikes = mergeExpectActual(classlikes + other.classlikes) { c1, c2 -> c1.mergeWith(c2) },
+        typealiases = mergeExpectActual(typealiases + other.typealiases) { ta1, ta2 -> ta1.mergeWith(ta2) },
         companion = companion?.let { c -> other.companion?.let { c.mergeWith(it) } ?: c } ?: other.companion,
         generics = merge(generics + other.generics) { tp1, tp2 -> tp1.mergeWith(tp2) },
         modifier = modifier + other.modifier,
@@ -213,6 +219,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
         functions = mergeExpectActual(functions + other.functions) { f1, f2 -> f1.mergeWith(f2) },
         properties = mergeExpectActual(properties + other.properties) { p1, p2 -> p1.mergeWith(p2) },
         classlikes = mergeExpectActual(classlikes + other.classlikes) { c1, c2 -> c1.mergeWith(c2) },
+        typealiases = mergeExpectActual(typealiases + other.typealiases) { ta1, ta2 -> ta1.mergeWith(ta2) },
         companion = companion?.let { c -> other.companion?.let { c.mergeWith(it) } ?: c } ?: other.companion,
         supertypes = supertypes + other.supertypes,
         documentation = documentation + other.documentation,
@@ -235,6 +242,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
         functions = mergeExpectActual(functions + other.functions) { f1, f2 -> f1.mergeWith(f2) },
         properties = mergeExpectActual(properties + other.properties) { p1, p2 -> p1.mergeWith(p2) },
         classlikes = mergeExpectActual(classlikes + other.classlikes) { c1, c2 -> c1.mergeWith(c2) },
+        typealiases = mergeExpectActual(typealiases + other.typealiases) { ta1, ta2 -> ta1.mergeWith(ta2) },
         supertypes = supertypes + other.supertypes,
         documentation = documentation + other.documentation,
         expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
@@ -247,6 +255,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
         functions = mergeExpectActual(functions + other.functions) { f1, f2 -> f1.mergeWith(f2) },
         properties = mergeExpectActual(properties + other.properties) { p1, p2 -> p1.mergeWith(p2) },
         classlikes = mergeExpectActual(classlikes + other.classlikes) { c1, c2 -> c1.mergeWith(c2) },
+        typealiases = mergeExpectActual(typealiases + other.typealiases) { ta1, ta2 -> ta1.mergeWith(ta2) },
         companion = companion?.let { c -> other.companion?.let { c.mergeWith(it) } ?: c } ?: other.companion,
         generics = merge(generics + other.generics) { tp1, tp2 -> tp1.mergeWith(tp2) },
         supertypes = supertypes + other.supertypes,
