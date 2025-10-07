@@ -36309,6 +36309,12 @@ public class FirWasmJsCodegenSplittingWithInlinedFunInKlibTestGenerated extends 
       }
 
       @Test
+      @TestMetadata("attemptToEvaluateConstantFromJava.kt")
+      public void testAttemptToEvaluateConstantFromJava() {
+        runTest("compiler/testData/codegen/box/javaInterop/attemptToEvaluateConstantFromJava.kt");
+      }
+
+      @Test
       @TestMetadata("conflictingOverloadsForThrowableInheritors.kt")
       public void testConflictingOverloadsForThrowableInheritors() {
         runTest("compiler/testData/codegen/box/javaInterop/conflictingOverloadsForThrowableInheritors.kt");
