@@ -12,8 +12,12 @@ import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.linkAndCompileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ExceptionTagType
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
@@ -23,6 +27,7 @@ import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -33,6 +38,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
 import java.io.File
@@ -122,6 +128,12 @@ class WasmLoweringFacade(
 
         val compilerResult = linkAndCompileWasmIrToBinary(parameters)
 
+        val linkedModule = getLinkedModule(
+            parameters,
+            allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) },
+            configuration
+        )
+
         val dceDumpNameCache = DceDumpNameCache()
         eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
 
@@ -152,6 +164,7 @@ class WasmLoweringFacade(
         val compilerResultWithDCE = linkAndCompileWasmIrToBinary(dceParameters)
 
         return BinaryArtifacts.Wasm(
+            linkedModule,
             compilerResult,
             compilerResultWithDCE,
             runIf(WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives) {
@@ -190,4 +203,27 @@ fun extractTestPackage(testServices: TestServices): String? {
     } ?: return null
 
     return fileWithBoxFunction.packageFqName.asString().takeIf { it.isNotEmpty() }
+}
+
+internal fun getLinkedModule(moduleConfiguration: WasmIrModuleConfiguration, wasmCompiledFileFragments: List<WasmCompiledFileFragment>, configuration: CompilerConfiguration): WasmModule {
+    val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
+
+    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
+        wasmCompiledFileFragments,
+        isWasmJsTarget,
+    )
+
+    val multimoduleParameters = moduleConfiguration.multimoduleOptions
+
+    val exceptionTagType: ExceptionTagType = when {
+        configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS) ->
+            ExceptionTagType.TRAP
+        isWasmJsTarget -> ExceptionTagType.JS_TAG
+        else -> ExceptionTagType.WASM_TAG
+    }
+
+    return wasmCompiledModuleFragment.linkWasmCompiledFragments(
+        multimoduleOptions = multimoduleParameters,
+        exceptionTagType = exceptionTagType
+    )
 }
