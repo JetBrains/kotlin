@@ -21,7 +21,8 @@ dependencies {
 
     testImplementation(libs.junit4)
     testImplementation(kotlin("stdlib", coreDepsVersion))
-    testImplementation(kotlin("test-junit", coreDepsVersion))
+    testImplementation(kotlin("test", coreDepsVersion))
+    testRuntimeOnly(kotlin("test-junit", coreDepsVersion))
 }
 
 projectTests {

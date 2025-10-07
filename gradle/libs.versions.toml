@@ -108,6 +108,7 @@ apache-commons-compress = { module = "org.apache.commons:commons-compress", vers
 apache-commons-io = { module = "commons-io:commons-io", version.ref = "commons-io" }
 apache-commons-lang = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang" }
 
+ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }

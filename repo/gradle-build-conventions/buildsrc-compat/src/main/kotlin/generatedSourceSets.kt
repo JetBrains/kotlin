@@ -14,5 +14,5 @@ val SourceSet.generatedTestDir: Project.() -> Unit
     }
 
 private fun SourceSet.generatedDir(project: Project, dirName: String) {
-    generatedDir(project, project.layout.projectDirectory.dir(dirName))
+    generatedDir(project, project.layout.projectDirectory.dir(project.provider { dirName }))
 }

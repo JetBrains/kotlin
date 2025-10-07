@@ -14,6 +14,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testCompileOnly(toolsJarApi())
     testFixturesCompileOnly(toolsJarApi())
+    testFixturesApi(kotlinStdlib())
     testRuntimeOnly(toolsJar())
 }
 

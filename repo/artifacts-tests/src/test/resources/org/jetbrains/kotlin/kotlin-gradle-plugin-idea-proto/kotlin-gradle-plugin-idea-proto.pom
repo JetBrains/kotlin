@@ -28,6 +28,12 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-tooling-core</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-gradle-plugin-idea</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>

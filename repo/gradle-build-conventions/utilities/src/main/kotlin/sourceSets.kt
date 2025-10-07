@@ -1,6 +1,7 @@
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.apply
@@ -69,11 +70,12 @@ fun Project.mainKotlinSourceSet() =
     (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
 fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
 
-fun SourceSet.generatedDir(project: Project, generationRoot: Directory) {
+fun SourceSet.generatedDir(project: Project, generationRoot: Provider<Directory>) {
     java.srcDir(generationRoot)
 
+    // This is needed until IDEA fixes IDEA-339729
     project.apply(plugin = "idea")
     project.idea {
-        this.module.generatedSourceDirs.add(generationRoot.asFile)
+        this.module.generatedSourceDirs.add(generationRoot.get().asFile)
     }
 }

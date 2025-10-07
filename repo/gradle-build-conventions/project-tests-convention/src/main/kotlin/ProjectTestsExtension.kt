@@ -273,11 +273,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         }
         val generationPath = when (generateTestsInBuildDirectory) {
             false -> project.layout.projectDirectory.dir("tests-gen")
-            true -> project.layout.buildDirectory.dir("tests-gen").get().also {
-                project.sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
-                    generatedDir(project, it)
-                }
-            }
+            true -> project.layout.buildDirectory.dir("tests-gen").get()
         }
         val generatorTask = project.generator(taskName, fqName, fixturesSourceSet) {
             this.args = buildList {
@@ -297,6 +293,9 @@ abstract class ProjectTestsExtension(val project: Project) {
             configure()
         }
         if (generateTestsInBuildDirectory) {
+            project.sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
+                generatedDir(project, generatorTask.map { generationPath })
+            }
             configureCollectTestDataTask(generatorTask)
         }
     }

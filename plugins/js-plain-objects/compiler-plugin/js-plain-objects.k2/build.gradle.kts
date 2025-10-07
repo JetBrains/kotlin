@@ -16,8 +16,6 @@ dependencies {
     implementation(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.common"))
 
     compileOnly(intellijCore())
-
-    testApi(project(":compiler:fir:plugin-utils"))
 }
 
 sourceSets {
