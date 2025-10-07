@@ -56,10 +56,10 @@ class FunctionInlining(
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrExpression {
         expression.transformChildren(this, data)
 
-        val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression
-        if (expression is IrCall && PreSerializationSymbols.isTypeOfIntrinsic(actualCallee.symbol)) {
+        if (expression is IrCall && PreSerializationSymbols.isTypeOfIntrinsic(expression.symbol)) {
             return expression
         }
+        val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression
         if (actualCallee.body == null) {
             return expression
         }

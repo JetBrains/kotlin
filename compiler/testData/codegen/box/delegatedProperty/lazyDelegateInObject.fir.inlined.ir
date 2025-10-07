@@ -323,38 +323,19 @@ FILE fqName:<root> fileName:/lazyDelegateInObject.kt
                 correspondingProperty: PROPERTY name:original visibility:public modality:FINAL [delegated,val]
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='public final fun <get-original> (): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>'
-                    BLOCK type=kotlin.Any? origin=INLINE_ARGS_CONTAINER
-                      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Lazy<kotlin.Any?> [val]
-                        TYPE_OP type=kotlin.Lazy<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=kotlin.Lazy<kotlin.Any?>
-                          GET_FIELD 'FIELD PROPERTY_DELEGATE name:original$delegate type:kotlin.Lazy<kotlin.Any?> visibility:private [final] declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Lazy<kotlin.Any?> origin=null
-                            receiver: GET_VAR '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=<root>.lazyDelegateInObject.<no name provided> origin=IMPLICIT_ARGUMENT
-                      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
-                        TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                          GET_VAR '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=<root>.lazyDelegateInObject.<no name provided> origin=null
-                      VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.reflect.KProperty<*> [val]
-                        TYPE_OP type=kotlin.reflect.KProperty<*> origin=IMPLICIT_CAST typeOperand=kotlin.reflect.KProperty<*>
-                          RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<*, kotlin.Any?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final original: kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>'
-                            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-original> visibility:local modality:FINAL returnType:kotlin.Any?
-                              VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Any?
-                              BLOCK_BODY
-                                RETURN type=kotlin.Nothing from='local final fun <get-original> (p0: kotlin.Any?): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>'
-                                  CALL 'public final fun <get-original> (): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Any? origin=null
-                                    ARG <this>: TYPE_OP type=<root>.lazyDelegateInObject.<no name provided> origin=IMPLICIT_CAST typeOperand=<root>.lazyDelegateInObject.<no name provided>
-                                      GET_VAR 'p0: kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>.<get-original>' type=kotlin.Any? origin=null
-                      RETURNABLE_BLOCK type=kotlin.Any? origin=null
-                        INLINED_BLOCK type=kotlin.Any? origin=null
-                          inlinedFunctionSymbol: public final fun getValue <T> (<this>: kotlin.Lazy<T of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin
-                          inlinedFunctionFileEntry: FILE_ENTRY path:src/kotlin/util/Lazy.kt
-                          VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:kotlin.Lazy<kotlin.Any?> [val]
-                            GET_VAR 'val tmp_0: kotlin.Lazy<kotlin.Any?> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.Lazy<kotlin.Any?> origin=null
-                          VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:thisRef type:kotlin.Any? [val]
-                            GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.Any? origin=null
-                          VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:property type:kotlin.reflect.KProperty<*> [val]
-                            GET_VAR 'val tmp_2: kotlin.reflect.KProperty<*> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.reflect.KProperty<*> origin=null
-                          RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                            TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                              CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any? origin=GET_PROPERTY
-                                ARG 1: GET_VAR 'val this: kotlin.Lazy<kotlin.Any?> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.Lazy<kotlin.Any?> origin=null
+                    CALL 'public final fun getValue <T> (<this>: kotlin.Lazy<T of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin' type=kotlin.Any? origin=null
+                      TYPE_ARG T: kotlin.Any?
+                      ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:original$delegate type:kotlin.Lazy<kotlin.Any?> visibility:private [final] declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Lazy<kotlin.Any?> origin=null
+                        receiver: GET_VAR '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=<root>.lazyDelegateInObject.<no name provided> origin=IMPLICIT_ARGUMENT
+                      ARG thisRef: GET_VAR '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=<root>.lazyDelegateInObject.<no name provided> origin=null
+                      ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<*, kotlin.Any?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final original: kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>'
+                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-original> visibility:local modality:FINAL returnType:kotlin.Any?
+                          VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Any?
+                          BLOCK_BODY
+                            RETURN type=kotlin.Nothing from='local final fun <get-original> (p0: kotlin.Any?): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>'
+                              CALL 'public final fun <get-original> (): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Any? origin=null
+                                ARG <this>: TYPE_OP type=<root>.lazyDelegateInObject.<no name provided> origin=IMPLICIT_CAST typeOperand=<root>.lazyDelegateInObject.<no name provided>
+                                  GET_VAR 'p0: kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>.<get-original>' type=kotlin.Any? origin=null
             CONSTRUCTOR visibility:public returnType:<root>.lazyDelegateInObject.<no name provided> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

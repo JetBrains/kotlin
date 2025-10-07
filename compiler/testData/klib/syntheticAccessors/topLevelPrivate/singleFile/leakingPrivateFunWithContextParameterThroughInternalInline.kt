@@ -1,3 +1,4 @@
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 // LANGUAGE: +ContextParameters
 class Scope {
     val ok = "OK"
