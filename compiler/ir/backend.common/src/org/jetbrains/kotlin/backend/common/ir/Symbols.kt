@@ -126,22 +126,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
     val primitiveArraysToPrimitiveTypes get() = irBuiltIns.primitiveArraysToPrimitiveTypes
     val unsignedTypesToUnsignedArrays get() = irBuiltIns.unsignedTypesToUnsignedArrays
 
-    val collection get() = irBuiltIns.collectionClass
-    val set get() = irBuiltIns.setClass
-    val list get() = irBuiltIns.listClass
-    val map get() = irBuiltIns.mapClass
-    val mapEntry get() = irBuiltIns.mapEntryClass
-    val iterable get() = irBuiltIns.iterableClass
-    val listIterator get() = irBuiltIns.listIteratorClass
-    val mutableCollection get() = irBuiltIns.mutableCollectionClass
-    val mutableSet get() = irBuiltIns.mutableSetClass
-    val mutableList get() = irBuiltIns.mutableListClass
-    val mutableMap get() = irBuiltIns.mutableMapClass
-    val mutableMapEntry get() = irBuiltIns.mutableMapEntryClass
-    val mutableIterable get() = irBuiltIns.mutableIterableClass
-    val mutableIterator get() = irBuiltIns.mutableIteratorClass
-    val mutableListIterator get() = irBuiltIns.mutableListIteratorClass
-
     open fun functionN(n: Int): IrClassSymbol = irBuiltIns.functionN(n).symbol
     open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunctionN(n).symbol
 

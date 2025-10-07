@@ -720,32 +720,32 @@ private fun ObjCExportCodeGenerator.emitCollectionConverters() {
             llvm.externalNativeRuntimeFunction(name, kotlinToObjCFunctionType).toConstPointer()
 
     bindObjCExportConvertToRetained(
-            symbols.list.owner,
+            irBuiltIns.listClass.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSArrayFromKList")
     )
 
     bindObjCExportConvertToRetained(
-            symbols.mutableList.owner,
+            irBuiltIns.mutableListClass.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSMutableArrayFromKList")
     )
 
     bindObjCExportConvertToRetained(
-            symbols.set.owner,
+            irBuiltIns.setClass.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSSetFromKSet")
     )
 
     bindObjCExportConvertToRetained(
-            symbols.mutableSet.owner,
+            irBuiltIns.mutableSetClass.owner,
             importConverter("Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet")
     )
 
     bindObjCExportConvertToRetained(
-            symbols.map.owner,
+            irBuiltIns.mapClass.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSDictionaryFromKMap")
     )
 
     bindObjCExportConvertToRetained(
-            symbols.mutableMap.owner,
+            irBuiltIns.mutableMapClass.owner,
             importConverter("Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap")
     )
 }
