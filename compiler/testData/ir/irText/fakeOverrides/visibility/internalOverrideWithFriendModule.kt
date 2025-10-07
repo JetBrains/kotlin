@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: ANY
 
+// K1 behavior is wrong
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 // MODULE: separate
 // FILE: KotlinInternal.kt
 open class KotlinInternal {

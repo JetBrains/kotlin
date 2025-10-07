@@ -1,0 +1,209 @@
+KClass: KotlinInternal
+  members:
+    fun KotlinInternal.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinInternal.foo(): kotlin.Unit
+    fun KotlinInternal.hashCode(): kotlin.Int
+    fun KotlinInternal.toString(): kotlin.String
+    val KotlinInternal.a: kotlin.Int
+  declaredMembers:
+    fun KotlinInternal.foo(): kotlin.Unit
+    val KotlinInternal.a: kotlin.Int
+KClass: I
+  members:
+    fun I.equals(kotlin.Any?): kotlin.Boolean
+    fun I.foo(): kotlin.Unit
+    fun I.hashCode(): kotlin.Int
+    fun I.toString(): kotlin.String
+    val I.a: kotlin.Int
+    var I.a: kotlin.Int
+  declaredMembers:
+KClass: Java4
+  members:
+    fun Java4.equals(kotlin.Any?): kotlin.Boolean
+    fun Java4.foo(): kotlin.Unit
+    fun Java4.hashCode(): kotlin.Int
+    fun Java4.toString(): kotlin.String
+    val Java4.a: kotlin.Int
+    var Java4.a: kotlin.Int
+  declaredMembers:
+    fun Java4.foo(): kotlin.Unit
+    var Java4.a: kotlin.Int
+KClass: K
+  members:
+    fun K.equals(kotlin.Any?): kotlin.Boolean
+    fun K.foo(): kotlin.Unit
+    fun K.hashCode(): kotlin.Int
+    fun K.toString(): kotlin.String
+    val K.a: kotlin.Int
+  declaredMembers:
+    fun K.foo(): kotlin.Unit
+    val K.a: kotlin.Int
+KClass: Java2
+  members:
+    fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    fun Java2.foo(): kotlin.Unit
+    fun Java2.hashCode(): kotlin.Int
+    fun Java2.toString(): kotlin.String
+    val Java2.a: kotlin.Int
+    var Java2.a: kotlin.Int
+  declaredMembers:
+    fun Java2.foo(): kotlin.Unit
+    var Java2.a: kotlin.Int
+KClass: J
+  members:
+    fun J.equals(kotlin.Any?): kotlin.Boolean
+    fun J.foo(): kotlin.Unit
+    fun J.hashCode(): kotlin.Int
+    fun J.toString(): kotlin.String
+    val J.a: kotlin.Int
+    var J.a: kotlin.Int
+  declaredMembers:
+    fun J.foo(): kotlin.Unit
+    val J.a: kotlin.Int
+KClass: Java5
+  members:
+    fun Java5.equals(kotlin.Any?): kotlin.Boolean
+    fun Java5.foo(): kotlin.Unit
+    fun Java5.hashCode(): kotlin.Int
+    fun Java5.toString(): kotlin.String
+    val Java5.a: kotlin.Int
+    var Java5.a: kotlin.Int
+  declaredMembers:
+    fun Java5.foo(): kotlin.Unit
+    var Java5.a: kotlin.Int
+KClass: H
+  members:
+    fun H.equals(kotlin.Any?): kotlin.Boolean
+    fun H.foo(): kotlin.Unit
+    fun H.hashCode(): kotlin.Int
+    fun H.toString(): kotlin.String
+    val H.a: kotlin.Int
+  declaredMembers:
+    val H.a: kotlin.Int
+KPackage: TestKt
+  fun test(A, B, C, D, E, F, G, H, I, J, K, L): kotlin.Unit
+KClass: Java3
+  members:
+    fun Java3.equals(kotlin.Any?): kotlin.Boolean
+    fun Java3.foo(): kotlin.Unit
+    fun Java3.hashCode(): kotlin.Int
+    fun Java3.toString(): kotlin.String
+    val Java3.a: kotlin.Int
+    var Java3.a: kotlin.Int
+  declaredMembers:
+    fun Java3.foo(): kotlin.Unit
+    var Java3.a: kotlin.Int
+KClass: L
+  members:
+    fun L.equals(kotlin.Any?): kotlin.Boolean
+    fun L.foo(): kotlin.Unit
+    fun L.hashCode(): kotlin.Int
+    fun L.toString(): kotlin.String
+    val L.a: kotlin.Int
+  declaredMembers:
+    fun L.foo(): kotlin.Unit
+    val L.a: kotlin.Int
+KClass: Java1
+  members:
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.foo(): kotlin.Unit
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.toString(): kotlin.String
+    val Java1.a: kotlin.Int
+  declaredMembers:
+KClass: JavaPublic
+  members:
+    fun JavaPublic.equals(kotlin.Any?): kotlin.Boolean
+    fun JavaPublic.foo(): kotlin.Unit
+    fun JavaPublic.hashCode(): kotlin.Int
+    fun JavaPublic.toString(): kotlin.String
+    val a: kotlin.Int
+  declaredMembers:
+    fun JavaPublic.foo(): kotlin.Unit
+    val a: kotlin.Int
+KClass: JavaDefault
+  members:
+    fun JavaDefault.equals(kotlin.Any?): kotlin.Boolean
+    fun JavaDefault.foo(): kotlin.Unit
+    fun JavaDefault.hashCode(): kotlin.Int
+    fun JavaDefault.toString(): kotlin.String
+    val a: kotlin.Int
+  declaredMembers:
+    fun JavaDefault.foo(): kotlin.Unit
+    val a: kotlin.Int
+KClass: B
+  members:
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.foo(): kotlin.Unit
+    fun B.hashCode(): kotlin.Int
+    fun B.toString(): kotlin.String
+    val B.a: kotlin.Int
+  declaredMembers:
+    fun B.foo(): kotlin.Unit
+    val B.a: kotlin.Int
+KClass: D
+  members:
+    fun D.equals(kotlin.Any?): kotlin.Boolean
+    fun D.foo(): kotlin.Unit
+    fun D.hashCode(): kotlin.Int
+    fun D.toString(): kotlin.String
+    val D.a: kotlin.Int
+    var D.a: kotlin.Int
+  declaredMembers:
+    fun D.foo(): kotlin.Unit
+    val D.a: kotlin.Int
+KClass: F
+  members:
+    fun F.equals(kotlin.Any?): kotlin.Boolean
+    fun F.foo(): kotlin.Unit
+    fun F.hashCode(): kotlin.Int
+    fun F.toString(): kotlin.String
+    val F.a: kotlin.Int
+    var F.a: kotlin.Int
+  declaredMembers:
+    fun F.foo(): kotlin.Unit
+    val F.a: kotlin.Int
+KClass: A
+  members:
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.foo(): kotlin.Unit
+    fun A.hashCode(): kotlin.Int
+    fun A.toString(): kotlin.String
+    val A.a: kotlin.Int
+  declaredMembers:
+KClass: C
+  members:
+    fun C.equals(kotlin.Any?): kotlin.Boolean
+    fun C.foo(): kotlin.Unit
+    fun C.hashCode(): kotlin.Int
+    fun C.toString(): kotlin.String
+    val C.a: kotlin.Int
+    var C.a: kotlin.Int
+  declaredMembers:
+KClass: G
+  members:
+    fun G.equals(kotlin.Any?): kotlin.Boolean
+    fun G.foo(): kotlin.Unit
+    fun G.hashCode(): kotlin.Int
+    fun G.toString(): kotlin.String
+    val G.a: kotlin.Int
+  declaredMembers:
+KClass: E
+  members:
+    fun E.equals(kotlin.Any?): kotlin.Boolean
+    fun E.foo(): kotlin.Unit
+    fun E.hashCode(): kotlin.Int
+    fun E.toString(): kotlin.String
+    val E.a: kotlin.Int
+    var E.a: kotlin.Int
+  declaredMembers:
+KClass: KotlinInternal
+  members:
+    fun KotlinInternal.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinInternal.foo(): kotlin.Unit
+    fun KotlinInternal.hashCode(): kotlin.Int
+    fun KotlinInternal.toString(): kotlin.String
+    val KotlinInternal.a: kotlin.Int
+  declaredMembers:
+    fun KotlinInternal.foo(): kotlin.Unit
+    val KotlinInternal.a: kotlin.Int
