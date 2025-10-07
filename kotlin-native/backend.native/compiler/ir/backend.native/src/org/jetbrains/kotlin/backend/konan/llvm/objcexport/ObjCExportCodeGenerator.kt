@@ -705,7 +705,7 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
 
 private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
     bindObjCExportConvertToRetained(
-            symbols.string.owner,
+            irBuiltIns.stringClass.owner,
             llvm.Kotlin_ObjCExport_CreateRetainedNSStringFromKString.toConstPointer()
     )
 

@@ -61,7 +61,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         val hashCode = value.hashCode()
         val header = Struct(
                 llvm.structTypeWithFlexibleArray(runtime.stringHeaderType, data.size),
-                permanentTag(context.symbols.string.owner.typeInfoPtr), // equivalent to CharArray
+                permanentTag(context.irBuiltIns.stringClass.owner.typeInfoPtr), // equivalent to CharArray
                 llvm.constInt32((runtime.stringHeaderExtraSize + data.size) / 2), // array size in Chars
                 llvm.constInt32(hashCode),
                 // flags = HASHCODE_IS_ZERO or IGNORE_LAST_BYTE or (encoding shl ENCODING_OFFSET)
