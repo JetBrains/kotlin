@@ -1447,6 +1447,17 @@ val Int.previousOffset
             else -> if (this > 0) minus(1) else error("Invalid offset appear")
         }
 
+fun validatedOffsetsOrUndefined(startOffset: Int, endOffset: Int): Pair<Int, Int> {
+    val isValid = when {
+        startOffset < -2 || endOffset < -2 -> false
+        (startOffset < 0 || endOffset < 0) && startOffset != endOffset -> false
+        startOffset > endOffset -> false
+        else -> true
+    }
+    return if (isValid) startOffset to endOffset
+    else UNDEFINED_OFFSET to UNDEFINED_OFFSET
+}
+
 fun IrElement.extractRelatedDeclaration(): IrDeclaration? {
     return when (this) {
         is IrClass -> this

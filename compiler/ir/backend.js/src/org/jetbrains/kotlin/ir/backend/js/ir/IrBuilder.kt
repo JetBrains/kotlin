@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.validatedOffsetsOrUndefined
 import org.jetbrains.kotlin.name.Name
 
 object JsIrBuilder {
@@ -245,8 +246,8 @@ object JsIrBuilder {
         cond: IrExpression,
         thenBranch: IrExpression,
         elseBranch: IrExpression? = null,
-        thenBranchStartOffset: Int = cond.startOffset,
-        thenBranchEndOffset: Int = thenBranch.endOffset,
+        thenBranchStartOffset: Int = validatedOffsetsOrUndefined(cond.startOffset, thenBranch.endOffset).first,
+        thenBranchEndOffset: Int = validatedOffsetsOrUndefined(cond.startOffset, thenBranch.endOffset).second,
         elseBranchStartOffset: Int = UNDEFINED_OFFSET,
         elseBranchEndOffset: Int = elseBranch?.endOffset ?: UNDEFINED_OFFSET,
     ): IrWhen =
