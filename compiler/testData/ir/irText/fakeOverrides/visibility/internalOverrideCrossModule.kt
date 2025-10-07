@@ -1,6 +1,9 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
+// K1 behavior is wrong
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 // MODULE: separate
 // FILE: KotlinInternal.kt
 open class KotlinInternal {
