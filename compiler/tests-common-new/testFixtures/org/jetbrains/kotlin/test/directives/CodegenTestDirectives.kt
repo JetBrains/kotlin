@@ -143,7 +143,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Skips check pretty kt IR dump (disables ${IrPrettyKotlinDumpHandler::class})"
     )
 
-    val SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK by directive(
+    val SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK by directive( // todo rename
         description = "Skips the check that New kotlin-reflect dumps are the same to those of K1"
     )
 
@@ -206,11 +206,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
             This directive can be used to attach debugger to instance of JVM which
               is used to run `box` test in case it runs in separate JVM instance
               (e.g. when this case should be ran on some modern JDK like JDK 17)
-              
+
             After running test run remote debugger on port 5005 (test will wait until
               debugger won't be attached)
-              
-            Please don't forget to remove this directive after debug session is over 
+
+            Please don't forget to remove this directive after debug session is over
         """.trimIndent()
     )
 
