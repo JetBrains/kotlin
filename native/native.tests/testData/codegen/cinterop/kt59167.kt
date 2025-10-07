@@ -6,7 +6,6 @@
 // DISABLE_NATIVE: isAppleTarget=false
 //   There is no GameController on watchOS.
 // DISABLE_NATIVE: targetFamily=WATCHOS
-// WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: kt59167.def
 language=Objective-C

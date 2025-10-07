@@ -3,7 +3,6 @@
  * that can be found in the LICENSE file.
  */
 // TARGET_BACKEND: NATIVE
-// WITH_PLATFORM_LIBS
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 import kotlinx.cinterop.*
 import kotlin.test.assertEquals

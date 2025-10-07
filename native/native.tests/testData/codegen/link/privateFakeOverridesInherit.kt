@@ -1,4 +1,3 @@
-// WITH_PLATFORM_LIBS
 // MODULE: lib
 // FILE: lib.kt
 

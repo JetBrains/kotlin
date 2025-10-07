@@ -1,5 +1,4 @@
 // TARGET_BACKEND: NATIVE
-// WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: kt54284.def
 ---

@@ -3,7 +3,6 @@
 // DISABLE_NATIVE: targetFamily=IOS
 // DISABLE_NATIVE: targetFamily=TVOS
 // DISABLE_NATIVE: targetFamily=WATCHOS
-// WITH_PLATFORM_LIBS
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.readValue

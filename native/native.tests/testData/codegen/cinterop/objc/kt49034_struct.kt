@@ -7,7 +7,6 @@
 // DISABLE_NATIVE: isAppleTarget=false
 //   There is no JavaScriptCore on watchOS.
 // DISABLE_NATIVE: targetFamily=WATCHOS
-// WITH_PLATFORM_LIBS
 
 // MODULE: cinterop
 // FILE: kt49034.def

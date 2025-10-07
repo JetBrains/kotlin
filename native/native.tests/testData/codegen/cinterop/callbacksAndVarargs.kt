@@ -3,7 +3,6 @@
  * that can be found in the LICENSE file.
  */
 // TARGET_BACKEND: NATIVE
-// WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: ccallbacksAndVarargs.def
 ---

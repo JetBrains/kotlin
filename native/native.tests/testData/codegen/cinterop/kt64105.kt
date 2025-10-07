@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 // TARGET_BACKEND: NATIVE
-// WITH_PLATFORM_LIBS
 // MODULE: lib1
 // FILE: lib1.def
 language=Objective-C

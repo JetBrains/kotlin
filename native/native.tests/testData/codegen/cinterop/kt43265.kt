@@ -1,5 +1,4 @@
 // TARGET_BACKEND: NATIVE
-// WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: kt43265.def
 strictEnums = bcm2835FunctionSelect

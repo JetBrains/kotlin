@@ -4,7 +4,6 @@
  */
 // TARGET_BACKEND: NATIVE
 // DISABLE_NATIVE: isAppleTarget=false
-// WITH_PLATFORM_LIBS
 
 // MODULE: cinterop
 // FILE: conversion.def

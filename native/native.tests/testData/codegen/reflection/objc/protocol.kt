@@ -1,6 +1,5 @@
 // TARGET_BACKEND: NATIVE
 // DISABLE_NATIVE: isAppleTarget=false
-// WITH_PLATFORM_LIBS
 
 // MODULE: objcinterop
 // FILE: objcinterop.def

@@ -3,7 +3,6 @@
 // DISABLE_NATIVE: isAppleTarget=false
 // DISABLE_NATIVE: targetFamily=OSX
 // DISABLE_NATIVE: targetFamily=WATCHOS
-// WITH_PLATFORM_LIBS
 
 import platform.UIKit.UIViewController
 
