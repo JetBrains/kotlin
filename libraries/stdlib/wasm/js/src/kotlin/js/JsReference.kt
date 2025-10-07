@@ -10,9 +10,12 @@ import kotlin.wasm.internal.internalize
 
 /**
  * A JavaScript value that can be shared between threads in "-Xwasm-use-shared-objects" mode.
+ *
+ * Currently, only JsReference can be shareable, but eventually user-defined JS types may be supported as well,
+ * with respective changes in `KotlinJsBox` and `externRefToAny`.
  */
 @ExperimentalWasmJsInterop
-public external interface JsShareableAny : JsAny
+public sealed external interface JsShareableAny : JsAny
 
 /**
  * JavaScript value that can serve as a reference for any Kotlin value.
