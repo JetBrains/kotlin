@@ -1437,11 +1437,451 @@ class UklibResolutionTestsWithMockComponents {
         }
 
         assertEquals(
-            listOf("empty", "fallbackVariant_KT-81412"),
+            listOf("empty", "jvmRuntimeElements-published"),
             consumer.configurations.getByName("empty").incoming.resolutionResult.allComponents.map {
                 it.variants.single().displayName
             }
         )
+    }
+
+    @Test
+    fun `uklib resolution - pre-HMPP resolution with serialization json resolution - KT-81488`() {
+        val consumer = uklibConsumer {
+            kotlin {
+                jvm()
+                linuxArm64()
+                js()
+                wasmWasi()
+                repositories.mavenCentral()
+                sourceSets.commonMain {
+                    dependencies {
+                        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
+                    }
+                }
+            }
+        }
+
+        listOf(
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib-common:1.4.30" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                            ),
+                        ),
+                        configuration = "compile",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "kotlin-metadata",
+                                "org.jetbrains.kotlin.platform.type" to "common",
+                            ),
+                        ),
+                        configuration = "metadataApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "kotlin-metadata",
+                                "org.jetbrains.kotlin.platform.type" to "common",
+                            ),
+                        ),
+                        configuration = "metadataApiElements-published",
+                    ),
+                ).prettyPrinted,
+                it.prettyPrinted,
+            )
+        }
+
+        listOf(
+            { consumer.multiplatformExtension.linuxArm64() },
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core-linuxarm64:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "org.jetbrains.kotlin.klib",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.native.target" to "linux_arm64",
+                                "org.jetbrains.kotlin.platform.type" to "native",
+                            ),
+                        ),
+                        configuration = "linuxArm64ApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "linuxArm64ApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json-linuxarm64:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "org.jetbrains.kotlin.klib",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.native.target" to "linux_arm64",
+                                "org.jetbrains.kotlin.platform.type" to "native",
+                            ),
+                        ),
+                        configuration = "linuxArm64ApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "linuxArm64ApiElements-published",
+                    ),
+                ).prettyPrinted,
+                it().compilationResolution().prettyPrinted,
+                message = it().name
+            )
+        }
+
+
+        listOf(
+            { consumer.multiplatformExtension.jvm() },
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:1.4.30" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                            ),
+                        ),
+                        configuration = "compile",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jvmApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jvmApiElements-published",
+                    ),
+                    "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                            ),
+                        ),
+                        configuration = "compile",
+                    ),
+                ).prettyPrinted,
+                it().compilationResolution().prettyPrinted,
+                message = it().name
+            )
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:1.4.30" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                            ),
+                        ),
+                        configuration = "runtime",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmRuntimeElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jvmRuntimeElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmRuntimeElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jvmRuntimeElements-published",
+                    ),
+                    "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                            ),
+                        ),
+                        configuration = "runtime",
+                    ),
+                ).prettyPrinted,
+                it().runtimeResolution().prettyPrinted,
+                message = it().name
+            )
+        }
+
+        listOf(
+            { consumer.multiplatformExtension.js() },
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib-js:1.4.30" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                            ),
+                        ),
+                        configuration = "compile",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core-js:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "klib",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.js.compiler" to "ir",
+                                "org.jetbrains.kotlin.platform.type" to "js",
+                            ),
+                        ),
+                        configuration = "jsIrApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jsIrApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json-js:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "klib",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.js.compiler" to "ir",
+                                "org.jetbrains.kotlin.platform.type" to "js",
+                            ),
+                        ),
+                        configuration = "jsIrApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jsIrApiElements-published",
+                    ),
+                ).prettyPrinted,
+                it().compilationResolution().prettyPrinted,
+                message = it().name
+            )
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib-js:1.4.30" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                            ),
+                        ),
+                        configuration = "runtime",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core-js:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "klib",
+                                "org.gradle.usage" to "kotlin-runtime",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.js.compiler" to "ir",
+                                "org.jetbrains.kotlin.platform.type" to "js",
+                            ),
+                        ),
+                        configuration = "jsIrRuntimeElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jsIrRuntimeElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json-js:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "klib",
+                                "org.gradle.usage" to "kotlin-runtime",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.js.compiler" to "ir",
+                                "org.jetbrains.kotlin.platform.type" to "js",
+                            ),
+                        ),
+                        configuration = "jsIrRuntimeElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jsIrRuntimeElements-published",
+                    ),
+                ).prettyPrinted,
+                it().runtimeResolution().prettyPrinted,
+                message = it().name
+            )
+        }
+
+        listOf(
+            { consumer.multiplatformExtension.wasmWasi() },
+        ).forEach {
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.platform.type" to "common",
+                            ),
+                        ),
+                        configuration = "commonMainMetadataElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.platform.type" to "common",
+                            ),
+                        ),
+                        configuration = "commonMainMetadataElements-published",
+                    ),
+                ).prettyPrinted,
+                it().compilationResolution().prettyPrinted,
+                message = it().name
+            )
+            // FIXME: Right now wasmWasi runtime resolves to JVM, but we expect "commonMainMetadataElements-published" here. Since this is
+            // legacy resolution, we will not support lenient resolution against legacy KMP publication in runtime.
+            assertEquals(
+                mapOf<String, ResolvedComponentWithArtifacts>(
+                    "org.jetbrains.kotlin:kotlin-stdlib:1.4.30" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                            ),
+                        ),
+                        configuration = "runtime",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmRuntimeElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jvmRuntimeElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmRuntimeElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                        ),
+                        configuration = "jvmRuntimeElements-published",
+                    ),
+                    "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(
+                            mutableMapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-runtime",
+                            ),
+                        ),
+                        configuration = "runtime",
+                    ),
+                ).prettyPrinted,
+                it().runtimeResolution().prettyPrinted,
+                message = it().name
+            )
+        }
     }
 
     @Test
