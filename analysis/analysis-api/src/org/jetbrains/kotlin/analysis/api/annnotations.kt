@@ -130,3 +130,11 @@ internal annotation class KaNoContextParameterBridgeRequired
 )
 @OptIn(KaContextParameterApi::class)
 internal annotation class KaCustomContextParameterBridge
+
+/**
+ * Marks an API endpoint designed to be extensible.
+ *
+ * Apply this to types that are intended to be subclassed or implemented by external clients.
+ */
+@Target(AnnotationTarget.CLASS)
+internal annotation class KaExtensibleApi

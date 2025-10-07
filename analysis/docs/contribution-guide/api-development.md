@@ -311,7 +311,8 @@ If an interface or class isn't intended to be subclassed by clients, make this e
 interface KaSession
 ```
 
-On the other hand, if you expect users to create subtypes of your class or interface, provide detailed instructions on not only how to use
+On the other hand, if you expect users to create subtypes of your class or interface,
+mark the declaration with `@KaExtensibleApi` annotation and provide detailed instructions on not only how to use
 each of the members, but also how to implement them correctly.
 
 #### Check Whether Your Entity Needs to be a `KaLifetimeOwner`
