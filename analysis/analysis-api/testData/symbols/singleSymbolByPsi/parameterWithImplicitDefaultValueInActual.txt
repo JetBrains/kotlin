@@ -4,7 +4,7 @@ KaValueParameterSymbol:
   compilerVisibility: Public
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
-  hasDefaultValue: false
+  hasDefaultValue: true
   isActual: false
   isCrossinline: false
   isExpect: false
