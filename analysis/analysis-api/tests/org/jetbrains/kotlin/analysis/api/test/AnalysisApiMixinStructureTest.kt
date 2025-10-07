@@ -9,9 +9,6 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -35,10 +32,10 @@ class AnalysisApiMixinStructureTest : AbstractAnalysisApiSurfaceCodebaseValidati
         assertNoCompanion(file, sessionComponent)
 
         // OptIn annotation itself
-        assertSpecialAnnotation(file, psiFile, sessionComponent, KA_SESSION_COMPONENT_IMPLEMENTATION_DETAIL_ANNOTATION)
+        assertSpecialAnnotation(file, sessionComponent, KA_SESSION_COMPONENT_IMPLEMENTATION_DETAIL_ANNOTATION)
 
         // OptIn annotation for subclasses
-        assertSpecialAnnotation(file, psiFile, sessionComponent, KA_SESSION_COMPONENT_IMPLEMENTATION_DETAIL_SUBCLASS_ANNOTATION)
+        assertSpecialAnnotation(file, sessionComponent, KA_SESSION_COMPONENT_IMPLEMENTATION_DETAIL_SUBCLASS_ANNOTATION)
     }
 
     private fun assertNoCompanion(file: File, sessionComponent: KtClassOrObject) {
@@ -47,24 +44,12 @@ class AnalysisApiMixinStructureTest : AbstractAnalysisApiSurfaceCodebaseValidati
         }
     }
 
-    private fun assertSpecialAnnotation(file: File, psiFile: KtFile, sessionComponent: KtClassOrObject, annotationText: String) {
+    private fun assertSpecialAnnotation(file: File, sessionComponent: KtClassOrObject, annotationText: String) {
         if (sessionComponent.annotationEntries.any { it.textMatches(annotationText) }) {
             return
         }
 
-        val fileText = psiFile.text
-        val positionForNewAnnotation = sessionComponent.annotationEntries
-            .lastOrNull()
-            ?.nextLeaf() // the next leaf is used to find the new line after the last annotation
-            ?.endOffset
-            ?: sessionComponent.startOffset
-
-        val actualText = buildString {
-            append(fileText.take(positionForNewAnnotation))
-            appendLine(annotationText)
-            append(fileText.drop(positionForNewAnnotation))
-        }
-
+        val actualText = fileTextWithNewAnnotation(sessionComponent, annotationText)
         TestDataAssertions.assertEqualsToFile(
             /* message = */
             "The session component has to be marked by '$annotationText' in order to not guarantee its compatibility",
