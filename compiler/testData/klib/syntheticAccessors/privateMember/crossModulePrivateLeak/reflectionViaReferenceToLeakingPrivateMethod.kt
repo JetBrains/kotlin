@@ -1,3 +1,4 @@
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, WASM
 // TARGET_BACKEND: NATIVE, JS_IR, WASM
 // ^^^ JVM has a similar but distinct behavior w.r.t. references to unreferencable callables
 

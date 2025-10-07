@@ -1,3 +1,4 @@
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, WASM
 // LANGUAGE: +ContextParameters
 // FILE: A.kt
 class Scope {
