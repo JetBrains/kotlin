@@ -380,6 +380,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
+  @TestMetadata("friendDependencyWithCrossModuleInlinerPerFile")
+  public void testFriendDependencyWithCrossModuleInlinerPerFile() {
+    runTest("js/js.translator/testData/incremental/invalidation/friendDependencyWithCrossModuleInlinerPerFile/");
+  }
+
+  @Test
   @TestMetadata("functionDefaultParams")
   public void testFunctionDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/functionDefaultParams/");
