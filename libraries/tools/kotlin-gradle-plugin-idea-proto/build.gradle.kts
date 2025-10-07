@@ -22,13 +22,17 @@ val embedded by configurations.getting {
 }
 
 dependencies {
+    api(project(":kotlin-tooling-core"))
     api(project(":kotlin-gradle-plugin-idea"))
     embedded(libs.protobuf.java)
     embedded(libs.protobuf.kotlin)
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    testImplementation(libs.junit4)
+    testRuntimeOnly(kotlin("test-junit", coreDepsVersion))
+    testImplementation(kotlin("test", coreDepsVersion))
     testImplementation(kotlin("stdlib", coreDepsVersion))
     testImplementation(kotlin("reflect", coreDepsVersion))
-    testImplementation(kotlin("test-junit", coreDepsVersion))
+    testImplementation(project(":kotlin-tooling-core"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
 }
 

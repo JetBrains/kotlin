@@ -9,10 +9,11 @@ plugins {
 dependencies {
     implementation(kotlinStdlib("jdk8"))
     implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.http)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.gson)
     implementation("org.apache.velocity:velocity-engine-core:2.3")
-    implementation(libs.kotlinx.serialization.core)
-
     constraints {
         api(libs.apache.commons.lang)
     }

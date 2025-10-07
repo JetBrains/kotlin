@@ -282,6 +282,9 @@ abstract class ProjectTestsExtension(val project: Project) {
                 .withPropertyName("testDataFilesList")
                 .withPathSensitivity(PathSensitivity.RELATIVE)
         }
+        project.sourceSets.named(SourceSet.TEST_SOURCE_SET_NAME) {
+            this.java.srcDir(generatorTask.map { it.outputs.files.singleFile })
+        }
         project.tasks.named("compileTestKotlin") {
             inputs.dir(generatorTask.map { it.outputs.files.singleFile })
                 .withPropertyName("generatedTestSources")

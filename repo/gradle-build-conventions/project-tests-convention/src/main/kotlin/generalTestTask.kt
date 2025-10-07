@@ -92,11 +92,11 @@ internal fun Project.createGeneralTestTask(
 ): TaskProvider<Test> {
     if (jUnitMode == JUnitMode.JUnit5) {
         project.dependencies {
-            "testImplementation"(project(":compiler:tests-mutes:mutes-junit5"))
+            "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit5"))
         }
     } else {
         project.dependencies {
-            "testImplementation"(project(":compiler:tests-mutes:mutes-junit4"))
+            "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit4"))
         }
     }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
