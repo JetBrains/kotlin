@@ -33,6 +33,7 @@ internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
     archs: List<String> = listOf("arm64"),
     sdk: String = "iphoneos",
+    iphoneOsDeploymentTarget: String = "14.1"
 ) = EnvironmentalVariables(
     "CONFIGURATION" to "Debug",
     "SDK_NAME" to sdk,
@@ -41,6 +42,8 @@ internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     "TARGET_BUILD_DIR" to testBuildDir.absolutePathString(),
     "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
     "PLATFORM_NAME" to sdk,
+    "DEPLOYMENT_TARGET_SETTING_NAME" to "IPHONEOS_DEPLOYMENT_TARGET",
+    "IPHONEOS_DEPLOYMENT_TARGET" to iphoneOsDeploymentTarget,
     "BUILT_PRODUCTS_DIR" to projectPath.resolve("build/builtProductsDir").absolutePathString(),
 )
 
