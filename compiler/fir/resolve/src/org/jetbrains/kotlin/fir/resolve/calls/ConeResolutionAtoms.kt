@@ -95,7 +95,7 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                         fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
                     )
                 }
-                is FirCollectionLiteralCall -> ConeResolutionAtomWithPostponedChild(expression)
+                is FirCollectionLiteral -> ConeResolutionAtomWithPostponedChild(expression)
                 is FirResolvable -> createRawAtomForResolvable(expression, allowUnresolvedExpression)
                 is FirSafeCallExpression -> expression.createConeResolutionAtomWithSingleChild(
                     (expression.selector as? FirExpression)?.unwrapSmartcastExpression()
@@ -161,8 +161,8 @@ class ConeResolutionAtomWithPostponedChild(
     }
 
     fun useFallbackForDisabledCollectionLiterals() {
-        require(expression is FirCollectionLiteralCall) {
-            "expected atom with ${FirCollectionLiteralCall::class.simpleName}, got ${expression::class.simpleName}"
+        require(expression is FirCollectionLiteral) {
+            "expected atom with ${FirCollectionLiteral::class.simpleName}, got ${expression::class.simpleName}"
         }
         subAtom = ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression = false)
     }
@@ -369,7 +369,7 @@ class ConeSimpleNameForContextSensitiveResolution(
 }
 
 class ConeCollectionLiteralAtom(
-    override val expression: FirCollectionLiteralCall,
+    override val expression: FirCollectionLiteral,
     override val expectedType: ConeKotlinType?,
     val containingCallCandidate: Candidate,
 ) : ConePostponedResolvedAtom() {

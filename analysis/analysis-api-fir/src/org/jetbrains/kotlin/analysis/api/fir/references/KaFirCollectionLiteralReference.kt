@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralCall
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.idea.references.KtCollectionLiteralReference
@@ -22,7 +22,7 @@ internal class KaFirCollectionLiteralReference(
     expression: KtCollectionLiteralExpression,
 ) : KtCollectionLiteralReference(expression), KaFirReference {
     override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
-        val fir = element.getOrBuildFirSafe<FirCollectionLiteralCall>(resolutionFacade) ?: return emptyList()
+        val fir = element.getOrBuildFirSafe<FirCollectionLiteral>(resolutionFacade) ?: return emptyList()
 
         val type = fir.resolvedType as? ConeClassLikeType ?: return listOfNotNull(arrayOfSymbol(arrayOf))
         val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf

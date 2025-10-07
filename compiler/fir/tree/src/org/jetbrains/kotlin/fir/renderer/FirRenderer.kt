@@ -1180,10 +1180,10 @@ class FirRenderer(
             print(")")
         }
 
-        override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall) {
-            annotationRenderer?.render(collectionLiteralCall)
+        override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral) {
+            annotationRenderer?.render(collectionLiteral)
             print("<collectionLiteralCall>")
-            visitCall(collectionLiteralCall)
+            visitCall(collectionLiteral)
         }
 
         override fun visitThrowExpression(throwExpression: FirThrowExpression) {

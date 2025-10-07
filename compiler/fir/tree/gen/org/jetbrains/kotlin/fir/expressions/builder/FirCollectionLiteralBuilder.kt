@@ -17,19 +17,19 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirCollectionLiteralCallImpl
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.impl.FirCollectionLiteralImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
-class FirCollectionLiteralCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
+class FirCollectionLiteralBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var argumentList: FirArgumentList
 
-    override fun build(): FirCollectionLiteralCall {
-        return FirCollectionLiteralCallImpl(
+    override fun build(): FirCollectionLiteral {
+        return FirCollectionLiteralImpl(
             source,
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
@@ -40,9 +40,9 @@ class FirCollectionLiteralCallBuilder : FirCallBuilder, FirAnnotationContainerBu
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildCollectionLiteralCall(init: FirCollectionLiteralCallBuilder.() -> Unit): FirCollectionLiteralCall {
+inline fun buildCollectionLiteral(init: FirCollectionLiteralBuilder.() -> Unit): FirCollectionLiteral {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return FirCollectionLiteralCallBuilder().apply(init).build()
+    return FirCollectionLiteralBuilder().apply(init).build()
 }

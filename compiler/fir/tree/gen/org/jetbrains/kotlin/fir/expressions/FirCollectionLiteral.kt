@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.collectionLiteralCall]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.collectionLiteral]
  */
-abstract class FirCollectionLiteralCall : FirExpression(), FirCall {
+abstract class FirCollectionLiteral : FirExpression(), FirCall {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
@@ -25,11 +25,11 @@ abstract class FirCollectionLiteralCall : FirExpression(), FirCall {
     abstract override val argumentList: FirArgumentList
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitCollectionLiteralCall(this, data)
+        visitor.visitCollectionLiteral(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformCollectionLiteralCall(this, data) as E
+        transformer.transformCollectionLiteral(this, data) as E
 
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
@@ -37,5 +37,5 @@ abstract class FirCollectionLiteralCall : FirExpression(), FirCall {
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCollectionLiteralCall
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCollectionLiteral
 }

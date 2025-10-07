@@ -266,7 +266,7 @@ private fun ConeAmbiguityError.candidatesWithDiagnosticMessages(
 
 private fun AbstractConeResolutionAtom.containsErrorTypeForSuppressingAmbiguityError(): Boolean {
     return when (expression) {
-        is FirCollectionLiteralCall, is FirCallableReferenceAccess, is FirAnonymousFunctionExpression -> false
+        is FirCollectionLiteral, is FirCallableReferenceAccess, is FirAnonymousFunctionExpression -> false
         else -> expression.resolvedType.hasError()
     }
 }

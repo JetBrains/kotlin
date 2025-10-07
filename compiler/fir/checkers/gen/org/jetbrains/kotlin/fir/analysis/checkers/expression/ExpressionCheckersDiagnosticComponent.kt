@@ -155,8 +155,8 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allDoWhileLoopCheckers.check(doWhileLoop, data)
     }
 
-    override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: CheckerContext) {
-        checkers.allCollectionLiteralCallCheckers.check(collectionLiteralCall, data)
+    override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: CheckerContext) {
+        checkers.allCollectionLiteralCheckers.check(collectionLiteral, data)
     }
 
     override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: CheckerContext) {

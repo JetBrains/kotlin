@@ -126,7 +126,7 @@ inline fun buildVarargArgumentsExpressionWithTargets(
 private fun FirAnnotation.targetArgumentExpressions(): List<FirExpression> =
     when (val mapped = argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]) {
         is FirVarargArgumentsExpression -> mapped.arguments
-        is FirCollectionLiteralCall -> mapped.argumentList.arguments
+        is FirCollectionLiteral -> mapped.argumentList.arguments
         else -> listOf(this)
     }
 
@@ -176,7 +176,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
             session,
             expectedArrayElementTypeIfArray
         )
-        is JavaArrayAnnotationArgument -> buildCollectionLiteralCall {
+        is JavaArrayAnnotationArgument -> buildCollectionLiteral {
             val argumentTypeRef = expectedConeType?.let {
                 coneTypeOrNull = it
                 buildResolvedTypeRef {
@@ -218,8 +218,8 @@ internal fun JavaAnnotationArgument.toFirExpression(
         }
     }
 
-    return if (expectedConeType?.lowerBoundIfFlexible()?.isArrayOrPrimitiveArray == true && argument !is FirCollectionLiteralCall) {
-        buildCollectionLiteralCall {
+    return if (expectedConeType?.lowerBoundIfFlexible()?.isArrayOrPrimitiveArray == true && argument !is FirCollectionLiteral) {
+        buildCollectionLiteral {
             coneTypeOrNull = expectedConeType
             argumentList = buildArgumentList {
                 arguments += argument

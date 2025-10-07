@@ -375,7 +375,7 @@ class FirCallCompletionResultsWriterTransformer(
         return transformQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
-    private fun transformArrayLiteralInAnnotation(arrayLiteral: FirCollectionLiteralCall, data: ExpectedArgumentType?): FirStatement {
+    private fun transformArrayLiteralInAnnotation(arrayLiteral: FirCollectionLiteral, data: ExpectedArgumentType?): FirStatement {
         if (arrayLiteral.isResolved) return arrayLiteral
         val expectedArrayType = data?.getExpectedType(arrayLiteral)
         val expectedArrayElementType = expectedArrayType?.arrayElementType()
@@ -393,23 +393,23 @@ class FirCallCompletionResultsWriterTransformer(
         return arrayLiteral
     }
 
-    override fun transformCollectionLiteralCall(
-        collectionLiteralCall: FirCollectionLiteralCall,
+    override fun transformCollectionLiteral(
+        collectionLiteral: FirCollectionLiteral,
         data: ExpectedArgumentType?
     ): FirStatement {
         if (!session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) ||
             insideAnnotationContext
         ) {
-            return transformArrayLiteralInAnnotation(collectionLiteralCall, data)
+            return transformArrayLiteralInAnnotation(collectionLiteral, data)
         }
 
-        data?.argumentReplacements?.get(collectionLiteralCall)?.let { replacement ->
+        data?.argumentReplacements?.get(collectionLiteral)?.let { replacement ->
             return replacement.transform(this, data)
         }
 
-        collectionLiteralCall.transformChildren(this, null)
-        collectionLiteralCall.replaceConeTypeOrNull(ConeErrorType(ConeUnsupportedCollectionLiteralType))
-        return collectionLiteralCall
+        collectionLiteral.transformChildren(this, null)
+        collectionLiteral.replaceConeTypeOrNull(ConeErrorType(ConeUnsupportedCollectionLiteralType))
+        return collectionLiteral
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ExpectedArgumentType?): FirStatement {

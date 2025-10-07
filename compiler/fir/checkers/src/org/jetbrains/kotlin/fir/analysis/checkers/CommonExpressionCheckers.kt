@@ -173,7 +173,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirContextSensitiveResolutionAmbiguityCheckerForEqualities,
     )
 
-    override val collectionLiteralCallCheckers: Set<FirCollectionLiteralCallChecker> = setOf(
+    override val collectionLiteralCheckers: Set<FirCollectionLiteralChecker> = setOf(
         FirUnsupportedArrayLiteralChecker
     )
 

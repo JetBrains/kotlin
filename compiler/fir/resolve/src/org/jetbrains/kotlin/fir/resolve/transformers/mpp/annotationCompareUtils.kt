@@ -72,8 +72,8 @@ private fun FirExpectActualMatchingContext.areAnnotationArgumentsEqual(
 ): Boolean {
     fun List<FirExpression>.unwrapSpreadOperator(): List<FirExpression> {
         return this.flatMap {
-            if (it is FirSpreadArgumentExpression && it.expression is FirCollectionLiteralCall) {
-                (it.expression as FirCollectionLiteralCall).argumentList.arguments
+            if (it is FirSpreadArgumentExpression && it.expression is FirCollectionLiteral) {
+                (it.expression as FirCollectionLiteral).argumentList.arguments
             } else {
                 listOf(it)
             }
@@ -91,15 +91,15 @@ private fun FirExpectActualMatchingContext.areAnnotationArgumentsEqual(
     fun FirVarargArgumentsExpression.isEqualTo(other: FirElement): Boolean {
         return when (other) {
             is FirVarargArgumentsExpression -> argumentsOfArrayAreEqual(this.arguments, other.arguments)
-            is FirCollectionLiteralCall -> argumentsOfArrayAreEqual(this.arguments, other.arguments)
+            is FirCollectionLiteral -> argumentsOfArrayAreEqual(this.arguments, other.arguments)
             else -> false
         }
     }
 
-    fun FirCollectionLiteralCall.isEqualTo(other: FirElement): Boolean {
+    fun FirCollectionLiteral.isEqualTo(other: FirElement): Boolean {
         return when (other) {
             is FirVarargArgumentsExpression -> other.isEqualTo(this)
-            is FirCollectionLiteralCall -> argumentsOfArrayAreEqual(this.arguments, other.arguments)
+            is FirCollectionLiteral -> argumentsOfArrayAreEqual(this.arguments, other.arguments)
             else -> false
         }
     }
@@ -190,8 +190,8 @@ private fun FirExpectActualMatchingContext.areAnnotationArgumentsEqual(
         expression1 is FirEnumEntryDeserializedAccessExpression -> expression1.isEqualTo(expression2)
         expression2 is FirEnumEntryDeserializedAccessExpression -> expression2.isEqualTo(expression1)
 
-        expression1 is FirCollectionLiteralCall -> expression1.isEqualTo(expression2)
-        expression2 is FirCollectionLiteralCall -> expression2.isEqualTo(expression1)
+        expression1 is FirCollectionLiteral -> expression1.isEqualTo(expression2)
+        expression2 is FirCollectionLiteral -> expression2.isEqualTo(expression1)
 
         expression1 is FirVarargArgumentsExpression -> expression1.isEqualTo(expression2)
         expression2 is FirVarargArgumentsExpression -> expression2.isEqualTo(expression1)

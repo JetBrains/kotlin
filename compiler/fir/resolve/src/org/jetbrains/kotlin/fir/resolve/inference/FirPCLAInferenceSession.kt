@@ -276,7 +276,7 @@ class FirPCLAInferenceSession(
         val callSite = callInfo.callSite
         // Annotation calls and collection literals (allowed only inside annotations)
         // should be completed independently since that can't somehow affect PCLA
-        if (callSite is FirAnnotationCall || callSite is FirCollectionLiteralCall) return true
+        if (callSite is FirAnnotationCall || callSite is FirCollectionLiteral) return true
 
         // I'd say that this might be an assertion, but let's do an early return
         if (callSite !is FirResolvable && callSite !is FirVariableAssignment) return false

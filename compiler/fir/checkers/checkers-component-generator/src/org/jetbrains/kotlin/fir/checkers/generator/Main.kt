@@ -172,7 +172,7 @@ fun main(args: Array<String>) {
             alias<FirWhileLoop>("WhileLoopChecker")
             alias<FirThrowExpression>("ThrowExpressionChecker")
             alias<FirDoWhileLoop>("DoWhileLoopChecker")
-            alias<FirCollectionLiteralCall>("CollectionLiteralCallChecker")
+            alias<FirCollectionLiteral>("CollectionLiteralChecker")
             alias<FirClassReferenceExpression>("ClassReferenceExpressionChecker")
             alias<FirInaccessibleReceiverExpression>("InaccessibleReceiverChecker")
         }

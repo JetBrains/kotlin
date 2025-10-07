@@ -64,7 +64,7 @@ class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionCo
     }
 
     private fun FirExpression.unwrapArguments(): List<FirExpression> = when (this) {
-        is FirCollectionLiteralCall -> arguments
+        is FirCollectionLiteral -> arguments
         is FirVarargArgumentsExpression -> arguments
         else -> emptyList()
     }

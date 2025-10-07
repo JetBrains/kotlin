@@ -3612,7 +3612,7 @@ open class PsiRawFirBuilder(
                     arguments += innerExpression.toFirExpression("Incorrect collection literal argument")
                 }
             }
-            return buildCollectionLiteralCall {
+            return buildCollectionLiteral {
                 source = expression.toFirSourceElement()
                 argumentList = arguments
             }

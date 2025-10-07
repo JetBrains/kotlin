@@ -1974,29 +1974,29 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             return (this as? ResolutionMode.WithExpectedType)?.arrayLiteralPosition != null
         }
 
-    override fun transformCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: ResolutionMode): FirStatement =
-        whileAnalysing(session, collectionLiteralCall) {
+    override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement =
+        whileAnalysing(session, collectionLiteral) {
             when {
                 // if the feature is not supported, OR collection literal is in the annotation, use old resolution
                 !session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) ||
                         enableArrayOfCallTransformation ->
-                    transformCollectionLiteralInAnnotation(collectionLiteralCall, data)
+                    transformCollectionLiteralInAnnotation(collectionLiteral, data)
                 else -> {
-                    collectionLiteralCall.transformAnnotations(transformer, data)
-                    collectionLiteralCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+                    collectionLiteral.transformAnnotations(transformer, data)
+                    collectionLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
                     if (data != ResolutionMode.ContextDependent) {
                         components.syntheticCallGenerator.resolveCollectionLiteralExpressionWithSyntheticOuterCall(
-                            collectionLiteralCall, data as? ResolutionMode.WithExpectedType, resolutionContext
+                            collectionLiteral, data as? ResolutionMode.WithExpectedType, resolutionContext
                         )
                     } else {
-                        collectionLiteralCall
+                        collectionLiteral
                     }
                 }
             }
         }
 
     private fun transformCollectionLiteralInAnnotation(
-        collectionLiteral: FirCollectionLiteralCall,
+        collectionLiteral: FirCollectionLiteral,
         data: ResolutionMode,
     ): FirStatement {
         return when {

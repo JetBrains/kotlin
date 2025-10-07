@@ -194,7 +194,7 @@ class FirSyntheticCallGenerator(
     }
 
     fun generateSyntheticArrayOfCall(
-        arrayLiteral: FirCollectionLiteralCall,
+        arrayLiteral: FirCollectionLiteral,
         expectedType: ConeKotlinType,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
@@ -252,7 +252,7 @@ class FirSyntheticCallGenerator(
     }
 
     fun resolveCollectionLiteralExpressionWithSyntheticOuterCall(
-        collectionLiteral: FirCollectionLiteralCall,
+        collectionLiteral: FirCollectionLiteral,
         expectedTypeData: ResolutionMode.WithExpectedType?,
         context: ResolutionContext,
     ): FirExpression {
@@ -393,7 +393,7 @@ class FirSyntheticCallGenerator(
                     session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
                             && source?.kind == KtFakeSourceElementKind.OperatorOfCall
                 ) {
-                    "Expected ${FirFunctionCall::class.simpleName} originating from ${FirCollectionLiteralCall::class.simpleName}"
+                    "Expected ${FirFunctionCall::class.simpleName} originating from ${FirCollectionLiteral::class.simpleName}"
                 }
             }
             else -> {

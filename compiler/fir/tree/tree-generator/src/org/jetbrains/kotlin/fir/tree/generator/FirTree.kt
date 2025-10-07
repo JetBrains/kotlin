@@ -323,7 +323,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("extensionReceiver", expression, nullable = true, withReplace = true, withTransform = true)
     }
 
-    val collectionLiteralCall: Element by element(Expression) {
+    val collectionLiteral: Element by element(Expression) {
         parent(expression)
         parent(call)
     }

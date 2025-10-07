@@ -148,7 +148,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             additionalImports(emptyArgumentListType, emptyAnnotationArgumentMappingType, firImplicitTypeWithoutSourceType)
         }
 
-        builder(collectionLiteralCall) {
+        builder(collectionLiteral) {
             parents += callBuilder
         }
 

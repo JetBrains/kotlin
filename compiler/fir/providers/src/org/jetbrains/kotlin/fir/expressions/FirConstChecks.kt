@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
@@ -252,8 +251,8 @@ private class FirConstCheckVisitor(
         return ConstantArgumentKind.VALID_CONST
     }
 
-    override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: Nothing?): ConstantArgumentKind {
-        for (exp in collectionLiteralCall.arguments) {
+    override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: Nothing?): ConstantArgumentKind {
+        for (exp in collectionLiteral.arguments) {
             exp.accept(this, data).ifNotValidConst { return it }
         }
         return ConstantArgumentKind.VALID_CONST

@@ -238,7 +238,7 @@ class PostponedArgumentsAnalyzer(
                 topLevelCandidate,
             )
 
-        atom.containingCallCandidate.setUpdatedCollectionLiteralCall(originalExpression, newExpression)
+        atom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, newExpression)
 
         ArgumentCheckingProcessor.resolveArgumentExpression(
             topLevelCandidate,

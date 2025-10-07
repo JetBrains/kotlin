@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralCall
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -242,7 +242,7 @@ class Candidate(
         setUpdatedArgument(old, new)
     }
 
-    fun setUpdatedCollectionLiteralCall(old: FirCollectionLiteralCall, new: FirExpression) {
+    fun setUpdatedCollectionLiteral(old: FirCollectionLiteral, new: FirExpression) {
         setUpdatedArgument(old, new)
     }
 

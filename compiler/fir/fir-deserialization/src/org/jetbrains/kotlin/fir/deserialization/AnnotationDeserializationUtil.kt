@@ -167,7 +167,7 @@ private fun resolveValue(session: FirSession, value: ProtoBuf.Annotation.Argumen
             enumClassId = nameResolver.getClassId(value.classId)
             enumEntryName = nameResolver.getName(value.enumValueId)
         }
-        ARRAY -> buildCollectionLiteralCall {
+        ARRAY -> buildCollectionLiteral {
             // For the array literal type, we use `Array<Any>` as an approximation. Later FIR2IR will calculate a more precise
             // type. See KT-62598.
             // FIR provides no guarantees on having the exact type of deserialized array literals in annotations, including

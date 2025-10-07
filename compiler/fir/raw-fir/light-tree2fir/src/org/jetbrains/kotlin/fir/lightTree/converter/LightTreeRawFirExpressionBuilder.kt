@@ -1163,7 +1163,7 @@ class LightTreeRawFirExpressionBuilder(
         val arguments = buildArgumentList {
             arguments += firExpressionList
         }
-        return buildCollectionLiteralCall {
+        return buildCollectionLiteral {
             source = expression.toFirSourceElement()
             argumentList = arguments
         }
