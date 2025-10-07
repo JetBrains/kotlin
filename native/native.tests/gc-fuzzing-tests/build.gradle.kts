@@ -23,7 +23,6 @@ sourceSets {
 projectTests {
     nativeTestTask(
         "test",
-        tag = null,
         allowParallelExecution = false, // some of the tests may spawn quite a lot of threads
     ) {
         // nativeTest sets workingDir to rootDir so here we need to override it

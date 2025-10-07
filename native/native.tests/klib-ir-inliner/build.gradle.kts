@@ -40,7 +40,6 @@ projectTests {
 
     nativeTestTask(
         "test",
-        null,
         allowParallelExecution = true,
         requirePlatformLibs = true,
     ) {

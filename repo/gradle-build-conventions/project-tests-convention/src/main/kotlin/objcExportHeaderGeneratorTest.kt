@@ -24,6 +24,7 @@ import java.io.File
  */
 fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
     taskName: String,
+    tag: String? = null,
     requirePlatformLibs: Boolean = false,
     configure: Test.() -> Unit = {}
 ) : TaskProvider<Test> {
@@ -79,11 +80,9 @@ fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
             }
         }
 
-    val testTags = project.findProperty("kotlin.native.tests.tags")?.toString()
-
     return nativeTestTask(
         taskName = taskName,
-        tag = "$testTags|none()",
+        tag = tag,
         requirePlatformLibs = requirePlatformLibs,
     ) {
         /**

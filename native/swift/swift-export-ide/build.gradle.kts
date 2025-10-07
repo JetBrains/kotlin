@@ -38,7 +38,7 @@ sourceSets {
 }
 
 projectTests {
-    nativeTestTask("test", null) {
+    nativeTestTask("test") {
         dependsOn(":dist", ":kotlin-native:distInvalidateStaleCaches")
     }
 

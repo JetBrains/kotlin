@@ -34,7 +34,7 @@ sourceSets {
 }
 
 projectTests {
-    nativeTestTask("test", null, requirePlatformLibs = true) {
+    nativeTestTask("test", requirePlatformLibs = true) {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")
     }
 }

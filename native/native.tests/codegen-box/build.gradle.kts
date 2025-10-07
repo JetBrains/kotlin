@@ -26,10 +26,7 @@ sourceSets {
 projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
 
-    val testTags = findProperty("kotlin.native.tests.tags")?.toString()
-    // Note: arbitrary JUnit tag expressions can be used in this property.
-    // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
-    nativeTestTask("test", testTags) {
+    nativeTestTask("test") {
         extensions.configure<TestInputsCheckExtension> {
             isNative.set(true)
             useXcode.set(OperatingSystem.current().isMacOsX)
