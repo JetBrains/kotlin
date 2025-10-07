@@ -45,7 +45,7 @@ internal class WasmVarargExpressionLowering(
         }
 
         val isUnsigned
-            get() = arrayClass.symbol in context.wasmSymbols.unsignedTypesToUnsignedArrays.values
+            get() = arrayClass.symbol in context.irBuiltIns.unsignedTypesToUnsignedArrays.values
 
         val primaryConstructor: IrConstructor
             get() =

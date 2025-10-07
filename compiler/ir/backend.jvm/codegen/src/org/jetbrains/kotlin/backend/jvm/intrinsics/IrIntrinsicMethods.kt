@@ -137,7 +137,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     }
 
     private fun intrinsicsThatShouldHaveBeenLowered() =
-        (symbols.primitiveTypesToPrimitiveArrays.map { (_, primitiveClassSymbol) ->
+        (irBuiltIns.primitiveTypesToPrimitiveArrays.map { (_, primitiveClassSymbol) ->
             val name = primitiveClassSymbol.owner.name.asString()
             // IntArray -> intArrayOf
             val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"
@@ -191,7 +191,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         }
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
-        symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
+        irBuiltIns.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
                 arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
 
     private fun atomicIntrinsicsForJdk8(): List<Pair<Key, IntrinsicMethod>> =
