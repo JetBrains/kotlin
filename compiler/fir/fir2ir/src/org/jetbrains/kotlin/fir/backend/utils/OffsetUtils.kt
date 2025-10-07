@@ -141,7 +141,7 @@ internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
         endOffset = UNDEFINED_OFFSET
     } else {
         startOffset = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
-        endOffset = source?.endOffset ?: UNDEFINED_OFFSET
+        endOffset = source?.endOffset ?: calleeReference.source?.endOffset ?: UNDEFINED_OFFSET
     }
     return f(startOffset, endOffset)
 }
