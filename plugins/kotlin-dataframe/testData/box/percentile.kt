@@ -29,40 +29,44 @@ fun box(): String {
     )
 
     // scenario #0: all numerical columns
-    val res0 = personsDf.percentile(percentile = 30.0)
-    res0.df().compareSchemas()
+    personsDf.percentile(percentile = 30.0).let { row ->
+        row.df().compareSchemas()
 
-    val percentile01: Double? = res0.age
-    val percentile02: Double? = res0.weight
-    val percentile03: Double? = res0.yearsToRetirement
-    val percentile04: Double? = res0.workExperienceYears
-    val percentile05: Double? = res0.dependentsCount
-    val percentile06: Double? = res0.annualIncome
-    val percentile07: String? = res0.name
-    val percentile08: String? = res0.city
-    val percentile09: String? = res0.height
+        val percentile01: Double? = row.age
+        val percentile02: Double? = row.weight
+        val percentile03: Double? = row.yearsToRetirement
+        val percentile04: Double? = row.workExperienceYears
+        val percentile05: Double? = row.dependentsCount
+        val percentile06: Double? = row.annualIncome
+        val percentile07: String? = row.name
+        val percentile08: String? = row.city
+        val percentile09: String? = row.height
+    }
 
     // scenario #1: particular column
-    val res1 = personsDf.percentileFor(percentile = 30.0) { age }
-    res1.df().compareSchemas()
+    personsDf.percentileFor(percentile = 30.0) { age }.let { row ->
+        row.df().compareSchemas()
 
-    val percentile11: Double? = res1.age
+        val percentile11: Double? = row.age
+    }
 
     // scenario #1.1: particular column with converted type
-    val res11 = personsDf.percentileFor(percentile = 30.0) { dependentsCount }
-    res11.df().compareSchemas()
+    personsDf.percentileFor(percentile = 30.0) { dependentsCount }.let { row ->
+        row.df().compareSchemas()
 
-    val percentile111: Double? = res11.dependentsCount
+        val percentile111: Double? = row.dependentsCount
+    }
 
     // scenario #2: percentile of values per columns separately
-    val res3 = personsDf.percentileFor<_, String>(percentile = 30.0){ name and weight and workExperienceYears and dependentsCount and annualIncome }
-    res3.df().compareSchemas()
+    personsDf.percentileFor<_, String>(percentile = 30.0) { name and weight and workExperienceYears and dependentsCount and annualIncome }.let { row ->
+        row.df().compareSchemas()
 
-    val percentile31: String? = res3.name
-    val percentile32: Double? = res3.weight
-    val percentile33: Double? = res3.workExperienceYears
-    val percentile34: Double? = res3.dependentsCount
-    val percentile35: Double? = res3.annualIncome
+        val percentile31: String? = row.name
+        val percentile32: Double? = row.weight
+        val percentile33: Double? = row.workExperienceYears
+        val percentile34: Double? = row.dependentsCount
+        val percentile35: Double? = row.annualIncome
+    }
 
     return "OK"
 }

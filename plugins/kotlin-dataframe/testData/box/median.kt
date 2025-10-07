@@ -29,40 +29,44 @@ fun box(): String {
     )
 
     // scenario #0: all numerical columns
-    val res0 = personsDf.median()
-    res0.df().compareSchemas()
+    personsDf.median().let { row ->
+        row.df().compareSchemas()
 
-    val median01: Double? = res0.age
-    val median02: Double? = res0.weight
-    val median03: Double? = res0.yearsToRetirement
-    val median04: Double? = res0.workExperienceYears
-    val median05: Double? = res0.dependentsCount
-    val median06: Double? = res0.annualIncome
-    val median07: String? = res0.name
-    val median08: String? = res0.city
-    val median09: String? = res0.height
+        val median01: Double? = row.age
+        val median02: Double? = row.weight
+        val median03: Double? = row.yearsToRetirement
+        val median04: Double? = row.workExperienceYears
+        val median05: Double? = row.dependentsCount
+        val median06: Double? = row.annualIncome
+        val median07: String? = row.name
+        val median08: String? = row.city
+        val median09: String? = row.height
+    }
 
     // scenario #1: particular column
-    val res1 = personsDf.medianFor { age }
-    res1.df().compareSchemas()
+    personsDf.medianFor { age }.let { row ->
+        row.df().compareSchemas()
 
-    val median11: Double? = res1.age
+        val median11: Double? = row.age
+    }
 
     // scenario #1.1: particular column with converted type
-    val res11 = personsDf.medianFor { dependentsCount }
-    res11.df().compareSchemas()
+    personsDf.medianFor { dependentsCount }.let { row ->
+        row.df().compareSchemas()
 
-    val median111: Double? = res11.dependentsCount
+        val median111: Double? = row.dependentsCount
+    }
 
     // scenario #2: median of values per columns separately
-    val res3 = personsDf.medianFor<_, String> { name and weight and workExperienceYears and dependentsCount and annualIncome }
-    res3.df().compareSchemas()
+    personsDf.medianFor<_, String> { name and weight and workExperienceYears and dependentsCount and annualIncome }.let { row ->
+        row.df().compareSchemas()
 
-    val median31: String? = res3.name
-    val median32: Double? = res3.weight
-    val median33: Double? = res3.workExperienceYears
-    val median34: Double? = res3.dependentsCount
-    val median35: Double? = res3.annualIncome
+        val median31: String? = row.name
+        val median32: Double? = row.weight
+        val median33: Double? = row.workExperienceYears
+        val median34: Double? = row.dependentsCount
+        val median35: Double? = row.annualIncome
+    }
 
     return "OK"
 }

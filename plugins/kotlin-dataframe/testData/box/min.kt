@@ -29,40 +29,44 @@ fun box(): String {
     )
 
     // scenario #0: all numerical columns
-    val res0 = personsDf.min()
-    res0.df().compareSchemas()
+    personsDf.min().let { row ->
+        row.df().compareSchemas()
 
-    val min01: Int? = res0.age
-    val min02: Double? = res0.weight
-    val min03: Int? = res0.yearsToRetirement
-    val min04: Short? = res0.workExperienceYears
-    val min05: Byte? = res0.dependentsCount
-    val min06: Long? = res0.annualIncome
-    val min07: String? = res0.name
-    val min08: String? = res0.city
-    val min09: String? = res0.height
+        val min01: Int? = row.age
+        val min02: Double? = row.weight
+        val min03: Int? = row.yearsToRetirement
+        val min04: Short? = row.workExperienceYears
+        val min05: Byte? = row.dependentsCount
+        val min06: Long? = row.annualIncome
+        val min07: String? = row.name
+        val min08: String? = row.city
+        val min09: String? = row.height
+    }
 
     // scenario #1: particular column
-    val res1 = personsDf.minFor { age }
-    res1.df().compareSchemas()
+    personsDf.minFor { age }.let { row ->
+        row.df().compareSchemas()
 
-    val min11: Int? = res1.age
+        val min11: Int? = row.age
+    }
 
     // scenario #1.1: particular column with converted type
-    val res11 = personsDf.minFor { dependentsCount }
-    res11.df().compareSchemas()
+    personsDf.minFor { dependentsCount }.let { row ->
+        row.df().compareSchemas()
 
-    val min111: Byte? = res11.dependentsCount
+        val min111: Byte? = row.dependentsCount
+    }
 
     // scenario #2: min of values per columns separately
-    val res3 = personsDf.minFor<_, String> { name and weight and workExperienceYears and dependentsCount and annualIncome }
-    res3.df().compareSchemas()
+    personsDf.minFor<_, String> { name and weight and workExperienceYears and dependentsCount and annualIncome }.let { row ->
+        row.df().compareSchemas()
 
-    val min31: String? = res3.name
-    val min32: Double? = res3.weight
-    val min33: Short? = res3.workExperienceYears
-    val min34: Byte? = res3.dependentsCount
-    val min35: Long? = res3.annualIncome
+        val min31: String? = row.name
+        val min32: Double? = row.weight
+        val min33: Short? = row.workExperienceYears
+        val min34: Byte? = row.dependentsCount
+        val min35: Long? = row.annualIncome
+    }
 
     return "OK"
 }
