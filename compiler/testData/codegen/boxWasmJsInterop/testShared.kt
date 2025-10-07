@@ -6,69 +6,76 @@
 
 // FILE: shared.kt
 
+fun box(): String {
+    val res = testJsReferences()
+    if (res != "OK") return res
+
+    return testVirtualCalls()
+}
+
 abstract class MyClassBase {
     abstract fun foo(): Int
 }
 
 class MyClass(val a: Int, val b: Int) : Function2<Int, Int, Int>, MyClassBase() {
     override fun invoke(p1: Int, p2: Int): Int = p1 - a + p2 * b
-
     override fun foo() = 5
 }
 
-var myObj = MyClass(1, 2)
-
-fun box(): String {
-    testJsReferences()
+fun testVirtualCalls() : String {
+    val myObj : MyClass = MyClass(1, 2)
     val myObjAsBase: MyClassBase = myObj
     val myObjAsFunc: Function2<Int, Int, Int> = myObj
-    return if (myObj.a == 1 && myObjAsFunc.invoke(3, 4) == 10 && myObjAsBase.foo() == 5) "OK" else "Fail"
+
+    if (myObj.a != 1) return "Fail: get field"
+    if (myObjAsFunc.invoke(3, 4) != 10) return "Fail: interface call"
+    if (myObjAsBase.foo() != 5) return "Fail: virtual method call"
+
+    return "OK"
 }
 
 class C(val x: Int)
 
-@JsExport
-fun makeC(x: Int): JsReference<C> = C(x).toJsReference()
-
-@JsExport
-fun getX(c: JsReference<C>): Int = c.get().x
-
-var someUnsharedRef : JsAny? = null
-var someKotlinRef : Any? = null
+var unsharedRef : JsAny? = null
+var shareableRef : JsShareableAny? = null
+var kotlinRef : Any? = null
 var someInt : Int = 0
 
-@JsExport
-fun testCurrentState(x: JsAny): JsAny {
-    someUnsharedRef = x
-    someKotlinRef = x
-    var kotlinRef = x
-    someInt = x.hashCode() + kotlinRef.hashCode()
-    return x
-}
-
-fun testCurrentState() {
-    val c = C(2)
-    println(c)
-    println(c as Any)
-}
-
-fun testJsReferences() {
+fun testJsReferences(): String {
     val c = C(1)
-    val ref: JsReference<C> = c.toJsReference()
-    // TDOO test casts to JsAny, to Any, to JsAny then To Any, and back  all 3 cases
-    someKotlinRef = ref // is it JsExternalBox or c???
-    someUnsharedRef = ref // is there any boxing, or the same ref?
-    val hashCode = ref.hashCode() // is it external or Kotlin hashCode???
-}
+    val jsReference: JsReference<C> = c.toJsReference()
+    if (jsReference is C)
+        return "Fail: JsReference is not Kotlin type"
+//    if (c !== (ref as C)) // currently does not work due to WasmBaseTypeOperatorTransformer.generateIsSubClass()
+//        return "Fail: conversion JsReference -> KotlinType"
 
-// FILE: entry.mjs
+    // test JsReference -> Any conversion
+    kotlinRef = jsReference
+    if (kotlinRef !== c)
+        return "Fail: Any -> JsReference -> Any conversion"
 
-import {
-    makeC,
-    getX,
-} from "./index.mjs"
+    // test Any -> JsAny -> JsShareableAny -> Any casts
+    unsharedRef = (c as Any) as JsAny
+    shareableRef = unsharedRef as JsShareableAny
+    if (jsReference !== shareableRef)
+        return "Fail: conversion Any -> JsAny -> JsShareableAny"
+    if (c !== (shareableRef as Any))
+        return "Fail: conversion Any -> JsAny -> JsShareableAny -> Any"
+//    if (c !== (someShareableRef as C))  // currently does not work due to WasmBaseTypeOperatorTransformer.generateIsSubClass()
+//        return "Fail: conversion JsShareableAny -> KotlinType"
 
-const c = makeC(300);
-if (getX(c) !== 300) {
-    throw "Fail 1";
+    // test JsReference -> JsAny conversion and back
+    unsharedRef = jsReference
+    if (jsReference !== (unsharedRef as JsShareableAny))
+        return "Fail: conversion JsReference->JsAny->JsShareableAny"
+
+    // test hash codes
+    if (c.hashCode() != jsReference.hashCode())
+        return "Fail: JsReference.hashCode"
+    if (c.hashCode() != shareableRef.hashCode())
+        return "Fail: JsShareableAny.hashCode"
+    if (c.hashCode() != unsharedRef.hashCode())
+        return "Fail: (jsReference as JsAny).hashCode"
+
+    return "OK"
 }
