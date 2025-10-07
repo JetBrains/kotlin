@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// LANGUAGE: -ForbidBridgesConflictingWithInheritedMethodsInJvmCode
 // FILE: Base.java
 import org.jetbrains.annotations.NotNull;
 
@@ -30,10 +31,10 @@ abstract class DerivedImpl : Derived, Impl() {
 }
 
 fun test() {
-    val implDerived: ImplDerived = <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>object : ImplDerived() {
+    val implDerived: ImplDerived = <!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING!>object : ImplDerived() {
         override fun foo(name: String?): Derived = this
     }<!>
-    val derivedImpl: DerivedImpl = <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>object : DerivedImpl() {
+    val derivedImpl: DerivedImpl = <!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING!>object : DerivedImpl() {
         override fun foo(name: String?): Derived = this
     }<!>
     implDerived.foo("")

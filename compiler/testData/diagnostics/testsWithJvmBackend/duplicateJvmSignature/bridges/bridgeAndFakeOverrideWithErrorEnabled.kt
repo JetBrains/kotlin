@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LANGUAGE: -ForbidBridgesConflictingWithInheritedMethodsInJvmCode
+// LANGUAGE: +ForbidBridgesConflictingWithInheritedMethodsInJvmCode
 // ISSUE: KT-13712
 
 interface Restrict
@@ -18,7 +18,7 @@ open class Foo {
     }
 }
 
-<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING, ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_WARNING!>class Bar : Foo(), RestrictedGeneric<Bar>{
+<!ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_ERROR, ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD_ERROR!>class Bar : Foo(), RestrictedGeneric<Bar>{
     override fun accept(obj: Bar): Int = 0
     override fun acceptOpen(obj: Bar) {
     }

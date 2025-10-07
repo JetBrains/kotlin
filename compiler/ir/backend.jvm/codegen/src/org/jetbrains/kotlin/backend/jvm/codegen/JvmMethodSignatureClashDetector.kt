@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.chooseFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
@@ -90,14 +91,6 @@ class JvmMethodSignatureClashDetector(
 
         val conflictingJvmDeclarationsData = JvmIrConflictingDeclarationsData(signature, declarations)
 
-        fun reportConflictingInheritedJvmDeclarations() =
-            reportJvmSignatureClash(
-                diagnosticReporter,
-                JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
-                listOf(classCodegen.irClass),
-                conflictingJvmDeclarationsData
-            )
-
         when {
             realMethodsCount == 0 && fakeOverridesCount == 1 && specialOverridesCount == 1 -> {
                 val bridge = declarations.single { it.isSpecialOverride() }
@@ -106,13 +99,26 @@ class JvmMethodSignatureClashDetector(
                 if (bridgeCallee is IrSimpleFunction &&
                     !getOverriddenFunctions(bridgeCallee).containsAll(overriddenByFakeOverrideWithSignature(signature))
                 ) {
-                    reportConflictingInheritedJvmDeclarations()
+                    val diagnosticFactory = JvmBackendErrors.ACCIDENTAL_OVERRIDE_BY_BRIDGE_METHOD.chooseFactory(
+                        diagnosticReporter.at(classCodegen.irClass)
+                    )
+                    reportJvmSignatureClash(
+                        diagnosticReporter,
+                        diagnosticFactory,
+                        listOf(classCodegen.irClass),
+                        conflictingJvmDeclarationsData,
+                    )
                 }
             }
 
             realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
                 if (classCodegen.irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
-                    reportConflictingInheritedJvmDeclarations()
+                    reportJvmSignatureClash(
+                        diagnosticReporter,
+                        JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
+                        listOf(classCodegen.irClass),
+                        conflictingJvmDeclarationsData
+                    )
                 }
 
             fakeOverridesCount == 0 && specialOverridesCount == 0 -> {

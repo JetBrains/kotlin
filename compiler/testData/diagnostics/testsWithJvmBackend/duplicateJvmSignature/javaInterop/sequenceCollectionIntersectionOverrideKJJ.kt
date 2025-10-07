@@ -1,4 +1,5 @@
 // JDK_KIND: FULL_JDK_21
+// LANGUAGE: -ForbidBridgesConflictingWithInheritedMethodsInJvmCode
 // WITH_STDLIB
 // ISSUE: KT-13712
 
