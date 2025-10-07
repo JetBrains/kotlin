@@ -205,7 +205,11 @@ internal class BtaImplGenerator(
                 when {
                     type.classifier in enumNameAccessors -> {
                         add(maybeGetNullabilitySign(argument))
-                        add(".let { %T.entries.first { entry -> entry.stringValue == it } }", argumentTypeParameter.copy(nullable = false))
+                        add(
+                            $$".let { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                            argumentTypeParameter.copy(nullable = false),
+                            MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+                        )
                     }
                     argument.valueType is IntType -> {
                         add(maybeGetNullabilitySign(argument))

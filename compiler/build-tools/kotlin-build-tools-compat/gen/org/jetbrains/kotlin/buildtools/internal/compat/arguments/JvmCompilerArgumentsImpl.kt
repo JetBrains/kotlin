@@ -295,7 +295,7 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
     try { this[JAVA_PARAMETERS] = arguments.javaParameters } catch (_: NoSuchMethodError) {  }
     try { this[JDK_HOME] = arguments.jdkHome } catch (_: NoSuchMethodError) {  }
     try { this[JVM_DEFAULT] = arguments.jvmDefaultStable } catch (_: NoSuchMethodError) {  }
-    try { this[JVM_TARGET] = arguments.jvmTarget?.let { JvmTarget.entries.first { entry -> entry.stringValue == it } } } catch (_: NoSuchMethodError) {  }
+    try { this[JVM_TARGET] = arguments.jvmTarget?.let { JvmTarget.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
     try { this[NO_JDK] = arguments.noJdk } catch (_: NoSuchMethodError) {  }
     try { this[NO_REFLECT] = arguments.noReflect } catch (_: NoSuchMethodError) {  }
