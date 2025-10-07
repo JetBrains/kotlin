@@ -937,14 +937,14 @@ class JvmSymbols(
     val arraysClass: IrClassSymbol =
         createClass(FqName("java.util.Arrays")) { irClass ->
             for (type in listOf(
-                booleanArrayType,
-                byteArrayType,
-                charArrayType,
-                shortArrayType,
-                intArrayType,
-                longArrayType,
-                floatArrayType,
-                doubleArrayType,
+                irBuiltIns.booleanArray.defaultType,
+                irBuiltIns.byteArray.defaultType,
+                irBuiltIns.charArray.defaultType,
+                irBuiltIns.shortArray.defaultType,
+                irBuiltIns.intArray.defaultType,
+                irBuiltIns.longArray.defaultType,
+                irBuiltIns.floatArray.defaultType,
+                irBuiltIns.doubleArray.defaultType,
                 arrayOfAnyNType
             )) {
                 irClass.addArraysCopyOfFunction(type)
