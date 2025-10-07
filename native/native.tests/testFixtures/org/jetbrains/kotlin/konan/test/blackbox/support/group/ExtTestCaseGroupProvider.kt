@@ -198,8 +198,10 @@ private class ExtTestDataFile(
         }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isStack()`
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
+        /* TODO(KT-81518): restore the directive handling.
         if (!structure.directives.contains(WITH_PLATFORM_LIBS))
             args += "-no-default-libs"
+        */
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
             .orEmpty().flatMap { it.split(" ") }
             .map { it.replace("\$generatedSourcesDir", testDataFileSettings.generatedSourcesDir.absolutePath) }
