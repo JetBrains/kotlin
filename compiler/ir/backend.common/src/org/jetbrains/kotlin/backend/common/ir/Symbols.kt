@@ -30,8 +30,6 @@ import kotlin.getValue
 
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(irBuiltIns) {
-    val iterator: IrClassSymbol = irBuiltIns.iteratorClass
-
     val charSequence: IrClassSymbol = irBuiltIns.charSequenceClass
     val string: IrClassSymbol = irBuiltIns.stringClass
 

@@ -109,7 +109,7 @@ internal class HeaderProcessor(
     fun extractHeader(variable: IrVariable): ForLoopHeader? {
         // Verify the variable type is a subtype of Iterator<*>.
         assert(variable.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR)
-        if (!variable.type.isSubtypeOfClass(symbols.iterator)) {
+        if (!variable.type.isSubtypeOfClass(context.irBuiltIns.iteratorClass)) {
             return null
         }
 
