@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.lifetime
 
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
+
 /**
  * An Analysis API entity with a *lifetime* bound to the [KaSession][org.jetbrains.kotlin.analysis.api.KaSession] where the entity was
  * created.
@@ -14,6 +16,7 @@ package org.jetbrains.kotlin.analysis.api.lifetime
  *
  * See the documentation for [KaSession][org.jetbrains.kotlin.analysis.api.KaSession] to find out more about lifetime management.
  */
+@KaExtensibleApi
 public interface KaLifetimeOwner {
     /**
      * The [KaLifetimeToken] which determines the lifetime of the lifetime owner.
