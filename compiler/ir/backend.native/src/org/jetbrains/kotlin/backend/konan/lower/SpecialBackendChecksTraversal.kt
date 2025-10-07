@@ -744,7 +744,7 @@ private fun BackendChecker.checkCanMapCalleeFunctionParameter(
         classifier?.isClassWithFqName(InteropFqNames.cValues.toUnsafe()) == true || // Note: this should not be accepted, but is required for compatibility
                 classifier?.isClassWithFqName(InteropFqNames.cValuesRef.toUnsafe()) == true -> return
 
-        classifier == symbols.string && (variadic || parameter?.isCStringParameter() == true) -> {
+        classifier == irBuiltIns.stringClass && (variadic || parameter?.isCStringParameter() == true) -> {
             if (variadic && isObjCMethod) {
                 reportError(argument, "Passing String as variadic Objective-C argument is ambiguous; " +
                         "cast it to NSString or pass with '.cstr' as C string")
@@ -752,7 +752,7 @@ private fun BackendChecker.checkCanMapCalleeFunctionParameter(
             }
         }
 
-        classifier == symbols.string && parameter?.isWCStringParameter() == true -> return
+        classifier == irBuiltIns.stringClass && parameter?.isWCStringParameter() == true -> return
 
         else -> checkCanMapFunctionParameterType(type, variadic = variadic, location = TypeLocation.FunctionArgument(argument))
     }

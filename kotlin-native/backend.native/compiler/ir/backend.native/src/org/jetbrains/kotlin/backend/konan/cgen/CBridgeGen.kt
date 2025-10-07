@@ -835,12 +835,12 @@ private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
         classifier?.isClassWithFqName(InteropFqNames.cValues.toUnsafe()) == true || // Note: this should not be accepted, but is required for compatibility
                 classifier?.isClassWithFqName(InteropFqNames.cValuesRef.toUnsafe()) == true -> CValuesRefArgumentPassing(type)
 
-        classifier == symbols.string && (variadic || parameter?.isCStringParameter() == true) -> {
+        classifier == irBuiltIns.stringClass && (variadic || parameter?.isCStringParameter() == true) -> {
             require(!variadic || !isObjCMethod) { stubs.renderCompilerError(argument) }
             CStringArgumentPassing()
         }
 
-        classifier == symbols.string && parameter?.isWCStringParameter() == true ->
+        classifier == irBuiltIns.stringClass && parameter?.isWCStringParameter() == true ->
             WCStringArgumentPassing()
 
         else -> state.mapFunctionParameterType(

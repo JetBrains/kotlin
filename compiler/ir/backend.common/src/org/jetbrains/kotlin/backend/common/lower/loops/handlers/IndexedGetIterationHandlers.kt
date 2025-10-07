@@ -150,8 +150,8 @@ internal class StringIterationHandler(context: CommonBackendContext) : CharSeque
         expression.type.isString()
 
     override val IrType.sizePropertyGetter: IrSimpleFunction
-        get() = context.symbols.string.getPropertyGetter("length")!!.owner
+        get() = context.irBuiltIns.stringClass.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction: IrSimpleFunction
-        get() = context.symbols.string.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
+        get() = context.irBuiltIns.stringClass.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }
