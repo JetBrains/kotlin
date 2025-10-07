@@ -72,7 +72,7 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
         .withType(InternalKotlinTarget::class.java)
         .matching { kotlinTarget ->
             when (kotlinTarget) {
-                is KotlinNativeTarget -> kotlinTarget.crossCompilationPublishable
+                is KotlinNativeTarget -> kotlinTarget.publishableWithFallback
                 else -> kotlinTarget.publishable
             }
         }

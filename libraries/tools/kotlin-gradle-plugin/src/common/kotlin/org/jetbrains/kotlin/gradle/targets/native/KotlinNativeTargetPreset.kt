@@ -138,9 +138,9 @@ internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSuppor
         else -> project.future { true }
     }
 
-// The same as `KotlinNativeTarget.publishable`, but with a fallback to `enabledOnCurrentHostForKlibCompilation`
+// KT-81134 with a fallback to `enabledOnCurrentHostForKlibCompilation`
 @Suppress("DEPRECATION")
-internal val KotlinNativeTarget.crossCompilationPublishable: Boolean
+internal val KotlinNativeTarget.publishableWithFallback: Boolean
     get() = crossCompilationOnCurrentHostSupported.lenient.getOrNull()
         ?: konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
 
