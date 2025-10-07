@@ -40,10 +40,6 @@ object FirThreadUnsafeCachesFactory : FirCachesFactory() {
 
     override fun <V> createPossiblySoftLazyValue(createValue: () -> V): FirLazyValue<V> =
         createLazyValue(createValue)
-
-    @PerformanceWise
-    override val isThreadSafe: Boolean
-        get() = false
 }
 
 @Suppress("UNCHECKED_CAST")
