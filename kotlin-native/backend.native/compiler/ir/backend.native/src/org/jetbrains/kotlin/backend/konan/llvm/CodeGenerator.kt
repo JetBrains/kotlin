@@ -333,7 +333,8 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
             val proto = LlvmFunctionProto(
                     name = "$targetName-trampoline",
                     signature = LlvmFunctionSignature(irFunction, this),
-                    origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass),
+                    // A link-time dependency only: recompilation is not needed if only the trampoline's impl has changed.
+                    origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass, weak = true),
                     linkage = linkageOf(irFunction)
             )
             if (isExternal(irFunction))
