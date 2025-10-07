@@ -60,7 +60,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPol
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon : org/jetbrains/kotlin/buildtools/api/ExecutionPolicy {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Companion;
 	public static final field JVM_ARGUMENTS Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;
-	public static final field SHUTDOWN_DELAY Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;
+	public static final field SHUTDOWN_DELAY_MILLIS Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;Ljava/lang/Object;)V
 }

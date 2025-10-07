@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.JVM_ARGUMENTS
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY_MILLIS
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
@@ -189,8 +189,8 @@ internal class JvmCompilationOperationImpl(
 
         val daemonOptions = configureDaemonOptions(
             DaemonOptions().apply {
-                executionPolicy[SHUTDOWN_DELAY]?.let { shutdownDelay ->
-                    shutdownDelayMilliseconds = shutdownDelay.inWholeMilliseconds
+                executionPolicy[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
+                    shutdownDelayMilliseconds = shutdownDelay
                 }
             })
 

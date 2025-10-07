@@ -297,9 +297,9 @@ private interface ExecutionPolicyV1Adapter {
         override val strategyConfiguration: CompilerExecutionStrategyConfiguration
             get() {
                 val jvmArguments = get(JVM_ARGUMENTS) ?: emptyList()
-                return get(SHUTDOWN_DELAY)?.let {
+                return get(SHUTDOWN_DELAY_MILLIS)?.let {
                     compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(
-                        jvmArguments, it.toJavaDuration()
+                        jvmArguments, java.time.Duration.ofMillis(it)
                     )
                 } ?: compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(
                     jvmArguments
@@ -332,9 +332,9 @@ private interface ExecutionPolicyV1Adapter {
             val JVM_ARGUMENTS: Option<List<String>?> = Option("JVM_ARGUMENTS", default = null)
 
             /**
-             * The time that the daemon process continues to live after all clients have disconnected.
+             * The time in milliseconds that the daemon process continues to live after all clients have disconnected.
              */
-            val SHUTDOWN_DELAY: Option<Duration?> = Option("SHUTDOWN_DELAY", null)
+            val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS", null)
         }
     }
 }
