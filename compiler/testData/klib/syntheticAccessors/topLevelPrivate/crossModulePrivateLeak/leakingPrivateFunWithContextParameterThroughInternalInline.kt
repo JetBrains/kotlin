@@ -1,3 +1,4 @@
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 // LANGUAGE: +ContextParameters
 // MODULE: lib
 // FILE: A.kt
