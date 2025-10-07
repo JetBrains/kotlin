@@ -11,6 +11,7 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DModule
+import org.jetbrains.dokka.model.WithTypealiases
 import kotlin.test.*
 
 class VisibilityFilterTest : BaseAbstractTest() {
@@ -639,6 +640,35 @@ class VisibilityFilterTest : BaseAbstractTest() {
         ) {
             preMergeDocumentablesTransformationStage = {
                 assertEquals(0, it.first().packages.first().typealiases.size)
+            }
+        }
+    }
+
+    @Test
+    fun `includeNonPublic - private nested typealias should be skipped`() {
+        @Suppress("DEPRECATION")
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    includeNonPublic = false
+                    sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/basic/Test.kt
+            |package example
+            |
+            |class Foo {
+            |    private typealias ABC = Int
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            preMergeDocumentablesTransformationStage = {
+                assertEquals(0, (it.first().packages.first().classlikes.first() as WithTypealiases).typealiases.size)
             }
         }
     }
