@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
 internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
 ) : AbstractSuspendFunctionsLowering<Context>(generationState.context), FileLoweringPass {
+    private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
     private val fileLowerState = generationState.fileLowerState
     private val saveCoroutineState = symbols.saveCoroutineState
@@ -105,7 +106,7 @@ internal class NativeSuspendFunctionsLowering(
         +irReturn(
                 irCall(invokeSuspendFunction).apply {
                     arguments[0] = receiver
-                    arguments[1] = irSuccess(irGetObject(symbols.unit))
+                    arguments[1] = irSuccess(irGetObject(irBuiltIns.unitClass))
                 }
         )
     }
@@ -174,7 +175,7 @@ internal class NativeSuspendFunctionsLowering(
                         (originalBody as IrBlockBody).statements.forEach { +it }
                     })
             if (transformingFunction.returnType.isUnit())
-                +irReturn(irGetObject(symbols.unit))                             // Insert explicit return for Unit functions.
+                +irReturn(irGetObject(irBuiltIns.unitClass))                             // Insert explicit return for Unit functions.
         }
     }
 
