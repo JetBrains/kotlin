@@ -317,6 +317,7 @@ internal class DokkaPsiParser(
                     properties = fields.filter { it !is PsiEnumConstant }
                         .map { parseField(it, accessors[it].orEmpty()) },
                     classlikes = classlikes.await(),
+                    typealiases = emptyList(),
                     visibility = visibility,
                     companion = null,
                     constructors = parseConstructors(dri),
@@ -340,6 +341,7 @@ internal class DokkaPsiParser(
                     functions = allFunctions.await(),
                     properties = allFields.await(),
                     classlikes = classlikes.await(),
+                    typealiases = emptyList(),
                     visibility = visibility,
                     companion = null,
                     generics = mapTypeParameters(dri),
@@ -361,6 +363,7 @@ internal class DokkaPsiParser(
                     functions = allFunctions.await(),
                     properties = allFields.await(),
                     classlikes = classlikes.await(),
+                    typealiases = emptyList(),
                     sources = source,
                     visibility = visibility,
                     companion = null,
