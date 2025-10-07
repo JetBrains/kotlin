@@ -11,7 +11,7 @@ open class C {
     protected class Protected
 
     internal inline fun internal(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Protected<!> // should be an error
-    internal inline fun internal2(): Any = <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>Protected<!>() // should be an error
+    internal inline fun internal2(): Any = <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>Protected<!>() // should be an error
 }
 
 fun <T> ignore() {}
@@ -58,7 +58,7 @@ private class A {
 }
 
 internal inline fun internal4() {
-    A.<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>B<!>.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR!>foo<!>()// should be an error
+    A.B.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>foo<!>()// should be an error
 }
 
 class C2 {
@@ -81,7 +81,7 @@ class C3 {
     }
 
     internal inline fun internal() {
-        <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // already an error, should be an error
+        <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // already an error, should be an error
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Companion<!>
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>C3<!>
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>C3TA<!>
@@ -96,7 +96,7 @@ private object O {
 }
 
 internal inline fun internal5() {
-    O.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>C<!>()
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>O<!>.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>C<!>()
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,

@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -1022,4 +1023,17 @@ fun FirBasedSymbol<*>?.isExpect(): Boolean {
         is FirClassLikeSymbol -> isExpect
         else -> false
     }
+}
+
+context(context: SessionHolder)
+fun FirResolvedQualifier.resolvedSymbolOrCompanionSymbol(): FirClassLikeSymbol<*>? {
+    return symbol?.applyIf(resolvedToCompanionObject) {
+        fullyExpandedClass()?.resolvedCompanionObjectSymbol
+    }
+}
+
+context(context: CheckerContext)
+fun FirExpression.isDispatchReceiver(): Boolean {
+    val parentElement = context.containingElements.elementAtOrNull(context.containingElements.size - 2)
+    return parentElement is FirQualifiedAccessExpression && parentElement.dispatchReceiver == this
 }

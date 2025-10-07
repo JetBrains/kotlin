@@ -198,4 +198,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val literalExpressionCheckers: Set<FirLiteralExpressionChecker> = setOf(
         FirMultiDollarInterpolationCheckerLiteral,
     )
+
+    override val thisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker> = setOf(
+        FirInlineExposedLessVisibleThisReceiverChecker
+    )
 }

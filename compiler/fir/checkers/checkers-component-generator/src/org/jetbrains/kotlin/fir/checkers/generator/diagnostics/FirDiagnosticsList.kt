@@ -2150,16 +2150,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<EffectiveVisibility>("inlineVisibility")
         }
 
-        val LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE by deprecationError<KtElement>(
-            LanguageFeature.ForbidExposingLessVisibleTypesInInline,
-            PositioningStrategy.REFERENCE_BY_QUALIFIED
-        ) {
-            parameter<FirBasedSymbol<*>>("symbol")
-            parameter<EffectiveVisibility>("visibility")
-            parameter<FirRegularClassSymbol>("containingClass")
-            parameter<EffectiveVisibility>("inlineVisibility")
-        }
-
         val CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE by deprecationError<KtElement>(
             LanguageFeature.ForbidExposingLessVisibleTypesInInline,
             PositioningStrategy.REFERENCE_BY_QUALIFIED

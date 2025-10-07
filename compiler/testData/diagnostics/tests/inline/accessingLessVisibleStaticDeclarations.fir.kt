@@ -25,9 +25,9 @@ class C {
     protected object O : I
 
     internal <!NOTHING_TO_INLINE!>inline<!> fun bar() {
-        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>C<!>.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING!>foo<!>() // should be yellow
-        <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING!>foo<!>() // should be yellow
-        extensionFoo() // should be yellow
+        C.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>() // should be yellow
+        <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>() // should be yellow
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>extensionFoo<!>() // should be yellow
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>with<!>(<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>O<!>) <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>{
             extensionFoo()
         }<!>
@@ -46,12 +46,12 @@ private object O {
 
 internal <!NOTHING_TO_INLINE!>inline<!> fun inlineFun() {
     <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>O<!>
-    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>O<!>.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // should be yellow
-    <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // should be yellow
-    Super.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING!>foo<!>() // should be yellow
-    Sub.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING!>foo<!>() // should be green
-    <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>fooSuper<!>() // should be yellow
-    <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING!>fooSub<!>() // should be green
+    O.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // should be yellow
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // should be yellow
+    Super.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>() // should be yellow
+    Sub.foo() // should be green
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>fooSuper<!>() // should be yellow
+    fooSub() // should be green
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline */

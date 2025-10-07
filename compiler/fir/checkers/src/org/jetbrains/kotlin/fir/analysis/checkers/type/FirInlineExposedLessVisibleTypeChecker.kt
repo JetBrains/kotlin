@@ -11,13 +11,10 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
@@ -38,17 +35,14 @@ object FirInlineExposedLessVisibleTypeChecker : FirResolvedTypeRefChecker(MppChe
         val fullyExpandedType = coneType.fullyExpandedType()
         val classLikeSymbol = fullyExpandedType.toClassLikeSymbol() ?: return
 
-        if (classLikeSymbol.isLocalMember) return
+        val symbolEffectiveVisibility = inlineFunctionBodyContext.lessVisibleVisibilityOrNull(classLikeSymbol, ignoreLocal = true) ?: return
 
-        val symbolEffectiveVisibility = classLikeSymbol.publishedApiEffectiveVisibility ?: classLikeSymbol.effectiveVisibility
-        if (inlineFunctionBodyContext.isLessVisibleThanInlineFunction(symbolEffectiveVisibility)) {
-            reporter.reportOn(
-                source,
-                FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE,
-                symbolEffectiveVisibility,
-                fullyExpandedType,
-                inlineFunctionBodyContext.inlineFunEffectiveVisibility
-            )
-        }
+        reporter.reportOn(
+            source,
+            FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE,
+            symbolEffectiveVisibility,
+            fullyExpandedType,
+            inlineFunctionBodyContext.inlineFunEffectiveVisibility
+        )
     }
 }

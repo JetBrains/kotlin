@@ -4285,22 +4285,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val inlineVisibility: EffectiveVisibility
     }
 
-    interface LessVisibleContainingClassInInlineError : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = LessVisibleContainingClassInInlineError::class
-        val symbol: KaSymbol
-        val visibility: EffectiveVisibility
-        val containingClass: KaClassLikeSymbol
-        val inlineVisibility: EffectiveVisibility
-    }
-
-    interface LessVisibleContainingClassInInlineWarning : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = LessVisibleContainingClassInInlineWarning::class
-        val symbol: KaSymbol
-        val visibility: EffectiveVisibility
-        val containingClass: KaClassLikeSymbol
-        val inlineVisibility: EffectiveVisibility
-    }
-
     interface CallableReferenceToLessVisibleDeclarationInInlineError : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = CallableReferenceToLessVisibleDeclarationInInlineError::class
         val symbol: KaSymbol

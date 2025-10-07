@@ -5143,24 +5143,6 @@ internal class LessVisibleTypeInInlineAccessedSignatureWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleTypeInInlineAccessedSignatureWarning
 
-internal class LessVisibleContainingClassInInlineErrorImpl(
-    override val symbol: KaSymbol,
-    override val visibility: EffectiveVisibility,
-    override val containingClass: KaClassLikeSymbol,
-    override val inlineVisibility: EffectiveVisibility,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleContainingClassInInlineError
-
-internal class LessVisibleContainingClassInInlineWarningImpl(
-    override val symbol: KaSymbol,
-    override val visibility: EffectiveVisibility,
-    override val containingClass: KaClassLikeSymbol,
-    override val inlineVisibility: EffectiveVisibility,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.LessVisibleContainingClassInInlineWarning
-
 internal class CallableReferenceToLessVisibleDeclarationInInlineErrorImpl(
     override val symbol: KaSymbol,
     override val visibility: EffectiveVisibility,
