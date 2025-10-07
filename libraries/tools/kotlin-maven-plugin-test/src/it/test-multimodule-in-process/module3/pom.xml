@@ -30,6 +30,12 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Apply another plugin to ensure it does not affect the compiler classloader -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+            </plugin>
         </plugins>
     </build>
 
