@@ -159,6 +159,46 @@ object FirDiagnosticRenderers {
 
     val MEMBER_SYMBOL_COLLECTION_RENDERER = SymbolCollectionRenderer(prefix = "member:\n", pluralPrefix = "members:\n")
 
+    private class SymbolWithDiagnosticMessagesCollectionRenderer :
+        ContextIndependentParameterRenderer<Collection<Pair<FirBasedSymbol<*>, List<String>>>> {
+        override fun render(obj: Collection<Pair<FirBasedSymbol<*>, List<String>>>): String {
+            return renderWithTail(obj).parameter
+        }
+
+        override fun renderWithTail(obj: Collection<Pair<FirBasedSymbol<*>, List<String>>>): ParameterWithTail {
+            val collectionTail = mutableListOf<String>()
+            val collectionResult = obj.joinToString(
+                separator = "\n",
+            ) { (symbol, diagnostics) ->
+                val symbolRenderer = SymbolRenderer<FirBasedSymbol<*>>(
+                    startErrorTypeIndex = collectionTail.size,
+                    modifierRenderer = ::FirPartialModifierRenderer
+                )
+
+                buildString {
+                    append(
+                        symbolRenderer.renderWithTail(symbol).also {
+                            collectionTail += it.tail.orEmpty()
+                        }.parameter
+                    )
+
+                    if (diagnostics.isNotEmpty()) {
+                        appendLine(":")
+
+                        diagnostics.forEach {
+                            append("  ")
+                            appendLine(it)
+                        }
+                    }
+                }
+            }
+            return ParameterWithTail(collectionResult, collectionTail)
+        }
+    }
+
+    val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES: ContextIndependentParameterRenderer<Collection<Pair<FirBasedSymbol<*>, List<String>>>> =
+        SymbolWithDiagnosticMessagesCollectionRenderer()
+
     fun <Q> formatted(message: String, renderer: DiagnosticParameterRenderer<Q>): DiagnosticParameterRenderer<Q> =
         ContextDependentRenderer { value, context ->
             MessageFormat(message).format(arrayOf(renderer.render(value, context)))
@@ -526,25 +566,6 @@ object FirDiagnosticRenderers {
             1 -> "target $quotedTargets"
             else -> "targets $quotedTargets"
         }
-    }
-
-    val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES = Renderer { list: Collection<Pair<FirBasedSymbol<*>, List<String>>> ->
-        buildString {
-            for ((symbol, diagnostics) in list) {
-                append(SYMBOL.render(symbol))
-
-                if (diagnostics.isNotEmpty()) {
-                    appendLine(":")
-
-                    diagnostics.forEach {
-                        append("  ")
-                        appendLine(it)
-                    }
-                }
-
-                appendLine()
-            }
-        }.trim()
     }
 }
 

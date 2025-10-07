@@ -567,6 +567,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("noneApplicableWithErroneousSignatures.kt")
+    public void testNoneApplicableWithErroneousSignatures() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/noneApplicableWithErroneousSignatures.kt");
+    }
+
+    @Test
     @TestMetadata("objectInnerClass.kt")
     public void testObjectInnerClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/objectInnerClass.kt");

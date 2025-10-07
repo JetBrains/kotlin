@@ -1,0 +1,17 @@
+/noneApplicableWithErroneousSignatures.kt:(89,92): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+
+/noneApplicableWithErroneousSignatures.kt:(89,96): error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.
+
+/noneApplicableWithErroneousSignatures.kt:(103,108): error: Type parameter has cyclic upper bounds: T.
+
+/noneApplicableWithErroneousSignatures.kt:(146,149): error: None of the following candidates is applicable:
+
+fun <T> foo(s: String): #1:
+  Argument type mismatch: actual type is 'Int', but 'String' was expected.
+
+fun <T : #2> foo(d: Double): Unit:
+  Inapplicable candidate(s): fun <T : #1> foo(d: Double): Unit Where:
+    #1 = Type parameter T has cyclic bounds
+ Where:
+    #1 = Recursive implicit type
+    #2 = Type parameter T has cyclic bounds
