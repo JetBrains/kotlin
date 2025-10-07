@@ -180,7 +180,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.putImplementationOptInInConstructor = false
             implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName")
             defaultWithErrorOnSet("startOffset", "0")
-            defaultWithErrorOnSet("endOffset", "fileEntry.maxOffset")
+            defaultWithErrorOnSet("endOffset", "maxOf(fileEntry.maxOffset, 0)")
             isMutable("module")
             isLateinit("module")
         }
