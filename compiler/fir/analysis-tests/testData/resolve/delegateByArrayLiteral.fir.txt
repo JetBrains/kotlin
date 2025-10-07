@@ -1,5 +1,5 @@
 FILE: delegateByArrayLiteral.kt
-    public final val d: <ERROR TYPE REF: Unresolved name: getValue>by <implicitArrayOf>()
+    public final val d: <ERROR TYPE REF: Unresolved name: getValue>by <collectionLiteralCall>()
         public get(): <ERROR TYPE REF: Unresolved name: getValue> {
             ^ D|/d|.<Unresolved name: getValue>#(Null(null), ::R|/d|)
         }

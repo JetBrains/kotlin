@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralPreresolved.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] targetUsageWithArrayLiteralPreresolved.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }

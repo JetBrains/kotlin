@@ -1996,6 +1996,40 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals")
+      @TestDataPath("$PROJECT_ROOT")
+      public class FormerArrayLiterals {
+        @Test
+        public void testAllFilesPresentInFormerArrayLiterals() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("inAnnotationCallsOutsideOfAnnotations.kt")
+        public void testInAnnotationCallsOutsideOfAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals/inAnnotationCallsOutsideOfAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("inAnnotations.kt")
+        public void testInAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals/inAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("inNestedAnnotations.kt")
+        public void testInNestedAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals/inNestedAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("inVarargsInAnnotations.kt")
+        public void testInVarargsInAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/formerArrayLiterals/inVarargsInAnnotations.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/multipleOverloads")
       @TestDataPath("$PROJECT_ROOT")
       public class MultipleOverloads {

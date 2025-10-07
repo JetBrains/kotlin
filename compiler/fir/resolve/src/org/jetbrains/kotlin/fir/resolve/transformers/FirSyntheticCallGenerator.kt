@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnsupportedCollectionLiteralType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -191,7 +192,7 @@ class FirSyntheticCallGenerator(
     }
 
     fun generateSyntheticArrayOfCall(
-        arrayLiteral: FirArrayLiteral,
+        arrayLiteral: FirCollectionLiteralCall,
         expectedType: ConeKotlinType,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
@@ -272,7 +273,9 @@ class FirSyntheticCallGenerator(
         val resultingCall = components.callCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
         components.dataFlowAnalyzer.exitFunctionCall(fakeCall, callCompleted = true)
 
-        return resultingCall.arguments.single()
+        val resolvedCollectionLiteral = resultingCall.arguments.single()
+
+        return resolvedCollectionLiteral
     }
 
     fun resolveAnonymousFunctionExpressionWithSyntheticOuterCall(

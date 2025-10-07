@@ -191,17 +191,17 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R
 
     public final operator fun rangeTo(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/IntRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
@@ -271,21 +271,21 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializa
 
     public final operator fun rangeTo(other: R|kotlin/Char|): R|kotlin/ranges/CharRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Char|): R|kotlin/ranges/CharRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Char|): R|kotlin/ranges/CharRange|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toByte()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toByte()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toByte(): R|kotlin/Byte|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toChar(): R|kotlin/Char|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toShort()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toShort()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toShort(): R|kotlin/Short|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toInt(): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toInt(): R|kotlin/Int|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toLong()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toLong(): R|kotlin/Long|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toLong()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toFloat()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toFloat(): R|kotlin/Float|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toFloat()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toFloat(): R|kotlin/Float|
 
-    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toDouble()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toDouble(): R|kotlin/Double|
+    @R|kotlin/Deprecated|(message = String(Conversion of Char to Number is deprecated. Use Char.code property instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.code.toDouble()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public final fun toDouble(): R|kotlin/Double|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toString(): R|kotlin/String|
 
@@ -365,7 +365,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.7)) public final annotation class ContextFunctionTypeParams : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.7)) public final annotation class ContextFunctionTypeParams : R|kotlin/Annotation| {
     public final val count: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
@@ -373,7 +373,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
     public final val message: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -387,7 +387,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.4)) public final annotation class DeprecatedSinceKotlin : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.4)) public final annotation class DeprecatedSinceKotlin : R|kotlin/Annotation| {
     public final val warningSince: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -499,11 +499,11 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryMinus(): R|kotlin/Double|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toInt(): R|kotlin/Int|
 
@@ -565,7 +565,7 @@ public final class DoubleArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/S
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
     public constructor(): R|kotlin/DslMarker|
 
 }
@@ -596,17 +596,17 @@ public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|j
 
 }
 
-@R|kotlin/RequiresOptIn|(level = kotlin/RequiresOptIn.Level.ERROR) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class ExperimentalStdlibApi : R|kotlin/Annotation| {
+@R|kotlin/RequiresOptIn|(level = kotlin/RequiresOptIn.Level.ERROR) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class ExperimentalStdlibApi : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExperimentalStdlibApi|
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(1.8)) @R|kotlin/RequiresOptIn|() public final annotation class ExperimentalSubclassOptIn : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(1.8)) @R|kotlin/RequiresOptIn|() public final annotation class ExperimentalSubclassOptIn : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExperimentalSubclassOptIn|
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExtensionFunctionType|
 
 }
@@ -692,11 +692,11 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun unaryMinus(): R|kotlin/Float|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toInt(): R|kotlin/Int|
 
@@ -761,7 +761,7 @@ public final class FloatArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 public abstract interface Function<out R> : R|kotlin/Any| {
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.FUNCTION)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(2.2)) public final annotation class IgnorableReturnValue : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FUNCTION)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(2.2)) public final annotation class IgnorableReturnValue : R|kotlin/Annotation| {
     public constructor(): R|kotlin/IgnorableReturnValue|
 
 }
@@ -855,13 +855,13 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|j
 
     public final operator fun rangeTo(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/IntRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun shl(bitCount: R|kotlin/Int|): R|kotlin/Int|
 
@@ -1023,13 +1023,13 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R
 
     public final operator fun rangeTo(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/LongRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/LongRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/LongRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/LongRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/LongRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/LongRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final infix fun shl(bitCount: R|kotlin/Int|): R|kotlin/Long|
 
@@ -1047,7 +1047,7 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
@@ -1102,7 +1102,7 @@ public final class LongArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/SinceKotlin|(version = String(2.2)) public final annotation class MustUseReturnValue : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/SinceKotlin|(version = String(2.2)) public final annotation class MustUseReturnValue : R|kotlin/Annotation| {
     public constructor(): R|kotlin/MustUseReturnValue|
 
 }
@@ -1123,7 +1123,7 @@ public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
 
     @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
 If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.9), errorSince = String(2.3)) public open fun toChar(): R|kotlin/Char|
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.9), errorSince = String(2.3)) public open fun toChar(): R|kotlin/Char|
 
     public abstract fun toShort(): R|kotlin/Short|
 
@@ -1133,7 +1133,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.EXPRESSION, kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class OptIn : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.EXPRESSION, kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class OptIn : R|kotlin/Annotation| {
     public final val markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
         public get(): R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
 
@@ -1141,7 +1141,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
     public final val name: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1149,12 +1149,12 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class PublishedApi : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class PublishedApi : R|kotlin/Annotation| {
     public constructor(): R|kotlin/PublishedApi|
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>()) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ReplaceWith : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>()) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ReplaceWith : R|kotlin/Annotation| {
     public final val expression: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1165,7 +1165,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class RequiresOptIn : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class RequiresOptIn : R|kotlin/Annotation| {
     public final val message: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1281,17 +1281,17 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|,
 
     public final operator fun rangeTo(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Byte|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Short|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/IntRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Int|): R|kotlin/ranges/IntRange|
 
-    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
+    @R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public final operator fun rangeUntil(other: R|kotlin/Long|): R|kotlin/ranges/LongRange|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <implicitArrayOf>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(this.toInt().toChar()), imports = <collectionLiteralCall>()) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toShort(): R|kotlin/Short|
 
@@ -1346,7 +1346,7 @@ public final class ShortArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() public final annotation class SinceKotlin : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() public final annotation class SinceKotlin : R|kotlin/Annotation| {
     public final val version: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1379,7 +1379,7 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(2.1)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalSubclassOptIn|)))) public final annotation class SubclassOptInRequired : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(2.1)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalSubclassOptIn|)))) public final annotation class SubclassOptInRequired : R|kotlin/Annotation| {
     public final val markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
         public get(): R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
 
@@ -1387,7 +1387,7 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.EXPRESSION, kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) public final annotation class Suppress : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.EXPRESSION, kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) public final annotation class Suppress : R|kotlin/Annotation| {
     public final val names: R|kotlin/Array<out kotlin/String>|
         public get(): R|kotlin/Array<out kotlin/String>|
 
@@ -1419,12 +1419,12 @@ public final object Unit : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) @R|kotlin/annotation/MustBeDocumented|() public final annotation class UnsafeVariance : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.TYPE)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.SOURCE) @R|kotlin/annotation/MustBeDocumented|() public final annotation class UnsafeVariance : R|kotlin/Annotation| {
     public constructor(): R|kotlin/UnsafeVariance|
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) internal final annotation class WasExperimental : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.TYPEALIAS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) internal final annotation class WasExperimental : R|kotlin/Annotation| {
     public final val markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
         public get(): R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
 

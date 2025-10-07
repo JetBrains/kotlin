@@ -3,7 +3,7 @@ public abstract interface AnnotationInParam : R|kotlin/Any| {
         public constructor(): R|test/AnnotationInParam.A|
 
     }
-    @R|test/AnnotationInParam.MyAnnotationWithParam2|(value = @R|test/AnnotationInParam.MyAnnotation2|(value = <implicitArrayOf>(String(test), String(test2))) ) public open class B : R|kotlin/Any| {
+    @R|test/AnnotationInParam.MyAnnotationWithParam2|(value = @R|test/AnnotationInParam.MyAnnotation2|(value = <collectionLiteralCall>(String(test), String(test2))) ) public open class B : R|kotlin/Any| {
         public constructor(): R|test/AnnotationInParam.B|
 
     }

@@ -93,7 +93,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 }
 
                 override fun visitEnd() {
-                    visitExpression(name, buildArrayLiteral {
+                    visitExpression(name, buildCollectionLiteralCall {
                         // For the array literal type, we use `Array<Any>` as an approximation. Later FIR2IR will calculate a more precise
                         // type. See KT-62598.
                         // FIR provides no guarantees on having the exact type of deserialized array literals in annotations, including

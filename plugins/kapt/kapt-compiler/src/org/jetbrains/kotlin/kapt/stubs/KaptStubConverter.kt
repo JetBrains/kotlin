@@ -967,7 +967,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 val enumType = AsmUtil.asmTypeByClassId(enumEntry.callableId.classId!!)
                 arrayOf(enumType.descriptor, enumEntry.name.asString())
             }
-            is FirArrayLiteral -> {
+            is FirCollectionLiteralCall -> {
                 result.argumentList.arguments.map(::evaluateFirExpression)
             }
             else -> null
@@ -1506,7 +1506,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     ): JCExpression? {
         if (!isValidIdentifier(name)) return null
         val expr = when (value) {
-            is FirArrayLiteral -> {
+            is FirCollectionLiteralCall -> {
                 convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments)
             }
             is FirVarargArgumentsExpression -> {

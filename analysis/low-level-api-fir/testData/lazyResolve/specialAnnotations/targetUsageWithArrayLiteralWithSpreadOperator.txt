@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class KaCachedService : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
-    @R|kotlin/annotation/Target|[Types](*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(STATUS)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(STATUS)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
-    @R|kotlin/annotation/Target|[Types](*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(STATUS)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(STATUS)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayLiteralWithSpreadOperator.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] targetUsageWithArrayLiteralWithSpreadOperator.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }

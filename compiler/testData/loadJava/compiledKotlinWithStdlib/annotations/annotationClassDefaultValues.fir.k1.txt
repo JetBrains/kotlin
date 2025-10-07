@@ -1,8 +1,8 @@
 public final annotation class A : R|kotlin/Annotation| {
-    public final val aI: R|kotlin/IntArray| = <implicitArrayOf>(Int(1), Int(2))
+    public final val aI: R|kotlin/IntArray| = <collectionLiteralCall>(Int(1), Int(2))
         public get(): R|kotlin/IntArray|
 
-    public final val aS: R|kotlin/Array<kotlin/String>| = <implicitArrayOf>(String(a), String(b))
+    public final val aS: R|kotlin/Array<kotlin/String>| = <collectionLiteralCall>(String(a), String(b))
         public get(): R|kotlin/Array<kotlin/String>|
 
     public final val anno: R|test/Empty| = @R|test/Empty|()
@@ -17,7 +17,7 @@ public final annotation class A : R|kotlin/Annotation| {
     public final val kClass: R|kotlin/reflect/KClass<*>| = <getClass>(<getClass>(R|kotlin/Int|))
         public get(): R|kotlin/reflect/KClass<*>|
 
-    public final val kClassArray: R|kotlin/Array<kotlin/reflect/KClass<*>>| = <implicitArrayOf>(<getClass>(<getClass>(R|test/A|)))
+    public final val kClassArray: R|kotlin/Array<kotlin/reflect/KClass<*>>| = <collectionLiteralCall>(<getClass>(<getClass>(R|test/A|)))
         public get(): R|kotlin/Array<kotlin/reflect/KClass<*>>|
 
     public final val s: R|kotlin/String| = String(foo)
@@ -48,16 +48,16 @@ public final annotation class Empty : R|kotlin/Annotation| {
 }
 
 public final annotation class OtherArrays : R|kotlin/Annotation| {
-    public final val annotationsArray: R|kotlin/Array<kotlin/jvm/JvmStatic>| = <implicitArrayOf>()
+    public final val annotationsArray: R|kotlin/Array<kotlin/jvm/JvmStatic>| = <collectionLiteralCall>()
         public get(): R|kotlin/Array<kotlin/jvm/JvmStatic>|
 
-    public final val doublesArray: R|kotlin/DoubleArray| = <implicitArrayOf>(Double(1.5))
+    public final val doublesArray: R|kotlin/DoubleArray| = <collectionLiteralCall>(Double(1.5))
         public get(): R|kotlin/DoubleArray|
 
-    public final val enumArray: R|kotlin/Array<kotlin/text/RegexOption>| = <implicitArrayOf>(kotlin/text/RegexOption.IGNORE_CASE)
+    public final val enumArray: R|kotlin/Array<kotlin/text/RegexOption>| = <collectionLiteralCall>(kotlin/text/RegexOption.IGNORE_CASE)
         public get(): R|kotlin/Array<kotlin/text/RegexOption>|
 
-    public final val namesArray: R|kotlin/Array<kotlin/jvm/JvmName>| = <implicitArrayOf>(@R|kotlin/jvm/JvmName|(name = String(foo)) )
+    public final val namesArray: R|kotlin/Array<kotlin/jvm/JvmName>| = <collectionLiteralCall>(@R|kotlin/jvm/JvmName|(name = String(foo)) )
         public get(): R|kotlin/Array<kotlin/jvm/JvmName>|
 
     public constructor(doublesArray: R|kotlin/DoubleArray| = STUB, enumArray: R|kotlin/Array<kotlin/text/RegexOption>| = STUB, annotationsArray: R|kotlin/Array<kotlin/jvm/JvmStatic>| = STUB, namesArray: R|kotlin/Array<kotlin/jvm/JvmName>| = STUB): R|test/OtherArrays|

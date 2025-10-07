@@ -1,17 +1,17 @@
 FILE: targetAnnotationWithDifferentValues.kt
-    @Target(allowedTargets = <implicitArrayOf>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#)) public final? annotation class AnnotationWithArrayLiteral : R|kotlin/Annotation| {
+    @Target(allowedTargets = <collectionLiteralCall>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#)) public final? annotation class AnnotationWithArrayLiteral : R|kotlin/Annotation| {
         public? [ContainingClassKey=AnnotationWithArrayLiteral] constructor(): R|AnnotationWithArrayLiteral| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @Target(allowedTargets = <implicitArrayOf>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#, IntegerLiteral(1))) public final? annotation class AnnotationWithArrayLiteralAndIncorrectValue : R|kotlin/Annotation| {
+    @Target(allowedTargets = <collectionLiteralCall>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#, IntegerLiteral(1))) public final? annotation class AnnotationWithArrayLiteralAndIncorrectValue : R|kotlin/Annotation| {
         public? [ContainingClassKey=AnnotationWithArrayLiteralAndIncorrectValue] constructor(): R|AnnotationWithArrayLiteralAndIncorrectValue| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @Target(*<implicitArrayOf>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#)) public final? annotation class AnnotationWithArrayLiteralAndSpreadOperator : R|kotlin/Annotation| {
+    @Target(*<collectionLiteralCall>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#)) public final? annotation class AnnotationWithArrayLiteralAndSpreadOperator : R|kotlin/Annotation| {
         public? [ContainingClassKey=AnnotationWithArrayLiteralAndSpreadOperator] constructor(): R|AnnotationWithArrayLiteralAndSpreadOperator| {
             super<R|kotlin/Any|>()
         }

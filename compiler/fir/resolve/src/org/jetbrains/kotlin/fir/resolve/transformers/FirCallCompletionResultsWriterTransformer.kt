@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpressio
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -84,6 +82,10 @@ class FirCallCompletionResultsWriterTransformer(
     private val samResolver: FirSamResolver,
     private val context: BodyResolveContext,
     private val mode: Mode = Mode.Normal,
+    // TODO: this is a temporary solution.
+    //  The way we deal with collection literals inside annotations (annotation constructors) and in usual calls should be unified.
+    //  For now, however, they are intentionally separated. Related issue: KT-81110.
+    private var insideAnnotationContext: Boolean = false,
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
 
     private fun finallySubstituteOrNull(
@@ -109,14 +111,25 @@ class FirCallCompletionResultsWriterTransformer(
         Normal, DelegatedPropertyCompletion
     }
 
-    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
-        enableArrayOfCallTransformation = true
+    private inline fun <T> withCollectionLiteralInAnnotationResolution(block: () -> T): T {
+        val savedInsideAnnotationContext = insideAnnotationContext
+        insideAnnotationContext = true
         return try {
             block()
         } finally {
-            enableArrayOfCallTransformation = false
+            insideAnnotationContext = savedInsideAnnotationContext
         }
     }
+
+    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T =
+        withCollectionLiteralInAnnotationResolution {
+            enableArrayOfCallTransformation = true
+            return try {
+                block()
+            } finally {
+                enableArrayOfCallTransformation = false
+            }
+        }
 
     private fun <T : FirQualifiedAccessExpression> prepareQualifiedTransform(
         qualifiedAccessExpression: T, calleeReference: FirNamedReferenceWithCandidate,
@@ -362,26 +375,40 @@ class FirCallCompletionResultsWriterTransformer(
         return transformQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
+    private fun transformArrayLiteralInAnnotation(arrayLiteral: FirCollectionLiteralCall, data: ExpectedArgumentType?): FirStatement {
+        if (arrayLiteral.isResolved) return arrayLiteral
+        val expectedArrayType = data?.getExpectedType(arrayLiteral)
+        val expectedArrayElementType = expectedArrayType?.arrayElementType()
+        arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType(data.argumentReplacements))
+        val arrayElementType =
+            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
+                typeApproximator.approximateToSuperType(
+                    it,
+                    TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
+                )
+                    ?: it
+            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
+        arrayLiteral.resultType =
+            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
+        return arrayLiteral
+    }
+
     override fun transformCollectionLiteralCall(
         collectionLiteralCall: FirCollectionLiteralCall,
         data: ExpectedArgumentType?
     ): FirStatement {
+        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) ||
+            insideAnnotationContext
+        ) {
+            return transformArrayLiteralInAnnotation(collectionLiteralCall, data)
+        }
+
         data?.argumentReplacements?.get(collectionLiteralCall)?.let { replacement ->
             return replacement.transform(this, data)
         }
-        val diagnostic = ConeUnsupportedCollectionLiteralType
 
-        val errorCalleeReference: FirNamedReference = when (val calleeReference = collectionLiteralCall.calleeReference) {
-            is FirErrorNamedReference -> calleeReference
-            else -> buildErrorNamedReference {
-                source = calleeReference.source
-                name = calleeReference.name
-                this.diagnostic = diagnostic
-            }
-        }
-        collectionLiteralCall.replaceCalleeReference(errorCalleeReference)
-        collectionLiteralCall.replaceConeTypeOrNull(ConeErrorType(diagnostic))
-        collectionLiteralCall.transformArgumentList(null)
+        collectionLiteralCall.transformChildren(this, null)
+        collectionLiteralCall.replaceConeTypeOrNull(ConeErrorType(ConeUnsupportedCollectionLiteralType))
         return collectionLiteralCall
     }
 
@@ -608,7 +635,9 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        annotationCall.transformArgumentList(expectedArgumentsTypeMapping = null)
+        withCollectionLiteralInAnnotationResolution {
+            annotationCall.transformArgumentList(expectedArgumentsTypeMapping = null)
+        }
         return annotationCall
     }
 
@@ -1334,24 +1363,6 @@ class FirCallCompletionResultsWriterTransformer(
             return integerLiteralOperatorCall
         }
         return integerLiteralOperatorCall.transformSingle(integerOperatorApproximator, expectedType)
-    }
-
-    override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ExpectedArgumentType?): FirStatement {
-        if (arrayLiteral.isResolved) return arrayLiteral
-        val expectedArrayType = data?.getExpectedType(arrayLiteral)
-        val expectedArrayElementType = expectedArrayType?.arrayElementType()
-        arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType(data.argumentReplacements))
-        val arrayElementType =
-            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
-                typeApproximator.approximateToSuperType(
-                    it,
-                    TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
-                )
-                    ?: it
-            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
-        arrayLiteral.resultType =
-            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
-        return arrayLiteral
     }
 
     override fun transformVarargArgumentsExpression(

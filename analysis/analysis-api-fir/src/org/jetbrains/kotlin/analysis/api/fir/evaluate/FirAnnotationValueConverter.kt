@@ -127,7 +127,7 @@ internal object FirAnnotationValueConverter {
                 KaArrayAnnotationValueImpl(annotationValues, representativePsi ?: sourcePsi, token)
             }
 
-            is FirArrayLiteral -> {
+            is FirCollectionLiteralCall -> {
                 // Desugared collection literals.
                 KaArrayAnnotationValueImpl(argumentList.arguments.convertVarargsExpression(builder).first, sourcePsi, token)
             }

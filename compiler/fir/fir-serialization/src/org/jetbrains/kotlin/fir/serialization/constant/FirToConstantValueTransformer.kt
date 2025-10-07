@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import kotlin.math.exp
 
 internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue(
     session: FirSession,
@@ -111,12 +110,12 @@ private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeS
         }
         is FirGetClassCall -> create(this.argument.resolvedType)
         is FirEnumEntryDeserializedAccessExpression -> EnumValue(this.enumClassId, this.enumEntryName)
-        is FirArrayLiteral -> ArrayValue(this.argumentList.arguments.mapNotNull { it.toConstantValue(session, scopeSession) })
+        is FirCollectionLiteralCall -> ArrayValue(this.argumentList.arguments.mapNotNull { it.toConstantValue(session, scopeSession) })
         is FirVarargArgumentsExpression -> {
             val arguments = this.arguments.let {
                 // Named, spread or array literal arguments for vararg parameters have the form Vararg(Named/Spread?(ArrayLiteral(..))).
                 // We need to extract the ArrayLiteral, otherwise we will get two nested ArrayValue as a result.
-                (it.singleOrNull()?.unwrapArgument() as? FirArrayLiteral)?.arguments ?: it
+                (it.singleOrNull()?.unwrapArgument() as? FirCollectionLiteralCall)?.arguments ?: it
             }
 
             return ArrayValue(arguments.mapNotNull { it.toConstantValue(session, scopeSession) })
@@ -199,8 +198,8 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
         return stringConcatenationCall.argumentList.arguments.all { it.accept(this, data) }
     }
 
-    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: FirSession): Boolean {
-        return arrayLiteral.arguments.all { it.accept(this, data) }
+    override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: FirSession): Boolean {
+        return collectionLiteralCall.arguments.all { it.accept(this, data) }
     }
 
     override fun visitAnnotation(annotation: FirAnnotation, data: FirSession): Boolean = true

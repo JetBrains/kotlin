@@ -1055,7 +1055,7 @@ class Fir2IrVisitor(
             else -> {
                 when (val unwrappedExpression = expression.unwrapArgument()) {
                     is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
-                    is FirArrayLiteral -> convertToArrayLiteral(unwrappedExpression, expectedType)
+                    is FirCollectionLiteralCall -> convertToArrayLiteral(unwrappedExpression, expectedType)
                     else -> expression.accept(this, null) as IrExpression
                 }
             }
@@ -1818,7 +1818,7 @@ class Fir2IrVisitor(
     }
 
     private fun convertToArrayLiteral(
-        arrayLiteral: FirArrayLiteral,
+        arrayLiteral: FirCollectionLiteralCall,
         // This argument is used for a corner case with deserialized empty array literals
         // These array literals normally have a type of Array<Any>,
         // so FIR2IR should instead use a type of corresponding property

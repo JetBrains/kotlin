@@ -55,7 +55,7 @@ class FirAnnotationTypeQualifierResolver(
 
     private fun FirExpression.toEnumNames(): List<String> =
         when (this) {
-            is FirArrayLiteral -> arguments.flatMap { it.toEnumNames() }
+            is FirCollectionLiteralCall -> arguments.flatMap { it.toEnumNames() }
             is FirVarargArgumentsExpression -> arguments.flatMap { it.toEnumNames() }
             else -> listOfNotNull(extractEnumValueArgumentInfo()?.enumEntryName?.asString())
         }

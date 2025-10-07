@@ -83,7 +83,7 @@ fun ResolutionContext.runCollectionLiteralResolution(
             )
         source = collectionLiteral.source
         calleeReference = buildSimpleNamedReference {
-            source = collectionLiteral.calleeReference.source
+            source = collectionLiteral.source
             name = OperatorNameConventions.OF
         }
         argumentList = collectionLiteral.argumentList

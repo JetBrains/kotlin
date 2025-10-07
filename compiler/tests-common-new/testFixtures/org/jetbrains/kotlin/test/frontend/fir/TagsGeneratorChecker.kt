@@ -540,8 +540,8 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         tags += FirTags.CALLABLE_REFERENCE
     }
 
-    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral) {
-        visitElement(arrayLiteral)
+    override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall) {
+        visitElement(collectionLiteralCall)
         tags += FirTags.COLLECTION_LITERAL
     }
 

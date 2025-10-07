@@ -363,14 +363,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(integerLiteralOperatorCall)
     }
 
-    final override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Nothing?) {
-        visitArrayLiteral(arrayLiteral)
-    }
-
-    open fun visitArrayLiteral(arrayLiteral: FirArrayLiteral) {
-        visitElement(arrayLiteral)
-    }
-
     final override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: Nothing?) {
         visitCollectionLiteralCall(collectionLiteralCall)
     }

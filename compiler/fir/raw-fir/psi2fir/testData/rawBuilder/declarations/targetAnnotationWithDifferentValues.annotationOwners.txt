@@ -1,12 +1,12 @@
-@Target(allowedTargets = <implicitArrayOf>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#))
+@Target(allowedTargets = <collectionLiteralCall>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#))
 owner -> FirRegularClassSymbol AnnotationWithArrayLiteral
 context -> FirRegularClassSymbol AnnotationWithArrayLiteral
 
-@Target(allowedTargets = <implicitArrayOf>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#, IntegerLiteral(1)))
+@Target(allowedTargets = <collectionLiteralCall>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#, IntegerLiteral(1)))
 owner -> FirRegularClassSymbol AnnotationWithArrayLiteralAndIncorrectValue
 context -> FirRegularClassSymbol AnnotationWithArrayLiteralAndIncorrectValue
 
-@Target(*<implicitArrayOf>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#))
+@Target(*<collectionLiteralCall>(AnnotationTarget#.PROPERTY#, AnnotationTarget#.FIELD#))
 owner -> FirRegularClassSymbol AnnotationWithArrayLiteralAndSpreadOperator
 context -> FirRegularClassSymbol AnnotationWithArrayLiteralAndSpreadOperator
 

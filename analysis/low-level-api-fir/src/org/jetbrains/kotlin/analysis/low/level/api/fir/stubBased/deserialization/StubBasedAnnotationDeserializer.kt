@@ -143,7 +143,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                 coneTypeOrNull = resolvedType
             }
             is ArrayValue -> {
-                buildArrayLiteral {
+                buildCollectionLiteralCall {
                     source = KtRealPsiSourceElement(sourceElement)
                     // Not quite precise, yet doesn't require annotation resolution
                     coneTypeOrNull = (inferArrayValueType(value.value) ?: session.builtinTypes.anyType.coneType).createArrayType()

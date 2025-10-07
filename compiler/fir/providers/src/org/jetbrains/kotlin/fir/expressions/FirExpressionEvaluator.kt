@@ -186,12 +186,12 @@ object FirExpressionEvaluator {
         }
 
         @OptIn(UnresolvedExpressionTypeAccess::class)
-        override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Nothing?): FirEvaluatorResult {
-            return buildArrayLiteral {
-                source = arrayLiteral.source
-                coneTypeOrNull = arrayLiteral.coneTypeOrNull
-                annotations.addAll(arrayLiteral.annotations)
-                argumentList = visitArgumentList(arrayLiteral.argumentList, data).unwrapOr { return it } ?: return NotEvaluated
+        override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: Nothing?): FirEvaluatorResult {
+            return buildCollectionLiteralCall {
+                source = collectionLiteralCall.source
+                coneTypeOrNull = collectionLiteralCall.coneTypeOrNull
+                annotations.addAll(collectionLiteralCall.annotations)
+                argumentList = visitArgumentList(collectionLiteralCall.argumentList, data).unwrapOr { return it } ?: return NotEvaluated
             }.wrap()
         }
 

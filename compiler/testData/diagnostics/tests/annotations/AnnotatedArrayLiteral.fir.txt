@@ -20,7 +20,7 @@ FILE: AnnotatedArrayLiteral.fir.kt
         }
 
     }
-    @R|X|(value = @R|Z|() <implicitArrayOf>()) public final fun foo0(): R|kotlin/Unit| {
+    @R|X|(value = @R|Z|() <collectionLiteralCall>()) public final fun foo0(): R|kotlin/Unit| {
     }
-    @R|X|(value = @R|Z|() <implicitArrayOf>()) public final fun foo1(): R|kotlin/Unit| {
+    @R|X|(value = @R|Z|() <collectionLiteralCall>()) public final fun foo1(): R|kotlin/Unit| {
     }

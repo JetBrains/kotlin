@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.secondToLastContainer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -28,10 +28,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind.Common) {
-
+object FirUnsupportedArrayLiteralChecker : FirCollectionLiteralCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirArrayLiteral) {
+    override fun check(expression: FirCollectionLiteralCall) {
         if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)) return
         if (isInsideAnnotationConstructor()) return
 
@@ -47,7 +46,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun reportUnsupported(expression: FirArrayLiteral, forceError: Boolean) {
+    private fun reportUnsupported(expression: FirCollectionLiteralCall, forceError: Boolean) {
         if (forceError) {
             reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION.errorFactory)
         } else {
@@ -98,7 +97,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind
      * ```
      */
     context(context: CheckerContext)
-    private fun FirArrayLiteral.isInDefinitelyFailingPosition(): Boolean {
+    private fun FirCollectionLiteralCall.isInDefinitelyFailingPosition(): Boolean {
         val containingBlock = context.secondToLastContainer as? FirBlock ?: return false
 
         return when (context.nthLastContainer(3)) {

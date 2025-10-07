@@ -1,5 +1,5 @@
 public abstract interface EmptyArrayInParam : R|kotlin/Any| {
-    @R|test/EmptyArrayInParam.MyAnnotation|(value = <implicitArrayOf>()) public open class A : R|kotlin/Any| {
+    @R|test/EmptyArrayInParam.MyAnnotation|(value = <collectionLiteralCall>()) public open class A : R|kotlin/Any| {
         public constructor(): R|test/EmptyArrayInParam.A|
 
     }

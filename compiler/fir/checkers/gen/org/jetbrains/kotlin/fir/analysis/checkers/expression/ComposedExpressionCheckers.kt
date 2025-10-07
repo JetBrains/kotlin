@@ -81,8 +81,8 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         get() = _throwExpressionCheckers
     override val doWhileLoopCheckers: Set<FirDoWhileLoopChecker>
         get() = _doWhileLoopCheckers
-    override val arrayLiteralCheckers: Set<FirArrayLiteralChecker>
-        get() = _arrayLiteralCheckers
+    override val collectionLiteralCallCheckers: Set<FirCollectionLiteralCallChecker>
+        get() = _collectionLiteralCallCheckers
     override val classReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker>
         get() = _classReferenceExpressionCheckers
     override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker>
@@ -120,7 +120,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
     private val _whileLoopCheckers: MutableSet<FirWhileLoopChecker> = mutableSetOf()
     private val _throwExpressionCheckers: MutableSet<FirThrowExpressionChecker> = mutableSetOf()
     private val _doWhileLoopCheckers: MutableSet<FirDoWhileLoopChecker> = mutableSetOf()
-    private val _arrayLiteralCheckers: MutableSet<FirArrayLiteralChecker> = mutableSetOf()
+    private val _collectionLiteralCallCheckers: MutableSet<FirCollectionLiteralCallChecker> = mutableSetOf()
     private val _classReferenceExpressionCheckers: MutableSet<FirClassReferenceExpressionChecker> = mutableSetOf()
     private val _inaccessibleReceiverCheckers: MutableSet<FirInaccessibleReceiverChecker> = mutableSetOf()
 
@@ -158,7 +158,7 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         checkers.whileLoopCheckers.filterTo(_whileLoopCheckers, predicate)
         checkers.throwExpressionCheckers.filterTo(_throwExpressionCheckers, predicate)
         checkers.doWhileLoopCheckers.filterTo(_doWhileLoopCheckers, predicate)
-        checkers.arrayLiteralCheckers.filterTo(_arrayLiteralCheckers, predicate)
+        checkers.collectionLiteralCallCheckers.filterTo(_collectionLiteralCallCheckers, predicate)
         checkers.classReferenceExpressionCheckers.filterTo(_classReferenceExpressionCheckers, predicate)
         checkers.inaccessibleReceiverCheckers.filterTo(_inaccessibleReceiverCheckers, predicate)
     }

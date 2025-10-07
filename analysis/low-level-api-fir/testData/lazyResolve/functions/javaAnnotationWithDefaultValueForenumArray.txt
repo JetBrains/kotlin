@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
             public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
-    @R|light/ann/array/ArrayAnnEnumJava|[Types](enumValDef = <implicitArrayOf>(R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_A|, R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_B|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun box(): R|kotlin/String| {
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](enumValDef = <collectionLiteralCall>(R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_A|, R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_B|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun box(): R|kotlin/String| {
         ^box String(OK)
     }
 
@@ -275,7 +275,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
             public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
-    @R|light/ann/array/ArrayAnnEnumJava|[Types](enumValDef = <implicitArrayOf>(R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_A|, R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_B|)) public final [ResolvedTo(BODY_RESOLVE)] fun box(): R|kotlin/String| {
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](enumValDef = <collectionLiteralCall>(R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_A|, R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_B|)) public final [ResolvedTo(BODY_RESOLVE)] fun box(): R|kotlin/String| {
         ^box String(OK)
     }
 
@@ -298,6 +298,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] ArrayAnnUsage.kt
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
 
     }
-    @R|light/ann/array/ArrayAnnEnumJava|[Types](enumValDef = <implicitArrayOf>(R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_A|, R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_B|)) public final [ResolvedTo(BODY_RESOLVE)] fun box(): R|kotlin/String| {
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](enumValDef = <collectionLiteralCall>(R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_A|, R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_B|)) public final [ResolvedTo(BODY_RESOLVE)] fun box(): R|kotlin/String| {
         ^box String(OK)
     }

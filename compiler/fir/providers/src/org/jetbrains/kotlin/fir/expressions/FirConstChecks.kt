@@ -252,8 +252,8 @@ private class FirConstCheckVisitor(
         return ConstantArgumentKind.VALID_CONST
     }
 
-    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Nothing?): ConstantArgumentKind {
-        for (exp in arrayLiteral.arguments) {
+    override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: Nothing?): ConstantArgumentKind {
+        for (exp in collectionLiteralCall.arguments) {
             exp.accept(this, data).ifNotValidConst { return it }
         }
         return ConstantArgumentKind.VALID_CONST

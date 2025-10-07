@@ -3,7 +3,7 @@ public final annotation class Default : R|kotlin/Annotation| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.FUNCTION)) public final annotation class Function : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.PROPERTY_SETTER, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.FUNCTION)) public final annotation class Function : R|kotlin/Annotation| {
     public constructor(): R|test/Function|
 
 }
@@ -38,7 +38,7 @@ public final object O : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.PROPERTY)) public final annotation class Prop : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.PROPERTY)) public final annotation class Prop : R|kotlin/Annotation| {
     public constructor(): R|test/Prop|
 
 }

@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildArrayLiteral
+import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
@@ -127,8 +127,8 @@ internal fun Any?.createConstantIfAny(session: FirSession, unsigned: Boolean = f
     }
 }
 
-private fun <T> List<T>.createArrayLiteral(session: FirSession, kind: ConstantValueKind): FirArrayLiteral {
-    return buildArrayLiteral {
+private fun <T> List<T>.createArrayLiteral(session: FirSession, kind: ConstantValueKind): FirCollectionLiteralCall {
+    return buildCollectionLiteralCall {
         argumentList = buildArgumentList {
             for (element in this@createArrayLiteral) {
                 arguments += element.createConstantOrError(session)
