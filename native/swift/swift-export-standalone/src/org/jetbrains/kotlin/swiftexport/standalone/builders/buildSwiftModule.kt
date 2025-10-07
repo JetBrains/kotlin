@@ -46,7 +46,8 @@ internal fun buildSirSession(
     unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
     moduleProvider = SirOneToOneModuleProvider(kaModules.platformLibraries),
     targetPackageFqName = moduleConfig.targetPackageFqName,
-    referencedTypeHandler = referenceHandler
+    referencedTypeHandler = referenceHandler,
+    enableCoroutinesSupport = config.enableCoroutinesSupport,
 )
 
 /**

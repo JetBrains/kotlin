@@ -25,6 +25,7 @@ internal fun KlibExportSettings.createConfig(outputPath: Path): SwiftExportConfi
         outputPath = outputPath,
         konanTarget = konanTarget,
         stableDeclarationsOrder = false,
+        enableCoroutinesSupport = true
     )
 }
 
