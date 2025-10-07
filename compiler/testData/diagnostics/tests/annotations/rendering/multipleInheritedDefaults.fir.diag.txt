@@ -1,0 +1,12 @@
+/multipleInheritedDefaults.fir.kt:(479,488): error: Class 'AB1' is not abstract and does not implement abstract member:
+fun foo(a: Int = ...): Unit
+
+/multipleInheritedDefaults.fir.kt:(479,488): error: More than one function overridden by 'foo' declares a default value for 'a: Int':
+    fun foo(a: Int = ...): Unit, defined in A
+    fun foo(a: Int = ...): Unit, defined in B
+As the compiler can not make sure these values agree, this is not allowed.
+
+/multipleInheritedDefaults.fir.kt:(549,563): error: More than one function overridden by 'foo' declares a default value for 'a: Int':
+    fun foo(a: Int = ...): Unit, defined in A
+    fun foo(a: Int = ...): Unit, defined in B
+As the compiler can not make sure these values agree, this is not allowed.

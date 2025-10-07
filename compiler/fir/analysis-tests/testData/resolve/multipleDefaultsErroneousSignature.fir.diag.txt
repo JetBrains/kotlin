@@ -1,0 +1,13 @@
+/multipleDefaultsErroneousSignature.kt:(104,114): error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.
+
+/multipleDefaultsErroneousSignature.kt:(158,168): error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.
+
+/multipleDefaultsErroneousSignature.kt:(206,209): error: Return type of 'fun foo(a: Int): Int' is not a subtype of the return type of the overridden member 'fun foo(a: Int = ...): #1' defined in 'B'. Where:
+    #1 = Recursive implicit type
+
+/multipleDefaultsErroneousSignature.kt:(210,216): error: More than one function overridden by 'foo' declares a default value for 'a: Int':
+    fun foo(a: Int = ...): #1, defined in B
+    fun foo(a: Int = ...): #2, defined in A
+As the compiler can not make sure these values agree, this is not allowed. Where:
+    #1 = Recursive implicit type
+    #2 = Recursive implicit type

@@ -40,16 +40,20 @@ import java.text.MessageFormat
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object FirDiagnosticRenderers {
-    val SYMBOL: ContextIndependentParameterRenderer<FirBasedSymbol<*>> = SymbolRenderer(modifierRenderer = ::FirPartialModifierRenderer)
+    @RequiresOptIn(message = "You may loss the diagnostics tail (where ...) by using this function. Consider renderWithTail instead.")
+    annotation class ThreatOfTailLoss
 
-    val SYMBOL_WITH_ALL_MODIFIERS: ContextIndependentParameterRenderer<FirBasedSymbol<*>> = SymbolRenderer()
+    val SYMBOL = SymbolRenderer<FirBasedSymbol<*>>(modifierRenderer = ::FirPartialModifierRenderer)
 
-    private open class SymbolRenderer<T : FirBasedSymbol<*>>(
+    val SYMBOL_WITH_ALL_MODIFIERS = SymbolRenderer<FirBasedSymbol<*>>()
+
+    open class SymbolRenderer<T : FirBasedSymbol<*>>(
         val useCallableSignatureRenderer: Boolean = true,
         val useSupertypeRenderer: Boolean = true,
         val startErrorTypeIndex: Int = 0,
         val modifierRenderer: () -> FirModifierRenderer? = ::FirAllModifierRenderer,
     ) : ContextIndependentParameterRenderer<T> {
+        @ThreatOfTailLoss
         override fun render(obj: T): String {
             return renderWithTail(obj).parameter
         }
@@ -89,22 +93,32 @@ object FirDiagnosticRenderers {
 
     }
 
-    val CALLABLE_FQ_NAME: ContextIndependentParameterRenderer<FirCallableSymbol<*>> = SymbolRendererCallableFqName()
+    val RENDER_FQ_NAME_WITH_PREFIX = SymbolRendererFqNameWithPrefix()
 
-    private class SymbolRendererCallableFqName : SymbolRenderer<FirCallableSymbol<*>>(
+    class SymbolRendererFqNameWithPrefix : SymbolRenderer<FirBasedSymbol<*>>(
         modifierRenderer = ::FirPartialModifierRenderer
     ) {
-        override fun renderWithTail(obj: FirCallableSymbol<*>): ParameterWithTail {
-            val result = super.renderWithTail(obj)
-            val origin = obj.containingClassLookupTag()?.classId?.asFqNameString()
-            return ParameterWithTail(result.parameter + origin?.let { ", defined in $it" }.orEmpty(), result.tail)
+        override fun renderWithTail(obj: FirBasedSymbol<*>): ParameterWithTail {
+            return when (obj) {
+                is FirCallableSymbol<*> -> {
+                    val result = super.renderWithTail(obj)
+                    val origin = obj.containingClassLookupTag()?.classId?.asFqNameString()
+                    ParameterWithTail(result.parameter + origin?.let { ", defined in $it" }.orEmpty(), result.tail)
+                }
+                is FirClassLikeSymbol<*> -> {
+                    val parameter = RENDER_CLASS_OR_OBJECT(quoted = false) { classId ->
+                        classId.asFqNameString()
+                    }.render(obj)
+                    ParameterWithTail(parameter, tail = null)
+                }
+                else -> ParameterWithTail(parameter = "???", tail = null)
+            }
         }
     }
 
-    val SYMBOL_WITH_CONTAINING_DECLARATION: ContextIndependentParameterRenderer<FirBasedSymbol<*>> =
-        SymbolRendererWithContainingDeclaration()
+    val SYMBOL_WITH_CONTAINING_DECLARATION = SymbolRendererWithContainingDeclaration()
 
-    private class SymbolRendererWithContainingDeclaration : SymbolRenderer<FirBasedSymbol<*>>(
+    class SymbolRendererWithContainingDeclaration : SymbolRenderer<FirBasedSymbol<*>>(
         modifierRenderer = ::FirPartialModifierRenderer
     ) {
         override fun renderWithTail(obj: FirBasedSymbol<*>): ParameterWithTail {
@@ -121,8 +135,8 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val TYPE_PARAMETER_OWNER_SYMBOL: ContextIndependentParameterRenderer<FirBasedSymbol<*>> =
-        SymbolRenderer(useCallableSignatureRenderer = false, useSupertypeRenderer = false) { null }
+    val TYPE_PARAMETER_OWNER_SYMBOL =
+        SymbolRenderer<FirBasedSymbol<*>>(useCallableSignatureRenderer = false, useSupertypeRenderer = false) { null }
 
     /**
      * Adds a line break before the list, then prints one symbol per line.
@@ -132,7 +146,11 @@ object FirDiagnosticRenderers {
     class SymbolCollectionRenderer(
         val prefix: String = "\n",
         val pluralPrefix: String = prefix,
+        val postfix: String = "",
+        val separator: String = "\n",
+        val addDefinedIn: Boolean = false,
     ) : ContextIndependentParameterRenderer<Collection<FirBasedSymbol<*>>> {
+        @ThreatOfTailLoss
         override fun render(obj: Collection<FirBasedSymbol<*>>): String {
             return renderWithTail(obj).parameter
         }
@@ -140,17 +158,21 @@ object FirDiagnosticRenderers {
         override fun renderWithTail(obj: Collection<FirBasedSymbol<*>>): ParameterWithTail {
             val collectionTail = mutableListOf<String>()
             val collectionResult = obj.joinToString(
-                separator = "\n",
+                separator = separator,
                 prefix = if (obj.isEmpty()) "" else if (obj.size == 1) prefix else pluralPrefix,
+                postfix = postfix,
             ) { symbol ->
                 val symbolRenderer = SymbolRenderer<FirBasedSymbol<*>>(
                     startErrorTypeIndex = collectionTail.size,
                     modifierRenderer = ::FirPartialModifierRenderer
                 )
 
+                val origin = if (addDefinedIn && symbol is FirCallableSymbol<*>) {
+                    symbol.containingClassLookupTag()?.classId?.asFqNameString()
+                } else null
                 symbolRenderer.renderWithTail(symbol).also {
                     collectionTail += it.tail.orEmpty()
-                }.parameter
+                }.parameter + origin?.let { ", defined in $it" }.orEmpty()
             }
             return ParameterWithTail(collectionResult, collectionTail)
         }
@@ -159,8 +181,16 @@ object FirDiagnosticRenderers {
 
     val MEMBER_SYMBOL_COLLECTION_RENDERER = SymbolCollectionRenderer(prefix = "member:\n", pluralPrefix = "members:\n")
 
-    private class SymbolWithDiagnosticMessagesCollectionRenderer :
+    val CALLABLES_FQ_NAMES = SymbolCollectionRenderer(
+        prefix = "\n" + INDENTATION_UNIT,
+        postfix = "\n",
+        separator = "\n" + INDENTATION_UNIT,
+        addDefinedIn = true,
+    )
+
+    class SymbolWithDiagnosticMessagesCollectionRenderer :
         ContextIndependentParameterRenderer<Collection<Pair<FirBasedSymbol<*>, List<String>>>> {
+        @ThreatOfTailLoss
         override fun render(obj: Collection<Pair<FirBasedSymbol<*>, List<String>>>): String {
             return renderWithTail(obj).parameter
         }
@@ -196,8 +226,7 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES: ContextIndependentParameterRenderer<Collection<Pair<FirBasedSymbol<*>, List<String>>>> =
-        SymbolWithDiagnosticMessagesCollectionRenderer()
+    val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES = SymbolWithDiagnosticMessagesCollectionRenderer()
 
     fun <Q> formatted(message: String, renderer: DiagnosticParameterRenderer<Q>): DiagnosticParameterRenderer<Q> =
         ContextDependentRenderer { value, context ->
@@ -227,12 +256,6 @@ object FirDiagnosticRenderers {
                 }
             }
         }
-    }
-
-    val CALLABLES_FQ_NAMES = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
-        override fun render(obj: Collection<FirCallableSymbol<*>>) = "\n" + obj.joinToString("\n") { symbol ->
-            INDENTATION_UNIT + CALLABLE_FQ_NAME.render(symbol)
-        } + "\n"
     }
 
     val RENDER_COLLECTION_OF_TYPES = ContextDependentRenderer { types: Collection<ConeKotlinType>, ctx ->
@@ -335,9 +358,10 @@ object FirDiagnosticRenderers {
         list.reversed().joinToString(".")
     }
 
-    val RENDER_TYPE: DiagnosticParameterRenderer<ConeKotlinType> = AdaptiveTypeRenderer()
+    val RENDER_TYPE = AdaptiveTypeRenderer()
 
-    private class AdaptiveTypeRenderer() : DiagnosticParameterRenderer<ConeKotlinType> {
+    class AdaptiveTypeRenderer() : DiagnosticParameterRenderer<ConeKotlinType> {
+        @ThreatOfTailLoss
         override fun render(obj: ConeKotlinType, renderingContext: RenderingContext): String {
             return renderWithTail(obj, renderingContext).parameter
         }
@@ -349,14 +373,6 @@ object FirDiagnosticRenderers {
             return ParameterWithTail(representation[obj], tail)
         }
 
-    }
-
-    val RENDER_FQ_NAME_WITH_PREFIX = Renderer { symbol: FirBasedSymbol<*> ->
-        when (symbol) {
-            is FirCallableSymbol<*> -> CALLABLE_FQ_NAME.render(symbol)
-            is FirClassLikeSymbol<*> -> RENDER_CLASS_OR_OBJECT(quoted = false) { classId -> classId.asFqNameString() }.render(symbol)
-            else -> return@Renderer "???"
-        }
     }
 
     private class AdaptiveTypesRepresentation(val strings: Map<ConeKotlinType, String>, val descriptions: List<String>) {
@@ -433,6 +449,8 @@ object FirDiagnosticRenderers {
 
                         if (typeParameterSymbol != null) {
                             append(" (of ")
+                            // It seems possible, as we don't render a signature in TYPE_PARAMETER_OWNER_SYMBOL
+                            @OptIn(ThreatOfTailLoss::class)
                             append(TYPE_PARAMETER_OWNER_SYMBOL.render(typeParameterSymbol.containingDeclarationSymbol))
                             append(')')
                         }

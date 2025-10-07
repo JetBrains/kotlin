@@ -525,6 +525,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("multipleDefaultsErroneousSignature.kt")
+    public void testMultipleDefaultsErroneousSignature() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/multipleDefaultsErroneousSignature.kt");
+    }
+
+    @Test
     @TestMetadata("nestedAnnotationConstExprArguments.kt")
     public void testNestedAnnotationConstExprArguments() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedAnnotationConstExprArguments.kt");
