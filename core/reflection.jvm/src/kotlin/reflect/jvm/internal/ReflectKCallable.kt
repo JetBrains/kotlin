@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import kotlin.coroutines.Continuation
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KCallable
@@ -48,6 +49,8 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
     override fun call(vararg args: Any?): R = reflectionCall {
         return caller.call(args) as R
     }
+
+    val fullVisibility: DescriptorVisibility
 
     override fun callBy(args: Map<KParameter, Any?>): R {
         return if (isAnnotationConstructor) callAnnotationConstructor(args) else callDefaultMethod(args, null)

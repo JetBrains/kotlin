@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import java.util.*
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
@@ -35,7 +36,7 @@ internal fun getAllMembers_newKotlinReflectImpl(
     val supertypes = kClass.supertypes
     val receiver = kClass.descriptor.thisAsReceiverParameter
     for (supertype in supertypes) {
-        val context = RecursionContext(receiver, visitedClassifiers, memberKind)
+        val context = RecursionContext(kClass, receiver, visitedClassifiers, memberKind)
         collectVisitedSignaturesForSuperclassRecursively(
             supertype,
             KTypeSubstitutor.EMPTY,
@@ -55,7 +56,8 @@ private fun nonDenotableSupertypesAreNotPossible(): Nothing = error("Non-denotab
 private fun starProjectionSupertypesAreNotPossible(): Nothing = error("Star projection supertypes are not possible")
 
 private data class RecursionContext(
-    val receiver: ReceiverParameterDescriptor,
+    val receiver: KClassImpl<*>,
+    val receiverParameterDescriptor: ReceiverParameterDescriptor,
     val visitedClassifiers: HashSet<KClass<*>>,
     val memberKind: MemberKind,
 )
@@ -126,13 +128,18 @@ private fun collectVisitedSignaturesForSuperclassRecursively(
         accumulateClassGenericsSubstitutor.createCombinedSubstitutorOrNull(currentType) ?: starProjectionSupertypesAreNotPossible()
     for (notSubstitutedMember in currentClass.declaredDescriptorKCallableMembers) {
         if (notSubstitutedMember.visibility == KVisibility.PRIVATE) continue
+        if (notSubstitutedMember.fullVisibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY &&
+            currentClass.jClass.`package` != context.receiver.jClass.`package`
+        ) {
+            continue
+        }
         val isStaticMember = notSubstitutedMember.instanceReceiverParameter == null
         // static members in interfaces are never inherited (not in Java, not in Kotlin enums)
         if (isStaticMember && currentClass.classKind == ClassKind.INTERFACE) continue
         if (isStaticMember != (context.memberKind == MemberKind.STATIC)) continue
 
         val member = notSubstitutedMember.shallowCopy().apply {
-            forceInstanceReceiverParameter = if (isStaticMember) null else context.receiver
+            forceInstanceReceiverParameter = if (isStaticMember) null else context.receiverParameterDescriptor
             kTypeSubstitutor = classGenericsSubstitutor
         }
 

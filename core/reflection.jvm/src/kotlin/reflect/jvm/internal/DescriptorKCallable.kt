@@ -122,6 +122,9 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
 
+    override val fullVisibility: DescriptorVisibility
+        get() = descriptor.visibility
+
     override val isFinal: Boolean
         get() = descriptor.modality == Modality.FINAL
 
