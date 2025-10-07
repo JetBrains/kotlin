@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 
 internal class CriFileIdToPathDataDeserializationOperationImpl(
     private val data: ByteArray,
+    private val deserializer: CriDataDeserializerImpl = CriDataDeserializerImpl(),
 ) : BuildOperationImpl<Collection<FileIdToPathEntry>>(), CriFileIdToPathDataDeserializationOperation {
 
     override fun execute(
@@ -22,6 +23,6 @@ internal class CriFileIdToPathDataDeserializationOperationImpl(
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
     ): Collection<FileIdToPathEntry> {
-        return CriDataDeserializerImpl().deserializeFileIdToPathData(data)
+        return deserializer.deserializeFileIdToPathData(data)
     }
 }

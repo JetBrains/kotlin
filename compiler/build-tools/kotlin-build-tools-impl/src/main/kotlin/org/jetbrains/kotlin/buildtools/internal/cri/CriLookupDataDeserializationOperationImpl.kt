@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 
 internal class CriLookupDataDeserializationOperationImpl(
     private val data: ByteArray,
+    private val deserializer: CriDataDeserializerImpl = CriDataDeserializerImpl(),
 ) : BuildOperationImpl<Collection<LookupEntry>>(), CriLookupDataDeserializationOperation {
 
     override fun execute(
@@ -22,6 +23,6 @@ internal class CriLookupDataDeserializationOperationImpl(
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
     ): Collection<LookupEntry> {
-        return CriDataDeserializerImpl().deserializeLookupData(data)
+        return deserializer.deserializeLookupData(data)
     }
 }
