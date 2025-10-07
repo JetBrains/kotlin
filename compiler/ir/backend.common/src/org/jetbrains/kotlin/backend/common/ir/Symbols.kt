@@ -74,20 +74,11 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
             ?: error("Expected extension receiver for ${it.render()}")
     }
 
-    val char get() = irBuiltIns.charClass
-
-    val byte get() = irBuiltIns.byteClass
-    val short get() = irBuiltIns.shortClass
-    val int get() = irBuiltIns.intClass
-    val long get() = irBuiltIns.longClass
-    val float get() = irBuiltIns.floatClass
-    val double get() = irBuiltIns.doubleClass
-
-    val integerClasses = listOf(byte, short, int, long)
+    val integerClasses = listOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
 
     val progressionElementTypes: Collection<IrType> by lazy {
         listOfNotNull(
-            byte, short, int, long, char,
+            irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass, irBuiltIns.charClass,
             irBuiltIns.ubyteClass, irBuiltIns.ushortClass, irBuiltIns.uintClass, irBuiltIns.ulongClass
         ).map { it.defaultType }
     }

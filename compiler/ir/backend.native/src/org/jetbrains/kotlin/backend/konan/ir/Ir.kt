@@ -308,17 +308,17 @@ class KonanSymbols(
     val immutableBlobOf = CallableIds.immutableBlobOf.functionSymbol()
     val immutableBlobOfImpl = CallableIds.immutableBlobOfImpl.functionSymbol()
 
-    val signedIntegerClasses = setOf(byte, short, int, long)
+    val signedIntegerClasses = setOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
     val unsignedIntegerClasses = setOf(irBuiltIns.ubyteClass!!, irBuiltIns.ushortClass!!, irBuiltIns.uintClass!!, irBuiltIns.ulongClass!!)
 
     val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
 
     val unsignedToSignedOfSameBitWidth = unsignedIntegerClasses.associateWith {
         when (it) {
-            irBuiltIns.ubyteClass -> byte
-            irBuiltIns.ushortClass -> short
-            irBuiltIns.uintClass -> int
-            irBuiltIns.ulongClass -> long
+            irBuiltIns.ubyteClass -> irBuiltIns.byteClass
+            irBuiltIns.ushortClass -> irBuiltIns.shortClass
+            irBuiltIns.uintClass -> irBuiltIns.intClass
+            irBuiltIns.ulongClass -> irBuiltIns.longClass
             else -> error(it.toString())
         }
     }
