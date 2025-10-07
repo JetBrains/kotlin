@@ -247,7 +247,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
     }
 
     /**
-     * The callback that will be called on the script compilation  immediately before starting the compilation
+     * The callback that will be called on the script compilation immediately before starting the compilation
      * @param handler the callback that will be called
      */
     fun beforeCompiling(handler: RefineScriptCompilationConfigurationHandler) {
@@ -319,15 +319,21 @@ fun ScriptCompilationConfiguration.refineBeforeCompiling(
         refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
     }
 
-internal inline fun <Configuration: PropertiesCollection, RefineData> Configuration.simpleRefineImpl(
+internal inline fun <Configuration : PropertiesCollection, RefineData> Configuration.simpleRefineImpl(
     key: PropertiesCollection.Key<List<RefineData>>,
     refineFn: (Configuration, RefineData) -> ResultWithDiagnostics<Configuration>
-): ResultWithDiagnostics<Configuration> = (
-        this[key]
-            ?.fold(this) { config, refineData ->
-                refineFn(config, refineData).valueOr { return it }
-            } ?: this
-        ).asSuccess()
+): ResultWithDiagnostics<Configuration> {
+    val diagnostics = mutableListOf<ScriptDiagnostic>()
+
+    val configuration = this[key]
+        ?.fold(this) { config, refineData ->
+            val result = refineFn(config, refineData)
+            diagnostics.addAll(result.reports)
+            result.valueOr { return it }
+        } ?: this
+
+    return configuration.asSuccess(diagnostics)
+}
 
 /**
  * The functional interface to the script compiler

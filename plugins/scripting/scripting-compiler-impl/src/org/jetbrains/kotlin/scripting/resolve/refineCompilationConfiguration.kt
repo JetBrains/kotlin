@@ -184,16 +184,8 @@ fun refineScriptCompilationConfiguration(
         }
 }
 
-fun ScriptDependencies.adjustByDefinition(definition: ScriptDefinition): ScriptDependencies {
-    val additionalClasspath = additionalClasspath(definition).filterNot { classpath.contains(it) }
-    if (additionalClasspath.isEmpty()) return this
-
-    return copy(classpath = classpath + additionalClasspath)
-}
-
-fun ScriptCompilationConfiguration.adjustByDefinition(definition: ScriptDefinition): ScriptCompilationConfiguration {
-    return this.withUpdatedClasspath(additionalClasspath(definition))
-}
+fun ScriptCompilationConfiguration.adjustByDefinition(definition: ScriptDefinition): ScriptCompilationConfiguration =
+    this.withUpdatedClasspath(additionalClasspath(definition))
 
 private fun additionalClasspath(definition: ScriptDefinition): List<File> {
     return definition.hostConfiguration[ScriptingHostConfiguration.configurationDependencies].toClassPathOrEmpty()

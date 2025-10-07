@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.scripting.definitions
 
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.scripting.resolve.ApiChangeDependencyResolverWrapper
+import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import kotlin.reflect.KClass
@@ -20,6 +21,7 @@ import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.compilationConfiguration
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.host.FileBasedScriptSource
@@ -29,6 +31,7 @@ import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
+import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.location.ScriptExpectedLocation
@@ -36,6 +39,8 @@ import kotlin.script.experimental.location.ScriptExpectedLocations
 import kotlin.script.experimental.util.PropertiesCollection
 import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
+import kotlin.text.get
+import kotlin.text.orEmpty
 
 @Deprecated("Use 'ScriptDefinition' instead", level = DeprecationLevel.WARNING)
 class ScriptCompilationConfigurationFromLegacyTemplate(
@@ -104,18 +109,20 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         ide {
             acceptedLocations.put(scriptExpectedLocations)
         }
+        asyncDependenciesResolver(dependencyResolver is AsyncDependenciesResolver || dependencyResolver is LegacyResolverWrapper)
         if (dependencyResolver != DependenciesResolver.NoDependencies) {
             refineConfiguration {
-//                beforeCompiling {
-//                    refineWithResolver(dependencyResolver, it)
-//                }
                 onAnnotations(acceptedAnnotations) {
+                    refineWithResolver(dependencyResolver, it)
+                }
+                beforeCompiling {
                     refineWithResolver(dependencyResolver, it)
                 }
             }
         }
         template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern?.let {
-            filePathPattern(it)
+            @Suppress("DEPRECATION_ERROR")
+            fileNamePattern(it)
         }
     })
 
@@ -161,12 +168,27 @@ private fun refineWithResolver(
     dependencyResolver: DependenciesResolver,
     context: ScriptConfigurationRefinementContext,
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val resolveResult: DependenciesResolver.ResolveResult = dependencyResolver.resolve(
-        ScriptContentsFromRefinementContext(context), emptyMap()
-    )
+    val environment = context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
+        it[ScriptingHostConfiguration.getEnvironment]?.invoke()
+    }.orEmpty()
+
+    val resolveResult: DependenciesResolver.ResolveResult = if (dependencyResolver is AsyncDependenciesResolver) {
+        @Suppress("DEPRECATION_ERROR")
+        internalScriptingRunSuspend {
+            dependencyResolver.resolveAsync(ScriptContentsFromRefinementContext(context), environment)
+        }
+    } else {
+        dependencyResolver.resolve(ScriptContentsFromRefinementContext(context), environment)
+    }
 
     val reports = resolveResult.reports.map {
-        ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, it.message, mapLegacyDiagnosticSeverity(it.severity))
+        ScriptDiagnostic(
+            ScriptDiagnostic.unspecifiedError,
+            it.message,
+            mapLegacyDiagnosticSeverity(it.severity),
+            context.script.locationId,
+            mapLegacyScriptPosition(it.position)
+        )
     }
     val resolvedDeps = (resolveResult as? DependenciesResolver.ResolveResult.Success)?.dependencies
 
@@ -216,5 +238,7 @@ class AsyncDependencyResolverWrapper(
 val ScriptCompilationConfigurationKeys.annotationsForSamWithReceivers by PropertiesCollection.key<List<KotlinType>>()
 
 val ScriptCompilationConfigurationKeys.platform by PropertiesCollection.key<String>()
+
+val ScriptCompilationConfigurationKeys.asyncDependenciesResolver by PropertiesCollection.key<Boolean>()
 
 val ScriptingHostConfigurationKeys.getEnvironment by PropertiesCollection.key<() -> Environment?>()

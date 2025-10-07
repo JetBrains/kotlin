@@ -21,7 +21,6 @@ import kotlin.script.experimental.api.onSuccess
 import kotlin.script.experimental.api.valueOr
 import kotlin.script.experimental.api.with
 import kotlin.script.experimental.jvm.baseClassLoader
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 import kotlin.test.*
 
@@ -68,12 +67,7 @@ internal fun compileScript(
     val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val scriptDefinition = ScriptDefinitionProvider.getInstance(environment.project)!!.findDefinition(script)!!
 
-    val scriptCompilationConfiguration = scriptDefinition.compilationConfiguration.with {
-        jvm {
-            dependenciesFromCurrentContext(wholeClasspath = true)
-        }
-    }
-    val compileResult = scriptCompiler.compile(script, scriptCompilationConfiguration)
+    val compileResult = scriptCompiler.compile(script, scriptDefinition.compilationConfiguration)
     for (report in compileResult.reports) {
         messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
     }
