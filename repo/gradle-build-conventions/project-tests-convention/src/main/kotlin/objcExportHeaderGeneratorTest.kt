@@ -79,11 +79,8 @@ fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
             }
         }
 
-    val testTags = project.findProperty("kotlin.native.tests.tags")?.toString()
-
     return nativeTestTask(
         taskName = taskName,
-        tag = "$testTags|none()",
         requirePlatformLibs = requirePlatformLibs,
     ) {
         /**

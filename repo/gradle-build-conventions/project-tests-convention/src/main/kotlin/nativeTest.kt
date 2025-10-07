@@ -363,7 +363,15 @@ fun ProjectTestsExtension.nativeTestTask(
         environment("GRADLE_TASK_NAME", path)
 
         useJUnitPlatform {
-            tag?.let { includeTags(it) }
+            // Note: arbitrary JUnit tag expressions can be used in this property.
+            // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
+            val globalTags = findProperty("kotlin.native.tests.tags")?.toString()
+            val testTags = when {
+                tag == null -> globalTags
+                globalTags == null -> tag
+                else -> "($tag)&($globalTags)"
+            }
+            testTags?.let { includeTags(it) }
         }
 
         if (!allowParallelExecution) {

@@ -49,10 +49,8 @@ val downloadCustomCompilerDist: TaskProvider<Sync> by tasks.registering(Sync::cl
 }
 
 projectTests {
-    val testTags = findProperty("kotlin.native.tests.tags")?.toString()
     nativeTestTask(
         "test",
-        testTags,
         customCompilerDist = downloadCustomCompilerDist,
         maxMetaspaceSizeMb = 1024 // to handle two compilers in classloader
     ) {

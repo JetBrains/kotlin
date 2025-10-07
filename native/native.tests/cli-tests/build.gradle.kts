@@ -25,7 +25,6 @@ testsJar {}
 projectTests {
     nativeTestTask(
         "test",
-        tag = null,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,

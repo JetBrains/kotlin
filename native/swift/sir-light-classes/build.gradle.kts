@@ -32,7 +32,7 @@ dependencies {
 }
 
 projectTests {
-    nativeTestTask("test", tag = null) {
+    nativeTestTask("test") {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")
     }
 }
