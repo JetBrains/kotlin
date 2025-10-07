@@ -87,10 +87,10 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
     }
 
     override fun execute(parameters: Parameters) {
-        val buildId = parameters.buildUidProperty.orNull ?: return
+//        val buildId = parameters.buildUidProperty.orNull ?: return
         parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.buildFailed.get(),
-            buildId,
+//            buildId,
             parameters.buildFusServiceProperty.orNull?.parameters?.configurationMetrics?.orNull ?: emptyList()
         )
     }
@@ -112,10 +112,10 @@ internal class BuildFinishAndConfigurationTimeMetricsFlowAction : FlowAction<Bui
     }
 
     override fun execute(parameters: Parameters) {
-        val buildId = parameters.buildUidProperty.orNull ?: return
+//        val buildId = parameters.buildUidProperty.orNull ?: return
         parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.buildFailed.get(),
-            buildId,
+//            buildId,
             parameters.configurationTimeMetrics.get()
         )
     }

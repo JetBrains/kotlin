@@ -204,6 +204,17 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
         println("Close ${this.javaClass.simpleName}: $buildId")
     }
 
+    internal fun recordBuildFinished(buildFailed: Boolean, configurationMetrics: List<MetricContainer>) {
+        BuildFinishMetrics.collectMetrics(log, buildFailed, buildStartTime, projectEvaluatedTime, fusMetricsConsumer)
+        configurationMetrics.forEach { it.addToConsumer(fusMetricsConsumer) }
+        parameters.generalConfigurationMetrics.orNull?.addToConsumer(fusMetricsConsumer)
+        parameters.buildStatisticsConfiguration.orNull?.also {
+            val loggerService = KotlinBuildStatsLoggerService(it)
+            loggerService.initSessionLogger(buildId)
+            loggerService.reportBuildFinished(fusMetricsConsumer)
+        }
+    }
+
     internal fun recordBuildFinished(buildFailed: Boolean, buildId: String, configurationMetrics: List<MetricContainer>) {
         BuildFinishMetrics.collectMetrics(log, buildFailed, buildStartTime, projectEvaluatedTime, fusMetricsConsumer)
         configurationMetrics.forEach { it.addToConsumer(fusMetricsConsumer) }
