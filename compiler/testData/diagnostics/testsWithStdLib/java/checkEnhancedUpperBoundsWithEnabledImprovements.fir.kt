@@ -32,9 +32,9 @@ fun main1(x: A<<!UPPER_BOUND_VIOLATED!>Int?<!>>) {}
 fun main2(x: A2<<!UPPER_BOUND_VIOLATED!>Int?<!>>) {}
 fun main3(x: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!>) {}
 fun main3() {
-    val x = A3<Int?>()
+    val x = A3<<!UPPER_BOUND_VIOLATED!>Int?<!>>()
     val x2 = A<<!UPPER_BOUND_VIOLATED!>Int?<!>>()
-    val y: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!> = A3<Int?>()
+    val y: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!> = A3<<!UPPER_BOUND_VIOLATED!>Int?<!>>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, localProperty, nullableType, propertyDeclaration,

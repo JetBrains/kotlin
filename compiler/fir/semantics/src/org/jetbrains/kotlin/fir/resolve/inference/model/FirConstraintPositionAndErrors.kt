@@ -39,7 +39,8 @@ object ConeExpectedTypeConstraintPosition : ExpectedTypeConstraintPosition<Nothi
 
 class ConeExplicitTypeParameterConstraintPosition(
     typeArgument: FirTypeProjection,
-) : ExplicitTypeParameterConstraintPosition<FirTypeProjection>(typeArgument) {
+    index: Int,
+) : ExplicitTypeParameterConstraintPosition<FirTypeProjection>(typeArgument, index) {
     override fun toString(): String = "TypeParameter ${typeArgument.render()}"
 }
 

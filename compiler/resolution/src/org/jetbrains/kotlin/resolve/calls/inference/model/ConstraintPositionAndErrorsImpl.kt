@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 class ExplicitTypeParameterConstraintPositionImpl(
-    typeArgument: SimpleTypeArgument
-) : ExplicitTypeParameterConstraintPosition<SimpleTypeArgument>(typeArgument)
+    typeArgument: SimpleTypeArgument,
+    index: Int,
+) : ExplicitTypeParameterConstraintPosition<SimpleTypeArgument>(typeArgument, index)
 
 class InjectedAnotherStubTypeConstraintPositionImpl(builderInferenceLambdaOfInjectedStubType: LambdaKotlinCallArgument) :
     InjectedAnotherStubTypeConstraintPosition<LambdaKotlinCallArgument>(builderInferenceLambdaOfInjectedStubType)

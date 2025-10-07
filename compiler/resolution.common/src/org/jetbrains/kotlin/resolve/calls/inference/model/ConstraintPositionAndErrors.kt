@@ -17,7 +17,10 @@ interface OnlyInputTypeConstraintPosition
 
 sealed class ConstraintPosition
 
-abstract class ExplicitTypeParameterConstraintPosition<T>(val typeArgument: T) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
+abstract class ExplicitTypeParameterConstraintPosition<T>(
+    val typeArgument: T,
+    val index: Int,
+) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString(): String = "TypeParameter $typeArgument"
 }
 

@@ -166,7 +166,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
                 csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     getTypePreservingFlexibilityWrtTypeVariable(typeArgument.type, freshVariable),
-                    ExplicitTypeParameterConstraintPositionImpl(typeArgument)
+                    ExplicitTypeParameterConstraintPositionImpl(typeArgument, index)
                 )
             } else {
                 assert(typeArgument == TypeArgumentPlaceholder) {
