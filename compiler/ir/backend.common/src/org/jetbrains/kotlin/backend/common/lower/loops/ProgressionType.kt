@@ -51,12 +51,12 @@ sealed class ProgressionType(
 
 internal class IntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
     ProgressionType(
-        elementClass = symbols.int.owner,
-        stepClass = symbols.int.owner,
+        elementClass = irBuiltIns.intClass.owner,
+        stepClass = irBuiltIns.intClass.owner,
         minValueAsLong = Int.MIN_VALUE.toLong(),
         maxValueAsLong = Int.MAX_VALUE.toLong(),
         // Uses `getProgressionLastElement(Int, Int, Int): Int`
-        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.int]
+        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[irBuiltIns.intClass]
     ) {
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
@@ -64,12 +64,12 @@ internal class IntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
 
 internal class LongProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
     ProgressionType(
-        elementClass = symbols.long.owner,
-        stepClass = symbols.long.owner,
+        elementClass = irBuiltIns.longClass.owner,
+        stepClass = irBuiltIns.longClass.owner,
         minValueAsLong = Long.MIN_VALUE,
         maxValueAsLong = Long.MAX_VALUE,
         // Uses `getProgressionLastElement(Long, Long, Long): Long`
-        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.long]
+        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[irBuiltIns.longClass]
     ) {
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irLong(0)
@@ -77,12 +77,12 @@ internal class LongProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
 
 internal class CharProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
     ProgressionType(
-        elementClass = symbols.char.owner,
-        stepClass = symbols.int.owner,
+        elementClass = irBuiltIns.charClass.owner,
+        stepClass = irBuiltIns.intClass.owner,
         minValueAsLong = Char.MIN_VALUE.code.toLong(),
         maxValueAsLong = Char.MAX_VALUE.code.toLong(),
         // Uses `getProgressionLastElement(Int, Int, Int): Int`
-        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.int]
+        getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[irBuiltIns.intClass]
     ) {
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
@@ -167,14 +167,14 @@ internal abstract class UnsignedProgressionType(
 internal class UIntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
-        elementClass = if (allowUnsignedBounds) irBuiltIns.uintClass!!.owner else symbols.int.owner,
-        stepClass = symbols.int.owner,
+        elementClass = if (allowUnsignedBounds) irBuiltIns.uintClass!!.owner else irBuiltIns.intClass.owner,
+        stepClass = irBuiltIns.intClass.owner,
         minValueAsLong = UInt.MIN_VALUE.toLong(),
         maxValueAsLong = UInt.MAX_VALUE.toLong(),
         // Uses `getProgressionLastElement(UInt, UInt, Int): UInt`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[irBuiltIns.uintClass!!],
         unsignedType = irBuiltIns.uintClass!!.defaultType,
-        unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int)
+        unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(irBuiltIns.intClass)
     ) {
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
@@ -183,14 +183,14 @@ internal class UIntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols, all
 internal class ULongProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
-        elementClass = if (allowUnsignedBounds) irBuiltIns.ulongClass!!.owner else symbols.long.owner,
-        stepClass = symbols.long.owner,
+        elementClass = if (allowUnsignedBounds) irBuiltIns.ulongClass!!.owner else irBuiltIns.longClass.owner,
+        stepClass = irBuiltIns.longClass.owner,
         minValueAsLong = ULong.MIN_VALUE.toLong(),
         maxValueAsLong = ULong.MAX_VALUE.toLong(),
         // Uses `getProgressionLastElement(ULong, ULong, Long): ULong`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[irBuiltIns.ulongClass!!],
         unsignedType = irBuiltIns.ulongClass!!.defaultType,
-        unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long)
+        unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(irBuiltIns.longClass)
     ) {
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irLong(0)

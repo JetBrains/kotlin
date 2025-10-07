@@ -103,7 +103,7 @@ private fun InteropCallContext.determineInMemoryType(type: IrType): IrType {
             symbols.unsignedToSignedOfSameBitWidth.getValue(classifier).owner.defaultType
         }
         // Assuming that _Bool is stored as single byte.
-        irBuiltIns.booleanClass -> symbols.byte.defaultType
+        irBuiltIns.booleanClass -> irBuiltIns.byteClass.defaultType
         else -> type
     }
 }
@@ -138,9 +138,9 @@ private fun InteropCallContext.castPrimitiveIfNeeded(
 private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: IrExpression): IrExpression {
     val (primitiveBinaryType, immZero) = when (sourceClass) {
         // Case of regular struct field.
-        symbols.byte -> PrimitiveBinaryType.BYTE to builder.irByte(0)
+        irBuiltIns.byteClass -> PrimitiveBinaryType.BYTE to builder.irByte(0)
         // Case of bitfield.
-        symbols.long -> PrimitiveBinaryType.LONG to builder.irLong(0)
+        irBuiltIns.longClass -> PrimitiveBinaryType.LONG to builder.irLong(0)
         else -> error("Unsupported cast to boolean from ${sourceClass.owner.name}")
     }
     val areEqualByValuesBytes = symbols.areEqualByValue.getValue(primitiveBinaryType)
@@ -159,9 +159,9 @@ private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: 
 private fun InteropCallContext.castFromBoolean(targetClass: IrClassSymbol, value: IrExpression): IrExpression {
     val (thenPart, elsePart) = when (targetClass) {
         // Case of regular struct field.
-        symbols.byte -> builder.irByte(1) to builder.irByte(0)
+        irBuiltIns.byteClass -> builder.irByte(1) to builder.irByte(0)
         // Case of bitfield.
-        symbols.long -> builder.irLong(1) to builder.irLong(0)
+        irBuiltIns.longClass -> builder.irLong(1) to builder.irLong(0)
         else -> error("Unsupported cast from boolean to ${targetClass.owner.name}")
     }
     return builder.irIfThenElse(targetClass.defaultType, value, thenPart, elsePart)

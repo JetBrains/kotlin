@@ -289,10 +289,10 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 when (it) {
                     is IrConstantPrimitive -> {
                         val castedConst = when (it.value.kind) {
-                            IrConstKind.Byte -> IrConstImpl.byte(it.startOffset, it.endOffset, symbols.byte.defaultType, it.value.value as Byte)
-                            IrConstKind.Short -> IrConstImpl.short(it.startOffset, it.endOffset, symbols.short.defaultType, it.value.value as Short)
-                            IrConstKind.Int -> IrConstImpl.int(it.startOffset, it.endOffset, symbols.int.defaultType, it.value.value as Int)
-                            IrConstKind.Long -> IrConstImpl.long(it.startOffset, it.endOffset, symbols.long.defaultType, it.value.value as Long)
+                            IrConstKind.Byte -> IrConstImpl.byte(it.startOffset, it.endOffset, irBuiltIns.byteClass.defaultType, it.value.value as Byte)
+                            IrConstKind.Short -> IrConstImpl.short(it.startOffset, it.endOffset, irBuiltIns.shortClass.defaultType, it.value.value as Short)
+                            IrConstKind.Int -> IrConstImpl.int(it.startOffset, it.endOffset, irBuiltIns.intClass.defaultType, it.value.value as Int)
+                            IrConstKind.Long -> IrConstImpl.long(it.startOffset, it.endOffset, irBuiltIns.longClass.defaultType, it.value.value as Long)
                             else -> error("Unsupported unsigned constant")
                         }
                         builder.irConstantPrimitive(castedConst)
