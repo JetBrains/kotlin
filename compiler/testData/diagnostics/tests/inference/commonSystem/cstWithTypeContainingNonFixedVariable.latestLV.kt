@@ -60,11 +60,11 @@ fun testVariableWithBound() {
 
     c1
 
-    val c2 = <!TYPE_MISMATCH!>select(SubInv<String>(), <!UPPER_BOUND_VIOLATED!>createWithNumberBound<!>())<!>
+    val c2 = <!TYPE_MISMATCH!>select(SubInv<String>(), createWithNumberBound())<!>
 
     c2
 
-    val c3 = <!TYPE_MISMATCH!>select(SubInv<Double>(), <!UPPER_BOUND_VIOLATED!>createWithIntBound<!>())<!>
+    val c3 = <!TYPE_MISMATCH!>select(SubInv<Double>(), createWithIntBound())<!>
 
     c3
 }
