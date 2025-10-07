@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import kotlin.time.Duration
 
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
@@ -41,8 +40,8 @@ internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
         val JVM_ARGUMENTS: Option<List<String>?> = Option("JVM_ARGUMENTS", default = null)
 
         /**
-         * The time that the daemon process continues to live after all clients have disconnected.
+         * The time in milliseconds that the daemon process continues to live after all clients have disconnected.
          */
-        val SHUTDOWN_DELAY: Option<Duration?> = Option("SHUTDOWN_DELAY", null)
+        val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS", null)
     }
 }
