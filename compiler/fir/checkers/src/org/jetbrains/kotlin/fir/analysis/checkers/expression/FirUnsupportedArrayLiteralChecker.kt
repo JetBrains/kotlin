@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lastExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -30,6 +32,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirArrayLiteral) {
+        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)) return
         if (isInsideAnnotationConstructor()) return
 
         when (containingCallKind()) {

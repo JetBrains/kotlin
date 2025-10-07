@@ -1300,6 +1300,27 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         return status.isActual && (status.isInline || status.isValue || classKind == ClassKind.ANNOTATION_CLASS)
     }
 
+    protected fun chooseCollectionLiteralNode(arguments: FirArgumentList, callSource: KtSourceElement): FirExpression {
+        val supportsCollectionLiteral = baseSession.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
+
+        return when {
+            supportsCollectionLiteral ->
+                buildCollectionLiteralCall {
+                    calleeReference = buildSimpleNamedReference {
+                        name = OperatorNameConventions.OF
+                        source = callSource
+                    }
+                    source = callSource
+                    argumentList = arguments
+                }
+            else ->
+                buildArrayLiteral {
+                    source = callSource
+                    argumentList = arguments
+                }
+        }
+    }
+
     enum class ValueParameterDeclaration(val shouldExplicitParameterTypeBePresent: Boolean, val isAnnotationOwner: Boolean) {
         FUNCTION(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = true),
         CATCH(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = false),
