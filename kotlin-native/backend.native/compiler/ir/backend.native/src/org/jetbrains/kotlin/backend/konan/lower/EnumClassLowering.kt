@@ -174,7 +174,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
     private val createUninitializedInstance = symbols.createUninitializedInstance
     private val createEnumEntries = symbols.createEnumEntries
     private val initInstance = symbols.initInstance
-    private val arrayGet = symbols.array.owner.functions.single { it.name == KonanNameConventions.getWithoutBoundCheck }.symbol
+    private val arrayGet = context.irBuiltIns.arrayClass.owner.functions.single { it.name == KonanNameConventions.getWithoutBoundCheck }.symbol
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {

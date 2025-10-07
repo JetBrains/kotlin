@@ -270,7 +270,7 @@ private fun KotlinToCCallBuilder.addVariadicArguments(
         with(irBuilder) {
             val argumentTypes = unwrapVariadicArguments(elements).map { it.type }
             argumentTypes.forEachIndexed { index, type ->
-                val argument = irCall(symbols.arrayGet[symbols.array]!!, irBuiltIns.anyClass.defaultType.makeNullable()).apply {
+                val argument = irCall(symbols.arrayGet[irBuiltIns.arrayClass]!!, irBuiltIns.anyClass.defaultType.makeNullable()).apply {
                     arguments[0] = irGet(variable)
                     arguments[1] = irInt(index)
                 }.implicitCastIfNeededTo(type)
@@ -287,7 +287,7 @@ private fun KotlinToCCallBuilder.unwrapVariadicArguments(
         is IrExpression -> listOf(it)
         is IrSpreadElement -> {
             val expression = it.expression
-            require(expression is IrCall && expression.symbol == symbols.arrayOf) { stubs.renderCompilerError(it) }
+            require(expression is IrCall && expression.symbol == irBuiltIns.arrayOf) { stubs.renderCompilerError(it) }
             handleArgumentForVarargParameter(expression.arguments[0]) { _, elements ->
                 unwrapVariadicArguments(elements)
             }

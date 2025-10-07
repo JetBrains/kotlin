@@ -23,10 +23,10 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
     init {
         symbolToTransformer.run {
             // Arrays
-            add(context.symbols.array.sizeProperty, context.symbols.jsArrayLength)
-            add(context.symbols.array.getFunction, context.symbols.jsArrayGet)
-            add(context.symbols.array.setFunction, context.symbols.jsArraySet)
-            add(context.symbols.array.iterator, context.symbols.jsArrayIteratorFunction)
+            add(context.irBuiltIns.arrayClass.sizeProperty, context.symbols.jsArrayLength)
+            add(context.irBuiltIns.arrayClass.getFunction, context.symbols.jsArrayGet)
+            add(context.irBuiltIns.arrayClass.setFunction, context.symbols.jsArraySet)
+            add(context.irBuiltIns.arrayClass.iterator, context.symbols.jsArrayIteratorFunction)
             for ((key, elementType) in context.symbols.primitiveArrays) {
                 add(key.sizeProperty, context.symbols.jsArrayLength)
                 add(key.getFunction, context.symbols.jsArrayGet)

@@ -283,7 +283,7 @@ internal class WasmVarargExpressionLowering(
         when (expr) {
             is IrFunctionAccessExpression -> {
                 val arrDescr = ArrayDescr(expr.type, context)
-                expr.symbol.owner in arrDescr.constructors || expr.symbol == context.wasmSymbols.arrayOfNulls
+                expr.symbol.owner in arrDescr.constructors || expr.symbol == context.irBuiltIns.arrayOfNulls
             }
             is IrTypeOperatorCall -> isImmediatelyCreatedArray(expr.argument)
             is IrComposite ->
