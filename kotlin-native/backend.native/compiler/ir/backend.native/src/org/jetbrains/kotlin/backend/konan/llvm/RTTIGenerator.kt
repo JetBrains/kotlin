@@ -33,8 +33,8 @@ internal class RTTIGenerator(
             context.irBuiltIns.byteClass, context.irBuiltIns.shortClass, context.irBuiltIns.intClass,
             context.irBuiltIns.longClass,
             context.irBuiltIns.floatClass, context.irBuiltIns.doubleClass) +
-            context.symbols.primitiveTypesToPrimitiveArrays.values +
-            context.symbols.unsignedTypesToUnsignedArrays.values
+            context.irBuiltIns.primitiveTypesToPrimitiveArrays.values +
+            context.irBuiltIns.unsignedTypesToUnsignedArrays.values
 
     // TODO: extend logic here by taking into account final acyclic classes.
     private fun checkAcyclicFieldType(type: IrType): Boolean = acyclicCache.getOrPut(type) {
