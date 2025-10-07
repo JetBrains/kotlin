@@ -89,7 +89,7 @@ private class VarargTransformer(
         val arrayLiteral =
             segments.toArrayLiteral(
                 context,
-                IrSimpleTypeImpl(context.symbols.array, false, emptyList(), emptyList()), // TODO: Substitution
+                IrSimpleTypeImpl(context.irBuiltIns.arrayClass, false, emptyList(), emptyList()), // TODO: Substitution
                 context.irBuiltIns.anyType,
                 expression.startOffset,
                 expression.endOffset,

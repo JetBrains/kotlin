@@ -651,7 +651,7 @@ private fun BackendChecker.checkCanUnwrapVariadicArguments(elements: List<IrVara
             checkCanMapCalleeFunctionParameter(element.type, isObjCMethod, variadic = true, parameter = null, argument = element)
         is IrSpreadElement -> {
             val expression = element.expression
-            if (expression is IrCall && expression.symbol == symbols.arrayOf)
+            if (expression is IrCall && expression.symbol == irBuiltIns.arrayOf)
                 checkCanHandleArgumentForVarargParameter(expression.arguments[0], isObjCMethod)
             else
                 reportError(element, "When calling variadic " +

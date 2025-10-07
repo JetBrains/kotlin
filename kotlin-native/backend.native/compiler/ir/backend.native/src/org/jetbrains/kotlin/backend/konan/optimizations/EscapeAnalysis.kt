@@ -1701,7 +1701,7 @@ internal object EscapeAnalysis {
                     } else {
                         remainedToAlloc = 0
                         // Do not exile primitive arrays - they ain't reference no object.
-                        if (irClass.symbol == symbols.array && propagateExiledToHeapObjects) {
+                        if (irClass.symbol == irBuiltIns.arrayClass && propagateExiledToHeapObjects) {
                             context.log { "Forcing node ${nodeToString(ptgNode.node!!)} to escape" }
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)

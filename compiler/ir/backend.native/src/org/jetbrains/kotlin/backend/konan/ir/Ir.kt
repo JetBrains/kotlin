@@ -559,7 +559,7 @@ class KonanSymbols(
     val valueOfForEnum = CallableIds.valueOfForEnum.functionSymbol()
 
     val createEnumEntries by CallableIds.enumEntries.functionSymbol {
-        it.hasShape(regularParameters = 1) && it.parameters[0].type.classOrNull == array
+        it.hasShape(regularParameters = 1) && it.parameters[0].type.classOrNull == irBuiltIns.arrayClass
     }
 
     val enumEntriesInterface = ClassIds.enumEntries.classSymbol()

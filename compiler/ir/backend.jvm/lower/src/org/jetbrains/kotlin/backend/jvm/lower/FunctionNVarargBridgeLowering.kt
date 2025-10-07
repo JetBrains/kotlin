@@ -55,7 +55,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
                     expression.dispatchReceiver!!.transformVoid(),
                     this@FunctionNVarargBridgeLowering.context.symbols.functionN.defaultType
                 )
-                arguments[1] = irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
+                arguments[1] = irArray(context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType)) {
                     for (argument in expression.nonDispatchArguments) {
                         +argument!!.transformVoid()
                     }

@@ -83,11 +83,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
         ).map { it.defaultType }
     }
 
-    val arrayOf: IrSimpleFunctionSymbol get() = irBuiltIns.arrayOf
-    val arrayOfNulls: IrSimpleFunctionSymbol get() = irBuiltIns.arrayOfNulls
-
-    val array get() = irBuiltIns.arrayClass
-
     open fun functionN(n: Int): IrClassSymbol = irBuiltIns.functionN(n).symbol
     open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunctionN(n).symbol
 

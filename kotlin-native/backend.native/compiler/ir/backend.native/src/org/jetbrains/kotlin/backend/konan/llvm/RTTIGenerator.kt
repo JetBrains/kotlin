@@ -49,7 +49,7 @@ internal class RTTIGenerator(
     }
 
     private fun checkAcyclicClass(irClass: IrClass): Boolean = when {
-        irClass.symbol == context.symbols.array -> false
+        irClass.symbol == context.irBuiltIns.arrayClass -> false
         irClass.isArray -> true
         context.getLayoutBuilder(irClass).getFields(llvm).all { checkAcyclicFieldType(it.type) } -> true
         else -> false
@@ -257,7 +257,7 @@ internal class RTTIGenerator(
                 llvmDeclarations.writableTypeInfoGlobal,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
-                    irClass.symbol == context.symbols.array -> llvm.Kotlin_processArrayInMark.toConstPointer()
+                    irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_processArrayInMark.toConstPointer()
                     else -> genProcessObjectInMark(llvmDeclarations.bodyType)
                 },
                 requiredAlignment = llvmDeclarations.alignment
