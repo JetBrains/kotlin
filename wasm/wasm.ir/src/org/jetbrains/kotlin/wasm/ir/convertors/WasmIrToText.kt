@@ -196,6 +196,8 @@ class WasmIrToText(
             is WasmImmediate.ConstString -> error("Pseudo immediate")
 
             is WasmImmediate.Catch -> appendCatch(x)
+
+            is WasmImmediate.ContHandle -> appendContHandle(x)
         }
     }
 
@@ -286,6 +288,8 @@ class WasmIrToText(
                     appendArrayTypeDeclaration(type)
                 is WasmFunctionType ->
                     appendFunctionTypeDeclaration(type)
+                is WasmContType ->
+                    appendContTypeDeclaration(type)
             }
         }
     }
@@ -337,6 +341,15 @@ class WasmIrToText(
                         type.resultTypes.forEach { appendType(it) }
                     }
                 }
+            }
+        }
+    }
+
+    private fun appendContTypeDeclaration(contType: WasmContType) {
+        newLineList("type") {
+            appendModuleFieldReference(contType)
+            sameLineList("cont") {
+                appendType(contType.funType)
             }
         }
     }
@@ -600,6 +613,20 @@ class WasmIrToText(
         catch.immediates.forEach(this::appendImmediate)
     }
 
+    fun appendContHandle(contHandle: WasmImmediate.ContHandle) {
+        appendElement("(on")
+        when (contHandle.type) {
+            WasmImmediate.ContHandle.ContHandleType.ON -> {
+                appendImmediate(contHandle.immediates[0])
+                appendElement((contHandle.immediates[1] as WasmImmediate.LabelIdx).value.toString() + ")")
+            }
+            WasmImmediate.ContHandle.ContHandleType.ON_SWITCH -> {
+                appendImmediate(contHandle.immediates[0])
+                appendElement("switch)")
+            }
+        }
+    }
+
     fun appendModuleFieldReference(field: WasmSymbolReadOnly<WasmNamedModuleField>) {
         appendModuleFieldReference(field.owner)
     }
@@ -617,6 +644,7 @@ class WasmIrToText(
             is WasmGlobal -> "g"
             is WasmTypeDeclaration -> "type"
             is WasmTag -> "tag"
+            is WasmCont -> "cont"
         }
 
         appendElement("\$${sanitizeWatIdentifier(field.name)}___${indexSpaceKind}_$id")

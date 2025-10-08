@@ -89,6 +89,7 @@ class WasmIrToBinary(
                 is WasmStructDeclaration -> appendStructTypeDeclaration(type)
                 is WasmArrayDeclaration -> appendArrayTypeDeclaration(type)
                 is WasmFunctionType -> appendFunctionTypeDeclaration(type)
+                is WasmContType -> appendContTypeDeclaration(type)
             }
         }
     }
@@ -337,6 +338,7 @@ class WasmIrToBinary(
 
             is WasmImmediate.ContHandle -> {
                 b.writeVarUInt32(x.type.opcode)
+                x.immediates.forEach(this::appendImmediate)
             }
         }
     }
@@ -375,6 +377,11 @@ class WasmIrToBinary(
         type.parameterTypes.forEach { appendType(it) }
         b.writeVarUInt32(type.resultTypes.size)
         type.resultTypes.forEach { appendType(it) }
+    }
+
+    private fun appendContTypeDeclaration(type: WasmContType) {
+        b.writeVarInt7(WasmBinary.CONT_TYPE)
+        appendType(type.funType)
     }
 
     private fun appendBlockType(type: WasmImmediate.BlockType) {

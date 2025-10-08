@@ -420,12 +420,12 @@ enum class WasmOp(
 
     // ============================================================
     // Stack switching
-    CONT_NEW("cont.new", 0xe0, TYPE_IDX),
-    CONT_BIND("cont.bind", 0xe1, TYPE_IDX, TYPE_IDX),
-    SUSPEND("suspend", 0xe2, TAG_IDX),
-    RESUME("resume", 0xe3, TYPE_IDX, ON_VECTOR),
-    RESUME_THROW("resume_throw", 0xe4, TYPE_IDX, TYPE_IDX, ON_VECTOR),
-    SWITCH("switch", 0xe5, TYPE_IDX, TAG_IDX),
+    CONT_NEW("cont.new", 0xE0, TYPE_IDX),
+    CONT_BIND("cont.bind", 0xE1, TYPE_IDX, TYPE_IDX),
+    SUSPEND("suspend", 0xE2, TAG_IDX),
+    RESUME("resume", 0xE3, TYPE_IDX, ON_VECTOR),
+    RESUME_THROW("resume_throw", 0xE4, TYPE_IDX, TAG_IDX, ON_VECTOR),
+    SWITCH("switch", 0xE5, TYPE_IDX, TAG_IDX),
 
     // ============================================================
     // Exception handling

@@ -116,6 +116,11 @@ class WasmTag(
     }
 }
 
+class WasmCont(
+    val type: WasmType,
+    val importPair: WasmImportDescriptor? = null
+) : WasmNamedModuleField()
+
 class WasmLocal(
     val id: Int,
     val name: String,
@@ -151,6 +156,10 @@ sealed class WasmTypeDeclaration(
 data class WasmFunctionType(
     val parameterTypes: List<WasmType>,
     val resultTypes: List<WasmType>
+) : WasmTypeDeclaration("")
+
+data class WasmContType(
+    val funType: WasmType,
 ) : WasmTypeDeclaration("")
 
 class WasmStructDeclaration(
