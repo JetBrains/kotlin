@@ -743,6 +743,26 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("enabling/disabling BTA")
+    @GradleTest
+    @JvmGradlePluginTests
+    fun testBtaEnabled(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins { kotlin("jvm") }
+            assertNoErrorFilesCreated {
+                build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContains("KOTLIN_BTA_USED=true")
+                }
+
+                build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", "-Pkotlin.compiler.runViaBuildToolsApi=false") {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContains("KOTLIN_BTA_USED=false")
+                }
+            }
+        }
+    }
+
     private fun getExpectedFusFilesCount(gradleVersion: GradleVersion, rounds: Int): Int {
         val expectedFiles = if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_9)) {
             //every submodule will create a separate file. There are two modules in the project

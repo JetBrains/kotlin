@@ -132,6 +132,11 @@ internal fun collectProjectConfigurationTimeMetrics(
             project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
         )
 
+        configurationTimeMetrics.put(
+            BooleanMetrics.KOTLIN_BTA_USED,
+            project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi.get()
+        )
+
         addTaskMetrics(project, configurationTimeMetrics)
 
         val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
