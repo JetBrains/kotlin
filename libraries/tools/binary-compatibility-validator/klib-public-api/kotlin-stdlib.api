@@ -9717,9 +9717,6 @@ open annotation class kotlin.js/JsName : kotlin/Annotation { // kotlin.js/JsName
         final fun <get-name>(): kotlin/String // kotlin.js/JsName.name.<get-name>|<get-name>(){}[1]
 }
 
-// Targets: [native, wasmWasi]
-open annotation class kotlin.js/nativeInvoke : kotlin/Annotation // kotlin.js/nativeInvoke|null[1]
-
 // Targets: [native]
 open annotation class kotlin.concurrent/Volatile : kotlin/Annotation { // kotlin.concurrent/Volatile|null[0]
     constructor <init>() // kotlin.concurrent/Volatile.<init>|<init>(){}[0]
