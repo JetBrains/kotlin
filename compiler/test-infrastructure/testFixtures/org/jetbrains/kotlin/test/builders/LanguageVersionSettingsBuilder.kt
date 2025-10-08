@@ -105,6 +105,7 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(AnalysisFlags.dontWarnOnErrorSuppression, trueOrNull(LanguageSettingsDirectives.DONT_WARN_ON_ERROR_SUPPRESSION in directives)),
             analysisFlag(AnalysisFlags.stdlibCompilation, trueOrNull(LanguageSettingsDirectives.STDLIB_COMPILATION in directives)),
             analysisFlag(AnalysisFlags.lenientMode, trueOrNull(LanguageSettingsDirectives.LENIENT_MODE in directives)),
+            analysisFlag(AnalysisFlags.headerMode, trueOrNull(LanguageSettingsDirectives.HEADER_MODE in directives)),
 
             analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives.singleOrZeroValue(LanguageSettingsDirectives.JVM_DEFAULT_MODE)),
             analysisFlag(JvmAnalysisFlags.inheritMultifileParts, trueOrNull(LanguageSettingsDirectives.INHERIT_MULTIFILE_PARTS in directives)),

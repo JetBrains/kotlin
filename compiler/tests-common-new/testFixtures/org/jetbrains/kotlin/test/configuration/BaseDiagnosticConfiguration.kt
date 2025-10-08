@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.*
@@ -291,6 +292,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
     forTestsMatching("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/*") {
         defaultDirectives {
             LANGUAGE + "+NestedTypeAliases"
+        }
+    }
+
+    forTestsMatching("compiler/fir/analysis-tests/testData/resolve/headerMode/*") {
+        defaultDirectives {
+            +HEADER_MODE
         }
     }
 }
