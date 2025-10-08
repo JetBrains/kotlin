@@ -5,4 +5,4 @@
 val e : Any
     field: Int = <!FIELD_INITIALIZER_TYPE_MISMATCH!>""<!>
 
-/* GENERATED_FIR_TAGS: propertyDeclaration, stringLiteral */
+/* GENERATED_FIR_TAGS: explicitBackingField, propertyDeclaration, stringLiteral */

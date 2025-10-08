@@ -21,4 +21,5 @@ private class A {
     fun mustNotWork() = B().a.<!UNRESOLVED_REFERENCE!>add<!>("test")
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, propertyDeclaration, smartcast, stringLiteral */
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, functionDeclaration, nestedClass, propertyDeclaration,
+smartcast, stringLiteral */

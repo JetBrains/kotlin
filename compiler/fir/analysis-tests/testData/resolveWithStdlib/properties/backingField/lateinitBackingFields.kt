@@ -35,5 +35,5 @@ val something: Number
         field = value.toString()
     }
 
-/* GENERATED_FIR_TAGS: assignment, functionDeclaration, getter, integerLiteral, lateinit, nullableType,
-propertyDeclaration, setter */
+/* GENERATED_FIR_TAGS: assignment, explicitBackingField, functionDeclaration, getter, integerLiteral, lateinit,
+nullableType, propertyDeclaration, setter */

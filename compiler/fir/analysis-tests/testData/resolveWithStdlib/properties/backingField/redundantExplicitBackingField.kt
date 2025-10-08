@@ -2,4 +2,4 @@
 val it: Int
     <!REDUNDANT_EXPLICIT_BACKING_FIELD!>field<!> = 42
 
-/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration */
+/* GENERATED_FIR_TAGS: explicitBackingField, integerLiteral, propertyDeclaration */

@@ -25,4 +25,4 @@ class Test {
         }
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, getter, propertyDeclaration, setter, smartcast, stringLiteral */
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, getter, propertyDeclaration, setter, stringLiteral */

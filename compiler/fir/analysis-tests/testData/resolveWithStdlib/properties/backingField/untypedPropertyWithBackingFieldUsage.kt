@@ -63,4 +63,4 @@ val simpleNoTypeExpression
     field = 3.14
     <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = 10
 
-/* GENERATED_FIR_TAGS: getter, integerLiteral, propertyDeclaration */
+/* GENERATED_FIR_TAGS: explicitBackingField, getter, integerLiteral, propertyDeclaration */

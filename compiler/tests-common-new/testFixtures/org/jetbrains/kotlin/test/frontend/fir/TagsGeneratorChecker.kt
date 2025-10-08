@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalReturnsDecl
 import org.jetbrains.kotlin.fir.contracts.description.ConeHoldsInEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
@@ -248,6 +249,7 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
         const val CONTRACT_CONDITIONAL_EFFECT = "contractConditionalEffect"
         const val CONTRACT_HOLDSIN_EFFECT = "contractHoldsInEffect"
         const val CONTRACT_IMPLIES_RETURN_EFFECT = "contractImpliesReturnEffect"
+        const val EXPLICIT_BACKING_FIELD = "explicitBackingField"
     }
 }
 
@@ -310,7 +312,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         if (property.contextParameters.isNotEmpty()) tags += FirTags.PROPERTY_WITH_CONTEXT
         if (property.isLocal) tags += FirTags.LOCAL_PROPERTY
         if (property.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) tags += FirTags.UNNAMED_LOCAL_VARIABLE
-
+        if (property.hasExplicitBackingField) tags += FirTags.EXPLICIT_BACKING_FIELD
         checkPropertyStatus(property.status)
     }
 

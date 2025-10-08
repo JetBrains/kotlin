@@ -6,4 +6,4 @@ fun add(s: String) {
     list.add(s)
 }
 
-/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration */
+/* GENERATED_FIR_TAGS: explicitBackingField, functionDeclaration, propertyDeclaration, smartcast */
