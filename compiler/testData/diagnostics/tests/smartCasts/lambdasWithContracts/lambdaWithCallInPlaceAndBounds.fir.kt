@@ -222,7 +222,7 @@ fun test19(x: Any?) {
         if (x != null) {
             y = x
         } else {
-            y = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
+            y <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
         }
         require(x is String)
         y.length
@@ -235,7 +235,7 @@ fun test20(x: Any?) {
         if (x != null) {
             y = x
         } else {
-            y = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
+            y <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
         }
         require(x is String)
         y.length
@@ -248,7 +248,7 @@ fun test21(x: Any?) {
         if (x != null) {
             y = x
         } else {
-            y = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
+            y <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
         }
         require(x is String)
         <!SMARTCAST_IMPOSSIBLE!>y<!>.length

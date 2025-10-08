@@ -9,7 +9,7 @@ fun f(): Unit {
     x + 1
     x <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
     x <!UNSAFE_OPERATOR_CALL!><<!> 1
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1<!>
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1
 
     x == 1
     x != 1

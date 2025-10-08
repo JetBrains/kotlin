@@ -61,7 +61,7 @@ fun case_9() {
 // TESTCASE NUMBER: 10
 fun case_10(x: Int?) {
     var y = 10
-    y = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
+    y <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
 }
 
 // TESTCASE NUMBER: 11

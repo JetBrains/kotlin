@@ -26,7 +26,7 @@ val withGetter: MyFun
 
 fun main() {
     var local: MyFun <!INITIALIZER_TYPE_MISMATCH!>=<!> { <!UNRESOLVED_REFERENCE!>it<!>.length }
-    local = <!ASSIGNMENT_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>.length + 1 }<!>
+    local <!ASSIGNMENT_TYPE_MISMATCH!>=<!> { <!UNRESOLVED_REFERENCE!>it<!>.length + 1 }
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funInterface, functionDeclaration, getter,

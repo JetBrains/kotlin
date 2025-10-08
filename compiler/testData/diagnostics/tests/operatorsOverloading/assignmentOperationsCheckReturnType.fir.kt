@@ -4,32 +4,32 @@ fun intBinEq() {
     x <!NONE_APPLICABLE!>+=<!> 'a'
     x += 1.toByte()
     x += 1.toShort()
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1L<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1f<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.0<!>
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1L
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1f
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1.0
     x <!NONE_APPLICABLE!>*=<!> 'a'
     x *= 1.toByte()
     x *= 1.toShort()
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1L<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1f<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.0<!>
+    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1L
+    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1f
+    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1.0
 }
 
 fun shortBinEq() {
     var x = 0.toShort()
     x <!NONE_APPLICABLE!>+=<!> 'a'
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.toByte()<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.toShort()<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1L<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1f<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.0<!>
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1.toByte()
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1.toShort()
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1L
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1f
+    x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 1.0
 
     x <!NONE_APPLICABLE!>*=<!> 'a'
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toByte()<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toShort()<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1L<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1f<!>
-    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.0<!>
+    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1.toByte()
+    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1.toShort()
+    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1L
+    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1f
+    x <!ASSIGNMENT_TYPE_MISMATCH!>*=<!> 1.0
 }
 
 class A {
@@ -45,7 +45,7 @@ fun overloading() {
     var y = A()
     x += y
     var z = B()
-    <!ASSIGNMENT_TYPE_MISMATCH!>z += x<!>
+    z <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> x
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,

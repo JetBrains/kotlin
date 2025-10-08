@@ -51,7 +51,7 @@ object C {
 }
 
 fun bad(c: C?) {
-    <!ASSIGNMENT_TYPE_MISMATCH!>c?.p += 10<!>
+    c?.p <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 10
     (c?.p) <!NONE_APPLICABLE!>+=<!> 10
 
     c?.pa += 10

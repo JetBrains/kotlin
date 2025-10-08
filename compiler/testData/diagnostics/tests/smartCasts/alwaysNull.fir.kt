@@ -8,7 +8,7 @@ fun foo(): String {
     var t: String? = "y"
     if (t == null) t = "x"
     var x: Int? = null
-    if (x == null) <!ASSIGNMENT_TYPE_MISMATCH!>x += null<!>
+    if (x == null) x <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> null
     return t + s
 }
 

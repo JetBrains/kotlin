@@ -11,7 +11,7 @@ class Outer<T> {
         z.checkType { _<Inner>() }
         z.checkType { _<Outer<T>.Inner>() }
 
-        inner = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
+        inner <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
     }
 
     class Nested

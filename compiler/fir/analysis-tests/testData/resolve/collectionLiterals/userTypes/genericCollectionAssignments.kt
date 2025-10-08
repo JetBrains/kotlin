@@ -28,8 +28,8 @@ fun test() {
     lst = ["1", "2", "3"]
     lst = [null, "0"]
     lst = [null]
-    lst = <!ASSIGNMENT_TYPE_MISMATCH!>[A()]<!> // should not pass
-    lst = <!ASSIGNMENT_TYPE_MISMATCH!>["0", null, A()]<!> // should not pass
+    lst <!ASSIGNMENT_TYPE_MISMATCH!>=<!> [A()] // should not pass
+    lst <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ["0", null, A()] // should not pass
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nullableType,

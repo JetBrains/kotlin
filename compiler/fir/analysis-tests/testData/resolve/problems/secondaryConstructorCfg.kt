@@ -8,7 +8,7 @@ class B(p0: String) {
         p3 = p1
     }
     init {
-        <!VAL_REASSIGNMENT!>p1<!> = <!ASSIGNMENT_TYPE_MISMATCH!>p0.length<!>
+        <!VAL_REASSIGNMENT!>p1<!> <!ASSIGNMENT_TYPE_MISMATCH!>=<!> p0.length
         p3 = ""
     }
 }

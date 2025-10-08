@@ -24,7 +24,7 @@ fun testReassignment() {
     var m: MyEnum = Option1
     m = Option1
     m = OptionAlias
-    m = <!ASSIGNMENT_TYPE_MISMATCH!>stringProp<!>
+    m <!ASSIGNMENT_TYPE_MISMATCH!>=<!> stringProp
 }
 
 fun testCorrectDefaultParam(arg1: MyEnum = Option1, arg2: MyEnum = enumProp) {}

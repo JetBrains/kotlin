@@ -16,14 +16,14 @@ public class J {
 fun test() {
     val n = J.staticN
     foo(<!ARGUMENT_TYPE_MISMATCH!>n<!>)
-    J.staticNN = <!ASSIGNMENT_TYPE_MISMATCH!>n<!>
+    J.staticNN <!ASSIGNMENT_TYPE_MISMATCH!>=<!> n
     if (n != null) {
         foo(n)
         J.staticNN = n
     }
 
     val x: J? = null
-    J.staticNN = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
+    J.staticNN <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
     if (x != null) {
         J.staticNN = x
     }

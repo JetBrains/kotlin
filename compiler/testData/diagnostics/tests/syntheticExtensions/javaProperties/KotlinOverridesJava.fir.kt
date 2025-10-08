@@ -30,7 +30,7 @@ fun foo(k: KotlinClass) {
     useString(k.getSomething5())
     useString(k.something5)
     k.setSomething5(1)
-    k.something5 = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
+    k.something5 <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 1
 }
 
 fun useInt(i: Int) {}
