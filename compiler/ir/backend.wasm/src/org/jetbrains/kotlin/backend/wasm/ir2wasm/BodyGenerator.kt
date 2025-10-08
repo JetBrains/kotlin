@@ -1150,6 +1150,15 @@ class BodyGenerator(
                 body.buildDrop(location)
             }
 
+            in wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub -> {
+                when (function.symbol) {
+                    wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0] -> {
+                        TODO("wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0]")
+                    }
+                    else -> TODO("else startCoroutineUninterceptedOrReturnIntrinsicsStub")
+                }
+            }
+
             wasmSymbols.wasmArrayCopy -> {
                 val immediate = WasmImmediate.GcType(
                     wasmFileCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)

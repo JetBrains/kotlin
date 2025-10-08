@@ -28,9 +28,11 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 @PublishedApi
 internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnImpl(
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(
-    this, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
-)
+): Any? {
+    return startCoroutineUninterceptedOrReturnIntrinsic0Stub(
+        this, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+    )
+}
 
 /**
  * Starts an unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
@@ -54,7 +56,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnImpl(
     receiver: R,
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(
+): Any? = startCoroutineUninterceptedOrReturnIntrinsic1Stub(
     this, receiver, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
 )
 
@@ -63,7 +65,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic2(
+): Any? = startCoroutineUninterceptedOrReturnIntrinsic2Stub(
     this, receiver, param, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
 )
 

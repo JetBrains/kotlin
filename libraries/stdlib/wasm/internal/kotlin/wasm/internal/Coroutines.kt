@@ -51,6 +51,16 @@ internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
+internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0Stub(
+    f: (suspend () -> T),
+    completion: Continuation<T>
+): Any? {
+    implementedAsIntrinsic
+}
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+@PublishedApi
 internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
     f: (suspend R.() -> T),
     receiver: R,
@@ -62,7 +72,30 @@ internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
+internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1Stub(
+    f: (suspend R.() -> T),
+    receiver: R,
+    completion: Continuation<T>
+): Any? {
+    implementedAsIntrinsic
+}
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+@PublishedApi
 internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
+    f: (suspend R.(P) -> T),
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): Any? {
+    implementedAsIntrinsic
+}
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+@PublishedApi
+internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2Stub(
     f: (suspend R.(P) -> T),
     receiver: R,
     param: P,

@@ -255,6 +255,9 @@ class WasmSymbols(
     val startCoroutineUninterceptedOrReturnIntrinsics =
         (0..2).map { getInternalWasmFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
 
+    val startCoroutineUninterceptedOrReturnIntrinsicsStub =
+        (0..2).map { getInternalWasmFunction("startCoroutineUninterceptedOrReturnIntrinsic${it}Stub") }
+
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = getInternalWasmClass("KLocalDelegatedPropertyImpl")
     val kLocalDelegatedMutablePropertyImpl: IrClassSymbol = getInternalWasmClass("KLocalDelegatedMutablePropertyImpl")
