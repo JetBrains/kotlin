@@ -12,15 +12,15 @@ fun <T : A> fest() {
 }
 
 fun test() {
-    val b1 = B<<!UPPER_BOUND_VIOLATED!>Int<!>>()
+    val b1 = B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Int<!>>()
     val b2 = B<C>()
-    val b3 = B<<!UPPER_BOUND_VIOLATED!>Any?<!>>()
+    val b3 = B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any?<!>>()
     val b4 = B<<!UNRESOLVED_REFERENCE!>UnexistingType<!>>()<!UNRESOLVED_REFERENCE!>NL<!><!SYNTAX!><<!>Int<!SYNTAX!><!SYNTAX!>><!>()<!>NumberPhile<!SYNTAX!><!>
-    val b5 = B<<!UPPER_BOUND_VIOLATED!>B<<!UNRESOLVED_REFERENCE!>UnexistingType<!>><!>>()
-    fest<<!UPPER_BOUND_VIOLATED!>Boolean<!>>()
+    val b5 = B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>B<<!UNRESOLVED_REFERENCE!>UnexistingType<!>><!>>()
+    fest<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Boolean<!>>()
     fest<C>()
     fest<HHH>()
-    fest<<!UPPER_BOUND_VIOLATED!>JJJ<!>>()
+    fest<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>JJJ<!>>()
 }
 
 open class S<F, G : F>
@@ -35,12 +35,12 @@ fun <K, L : K> rest() {
     val o3 = S<L, L>()
 
     val o4 = S<S<K, L>, T<K, L>>()
-    val o5 = S<S<K, L>, <!UPPER_BOUND_VIOLATED!>T<K, K><!>>()
-    val o6 = S<S<L, L>, <!UPPER_BOUND_VIOLATED!>T<K, L><!>>()
+    val o5 = S<S<K, L>, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>T<K, K><!>>()
+    val o6 = S<S<L, L>, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>T<K, L><!>>()
 
     val o7 = S<Any, T<S<K, L>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
     val o8 = S<Any, T<S<K, L>, Nothing>>()
-    val o9 = P<<!UPPER_BOUND_VIOLATED!>String<!>, P1<<!UPPER_BOUND_VIOLATED!>String<!>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
+    val o9 = P<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>String<!>, P1<<!UPPER_BOUND_VIOLATED!>String<!>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
 }
 
 class NumColl<T : Collection<Number>>

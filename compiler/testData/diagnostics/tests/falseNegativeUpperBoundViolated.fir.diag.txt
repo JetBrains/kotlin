@@ -1,7 +1,7 @@
-/falseNegativeUpperBoundViolated.fir.kt:(400,409): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(327,334): error: Type argument is not within its bounds: must be subtype of 'AlphaKey'.
 
-/falseNegativeUpperBoundViolated.fir.kt:(432,441): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(359,365): error: Type argument is not within its bounds: must be subtype of 'AlphaKey'.
 
-/falseNegativeUpperBoundViolated.fir.kt:(464,466): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(384,391): error: Type argument is not within its bounds: must be subtype of 'AlphaKey'.
 
-/falseNegativeUpperBoundViolated.fir.kt:(489,491): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(409,415): error: Type argument is not within its bounds: must be subtype of 'AlphaKey'.
