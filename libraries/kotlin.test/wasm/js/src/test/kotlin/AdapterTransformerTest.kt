@@ -7,6 +7,7 @@ package kotlin.test.tests
 
 import kotlin.test.*
 
+@OptIn(ExperimentalWasmJsInterop::class)
 private fun wrapAdapter(externalAdapter: ExternalFrameworkAdapter): ExternalFrameworkAdapter = js("""{
     return {
         suite: (name, ignored, suiteFn) => externalAdapter.suite(name, ignored, suiteFn),
@@ -20,6 +21,7 @@ private class TestAdapter : FrameworkAdapter {
     override fun test(name: String, ignored: Boolean, testFn: () -> Any?) { testResult = testFn() }
 }
 
+@OptIn(ExperimentalWasmJsInterop::class)
 class AdapterTransformerTest {
     @Test
     fun loopAround() {
