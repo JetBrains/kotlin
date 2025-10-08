@@ -56,8 +56,8 @@ internal fun KotlinTargetSoftwareComponent(
                         }
                     }.toMutableMap()
 
-                    resolvableConfiguration.incoming.resolutionResult.root.dependencies.forEach {
-                        if (it !is ResolvedDependencyResult) return@forEach
+                    resolvableConfiguration.incoming.resolutionResult.root.dependencies.forEach hackForEach@{
+                        if (it !is ResolvedDependencyResult) return@hackForEach
                         val fallbackedToIncompatibleVariant = it.selected.variants.any { variantResult ->
                             val usageValue = variantResult.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)
                             val isMetadataFallback = usageValue.name == "kotlin-metadata" || usageValue.name == KOTLIN_UKLIB_FALLBACK_VARIANT
@@ -67,13 +67,13 @@ internal fun KotlinTargetSoftwareComponent(
                             } else false
                             isMetadataFallback || isKotlinJvmFallback
                         }
-                        if (!fallbackedToIncompatibleVariant) return@forEach
+                        if (!fallbackedToIncompatibleVariant) return@hackForEach
 
                         val requestedId = it.requested
                         when (requestedId) {
                             is ModuleComponentSelector -> directDependencies -= "module_${requestedId.group}:${requestedId.module}"
                             is ProjectComponentSelector -> directDependencies -= "project_${requestedId.projectPath}"
-                            else -> null
+                            else -> Unit
                         }
                     }
                     directDependencies.values.flatten()
