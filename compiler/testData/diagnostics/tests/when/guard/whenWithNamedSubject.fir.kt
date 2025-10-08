@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +WhenGuards
 // DIAGNOSTICS: -DUPLICATE_LABEL_IN_WHEN, -USELESS_IS_CHECK
 
@@ -14,7 +15,7 @@ fun whenWithNamedSubject(y: BooleanHolder) {
     when (val x = if (y.value) y else supply(True)) {
         is True if x.value -> Unit
         is False if x.value -> Unit
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> if x.length == 0 -> Unit
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is String<!> if x.length == 0 -> Unit
         else -> Unit
     }
 

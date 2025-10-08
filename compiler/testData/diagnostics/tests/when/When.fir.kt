@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -19,7 +20,7 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 1
+      <!IMPOSSIBLE_IS_CHECK_WARNING!>is String<!> -> 1
       <!USELESS_IS_CHECK!>!is Int<!> -> 1
       <!USELESS_IS_CHECK!>is Any?<!> -> 1
       <!USELESS_IS_CHECK!>is Any<!> -> 1

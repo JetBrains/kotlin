@@ -1,0 +1,36 @@
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
+// ISSUE: KT-76766
+
+open class A<T>
+open class B<T>
+
+typealias AliasWithTypeParam<T> = B<T>
+typealias Alias = B<*>
+
+fun test1(a: A<Int>){
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is B<*><!>
+}
+
+fun test2(a: A<*>){
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is B<*><!>
+}
+
+fun test3(a: A<Int>) {
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is AliasWithTypeParam<*><!>
+}
+
+fun test4(a: A<Int>) {
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is Alias<!>
+}
+
+fun <T : A<T>> test5(x: T) {
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>x is B<*><!>
+}
+
+fun <T> test6(x: T) where T : A<T>, T : CharSequence {
+    x is B<*>
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, starProjection, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */
