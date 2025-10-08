@@ -452,6 +452,16 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
         if (
             mapOf(
                 /**
+                 * Fallback variant for Android resolution
+                 * Android compile/runtime classpath request the JAVA_* usages. Since Android is not published in the UKlib and we don't
+                 * support lenient resolution in Android variants we register a fallback without dependencies for Android. The only use case
+                 * should be pre-UKlib KMP publication.
+                 *
+                 * We should remove this compatibility in the future when all KMP libraries will have a proper or stub JVM variant
+                 */
+                JAVA_API to setOf(KOTLIN_UKLIB_FALLBACK_VARIANT),
+                JAVA_RUNTIME to setOf(KOTLIN_UKLIB_FALLBACK_VARIANT),
+                /**
                  * KOTLIN_UKLIB_API is requested in platform compile dependency configurations
                  */
                 KOTLIN_UKLIB_API to apiElements,
