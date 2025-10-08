@@ -910,7 +910,7 @@ val strictModeReservedWords = setOf(
 
 private val allReservedWords = reservedWords + strictModeReservedWords
 
-fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
+private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
     declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
 
     if (declaration.isJsExportDefault()) {

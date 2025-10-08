@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonSymbols
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -333,6 +334,15 @@ class WasmSymbols(
 
         private val jsExportClass = getIrClass(FqName("kotlin.js.JsExport"))
         val jsExportConstructor by lazy { jsExportClass.constructors.single() }
+
+        private val jsExportDefaultClass by lazy {
+            jsExportClass.owner
+                .findDeclaration<IrClass> { it.fqNameWhenAvailable == FqName("kotlin.js.JsExport.Default") }
+                ?.symbol ?: irError("can't find kotlin.js.JsExport.Ignore annotation") {
+                withIrEntry("jsExportAnnotationSymbol.owner", jsExportClass.owner)
+            }
+        }
+        val jsExportDefaultConstructor by lazy { jsExportDefaultClass.constructors.single() }
 
         private val jsNameClass = getIrClass(FqName("kotlin.js.JsName"))
         val jsNameConstructor by lazy { jsNameClass.constructors.single() }
