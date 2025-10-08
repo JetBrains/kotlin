@@ -1640,3 +1640,20 @@ public fun String.toBooleanStrictOrNull(): Boolean? = when (this) {
     "false" -> false
     else -> null
 }
+
+/**
+ * Scans the string (skips its characters) starting from [startIndex] until [predicate] return `false`,
+ * and returns the index of the first character rejected by the predicate, or the length of [this] string,
+ * whichever is reached first.
+ *
+ * This function is intended for internal use only and does not validate [startIndex] index value.
+ *
+ * @param startIndex the index to start scanning from
+ * @param predicate a test applied to each character of the scanned string prefix
+ * @return the index of a first character not conforming to the [predicate], or the length of this string, if all characters conform it.
+ */
+internal inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolean): Int {
+    var i = startIndex
+    while (i < length && predicate(this[i])) i++
+    return i
+}
