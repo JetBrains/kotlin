@@ -513,6 +513,15 @@ public inline fun <K, V> Map<out K, V>.filterValues(predicate: (V) -> Boolean): 
     return result
 }
 
+/**
+ * Returns a map containing all key-value pairs with nonnull values.
+ *
+ * The returned map preserves the entry iteration order of the original map.
+ * @sample samples.collections.Maps.Filtering.filterValuesNotNull
+ */
+@Suppress("UNCHECKED_CAST")
+public fun <K, V> Map<out K, V?>.filterValuesNotNull(): Map<K, V> =
+    this.filterValues { it != null } as Map<K, V>
 
 /**
  * Appends all entries matching the given [predicate] into the mutable map given as [destination] parameter.
