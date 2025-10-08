@@ -401,3 +401,8 @@
 -keep class it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap {
     public java.lang.Object computeIfAbsent(java.lang.Object, it.unimi.dsi.fastutil.objects.Object2ObjectFunction);
 }
+
+# Used by K/JS JavaScript parser
+-keep class org.antlr.v4.runtime.** {
+    public protected *;
+}

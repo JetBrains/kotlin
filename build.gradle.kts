@@ -678,6 +678,7 @@ allprojects {
                 includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
                 includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
                 includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|lang\\-syntax).*")
+                includeVersion("org.antlr", "antlr4-runtime", "4.13.2")
             }
         }
 
