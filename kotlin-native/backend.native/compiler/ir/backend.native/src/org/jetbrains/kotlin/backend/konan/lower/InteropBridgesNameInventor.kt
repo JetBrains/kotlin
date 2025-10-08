@@ -156,7 +156,7 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                 var state = 0
                 var placeHolderStart = 0
                 while (index < snippet.length) {
-                    if (snippet[index] == '$') {
+                    if (snippet[index] == InteropLowering.NAME_PLACEHOLDER_QUOTE) {
                         if (state == 0) {
                             state = 1
                             placeHolderStart = index++
@@ -173,7 +173,10 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                         ++index
                     }
                 }
-                require(state == 0) { "Bad code snippet, no closing '$' was found after position $placeHolderStart: $snippet" }
+                require(state == 0) {
+                    """Bad code snippet, no closing '${InteropLowering.NAME_PLACEHOLDER_QUOTE}' was found after position $placeHolderStart:
+                        |$snippet""".trimMargin()
+                }
             }
 
             for (bridge in bridges) {

@@ -53,6 +53,10 @@ internal class InteropLowering(val context: Context, val fileLowerState: FileLow
         InteropLoweringPart1(context, fileLowerState).lower(irBody, container)
         InteropLoweringPart2(context, fileLowerState).lower(irBody, container)
     }
+
+    companion object {
+        const val NAME_PLACEHOLDER_QUOTE = '$'
+    }
 }
 
 private class NameCounter {
@@ -129,7 +133,10 @@ private abstract class BaseInteropIrTransformer(
                 addKotlin(declaration)
             }
 
-            override fun getUniqueCName(prefix: String) = "\$$prefix${nameCounter.getNext()}\$"
+            override fun getUniqueCName(prefix: String): String {
+                val quote = InteropLowering.NAME_PLACEHOLDER_QUOTE
+                return "$quote$prefix${nameCounter.getNext()}$quote"
+            }
 
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
                     fileLowerState.getFunctionReferenceImplUniqueName(prefix)
