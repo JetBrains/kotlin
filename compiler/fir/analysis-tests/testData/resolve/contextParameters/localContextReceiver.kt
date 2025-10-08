@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextReceivers
 // ISSUE: KT-75050
 
@@ -6,7 +6,7 @@ class A(val a: String)
 
 <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
 private fun f1() {
-    <!CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
+    <!NONE_APPLICABLE!>context<!>(<!NO_COMPANION_OBJECT!>A<!>)
     fun f2() {
         foo(a)
     }

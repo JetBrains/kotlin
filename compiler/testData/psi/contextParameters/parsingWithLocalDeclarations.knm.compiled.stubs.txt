@@ -1,40 +1,37 @@
-FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarationsKt]]
-  facadeFqName: ParsingWithLocalDeclarationsKt
-  partSimpleName: "ParsingWithLocalDeclarationsKt"
+FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=kotlin.reflect.KClass, isAllUnder=false, isValid=true]
-      DOT_QUALIFIED_EXPRESSION
-        DOT_QUALIFIED_EXPRESSION
-          REFERENCE_EXPRESSION[referencedName=kotlin]
-          REFERENCE_EXPRESSION[referencedName=reflect]
-        REFERENCE_EXPRESSION[referencedName=KClass]
   FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
+    MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
-    FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      VALUE_PARAMETER_LIST
-    FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      VALUE_PARAMETER_LIST
-    FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      VALUE_PARAMETER_LIST
-    FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      VALUE_PARAMETER_LIST
-    FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=contextFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun]
-    MODIFIER_LIST[]
+    MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Any]
     VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=contextFun2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun2]
-    MODIFIER_LIST[]
+    MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
           TYPE_REFERENCE
@@ -42,10 +39,17 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
     VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=contextFun3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun3]
-    MODIFIER_LIST[]
+    MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
@@ -53,18 +57,31 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
           TYPE_REFERENCE
             USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
     VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=contextFun4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun4]
-    MODIFIER_LIST[]
+    MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
               REFERENCE_EXPRESSION[referencedName=KClass]
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=STAR]
@@ -74,5 +91,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
     VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]
