@@ -37,6 +37,29 @@
         </developer>
     </developers>
 
+    <repositories>
+      <repository>
+        <id>central</id>
+        <name>Central Repository With Cache Redirector</name>
+        <url>https://cache-redirector.jetbrains.com/maven-central</url>
+        <layout>default</layout>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+      </repository>
+    </repositories>
+    <pluginRepositories>
+      <pluginRepository>
+        <id>central</id>
+        <name>Central Repository With Cache Redirector</name>
+        <url>https://cache-redirector.jetbrains.com/maven-central</url>
+        <layout>default</layout>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+      </pluginRepository>
+    </pluginRepositories>
+
     <organization>
         <name>JetBrains s.r.o.</name>
     </organization>
