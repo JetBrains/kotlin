@@ -6496,6 +6496,7 @@ public final class kotlin/uuid/Uuid$Companion {
 	public final fun fromULongs-eb3DHEI (JJ)Lkotlin/uuid/Uuid;
 	public final fun generateV4 ()Lkotlin/uuid/Uuid;
 	public final fun generateV7 ()Lkotlin/uuid/Uuid;
+	public final fun generateV7NonMonotonicAt (Lkotlin/time/Instant;)Lkotlin/uuid/Uuid;
 	public final fun getLEXICAL_ORDER ()Ljava/util/Comparator;
 	public final fun getNIL ()Lkotlin/uuid/Uuid;
 	public final fun parse (Ljava/lang/String;)Lkotlin/uuid/Uuid;
