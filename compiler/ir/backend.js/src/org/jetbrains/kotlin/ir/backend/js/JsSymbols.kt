@@ -362,11 +362,6 @@ class JsSymbols(
 
     val jsObjectConstructorSymbol by JsStandardClassIds.JsObject.primaryConstructorSymbol()
 
-    val uByteClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { StandardClassIds.UByte.classSymbol() }
-    val uShortClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { StandardClassIds.UShort.classSymbol() }
-    val uIntClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { StandardClassIds.UInt.classSymbol() }
-    val uLongClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { StandardClassIds.ULong.classSymbol() }
-
     val unreachable = CallableIds.unreachable.functionSymbol()
 
     val jsArguments = CallableIds.jsArguments.functionSymbol()
