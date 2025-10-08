@@ -2504,6 +2504,28 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Explicit {
+        @Test
+        public void testAllFilesPresentInExplicit() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("optional.kt")
+        public void testOptional() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/optional.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/simple.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/inference")
       @TestDataPath("$PROJECT_ROOT")
       public class Inference {

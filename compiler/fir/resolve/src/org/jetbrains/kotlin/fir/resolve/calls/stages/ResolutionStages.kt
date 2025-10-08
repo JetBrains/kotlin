@@ -276,6 +276,14 @@ object CheckContextArguments : ResolutionStage() {
         var errorReported = false
 
         for (symbol in contextSymbols) {
+            // handle context argument given using named arguments
+            argumentMapping.firstNotNullOfOrNull { (atom, parameter) ->
+                atom.takeIf { parameter.symbol == symbol && atom.expression is FirNamedArgumentExpression }
+            }?.let {
+                resultingContextArguments.add(it)
+                continue
+            }
+
             val expectedType = substitutor.substituteOrSelf(symbol.resolvedReturnType)
             val potentialContextArguments = findClosestMatchingContextArguments(expectedType, implicitsGroupedByScope)
             when (potentialContextArguments.size) {
@@ -680,8 +688,9 @@ internal object MapArguments : ResolutionStage() {
         // and then try to re-initialize it second time inside 'preprocessLambdaArgument' -> 'createResolvedLambdaAtom' for a functional one
         //
         // So the pattern is "lambda at use-site with two different candidates"
+        val expectedContextParameterTypesForInvoke = candidate.getExpectedContextParameterTypesForInvoke(function)
         val arguments = buildList {
-            candidate.getExpectedContextParameterTypesForInvoke(function)?.let { expectedContextTypes ->
+            expectedContextParameterTypesForInvoke?.let { expectedContextTypes ->
                 // Those stubs shall be replaced at CheckContextArguments.replaceArgumentPrefixForInvokeWithImplicitlyMappedContextValues
                 expectedContextTypes.mapTo(this) {
                     @OptIn(UnsafeExpressionUtility::class) // It's a temporary atom anyway
@@ -696,7 +705,8 @@ internal object MapArguments : ResolutionStage() {
             arguments,
             function,
             candidate.originScope,
-            callSiteIsOperatorCall = (candidate.callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator
+            callSiteIsOperatorCall = (candidate.callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator,
+            lookInContextParameters = true,
         )
         candidate.initializeArgumentMapping(
             arguments.unwrapNamedArgumentsForDynamicCall(function),

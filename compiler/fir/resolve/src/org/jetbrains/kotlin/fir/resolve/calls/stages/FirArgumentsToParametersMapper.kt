@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
@@ -70,6 +71,7 @@ fun BodyResolveComponents.mapArguments(
     function: FirFunction,
     originScope: FirScope?,
     callSiteIsOperatorCall: Boolean,
+    lookInContextParameters: Boolean,
 ): ArgumentMapping {
     if (arguments.isEmpty() && function.valueParameters.isEmpty()) {
         return EmptyArgumentMapping
@@ -99,7 +101,7 @@ fun BodyResolveComponents.mapArguments(
             && function.name == OperatorNameConventions.SET
             && function.origin !is FirDeclarationOrigin.DynamicScope
 
-    val processor = FirCallArgumentsProcessor(session, function, this, originScope, isIndexedSetOperator)
+    val processor = FirCallArgumentsProcessor(session, function, this, originScope, isIndexedSetOperator, lookInContextParameters)
     processor.processNonLambdaArguments(nonLambdaArguments)
     if (externalArgument != null) {
         processor.processExternalArgument(externalArgument)
@@ -116,6 +118,7 @@ private class FirCallArgumentsProcessor(
     private val bodyResolveComponents: BodyResolveComponents,
     private val originScope: FirScope?,
     private val isIndexedSetOperator: Boolean,
+    private val lookInContextParameters: Boolean,
 ) {
     private var state = State.POSITION_ARGUMENTS
     private var currentPositionedParameterIndex = 0
@@ -350,7 +353,7 @@ private class FirCallArgumentsProcessor(
                     nameToParameter = emptyMap()
                 }
             } else {
-                nameToParameter = parameters.associateByTo(LinkedHashMap()) { parameter ->
+                nameToParameter = valueAndContextParametersIfRequired.associateByTo(LinkedHashMap()) { parameter ->
                     parameter.returnTypeRef.coneTypeOrNull?.valueParameterName(useSiteSession) ?: parameter.name
                 }
             }
@@ -384,7 +387,7 @@ private class FirCallArgumentsProcessor(
                     if (it.fir.areNamedArgumentsForbiddenIgnoringOverridden()) {
                         return@processOverriddenFunctions ProcessorAction.NEXT
                     }
-                    val someParameterSymbols = it.valueParameterSymbols
+                    val someParameterSymbols = it.valueAndContextParameterSymbolsIfRequired
                     if (matchedIndex != -1) {
                         someParameterSymbols.findAndReportValueParameterWithDifferentName()
                     } else {
@@ -421,7 +424,7 @@ private class FirCallArgumentsProcessor(
                         if (it.fir.areNamedArgumentsForbiddenIgnoringOverridden()) {
                             return@processOverriddenFunctions ProcessorAction.NEXT
                         }
-                        it.valueParameterSymbols.findAndReportValueParameterWithDifferentName()
+                        it.valueAndContextParameterSymbolsIfRequired.findAndReportValueParameterWithDifferentName()
                     }
                 }
             }
@@ -445,4 +448,10 @@ private class FirCallArgumentsProcessor(
 
     private val parameters: List<FirValueParameter>
         get() = function.valueParameters
+
+    private val FirFunctionSymbol<*>.valueAndContextParameterSymbolsIfRequired: List<FirValueParameterSymbol>
+        get() = valueParameterSymbols + contextParameterSymbols.takeIf { lookInContextParameters }.orEmpty()
+
+    private val valueAndContextParametersIfRequired: List<FirValueParameter>
+        get() = parameters + function.contextParameters.takeIf { lookInContextParameters }.orEmpty()
 }
