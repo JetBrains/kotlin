@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package com.google.gwt.dev.js.rhino;
+package org.jetbrains.kotlin.js.parser
 
-public class Utils {
-    public static boolean isEndOfLine(int c) {
-        return c == '\r' || c == '\n' || c == '\u2028' || c == '\u2029';
-    }
+class CodePosition(val line: Int, val offset: Int) : Comparable<CodePosition> {
+    override fun compareTo(other: CodePosition): Int =
+        when {
+            line < other.line -> -1
+            line > other.line -> 1
+            else -> offset.compareTo(other.offset)
+        }
+
+    override fun toString(): String = "($line, $offset)"
 }

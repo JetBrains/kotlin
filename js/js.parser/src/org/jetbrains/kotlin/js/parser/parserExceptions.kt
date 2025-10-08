@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.gwt.dev.js.parserExceptions
-
-import com.google.gwt.dev.js.rhino.CodePosition
+package org.jetbrains.kotlin.js.parser
 
 /**
  * Can be used in Error reporter to exit parser
