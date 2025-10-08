@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 // DISABLE_JAVA_FACADE
 // FILE: ComponentSerializationUtil.java
 
@@ -22,7 +23,7 @@ fun <T> deserializeAndLoadState(
 ) {}
 
 fun use(beforeRunTask: BeforeRunTask<*>) {
-    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>beforeRunTask is PersistentStateComponent<*><!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_WARNING!>beforeRunTask is PersistentStateComponent<*><!>) {
         deserializeAndLoadState(beforeRunTask)
     }
 }

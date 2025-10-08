@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.RequiresOptIn
 import kotlin.contracts.*
 
@@ -14,7 +15,7 @@ fun test1(x: String?): Int? {
 @OptIn(ExperimentalContracts::class)
 fun test2(x: String?): Int? {
     contract {
-        returnsNotNull() implies (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is Boolean<!>)
+        returnsNotNull() implies (<!IMPOSSIBLE_IS_CHECK_WARNING!>x is Boolean<!>)
     }
 
     return x?.length

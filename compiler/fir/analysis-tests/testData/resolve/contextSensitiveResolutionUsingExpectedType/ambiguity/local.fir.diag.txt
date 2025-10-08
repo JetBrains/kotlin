@@ -1,51 +1,51 @@
-/local.kt:(577,581): error: Check for instance is always 'false'.
+/local.kt:(601,605): warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
 
-/local.kt:(580,581): error: Ambiguity with context-sensitive resolution:
+/local.kt:(604,605): error: Ambiguity with context-sensitive resolution:
 object <local>.B
 class foo.Sealed.B
 
-/local.kt:(628,637): error: Check for instance is always 'false'.
+/local.kt:(652,661): warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
 
-/local.kt:(631,637): error: Ambiguity with context-sensitive resolution:
+/local.kt:(655,661): error: Ambiguity with context-sensitive resolution:
 class kotlin.String
 class foo.Sealed.String
 
-/local.kt:(651,661): error: Ambiguity with context-sensitive resolution:
+/local.kt:(675,685): error: Ambiguity with context-sensitive resolution:
 local val CompanionB: Int
 val CompanionB: Sealed, defined in foo.Sealed.Companion
 
-/local.kt:(651,661): error: Incompatible types 'Sealed' and 'Int'.
+/local.kt:(675,685): error: Incompatible types 'Sealed' and 'Int'.
 
-/local.kt:(1113,1114): error: Ambiguity with context-sensitive resolution:
+/local.kt:(1137,1138): error: Ambiguity with context-sensitive resolution:
 class foo.Test.A
 class foo.Sealed.A
 
-/local.kt:(1132,1136): error: Check for instance is always 'false'.
+/local.kt:(1156,1160): warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
 
-/local.kt:(1135,1136): error: Ambiguity with context-sensitive resolution:
+/local.kt:(1159,1160): error: Ambiguity with context-sensitive resolution:
 class foo.Test.B
 class foo.Sealed.B
 
-/local.kt:(1195,1204): error: Check for instance is always 'false'.
+/local.kt:(1219,1228): warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
 
-/local.kt:(1198,1204): error: Ambiguity with context-sensitive resolution:
+/local.kt:(1222,1228): error: Ambiguity with context-sensitive resolution:
 class kotlin.String
 class foo.Sealed.String
 
-/local.kt:(1222,1232): error: Ambiguity with context-sensitive resolution:
+/local.kt:(1246,1256): error: Ambiguity with context-sensitive resolution:
 class foo.Test.CompanionA
 val CompanionA: Sealed, defined in foo.Sealed.Companion
 
-/local.kt:(1250,1260): error: Ambiguity with context-sensitive resolution:
+/local.kt:(1274,1284): error: Ambiguity with context-sensitive resolution:
 val CompanionB: Int, defined in foo.Test
 val CompanionB: Sealed, defined in foo.Sealed.Companion
 
-/local.kt:(1250,1260): error: Incompatible types 'Sealed' and 'Int'.
+/local.kt:(1274,1284): error: Incompatible types 'Sealed' and 'Int'.
 
-/local.kt:(1405,1414): error: Check for instance is always 'false'.
+/local.kt:(1429,1438): warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
 
-/local.kt:(1487,1503): error: Check for instance is always 'false'.
+/local.kt:(1511,1527): warning: Check for instance is always 'false'. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-365.
 
-/local.kt:(1554,1569): error: Incompatible types 'Sealed' and 'Int'.
+/local.kt:(1578,1593): error: Incompatible types 'Sealed' and 'Int'.
 
-/local.kt:(1905,1909): warning: 'when' is exhaustive so 'else' is redundant here.
+/local.kt:(1929,1933): warning: 'when' is exhaustive so 'else' is redundant here.

@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 enum class Enum {
     A, B, C
@@ -12,7 +13,7 @@ fun test_1(e: Enum) {
     val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         Enum.A -> 1
         Enum.B -> 2
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 3
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is String<!> -> 3
     }
 
     val c = when (e) {

@@ -1,9 +1,10 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 
 fun test() {
    if (<!USELESS_IS_CHECK!>1 is Int<!>) {
-     if (<!IMPOSSIBLE_IS_CHECK_ERROR!>1 is Boolean<!>) {
+     if (<!IMPOSSIBLE_IS_CHECK_WARNING!>1 is Boolean<!>) {
 
      }
    }

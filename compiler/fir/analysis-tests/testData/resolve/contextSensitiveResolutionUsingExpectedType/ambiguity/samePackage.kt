@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
@@ -16,10 +17,10 @@ class B
 
 fun sealed(s: Sealed): Int = when (s) {
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
     C -> 3
     is D -> 4
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
     else -> 6
 }
 
@@ -31,7 +32,7 @@ fun sealedExplicit(s: Sealed): Int = when (s) {
 
 fun topLevelExplicit(s: Sealed): Int = when (s) {
     foo.A -> 1
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.B<!> -> 2
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is foo.B<!> -> 2
     else -> 6
 }
 

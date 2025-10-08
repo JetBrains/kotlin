@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-52469
 // LANGUAGE: +ProhibitIntersectionReifiedTypeParameter
@@ -22,8 +23,8 @@ fun <T> testTypeParamter(value: T) {
 fun testInterfaces(value: InterfaceA) {
     when (value) {
         is InterfaceB -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is Int<!> -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is String<!> -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is Int<!> -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
         is List<*> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
         else -> reifiedType(value)
     }
@@ -32,8 +33,8 @@ fun testInterfaces(value: InterfaceA) {
 fun testArray(value: InterfaceA) {
     when (value) {
         is InterfaceB -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is Int<!> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is String<!> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is Int<!> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
         is List<*> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
         else -> Array(1) { _ -> value }
     }
