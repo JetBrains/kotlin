@@ -107,19 +107,22 @@ internal class KaFirValueParameterSymbol private constructor(
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaValueParameterSymbol>()?.let { return it }
-
-        val ownerSymbol = with(analysisSession) { containingDeclaration }
-            ?: error("Containing function is expected for a value parameter symbol")
-
-        requireIsInstance<KaFunctionSymbol>(ownerSymbol)
-
         return KaFirValueParameterSymbolPointer(
             ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
-            index = (ownerSymbol.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),
+            index = index,
             originalSymbol = this
         )
     }
+
+    private val index: Int
+        get() {
+            val ownerSymbol = with(analysisSession) { containingDeclaration }
+                ?: error("Containing function is expected for a value parameter symbol")
+            requireIsInstance<KaFunctionSymbol>(ownerSymbol)
+
+            return (ownerSymbol.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir)
+        }
 
     override fun equals(other: Any?): Boolean {
         return psiOrSymbolEquals(other)
