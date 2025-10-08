@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.text
 
-import test.*
 import kotlin.test.*
 
 class StringNumberConversionJVMTest {
@@ -77,17 +76,43 @@ class StringNumberConversionJVMTest {
             assertProduces("-77", bd("-77"))
             assertProduces("-77.0", bd("-77.0"))
             assertProduces("77.", bd("77"))
+            assertProduces(".77", bd("0.77"))
             assertProduces("123456789012345678901234567890.123456789", bd("123456789012345678901234567890.123456789"))
             assertProduces("-1.77", bd("-1.77"))
             assertProduces("+.77", bd("0.77"))
             assertProduces("7.7e1", bd("77"))
+            assertProduces("7.7E1", bd("77"))
+            assertProduces("7.e1", bd("7E+1"))
+            assertProduces("-7E+1", bd("-7E+1"))
+            assertProduces(".7E1", bd("7"))
             assertProduces("+770e-1", bd("77.0"))
+            assertProduces("৪೦໑.۵၅", bd("401.55"))
+            assertProduces("-.1e-1", bd("-0.01"))
+            assertProduces("-.1e+1", bd("-1"))
+            assertProduces("+1", bd("1"))
+            assertProduces("-1", bd("-1"))
 
             assertFailsOrNull("7..7")
             assertFailsOrNull("\t-77 \n")
             assertFailsOrNull("007 not a number")
             assertFailsOrNull("")
             assertFailsOrNull("   ")
+            assertFailsOrNull(" 3.14")
+            assertFailsOrNull("3.14 ")
+            assertFailsOrNull("0x77p1")
+            assertFailsOrNull("++123")
+            assertFailsOrNull("--123")
+            assertFailsOrNull("+-123")
+            assertFailsOrNull(".")
+            assertFailsOrNull("-.e-")
+            assertFailsOrNull("-.e-1")
+            assertFailsOrNull("-.1e+1e")
+            assertFailsOrNull("e")
+            assertFailsOrNull("e1")
+            assertFailsOrNull("e+1")
+            assertFailsOrNull("\u058A1") // ֊1
+            assertFailsOrNull("\u207A1") // ⁺1
+            assertFailsOrNull("123.A10")
         }
 
         var mc = java.math.MathContext(3, java.math.RoundingMode.UP)
