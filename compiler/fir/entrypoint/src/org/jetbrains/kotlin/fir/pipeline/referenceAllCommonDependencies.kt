@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -51,7 +51,7 @@ private class Visitor(val session: FirSession) : FirDefaultVisitorVoid() {
 
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
         val symbol = resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*> ?: return
-        val id = symbol.callableId.takeIf { symbol.isNonLocal && it != null && it.classId == null } ?: return
+        val id = symbol.callableId.takeIf { symbol.rawStatus.visibility != Visibilities.Local && it != null && it.classId == null } ?: return
         session.symbolProvider.getTopLevelCallableSymbols(id.packageName, id.callableName)
     }
 

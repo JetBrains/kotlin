@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
@@ -31,7 +32,10 @@ import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionWithoutNameSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -39,6 +43,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
@@ -296,7 +301,13 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
                 }
             }
 
-            private fun FirDeclaration.shouldAddParentContext(): Boolean = symbol is FirFunctionWithoutNameSymbol || !isNonLocal
+            @OptIn(ClassIdBasedLocality::class)
+            private fun FirDeclaration.shouldAddParentContext(): Boolean = when (val symbol = this.symbol) {
+                is FirFunctionWithoutNameSymbol -> true
+                is FirPropertySymbol -> symbol.isLocal
+                is FirCallableSymbol -> symbol.callableId?.isLocal == true
+                else -> !isNonLocal
+            }
         }
     }
 }

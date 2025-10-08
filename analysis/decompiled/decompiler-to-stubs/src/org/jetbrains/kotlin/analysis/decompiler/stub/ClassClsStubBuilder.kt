@@ -136,13 +136,14 @@ private class ClassClsStubBuilder(
 
         @OptIn(ClassIdBasedLocality::class)
         val classId = classId.takeUnless { it.isLocal }
+        val isTopLevel = classId?.isNestedClass == false
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> {
                 KotlinObjectStubImpl(
                     parentStub, shortName, fqName,
                     classId = classId,
                     superTypeRefs,
-                    isTopLevel = !classId.isNestedClass,
+                    isTopLevel = isTopLevel,
                     isLocal = false,
                     isObjectLiteral = false,
                 )
@@ -160,7 +161,7 @@ private class ClassClsStubBuilder(
                     isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
                     isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
                     isLocal = false,
-                    isTopLevel = !classId.isNestedClass,
+                    isTopLevel = isTopLevel,
                     valueClassRepresentation = valueClassRepresentation(),
                 )
             }
