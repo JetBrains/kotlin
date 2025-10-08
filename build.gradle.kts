@@ -127,6 +127,7 @@ if (!project.hasProperty("versions.kotlin-native")) {
     } else if (kotlinBuildProperties.isKotlinNativeEnabled) {
         kotlinBuildProperties.defaultSnapshotVersion
     } else {
+        System.setProperty("kotlin.native.distribution.disableDownloadFromMavenForTests", "true")
         "2.3.0-dev-5665"
     }
 }

@@ -41,6 +41,9 @@ fun buildProject(
     .also {
         it.enableDependencyVerification(false)
         it.setFunctionalTestMode()
+        if (System.getProperty("kotlin.native.distribution.disableDownloadFromMavenForTests", "false").toBoolean()) {
+            it.extensions.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "false")
+        }
     }
     .apply(configureProject)
     .let { it as ProjectInternal }
