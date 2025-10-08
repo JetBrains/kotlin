@@ -185,7 +185,3 @@ internal annotation class JsImplicitExport(val couldBeConvertedToExplicitExport:
 @OptionalExpectation
 @SinceKotlin("2.0")
 public expect annotation class JsStatic()
-
-@Target(FUNCTION)
-@OptionalExpectation
-public expect annotation class nativeInvoke
