@@ -36,6 +36,9 @@ class ConstraintInjector(
 
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 
+    private val useMaxTypeDepthFromInitialConstraints: Boolean =
+        !languageVersionSettings.supportsFeature(LanguageFeature.DisableMaxTypeDepthFromInitialConstraints)
+
     interface Context : TypeSystemInferenceExtensionContext, ConstraintSystemMarker {
         val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
 
@@ -214,6 +217,7 @@ class ConstraintInjector(
 
     context(c: Context)
     private fun updateAllowedTypeDepth(type: KotlinTypeMarker) {
+        if (!useMaxTypeDepthFromInitialConstraints) return
         c.maxTypeDepthFromInitialConstraints = max(c.maxTypeDepthFromInitialConstraints, type.typeDepth())
     }
 
@@ -478,7 +482,7 @@ class ConstraintInjector(
             } else {
                 if (lowerType === upperType) return
             }
-            if (lowerType.isAllowedType() && upperType.isAllowedType()) {
+            if (!useMaxTypeDepthFromInitialConstraints || (lowerType.isAllowedType() && upperType.isAllowedType())) {
                 withNewConfigurationForIncorporationConstraints(
                     newDerivedFromSet = newDerivedFrom,
                     isFromDeclaredUpperBound = isFromDeclaredUpperBound,

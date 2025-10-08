@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextParameters
+// LANGUAGE: +ContextParameters +DisableMaxTypeDepthFromInitialConstraints
 // ISSUE: KT-81441
 interface Dsl<F>
 
@@ -8,12 +8,12 @@ fun <F> dslFun() {}
 
 data object FalseNegative : Dsl<List<List<List<*>>>> {
     fun test() {
-        dslFun<Int>()
+        <!NO_CONTEXT_ARGUMENT!>dslFun<!><Int>()
     }
 }
 
 fun FalseNegative.anotherFalseNegative() {
-    dslFun<Int>()
+    <!NO_CONTEXT_ARGUMENT!>dslFun<!><Int>()
 }
 
 data object FailsAsExpected : Dsl<List<List<*>>> {
