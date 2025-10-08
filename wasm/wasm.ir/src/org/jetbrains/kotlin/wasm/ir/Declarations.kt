@@ -112,7 +112,7 @@ class WasmTag(
     val importPair: WasmImportDescriptor? = null
 ) : WasmNamedModuleField() {
     init {
-        assert(type.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
+//        assert(type.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
     }
 }
 
@@ -159,7 +159,7 @@ data class WasmFunctionType(
 ) : WasmTypeDeclaration("")
 
 data class WasmContType(
-    val funType: WasmType,
+    val funType: WasmFunctionType,
 ) : WasmTypeDeclaration("")
 
 class WasmStructDeclaration(

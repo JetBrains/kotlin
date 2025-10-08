@@ -55,6 +55,10 @@ class WasmFileCodegenContext(
         wasmFileFragment.gcTypes.define(irClass.getReferenceKey(), wasmType)
     }
 
+    fun defineContType(irFunction: IrFunctionSymbol, wasmType: WasmContType) {
+        wasmFileFragment.contTypes.define(irFunction.getReferenceKey(), wasmType)
+    }
+
     fun defineVTableGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
         wasmFileFragment.vTableGcTypes.define(irClass.getReferenceKey(), wasmType)
     }
@@ -83,6 +87,9 @@ class WasmFileCodegenContext(
 
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
         wasmFileFragment.functionTypes.reference(irFunction.getReferenceKey())
+
+    fun referenceContType(irFunction: IrFunctionSymbol): WasmSymbol<WasmContType> =
+        wasmFileFragment.contTypes.reference(irFunction.getReferenceKey())
 
     fun referenceTypeId(irClass: IrClassSymbol): Long =
         cityHash64(irClass.getSignature().toString().encodeToByteArray()).toLong()

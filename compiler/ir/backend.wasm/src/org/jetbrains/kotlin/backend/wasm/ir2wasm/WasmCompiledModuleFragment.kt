@@ -64,6 +64,7 @@ class WasmCompiledFileFragment(
     val globalClassITables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
     val functionTypes: ReferencableAndDefinable<IdSignature, WasmFunctionType> = ReferencableAndDefinable(),
     val gcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
+    val contTypes: ReferencableAndDefinable<IdSignature, WasmContType> = ReferencableAndDefinable(),
     val vTableGcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
     val stringLiteralId: ReferencableElements<String, Int> = ReferencableElements(),
     val constantArrayDataSegmentId: ReferencableElements<Pair<List<Long>, WasmType>, Int> = ReferencableElements(),
@@ -92,6 +93,8 @@ class WasmCompiledModuleFragment(
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
+    private val contFunctionType = WasmFunctionType(emptyList(), emptyList())
+    private val contType = WasmContType(TODO())
 
     private val stringDataSectionIndex = WasmImmediate.DataIdx(0)
     private val stringAddressesAndLengthsIndex = WasmImmediate.DataIdx(1)
@@ -246,6 +249,9 @@ class WasmCompiledModuleFragment(
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
+        // TODO("Create types")
+        additionalTypes.addAll(TODO("Function type"))
+        additionalTypes.addAll(TODO("Cont type"))
 
         val elements = mutableListOf<WasmElement>()
         createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, elements, exports, globals)
@@ -254,7 +260,7 @@ class WasmCompiledModuleFragment(
             ?: compilationException("kotlin.Throwable is not found in fragments", null)
 
         val tags = getTags(throwableDeclaration)
-        require(tags.size <= 1) { "Having more than 1 tag is not supported" }
+//        require(tags.size <= 1) { "Having more than 1 tag is not supported" }
 
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
         val importsInOrder = importedFunctions + importedTags
@@ -363,9 +369,9 @@ class WasmCompiledModuleFragment(
     }
 
     private fun getTags(throwableDeclaration: WasmTypeDeclaration): List<WasmTag> {
-        if (generateTrapsInsteadOfExceptions) return emptyList()
-
-        val tag = if (isWasmJsTarget) {
+        val throwableTag = if (generateTrapsInsteadOfExceptions) {
+            null
+        } else if (isWasmJsTarget) {
             val jsExceptionTagFuncType = WasmFunctionType(
                 parameterTypes = listOf(WasmExternRef),
                 resultTypes = emptyList()
@@ -383,7 +389,11 @@ class WasmCompiledModuleFragment(
             WasmTag(throwableTagFuncType)
         }
 
-        return listOf(tag)
+        val contTagFuncParamType = WasmRefNullType(WasmHeapType.Type(WasmSymbol(tryFindBuiltInType { it.kotlinAny })))
+        val contTagFuncType = WasmFunctionType(listOf(contTagFuncParamType), listOf(contTagFuncParamType))
+        val contTagType = WasmTag(contTagFuncType)
+
+        return listOfNotNull(throwableTag, contTagType)
     }
 
     private fun getTypes(

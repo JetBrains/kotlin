@@ -119,7 +119,7 @@ private fun wasmDeclarationFingerprint(
         }
         is WasmContType -> {
             val contHash = currentHash.combineWith(contHash)
-            typeFingerprint(declaration.funType, contHash, visited)
+            wasmDeclarationFingerprint(declaration.funType, contHash, visited)
         }
     }
 }

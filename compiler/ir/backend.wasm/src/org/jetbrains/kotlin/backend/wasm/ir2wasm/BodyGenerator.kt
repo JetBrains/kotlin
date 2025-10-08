@@ -1155,7 +1155,7 @@ class BodyGenerator(
                     wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0] -> {
                         TODO("wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0]")
                     }
-                    else -> TODO("else startCoroutineUninterceptedOrReturnIntrinsicsStub")
+                    else -> TODO("startCoroutineUninterceptedOrReturnIntrinsicsStub 1-2")
                 }
             }
 
@@ -1613,6 +1613,7 @@ class BodyGenerator(
         val rttiQualifierGetterFieldId = WasmSymbol(6)
         val rttiSimpleNameGetterFieldId = WasmSymbol(7)
         private val exceptionTagId = WasmSymbol(0)
+        private val contTagId = WasmSymbol(1)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
     }
 }

@@ -381,7 +381,7 @@ class WasmIrToBinary(
 
     private fun appendContTypeDeclaration(type: WasmContType) {
         b.writeVarInt7(WasmBinary.CONT_TYPE)
-        appendType(type.funType)
+        appendFunctionTypeDeclaration(type.funType)
     }
 
     private fun appendBlockType(type: WasmImmediate.BlockType) {

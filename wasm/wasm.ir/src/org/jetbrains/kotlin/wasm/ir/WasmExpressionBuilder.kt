@@ -307,7 +307,7 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
     fun createNewContHandle(tagIdx: WasmSymbol<Int>, relativeLevel: Int) =
         createNewContHandleImmediate(WasmImmediate.ContHandle.ContHandleType.ON, tagIdx, relativeLevel)
 
-    fun createNewContHandleImmediate(
+    private fun createNewContHandleImmediate(
         handleType: WasmImmediate.ContHandle.ContHandleType,
         tagIdx: WasmSymbol<Int>,
         relativeLevel: Int? = null,
@@ -321,8 +321,8 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         )
     }
 
-    fun buildContNew(contType: WasmHeapType, location: SourceLocation) {
-        buildInstr(WasmOp.CONT_NEW, location, WasmImmediate.HeapType(WasmRefType(contType)))
+    fun buildContNew(contType: WasmSymbol<WasmTypeDeclaration>, location: SourceLocation) {
+        buildInstr(WasmOp.CONT_NEW, location, WasmImmediate.TypeIdx(contType))
     }
 
 //    fun buildContBind(ct1: WasmHeapType, ct2: WasmHeapType, location: SourceLocation) {
@@ -339,30 +339,18 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
 
     fun buildResume(
         contType: WasmHeapType,
-        handleType: WasmImmediate.ContHandle.ContHandleType,
-        tagIdx: WasmSymbol<Int>,
-        relativeLevel: Int? = null,
+        contHandle: WasmImmediate.ContHandle,
         location: SourceLocation
     ) {
-        val contHandle = when (handleType) {
-            WasmImmediate.ContHandle.ContHandleType.ON -> createNewContHandle(tagIdx, relativeLevel!!)
-            WasmImmediate.ContHandle.ContHandleType.ON_SWITCH -> createNewContHandleSwitch(tagIdx)
-        }
         buildInstr(WasmOp.RESUME, location, WasmImmediate.HeapType(contType), contHandle)
     }
 
     fun buildResumeThrow(
         contType: WasmHeapType,
         exceptionTag: WasmSymbol<Int>,
-        handleType: WasmImmediate.ContHandle.ContHandleType,
-        tagIdx: WasmSymbol<Int>,
-        relativeLevel: Int? = null,
+        contHandle: WasmImmediate.ContHandle,
         location: SourceLocation
     ) {
-        val contHandle = when (handleType) {
-            WasmImmediate.ContHandle.ContHandleType.ON -> createNewContHandle(tagIdx, relativeLevel!!)
-            WasmImmediate.ContHandle.ContHandleType.ON_SWITCH -> createNewContHandleSwitch(tagIdx)
-        }
         buildInstr(WasmOp.RESUME_THROW, location, WasmImmediate.TagIdx(exceptionTag), WasmImmediate.HeapType(contType), contHandle)
     }
 

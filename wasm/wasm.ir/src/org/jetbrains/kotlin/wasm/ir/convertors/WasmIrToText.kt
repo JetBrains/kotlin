@@ -349,7 +349,7 @@ class WasmIrToText(
         newLineList("type") {
             appendModuleFieldReference(contType)
             sameLineList("cont") {
-                appendType(contType.funType)
+                appendFunctionTypeDeclaration(contType.funType)
             }
         }
     }
@@ -534,7 +534,7 @@ class WasmIrToText(
             sameLineList("param") {
                 wasmTag.type.parameterTypes.forEach { appendType(it) }
             }
-            assert(wasmTag.type.resultTypes.isEmpty()) { "must be as per spec" }
+//            assert(wasmTag.type.resultTypes.isEmpty()) { "must be as per spec" }
         }
     }
 
