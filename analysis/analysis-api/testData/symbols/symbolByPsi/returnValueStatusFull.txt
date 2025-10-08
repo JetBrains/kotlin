@@ -35,6 +35,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: MustUse
   importableFqName: mustUse
 
 KaNamedFunctionSymbol:
@@ -77,4 +78,5 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: ExplicitlyIgnorable
   importableFqName: ignorable

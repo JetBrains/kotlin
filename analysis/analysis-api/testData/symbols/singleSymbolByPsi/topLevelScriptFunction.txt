@@ -67,4 +67,5 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaScriptModule "Script topLevelScriptFunction.kts"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: pack.topLevelFun

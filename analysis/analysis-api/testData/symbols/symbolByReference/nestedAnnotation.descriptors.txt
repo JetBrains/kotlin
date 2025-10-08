@@ -38,4 +38,5 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=Use 'bar() instead)
+  returnValueStatus: Unspecified
   importableFqName: lib.foo

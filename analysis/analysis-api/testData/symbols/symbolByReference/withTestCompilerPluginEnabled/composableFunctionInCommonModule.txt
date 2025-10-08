@@ -78,4 +78,5 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of common"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: test.Foo

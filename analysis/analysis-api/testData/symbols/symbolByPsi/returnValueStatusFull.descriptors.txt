@@ -1,6 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
-  callableId: /I.foo
+  callableId: /mustUse
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -18,33 +18,32 @@ KaNamedFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
-  location: CLASS
-  modality: OPEN
-  name: foo
-  origin: DELEGATED
+  location: TOP_LEVEL
+  modality: FINAL
+  name: mustUse
+  origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/Int
+    type: kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: A
-  getContainingFileSymbol: KaFileSymbol(withImplicitType.kt)
-  getContainingJvmClassName: I
+  getContainingFileSymbol: KaFileSymbol(returnValueStatusFull.kt)
+  getContainingJvmClassName: ReturnValueStatusFullKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   returnValueStatus: Unspecified
-  importableFqName: null
+  importableFqName: mustUse
 
 KaNamedFunctionSymbol:
-  annotations: []
-  callableId: /I.bar
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: KtAnnotationEntry
+  ]
+  callableId: /ignorable
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -62,26 +61,22 @@ KaNamedFunctionSymbol:
   isStatic: false
   isSuspend: false
   isTailRec: false
-  location: CLASS
-  modality: OPEN
-  name: bar
-  origin: DELEGATED
+  location: TOP_LEVEL
+  modality: FINAL
+  name: ignorable
+  origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/Int
+    type: kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: A
-  getContainingFileSymbol: KaFileSymbol(withImplicitType.kt)
-  getContainingJvmClassName: I
+  getContainingFileSymbol: KaFileSymbol(returnValueStatusFull.kt)
+  getContainingJvmClassName: ReturnValueStatusFullKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   returnValueStatus: Unspecified
-  importableFqName: null
+  importableFqName: ignorable

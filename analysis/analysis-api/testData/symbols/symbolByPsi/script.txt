@@ -35,6 +35,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: foo
 
 KaKotlinPropertySymbol:
@@ -174,6 +175,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaScriptModule "Script script.kts"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: null
 
 KaKotlinPropertySymbol:
