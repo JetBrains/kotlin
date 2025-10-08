@@ -452,6 +452,11 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
         if (
             mapOf(
                 /**
+                 * Fallback variant for Android resolution
+                 */
+                JAVA_API to setOf(KOTLIN_UKLIB_FALLBACK_VARIANT),
+                JAVA_RUNTIME to setOf(KOTLIN_UKLIB_FALLBACK_VARIANT),
+                /**
                  * KOTLIN_UKLIB_API is requested in platform compile dependency configurations
                  */
                 KOTLIN_UKLIB_API to apiElements,
