@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstrai
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
-import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -801,25 +800,41 @@ private fun ConstraintSystemError.toDiagnostic(
                 }
 
                 is ConeExplicitTypeParameterConstraintPosition -> {
+                    val argumentType = position.typeArgument.toConeTypeProjection().type
+                        ?: return null
                     val argumentIndex = (candidate.callInfo.callSite as? FirQualifiedAccessExpression)
                         ?.typeArguments?.indexOfFirst { it.source == position.typeArgument.source }
                         ?: return null
-                    val argumentType = position.typeArgument.toConeTypeProjection().type
-                        ?: return null
-                    val parameterType = candidate.symbol.typeParameterSymbols?.getOrNull(argumentIndex)?.toConeType()
-                        ?.let { candidate.substitutor.substituteOrSelf(it) }
+                    val parameter = candidate.symbol.typeParameterSymbols?.getOrNull(argumentIndex)
                         ?: return null
 
-                    // NOTE: Supplying the `parameterType` here is not correct as we have two scenarios
-                    // (see `falseNegativeUpperBoundViolated.kt` and `upperBoundViolated2.kt`):
-                    // - a variable may have been fixed to an explicit argument which violates the bound
-                    //   (in which case we, need to check it against the inferred combined upper bound),
-                    // - or it may have been fixed implicitly to something coming from another argument variable fixation
-                    //   (in which case, we need to check the explicit argument against this fixation).
-                    // This will be accounted for in a later commit.
+                    val argumentVariable = this.position.initialConstraint.a as? ConeTypeVariableType
+                    val argumentVariablePrototype = argumentVariable?.typeConstructor?.originalTypeParameter as? ConeTypeParameterLookupTag
+
+                    // The argument's bound mismatch may cause a cascade of other constraint system errors which are basically noise.
+                    // Filter them out by only picking the most relevant error resulting.
+                    if (argumentVariablePrototype?.typeParameterSymbol != parameter) {
+                        return null
+                    }
+
+                    val combinedUpperBound = candidate.freshVariablesToUpperBoundsSnapshot[argumentVariable.typeConstructor]?.constraints
+                        ?.filter { it.kind != ConstraintKind.LOWER }
+                        ?.map { (it.type as ConeKotlinType).substituteTypeVariableTypes(candidate, typeContext) }
+                        ?.let {
+                            val variableFixationType = argumentVariable.substituteTypeVariableTypes(candidate, typeContext)
+                            // So, we have two scenarios (see `falseNegativeUpperBoundViolated.kt` and `upperBoundViolated2.kt`):
+                            // - a variable may have been fixed to an explicit argument which violates the bound
+                            //   (in which case we, need to check it against the inferred combined upper bound),
+                            // - or it may have been fixed implicitly to something coming from another argument variable fixation
+                            //   (in which case, we need to check the explicit argument against this fixation).
+                            // Below, we're taking the intersection of the two and thus account for both scenarios.
+                            ConeTypeIntersector.intersectTypes(typeContext, it + variableFixationType)
+                        }
+                        ?: error("Couldn't find the upper bound for $argumentVariable")
+
                     FirErrors.UPPER_BOUND_VIOLATED.createOn(
                         position.typeArgument.source ?: qualifiedAccessSource ?: source,
-                        parameterType.substituteTypeVariableTypes(candidate, typeContext),
+                        combinedUpperBound,
                         argumentType.substituteTypeVariableTypes(candidate, typeContext),
                         "",
                         session,

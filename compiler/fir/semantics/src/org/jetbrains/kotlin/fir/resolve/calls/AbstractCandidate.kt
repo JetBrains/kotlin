@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 abstract class AbstractCandidate {
     abstract val symbol: FirBasedSymbol<*>
@@ -29,6 +31,7 @@ abstract class AbstractCallCandidate<P : AbstractConeResolutionAtom> : AbstractC
     abstract val diagnostics: List<ResolutionDiagnostic>
     abstract val errors: List<ConstraintSystemError>
     abstract val substitutor: ConeSubstitutor
+    abstract val freshVariablesToUpperBoundsSnapshot: Map<TypeConstructorMarker, VariableWithConstraints>
     abstract val system: NewConstraintSystem
     abstract val usedOuterCs: Boolean
 }
