@@ -106,7 +106,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             additionalArgs.add("D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"${logFile.loggerCompatiblePath}\"")
         }
         args.forEach { additionalArgs.add(it) }
-        val baseOpts = if (xmx > 0) DaemonJVMOptions(maxMemory = "${xmx}m") else DaemonJVMOptions()
+        val baseOpts = if (xmx > 0) DaemonJVMOptions(maxHeapSize = "${xmx}m") else DaemonJVMOptions()
         return configureDaemonJVMOptions(
                 baseOpts,
                 *additionalArgs.toTypedArray(),
@@ -158,16 +158,16 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         try {
             System.setProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property, "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxMetaspaceSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy")
             val opts = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
-            assertEquals("200m", opts.maxMemory)
+            assertEquals("200m", opts.maxHeapSize)
             assertEquals("10k", opts.maxMetaspaceSize)
             assertEquals("100", opts.reservedCodeCacheSize)
             assertEquals(arrayListOf("aaa", "bbb,ccc", "ddd", "xxx,yyy", "ea"), opts.jvmParams)
 
             System.setProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property, "-Xmx300m,-XX:MaxMetaspaceSize=10k,-XX:ReservedCodeCacheSize=100")
             val opts2 = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false, inheritOtherJvmOptions = false)
-            assertEquals("300m", opts2.maxMemory)
+            assertEquals("300m", opts2.maxHeapSize)
             assertEquals( -1, DaemonJVMOptionsMemoryComparator().compare(opts, opts2))
-            assertEquals("300m", listOf(opts, opts2).maxWithOrNull(DaemonJVMOptionsMemoryComparator())?.maxMemory)
+            assertEquals("300m", listOf(opts, opts2).maxWithOrNull(DaemonJVMOptionsMemoryComparator())?.maxHeapSize)
 
             val myXmxParam = ManagementFactory.getRuntimeMXBean().inputArguments.first { it.startsWith("-Xmx") }
             TestCase.assertNotNull(myXmxParam)
@@ -176,7 +176,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val opts3 = configureDaemonJVMOptions(inheritMemoryLimits = true,
                                                   inheritOtherJvmOptions = true,
                                                   inheritAdditionalProperties = false)
-            assertEquals(myXmxVal, opts3.maxMemory)
+            assertEquals(myXmxVal, opts3.maxHeapSize)
         }
         finally {
             restoreSystemProperty(CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property, backupJvmOptions)
