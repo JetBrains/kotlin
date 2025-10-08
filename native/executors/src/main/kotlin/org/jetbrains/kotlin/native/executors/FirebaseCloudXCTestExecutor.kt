@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalAtomicApi::class)
+
 package org.jetbrains.kotlin.native.executors
 
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
@@ -10,9 +12,12 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 import java.nio.file.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.concurrent.atomics.AtomicReference
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.io.path.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -34,13 +39,7 @@ class FirebaseCloudXCTestExecutor(
 
     private val target by configurables::target
 
-    private enum class State {
-        NORMAL,
-        FAILED
-    }
-
-    @Volatile
-    private var state: State = State.NORMAL
+    private val rememberedFailure = AtomicReference<Throwable?>(null)
 
     init {
         require(HostManager.host.family.isAppleFamily) {
@@ -51,16 +50,29 @@ class FirebaseCloudXCTestExecutor(
         }
     }
 
-    @Synchronized
-    private fun checkState() {
-        check(state == State.NORMAL) {
-            "${this::class.java.simpleName} is in the ${state.name} state. Check the executor logs and configuration"
+    private fun abortWithFailureIfNeeded() {
+        rememberedFailure.load()?.let { failure ->
+            // The usual stack trace reporting is too verbose. Produce a compact report as the message instead
+            fun StringBuilder.appendThrowable(t: Throwable) {
+                appendLine(t.toString())
+                when (val cause = t.cause) {
+                    null -> append(t.stackTraceToString())
+                    else -> {
+                        t.stackTrace.firstOrNull()?.let { appendLine("\tat $it") }
+                        append("Caused by: ")
+                        appendThrowable(cause)
+                    }
+                }
+            }
+            error(buildString {
+                appendThrowable(failure)
+            })
         }
     }
 
     override fun execute(request: ExecuteRequest): ExecuteResponse {
         // Check the state to understand whether it is possible to build or some config/build failure happened already.
-        checkState()
+        abortWithFailureIfNeeded()
 
         val workDir = request.workingDirectory?.toPath() ?: Paths.get(".")
         val projectDir = Files.createTempDirectory(workDir, "xctest-firebase-runner")
@@ -73,8 +85,14 @@ class FirebaseCloudXCTestExecutor(
                 createZip(bundle.prepareToRun(projectDir))
             }
         } catch (throwable: Throwable) {
-            state = State.FAILED
-            throw IllegalStateException("Failed to prepare a XCTest bundle with Xcode. Check Xcode or project configuration", throwable)
+            rememberedFailure.compareAndSet(
+                null,
+                IllegalStateException(
+                    "Failed to prepare a XCTest bundle with Xcode. Check Xcode or project configuration",
+                    throwable
+                )
+            )
+            abortWithFailureIfNeeded()
         }
 
         // Execute tests in the Firebase
