@@ -148,12 +148,10 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
         if (declaredConstructors.any { it.isZeroParameterConstructor() }) return false
 
         // Superclass must have a no-arg constructor OR be annotated (and will get one generated)
-        val superClassSymbol = classSymbol.getSuperClassSymbolOrAny(session)
+        val superClassSymbol = classSymbol.getSuperClassSymbolOrAny(session) ?: return true
         val superHasNoArg = superClassSymbol.constructors(session).any { it.isZeroParameterConstructor() }
         val superAnnotated = superClassSymbol.isAnnotatedWithNoArg()
-        if (!superHasNoArg && !superAnnotated) return false
-
-        return true
+        return superHasNoArg || superAnnotated
     }
 
     private fun FirConstructorSymbol.isZeroParameterConstructor(): Boolean {
