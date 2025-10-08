@@ -611,6 +611,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  returnValueStatus: Unspecified
   importableFqName: f
 
 KaNamedClassSymbol:
@@ -803,6 +804,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+  returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedClassSymbol:

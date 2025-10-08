@@ -35,6 +35,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.fooApi3
 
 KaNamedFunctionSymbol:
@@ -74,6 +75,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.internalFooApi3
 
 KaNamedFunctionSymbol:
@@ -113,6 +115,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.privateFooApi3
 
 KaNamedFunctionSymbol:
@@ -176,6 +179,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.barApi3
 
 KaNamedFunctionSymbol:
@@ -239,6 +243,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.internalBarApi3
 
 KaNamedFunctionSymbol:
@@ -302,6 +307,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.privateBarApi3
 
 KaNamedFunctionSymbol:
@@ -341,6 +347,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.fooApi2
 
 KaNamedFunctionSymbol:
@@ -380,6 +387,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.internalFooApi2
 
 KaNamedFunctionSymbol:
@@ -419,6 +427,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.privateFooApi2
 
 KaNamedFunctionSymbol:
@@ -482,6 +491,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.barApi2
 
 KaNamedFunctionSymbol:
@@ -545,6 +555,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.internalBarApi2
 
 KaNamedFunctionSymbol:
@@ -608,6 +619,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.privateBarApi2
 
 KaNamedFunctionSymbol:
@@ -647,6 +659,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.fooApi1
 
 KaNamedFunctionSymbol:
@@ -686,6 +699,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.internalFooApi1
 
 KaNamedFunctionSymbol:
@@ -725,6 +739,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.privateFooApi1
 
 KaNamedFunctionSymbol:
@@ -788,6 +803,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.barApi1
 
 KaNamedFunctionSymbol:
@@ -851,6 +867,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.internalBarApi1
 
 KaNamedFunctionSymbol:
@@ -914,6 +931,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library library"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: library.api.privateBarApi1
 
 KaNamedClassSymbol:

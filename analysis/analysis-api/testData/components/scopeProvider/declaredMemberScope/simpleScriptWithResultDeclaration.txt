@@ -71,6 +71,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: foo
 
 KaKotlinPropertySymbol:

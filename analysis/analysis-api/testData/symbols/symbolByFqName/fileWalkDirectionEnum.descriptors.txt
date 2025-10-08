@@ -88,6 +88,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: kotlin.collections.listOf
 
 KaNamedFunctionSymbol:
@@ -180,6 +181,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: kotlin.collections.listOf
 
 KaNamedFunctionSymbol:
@@ -245,4 +247,5 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: kotlin.collections.listOf

@@ -70,6 +70,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: MyClass.Companion.functionFromCompanion
 
 KaNamedFunctionSymbol:
@@ -116,6 +117,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: MyClass.Companion.staticFunctionFromCompanion
 
 KaNamedClassSymbol:

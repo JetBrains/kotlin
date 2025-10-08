@@ -720,3 +720,4 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 9
+

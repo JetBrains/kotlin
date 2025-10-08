@@ -35,6 +35,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.fooApi3
 
 KaNamedFunctionSymbol:
@@ -74,6 +75,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.internalFooApi3
 
 KaNamedFunctionSymbol:
@@ -113,6 +115,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.privateFooApi3
 
 KaNamedFunctionSymbol:
@@ -176,6 +179,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.barApi3
 
 KaNamedFunctionSymbol:
@@ -239,6 +243,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.internalBarApi3
 
 KaNamedFunctionSymbol:
@@ -302,6 +307,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.privateBarApi3
 
 KaNamedFunctionSymbol:
@@ -341,6 +347,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.fooApi1
 
 KaNamedFunctionSymbol:
@@ -380,6 +387,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.internalFooApi1
 
 KaNamedFunctionSymbol:
@@ -419,6 +427,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.privateFooApi1
 
 KaNamedFunctionSymbol:
@@ -482,6 +491,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.barApi1
 
 KaNamedFunctionSymbol:
@@ -545,6 +555,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.internalBarApi1
 
 KaNamedFunctionSymbol:
@@ -608,6 +619,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.privateBarApi1
 
 KaNamedFunctionSymbol:
@@ -647,6 +659,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.fooApi2
 
 KaNamedFunctionSymbol:
@@ -686,6 +699,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.internalFooApi2
 
 KaNamedFunctionSymbol:
@@ -725,6 +739,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.privateFooApi2
 
 KaNamedFunctionSymbol:
@@ -788,6 +803,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.barApi2
 
 KaNamedFunctionSymbol:
@@ -851,6 +867,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.internalBarApi2
 
 KaNamedFunctionSymbol:
@@ -914,6 +931,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of dependency"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: dependency.api.privateBarApi2
 
 KaNamedClassSymbol:

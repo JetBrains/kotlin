@@ -66,4 +66,5 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaScriptModule "Script functionFromScriptStatement.kts"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: null
