@@ -214,6 +214,7 @@ class ConstraintInjector(
 
     context(c: Context)
     private fun updateAllowedTypeDepth(type: KotlinTypeMarker) {
+        if (c.isK2) return
         c.maxTypeDepthFromInitialConstraints = max(c.maxTypeDepthFromInitialConstraints, type.typeDepth())
     }
 
@@ -478,7 +479,7 @@ class ConstraintInjector(
             } else {
                 if (lowerType === upperType) return
             }
-            if (lowerType.isAllowedType() && upperType.isAllowedType()) {
+            if (isK2 || (lowerType.isAllowedType() && upperType.isAllowedType())) {
                 withNewConfigurationForIncorporationConstraints(
                     newDerivedFromSet = newDerivedFrom,
                     isFromDeclaredUpperBound = isFromDeclaredUpperBound,

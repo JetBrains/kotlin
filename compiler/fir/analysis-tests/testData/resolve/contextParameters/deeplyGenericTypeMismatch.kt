@@ -8,12 +8,12 @@ fun <F> dslFun() {}
 
 data object FalseNegative : Dsl<List<List<List<*>>>> {
     fun test() {
-        dslFun<Int>()
+        <!NO_CONTEXT_ARGUMENT!>dslFun<!><Int>()
     }
 }
 
 fun FalseNegative.anotherFalseNegative() {
-    dslFun<Int>()
+    <!NO_CONTEXT_ARGUMENT!>dslFun<!><Int>()
 }
 
 data object FailsAsExpected : Dsl<List<List<*>>> {
