@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParamete
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -86,7 +87,22 @@ internal class KaFirValueParameterSymbol private constructor(
         }
 
     override val hasDefaultValue: Boolean
-        get() = withValidityAssertion { backingPsi?.hasDefaultValue() ?: firSymbol.hasDefaultValue }
+        get() = withValidityAssertion {
+            with(analysisSession) {
+                if (backingPsi?.hasDefaultValue() == true || firSymbol.hasDefaultValue) {
+                    return true
+                }
+
+                val parameterIndex = index
+                val ownerFunction = containingDeclaration as? KaFunctionSymbol ?: return false
+
+                fun KaDeclarationSymbol.hasMatchingParameterWithDefaultValue(): Boolean =
+                    (this as? KaFunctionSymbol)?.valueParameters?.getOrNull(parameterIndex)?.hasDefaultValue == true
+
+                ownerFunction.allOverriddenSymbols.any { it.hasMatchingParameterWithDefaultValue() } ||
+                        ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingParameterWithDefaultValue() }
+            }
+        }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }
