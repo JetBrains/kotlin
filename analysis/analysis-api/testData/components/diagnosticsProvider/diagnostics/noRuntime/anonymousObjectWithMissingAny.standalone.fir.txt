@@ -1,0 +1,4 @@
+Diagnostics from file:
+  for PSI element of type KtProperty at (6,5-25)
+    UNUSED_VARIABLE      text ranges: [(71,74)]
+      PSI: KtProperty at (6,5-25)
