@@ -18,7 +18,7 @@ fun test1() {
     bar("", 1, ::fooTakeString).checkType { _<Pair<String, Int>>() }
     bar("", "", ::fooReturnInt).checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Pair<String, Any>>() }
 
-    val x: String = <!INITIALIZER_TYPE_MISMATCH!>bar("", "", ::fooReturnInt)<!>
+    val x: String <!INITIALIZER_TYPE_MISMATCH!>=<!> bar("", "", ::fooReturnInt)
 
     baz(Int::toString, ::foo).checkType { _<Pair<Int, String>>() }
 }

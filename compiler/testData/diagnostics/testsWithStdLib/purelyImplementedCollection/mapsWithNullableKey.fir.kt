@@ -20,15 +20,15 @@ fun hashMapTest() {
     x[""] = 1
     x[""] = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
-    val b1: MutableMap<String?, Int?> = <!INITIALIZER_TYPE_MISMATCH!>x<!>
+    val b1: MutableMap<String?, Int?> <!INITIALIZER_TYPE_MISMATCH!>=<!> x
     val b2: MutableMap<String?, Int> = x
     val b3: Map<String?, Int> = x
     val b4: Map<String?, Int?> = x
-    val b5: Map<String, Int?> = <!INITIALIZER_TYPE_MISMATCH!>x<!>
+    val b5: Map<String, Int?> <!INITIALIZER_TYPE_MISMATCH!>=<!> x
 
-    val b6: Int = <!INITIALIZER_TYPE_MISMATCH!>x[""]<!>
-    val b7: Int = <!INITIALIZER_TYPE_MISMATCH!>x[null]<!>
-    val b8: Int = <!INITIALIZER_TYPE_MISMATCH!>x.get("")<!>
+    val b6: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> x[""]
+    val b7: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> x[null]
+    val b8: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> x.get("")
 
     val b9: Int? = x.get("")
 }
@@ -45,14 +45,14 @@ fun treeMapTest() {
     x[""] = <!ARGUMENT_TYPE_MISMATCH!>nullableInt<!>
     x[""] = 1
 
-    val b1: MutableMap<String?, Int?> = <!INITIALIZER_TYPE_MISMATCH!>x<!>
+    val b1: MutableMap<String?, Int?> <!INITIALIZER_TYPE_MISMATCH!>=<!> x
     val b2: MutableMap<String?, Int> = x
     val b3: Map<String?, Int> = x
     val b4: Map<String?, Int?> = x
-    val b5: Map<String, Int?> = <!INITIALIZER_TYPE_MISMATCH!>x<!>
+    val b5: Map<String, Int?> <!INITIALIZER_TYPE_MISMATCH!>=<!> x
 
-    val b6: Int = <!INITIALIZER_TYPE_MISMATCH!>x[""]<!>
-    val b7: Int = <!INITIALIZER_TYPE_MISMATCH!>x.get("")<!>
+    val b6: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> x[""]
+    val b7: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> x.get("")
 
     val b8: Int? = x.get("")
 }

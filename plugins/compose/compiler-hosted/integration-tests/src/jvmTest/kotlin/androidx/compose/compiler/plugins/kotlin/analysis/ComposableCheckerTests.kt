@@ -198,7 +198,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
         // We should infer `ComposableFunction0<Unit>` for `T`
         val cl = identity(@Composable {})
-        val l: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>cl<!>
+        val l: () -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> cl
         """
         )
     }
@@ -215,7 +215,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
         // Explicitly instantiate `T` with `ComposableFunction0<Unit>`
         val cl = identity<@Composable () -> Unit> { A() }
-        val l: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>cl<!>
+        val l: () -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> cl
         """
         )
     }
@@ -551,7 +551,19 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             }
         """
         )
-        val error = if (useFir) "INITIALIZER_TYPE_MISMATCH" else "TYPE_MISMATCH"
+
+        fun wrapDiagnostic(diagnostic: String, text: String): String {
+            return "<!$diagnostic!>$text<!>"
+        }
+
+        fun initializerTypeMismatch(text: String): String {
+            return if (useFir) wrapDiagnostic("INITIALIZER_TYPE_MISMATCH", text) else text
+        }
+
+        fun typeMismatch(text: String): String {
+            return if (!useFir) wrapDiagnostic("TYPE_MISMATCH", text) else text
+        }
+
         check(
             """
             import androidx.compose.runtime.*;
@@ -560,7 +572,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             fun Leaf() {}
 
             fun foo() {
-                val myVariable: ()->Unit = <!$error!>@Composable { Leaf() }<!>
+                val myVariable: ()->Unit ${initializerTypeMismatch("=")} ${typeMismatch("@Composable { Leaf() }")}
                 System.out.println(myVariable)
             }
         """
@@ -746,13 +758,18 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             }
         """
         )
-        val error = if (useFir) "INITIALIZER_TYPE_MISMATCH" else "TYPE_MISMATCH"
+        val initializer = if (useFir) {
+            "<!INITIALIZER_TYPE_MISMATCH!>=<!> v"
+        } else {
+            "= <!TYPE_MISMATCH!>v<!>"
+        }
+
         check(
             """
             import androidx.compose.runtime.*;
 
             fun foo(v: @Composable ()->Unit) {
-                val myVariable: ()->Unit = <!$error!>v<!>
+                val myVariable: ()->Unit $initializer
                 myVariable()
             }
         """
@@ -829,8 +846,13 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             }
         """
         )
-        val argumentTypeMismatch = if (useFir) "ARGUMENT_TYPE_MISMATCH" else "TYPE_MISMATCH"
-        val initializerTypeMismatch = if (useFir) "INITIALIZER_TYPE_MISMATCH" else "TYPE_MISMATCH"
+
+        val initializer = if (useFir) {
+            "<!INITIALIZER_TYPE_MISMATCH!>=<!> identity (<!ARGUMENT_TYPE_MISMATCH!>f<!>)"
+        } else {
+            "= <!TYPE_MISMATCH!>identity (<!TYPE_MISMATCH!>f<!>)<!>"
+        }
+
         check(
             """
             import androidx.compose.runtime.*;
@@ -839,7 +861,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
             @Composable
             fun test(f: @Composable ()->Unit) {
-                val f2: @Composable ()->Unit = <!$initializerTypeMismatch!>identity (<!$argumentTypeMismatch!>f<!>)<!>;
+                val f2: @Composable ()->Unit $initializer;
                 f2()
             }
         """
@@ -1741,7 +1763,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
                 fun Test() {
                     val a: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> A = ${typeMismatch("A()")}
-                    val b: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> B = ${initializerTypeMismatch("{}")}
+                    val b: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> B ${initializerTypeMismatch("=")} {}
                     val c: @Composable () -> Unit = {}
                     val s: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> String = ${typeMismatch("\"\"")}
                     

@@ -37,7 +37,7 @@ fun usage(a:KotlinChildWithFakeOverride) {
     a.foo(AtomicInt(0))
     a.foo(<!ARGUMENT_TYPE_MISMATCH!>AtomicInteger(0)<!>)
     val t1: AtomicInt = a.a
-    val t2: AtomicInteger = <!INITIALIZER_TYPE_MISMATCH!>a.a<!>
+    val t2: AtomicInteger <!INITIALIZER_TYPE_MISMATCH!>=<!> a.a
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration, getter,

@@ -1,10 +1,10 @@
-/inDefaultValues.kt:(436,445): error: Initializer type mismatch: expected 'MyList<String>', actual 'MyList<Int>'.
+/inDefaultValues.kt:(434,435): error: Initializer type mismatch: expected 'MyList<String>', actual 'MyList<Int>'.
 
-/inDefaultValues.kt:(527,536): error: Initializer type mismatch: expected 'MyList<T (of class InGenericConstructor<T>)>', actual 'MyList<Int>'.
+/inDefaultValues.kt:(525,526): error: Initializer type mismatch: expected 'MyList<T (of class InGenericConstructor<T>)>', actual 'MyList<Int>'.
 
 /inDefaultValues.kt:(567,571): warning: Unchecked cast of 'Nothing?' to 'T (of class InGenericConstructor<T>)'.
 
-/inDefaultValues.kt:(686,697): error: Initializer type mismatch: expected 'MyList<String>', actual 'MyList<String?>'.
+/inDefaultValues.kt:(684,685): error: Initializer type mismatch: expected 'MyList<String>', actual 'MyList<String?>'.
 
 /inDefaultValues.kt:(738,747): error: Argument type mismatch: actual type is 'MyList<Int>', but 'MyList<String>' was expected.
 

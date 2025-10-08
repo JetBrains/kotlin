@@ -18,7 +18,7 @@ public fun <K, V> Map<K, V>.get1(key: Any?): Int = null!!
 public fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.get1(key: K): V? = null!!
 
 fun test(map: Map<Int, String>) {
-    val a: Int = <!INITIALIZER_TYPE_MISMATCH!>listOf(1).<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>("")<!>
+    val a: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> listOf(1).<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>("")
     val b: Boolean = listOf(1).contains1(1)
 
     val c: String? = map.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>get1<!>("")

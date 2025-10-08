@@ -14,7 +14,7 @@ fun test() {
 }
 
 fun test2() {
-    val f: Ext = <!INITIALIZER_TYPE_MISMATCH!>{}<!>
+    val f: Ext <!INITIALIZER_TYPE_MISMATCH!>=<!> {}
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,

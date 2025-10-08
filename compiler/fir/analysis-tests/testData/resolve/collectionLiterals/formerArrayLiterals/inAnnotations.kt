@@ -18,7 +18,7 @@ annotation class StringArrayAnno(val arg: Array<String>)
 annotation class FooArrayAnno(val arg: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Foo><!>)
 @Repeatable
 annotation class ArrayArrayAnno(val arg: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Array<String>><!> = [[]])
-annotation class BadDefaultParametert(val arg: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[[]]<!>)
+annotation class BadDefaultParametert(val arg: Array<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> [[]])
 
 @MyListAnno(<!ARGUMENT_TYPE_MISMATCH!>["1", "2", "3"]<!>)
 @IntArrayAnno([1, 2, 3])

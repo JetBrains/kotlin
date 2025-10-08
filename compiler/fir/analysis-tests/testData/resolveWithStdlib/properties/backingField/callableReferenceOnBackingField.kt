@@ -6,7 +6,7 @@ class CallableReference {
         field: String = ""
 
     fun foo() {
-        val x: KProperty<String> = <!INITIALIZER_TYPE_MISMATCH!>::a<!>
+        val x: KProperty<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> ::a
         val y: KProperty<Any> = ::a
     }
 }

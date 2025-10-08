@@ -5,7 +5,7 @@ class A<T : Number> {
         field: Number = 1
 
     val a2: Number
-        field: T = <!FIELD_INITIALIZER_TYPE_MISMATCH!>1<!>
+        field: T <!FIELD_INITIALIZER_TYPE_MISMATCH!>=<!> 1
 
     val a3: Number
         field: T = 1 <!UNCHECKED_CAST!>as T<!>

@@ -24,9 +24,9 @@ fun <E> foo(m: MyList<E>, c: C) {
             myListOf(x)
         } // ok in K1 and K2
 
-        val y2: MyList<E> = <!INITIALIZER_TYPE_MISMATCH!>m.limitedFlatMap { x ->
+        val y2: MyList<E> <!INITIALIZER_TYPE_MISMATCH!>=<!> m.limitedFlatMap { x ->
             myListOf(x)
-        }<!> // error in K1 and K2
+        } // error in K1 and K2
     }
 }
 

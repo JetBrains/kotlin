@@ -1,4 +1,4 @@
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(331,454): error: Initializer type mismatch: expected 'String', actual 'Function0<String>'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(329,330): error: Initializer type mismatch: expected 'String', actual 'Function0<String>'.
 
 /returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(349,448): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
 

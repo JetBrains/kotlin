@@ -9,12 +9,12 @@ fun returnNullableString(): String? = null
 fun returnString(): String = ""
 
 fun test() {
-    var str: String = <!INITIALIZER_TYPE_MISMATCH!>runLike {
+    var str: String <!INITIALIZER_TYPE_MISMATCH!>=<!> runLike {
         <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String {
             if (true) return <!RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }<!>
-    }<!>
+    }
     str = <!ASSIGNMENT_TYPE_MISMATCH!>runLike {
         <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String {
             if (true) return returnString()

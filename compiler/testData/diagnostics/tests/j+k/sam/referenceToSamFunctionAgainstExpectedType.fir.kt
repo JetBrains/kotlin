@@ -18,7 +18,7 @@ public class Inv<T> {
 // FILE: test.kt
 
 fun test(inv: Inv<String>) {
-    val m: ((String) -> String) -> Inv<String> = <!INITIALIZER_TYPE_MISMATCH!>inv::<!CANNOT_INFER_PARAMETER_TYPE!>map<!><!>
+    val m: ((String) -> String) -> Inv<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> inv::<!CANNOT_INFER_PARAMETER_TYPE!>map<!>
     take(inv::<!INAPPLICABLE_CANDIDATE!>map<!>)
 }
 

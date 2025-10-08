@@ -14,7 +14,7 @@ val prop3 = java.lang.Float.MAX_VALUE + 1
 val prop4 = java.lang.Float.MAX_VALUE - 1
 
 // val prop5: 3.4028235E38.toFloat()
-val prop5: Int = <!INITIALIZER_TYPE_MISMATCH!>java.lang.Float.MAX_VALUE + 1<!>
+val prop5: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> java.lang.Float.MAX_VALUE + 1
 
 // val prop6: 2.0.toFloat()
 val prop6: Float = 1.0.toFloat() + 1
@@ -23,7 +23,7 @@ val prop6: Float = 1.0.toFloat() + 1
 val prop7: Double = 1.0 + 1.0
 
 // val prop8: 2.0.toDouble()
-val prop8: Float = <!INITIALIZER_TYPE_MISMATCH!>1.0f.toDouble() + 1.0<!>
+val prop8: Float <!INITIALIZER_TYPE_MISMATCH!>=<!> 1.0f.toDouble() + 1.0
 
 // val prop9: -2.0.toDouble()
 val prop9: Double = -2.0

@@ -8,7 +8,7 @@ annotation class AnnoFoo
 @Repeatable
 annotation class IntAnno(vararg val args: Int = [])
 @Repeatable
-annotation class StringAnno(vararg val args: String = <!INITIALIZER_TYPE_MISMATCH!>[[]]<!>)
+annotation class StringAnno(vararg val args: String <!INITIALIZER_TYPE_MISMATCH!>=<!> [[]])
 @Repeatable
 annotation class FooAnno(vararg val args: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Foo<!>)
 @Repeatable
@@ -16,7 +16,7 @@ annotation class AnnoFooAnno(vararg val args: AnnoFoo = [AnnoFoo()])
 @Repeatable
 annotation class NestedAnno(vararg val args: NestedAnno = [NestedAnno(NestedAnno(), NestedAnno(*[]))])
 @Repeatable
-annotation class ArrayStringAnno(vararg val args: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<String><!> = <!INITIALIZER_TYPE_MISMATCH!>[[[]]]<!>)
+annotation class ArrayStringAnno(vararg val args: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<String><!> <!INITIALIZER_TYPE_MISMATCH!>=<!> [[[]]])
 
 @IntAnno
 @IntAnno(1, 2, 3)

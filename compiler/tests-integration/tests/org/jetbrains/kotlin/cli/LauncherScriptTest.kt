@@ -643,10 +643,10 @@ Caused by: java.lang.AssertionError: assert
             "kotlinc", "-Dkotlin.colors.enabled=always", testKt.absolutePath, K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
             expectedExitCode = 1,
             expectedStdout = "",
-            expectedStderr = """
-                ${"\$TMP_DIR\$"}/test.kt:1:22: [1;31merror: [0;1minitializer type mismatch: expected 'String', actual 'Int'.[m
+            expectedStderr = $$"""
+                $TMP_DIR$/test.kt:1:20: [1;31merror: [0;1minitializer type mismatch: expected 'String', actual 'Int'.[m
                 val result: String = 42
-                                     ^^
+                                   ^
                 
             """.trimIndent(),
         )

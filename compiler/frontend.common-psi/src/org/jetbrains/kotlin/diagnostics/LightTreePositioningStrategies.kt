@@ -388,6 +388,22 @@ object LightTreePositioningStrategies {
             }
     }
 
+    val VARIABLE_INITIALIZER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val eqToken = tree.findChildByType(node, EQ)
+            return if (eqToken != null) {
+                markElement(eqToken, startOffset, endOffset, tree, node)
+            } else {
+                LAST_CHILD.mark(node, startOffset, endOffset, tree)
+            }
+        }
+    }
+
     val LAST_CHILD: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

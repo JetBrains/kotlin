@@ -26,7 +26,7 @@ fun `acquire raw type by static field`() {
     val nullableAnyInvariant: Invariant<Any?> = raw.getStringInvariant()
     val anyInvariant: Invariant<Any> = raw.getStringInvariant()
     val listOfNullableAny: List<Any?> = raw.getListOfStrings()
-    val listOfAny: List<Any> = <!INITIALIZER_TYPE_MISMATCH!>raw.getListOfStrings()<!> // K1 & K2: inferred type is (Mutable)List<(raw) Any?>!
+    val listOfAny: List<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> raw.getListOfStrings() // K1 & K2: inferred type is (Mutable)List<(raw) Any?>!
 }
 
 fun `acquire raw type by instance field`(instance: Generic<*>) {
@@ -34,13 +34,13 @@ fun `acquire raw type by instance field`(instance: Generic<*>) {
     val nullableAnyInvariant: Invariant<Any?> = raw.getStringInvariant()
     val anyInvariant: Invariant<Any> = raw.getStringInvariant()
     val listOfNullableAny: List<Any?> = raw.getListOfStrings()
-    val listOfAny: List<Any> = <!INITIALIZER_TYPE_MISMATCH!>raw.getListOfStrings()<!> // K1 & K2: inferred type is (Mutable)List<(raw) Any?>!
+    val listOfAny: List<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> raw.getListOfStrings() // K1 & K2: inferred type is (Mutable)List<(raw) Any?>!
 }
 
 fun `acquire raw type via type parameter's upper bound of another class`(instance: GenericBox<*>) {
     val raw = instance.raw
-    val nullableAnyInvariant: Invariant<Any?> = <!INITIALIZER_TYPE_MISMATCH!>raw.getStringInvariant()<!> // K1 & K2: error
-    val anyInvariant: Invariant<Any> = <!INITIALIZER_TYPE_MISMATCH!>raw.getStringInvariant()<!> // K1 & K2: error
+    val nullableAnyInvariant: Invariant<Any?> <!INITIALIZER_TYPE_MISMATCH!>=<!> raw.getStringInvariant() // K1 & K2: error
+    val anyInvariant: Invariant<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> raw.getStringInvariant() // K1 & K2: error
     val listOfNullableAny: List<Any?> = raw.getListOfStrings()
     val listOfAny: List<Any> = raw.getListOfStrings() // K1 & K2: ok
 }

@@ -16,19 +16,19 @@ typealias Nested = MyList<MyList<String>>
 class InConstructor(
     val a: MyList<String> = [],
     val b: MyList<String> = ["1", "2", "3"],
-    c: MyList<String> = <!INITIALIZER_TYPE_MISMATCH!>[1, 2, 3]<!>,
+    c: MyList<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, 2, 3],
 )
 
 class InGenericConstructor<T>(
     val a: MyList<T> = [],
-    b: MyList<T> = <!INITIALIZER_TYPE_MISMATCH!>[1, 2, 3]<!>,
+    b: MyList<T> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, 2, 3],
     val c: MyList<T> = [null as T],
 )
 
 fun inFunction(
     a: MyList<String> = [],
     b: MyList<Int> = run { [1, 2, 3] } ,
-    c: MyList<String> = <!INITIALIZER_TYPE_MISMATCH!>[null, "0"]<!>,
+    c: MyList<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> [null, "0"],
     d: Nested = [[]],
     e: Nested = [<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>],
     f: Nested = [["1", "2", "3"]],

@@ -7,16 +7,16 @@ class OuterClass<OuterParam> {
 
     fun <NestedParam : OuterParam> foo(t: NestedParam) {
         val k: OuterParam = t
-        val l: OuterParam = <!INITIALIZER_TYPE_MISMATCH!>OuterParam()<!>
+        val l: OuterParam <!INITIALIZER_TYPE_MISMATCH!>=<!> OuterParam()
     }
 
     inner class Inner<NestedParam : OuterParam>(t: NestedParam) {
         val k: OuterParam = t
-        val l: OuterParam = <!INITIALIZER_TYPE_MISMATCH!>OuterParam()<!>
+        val l: OuterParam <!INITIALIZER_TYPE_MISMATCH!>=<!> OuterParam()
 
         init {
             val m: OuterParam = t
-            val n: OuterParam = <!INITIALIZER_TYPE_MISMATCH!>OuterParam()<!>
+            val n: OuterParam <!INITIALIZER_TYPE_MISMATCH!>=<!> OuterParam()
         }
     }
 }

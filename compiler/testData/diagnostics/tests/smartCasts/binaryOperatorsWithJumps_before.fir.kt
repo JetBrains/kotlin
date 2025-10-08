@@ -133,7 +133,7 @@ fun test19(foo: Any?) {
 
 fun test20(foo: Any?) {
     foo == null || foo !is String? && throw IllegalArgumentException()
-    var k: String? = <!INITIALIZER_TYPE_MISMATCH!>foo<!>
+    var k: String? <!INITIALIZER_TYPE_MISMATCH!>=<!> foo
 }
 
 /* GENERATED_FIR_TAGS: andExpression, break, continue, disjunctionExpression, equalityExpression, forLoop,

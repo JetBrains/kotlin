@@ -32,7 +32,7 @@ fun usage(a: KotlinClassWithFakeOverride) {
     a.foo(AtomicInteger(0))
     a.foo(<!ARGUMENT_TYPE_MISMATCH!>AtomicInt(0)<!>)
     val t1: AtomicInteger = a.a
-    val t2: AtomicInt = <!INITIALIZER_TYPE_MISMATCH!>a.a<!>
+    val t2: AtomicInt <!INITIALIZER_TYPE_MISMATCH!>=<!> a.a
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, flexibleType, functionDeclaration,

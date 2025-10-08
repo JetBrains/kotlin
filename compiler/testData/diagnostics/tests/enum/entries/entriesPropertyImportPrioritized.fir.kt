@@ -8,7 +8,7 @@ enum class MyEnum
 val entries = "local str"
 
 fun test() {
-    val s: String = <!INITIALIZER_TYPE_MISMATCH!>entries<!>
+    val s: String <!INITIALIZER_TYPE_MISMATCH!>=<!> entries
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, functionDeclaration, localProperty, propertyDeclaration, stringLiteral */
