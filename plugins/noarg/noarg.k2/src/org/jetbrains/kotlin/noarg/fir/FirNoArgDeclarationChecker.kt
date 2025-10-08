@@ -32,7 +32,7 @@ object FirNoArgDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common
 
         if (declaration.constructors(context.session).any { it.isNoArgConstructor() }) return
 
-        val superClassSymbol = declaration.symbol.getSuperClassSymbolOrAny(context.session)
+        val superClassSymbol = declaration.symbol.getSuperClassSymbolOrAny(context.session) ?: return
         if (superClassSymbol.constructors(context.session).none { it.isNoArgConstructor() } && !matcher.isAnnotated(superClassSymbol)) {
             reporter.reportOn(source, KtErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS)
         }

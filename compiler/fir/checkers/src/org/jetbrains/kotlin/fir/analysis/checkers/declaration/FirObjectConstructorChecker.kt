@@ -29,8 +29,10 @@ object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Commo
 
         val objectSymbol = declaration.symbol
         // Temporary restriction till KT-66754 will be accepted
-        if (objectSymbol.getContainingClassSymbol() != objectSymbol.getSuperClassSymbolOrAny(context.session))
-            return
+        objectSymbol.getSuperClassSymbolOrAny(context.session).let {
+            if (it == null || it != objectSymbol.getContainingClassSymbol())
+                return
+        }
 
         objectSymbol.primaryConstructorIfAny(context.session)?.resolvedDelegatedConstructorCall
             ?.accept(objectRefVisitor, Data(objectSymbol, context, reporter))

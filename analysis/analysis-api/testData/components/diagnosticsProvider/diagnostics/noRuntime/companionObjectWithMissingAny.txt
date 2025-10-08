@@ -1,0 +1,7 @@
+Diagnostics from file:
+  for PSI element of type KtClass at (5,1) - (7,2)
+    UNRESOLVED_REFERENCE      text ranges: [(49,65)]
+      PSI: KtClass at (5,1) - (7,2)
+  for PSI element of type KtObjectDeclaration at (6,5-21)
+    UNRESOLVED_REFERENCE      text ranges: [(72,88)]
+      PSI: KtObjectDeclaration at (6,5-21)
