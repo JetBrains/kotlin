@@ -475,27 +475,6 @@ fun checkTypeMismatch(
         rValue.isNullLiteral && !lValueType.isMarkedOrFlexiblyNullable -> {
             reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, lValueType)
         }
-        isInitializer -> {
-            if (reportReturnTypeMismatchInLambda(
-                    lValueType = lValueType.fullyExpandedType(),
-                    rValue = rValue,
-                    rValueType = rValueType.fullyExpandedType(),
-                )
-            ) return
-
-            val factory = when (source.elementType) {
-                KtNodeTypes.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
-                else -> FirErrors.INITIALIZER_TYPE_MISMATCH
-            }
-
-            reporter.reportOn(
-                source,
-                factory,
-                lValueType,
-                rValueType,
-                context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType)
-            )
-        }
         source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement || assignment?.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
             if (!lValueType.isMarkedOrFlexiblyNullable && rValueType.isMarkedOrFlexiblyNullable) {
                 val tempType = rValueType
@@ -509,9 +488,22 @@ fun checkTypeMismatch(
             }
         }
         else -> {
+            if (reportReturnTypeMismatchInLambda(
+                    lValueType = lValueType.fullyExpandedType(),
+                    rValue = rValue,
+                    rValueType = rValueType.fullyExpandedType(),
+                )
+            ) return
+
+            val factory = when {
+                !isInitializer -> FirErrors.ASSIGNMENT_TYPE_MISMATCH
+                source.elementType == KtNodeTypes.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
+                else -> FirErrors.INITIALIZER_TYPE_MISMATCH
+            }
+
             reporter.reportOn(
                 assignment?.source ?: source,
-                FirErrors.ASSIGNMENT_TYPE_MISMATCH,
+                factory,
                 lValueType,
                 rValueType,
                 context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType)
