@@ -1408,6 +1408,207 @@ class UklibResolutionTestsWithMockComponents {
     }
 
     @Test
+    fun `uklib resolution - legacy android library resolves fallback variant - in KMP publication without JVM + androidLibrary target`() {
+        val repo = generateMockRepository(
+            tmpDir,
+            listOf(
+                GradleComponent(
+                    GradleMetadataComponent(
+                        component = directGradleComponent,
+                        variants = listOf(
+                            kmpMetadataJarVariant,
+                            kmpIosArm64MetadataJarVariant,
+                            kmpIosArm64KlibVariant,
+                        ),
+                    ),
+                    directMavenComponent(),
+                ),
+            )
+        )
+
+        val consumer = uklibConsumer {
+            androidLibrary {
+                compileSdk = 31
+                namespace = "foo"
+            }
+            kotlin {
+                androidTarget()
+                sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
+            }
+            repositories.maven(repo)
+        }
+
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = "fallbackVariant_KT-81412",
+                    artifacts = mutableListOf()
+                ),
+            ).prettyPrinted,
+            consumer.configurations.getByName("androidDebugCompileClasspath")
+                .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    configuration = "fallbackVariant_KT-81412",
+                    artifacts = mutableListOf()
+                ),
+            ).prettyPrinted,
+            consumer.configurations.getByName("androidDebugRuntimeClasspath")
+                .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
+        )
+    }
+
+    @Test
+    fun `uklib resolution - legacy android library resolves fallback variant - in KMP publication with JVM`() {
+        val repo = generateMockRepository(
+            tmpDir,
+            listOf(
+                GradleComponent(
+                    GradleMetadataComponent(
+                        component = directGradleComponent,
+                        variants = listOf(
+                            kmpMetadataJarVariant,
+                            kmpIosArm64MetadataJarVariant,
+                            kmpIosArm64KlibVariant,
+                            kmpJvmApiVariant,
+                            kmpJvmRuntimeVariant,
+                        ),
+                    ),
+                    directMavenComponent(),
+                ),
+            )
+        )
+
+        val consumer = uklibConsumer {
+            androidLibrary {
+                compileSdk = 31
+                namespace = "foo"
+            }
+            kotlin {
+                androidTarget()
+                sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
+            }
+            repositories.maven(repo)
+        }
+
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "standard-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "jvmApiElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.configurations.getByName("androidDebugCompileClasspath")
+                .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "standard-jvm",
+                            "org.gradle.libraryelements" to "jar",
+                            "org.gradle.usage" to "java-runtime",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "jvmRuntimeElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.configurations.getByName("androidDebugRuntimeClasspath")
+                .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
+        )
+    }
+
+    @Test
+    fun `uklib resolution - legacy android library resolves fallback variant - in KMP publication with JVM and new android`() {
+        val repo = generateMockRepository(
+            tmpDir,
+            listOf(
+                GradleComponent(
+                    GradleMetadataComponent(
+                        component = directGradleComponent,
+                        variants = listOf(
+                            kmpMetadataJarVariant,
+                            kmpIosArm64MetadataJarVariant,
+                            kmpIosArm64KlibVariant,
+                            kmpJvmApiVariant,
+                            kmpJvmRuntimeVariant,
+                            kmpAndroidApiVariant,
+                            kmpAndroidRuntimeVariant
+                        ),
+                    ),
+                    directMavenComponent(),
+                ),
+            )
+        )
+
+        val consumer = uklibConsumer {
+            androidLibrary {
+                compileSdk = 31
+                namespace = "foo"
+            }
+            kotlin {
+                androidTarget()
+                sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
+            }
+            repositories.maven(repo)
+        }
+
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "android",
+                            "org.gradle.libraryelements" to "aar",
+                            "org.gradle.usage" to "java-api",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "androidApiElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.configurations.getByName("androidDebugCompileClasspath")
+                .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
+        )
+        assertEquals(
+            mapOf<String, ResolvedComponentWithArtifacts>(
+                "foo:direct:1.0" to ResolvedComponentWithArtifacts(
+                    artifacts = mutableListOf(
+                        mapOf(
+                            "artifactType" to "jar",
+                            "org.gradle.category" to "library",
+                            "org.gradle.jvm.environment" to "android",
+                            "org.gradle.libraryelements" to "aar",
+                            "org.gradle.usage" to "java-runtime",
+                            "org.jetbrains.kotlin.platform.type" to "jvm",
+                        ),
+                    ),
+                    configuration = "androidRuntimeElements-published",
+                ),
+            ).prettyPrinted,
+            consumer.configurations.getByName("androidDebugRuntimeClasspath")
+                .resolveProjectDependencyComponentsWithArtifacts().prettyPrinted
+        )
+    }
+
+    @Test
     fun `uklib resolution - resolvable configuration without attributes prefers JVM variants over fallback - KT-81488`() {
         val repo = generateMockRepository(
             tmpDir,
@@ -2290,6 +2491,19 @@ class UklibResolutionTestsWithMockComponents {
     private val kmpJvmRuntimeVariant = Variant(
         name = "jvmRuntimeElements-published",
         attributes = kmpJvmRuntimeVariantAttributes,
+        files = listOf(kmpJvmMock),
+        dependencies = listOf()
+    )
+
+    private val kmpAndroidApiVariant = Variant(
+        name = "androidApiElements-published",
+        attributes = kmpAndroidLibraryApiAttributes,
+        files = listOf(kmpJvmMock),
+        dependencies = listOf()
+    )
+    private val kmpAndroidRuntimeVariant = Variant(
+        name = "androidRuntimeElements-published",
+        attributes = kmpAndroidLibraryRuntimeAttributes,
         files = listOf(kmpJvmMock),
         dependencies = listOf()
     )

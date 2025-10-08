@@ -61,6 +61,22 @@ val jvmRuntimeClassifiedAttributes = mapOf(
     "org.gradle.usage" to "java-runtime",
 )
 
+val kmpAndroidLibraryApiAttributes = mapOf(
+    "org.gradle.category" to "library",
+    "org.gradle.jvm.environment" to "android",
+    "org.gradle.libraryelements" to "aar",
+    "org.gradle.usage" to "java-api",
+    "org.jetbrains.kotlin.platform.type" to "jvm",
+)
+val kmpAndroidLibraryRuntimeAttributes = mapOf(
+    "org.gradle.category" to "library",
+    "org.gradle.jvm.environment" to "android",
+    "org.gradle.libraryelements" to "aar",
+    "org.gradle.usage" to "java-runtime",
+    "org.jetbrains.kotlin.platform.type" to "jvm",
+)
+
+
 val kmpJvmRuntimeVariantAttributes = mapOf(
     "org.gradle.category" to "library",
     "org.gradle.jvm.environment" to "standard-jvm",
