@@ -1,3 +1,4 @@
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-68834
 class Foo {
