@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_JAVA_RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_METADATA
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_FALLBACK_VARIANT
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_ANDROID_FALLBACK_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragmentPlatformAttribute
@@ -451,6 +452,11 @@ internal class AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResol
         )
         if (
             mapOf(
+                /**
+                 * Fallback variant for Android resolution
+                 */
+                JAVA_API to setOf(KOTLIN_UKLIB_FALLBACK_VARIANT),
+                JAVA_RUNTIME to setOf(KOTLIN_UKLIB_FALLBACK_VARIANT),
                 /**
                  * KOTLIN_UKLIB_API is requested in platform compile dependency configurations
                  */
