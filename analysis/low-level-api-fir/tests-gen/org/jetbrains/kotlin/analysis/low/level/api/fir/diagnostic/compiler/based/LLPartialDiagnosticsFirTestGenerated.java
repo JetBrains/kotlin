@@ -5739,6 +5739,34 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/headerMode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class HeaderMode {
+      @Test
+      public void testAllFilesPresentInHeaderMode() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/headerMode"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("classDeclaration.kt")
+      public void testClassDeclaration() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/headerMode/classDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("functionDeclaration.kt")
+      public void testFunctionDeclaration() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/headerMode/functionDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("objectDeclaration.kt")
+      public void testObjectDeclaration() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/headerMode/objectDeclaration.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference")
     @TestDataPath("$PROJECT_ROOT")
     public class Inference {

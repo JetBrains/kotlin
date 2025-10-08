@@ -1,0 +1,12 @@
+FILE: functionDeclaration.kt
+    public final fun funA(): R|kotlin/String|
+    public final inline fun funB(): R|kotlin/String| {
+        ^funB String(funB body)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun isNotNull(value: R|kotlin/Any?|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> value != null
+        >
+
+    private final fun funC(): R|kotlin/String|
