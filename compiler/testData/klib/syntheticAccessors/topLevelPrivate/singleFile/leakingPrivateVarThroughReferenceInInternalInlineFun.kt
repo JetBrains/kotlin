@@ -1,4 +1,3 @@
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, WASM
 private var privateVar: String = ""
 
 internal inline fun internalInlineFunction() = ::privateVar
