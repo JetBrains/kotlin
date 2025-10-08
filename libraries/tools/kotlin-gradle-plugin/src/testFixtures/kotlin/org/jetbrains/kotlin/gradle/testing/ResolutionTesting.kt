@@ -19,6 +19,11 @@ data class ResolvedComponentWithArtifacts(
     val artifacts: MutableList<Map<String, String>> = mutableListOf(),
 ) : java.io.Serializable
 
+fun ResolvedComponentWithArtifacts(
+    configuration: String,
+    artifacts: List<Map<String, String>>,
+) = ResolvedComponentWithArtifacts(configuration).apply { this.artifacts.addAll(artifacts) }
+
 typealias ComponentPath = String
 
 fun Configuration.resolveProjectDependencyComponentsWithArtifacts(
