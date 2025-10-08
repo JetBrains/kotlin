@@ -19,6 +19,7 @@ import kotlin.internal.ReadObjectParameterType
 import kotlin.internal.throwReadObjectNotSupported
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 /**
  * Represents a Universally Unique Identifier (UUID), also known as a Globally Unique Identifier (GUID).
@@ -668,6 +669,77 @@ public class Uuid private constructor(
         @SinceKotlin("2.3")
         @OptIn(ExperimentalTime::class)
         public fun generateV7(): Uuid = generateV7(Clock.System)
+
+        /**
+         * Generates a new random [Uuid] Version 7 instance for a specified [moment in time][timestamp].
+         *
+         * The returned uuid is a time-based sortable UUID that conforms to the
+         * [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1)
+         * and [version 7](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2),
+         * uses UNIX timestamp in milliseconds extracted from [timestamp] as a prefix and a randomly generated suffix.
+         *
+         * Unlike [generateV7], this function does not provide any monotonicity guarantees, meaning that there will be no guaranteed order
+         * for uuids created by calling this function two or more times with exactly the same [timestamp].
+         * If multiple uuids corresponding to the same timestamp are needed, consider generating them using this function,
+         * then sorting the result before using it to achieve the monotonicity.
+         *
+         * This function is aimed for generating v7 uuids corresponding to the past (or the future).
+         * Always consider using [generateV7] if an uuid corresponding to a current moment in time in needed.
+         *
+         * This function does not affect the state and monotonicity guarantees of [generateV7] in any way,
+         * so even if it is invoked with a timestamp from a distant future,
+         * [generateV7] will continue returning uuids with a timestamp corresponding to a current moment in time.
+         *
+         * The random part of the uuid is produced using a cryptographically secure pseudorandom number generator (CSPRNG)
+         * available on the platform.
+         * If the underlying system has not collected enough entropy, this function
+         * may block until sufficient entropy is collected, and the CSPRNG is fully initialized.
+         * It is worth mentioning
+         * that the PRNG used in the Kotlin/WasmWasi target is not guaranteed to be cryptographically secure.
+         * See the list below for details about the API used for producing the random uuid in each supported target.
+         *
+         * Note that the returned uuid is not recommended for use for cryptographic purposes.
+         * Because version 7 uuid has a partially predictable bit pattern, and utilizes at most
+         * 74 bits of entropy, regardless of platform.
+         *
+         * The following APIs are used for producing the random uuid in each of the supported targets:
+         *   - Kotlin/JVM - [java.security.SecureRandom](https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html)
+         *   - Kotlin/JS - [Crypto.getRandomValues()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/WasmJs - [Crypto.getRandomValues()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/WasmWasi - [random_get](https://github.com/WebAssembly/WASI/blob/main/legacy/preview1/docs.md#random_get)
+         *   - Kotlin/Native:
+         *       - Linux targets - [getrandom](https://www.man7.org/linux/man-pages/man2/getrandom.2.html)
+         *       - Apple and Android Native targets - [arc4random_buf](https://man7.org/linux/man-pages/man3/arc4random_buf.3.html)
+         *       - Windows targets - [BCryptGenRandom](https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptgenrandom)
+         *
+         * Note that the underlying API used to produce random uuids may change in the future.
+         *
+         * @return A randomly generated uuid.
+         * @throws RuntimeException if the underlying API fails. Refer to the corresponding underlying API
+         *   documentation for possible reasons for failure and guidance on how to handle them.
+         *
+         * @sample samples.uuid.Uuids.v7NonMonotonicAt
+         * @sample samples.uuid.Uuids.v7ForTimestampSorted
+         */
+        @SinceKotlin("2.3")
+        @ExperimentalTime
+        public fun generateV7NonMonotonicAt(timestamp: Instant): Uuid {
+            val randomBytes = ByteArray(10).also {
+                secureRandomBytes(it)
+            }
+
+            val verAndRandA = randomBytes[8].toInt().and(0x0F).or(0x70).shl(8)
+                .or(randomBytes[9].toInt().and(0xFF))
+
+            val tsVerAndRandA = timestamp.toEpochMilliseconds().shl(16).or(verAndRandA.toLong())
+
+            randomBytes[0] = randomBytes[0]
+                .and(0x3F) // clear two MSBs
+                .or(0x80.toByte()) // set then to 0b10
+            val varAndRandB = randomBytes.getLongAt(0)
+
+            return fromLongs(tsVerAndRandA, varAndRandB)
+        }
 
         @OptIn(ExperimentalTime::class)
         internal fun generateV7(clock: Clock): Uuid = UuidV7Generator.generate(clock)
