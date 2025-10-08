@@ -37,25 +37,25 @@ fun box(): String {
     personsDf.meanFor { age }.let { row ->
         row.df().compareSchemas()
 
-        val mean11: Double? = row.age
+        val mean11: Double = row.age
     }
 
     // scenario #1.1: particular column with converted type
     personsDf.meanFor { dependentsCount }.let { row ->
         row.df().compareSchemas()
 
-        val mean111: Double? = row.dependentsCount
+        val mean111: Double = row.dependentsCount
     }
 
     // scenario #2: mean of values per columns separately
     personsDf.meanFor { age and weight and workExperienceYears and dependentsCount and annualIncome }.let { row ->
         row.df().compareSchemas()
 
-        val mean31: Double? = row.age
-        val mean32: Double? = row.weight
-        val mean33: Double? = row.workExperienceYears
-        val mean34: Double? = row.dependentsCount
-        val mean35: Double? = row.annualIncome
+        val mean31: Double = row.age
+        val mean32: Double = row.weight
+        val mean33: Double = row.workExperienceYears
+        val mean34: Double = row.dependentsCount
+        val mean35: Double = row.annualIncome
     }
 
     return "OK"

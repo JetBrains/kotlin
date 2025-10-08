@@ -8,7 +8,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
+import org.jetbrains.kotlin.fir.types.isPrimitiveOrMixedNumber
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregators
@@ -99,7 +99,7 @@ abstract class Aggregator0(val aggregator: Aggregator<*, *>) : AbstractSchemaMod
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val resolvedColumns = receiver.columns()
             .filterIsInstance<SimpleDataColumn>()
-            .filter { it.type.type.isSubtypeOf(session.builtinTypes.numberType.coneType, session) }
+            .filter { it.type.type.isPrimitiveOrMixedNumber(session) }
 
         val newColumns = generateStatisticResultColumns(aggregator, resolvedColumns)
 
