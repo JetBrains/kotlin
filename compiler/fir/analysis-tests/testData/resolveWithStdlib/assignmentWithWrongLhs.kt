@@ -1,3 +1,4 @@
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
 // RUN_PIPELINE_TILL: FRONTEND
 
 fun foo(): Int = 1
