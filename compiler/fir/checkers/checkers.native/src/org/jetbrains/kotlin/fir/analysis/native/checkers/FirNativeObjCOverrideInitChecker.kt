@@ -47,7 +47,7 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
         }
 
         fun checkCanGenerateOverrideInit(firClass: FirClass, constructor: FirConstructorSymbol) {
-            val superClass = (firClass as FirRegularClass).symbol.getSuperClassSymbolOrAny(session)
+            val superClass = (firClass as FirRegularClass).symbol.getSuperClassSymbolOrAny(session) ?: return
             val superConstructors = superClass.constructors(session).filter {
                 constructor.overridesConstructor(it)
             }.toList()
