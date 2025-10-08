@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
+import org.jetbrains.kotlin.js.parser.isEndOfLine
 
 object RenderFirstLineOfElementText : DiagnosticParameterRenderer<PsiElement> {
     override fun render(obj: PsiElement, renderingContext: RenderingContext): String {
@@ -33,10 +33,10 @@ abstract class JsCallDataRenderer : DiagnosticParameterRenderer<JsCallData> {
     protected abstract fun format(data: JsCallDataWithCode): String
 
     override fun render(obj: JsCallData, renderingContext: RenderingContext): String =
-            when (obj) {
-                is JsCallDataWithCode -> format(obj)
-                else -> obj.message
-            }
+        when (obj) {
+            is JsCallDataWithCode -> format(obj)
+            else -> obj.message
+        }
 }
 
 object JsCallDataTextRenderer : JsCallDataRenderer() {
@@ -81,7 +81,7 @@ fun String.underlineAsText(from: Int, to: Int): String {
         marks.append(mark)
         lineWasMarked = lineWasMarked || mark != ' '
 
-        if (isEndOfLine(c.code)) {
+        if (c.isEndOfLine()) {
             if (lineWasMarked) {
                 lines.appendLine(marks.toString().trimEnd())
                 lineWasMarked = false
@@ -122,7 +122,7 @@ fun String.underlineAsHtml(from: Int, to: Int): String {
 
         lines.append(mark)
 
-        if (isEndOfLine(c.code) && openMarker) {
+        if (c.isEndOfLine() && openMarker) {
             lines.append(underlineEnd + c + underlineStart)
         } else {
             lines.append(c)

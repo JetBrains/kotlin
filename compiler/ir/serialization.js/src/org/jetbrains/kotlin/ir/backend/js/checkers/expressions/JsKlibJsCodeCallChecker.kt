@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers.expressions
 
-import com.google.gwt.dev.js.parserExceptions.AbortParsingException
-import com.google.gwt.dev.js.rhino.CodePosition
-import com.google.gwt.dev.js.rhino.ErrorReporter
+import org.jetbrains.kotlin.js.parser.AbortParsingException
+import org.jetbrains.kotlin.js.parser.CodePosition
+import org.jetbrains.kotlin.js.parser.ErrorReporter
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCallChecker
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.backend.ast.JsRootScope
-import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
+import org.jetbrains.kotlin.js.parser.JsParser
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object JsKlibJsCodeCallChecker : JsKlibCallChecker {
@@ -63,7 +63,7 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
             val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
             val fileName = context.containingFile?.fileEntry?.name ?: "<unknown file>"
             val jsErrorReporter = JsErrorReporter(jsCodeExpr, context, reporter)
-            val statements = parseExpressionOrStatement(jsCodeStr, jsErrorReporter, parserScope, CodePosition(0, 0), fileName)
+            val statements = JsParser.parseExpressionOrStatement(jsCodeStr, jsErrorReporter, parserScope, CodePosition(0, 0), fileName)
             if (statements.isNullOrEmpty()) {
                 reporter.at(jsCodeExpr, context).report(JsKlibErrors.JSCODE_NO_JAVASCRIPT_PRODUCED)
             }

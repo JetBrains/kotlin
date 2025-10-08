@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.gwt.dev.js
+package org.jetbrains.kotlin.js.parser
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import java.util.*
