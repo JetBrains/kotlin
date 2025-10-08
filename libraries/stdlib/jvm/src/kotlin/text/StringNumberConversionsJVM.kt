@@ -250,7 +250,7 @@ public inline fun String.toBigDecimal(mathContext: java.math.MathContext): java.
  */
 @SinceKotlin("1.2")
 public fun String.toBigDecimalOrNull(): java.math.BigDecimal? =
-    screenFloatValue(this) { it.toBigDecimal() }
+    screenBigDecimalValue(this) { it.toBigDecimal() }
 
 /**
  * Parses the string as a [java.math.BigDecimal] number and returns the result
@@ -261,7 +261,7 @@ public fun String.toBigDecimalOrNull(): java.math.BigDecimal? =
  */
 @SinceKotlin("1.2")
 public fun String.toBigDecimalOrNull(mathContext: java.math.MathContext): java.math.BigDecimal? =
-    screenFloatValue(this) { it.toBigDecimal(mathContext) }
+    screenBigDecimalValue(this) { it.toBigDecimal(mathContext) }
 
 private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
     return try {
@@ -270,6 +270,18 @@ private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
         else
             null
     } catch (_: NumberFormatException) {  // overflow
+        null
+    }
+}
+
+private inline fun <T> screenBigDecimalValue(str: String, parse: (String) -> T): T? {
+    return try {
+        if (isValidBigDecimal(str)) {
+            parse(str)
+        } else {
+            null
+        }
+    } catch (_: NumberFormatException) {
         null
     }
 }
@@ -394,6 +406,51 @@ private fun isValidFloat(s: String): Boolean {
 
     // Anything left is invalid
     return false
+}
+
+private fun isValidBigDecimal(s: String): Boolean {
+    if (s.isEmpty()) return false
+    // BigDecimal could be constructed from a string with a following format:
+    // BigDecimal := Sign? Significand Exponent?
+    // Sign := '-' | '+'
+    // Significand := IntegerPart '.' FractionalPart?
+    //              | '.' FractionalPart
+    //              | IntegerPart
+    // IntegerPart := Digits
+    // FractionalPart := Digits
+    // Exponent := ExponentIndicator SignedInteger
+    // ExponentIndicator := 'e' | 'E'
+    // SignedInteger := Sign? Digits
+    // Digits := Digit+
+    // Digits := Char, such as isDigit returns true
+
+    // consume optional sign
+    val start = if (s[0] == '-' || s[0] == '+') 1 else 0
+    // consume significand's integer part
+    var index = s.skipWhile(start) { it.isDigit() }
+    // if we ran out of characters, did we consume any digits?
+    if (index == s.length) return index - start > 0
+    // we found a dot, let's parse a fractional part
+    if (s[index] == '.') {
+        index++
+        // fraction could be empty, but only if an integer part contained any digits
+        if (index == s.length) return index - start > 1
+        // fraction could contain only digits
+        index = s.skipWhile(index) { it.isDigit() }
+    }
+    // nothing left, we're good
+    if (index == s.length) return true
+    // only exponent is expected here
+    if (s[index] != 'e' && s[index] != 'E') return false
+    index++ // consume exponent indicator
+    if (index == s.length) return false
+    // consume an optional sign
+    if (s[index] == '+' || s[index] == '-') index++
+    // there should be something after sign
+    if (index == s.length) return false
+    // and it could only contain digits
+    index = s.skipWhile(index) { it.isDigit() }
+    return index == s.length
 }
 
 /**

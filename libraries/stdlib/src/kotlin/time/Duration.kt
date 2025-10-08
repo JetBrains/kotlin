@@ -1437,19 +1437,6 @@ private inline fun handleError(throwException: Boolean, message: String = ""): D
 private inline fun Duration.onInvalid(block: () -> Duration?): Duration? = if (this == Duration.INVALID) block() else this
 
 /**
- * Skips characters in this string starting from the given index while they match the predicate.
- *
- * @param startIndex the index to start skipping from
- * @param predicate condition to test each character
- * @return the index of the first character that doesn't match the predicate, or string length
- */
-private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolean): Int {
-    var i = startIndex
-    while (i < length && predicate(this[i])) i++
-    return i
-}
-
-/**
  * Parses a duration unit from its default format short name at the given position.
  *
  * Recognizes lowercase unit abbreviations:
