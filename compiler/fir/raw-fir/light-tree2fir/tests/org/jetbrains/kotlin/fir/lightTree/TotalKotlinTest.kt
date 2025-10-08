@@ -56,6 +56,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         @OptIn(ObsoleteTestInfrastructure::class)
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactoryHelper.createEmptySession(),
+            headerCompilationMode = false,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )

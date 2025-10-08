@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.asKtFilesList
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.headerCompilation
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
@@ -110,9 +111,10 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
                 }
             )
             sessionsWithSources.map { (session, files) ->
-                val firFiles = session.buildFirViaLightTree(files, diagnosticsReporter) { files, lines ->
-                    perfManager?.addSourcesStats(files, lines)
-                }
+                val firFiles = session.buildFirViaLightTree(files, diagnosticsReporter, { files, lines ->
+                        perfManager?.addSourcesStats(files, lines)
+                    },
+                    configuration.headerCompilation)
                 resolveAndCheckFir(session, firFiles, diagnosticsReporter)
             }
         } else {

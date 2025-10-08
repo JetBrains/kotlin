@@ -25,6 +25,7 @@ abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTes
         val path = Paths.get(filePath)
         val firFile = LightTree2Fir(
             session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(path.readText())),
+            headerCompilationMode = false,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         ).buildFirFile(path)
