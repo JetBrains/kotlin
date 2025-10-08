@@ -10,6 +10,7 @@ import kotlin.test.*
 
 private external fun setTimeout(body: () -> Unit, timeout: Int)
 
+@OptIn(ExperimentalWasmJsInterop::class)
 class AsyncTest {
 
     var log = ""
@@ -58,6 +59,7 @@ class AsyncTest {
 
     @Test
     fun checkCustomPromise(): CustomPromise {
+        @Suppress("CAST_NEVER_SUCCEEDS")
         return promise(10, "") as CustomPromise
     }
 
