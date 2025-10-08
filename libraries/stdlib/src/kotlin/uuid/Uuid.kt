@@ -615,6 +615,7 @@ public class Uuid private constructor(
          *
          * @sample samples.uuid.Uuids.v4
          */
+        @SinceKotlin("2.3")
         public fun generateV4(): Uuid = secureRandomUuid()
 
         /**
@@ -664,6 +665,7 @@ public class Uuid private constructor(
          *
          * @sample samples.uuid.Uuids.v7
          */
+        @SinceKotlin("2.3")
         @OptIn(ExperimentalTime::class)
         public fun generateV7(): Uuid = generateV7(Clock.System)
 
