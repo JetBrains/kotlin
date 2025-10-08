@@ -224,7 +224,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         }
 
         private val cachedClasses = mutableListOf<IrClassSymbol>()
-        private val classesToCache = mutableListOf("Throwable", "Collection", "Iterable")
+        private val classesToCache = mutableListOf("Throwable", "Collection", "Iterable", "Map", "MutableMap")
 
         private fun withKotlinBuiltinsHack(idSig: IdSignature, f: () -> IrSymbol?): IrSymbol? {
             val symbol = f()
