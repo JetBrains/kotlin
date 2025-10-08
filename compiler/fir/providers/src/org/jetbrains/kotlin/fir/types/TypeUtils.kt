@@ -778,6 +778,26 @@ fun ConeKotlinType.equalTypes(otherType: ConeKotlinType, session: FirSession, er
         this, otherType,
     )
 
+/**
+ * Returns `true` only if [this] represents an optionally nullable primitive number,
+ * (like `Double?`, or `Int`), or a "mixed Number" type: `Number?` or `Number`.
+ *
+ * We don't check for "subtype of Number" to prevent `BigInteger` etc. to be included, but since columns with
+ * mixed primitives are allowed in statistics, we do include `Number?` and `Number`
+ */
+fun ConeKotlinType.isPrimitiveOrMixedNumber(session: FirSession, errorTypesEqualToAnything: Boolean = false): Boolean =
+    this.isPrimitiveNumberOrNullableType ||
+            this.equalTypes(
+                otherType = session.builtinTypes.numberType.coneType,
+                session = session,
+                errorTypesEqualToAnything = errorTypesEqualToAnything,
+            ) ||
+            this.equalTypes(
+                otherType = session.builtinTypes.numberType.coneType.withNullability(true, session.typeContext),
+                session = session,
+                errorTypesEqualToAnything = errorTypesEqualToAnything,
+            )
+
 fun FirCallableDeclaration.isSubtypeOf(
     other: FirCallableDeclaration,
     typeCheckerContext: TypeCheckerState
