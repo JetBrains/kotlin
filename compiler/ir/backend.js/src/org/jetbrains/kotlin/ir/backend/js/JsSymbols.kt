@@ -81,7 +81,7 @@ class JsSymbols(
 
     override val getContinuation = CallableIds.getContinuation.functionSymbol()
 
-    val coroutineEmptyContinuation: IrPropertySymbol = CallableIds.EmptyContinuation.propertySymbols().single()
+    val coroutineEmptyContinuation: IrPropertySymbol = CallableIds.EmptyContinuation.propertySymbol()
 
     override val returnIfSuspended = CallableIds.returnIfSuspended.functionSymbol()
 
@@ -117,8 +117,8 @@ class JsSymbols(
     val jsIsEs6 = CallableIds.jsIsEs6.functionSymbol()
 
     // Global variables
-    val void = CallableIds.VOID.propertySymbols().single()
-    val globalThis = CallableIds.globalThis.propertySymbols().single()
+    val void = CallableIds.VOID.propertySymbol()
+    val globalThis = CallableIds.globalThis.propertySymbol()
 
     // Equality operations:
 
@@ -307,7 +307,7 @@ class JsSymbols(
 
     val jsNewAnonymousClass = CallableIds.jsNewAnonymousClass.functionSymbol()
 
-    val longBoxedOne = CallableIds.longBoxedOne.propertySymbols().single()
+    val longBoxedOne = CallableIds.longBoxedOne.propertySymbol()
 
     // Coroutines
 

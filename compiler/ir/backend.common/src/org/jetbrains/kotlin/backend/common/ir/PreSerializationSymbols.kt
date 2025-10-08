@@ -53,6 +53,15 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
         return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
     }
 
+    protected fun CallableId.propertySymbol(): IrPropertySymbol {
+        val elements = propertySymbols()
+        require(elements.isNotEmpty()) { "No property $this found" }
+        require(elements.size == 1) {
+            "Several properties $this found:\n${elements.joinToString("\n")}"
+        }
+        return elements.single()
+    }
+
     protected fun CallableId.functionSymbolOrNull(): IrSimpleFunctionSymbol? {
         val elements = functionSymbols()
         require(elements.size <= 1) {
