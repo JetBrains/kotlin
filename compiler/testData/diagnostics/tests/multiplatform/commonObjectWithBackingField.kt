@@ -21,5 +21,5 @@ actual fun calculateFlag() = true
 
 fun bar() = O.f
 
-/* GENERATED_FIR_TAGS: actual, equalityExpression, expect, functionDeclaration, localProperty, objectDeclaration,
-propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */
+/* GENERATED_FIR_TAGS: actual, equalityExpression, expect, explicitBackingField, functionDeclaration, localProperty,
+objectDeclaration, propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

@@ -15,4 +15,4 @@ actual val goodNumbers: List<Int>
 
 actual val badNumbers: List<Int> = listOf(1, 2, 3)
 
-/* GENERATED_FIR_TAGS: actual, expect, integerLiteral, propertyDeclaration */
+/* GENERATED_FIR_TAGS: actual, expect, explicitBackingField, integerLiteral, propertyDeclaration */

@@ -26,5 +26,6 @@ class Test {
     }
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
-localProperty, propertyDeclaration, stringLiteral */
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, explicitBackingField, functionDeclaration,
+functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, smartcast,
+stringLiteral */

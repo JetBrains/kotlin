@@ -13,4 +13,5 @@ val bar: Any
 val baz: Any
     field = object : A(bar) {}
 
-/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, primaryConstructor, propertyDeclaration */
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, explicitBackingField, primaryConstructor,
+propertyDeclaration, smartcast */

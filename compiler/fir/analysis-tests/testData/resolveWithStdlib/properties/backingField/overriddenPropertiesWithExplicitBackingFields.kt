@@ -20,5 +20,5 @@ open class B : A() {
         set(value) {}
 }
 
-/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, getter, integerLiteral,
-override, propertyDeclaration, setter */
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, explicitBackingField, functionDeclaration,
+getter, integerLiteral, override, propertyDeclaration, setter */

@@ -16,4 +16,5 @@ class Some {
     }
 }
 
-/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, propertyDeclaration */
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, explicitBackingField, init, integerLiteral,
+propertyDeclaration */

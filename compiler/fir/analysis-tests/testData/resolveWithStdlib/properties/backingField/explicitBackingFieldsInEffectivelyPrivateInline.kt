@@ -11,4 +11,5 @@ private class EffectiveVisibility {
     }
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, propertyDeclaration, stringLiteral */
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, functionDeclaration, inline, propertyDeclaration,
+smartcast, stringLiteral */
