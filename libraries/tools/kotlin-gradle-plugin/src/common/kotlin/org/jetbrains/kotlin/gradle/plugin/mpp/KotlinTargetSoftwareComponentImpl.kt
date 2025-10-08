@@ -6,6 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.component.ProjectComponentSelector
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.SoftwareComponent
@@ -13,9 +19,11 @@ import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_FALLBACK_VARIANT
 import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
@@ -35,7 +43,41 @@ internal fun KotlinTargetSoftwareComponent(
             val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
             val configuration = project.configurations.maybeCreateDependencyScope(publishedConfigurationName) {
                 isVisible = false
-                extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
+                //extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
+                val resolvableConfiguration = project.configurations.getByName(kotlinUsageContext.compilation.compileDependencyConfigurationName)
+                val consumableConfiguration = project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName)
+                // TODO: Included builds
+                dependencies.addAllLater(project.provider {
+                    val directDependencies = consumableConfiguration.allDependencies.groupBy {
+                        when (it) {
+                            is ProjectDependency -> "project_" + it.path
+                            is ModuleDependency -> "module_${it.group}:${it.name}"
+                            else -> TODO("Unexpected dependency type $it")
+                        }
+                    }.toMutableMap()
+
+                    resolvableConfiguration.incoming.resolutionResult.root.dependencies.forEach hackForEach@{
+                        if (it !is ResolvedDependencyResult) return@hackForEach
+                        val fallbackedToIncompatibleVariant = it.selected.variants.any { variantResult ->
+                            val usageValue = variantResult.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)
+                            val isMetadataFallback = usageValue.name == "kotlin-metadata" || usageValue.name == KOTLIN_UKLIB_FALLBACK_VARIANT
+                            val platformType = variantResult.attributes.getAttribute(KotlinPlatformType.attribute)
+                            val isKotlinJvmFallback = if (kotlinUsageContext.compilation.platformType !in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm) && platformType != null) {
+                                platformType == KotlinPlatformType.jvm
+                            } else false
+                            isMetadataFallback || isKotlinJvmFallback
+                        }
+                        if (!fallbackedToIncompatibleVariant) return@hackForEach
+
+                        val requestedId = it.requested
+                        when (requestedId) {
+                            is ModuleComponentSelector -> directDependencies -= "module_${requestedId.group}:${requestedId.module}"
+                            is ProjectComponentSelector -> directDependencies -= "project_${requestedId.projectPath}"
+                            else -> Unit
+                        }
+                    }
+                    directDependencies.values.flatten()
+                })
                 artifacts.addAll(kotlinUsageContext.artifacts)
                 // KT-64789: workaround for missing 'org.gradle.libraryelements' attribute on the kotlinUsageContext returned keys Set
                 // So far I don't know the reason why it appears only on the second call to `keySet()`
