@@ -7,13 +7,17 @@ package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Toolchain
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 
 /**
  * The main entry point to the Build Tools API.
  *
- * Allows access to the target-specific toolchains for creating build operations.
- * Currently only the [JvmPlatformToolchain] is supported.
+ * Allows access to the toolchains for creating build operations.
+ *
+ * Currently supported toolchains:
+ * - [JvmPlatformToolchain] for Kotlin/JVM compilation
+ * - [CriToolchain] for Compiler Reference Index operations
  *
  * This interface is not intended to be implemented by the API consumers.
  *
