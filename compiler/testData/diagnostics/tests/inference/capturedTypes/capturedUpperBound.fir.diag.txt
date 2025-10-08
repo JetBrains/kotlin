@@ -1,9 +1,9 @@
-/test.kt:(117,137): error: Type argument is not within its bounds: must be subtype of 'BodySpec<List<*>, *>'.
+/test.kt:(117,137): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'.
 
-/test.kt:(153,167): error: Type argument is not within its bounds: must be subtype of 'BodySpec<*, *>'.
+/test.kt:(153,167): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'.
 
-/test.kt:(183,199): error: Type argument is not within its bounds: must be subtype of 'BodySpec<Int, *>'.
+/test.kt:(183,199): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*) & BodySpec<Int, *>'.
 
-/test.kt:(228,238): error: Type argument is not within its bounds: must be subtype of 'WithDnn<*>'.
+/test.kt:(228,238): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*) & Any'.
 
-/test.kt:(267,281): error: Type argument is not within its bounds: must be subtype of 'JavaClass<*, *>'.
+/test.kt:(267,281): error: Type argument is not within its bounds: must be subtype of '(CapturedType(*)..CapturedType(*) & Any)'.

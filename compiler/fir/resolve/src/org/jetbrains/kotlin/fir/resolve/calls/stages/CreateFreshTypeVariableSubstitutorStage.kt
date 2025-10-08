@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.yieldDiagnostic
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.yieldIfNeed
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
@@ -30,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
+import org.jetbrains.kotlin.resolve.calls.inference.model.MutableVariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
@@ -38,13 +42,15 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         val declaration = candidate.symbol.fir
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         if (declaration !is FirTypeParameterRefsOwner || declaration.typeParameters.isEmpty()) {
-            candidate.initializeSubstitutorAndVariables(ConeSubstitutor.Empty, emptyList())
+            candidate.initializeSubstitutorAndVariables(ConeSubstitutor.Empty, emptyList(), emptyMap())
             return
         }
         val csBuilder = candidate.system.getBuilder()
         val (substitutor, freshVariables) =
             createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, csBuilder)
-        candidate.initializeSubstitutorAndVariables(substitutor, freshVariables)
+        val freshVariablesToUpperBoundsSnapshot = csBuilder.notFixedTypeVariables
+            .mapValues { (_, variableWithConstraints) -> MutableVariableWithConstraints(csBuilder, variableWithConstraints) }
+        candidate.initializeSubstitutorAndVariables(substitutor, freshVariables, freshVariablesToUpperBoundsSnapshot)
 
         // bad function -- error on declaration side
         if (csBuilder.hasContradiction) {

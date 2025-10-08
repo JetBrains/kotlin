@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Candidate(
@@ -100,10 +102,17 @@ class Candidate(
         private set
     lateinit var freshVariables: List<ConeTypeVariable>
         private set
+    override lateinit var freshVariablesToUpperBoundsSnapshot: Map<TypeConstructorMarker, VariableWithConstraints>
+        private set
 
-    fun initializeSubstitutorAndVariables(substitutor: ConeSubstitutor, freshVariables: List<ConeTypeVariable>) {
+    fun initializeSubstitutorAndVariables(
+        substitutor: ConeSubstitutor,
+        freshVariables: List<ConeTypeVariable>,
+        freshVariablesToUpperBoundsSnapshot: Map<TypeConstructorMarker, VariableWithConstraints>,
+    ) {
         this.substitutor = substitutor
         this.freshVariables = freshVariables
+        this.freshVariablesToUpperBoundsSnapshot = freshVariablesToUpperBoundsSnapshot
     }
 
     @UpdatingCandidateInvariants
