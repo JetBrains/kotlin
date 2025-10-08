@@ -156,6 +156,10 @@
                                     <projectsDirectory>src/it</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                                     <javaHome>${jdk_1_8}</javaHome>
+                                  <pomExcludes>
+                                    <!-- KTI-2703 MiscTests: java.lang.Exception: Expected build log to contain: "Conflicting overloads:"-->
+                                    <pomExclude>test-respect-compile-source-root/pom.xml</pomExclude>
+                                  </pomExcludes>
                                 </configuration>
                                 <!--<phase>package</phase>-->
                                 <goals>
