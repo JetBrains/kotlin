@@ -50,8 +50,8 @@ class BodyGenerator(
 
     fun WasmExpressionBuilder.buildGetUnit() {
         if (inlineUnitGetter) {
-            buildGetGlobal(
-                wasmFileCodegenContext.referenceGlobalField(unitInstanceField.symbol),
+            buildCall(
+                wasmFileCodegenContext.referenceFunction(unitGetInstance.symbol),
                 SourceLocation.NoLocation("GET_UNIT")
             )
         } else {
