@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_FALLBACK_VARIANT
 import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
+import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
+import org.jetbrains.kotlin.gradle.utils.projectPathCompat
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal fun KotlinTargetSoftwareComponent(
@@ -50,20 +52,20 @@ internal fun KotlinTargetSoftwareComponent(
                 dependencies.addAllLater(project.provider {
                     val directDependencies = consumableConfiguration.allDependencies.groupBy {
                         when (it) {
-                            is ProjectDependency -> "project_" + it.path
+                            is ProjectDependency -> "project_" + it.projectPathCompat
                             is ModuleDependency -> "module_${it.group}:${it.name}"
-                            else -> TODO("Unexpected dependency type $it")
+                            else -> "unknown" // group all unknown deps, and don't filter them out
                         }
                     }.toMutableMap()
 
                     resolvableConfiguration.incoming.resolutionResult.root.dependencies.forEach hackForEach@{
                         if (it !is ResolvedDependencyResult) return@hackForEach
                         val fallbackedToIncompatibleVariant = it.selected.variants.any { variantResult ->
-                            val usageValue = variantResult.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)
-                            val isMetadataFallback = usageValue.name == "kotlin-metadata" || usageValue.name == KOTLIN_UKLIB_FALLBACK_VARIANT
-                            val platformType = variantResult.attributes.getAttribute(KotlinPlatformType.attribute)
+                            val usageValue = variantResult.attributes.getAttributeSafely(Usage.USAGE_ATTRIBUTE) ?: return@any false
+                            val isMetadataFallback = usageValue == "kotlin-metadata" || usageValue == KOTLIN_UKLIB_FALLBACK_VARIANT
+                            val platformType = variantResult.attributes.getAttributeSafely(KotlinPlatformType.attribute)
                             val isKotlinJvmFallback = if (kotlinUsageContext.compilation.platformType !in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm) && platformType != null) {
-                                platformType == KotlinPlatformType.jvm
+                                platformType == KotlinPlatformType.jvm.name
                             } else false
                             isMetadataFallback || isKotlinJvmFallback
                         }
