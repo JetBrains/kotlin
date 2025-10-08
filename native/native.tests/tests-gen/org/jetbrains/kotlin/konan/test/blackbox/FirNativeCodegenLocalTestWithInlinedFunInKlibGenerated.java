@@ -262,6 +262,12 @@ public class FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("kt81538.kt")
+    public void testKt81538() {
+      runTest("native/native.tests/testData/codegen/cinterop/kt81538.kt");
+    }
+
+    @Test
     @TestMetadata("libiconv.kt")
     public void testLibiconv() {
       runTest("native/native.tests/testData/codegen/cinterop/libiconv.kt");
@@ -456,6 +462,12 @@ public class FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated extends Abst
       @TestMetadata("functionWithAsmAttribute.kt")
       public void testFunctionWithAsmAttribute() {
         runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/functionWithAsmAttribute.kt");
+      }
+
+      @Test
+      @TestMetadata("functionWithAsmAttributeWithDollar.kt")
+      public void testFunctionWithAsmAttributeWithDollar() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/functionWithAsmAttributeWithDollar.kt");
       }
 
       @Test

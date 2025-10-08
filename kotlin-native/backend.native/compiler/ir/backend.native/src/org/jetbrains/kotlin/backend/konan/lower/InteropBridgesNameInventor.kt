@@ -174,7 +174,8 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                     }
                 }
                 require(state == 0) {
-                    """Bad code snippet, no closing '${InteropLowering.NAME_PLACEHOLDER_QUOTE}' was found after position $placeHolderStart:
+                    val expectedChar = "\\u${InteropLowering.NAME_PLACEHOLDER_QUOTE.code.toString(16).padStart(4, '0')}"
+                    """Bad code snippet, no closing '$expectedChar' was found after position $placeHolderStart:
                         |$snippet""".trimMargin()
                 }
             }

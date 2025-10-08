@@ -55,7 +55,18 @@ internal class InteropLowering(val context: Context, val fileLowerState: FileLow
     }
 
     companion object {
-        const val NAME_PLACEHOLDER_QUOTE = '$'
+        /**
+         * InteropLowering uses this character to designate name placeholders in generated C stubs,
+         * so that InteropBridgesNameInventor replaces the placeholders with real names.
+         *
+         * So, ideally, this character should never be found in valid C code.
+         * Otherwise, something that is not a placeholder can be parsed as one (see e.g. KT-81538).
+         *
+         * It seems that the only reliable choice then is to use the null character.
+         * Which is not great because it is not normally displayed, making potential problems
+         * harder to diagnose.
+         */
+        const val NAME_PLACEHOLDER_QUOTE = '\u0000'
     }
 }
 
