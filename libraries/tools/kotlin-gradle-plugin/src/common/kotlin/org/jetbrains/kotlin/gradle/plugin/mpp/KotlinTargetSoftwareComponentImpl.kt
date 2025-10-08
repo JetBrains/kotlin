@@ -59,7 +59,7 @@ internal fun KotlinTargetSoftwareComponent(
                     resolvableConfiguration.incoming.resolutionResult.root.dependencies.forEach hackForEach@{
                         if (it !is ResolvedDependencyResult) return@hackForEach
                         val fallbackedToIncompatibleVariant = it.selected.variants.any { variantResult ->
-                            val usageValue = variantResult.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)
+                            val usageValue = variantResult.attributes.getAttribute(Usage.USAGE_ATTRIBUTE) ?: return@any false
                             val isMetadataFallback = usageValue.name == "kotlin-metadata" || usageValue.name == KOTLIN_UKLIB_FALLBACK_VARIANT
                             val platformType = variantResult.attributes.getAttribute(KotlinPlatformType.attribute)
                             val isKotlinJvmFallback = if (kotlinUsageContext.compilation.platformType !in setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm) && platformType != null) {
