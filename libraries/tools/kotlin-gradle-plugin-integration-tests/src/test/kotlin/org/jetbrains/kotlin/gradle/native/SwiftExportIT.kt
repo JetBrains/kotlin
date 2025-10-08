@@ -523,4 +523,48 @@ class SwiftExportIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Test build with new iOS apis which are not available in the minimum deployment target")
+    @GradleTest
+    fun testNewApiAvailability(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    // UIContentUnavailableConfiguration is available only starting iOS sdk 17
+                    sourceSets.iosMain.get().compileSource(
+                        """
+                            import platform.UIKit.UIContentUnavailableConfiguration
+                            fun demo(): UIContentUnavailableConfiguration = UIContentUnavailableConfiguration.emptyConfiguration()
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            // Build with iOS sdk 14, it should fail
+            buildAndFail(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, iphoneOsDeploymentTarget = "14.0")
+            ) {
+                assertTasksFailed(":iosArm64DebugBuildSPMPackage")
+            }
+
+            // Build with iOS sdk 17, it should succeed
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, iphoneOsDeploymentTarget = "17.0")
+            ) {
+                assertTasksExecuted(":iosArm64DebugBuildSPMPackage")
+            }
+        }
+    }
 }
