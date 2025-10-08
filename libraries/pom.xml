@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jetbrains.kotlin</groupId>
@@ -111,15 +111,15 @@
     </dependencies>
 
     <dependencyManagement>
-      <dependencies>
-        <dependency>
-          <!-- Force commons-io to 2.18.0 because of vulnerability -->
-          <!-- KT-80213 Vulnerability in tools/kotlin-maven-plugin-test/pom.xml -->
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-          <version>2.18.0</version>
-        </dependency>
-      </dependencies>
+        <dependencies>
+            <dependency>
+                <!-- Force commons-io to 2.18.0 because of vulnerability -->
+                <!-- KT-80213 Vulnerability in tools/kotlin-maven-plugin-test/pom.xml -->
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.18.0</version>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
 
     <build>
@@ -286,12 +286,42 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <spdxDocumentNamespace>https://www.jetbrains.com/spdxdocs/${project.artifactId}-${project.version}</spdxDocumentNamespace>
+                    <spdxDocumentNamespace>https://www.jetbrains.com/spdxdocs/${project.artifactId}-${project.version}
+                    </spdxDocumentNamespace>
                     <creators>
                         <creator>Organization: JetBrains s.r.o.</creator>
                     </creators>
                     <originator>Organization: JetBrains s.r.o.</originator>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.2</version>
+                <executions>
+                    <execution>
+                        <id>enforce-cache-redirector-activate</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireActiveProfile>
+                                    <message>MUST USE CUSTOM SETTINGS. You must run maven with --settings maven-settings.xml</message>
+                                    <profiles>cache-redirector</profiles>
+                                </requireActiveProfile>
+                                <bannedRepositories>
+                                    <bannedRepositories>
+                                        <bannedRepository>https://repo.maven.apache.org/*</bannedRepository>
+                                    </bannedRepositories>
+                                    <bannedPluginRepositories>
+                                        <bannedRepository>https://repo.maven.apache.org/*</bannedRepository>
+                                    </bannedPluginRepositories>
+                                </bannedRepositories>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -401,16 +431,16 @@
                 <module>examples/kotlin-java-example</module>
             </modules>
         </profile>
-      <profile>
-        <id>local-bootstrap</id>
-        <repositories>
-          <repository>
-            <id>local-boostrap</id>
-            <name>Local boostrap</name>
-            <url>${local-bootstrap-url}</url>
-            <snapshots/>
-          </repository>
-        </repositories>
-      </profile>
+        <profile>
+            <id>local-bootstrap</id>
+            <repositories>
+                <repository>
+                    <id>local-boostrap</id>
+                    <name>Local boostrap</name>
+                    <url>${local-bootstrap-url}</url>
+                    <snapshots/>
+                </repository>
+            </repositories>
+        </profile>
     </profiles>
 </project>
