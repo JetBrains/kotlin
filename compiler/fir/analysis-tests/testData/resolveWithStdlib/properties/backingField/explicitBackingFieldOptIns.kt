@@ -29,5 +29,5 @@ fun foo() {
     }
 }
 
-/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, functionDeclaration, localProperty,
-propertyDeclaration, smartcast */
+/* GENERATED_FIR_TAGS: annotationDeclaration, explicitBackingField, functionDeclaration, ifExpression, isExpression,
+localProperty, objectDeclaration, propertyDeclaration, smartcast */

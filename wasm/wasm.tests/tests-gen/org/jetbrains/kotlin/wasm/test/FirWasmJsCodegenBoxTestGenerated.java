@@ -45882,6 +45882,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       }
 
       @Test
+      @TestMetadata("backingFieldAndPropertyWithTheSameName.kt")
+      public void testBackingFieldAndPropertyWithTheSameName() {
+        runTest("compiler/testData/codegen/box/properties/backingField/backingFieldAndPropertyWithTheSameName.kt");
+      }
+
+      @Test
       @TestMetadata("backingFieldInitializedInInit.kt")
       public void testBackingFieldInitializedInInit() {
         runTest("compiler/testData/codegen/box/properties/backingField/backingFieldInitializedInInit.kt");
@@ -45963,6 +45969,18 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       @TestMetadata("overriddenPropertiesWithExplicitBackingFields.kt")
       public void testOverriddenPropertiesWithExplicitBackingFields() {
         runTest("compiler/testData/codegen/box/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideWithExplicitBackingField.kt")
+      public void testOverrideWithExplicitBackingField() {
+        runTest("compiler/testData/codegen/box/properties/backingField/overrideWithExplicitBackingField.kt");
+      }
+
+      @Test
+      @TestMetadata("propertyWithBackingFieldAndWithContext.kt")
+      public void testPropertyWithBackingFieldAndWithContext() {
+        runTest("compiler/testData/codegen/box/properties/backingField/propertyWithBackingFieldAndWithContext.kt");
       }
     }
 

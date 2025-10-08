@@ -4,4 +4,4 @@
 val that: Number
     <!UNSUPPORTED_FEATURE!>field = 4<!>
 
-/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration */
+/* GENERATED_FIR_TAGS: explicitBackingField, integerLiteral, propertyDeclaration */

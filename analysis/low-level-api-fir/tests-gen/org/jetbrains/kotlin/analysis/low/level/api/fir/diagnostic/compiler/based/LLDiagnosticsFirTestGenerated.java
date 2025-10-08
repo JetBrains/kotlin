@@ -9903,6 +9903,24 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("backingFieldExplicitAndImplicit.kt")
+        public void testBackingFieldExplicitAndImplicit() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldExplicitAndImplicit.kt");
+        }
+
+        @Test
+        @TestMetadata("backingFieldInInnerAndNestedScopes.kt")
+        public void testBackingFieldInInnerAndNestedScopes() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldInInnerAndNestedScopes.kt");
+        }
+
+        @Test
+        @TestMetadata("backingFieldInReceiverScope.kt")
+        public void testBackingFieldInReceiverScope() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldInReceiverScope.kt");
+        }
+
+        @Test
         @TestMetadata("backingFieldInitializedInInit.kt")
         public void testBackingFieldInitializedInInit() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldInitializedInInit.kt");
@@ -9915,15 +9933,39 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("backingFieldTypeModifier.kt")
+        public void testBackingFieldTypeModifier() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldTypeModifier.kt");
+        }
+
+        @Test
         @TestMetadata("backingFieldVisibility.kt")
         public void testBackingFieldVisibility() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldVisibility.kt");
         }
 
         @Test
+        @TestMetadata("backingFieldWithContextParameter.kt")
+        public void testBackingFieldWithContextParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldWithContextParameter.kt");
+        }
+
+        @Test
         @TestMetadata("backingFieldWithSmartTypeParameters.kt")
         public void testBackingFieldWithSmartTypeParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldWithSmartTypeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOnBackingField.kt")
+        public void testCallableReferenceOnBackingField() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/callableReferenceOnBackingField.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldDeclarationScope.kt")
+        public void testExplicitBackingFieldDeclarationScope() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldDeclarationScope.kt");
         }
 
         @Test
@@ -9951,6 +9993,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldWithTypeParameter.kt")
+        public void testExplicitBackingFieldWithTypeParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldWithTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldsInEffectivelyPrivateInline.kt")
         public void testExplicitBackingFieldsInEffectivelyPrivateInline() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInEffectivelyPrivateInline.kt");
@@ -9960,6 +10008,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("explicitBackingFieldsInInlineAccessors.kt")
         public void testExplicitBackingFieldsInInlineAccessors() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInInlineAccessors.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitBackingFieldsInInlineWithAnonymousFunction.kt")
+        public void testExplicitBackingFieldsInInlineWithAnonymousFunction() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsInInlineWithAnonymousFunction.kt");
         }
 
         @Test
@@ -10017,6 +10071,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("explicitFieldWithFunctionTypeWithReceiver.kt")
+        public void testExplicitFieldWithFunctionTypeWithReceiver() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldWithFunctionTypeWithReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("explicitFieldsInitializerTypeMismatch.kt")
         public void testExplicitFieldsInitializerTypeMismatch() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldsInitializerTypeMismatch.kt");
@@ -10044,6 +10104,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("overriddenPropertiesWithExplicitBackingFields.kt")
         public void testOverriddenPropertiesWithExplicitBackingFields() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideByThePropertyWithExplicitBackingField.kt")
+        public void testOverrideByThePropertyWithExplicitBackingField() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/overrideByThePropertyWithExplicitBackingField.kt");
         }
 
         @Test

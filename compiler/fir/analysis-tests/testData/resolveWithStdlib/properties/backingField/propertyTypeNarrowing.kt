@@ -15,5 +15,5 @@ fun test() {
     val b = A().p + 2
 }
 
-/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, getter, integerLiteral, localProperty,
-propertyDeclaration */
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, explicitBackingField, functionDeclaration, getter,
+integerLiteral, localProperty, propertyDeclaration, smartcast */

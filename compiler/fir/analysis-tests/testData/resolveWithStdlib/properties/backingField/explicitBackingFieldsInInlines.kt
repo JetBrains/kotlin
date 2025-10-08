@@ -14,4 +14,5 @@ class Test {
     private inline fun testPrivate(): MutableList<*> = numbers
 }
 
-/* GENERATED_FIR_TAGS: functionDeclaration, inline, objectDeclaration, propertyDeclaration, starProjection */
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, functionDeclaration, inline, propertyDeclaration,
+smartcast, starProjection */

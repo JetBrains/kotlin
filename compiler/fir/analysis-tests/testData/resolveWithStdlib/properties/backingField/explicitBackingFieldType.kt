@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-class A {
+class A(c : Inv<out Number>) {
     val a = 20
 
     val it: Number
@@ -34,6 +34,18 @@ class A {
     <!INCONSISTENT_BACKING_FIELD_TYPE!><!VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD!>var<!> setterNeeded: Int<!>
         field = "test"
         <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = field.length
+
+    val anonymousType: Any
+        field = object {
+            val x: Int = 1
+        }
+
+    val capturedType: Number?
+        field = c.x
+
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, nullableType, propertyDeclaration, stringLiteral */
+class Inv<T>(val x: T)
+
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, getter, integerLiteral, nullableType, propertyDeclaration,
+stringLiteral */
