@@ -29,5 +29,5 @@ fun test() {
     val dA = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
 }
 
-/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, localProperty,
-propertyDeclaration */
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, explicitBackingField, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration, smartcast */

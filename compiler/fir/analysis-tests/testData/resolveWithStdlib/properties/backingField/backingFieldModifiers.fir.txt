@@ -32,4 +32,12 @@ FILE: backingFieldModifiers.kt
             private final backing field field: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Number|
 
+        public final val h: R|kotlin/Number|
+            private final backing field field: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
+        public final val i: R|kotlin/Number|
+            private final lateinit backing field field: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
     }

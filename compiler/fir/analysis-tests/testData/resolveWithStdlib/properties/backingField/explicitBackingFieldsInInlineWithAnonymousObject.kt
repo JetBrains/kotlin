@@ -14,5 +14,5 @@ inline fun publicTest() = object : Foo() {
 
 inline fun publicTestInArg(noinline arg: () -> MutableList<Int> = { numbers }) {}
 
-/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inline, override,
-propertyDeclaration, smartcast */
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, explicitBackingField, functionDeclaration,
+functionalType, inline, lambdaLiteral, noinline, override, propertyDeclaration, smartcast */

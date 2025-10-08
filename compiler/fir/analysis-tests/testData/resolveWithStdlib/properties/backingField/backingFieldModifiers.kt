@@ -20,6 +20,12 @@ class A {
 
     val g: Number
         <!WRONG_MODIFIER_TARGET!>tailrec<!> field = 1
+
+    val h: Number
+        <!WRONG_MODIFIER_TARGET!>const<!> field = 1
+
+    val i: Number
+        <!LATEINIT_FIELD_IN_VAL_PROPERTY, LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER, WRONG_MODIFIER_TARGET!>lateinit<!> field = 1
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, propertyDeclaration */
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, integerLiteral, propertyDeclaration */
