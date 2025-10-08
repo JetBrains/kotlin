@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
@@ -310,7 +311,8 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             ktFiles.values,
             lightTreeFiles.values,
             parser,
-            testServices.firDiagnosticCollectorService.reporterForLTSyntaxErrors
+            testServices.firDiagnosticCollectorService.reporterForLTSyntaxErrors,
+            headerCompilationMode = (LanguageSettingsDirectives.ENABLE_HEADER_MODE in module.directives)
         )
         val firFiles = firAnalyzerFacade.runResolution()
 

@@ -25,7 +25,8 @@ class FirAnalyzerFacade(
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val lightTreeFiles: Collection<KtSourceFile> = emptyList(), // may be empty if light tree mode disabled
     val parser: FirParser,
-    val diagnosticReporterForLightTree: DiagnosticReporter? = null
+    val diagnosticReporterForLightTree: DiagnosticReporter? = null,
+    val headerCompilationMode: Boolean = false,
 ) : AbstractFirAnalyzerFacade() {
     private var firFiles: List<FirFile>? = null
     private var _scopeSession: ScopeSession? = null
@@ -38,7 +39,7 @@ class FirAnalyzerFacade(
     private fun buildRawFir() {
         if (firFiles != null) return
         firFiles = when (parser) {
-            FirParser.LightTree -> session.buildFirViaLightTree(lightTreeFiles, diagnosticReporterForLightTree, false, reportFilesAndLines = null)
+            FirParser.LightTree -> session.buildFirViaLightTree(lightTreeFiles, diagnosticReporterForLightTree, headerCompilationMode, reportFilesAndLines = null)
             FirParser.Psi -> session.buildFirFromKtFiles(ktFiles)
         }
     }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.isApplicableTo
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
@@ -188,6 +189,9 @@ fun createCompilerConfiguration(
         if (compilationStage == configurator.compilationStage) {
             configurator.configureCompileConfigurationWithAdditionalConfigurationKeys(configuration, module)
         }
+    }
+    if (LanguageSettingsDirectives.ENABLE_HEADER_MODE in module.directives) {
+        configuration.headerCompilation = true
     }
 
     return configuration
