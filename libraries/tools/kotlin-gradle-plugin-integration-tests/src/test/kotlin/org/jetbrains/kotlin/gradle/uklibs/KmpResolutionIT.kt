@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.uklibs
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.*
@@ -1025,10 +1026,334 @@ class KmpResolutionIT : KGPBaseTest() {
                 )
             }
 
-            // FIXME: Properly test which configuration failed to resolve
-            buildAndFail("assemble") {
-                assertOutputContains("No matching variant of transitive:empty:1.0 was found")
+            // expect no transitive dependendency, because it was filtered out as "unresolvable" for regular KMP consumption
+            assertEquals(
+                mapOf(
+                    "direct:empty-jvm:1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                            mapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "standard-jvm",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmApiElements-published",
+                    ),
+                    "direct:empty:1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                        ),
+                        configuration = "jvmApiElements-published",
+                    ),
+                    "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                            mapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "standard-jvm",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                                "org.jetbrains.kotlin.platform.type" to "jvm",
+                            ),
+                        ),
+                        configuration = "jvmApiElements",
+                    ),
+                    "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                            mapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                            ),
+                        ),
+                        configuration = "compile",
+                    ),
+                ).prettyPrinted,
+                buildScriptReturn {
+                    project.ignoreAccessViolations {
+                        project.configurations.getByName(
+                            java.sourceSets.getByName("main").compileClasspathConfigurationName
+                        ).resolveProjectDependencyComponentsWithArtifacts()
+                    }
+                }.buildAndReturn("assemble").prettyPrinted
+            )
+        }
+    }
+
+    @GradleTest
+    fun `regular kmp resolution - consume uklib with leniently resolved partially compatible dependencies`(
+        gradleVersion: GradleVersion,
+    ) {
+        val publishedUklib = project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.setUklibResolutionStrategy()
+                project.setUklibPublicationStrategy()
+                project.applyMultiplatform {
+                    jvm()
+                    linuxX64()
+                    sourceSets.commonMain.get().compileSource("class Common")
+
+                    sourceSets.commonMain.dependencies {
+                        // jvm only
+                        api("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0")
+
+                        // linux x64 only
+                        api("org.jetbrains.kotlinx:kotlinx-coroutines-core-linuxx64:1.9.0")
+
+                        // js only
+                        // FIXME KT-81575: fails to resolve even with lenient resolution
+                        // api("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.9.0")
+
+                        // pure maven
+                        api("org.jetbrains:annotations:24.0.0")
+                    }
+                }
             }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "uklib"))
+
+        project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            addPublishedProjectToRepositories(publishedUklib)
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    linuxX64()
+                    sourceSets.commonMain.dependencies {
+                        api(publishedUklib.rootCoordinate)
+                    }
+                }
+            }
+
+            // JVM Compile + Runtime classpaths
+            assertEquals(
+                mapOf(
+                    "compileClasspath" to mapOf(
+                        "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                                mapOf(
+                                    "artifactType" to "jar",
+                                    "org.gradle.category" to "library",
+                                    "org.gradle.jvm.environment" to "standard-jvm",
+                                    "org.gradle.libraryelements" to "jar",
+                                    "org.gradle.usage" to "java-api",
+                                    "org.jetbrains.kotlin.platform.type" to "jvm",
+                                ),
+                            ),
+                            configuration = "jvmApiElements",
+                        ),
+                        "org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.9.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                            ),
+                            configuration = "platform-compile",
+                        ),
+                        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                                mapOf(
+                                    "artifactType" to "jar",
+                                    "org.gradle.category" to "library",
+                                    "org.gradle.jvm.environment" to "standard-jvm",
+                                    "org.gradle.libraryelements" to "jar",
+                                    "org.gradle.usage" to "java-api",
+                                    "org.jetbrains.kotlin.platform.type" to "jvm",
+                                ),
+                            ),
+                            configuration = "jvmApiElements-published",
+                        ),
+                        "org.jetbrains:annotations:24.0.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                                mapOf(
+                                    "artifactType" to "jar",
+                                    "org.gradle.category" to "library",
+                                    "org.gradle.libraryelements" to "jar",
+                                    "org.gradle.usage" to "java-api",
+                                ),
+                            ),
+                            configuration = "compile",
+                        ),
+                        "uklib:empty-jvm:1.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                                mapOf(
+                                    "artifactType" to "jar",
+                                    "org.gradle.category" to "library",
+                                    "org.gradle.jvm.environment" to "standard-jvm",
+                                    "org.gradle.libraryelements" to "jar",
+                                    "org.gradle.usage" to "java-api",
+                                    "org.jetbrains.kotlin.platform.type" to "jvm",
+                                ),
+                            ),
+                            configuration = "jvmApiElements-published",
+                        ),
+                        "uklib:empty:1.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                            ),
+                            configuration = "jvmApiElements-published",
+                        ),
+                    ),
+                    "runtimeClasspath" to mapOf(
+                        "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                                mapOf(
+                                    "artifactType" to "jar",
+                                    "org.gradle.category" to "library",
+                                    "org.gradle.jvm.environment" to "standard-jvm",
+                                    "org.gradle.libraryelements" to "jar",
+                                    "org.gradle.usage" to "java-runtime",
+                                    "org.jetbrains.kotlin.platform.type" to "jvm",
+                                ),
+                            ),
+                            configuration = "jvmRuntimeElements",
+                        ),
+                        "org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.9.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                            ),
+                            configuration = "platform-runtime",
+                        ),
+                        "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                                mapOf(
+                                    "artifactType" to "jar",
+                                    "org.gradle.category" to "library",
+                                    "org.gradle.jvm.environment" to "standard-jvm",
+                                    "org.gradle.libraryelements" to "jar",
+                                    "org.gradle.usage" to "java-runtime",
+                                    "org.jetbrains.kotlin.platform.type" to "jvm",
+                                ),
+                            ),
+                            configuration = "jvmRuntimeElements-published",
+                        ),
+                        "org.jetbrains:annotations:24.0.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                                mapOf(
+                                    "artifactType" to "jar",
+                                    "org.gradle.category" to "library",
+                                    "org.gradle.libraryelements" to "jar",
+                                    "org.gradle.usage" to "java-runtime",
+                                ),
+                            ),
+                            configuration = "runtime",
+                        ),
+                        "uklib:empty-jvm:1.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                                mapOf(
+                                    "artifactType" to "jar",
+                                    "org.gradle.category" to "library",
+                                    "org.gradle.jvm.environment" to "standard-jvm",
+                                    "org.gradle.libraryelements" to "jar",
+                                    "org.gradle.usage" to "java-runtime",
+                                    "org.jetbrains.kotlin.platform.type" to "jvm",
+                                ),
+                            ),
+                            configuration = "jvmRuntimeElements-published",
+                        ),
+                        "uklib:empty:1.0" to ResolvedComponentWithArtifacts(
+                            artifacts = listOf(
+                            ),
+                            configuration = "jvmRuntimeElements-published",
+                        ),
+                    ),
+                ).prettyPrinted,
+                buildScriptReturn {
+                    project.ignoreAccessViolations {
+                        mapOf(
+                            "compileClasspath" to kotlinMultiplatform.jvm().compilationResolution(),
+                            "runtimeClasspath" to kotlinMultiplatform.jvm().runtimeResolution(),
+                        )
+                    }
+                }.buildAndReturn().prettyPrinted
+            )
+
+            // LinuxX64 compile classpath
+            assertEquals(
+                mapOf(
+                    "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                        ),
+                        configuration = "nativeApiElements",
+                    ),
+                    "org.jetbrains.kotlinx:atomicfu-linuxx64:0.25.0" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                            mapOf(
+                                "artifactType" to "org.jetbrains.kotlin.klib",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "non-jvm",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.native.target" to "linux_x64",
+                                "org.jetbrains.kotlin.platform.type" to "native",
+                            ),
+                            mapOf(
+                                "artifactType" to "org.jetbrains.kotlin.klib",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "non-jvm",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.native.target" to "linux_x64",
+                                "org.jetbrains.kotlin.platform.type" to "native",
+                            ),
+                        ),
+                        configuration = "linuxX64ApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:atomicfu:0.25.0" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                        ),
+                        configuration = "linuxX64ApiElements-published",
+                    ),
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-core-linuxx64:1.9.0" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                            mapOf(
+                                "artifactType" to "org.jetbrains.kotlin.klib",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "non-jvm",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.native.target" to "linux_x64",
+                                "org.jetbrains.kotlin.platform.type" to "native",
+                            ),
+                        ),
+                        configuration = "linuxX64ApiElements-published",
+                    ),
+                    // pure maven publications are resolvable by standard KMP
+                    "org.jetbrains:annotations:24.0.0" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                            mapOf(
+                                "artifactType" to "jar",
+                                "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
+                                "org.gradle.usage" to "java-api",
+                            ),
+                        ),
+                        configuration = "compile",
+                    ),
+                    "uklib:empty-linuxx64:1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                            mapOf(
+                                "artifactType" to "klib",
+                                "org.gradle.category" to "library",
+                                "org.gradle.jvm.environment" to "non-jvm",
+                                "org.gradle.usage" to "kotlin-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                                "org.jetbrains.kotlin.native.target" to "linux_x64",
+                                "org.jetbrains.kotlin.platform.type" to "native",
+                            ),
+                        ),
+                        configuration = "linuxX64ApiElements-published",
+                    ),
+                    "uklib:empty:1.0" to ResolvedComponentWithArtifacts(
+                        artifacts = listOf(
+                        ),
+                        configuration = "linuxX64ApiElements-published",
+                    ),
+                ).prettyPrinted,
+                buildScriptReturn {
+                    project.ignoreAccessViolations {
+                        kotlinMultiplatform.linuxX64().compilationResolution()
+                    }
+                }.buildAndReturn().prettyPrinted
+            )
         }
     }
 
