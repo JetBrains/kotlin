@@ -28646,6 +28646,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("defaultArgsLateinitLowering.kt")
+      public void testDefaultArgsLateinitLowering() {
+        runTest("compiler/testData/codegen/box/inline/defaultArgsLateinitLowering.kt");
+      }
+
+      @Test
       @TestMetadata("defaultArgsLowering.kt")
       public void testDefaultArgsLowering() {
         runTest("compiler/testData/codegen/box/inline/defaultArgsLowering.kt");
