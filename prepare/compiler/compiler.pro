@@ -404,3 +404,8 @@
 }
 
 -dontwarn kotlinx.coroutines.internal.intellij.IntellijCoroutines
+
+# Used by K/JS JavaScript parser
+-keep class org.antlr.v4.runtime.** {
+    public protected *;
+}
