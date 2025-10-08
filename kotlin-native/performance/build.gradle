@@ -89,7 +89,9 @@ tasks.register("buildAnalyzer") {
 
 task konanRun {
     subprojects.findAll {
-        !it.name.contains("videoplayer")
+        !it.name.contains("videoplayer") &&
+                // TODO revert when KTI-2681 is fixed
+                !it.name.contains("swiftinterop")
     }.each {
         dependsOn "${it.path}:konanRun"
     }
