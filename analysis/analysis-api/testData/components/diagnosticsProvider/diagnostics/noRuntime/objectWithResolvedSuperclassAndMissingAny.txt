@@ -1,0 +1,4 @@
+Diagnostics from file:
+  for PSI element of type KtClass at (6,1-20)
+    UNRESOLVED_REFERENCE      text ranges: [(75,89)]
+      PSI: KtClass at (6,1-20)
