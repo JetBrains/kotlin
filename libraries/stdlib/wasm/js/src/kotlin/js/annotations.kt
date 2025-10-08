@@ -131,5 +131,8 @@ public actual annotation class JsQualifier(actual val value: String)
 @SinceKotlin("2.3")
 @ExperimentalWasmJsInterop
 @Target(FUNCTION)
-@Deprecated("Temporary solution until WasmJs <-> Js interoperability will be designed. It may be removed in the future releases.")
+@Deprecated(
+  "Prefer using js(...) instead. This is a temporary solution for cases where using a non-member function is impossible. " +
+    "It will be removed once a proper solution is implemented. See KT-79937 for details."
+)
 public actual annotation class nativeInvoke()
