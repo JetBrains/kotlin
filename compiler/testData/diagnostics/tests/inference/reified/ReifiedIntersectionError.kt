@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-52469
 // LANGUAGE: +ProhibitIntersectionReifiedTypeParameter

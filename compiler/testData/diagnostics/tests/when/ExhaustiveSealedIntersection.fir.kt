@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-56564
@@ -15,7 +16,7 @@ fun test(a: A): Int {
         is SubAandB -> 1
     }
     i += <!NO_ELSE_IN_WHEN!>when<!>(a) {
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubB<!> -> 1
         is SubAandB -> 1
     }
     i += when(a) {
@@ -26,7 +27,7 @@ fun test(a: A): Int {
         <!USELESS_IS_CHECK!>is A<!> -> 1
         is SubA -> 1
         is B -> 1
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubB<!> -> 1
         is SubAandB -> 1
     }
     return i
@@ -42,12 +43,12 @@ fun test(b: B): Int {
         is SubAandB -> 1
     }
     i += <!NO_ELSE_IN_WHEN!>when<!>(b) {
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubA<!> -> 1
         is SubAandB -> 1
     }
     i += when(b) {
         is A -> 1
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
         is SubB -> 1
         is SubAandB -> 1
@@ -63,7 +64,7 @@ fun testIntersection(both: A): Int {
         is SubAandB -> 1
     }
     i += when(both) {
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubB<!> -> 1
         is SubAandB -> 1
     }
     i += when(both) {
@@ -74,7 +75,7 @@ fun testIntersection(both: A): Int {
         <!USELESS_IS_CHECK!>is A<!> -> 1
         <!USELESS_IS_CHECK!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubB<!> -> 1
         is SubAandB -> 1
     }
     return i
@@ -92,12 +93,12 @@ fun testIntersection(both: B): Int {
         is SubAandB -> 1
     }
     i += when(both) {
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubA<!> -> 1
         is SubAandB -> 1
     }
     i += when(both) {
         <!USELESS_IS_CHECK!>is A<!> -> 1
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
         <!USELESS_IS_CHECK!>is SubB<!> -> 1
         is SubAandB -> 1
