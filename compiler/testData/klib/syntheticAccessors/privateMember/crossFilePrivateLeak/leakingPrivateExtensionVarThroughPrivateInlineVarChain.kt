@@ -1,4 +1,3 @@
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, WASM
 // FILE: A.kt
 class A {
     internal inline var inlineVar: Int

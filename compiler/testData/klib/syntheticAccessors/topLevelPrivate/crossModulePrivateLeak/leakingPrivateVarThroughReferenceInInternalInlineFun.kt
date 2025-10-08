@@ -1,4 +1,3 @@
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, WASM
 // IGNORE_BACKEND: JVM_IR
 // The test should be unmuted for JVM when KT-77870 issue is fixed.
 
