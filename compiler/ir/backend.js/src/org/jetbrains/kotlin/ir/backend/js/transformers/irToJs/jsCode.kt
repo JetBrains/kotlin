@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
-import com.google.gwt.dev.js.rhino.CodePosition
+import org.jetbrains.kotlin.js.parser.ThrowExceptionOnErrorReporter
+import org.jetbrains.kotlin.js.parser.CodePosition
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.lower.PropertyLazyInitLowering
@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.getSourceFile
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
+import org.jetbrains.kotlin.js.parser.JsParser
 
 /**
  * Returns null if constant expression could not be parsed.
@@ -60,7 +59,7 @@ private fun translateJsCodeIntoStatementList(
     //
     // So we try to generate the debug info on the best-effort basis. It should work correctly with plain string literals without
     // concatenations, interpolations or backslash replacements like \n.
-    return parseExpressionOrStatement(jsCode, ThrowExceptionOnErrorReporter, currentScope, CodePosition(startLine, offset), fileName)
+    return JsParser.parseExpressionOrStatement(jsCode, ThrowExceptionOnErrorReporter, currentScope, CodePosition(startLine, offset), fileName)
 }
 
 private var IrField.lazyInitializerExpression: IrExpression? by irAttribute(copyByDefault = false)

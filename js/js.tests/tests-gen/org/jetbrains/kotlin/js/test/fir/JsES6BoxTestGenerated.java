@@ -7776,6 +7776,18 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("regex.kt")
+    public void testRegex() {
+      runTest("js/js.translator/testData/box/jsCode/regex.kt");
+    }
+
+    @Test
+    @TestMetadata("stringEscape.kt")
+    public void testStringEscape() {
+      runTest("js/js.translator/testData/box/jsCode/stringEscape.kt");
+    }
+
+    @Test
     @TestMetadata("switch.kt")
     public void testSwitch() {
       runTest("js/js.translator/testData/box/jsCode/switch.kt");

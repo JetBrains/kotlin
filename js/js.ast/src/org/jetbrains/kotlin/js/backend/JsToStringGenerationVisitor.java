@@ -409,16 +409,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         leftParen();
         nameDef(x.getParameter().getName());
 
-        // Optional catch condition.
-        //
-        JsExpression catchCond = x.getCondition();
-        if (catchCond != null) {
-            space();
-            _if();
-            space();
-            accept(catchCond);
-        }
-
         rightParen();
         space();
 

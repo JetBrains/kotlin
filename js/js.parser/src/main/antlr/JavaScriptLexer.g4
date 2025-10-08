@@ -239,10 +239,10 @@ fragment SingleStringCharacter: ~['\\\r\n] | '\\' EscapeSequence | LineContinuat
 
 fragment EscapeSequence:
     CharacterEscapeSequence
-    | '0' // no digit ahead! TODO
     | HexEscapeSequence
     | UnicodeEscapeSequence
     | ExtendedUnicodeEscapeSequence
+    | OctalEscapeSequence
 ;
 
 fragment CharacterEscapeSequence: SingleEscapeCharacter | NonEscapeCharacter;
@@ -256,11 +256,11 @@ fragment UnicodeEscapeSequence:
 
 fragment ExtendedUnicodeEscapeSequence: 'u' '{' HexDigit+ '}';
 
+fragment OctalEscapeSequence: [0-9] [0-9]? [0-9]?;
+
 fragment SingleEscapeCharacter: ['"\\bfnrtv];
 
 fragment NonEscapeCharacter: ~['"\\bfnrtv0-9xu\r\n];
-
-fragment EscapeCharacter: SingleEscapeCharacter | [0-9] | [xu];
 
 fragment LineContinuation: '\\' [\r\n\u2028\u2029]+;
 

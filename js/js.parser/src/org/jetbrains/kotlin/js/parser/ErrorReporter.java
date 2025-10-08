@@ -36,48 +36,43 @@
 
 // API class
 
-package com.google.gwt.dev.js.rhino;
+package org.jetbrains.kotlin.js.parser;
 
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Java reflection of JavaScript exceptions.  (Possibly wrapping a Java exception.)
+ * This is interface defines a protocol for the reporting of
+ * errors during JavaScript translation or execution.
  */
-public class JavaScriptException extends Exception {
+
+public interface ErrorReporter {
 
     /**
-     * Create a JavaScript exception wrapping the given JavaScript value.
+     * Report a warning.
      *
-     * Instances of this class are thrown by the JavaScript 'throw' keyword.
+     * The implementing class may choose to ignore the warning
+     * if it desires.
      *
-     * @param value the JavaScript value thrown.
+     * @param message a String describing the error
+     * @param startPosition position before error token
+     * @param endPosition position after error token
      */
-    public JavaScriptException(Object value) {
-        super(value.toString());
-        this.value = value;
-    }
+    void warning(@NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition);
 
     /**
-     * Get the exception value originally thrown.  This may be a
-     * JavaScript value (null, undefined, Boolean, Number, String,
-     * Scriptable or Function) or a Java exception value thrown from a
-     * host object or from Java called through LiveConnect.
+     * Report an error.
      *
-     * @return the value wrapped by this exception
-     */
-    public Object getValue() {
-        return value;
-    }
-
-    /**
-     * The JavaScript exception value.  This value is not
-     * intended for general use; if the JavaScriptException wraps a
-     * Java exception, getScriptableValue may return a Scriptable
-     * wrapping the original Java exception object.
+     * The implementing class is free to throw an exception if
+     * it desires.
      *
-     * We would prefer to go through a getter to encapsulate the value,
-     * however that causes the bizarre error "nanosecond timeout value
-     * out of range" on the MS JVM.
-     * @serial
+     * If execution has not yet begun, the JavaScript engine is
+     * free to find additional errors rather than terminating
+     * the translation. It will not execute a script that had
+     * errors, however.
+     *
+     * @param message a String describing the error
+     * @param startPosition position before error token
+     * @param endPosition position after error token
      */
-    Object value;
+    void error(@NotNull String message, @NotNull CodePosition startPosition, @NotNull CodePosition endPosition);
 }
