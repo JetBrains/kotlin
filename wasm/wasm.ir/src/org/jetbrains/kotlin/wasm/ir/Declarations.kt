@@ -159,7 +159,7 @@ data class WasmFunctionType(
 ) : WasmTypeDeclaration("")
 
 data class WasmContType(
-    val funType: WasmType,
+    val funType: WasmFunctionType,
 ) : WasmTypeDeclaration("")
 
 class WasmStructDeclaration(

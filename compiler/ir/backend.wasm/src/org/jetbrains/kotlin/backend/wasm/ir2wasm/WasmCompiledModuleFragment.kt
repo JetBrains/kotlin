@@ -64,6 +64,7 @@ class WasmCompiledFileFragment(
     val globalClassITables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
     val functionTypes: ReferencableAndDefinable<IdSignature, WasmFunctionType> = ReferencableAndDefinable(),
     val gcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
+    val contTypes: ReferencableAndDefinable<IdSignature, WasmContType> = ReferencableAndDefinable(),
     val vTableGcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
     val stringLiteralId: ReferencableElements<String, Int> = ReferencableElements(),
     val constantArrayDataSegmentId: ReferencableElements<Pair<List<Long>, WasmType>, Int> = ReferencableElements(),
@@ -92,6 +93,8 @@ class WasmCompiledModuleFragment(
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
+    private val contFunctionType = WasmFunctionType(emptyList(), emptyList())
+    private val contType = WasmContType(TODO())
 
     private val stringDataSectionIndex = WasmImmediate.DataIdx(0)
     private val stringAddressesAndLengthsIndex = WasmImmediate.DataIdx(1)
@@ -246,6 +249,9 @@ class WasmCompiledModuleFragment(
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
+        // TODO("Create types")
+        additionalTypes.addAll(TODO("Function type"))
+        additionalTypes.addAll(TODO("Cont type"))
 
         val elements = mutableListOf<WasmElement>()
         createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, elements, exports, globals)

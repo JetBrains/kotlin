@@ -1153,9 +1153,16 @@ class BodyGenerator(
             in wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub -> {
                 when (function.symbol) {
                     wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0] -> {
-                        TODO("wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0]")
+//                        val suspendFunctionClassType = function.parameters[0].type
+//                        val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.single { it. == "invoke" }
+//                        val funType: WasmHeapType = WasmHeapType.Type(
+//                            wasmFileCodegenContext.referenceFunctionType(suspendFunctionInvoke.symbol)
+//                        )
+
+                        body.buildContNew(funType, location)
+                        // TODO("wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub[0]")
                     }
-                    else -> TODO("else startCoroutineUninterceptedOrReturnIntrinsicsStub")
+                    else -> TODO("startCoroutineUninterceptedOrReturnIntrinsicsStub 1-2")
                 }
             }
 
