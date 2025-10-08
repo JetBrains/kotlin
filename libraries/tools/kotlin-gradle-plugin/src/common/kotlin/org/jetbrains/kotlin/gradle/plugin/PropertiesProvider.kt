@@ -207,7 +207,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         else KmpResolutionStrategy.StandardKMPResolution
 
     private val enableUKlibs: Boolean
-        get() = booleanProperty(KOTLIN_KMP_ENABLE_UKLIBS) ?: false
+        get() = booleanProperty(KOTLIN_KMP_ENABLE_UKLIBS) ?: true
 
     // Throw in IDE resolvers instead of just printing them
     val strictResolveIdeDependencies: Boolean
