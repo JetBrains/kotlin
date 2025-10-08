@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +WhenGuards
 // WITH_STDLIB
@@ -32,7 +33,7 @@ fun capturedTypesBoundedByBoolean(x: Any, outProjectedBox: InvariantBox<out Bool
 fun <T:<!FINAL_UPPER_BOUND!>Boolean<!>> typeVariablesBoundedByBoolean(x: T) {
     <!NO_ELSE_IN_WHEN!>when<!> (x) {
         is Boolean if x -> 250
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> if x -> 270
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is String<!> if x -> 270
         is BooleanAlias if x -> 20
     }
 }

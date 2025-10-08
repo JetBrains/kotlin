@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 
@@ -12,7 +13,7 @@ sealed class B {
 }
 
 fun foo(a: A) {
-    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>a !is B<!>) return
+    if (<!IMPOSSIBLE_IS_CHECK_WARNING!>a !is B<!>) return
 
     when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
@@ -27,18 +28,18 @@ fun foo(a: A) {
     when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
         <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..." // should be warning: unreachable code
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is B.B1<!> -> "..." // should be warning: unreachable code
     }.length // OK
 
     when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..."
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is B.B1<!> -> "..."
         <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
     }.length // OK
 
     <!NO_ELSE_IN_WHEN!>when<!> (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
-        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..."
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is B.B1<!> -> "..."
     }.length
 }
 

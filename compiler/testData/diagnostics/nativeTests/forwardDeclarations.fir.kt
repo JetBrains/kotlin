@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // WITH_STDLIB
 
 // FILE: stdlib.kt
@@ -68,8 +69,8 @@ fun testIs(x: Any) : Int {
     }
 }
 
-fun testIs2(x: lib.FwdStruct) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, IMPOSSIBLE_IS_CHECK_ERROR!>x is cnames.structs.FwdStruct<!>
-fun testIs3(x: lib.FwdObjcClass) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, IMPOSSIBLE_IS_CHECK_ERROR!>x is objcnames.classes.FwdObjcClass<!>
+fun testIs2(x: lib.FwdStruct) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, IMPOSSIBLE_IS_CHECK_WARNING!>x is cnames.structs.FwdStruct<!>
+fun testIs3(x: lib.FwdObjcClass) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, IMPOSSIBLE_IS_CHECK_WARNING!>x is objcnames.classes.FwdObjcClass<!>
 fun testIs4(x: lib.FwdProtocol) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is objcnames.protocols.FwdProtocol<!>
 
 
