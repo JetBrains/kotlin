@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
@@ -152,4 +153,7 @@ internal class KaFe10SymbolInformationProvider(
             else -> parentClassifier is ClassDescriptor && parentClassifier.kind == ClassKind.OBJECT
         }
     }
+
+    override val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
+        get() = withValidityAssertion { KaReturnValueStatus.Unspecified }
 }

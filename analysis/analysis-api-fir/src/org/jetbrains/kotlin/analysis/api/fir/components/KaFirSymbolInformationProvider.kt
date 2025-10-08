@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSymbolInformationProvider(
@@ -177,6 +179,15 @@ internal class KaFirSymbolInformationProvider(
                 }
 
                 else -> null
+            }
+        }
+
+    override val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
+        get() = withValidityAssertion {
+            when (firSymbol.resolvedStatus.returnValueStatus) {
+                ReturnValueStatus.MustUse -> KaReturnValueStatus.MustUse
+                ReturnValueStatus.ExplicitlyIgnorable -> KaReturnValueStatus.ExplicitlyIgnorable
+                ReturnValueStatus.Unspecified -> KaReturnValueStatus.Unspecified
             }
         }
 }

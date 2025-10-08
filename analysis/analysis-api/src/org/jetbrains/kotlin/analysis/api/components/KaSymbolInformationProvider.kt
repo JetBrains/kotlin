@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaIdeApi
-import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -89,6 +86,49 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      */
     @KaIdeApi
     public val KaSymbol.importableFqName: FqName?
+
+    /**
+     * The return value status of the function (should it be used, or can it be ignored).
+     * See the [KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0412-unused-return-value-checker.md) for details.
+     */
+    @KaExperimentalApi
+    @KaK1Unsupported
+    public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
+}
+
+/**
+ * The return value status of the function (should it be used, or can it be ignored).
+ * @see org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.returnValueStatus
+ */
+@KaExperimentalApi
+@KaK1Unsupported
+public sealed class KaReturnValueStatus(public val name: String) {
+    override fun toString(): String = name
+
+    /**
+     * The return value of the function must be checked for usage.
+     */
+    @KaExperimentalApi
+    public data object MustUse : KaReturnValueStatus("MustUse")
+
+    /**
+     * The return value of the function is declared as explicitly ignorable and should not be checked for usage.
+     */
+    @KaExperimentalApi
+    public data object ExplicitlyIgnorable : KaReturnValueStatus("ExplicitlyIgnorable")
+
+    /**
+     * The return value status of the function is unspecified.
+     */
+    @KaExperimentalApi
+    public data object Unspecified : KaReturnValueStatus("Unspecified")
+
+    /**
+     * A dummy private subclass to force 'else' branches in client code
+     */
+    @Suppress("unused")
+    @KaExperimentalApi
+    private data object Unknown : KaReturnValueStatus("Unknown")
 }
 
 /**
@@ -198,3 +238,15 @@ public val KaKotlinPropertySymbol.isInline: Boolean
 context(s: KaSession)
 public val KaSymbol.importableFqName: FqName?
     get() = with(s) { importableFqName }
+
+/**
+ * The return value status of the function (should it be used, or can it be ignored).
+ * See the [KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0412-unused-return-value-checker.md) for details.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(s: KaSession)
+public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
+    get() = with(s) { returnValueStatus }
