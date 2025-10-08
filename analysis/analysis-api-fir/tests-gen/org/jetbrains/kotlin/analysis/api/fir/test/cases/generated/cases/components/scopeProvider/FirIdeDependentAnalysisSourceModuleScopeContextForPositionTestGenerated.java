@@ -248,12 +248,6 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
-    @TestMetadata("anonymousFunctionContextReceiver.kt")
-    public void testAnonymousFunctionContextReceiver() {
-      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("anonymousFunctionContextReceiver2.kt")
     public void testAnonymousFunctionContextReceiver2() {
       runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiver2.kt");
@@ -263,12 +257,6 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     @TestMetadata("anonymousFunctionContextReceiver3.kt")
     public void testAnonymousFunctionContextReceiver3() {
       runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiver3.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionContextReceiverExpression.kt")
-    public void testAnonymousFunctionContextReceiverExpression() {
-      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextParameters/anonymousFunctionContextReceiverExpression.kt");
     }
 
     @Test

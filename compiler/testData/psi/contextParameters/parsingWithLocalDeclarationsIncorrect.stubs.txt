@@ -12,12 +12,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
   FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
     VALUE_PARAMETER_LIST
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      MODIFIER_LIST[suspend]
-        CONTEXT_RECEIVER_LIST
       VALUE_PARAMETER_LIST
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      MODIFIER_LIST[]
-        CONTEXT_RECEIVER_LIST
       VALUE_PARAMETER_LIST
   FUN[fqName=contextFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun]
     MODIFIER_LIST[]

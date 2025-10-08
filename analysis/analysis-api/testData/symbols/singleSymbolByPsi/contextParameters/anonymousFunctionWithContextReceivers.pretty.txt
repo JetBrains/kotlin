@@ -1,2 +1,1 @@
-context(String@kotlin.String, List@kotlin.collections.List<@Anno(position = "str") kotlin.Int>)
-fun(i: kotlin.Int): kotlin.Unit
+fun `<no name provided>`(i: kotlin.Int)

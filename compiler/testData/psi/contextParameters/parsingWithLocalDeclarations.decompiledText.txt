@@ -1,0 +1,12 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public fun test(): kotlin.Unit { /* compiled code */ }
+
+context(x: kotlin.Any) public fun contextFun(): kotlin.Unit { /* compiled code */ }
+
+context(x: kotlin.Int, y: () -> kotlin.Unit) public fun contextFun2(): kotlin.Unit { /* compiled code */ }
+
+context(x: () -> kotlin.Unit, y: kotlin.Int) public fun contextFun3(): kotlin.Unit { /* compiled code */ }
+
+context(x: kotlin.reflect.KClass<*>, y: () -> kotlin.Unit) public fun contextFun4(): kotlin.Unit { /* compiled code */ }

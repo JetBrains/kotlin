@@ -711,9 +711,11 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *
      * @param noModifiersBefore is a token set with elements indicating when met them
      * that the previous token must be parsed as an identifier rather than modifier
+     *
+     * @param localDeclaration is `true` if we are trying to parse a local declaration
      */
-    fun parseModifierList(modifierDetector: ModifierDetector?, noModifiersBefore: SyntaxElementTypeSet): Boolean {
-        return doParseModifierList(modifierDetector, KtTokens.MODIFIERS, AnnotationParsingMode.DEFAULT, noModifiersBefore)
+    fun parseModifierList(modifierDetector: ModifierDetector?, noModifiersBefore: SyntaxElementTypeSet, localDeclaration: Boolean = false): Boolean {
+        return doParseModifierList(modifierDetector, KtTokens.MODIFIERS, AnnotationParsingMode.DEFAULT, noModifiersBefore, localDeclaration)
     }
 
     private fun parseFunctionTypeValueParameterModifierList() {
@@ -748,6 +750,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         modifierKeywords: SyntaxElementTypeSet,
         annotationParsingMode: AnnotationParsingMode,
         noModifiersBefore: SyntaxElementTypeSet,
+        localDeclaration: Boolean = false,
     ): Boolean {
         var empty = true
         var beforeAnnotationMarker: SyntaxTreeBuilder.Marker?
@@ -765,14 +768,22 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                             AnnotationParsingMode.WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS
                         else
                             AnnotationParsingMode.WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS_NO_CONTEXT
-                    doParseModifierListBody(modifierDetector, modifierKeywords, newMode, noModifiersBefore)
+                    doParseModifierListBody(modifierDetector, modifierKeywords, newMode, noModifiersBefore, localDeclaration)
                     empty = false
                     break
                 } else {
                     beforeAnnotationMarker.drop()
                 }
             } else if (atWithRemap(KtTokens.CONTEXT_KEYWORD) && annotationParsingMode.allowContextList && lookahead(1) === KtTokens.LPAR) {
-                parseContextReceiverList(false)
+                val contextMarker = mark()
+                if (!parseContextParameterOrReceiverList(false) && localDeclaration) {
+                    // Rollback the entire context declaration to make it possible to prevent parsing of potential local declarations
+                    // that in fact are not declarations (we are trying to parse declarations at first and statements as second).
+                    contextMarker.rollbackTo()
+                    break
+                } else {
+                    contextMarker.drop()
+                }
             } else if (tryParseModifier(modifierDetector, noModifiersBefore, modifierKeywords)) {
                 // modifier advanced
             } else {
@@ -789,6 +800,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         modifierKeywords: SyntaxElementTypeSet,
         annotationParsingMode: AnnotationParsingMode,
         noModifiersBefore: SyntaxElementTypeSet,
+        localDeclaration: Boolean = false,
     ): Boolean {
         val list = mark()
 
@@ -796,7 +808,8 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             modifierDetector,
             modifierKeywords,
             annotationParsingMode,
-            noModifiersBefore
+            noModifiersBefore,
+            localDeclaration,
         )
 
         if (empty) {
@@ -835,35 +848,51 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         return false
     }
 
-    /*
+    /**
+     * ```
      * contextReceiverList
      *   : "context" "(" (contextReceiver{","})+ ")"
+     * ```
+     *
+     * @return `true` if it parsed a context with value parameters
+     * Otherwise returns `false` if it parsed a context with type refs (that work as receivers) or encountered a syntax error during parsing.
      */
-    private fun parseContextReceiverList(inFunctionType: Boolean) {
+    private fun parseContextParameterOrReceiverList(inFunctionType: Boolean): Boolean {
         require(atWithRemap(KtTokens.CONTEXT_KEYWORD))
         val contextReceiverList = mark()
         advance() // CONTEXT_KEYWORD
 
         require(at(KtTokens.LPAR))
 
+        val noError: Boolean
+
         if (lookahead(1) === KtTokens.RPAR) {
             advance() // LPAR
             error("Empty context parameter list")
             advance() // RPAR
+            noError = false
         } else {
-            valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET) { parseContextReceiver(inFunctionType) }
+            // Treat parsing of context receivers (deprecated syntax) as an error,
+            // But an outer caller decides if the entire list should be dropped:
+            // If we're trying to parse a local declaration, we should drop it to prevent unexpected parsing of ahead declarations
+            noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET) { parseValueParameterOrTypeRef(inFunctionType) }
         }
 
         contextReceiverList.done(KtNodeTypes.CONTEXT_RECEIVER_LIST)
+        return noError
     }
 
-    /*
+    /**
+     * ```
      * contextReceiver
      *   : label? typeReference
+     * ```
+     *
+     * @return `true` if it parsed a value parameter or type ref in the correct position (in function type) and `false` otherwise.
      */
-    private fun parseContextReceiver(inFunctionType: Boolean) {
+    private fun parseValueParameterOrTypeRef(inFunctionType: Boolean): Boolean {
         if (tryParseValueParameter(true)) {
-            return
+            return true
         }
 
         val contextReceiver = mark()
@@ -872,6 +901,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         }
         parseTypeRef()
         contextReceiver.done(KtNodeTypes.CONTEXT_RECEIVER)
+        return inFunctionType
     }
 
     /*
@@ -2353,7 +2383,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val contextReceiversStart = mark()
 
         if (withContextReceiver) {
-            parseContextReceiverList(true)
+            parseContextParameterOrReceiverList(true)
         }
 
         var typeElementMarker = mark()
@@ -2670,6 +2700,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             } else {
                 parseValueParameter(typeRequired)
             }
+            return@valueParameterLoop true
         }
 
         builder.restoreNewlinesState()
@@ -2677,19 +2708,30 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         parameters.done(KtNodeTypes.VALUE_PARAMETER_LIST)
     }
 
-    private inline fun valueParameterLoop(inFunctionTypeContext: Boolean, recoverySet: SyntaxElementTypeSet, parseParameter: () -> Unit) {
+    /**
+     * @param parseParameter returns `true` if internal parsing is correct
+     * @return `true` if the parsing of the entire parameter loop is correct
+     */
+    private inline fun valueParameterLoop(
+        inFunctionTypeContext: Boolean,
+        recoverySet: SyntaxElementTypeSet,
+        parseParameter: () -> Boolean,
+    ): Boolean {
         advance() // LPAR
+
+        var noError = true
 
         if (!at(KtTokens.RPAR) && !atSetWithRemap(recoverySet)) {
             while (true) {
                 val offsetBefore = builder.currentOffset
                 if (at(KtTokens.COMMA)) {
                     errorAndAdvance("Expecting a parameter declaration")
+                    noError = false
                 } else if (at(KtTokens.RPAR)) {
                     break
                 }
 
-                parseParameter()
+                noError = parseParameter() && noError
 
                 if (at(KtTokens.COMMA)) {
                     advance() // COMMA
@@ -2699,14 +2741,17 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                     //noinspection UnnecessaryContinue
                     continue
                 } else {
-                    if (!at(KtTokens.RPAR)) error("Expecting comma or ')'")
+                    if (!at(KtTokens.RPAR)) {
+                        error("Expecting comma or ')'")
+                        noError = false
+                    }
                     if (!atSetWithRemap(if (inFunctionTypeContext) LAMBDA_VALUE_PARAMETER_FIRST else VALUE_PARAMETER_FIRST)) break
                     if (offsetBefore == builder.currentOffset) break
                 }
             }
         }
 
-        expect(KtTokens.RPAR, "Expecting ')'", recoverySet)
+        return expect(KtTokens.RPAR, "Expecting ')'", recoverySet) && noError
     }
 
     /*

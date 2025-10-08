@@ -20,16 +20,12 @@ Tower Data Context:
             Properties:
                 FirValueParameterSymbol p: R|kotlin/Int|
     Element 9
-        Context receivers:
-            FirValueParameterSymbol R|kotlin/String|
-                Type: kotlin.String
-                Label: String
-    Element 10
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionContextReceiver3.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        context([ResolvedTo(BODY_RESOLVE)] R|kotlin/String|) [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+        <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(Q|kotlin/String|)
+        [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
             [ResolvedTo(BODY_RESOLVE)] lval d: R|kotlin/Double| = Double(1.0)
         }
 

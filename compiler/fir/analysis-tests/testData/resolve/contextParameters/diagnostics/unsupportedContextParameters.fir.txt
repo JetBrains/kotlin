@@ -205,14 +205,21 @@ FILE: unsupportedContextParameters.kt
     public final fun runWithA(block: R|@ContextFunctionTypeParams(1) context(kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun localFunctionsContextParametersWithoutType(): R|kotlin/Unit| {
-        lval t2: R|@ContextFunctionTypeParams(1) context(ERROR CLASS: Symbol not found for a) () -> kotlin/Unit| = context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        lval t2: <ERROR TYPE REF: Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]> = <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(<Unresolved name: a>#)
+        fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         }
 
-        R|/runWithA|(context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|/runWithA<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /runWithA>#|(<Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(<Unresolved name: a>#), fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         }
         )
-        context(a@<ERROR TYPE REF: Symbol not found for a>)
+        <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(<Unresolved name: a>#)
         local final fun contextReceiverSyntax(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun localFunctionsContextParametersDisambiguation(a: R|kotlin/Int|): R|kotlin/Unit| {
+        <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(R|<local>/a|)
+        local final fun localFun(): R|kotlin/Unit| {
         }
 
     }

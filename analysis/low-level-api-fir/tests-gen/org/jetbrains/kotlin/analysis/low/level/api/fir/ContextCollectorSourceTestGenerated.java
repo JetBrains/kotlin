@@ -672,12 +672,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("anonymousFunctionContextReceiver.kt")
-    public void testAnonymousFunctionContextReceiver() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/anonymousFunctionContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("anonymousFunctionContextReceiver2.kt")
     public void testAnonymousFunctionContextReceiver2() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/anonymousFunctionContextReceiver2.kt");
@@ -687,12 +681,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("anonymousFunctionContextReceiver3.kt")
     public void testAnonymousFunctionContextReceiver3() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/anonymousFunctionContextReceiver3.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionContextReceiverExpression.kt")
-    public void testAnonymousFunctionContextReceiverExpression() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/anonymousFunctionContextReceiverExpression.kt");
     }
 
     @Test

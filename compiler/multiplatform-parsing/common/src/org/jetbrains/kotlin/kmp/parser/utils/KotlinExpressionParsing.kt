@@ -1058,7 +1058,7 @@ internal open class KotlinExpressionParsing(
     private fun parseLocalDeclaration(rollbackIfDefinitelyNotExpression: Boolean, isScriptTopLevel: Boolean): Boolean {
         val decl = mark()
         val detector = KotlinParsing.ModifierDetector()
-        kotlinParsing.parseModifierList(detector, emptySyntaxElementTypeSet())
+        kotlinParsing.parseModifierList(detector, emptySyntaxElementTypeSet(), localDeclaration = true)
 
         val declType = parseLocalDeclarationRest(detector, rollbackIfDefinitelyNotExpression, isScriptTopLevel)
 

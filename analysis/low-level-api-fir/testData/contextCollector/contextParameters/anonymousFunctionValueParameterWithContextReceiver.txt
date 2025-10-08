@@ -41,30 +41,25 @@ Tower Data Context:
                 FirValueParameterSymbol anonParam: R|kotlin/Boolean|
                 FirValueParameterSymbol anonParam2: R|kotlin/Long|
     Element 13
-        Context receivers:
-            FirValueParameterSymbol R|B|
-                Type: B
-                Label: B
-    Element 14
         Implicit receiver:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|D|
                 Type: D
 
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionValueParameterWithContextReceiver.kt
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] constructor(): R|C| {
+    public final [ResolvedTo(STATUS)] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|C| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -77,7 +72,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionValueParameterWithContextReceiver.k
     }
     context([ResolvedTo(BODY_RESOLVE)] R|A|)
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T1> [ResolvedTo(BODY_RESOLVE)] R|C|.foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] param2: R|kotlin/String|): R|kotlin/Unit| {
-        context([ResolvedTo(BODY_RESOLVE)] R|B|) [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|D|.<anonymous>([ResolvedTo(BODY_RESOLVE)] anonParam: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] anonParam2: R|kotlin/Long|): R|kotlin/Unit| <inline=NoInline>  {
+        <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(Q|B|)
+        [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|D|.<anonymous>([ResolvedTo(BODY_RESOLVE)] anonParam: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] anonParam2: R|kotlin/Long|): R|kotlin/Unit| <inline=NoInline>  {
         }
 
     }

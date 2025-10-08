@@ -4,8 +4,6 @@ KtFile: parsingWithLocalDeclarations.kt
   PsiComment(EOL_COMMENT)('// LANGUAGE: +ContextParameters')
   PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// ISSUE: KT-80853, KT-81521')
-  PsiWhiteSpace('\n')
-  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
   IMPORT_LIST
     IMPORT_DIRECTIVE
@@ -35,305 +33,294 @@ KtFile: parsingWithLocalDeclarations.kt
       PsiWhiteSpace('\n    ')
       PsiComment(EOL_COMMENT)('// Class reference')
       PsiWhiteSpace('\n\n    ')
-      CLASS
-        MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
-            PsiElement(context)('context')
-            PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('String')
-            PsiErrorElement:Expecting comma or ')'
-              <empty list>
-            PsiErrorElement:Expecting ')'
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('context')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            CLASS_LITERAL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
               PsiElement(COLONCOLON)('::')
-        PsiElement(class)('class')
-        PsiErrorElement:Name expected
+              PsiElement(class)('class')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        CLASS_BODY
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n        ')
-          PsiErrorElement:Expecting member declaration
-            PsiElement(IDENTIFIER)('contextFun')
-          PsiErrorElement:Expecting member declaration
-            PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting member declaration
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace('\n    ')
-          PsiElement(RBRACE)('}')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              BLOCK
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('contextFun')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       PsiComment(EOL_COMMENT)('// Anonymous function')
       PsiWhiteSpace('\n\n    ')
-      FUN
-        MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
-            PsiElement(context)('context')
-            PsiElement(LPAR)('(')
-            PsiErrorElement:Expecting ')'
-              <empty list>
-        PsiElement(fun)('fun')
-        VALUE_PARAMETER_LIST
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('context')
+        VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BLOCK
-          PsiElement(LBRACE)('{')
-          PsiElement(RBRACE)('}')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n        ')
-          BLOCK
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('contextFun')
-              VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
-          PsiWhiteSpace('\n    ')
-          PsiElement(RBRACE)('}')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              BLOCK
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('contextFun')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       PsiComment(EOL_COMMENT)('// Mixed with other arguments')
       PsiWhiteSpace('\n\n    ')
-      FUN
-        MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
-            PsiElement(context)('context')
-            PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
-              TYPE_REFERENCE
-                PsiErrorElement:Type expected
-                  PsiElement(INTEGER_LITERAL)('1')
-            PsiElement(COMMA)(',')
-            PsiWhiteSpace(' ')
-            CONTEXT_RECEIVER
-              TYPE_REFERENCE
-                PsiErrorElement:Type expected
-                  <empty list>
-        PsiElement(fun)('fun')
-        VALUE_PARAMETER_LIST
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('context')
+        VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BLOCK
-          PsiElement(LBRACE)('{')
-          PsiElement(RBRACE)('}')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n        ')
-          BLOCK
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('contextFun2')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-          PsiWhiteSpace('\n    ')
-          PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n\n    ')
-      FUN
-        MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
-            PsiElement(context)('context')
-            PsiElement(LPAR)('(')
-            PsiErrorElement:Expecting ')'
-              <empty list>
-        PsiElement(fun)('fun')
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BLOCK
-          PsiElement(LBRACE)('{')
-          PsiElement(RBRACE)('}')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        PsiElement(INTEGER_LITERAL)('3')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n        ')
-          BLOCK
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('contextFun3')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-          PsiWhiteSpace('\n    ')
-          PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n\n    ')
-      CLASS
-        MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
-            PsiElement(context)('context')
-            PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Int')
-            PsiErrorElement:Expecting comma or ')'
-              <empty list>
-            PsiErrorElement:Expecting ')'
-              PsiElement(COLONCOLON)('::')
-        PsiElement(class)('class')
-        PsiErrorElement:Name expected
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
           PsiElement(COMMA)(',')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        <empty list>
-      PsiWhiteSpace(' ')
-      FUN
-        PsiElement(fun)('fun')
-        VALUE_PARAMETER_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        BLOCK
-          PsiElement(LBRACE)('{')
-          PsiElement(RBRACE)('}')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n        ')
-          BLOCK
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('contextFun4')
-              VALUE_ARGUMENT_LIST
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
-          PsiWhiteSpace('\n    ')
-          PsiElement(RBRACE)('}')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              BLOCK
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('contextFun2')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('context')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('3')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              BLOCK
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('contextFun3')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('context')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            CLASS_LITERAL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+              PsiElement(COLONCOLON)('::')
+              PsiElement(class)('class')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            FUN
+              PsiElement(fun)('fun')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              BLOCK
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('contextFun4')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       PsiComment(EOL_COMMENT)('// Recursion')
       PsiWhiteSpace('\n\n    ')
-      FUN
-        MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
-            PsiElement(context)('context')
-            PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
-              TYPE_REFERENCE
-                CONTEXT_RECEIVER_LIST
-                  PsiElement(context)('context')
-                  PsiElement(LPAR)('(')
-                  PsiErrorElement:Expecting ')'
-                    <empty list>
-        PsiElement(fun)('fun')
-        PsiWhiteSpace(' ')
-        VALUE_PARAMETER_LIST
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('context')
+        VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        STRING_TEMPLATE
-          PsiElement(OPEN_QUOTE)('"')
-          LITERAL_STRING_TEMPLATE_ENTRY
-            PsiElement(REGULAR_STRING_PART)('str')
-          PsiElement(CLOSING_QUOTE)('"')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace(' ')
-          BLOCK
+          VALUE_ARGUMENT
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('contextFun')
+                PsiElement(IDENTIFIER)('context')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  FUN
+                    PsiElement(fun)('fun')
+                    PsiWhiteSpace(' ')
+                    VALUE_PARAMETER_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    PsiElement(EQ)('=')
+                    PsiWhiteSpace(' ')
+                    STRING_TEMPLATE
+                      PsiElement(OPEN_QUOTE)('"')
+                      LITERAL_STRING_TEMPLATE_ENTRY
+                        PsiElement(REGULAR_STRING_PART)('str')
+                      PsiElement(CLOSING_QUOTE)('"')
                 PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(RBRACE)('}')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace(' ')
-          BLOCK
-            CALL_EXPRESSION
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('contextFun')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n\n    ')
-      CLASS
-        MODIFIER_LIST
-          CONTEXT_RECEIVER_LIST
-            PsiElement(context)('context')
-            PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
-              TYPE_REFERENCE
-                CONTEXT_RECEIVER_LIST
-                  PsiElement(context)('context')
-                  PsiElement(LPAR)('(')
-                  CONTEXT_RECEIVER
-                    TYPE_REFERENCE
-                      USER_TYPE
+              PsiWhiteSpace(' ')
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace(' ')
+                    BLOCK
+                      CALL_EXPRESSION
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('Int')
-                  PsiErrorElement:Expecting comma or ')'
-                    <empty list>
-                  PsiErrorElement:Expecting ')'
-                    PsiElement(COLONCOLON)('::')
-                PsiErrorElement:Type expected
-                  <empty list>
-        PsiElement(class)('class')
-        PsiErrorElement:Name expected
+                          PsiElement(IDENTIFIER)('contextFun')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    PsiElement(RBRACE)('}')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        CLASS_BODY
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting member declaration
-            PsiElement(IDENTIFIER)('contextFun')
-          PsiErrorElement:Expecting member declaration
-            PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting member declaration
-            PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(RBRACE)('}')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace(' ')
-          BLOCK
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace(' ')
+              BLOCK
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('contextFun')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('context')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('contextFun')
+                PsiElement(IDENTIFIER)('context')
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  CLASS_LITERAL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
+                    PsiElement(COLONCOLON)('::')
+                    PsiElement(class)('class')
                 PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          PsiElement(RBRACE)('}')
+              PsiWhiteSpace(' ')
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace(' ')
+                    BLOCK
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('contextFun')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace(' ')
+              BLOCK
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('contextFun')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

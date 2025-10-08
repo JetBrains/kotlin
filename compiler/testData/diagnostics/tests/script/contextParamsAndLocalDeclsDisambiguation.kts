@@ -7,11 +7,11 @@ class C
 context(x: Any)
 fun contextFun() {}
 
-context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>C<!><!SYNTAX!><!SYNTAX!><!>::<!>class<!SYNTAX!>)<!> {
-    <!SYNTAX!>contextFun<!><!SYNTAX!>(<!><!SYNTAX!>)<!>
+context(C::class) {
+    contextFun()
 }
 
-context(<!SYNTAX!><!>fun() {}<!SYNTAX!>)<!> {
+context(fun() {}) {
     contextFun()
 }
 
