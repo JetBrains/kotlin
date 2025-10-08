@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
+import kotlin.script.experimental.jvm.impl.toDependencies
 
 // WARNING: not thread safe, assuming external synchronization
 
@@ -79,10 +80,8 @@ open class GenericReplCompiler(
                 Pair(compilerState.lastLineState!!.psiFile, compilerState.lastLineState!!.errorHolder)
             }
 
-            @Suppress("DEPRECATION")
-            val newDependencies =
-                ScriptConfigurationsProvider.getInstance(checker.environment.project)?.getScriptConfiguration(psiFile)
-                    ?.legacyDependencies
+            val wrapper = ScriptConfigurationsProvider.getInstance(checker.environment.project)?.getScriptConfiguration(psiFile)
+            val newDependencies = wrapper?.configuration?.toDependencies(wrapper.dependenciesClassPath)
             var classpathAddendum: List<File>? = null
             if (compilerState.lastDependencies != newDependencies) {
                 compilerState.lastDependencies = newDependencies

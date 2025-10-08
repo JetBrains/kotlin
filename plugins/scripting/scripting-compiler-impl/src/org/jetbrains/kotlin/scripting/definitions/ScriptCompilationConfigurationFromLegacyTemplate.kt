@@ -21,13 +21,12 @@ import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.api.compilationConfiguration
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
+import kotlin.script.experimental.impl.fromLegacyTemplate
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
@@ -36,11 +35,8 @@ import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.experimental.location.ScriptExpectedLocations
-import kotlin.script.experimental.util.PropertiesCollection
 import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateDefinition
-import kotlin.text.get
-import kotlin.text.orEmpty
 
 @Deprecated("Use 'ScriptDefinition' instead", level = DeprecationLevel.WARNING)
 class ScriptCompilationConfigurationFromLegacyTemplate(
@@ -100,6 +96,7 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         }?.getAdditionalCompilerArguments(
             hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty()
         )
+        fromLegacyTemplate(true)
         platform("JVM")
         hostConfiguration(hostConfiguration)
         displayName(template.simpleName!!)
@@ -113,9 +110,6 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         if (dependencyResolver != DependenciesResolver.NoDependencies) {
             refineConfiguration {
                 onAnnotations(acceptedAnnotations) {
-                    refineWithResolver(dependencyResolver, it)
-                }
-                beforeCompiling {
                     refineWithResolver(dependencyResolver, it)
                 }
             }
@@ -171,15 +165,7 @@ private fun refineWithResolver(
     val environment = context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
         it[ScriptingHostConfiguration.getEnvironment]?.invoke()
     }.orEmpty()
-
-    val resolveResult: DependenciesResolver.ResolveResult = if (dependencyResolver is AsyncDependenciesResolver) {
-        @Suppress("DEPRECATION_ERROR")
-        internalScriptingRunSuspend {
-            dependencyResolver.resolveAsync(ScriptContentsFromRefinementContext(context), environment)
-        }
-    } else {
-        dependencyResolver.resolve(ScriptContentsFromRefinementContext(context), environment)
-    }
+    val resolveResult = dependencyResolver.resolve(ScriptContentsFromRefinementContext(context), environment)
 
     val reports = resolveResult.reports.map {
         ScriptDiagnostic(
@@ -234,11 +220,3 @@ class AsyncDependencyResolverWrapper(
         scriptContents: ScriptContents, environment: Environment,
     ): DependenciesResolver.ResolveResult = delegate.resolveAsync(scriptContents, environment)
 }
-
-val ScriptCompilationConfigurationKeys.annotationsForSamWithReceivers by PropertiesCollection.key<List<KotlinType>>()
-
-val ScriptCompilationConfigurationKeys.platform by PropertiesCollection.key<String>()
-
-val ScriptCompilationConfigurationKeys.asyncDependenciesResolver by PropertiesCollection.key<Boolean>()
-
-val ScriptingHostConfigurationKeys.getEnvironment by PropertiesCollection.key<() -> Environment?>()

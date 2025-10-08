@@ -12,3 +12,8 @@ import kotlin.script.experimental.util.PropertiesCollection
  * Set by the compiler: the language version used for script compilation
  */
 val ScriptCompilationConfigurationKeys._languageVersion by PropertiesCollection.key<String>()
+
+/**
+ * Internal for compatibility
+ */
+val ScriptCompilationConfigurationKeys.fromLegacyTemplate by PropertiesCollection.key(false)

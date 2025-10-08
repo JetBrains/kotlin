@@ -11,6 +11,7 @@ import java.io.File
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.impl.fromLegacyTemplate
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptCompilationConfigurationKeys
@@ -297,15 +298,17 @@ fun ScriptCompilationConfiguration.refineOnAnnotations(
     script: SourceCode,
     collectedData: ScriptCollectedData
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val foundAnnotationNames = collectedData[ScriptCollectedData.foundAnnotations]?.mapTo(HashSet()) { it.annotationClass.java.name }
-    if (foundAnnotationNames.isNullOrEmpty()) return this.asSuccess()
+    val foundAnnotationNames =
+        collectedData[ScriptCollectedData.foundAnnotations]?.mapTo(HashSet()) { it.annotationClass.java.name }.orEmpty()
+    val isFromLegacy = this[ScriptCompilationConfiguration.fromLegacyTemplate] ?: false
+    if (foundAnnotationNames.isEmpty() && !isFromLegacy) return this.asSuccess()
 
     val thisResult: ResultWithDiagnostics<ScriptCompilationConfiguration> = this.asSuccess()
     return this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
         ?.fold(thisResult) { config, (annotations, handler) ->
             config.onSuccess {
                 // checking that the collected data contains expected annotations
-                if (annotations.none { foundAnnotationNames.contains(it.typeName) }) it.asSuccess()
+                if (annotations.none { foundAnnotationNames.contains(it.typeName) } && !isFromLegacy) it.asSuccess()
                 else handler.invoke(ScriptConfigurationRefinementContext(script, it, collectedData))
             }
         } ?: thisResult
