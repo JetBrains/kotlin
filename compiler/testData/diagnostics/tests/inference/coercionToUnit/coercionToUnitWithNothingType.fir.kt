@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
@@ -46,7 +47,7 @@ fun test(i: Inv<Nothing>, iUnit: Inv<Unit>) {
         run<dynamic> { "" }
     }
 
-    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>iUnit is String<!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_WARNING!>iUnit is String<!>) {
         launch {
             run(A.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>flexible<!>(iUnit)) { 42 }
         }

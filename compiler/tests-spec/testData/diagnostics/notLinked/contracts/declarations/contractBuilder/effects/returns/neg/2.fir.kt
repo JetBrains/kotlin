@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
@@ -37,7 +38,7 @@ fun <T> T?.case_3(): Boolean {
 // TESTCASE NUMBER: 4
 inline fun <reified T : Number> T.case_4(): Boolean {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies (<!IMPOSSIBLE_IS_CHECK_ERROR!>this is Int<!>)<!>
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies (<!IMPOSSIBLE_IS_CHECK_WARNING!>this is Int<!>)<!>
     }
     return this is Int
 }

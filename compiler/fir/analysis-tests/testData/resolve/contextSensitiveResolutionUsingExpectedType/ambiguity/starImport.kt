@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
@@ -41,14 +42,14 @@ import bar.*
 
 fun sealed(s: Sealed): Int = when (s) {
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
     C -> 3
     is D -> 4
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>CompanionA<!> -> 6
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_TYPES!>CompanionB<!> -> 7
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>E<!><!> -> 8
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>F<!><!> -> 9
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>E<!><!> -> 8
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>F<!><!> -> 9
     else -> 100
 }
 
@@ -65,12 +66,12 @@ fun sealedExplicit(s: Sealed): Int = when (s) {
 
 fun topLevelExplicit(s: Sealed): Int = when (s) {
     foo.A -> 1
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.B<!> -> 2
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is kotlin.String<!> -> 5
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is foo.B<!> -> 2
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is kotlin.String<!> -> 5
     foo.CompanionA -> 6
     <!INCOMPATIBLE_TYPES!>foo.CompanionB<!> -> 7
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.E<!> -> 8
-    <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.F<!> -> 9
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is foo.E<!> -> 8
+    <!IMPOSSIBLE_IS_CHECK_WARNING!>is foo.F<!> -> 9
     else -> 6
 }
 
