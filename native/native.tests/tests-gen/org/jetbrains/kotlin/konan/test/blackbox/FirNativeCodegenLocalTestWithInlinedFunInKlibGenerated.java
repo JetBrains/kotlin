@@ -471,6 +471,12 @@ public class FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated extends Abst
       }
 
       @Test
+      @TestMetadata("functionWithAsmAttributeWithSpecialChars.kt")
+      public void testFunctionWithAsmAttributeWithSpecialChars() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/functionWithAsmAttributeWithSpecialChars.kt");
+      }
+
+      @Test
       @TestMetadata("sameFunctionWithDifferentSignatures.kt")
       public void testSameFunctionWithDifferentSignatures() {
         runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/sameFunctionWithDifferentSignatures.kt");

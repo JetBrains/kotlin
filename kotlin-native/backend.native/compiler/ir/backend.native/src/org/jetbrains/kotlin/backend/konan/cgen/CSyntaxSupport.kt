@@ -64,3 +64,42 @@ private class FunctionCType(
         append(')')
     })
 }
+
+/**
+ * The implementation is conservative (escapes more than necessary) but acts within the C standard.
+ */
+internal fun quoteAsCStringLiteral(str: String): String = buildString {
+    append('"')
+    // Encoding the string to UTF-8 is arguable (e.g. what if the target platform uses another encoding?),
+    // but we anyway encode the generated C stubs to UTF-8 when writing them to file in CStubsManager.
+    // So here we just do the same for fragments of them but earlier.
+    for (byte in str.toByteArray(Charsets.UTF_8)) {
+        when (byte) {
+            in asciiCharsAllowedInCStringLiterals -> {
+                // It is an allowed ASCII char and therefore can be rendered as is.
+                append(byte.toInt().toChar())
+            }
+            else -> {
+                // Some potentially arbitrary 8-bit value.
+                // Encode it as a three-digit octal escape sequence, e.g. `$` -> `\044`.
+                val threeOctalDigits = byte.toUByte().toString(radix = 8).padStart(length = 3, padChar = '0')
+                append("\\$threeOctalDigits")
+                // We could potentially use hex escape sequences (e.g. `\x24`). But they are tricky:
+                // we can't use a character that happens to be a hex digit right after the sequence,
+                // because `\x24f` is parsed as a single escape sequence and fails the compilation being out of range.
+            }
+        }
+    }
+    append('"')
+}
+
+private val asciiCharsAllowedInCStringLiterals: Set<Byte> = buildSet {
+    addAll('A'..'Z')
+    addAll('a'..'z')
+    addAll('0'..'9')
+    addAll("!#%&'()*+,-./:;<=>?[]^_{|}~ ".toList())
+}.mapTo(HashSet()) {
+    val code = it.code
+    check(code in 0..<128) { "Allowed char is not ASCII: $it" }
+    code.toByte()
+}
