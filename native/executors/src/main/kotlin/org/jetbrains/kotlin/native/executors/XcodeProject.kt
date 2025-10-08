@@ -5,10 +5,39 @@
 
 package org.jetbrains.kotlin.native.executors
 
-import java.nio.file.FileSystems
-import java.nio.file.FileVisitResult
+import java.io.File
+import java.net.JarURLConnection
+import java.net.URL
 import java.nio.file.Path
 import kotlin.io.path.*
+import kotlin.streams.asSequence
+
+private fun URL.copyRecursively(to: Path) {
+    // Cannot use ZipFileSystem, because it's impossible to make it read-only w.r.t. SecurityManager.
+    when (protocol) {
+        "jar" -> {
+            val connection = openConnection() as JarURLConnection
+            val rootPath = Path(connection.entryName)
+            connection.jarFile.use { jarFile ->
+                jarFile.stream().asSequence()
+                    .filter { !it.isDirectory && it.name.startsWith(connection.entryName) }
+                    .forEach { entry ->
+                        val entryRelativePath = Path(entry.name).relativeTo(rootPath)
+                        val targetFile = to.resolve(entryRelativePath)
+                        targetFile.createParentDirectories()
+                        jarFile.getInputStream(entry).use { input ->
+                            targetFile.outputStream().use { output ->
+                                input.copyTo(output)
+                            }
+                        }
+                    }
+            }
+        }
+        else -> {
+            File(toURI()).copyRecursively(to.toFile())
+        }
+    }
+}
 
 /**
  * Represents an Xcode project.
@@ -24,7 +53,7 @@ internal class XcodeProject(private val workDir: Path) {
     /**
      * Path to the project root
      */
-    val path: Path = workDir.resolve(PROJECT_RESOURCE_PATH.removePrefix("/")).resolve(PROJECT_NAME)
+    val path: Path = workDir.resolve(PROJECT_NAME)
 
     /**
      * Represents the derived data directory for a Xcode project.
@@ -81,27 +110,7 @@ internal class XcodeProject(private val workDir: Path) {
                 }
                 it.createDirectory()
             }
-
-            FileSystems.newFileSystem(url.toURI(), emptyMap<String, Any>()).use {
-                val fsRootPath = it.rootDirectories.singleOrNull()?.root ?: error("Root of the file system attached to $url not found")
-
-                fsRootPath.resolve(PROJECT_RESOURCE_PATH).visitFileTree {
-                    onPreVisitDirectory { directory, _ ->
-                        val destination = projectPath.resolveRelativeToRoot(directory)
-                        if (!destination.exists()) {
-                            destination.createDirectory()
-                        }
-
-                        FileVisitResult.CONTINUE
-                    }
-                    onVisitFile { file, _ ->
-                        val destination = projectPath.resolveRelativeToRoot(file)
-                        file.copyTo(destination)
-
-                        FileVisitResult.CONTINUE
-                    }
-                }
-            }
+            url.copyRecursively(projectPath)
         }
     }
 
@@ -150,10 +159,6 @@ internal class XcodeProject(private val workDir: Path) {
         }
     }
 
-    /**
-     * Resolves a given path relative to the root, which may be different between these two paths.
-     */
-    private fun Path.resolveRelativeToRoot(path: Path) = this.resolve(path.root.relativize(path).pathString)
 
     /**
      * Performs project code signing.
