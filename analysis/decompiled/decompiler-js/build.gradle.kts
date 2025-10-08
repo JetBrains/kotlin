@@ -1,18 +1,11 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("project-tests-convention")
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
-}
-
-projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
-        workingDir = rootDir
-    }
+    "test" { none() }
 }
 
 dependencies {
@@ -24,9 +17,6 @@ dependencies {
     implementation(project(":js:js.serializer"))
 
     compileOnly(intellijCore())
-
-    testImplementation(testFixtures(project(":compiler:tests-common")))
-    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 }
 
 testsJar()
