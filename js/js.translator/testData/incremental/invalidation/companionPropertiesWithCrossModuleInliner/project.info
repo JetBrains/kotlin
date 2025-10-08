@@ -1,9 +1,3 @@
-IGNORE_BACKEND: WASM
-// ^^^KT-80698
-// Mismatched file stats for module [kotlin_lib2] at step 2
-// Expected :[updated imports=[l2int.kt, l2string.kt]]
-// Actual   :[updated imports=[l2.kt, l2int.kt, l2string.kt]]
-
 MODULES: lib1, lib2, main
 
 STEP 0:
