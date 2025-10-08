@@ -9,8 +9,10 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.invocation.Gradle
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.statistics.plugins.ObservablePlugins
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.utils.*
@@ -34,7 +36,7 @@ internal fun collectGeneralConfigurationTimeMetrics(
     val configurationTimeMetrics = MetricContainer()
 
     val statisticOverhead = measureTimeMillis {
-        configurationTimeMetrics.put(StringMetrics.KOTLIN_COMPILER_VERSION, pluginVersion)
+        configurationTimeMetrics.put(StringMetrics.KOTLIN_GRADLE_PLUGIN_VERSION, pluginVersion)
         buildReportOutputs.forEach {
             when (it) {
                 BuildReportType.BUILD_SCAN -> configurationTimeMetrics.put(BooleanMetrics.BUILD_SCAN_BUILD_REPORT, true)
@@ -130,6 +132,16 @@ internal fun collectProjectConfigurationTimeMetrics(
         configurationTimeMetrics.put(
             BooleanMetrics.KOTLIN_KTS_USED,
             project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
+        )
+
+        configurationTimeMetrics.put(
+            BooleanMetrics.KOTLIN_BTA_USED,
+            project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi.get()
+        )
+
+        configurationTimeMetrics.put(
+            StringMetrics.KOTLIN_COMPILER_VERSION,
+            project.kotlinExtensionOrNull?.compilerVersion?.orNull ?: project.getKotlinPluginVersion()
         )
 
         addTaskMetrics(project, configurationTimeMetrics)
