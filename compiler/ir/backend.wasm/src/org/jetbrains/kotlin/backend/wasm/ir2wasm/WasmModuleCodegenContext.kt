@@ -66,6 +66,10 @@ open class WasmFileCodegenContext(
         wasmFileFragment.globalClassITables.define(irClass.getReferenceKey(), wasmGlobal)
     }
 
+    fun addTableFunction(function: WasmSymbol<WasmFunction>) {
+        wasmFileFragment.tableFunctions.add(function)
+    }
+
     fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
         wasmFileFragment.gcTypes.define(irClass.getReferenceKey(), wasmType)
     }

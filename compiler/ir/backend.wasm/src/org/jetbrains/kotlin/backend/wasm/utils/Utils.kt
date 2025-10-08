@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isFunctionMarker
+import java.util.Collections
+import java.util.IdentityHashMap
 
 // Backed codegen can only handle try/catch in the canonical form.
 // The defined for Wasm backend canonical form of try/catch:
@@ -38,3 +40,10 @@ internal fun getFunctionalInterfaceSlot(iFace: IrClass): Int {
 
 internal val String.fitsLatin1
     get() = this.all { it.code in 0..255 }
+
+fun <T> identityHashSetOf(): MutableSet<T> =
+    Collections.newSetFromMap(IdentityHashMap<T, Boolean>())
+
+fun <T> identityHashSetOf(expectedMaxSize: Int): MutableSet<T> =
+    Collections.newSetFromMap(IdentityHashMap<T, Boolean>(expectedMaxSize))
+

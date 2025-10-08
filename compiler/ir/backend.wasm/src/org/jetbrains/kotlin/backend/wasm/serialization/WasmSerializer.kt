@@ -178,9 +178,22 @@ class WasmSerializer(outputStream: OutputStream) {
     private fun serializeWasmGlobal(global: WasmGlobal) =
         serializeNamedModuleField(global, listOf(global.isMutable, global.importPair == null)) {
             serializeWasmType(global.type)
-            serializeList(global.init, ::serializeWasmInstr)
             global.importPair?.let { serializeWasmImportDescriptor(it) }
+
+            if (global.isDeferred) {
+                global as? DeferredWasmGlobal ?: error("Global type ${global::class} is not supported by serialization")
+                setTag(GlobalTags.DEFERRED_VTABLE)
+                serializeList(global.initTemplate, ::serializeWasmInstr)
+            } else {
+                // if DeferredVTableWasmGlobal is already materialized, it may be converted to "normal" WasmGlobal
+                setTag(GlobalTags.NORMAL)
+                serializeList(global.init, ::serializeWasmInstr)
+            }
         }
+
+    private fun serializeWasmFunctionSymbol(sym: WasmSymbol<WasmFunction>) {
+        serializeWasmSymbolReadOnly(sym) { serializeWasmFunction(it) }
+    }
 
     private fun serializeWasmFunctionType(funcType: WasmFunctionType) =
         serializeNamedModuleField(funcType) {
@@ -301,7 +314,7 @@ class WasmSerializer(outputStream: OutputStream) {
             is WasmImmediate.ConstU8 -> withTag(ImmediateTags.CONST_U8) { b.writeUByte(i.value) }
             is WasmImmediate.DataIdx -> withTag(ImmediateTags.DATA_INDEX) { serializeWasmSymbolReadOnly(i.value) { b.writeUInt32(it.toUInt()) } }
             is WasmImmediate.ElemIdx -> withTag(ImmediateTags.ELEMENT_INDEX) { serializeWasmElement(i.value) }
-            is WasmImmediate.FuncIdx -> withTag(ImmediateTags.FUNC_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeWasmFunction(it) } }
+            is WasmImmediate.FuncIdx -> withTag(ImmediateTags.FUNC_INDEX) { serializeWasmFunctionSymbol(i.value) }
             is WasmImmediate.GcType -> withTag(ImmediateTags.GC_TYPE) { serializeWasmSymbolReadOnly(i.value) { serializeWasmTypeDeclaration(it) } }
             is WasmImmediate.GlobalIdx -> withTag(ImmediateTags.GLOBAL_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeWasmGlobal(it) } }
             is WasmImmediate.HeapType -> withTag(ImmediateTags.HEAP_TYPE) { serializeWasmHeapType(i.value) }
@@ -344,7 +357,7 @@ class WasmSerializer(outputStream: OutputStream) {
     private fun serializeWasmTableValue(value: WasmTable.Value): Unit =
         when (value) {
             is WasmTable.Value.Expression -> withTag(TableValueTags.EXPRESSION) { serializeList(value.expr, ::serializeWasmInstr) }
-            is WasmTable.Value.Function -> withTag(TableValueTags.FUNCTION) { serializeWasmSymbolReadOnly(value.function) { serializeWasmFunction(it) } }
+            is WasmTable.Value.Function -> withTag(TableValueTags.FUNCTION) { serializeWasmFunctionSymbol(value.function) }
         }
 
     private fun serializeWasmElement(element: WasmElement): Unit =
@@ -638,6 +651,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeNullable(rttiElements, ::serializeRttiElements)
             serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
             serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
+            serializeSet(tableFunctions, ::serializeWasmFunctionSymbol)
         }
 
     private fun serializeWasmStringsElements(wasmStringsElements: WasmStringsElements) {

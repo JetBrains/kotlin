@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.*
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
+import org.jetbrains.kotlin.backend.wasm.utils.identityHashSetOf
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
+import org.jetbrains.kotlin.wasm.ir.WasmTable
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 class BuiltinIdSignatures(
@@ -83,6 +85,8 @@ class WasmCompiledFileFragment(
     var rttiElements: RttiElements? = null,
     val objectInstanceFieldInitializers: MutableList<IdSignature> = mutableListOf(),
     val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
+
+    val tableFunctions: MutableSet<WasmSymbol<WasmFunction>> = identityHashSetOf(),
 ) : IrICProgramFragment()
 
 class WasmCompiledModuleFragment(
@@ -243,14 +247,24 @@ class WasmCompiledModuleFragment(
         val memories = createAndExportMemory(exports, stdlibModuleNameForImport)
         val (importedMemories, definedMemories) = memories.partition { it.importPair != null }
 
+        // Tables and elements for indirect calls (useSharedObjects mode)
+        val tables = mutableListOf<WasmTable>()
+        val elements = mutableListOf<WasmElement>()
+        val functionsTableValues = getTableFunctionValues().toList()
+        if (functionsTableValues.isNotEmpty()) {
+            val tableSize = functionsTableValues.size.toUInt()
+            val funcTable = WasmTable(elementType = WasmFuncRef, limits = WasmLimits(tableSize, tableSize))
+            tables.add(FUNCTIONS_TABLE, funcTable)
+            elements.add(WasmElement(WasmFuncRef, functionsTableValues, WasmElement.Mode.Active(funcTable, 0)))
+        }
+
         val syntheticTypes = mutableListOf<WasmTypeDeclaration>()
         createAndBindSpecialITableTypes(syntheticTypes)
-        val globals = getGlobals(syntheticTypes)
+        val globals = getGlobals(syntheticTypes, functionsTableValues)
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
 
-        val elements = mutableListOf<WasmElement>()
         createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, initializeUnit, elements, exports, globals)
 
         val tags = getTags()
@@ -276,7 +290,7 @@ class WasmCompiledModuleFragment(
             importedMemories = importedMemories,
             definedFunctions = definedFunctions,
             importedTags = importedTags,
-            tables = emptyList(),
+            tables = tables,
             memories = definedMemories,
             globals = definedGlobals,
             importedGlobals = importedGlobals,
@@ -446,13 +460,32 @@ class WasmCompiledModuleFragment(
         return recursiveGroups
     }
 
-    private fun getGlobals(additionalTypes: MutableList<WasmTypeDeclaration>) = mutableListOf<WasmGlobal>().apply {
+    private fun getGlobals(additionalTypes: MutableList<WasmTypeDeclaration>, functionsTableValues: List<WasmTable.Value.Function>) = mutableListOf<WasmGlobal>().apply {
+        materializeDeferredGlobals(functionsTableValues)
         wasmCompiledFileFragments.forEach { fragment ->
             addAll(fragment.globalFields.elements)
             addAll(fragment.globalVTables.elements)
             addAll(fragment.globalClassITables.elements.distinct())
         }
         createRttiTypeAndProcessRttiGlobals(this, additionalTypes)
+    }
+
+    private fun materializeDeferredGlobals(functionsTableValues: List<WasmTable.Value.Function>) {
+        val tableFunctionIndicesMap = functionsTableValues.mapIndexed { index, value -> value.function to index }.toMap()
+        wasmCompiledFileFragments.forEach { fragment ->
+            (fragment.globalVTables.elements + fragment.globalClassITables.elements)
+                .filter { it.isDeferred }
+                .map { it as? DeferredWasmGlobal ?: error("Unknown deferred global type: ${it::class}") }
+                .forEach { it.materialize(tableFunctionIndicesMap) }
+        }
+    }
+
+    private fun getTableFunctionValues() = linkedSetOf<WasmTable.Value.Function>().apply {
+        for (fragment in wasmCompiledFileFragments) {
+            for (tableFunction in fragment.tableFunctions) {
+                add(WasmTable.Value.Function(tableFunction))
+            }
+        }
     }
 
     private fun createAndExportMemory(exports: MutableList<WasmExport<*>>, stdlibModuleNameForImport: String?): List<WasmMemory> {

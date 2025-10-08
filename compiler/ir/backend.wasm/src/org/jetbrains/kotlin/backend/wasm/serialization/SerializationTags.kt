@@ -144,3 +144,8 @@ internal object NullableTags {
     const val NULL = 0u
     const val NOT_NULL = 1u
 }
+
+internal object GlobalTags {
+    const val NORMAL = 0u
+    const val DEFERRED_VTABLE = 1u
+}

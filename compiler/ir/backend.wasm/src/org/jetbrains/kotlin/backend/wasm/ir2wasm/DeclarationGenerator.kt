@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
@@ -46,6 +47,8 @@ class DeclarationGenerator(
 
     private val unitGetInstanceFunction: IrSimpleFunction by lazy { backendContext.findUnitGetInstanceFunction() }
     private val unitPrimaryConstructor: IrConstructor? by lazy { backendContext.irBuiltIns.unitClass.owner.primaryConstructor }
+
+    private val useSharedObjects = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
@@ -222,6 +225,15 @@ class DeclarationGenerator(
         isFinal: Boolean,
         generateSpecialITableField: Boolean,
     ): WasmStructDeclaration {
+        // currently WasmGC do not support shared fun refs, so in case of "shared" objects vtable shall store indices into Wasm shared table
+        // instead of func refs
+        fun vtableFieldType(method: VirtualMethodMetadata): WasmType =
+            if (useSharedObjects) {
+                WasmI32
+            } else {
+                WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceFunctionType(method.function.symbol)))
+            }
+
         val vtableFields = mutableListOf<WasmStructFieldDeclaration>()
         if (generateSpecialITableField) {
             val specialITableField = WasmStructFieldDeclaration(
@@ -235,7 +247,7 @@ class DeclarationGenerator(
         methods.mapTo(vtableFields) {
             WasmStructFieldDeclaration(
                 name = it.signature.name.asString(),
-                type = WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceFunctionType(it.function.symbol))),
+                type = vtableFieldType(it),
                 isMutable = false
             )
         }
@@ -317,7 +329,7 @@ class DeclarationGenerator(
             isFinal = klass.modality == Modality.FINAL,
             generateSpecialITableField = true,
         )
-        wasmFileCodegenContext.defineVTableGcType(metadata.klass.symbol, vtableStruct)
+        wasmFileCodegenContext.defineVTableGcType(symbol, vtableStruct)
 
         if (klass.isAbstractOrSealed) return
 
@@ -329,7 +341,7 @@ class DeclarationGenerator(
         val initVTableGlobal = buildWasmExpression {
             val location = SourceLocation.NoLocation("Create instance of vtable struct")
             buildSpecialITableInit(metadata, this, location)
-            metadata.virtualMethods.forEachIndexed { i, method ->
+            for (method in metadata.virtualMethods) {
                 if (method.function.modality != Modality.ABSTRACT) {
                     buildInstr(WasmOp.REF_FUNC, location, WasmImmediate.FuncIdx(wasmFileCodegenContext.referenceFunction(method.function.symbol)))
                 } else {
@@ -342,11 +354,31 @@ class DeclarationGenerator(
             }
             buildStructNew(vTableTypeReference, location)
         }
+        val global = if (useSharedObjects) {
+            // the right initializer for this mode shall set indices of table functions instead of func refs.
+            // But these indices are not known until the module link phase, so we defer the "materialization"
+            // of the init until that time and use the ref-based (incorrect for "shared" structs) initializer
+            // version as the "template" for the later modification
+            addTableFunctionsForFuncRefsOf(initVTableGlobal)
+            DeferredWasmGlobal("<classVTable>", vTableRefGcType, false, initTemplate = initVTableGlobal)
+        } else {
+            WasmGlobal("<classVTable>", vTableRefGcType, false, init = initVTableGlobal)
+        }
+
         wasmFileCodegenContext.defineGlobalVTable(
             irClass = symbol,
-            wasmGlobal = WasmGlobal("<classVTable>", vTableRefGcType, false, initVTableGlobal)
+            wasmGlobal = global
         )
     }
+
+    private fun addTableFunctionsForFuncRefsOf(initVTableOrITableGlobal: MutableList<WasmInstr>) =
+        initVTableOrITableGlobal
+            .filter { it.operator == WasmOp.REF_FUNC && it.immediates.size == 1}
+            .mapNotNull { it.immediates[0] as? WasmImmediate.FuncIdx }
+            .map { it.value }
+            .forEach {
+                wasmFileCodegenContext.addTableFunction(it)
+            }
 
     internal fun addInterfaceMethod(
         metadata: ClassMetadata,
@@ -472,12 +504,14 @@ class DeclarationGenerator(
             )
         }
 
-        val wasmClassIFaceGlobal = WasmGlobal(
-            name = "<classITable>",
-            type = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType)),
-            isMutable = false,
-            init = initITableGlobal
-        )
+        val iTablesArrRefGcType = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType))
+        val wasmClassIFaceGlobal = if (useSharedObjects) {
+            addTableFunctionsForFuncRefsOf(initITableGlobal)
+            DeferredWasmGlobal("<classITable>", iTablesArrRefGcType, false, initTemplate = initITableGlobal)
+        } else {
+            WasmGlobal("<classITable>", iTablesArrRefGcType, false, init = initITableGlobal)
+        }
+
         wasmFileCodegenContext.defineGlobalClassITable(klass.symbol, wasmClassIFaceGlobal)
     }
 

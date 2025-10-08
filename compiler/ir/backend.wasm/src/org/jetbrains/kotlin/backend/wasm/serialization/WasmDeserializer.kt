@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.serialization
 
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.ReferencableElements
+import org.jetbrains.kotlin.backend.wasm.utils.identityHashSetOf
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -89,9 +90,20 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         deserializeNamedModuleField { name, flags ->
             val type = deserializeType()
             val isMutable = flags.consume()
-            val init = deserializeList(::deserializeInstr)
             val importPair = runIf(!flags.consume(), ::deserializeImportDescriptor)
-            WasmGlobal(name, type, isMutable, init, importPair)
+            withTag { tag ->
+                when (tag) {
+                    GlobalTags.NORMAL -> {
+                        val init = deserializeList(::deserializeInstr)
+                        WasmGlobal(name, type, isMutable, init, importPair)
+                    }
+                    GlobalTags.DEFERRED_VTABLE -> {
+                        val initTemplate = deserializeList(::deserializeInstr)
+                        DeferredWasmGlobal(name, type, isMutable, initTemplate)
+                    }
+                    else -> tagError(tag)
+                }
+            }
         }
 
     private fun deserializeFunctionType() =
@@ -250,7 +262,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 ImmediateTags.CONST_U8 -> WasmImmediate.ConstU8(b.readUByte())
                 ImmediateTags.DATA_INDEX -> WasmImmediate.DataIdx(deserializeSymbol(::deserializeInt))
                 ImmediateTags.ELEMENT_INDEX -> WasmImmediate.ElemIdx(deserializeElement())
-                ImmediateTags.FUNC_INDEX -> WasmImmediate.FuncIdx(deserializeSymbol(::deserializeFunction))
+                ImmediateTags.FUNC_INDEX -> WasmImmediate.FuncIdx(deserializeFunctionSymbol())
                 ImmediateTags.GC_TYPE -> WasmImmediate.GcType(deserializeSymbol(::deserializeTypeDeclaration))
                 ImmediateTags.GLOBAL_INDEX -> WasmImmediate.GlobalIdx(deserializeSymbol(::deserializeGlobal))
                 ImmediateTags.HEAP_TYPE -> WasmImmediate.HeapType(deserializeHeapType())
@@ -298,7 +310,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         withTag { tag ->
             when (tag) {
                 TableValueTags.EXPRESSION -> WasmTable.Value.Expression(deserializeList(::deserializeInstr))
-                TableValueTags.FUNCTION -> WasmTable.Value.Function(deserializeSymbol(::deserializeFunction))
+                TableValueTags.FUNCTION -> WasmTable.Value.Function(deserializeFunctionSymbol())
                 else -> tagError(tag)
             }
         }
@@ -371,6 +383,15 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private inline fun <T> deserializeSet(itemDeserializeFunc: () -> T): LinkedHashSet<T> {
         val size = deserializeInt()
         val set = newLinkedHashSetWithExpectedSize<T>(size)
+        repeat(size) {
+            set.add(itemDeserializeFunc())
+        }
+        return set
+    }
+
+    private inline fun <T> deserializeIdentityHashSet(itemDeserializeFunc: () -> T): MutableSet<T> {
+        val size = deserializeInt()
+        val set = identityHashSetOf<T>(size)
         repeat(size) {
             set.add(itemDeserializeFunc())
         }
@@ -589,6 +610,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             }
         }
 
+    private fun deserializeFunctionSymbol(): WasmSymbol<WasmFunction> = deserializeSymbol(::deserializeFunction)
+
     private fun deserializeCompiledFileFragment() = WasmCompiledFileFragment(
         fragmentTag = deserializeNullable(::deserializeString),
         functions = deserializeFunctions(),
@@ -615,6 +638,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         rttiElements = deserializeRttiElements(),
         objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
         nonConstantFieldInitializers = deserializeList(::deserializeIdSignature),
+        tableFunctions = deserializeIdentityHashSet(::deserializeFunctionSymbol),
     )
 
     private fun deserializeFunctions() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
