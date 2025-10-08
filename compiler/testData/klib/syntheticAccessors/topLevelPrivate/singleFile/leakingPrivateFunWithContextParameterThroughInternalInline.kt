@@ -1,4 +1,3 @@
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, WASM
 // LANGUAGE: +ContextParameters
 class Scope {
     val ok = "OK"
