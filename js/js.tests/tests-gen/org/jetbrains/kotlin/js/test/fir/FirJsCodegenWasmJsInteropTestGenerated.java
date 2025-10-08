@@ -248,6 +248,12 @@ public class FirJsCodegenWasmJsInteropTestGenerated extends AbstractFirJsCodegen
   }
 
   @Test
+  @TestMetadata("jsDelayedRuntimeQualifierOnDeclaration.kt")
+  public void testJsDelayedRuntimeQualifierOnDeclaration() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsDelayedRuntimeQualifierOnDeclaration.kt");
+  }
+
+  @Test
   @TestMetadata("jsException.kt")
   public void testJsException() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsException.kt");

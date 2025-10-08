@@ -444,11 +444,24 @@ public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeS
     public void testAllFilesPresentInJs_export_default() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js_export_default"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
+<<<<<<< HEAD
 
     @Test
     @TestMetadata("js_export_default.kt")
     public void testJs_export_default() {
       runTest("js/js.translator/testData/typescript-export/js/js_export_default/js_export_default.kt");
+=======
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/js_export_default-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("es6")
+  public class Js_export_default_in_exported_file {
+    @Test
+    public void testAllFilesPresentInJs_export_default_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js_export_default-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+>>>>>>> e09279d9dddb ([K/Wasm] Add lazy initialization test for per-declaration @JsQualifier)
     }
   }
 
