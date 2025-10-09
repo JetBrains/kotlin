@@ -242,14 +242,12 @@ fun compileWasm(
             "./$baseFileName.wasm",
             jsModuleAndQualifierReferences,
             useJsTag,
+            baseFileName,
         )
         jsWrapper = generateEsmExportsWrapper(
-            jsModuleImports,
             "./$baseFileName.uninstantiated.mjs",
-            jsModuleAndQualifierReferences,
             linkedModule.exports,
             useDebuggerCustomFormatters,
-            baseFileName,
         )
         jsBuiltinsPolyfillsWrapper = wasmCompiledFileFragments.flatMap { fragment ->
             fragment.jsBuiltinsPolyfills.values.toList()
@@ -308,6 +306,7 @@ fun generateAsyncJsWrapper(
     wasmFilePath: String,
     jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>,
     useJsTag: Boolean,
+    baseFileName: String,
 ): String {
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
@@ -323,6 +322,16 @@ fun generateAsyncJsWrapper(
             val moduleSpecifier = it.toJsStringLiteral()
             "        $moduleSpecifier: imports[$moduleSpecifier],\n"
         }
+
+    val allModuleImports = jsModuleImports + jsModuleAndQualifierReferences.mapNotNull { it.module }
+    val importModuleLoaders = allModuleImports.joinToString("\n") {
+        val moduleSpecifier = it.toJsStringLiteral()
+        buildString {
+            append("    imports[$moduleSpecifier] = imports[$moduleSpecifier] ?? await import(")
+            append(if (it.contains("wasm:")) "\'./${baseFileName}.js-builtins.mjs\'" else moduleSpecifier)
+            append(");")
+        }
+    }
 
     val dependenciesImports = dependenciesModules
         .joinToString("") {
@@ -376,6 +385,9 @@ export async function instantiate(imports={}, runInitializer=true) {
         return ifNotCached;
     }
 
+$dependenciesLoaders
+$importModuleLoaders
+
 $referencesToQualifiedAndImportedDeclarations
 
     ${
@@ -409,8 +421,6 @@ $jsCodeBodyIndented
     }
 
     const wasmFilePath = $pathJsStringLiteral;
-
-$dependenciesLoaders
 
     const importObject = {
         js_code,
@@ -479,59 +489,16 @@ For more information, see https://kotl.in/wasm-help
 }
 
 fun generateEsmExportsWrapper(
-    jsModuleImports: Set<String>,
     asyncWrapperFileName: String,
-    jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>,
     exports: List<WasmExport<*>>,
     useCustomFormatters: Boolean,
-    baseFileName: String,
 ): String {
-    val importedModules = jsModuleImports
-        .map {
-            val moduleSpecifier = it.toJsStringLiteral().toString()
-            val importVariableString = JsModuleAndQualifierReference.encode(it)
-            moduleSpecifier to importVariableString
-        }
-
-    val referencesToImportedDeclarations = jsModuleAndQualifierReferences
-        .filter { it.module != null }
-        .map {
-            val module = it.module!!
-            val stringLiteral = module.toJsStringLiteral().toString()
-            stringLiteral to if (it.qualifier != null) {
-                it.importVariableName
-            } else {
-                it.jsReference
-            }
-        }
-
-    val allModules = (importedModules + referencesToImportedDeclarations)
-        .distinctBy {
-            it.first
-        }.sortedBy { it.first }
-
-    val importsImportedSection = allModules.joinToString("\n") {
-        buildString {
-            append("import * as ")
-            append(it.second)
-            append(" from ")
-            append(if (it.first.contains("wasm:")) "\'./${baseFileName}.js-builtins.mjs\'" else it.first)
-            append(";")
-        }
-    }
-
-    val imports = allModules.joinToString(",\n") {
-        "    ${it.first}: ${it.second}"
-    }
-
     /*language=js */
     return """
-$importsImportedSection
 import { instantiate } from ${asyncWrapperFileName.toJsStringLiteral()};
 ${if (useCustomFormatters) "import \"./custom-formatters.js\"" else ""}
 
 const exports = (await instantiate({
-$imports
 })).exports;
 ${generateExports(exports)}
 """
