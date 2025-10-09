@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriFileIdToPathDataDeserializatio
 import org.jetbrains.kotlin.buildtools.api.cri.CriLookupDataDeserializationOperation
 import org.jetbrains.kotlin.buildtools.api.cri.CriSubtypeDataDeserializationOperation
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
-import org.jetbrains.kotlin.buildtools.cri.internal.CriDataDeserializerImpl
 
 internal class CriToolchainImpl() : CriToolchain {
     private val deserializer: CriDataDeserializerImpl = CriDataDeserializerImpl()

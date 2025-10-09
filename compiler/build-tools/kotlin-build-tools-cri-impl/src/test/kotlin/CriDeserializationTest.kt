@@ -2,10 +2,10 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import kotlinx.serialization.protobuf.schema.ProtoBufSchemaGenerator
-import org.jetbrains.kotlin.buildtools.cri.internal.CriDataDeserializerImpl
-import org.jetbrains.kotlin.buildtools.cri.internal.FileIdToPathEntryImpl
-import org.jetbrains.kotlin.buildtools.cri.internal.LookupEntryImpl
-import org.jetbrains.kotlin.buildtools.cri.internal.SubtypeEntryImpl
+import org.jetbrains.kotlin.buildtools.internal.cri.CriDataDeserializerImpl
+import org.jetbrains.kotlin.buildtools.internal.cri.FileIdToPathEntryImpl
+import org.jetbrains.kotlin.buildtools.internal.cri.LookupEntryImpl
+import org.jetbrains.kotlin.buildtools.internal.cri.SubtypeEntryImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -47,19 +47,19 @@ class CriDeserializationTest {
             syntax = "proto2";
 
 
-            // serial name 'org.jetbrains.kotlin.buildtools.cri.internal.LookupEntryImpl'
+            // serial name 'org.jetbrains.kotlin.buildtools.internal.cri.LookupEntryImpl'
             message LookupEntryImpl {
               optional int64 key = 1;
               repeated int32 fileIds = 2;
             }
 
-            // serial name 'org.jetbrains.kotlin.buildtools.cri.internal.FileIdToPathEntryImpl'
+            // serial name 'org.jetbrains.kotlin.buildtools.internal.cri.FileIdToPathEntryImpl'
             message FileIdToPathEntryImpl {
               optional int32 fileId = 1;
               optional string path = 2;
             }
 
-            // serial name 'org.jetbrains.kotlin.buildtools.cri.internal.SubtypeEntryImpl'
+            // serial name 'org.jetbrains.kotlin.buildtools.internal.cri.SubtypeEntryImpl'
             message SubtypeEntryImpl {
               optional string className = 1;
               repeated string subtypes = 2;
