@@ -105,11 +105,6 @@ class WasmSymbols(
     val voidClass = ClassIds.Void.classSymbol()
     val voidType by lazy { voidClass.defaultType }
 
-    val uByteType by lazy { StandardClassIds.UByte.classSymbol().defaultType }
-    val uShortType by lazy { StandardClassIds.UShort.classSymbol().defaultType }
-    val uIntType by lazy { StandardClassIds.UInt.classSymbol().defaultType }
-    val uLongType by lazy { StandardClassIds.ULong.classSymbol().defaultType }
-
     private val consumeAnyIntoVoid = CallableIds.consumeAnyIntoVoid.functionSymbol()
 
     private val consumePrimitiveIntoVoid = mapOf(
@@ -131,13 +126,13 @@ class WasmSymbols(
             irBuiltIns.booleanType to CallableIds.wasm_i32_eq.functionSymbol(),
             irBuiltIns.byteType to CallableIds.wasm_i32_eq.functionSymbol(),
             irBuiltIns.shortType to CallableIds.wasm_i32_eq.functionSymbol(),
-            uByteType to CallableIds.wasm_i32_eq.functionSymbol(),
-            uShortType to CallableIds.wasm_i32_eq.functionSymbol(),
+            irBuiltIns.ubyteType to CallableIds.wasm_i32_eq.functionSymbol(),
+            irBuiltIns.ushortType to CallableIds.wasm_i32_eq.functionSymbol(),
             irBuiltIns.charType to CallableIds.wasm_i32_eq.functionSymbol(),
             irBuiltIns.intType to CallableIds.wasm_i32_eq.functionSymbol(),
-            uIntType to CallableIds.wasm_i32_eq.functionSymbol(),
+            irBuiltIns.uintType to CallableIds.wasm_i32_eq.functionSymbol(),
             irBuiltIns.longType to CallableIds.wasm_i64_eq.functionSymbol(),
-            uLongType to CallableIds.wasm_i64_eq.functionSymbol()
+            irBuiltIns.ulongType to CallableIds.wasm_i64_eq.functionSymbol()
         )
 
     val floatEqualityFunctions = mapOf(
