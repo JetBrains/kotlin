@@ -364,8 +364,6 @@ class JsSymbols(
     val jsEnsureNonNull = CallableIds.ensureNotNull.functionSymbol()
 
     // Arrays:
-    val primitiveArrays get() = irBuiltIns.primitiveArraysToPrimitiveTypes
-
     val jsArrayLength = CallableIds.jsArrayLength.functionSymbol()
     val jsArrayGet = CallableIds.jsArrayGet.functionSymbol()
     val jsArraySet = CallableIds.jsArraySet.functionSymbol()

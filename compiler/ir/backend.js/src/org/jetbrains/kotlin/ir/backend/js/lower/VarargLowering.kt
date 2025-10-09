@@ -93,7 +93,7 @@ private class VarargTransformer(
                 context.irBuiltIns.anyType
             )
 
-        val concatFun = if (arrayInfo.primitiveArrayType.classifierOrNull in context.symbols.primitiveArrays.keys) {
+        val concatFun = if (arrayInfo.primitiveArrayType.classifierOrNull in context.irBuiltIns.primitiveArraysToPrimitiveTypes.keys) {
             context.symbols.primitiveArrayConcat
         } else {
             context.symbols.arrayConcat
@@ -175,7 +175,7 @@ private class VarargTransformer(
 private fun List<IrExpression>.toArrayLiteral(context: JsIrBackendContext, type: IrType, varargElementType: IrType): IrExpression {
 
     // TODO: Use symbols when builtins symbol table is fixes
-    val primitiveType = context.symbols.primitiveArrays.mapKeys { it.key }[type.classifierOrNull]
+    val primitiveType = context.irBuiltIns.primitiveArraysToPrimitiveTypes.mapKeys { it.key }[type.classifierOrNull]
 
     val intrinsic =
         if (primitiveType != null)
