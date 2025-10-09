@@ -228,14 +228,14 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     val primitivesToExternRefAdapters: Map<IrType, InteropTypeAdapter> by lazy {
         mapOf(
             builtIns.byteType to adapters.kotlinByteToExternRefAdapter,
-            symbols.uByteType to adapters.kotlinUByteToJsNumber,
+            builtIns.ubyteType to adapters.kotlinUByteToJsNumber,
             builtIns.shortType to adapters.kotlinShortToExternRefAdapter,
-            symbols.uShortType to adapters.kotlinUShortToJsNumber,
+            builtIns.ushortType to adapters.kotlinUShortToJsNumber,
             builtIns.charType to adapters.kotlinCharToExternRefAdapter,
             builtIns.intType to adapters.kotlinIntToExternRefAdapter,
-            symbols.uIntType to adapters.kotlinUIntToJsNumber,
+            builtIns.uintType to adapters.kotlinUIntToJsNumber,
             builtIns.longType to adapters.kotlinLongToExternRefAdapter,
-            symbols.uLongType to adapters.kotlinULongToJsBigInt,
+            builtIns.ulongType to adapters.kotlinULongToJsBigInt,
             builtIns.floatType to adapters.kotlinFloatToExternRefAdapter,
             builtIns.doubleType to adapters.kotlinDoubleToExternRefAdapter,
         ).mapValues {
@@ -287,10 +287,10 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             builtIns.anyType -> return FunctionBasedAdapter(adapters.kotlinToJsAnyAdapter.owner)
             builtIns.numberType -> return FunctionBasedAdapter(adapters.numberToDoubleAdapter.owner)
 
-            symbols.uByteType -> return FunctionBasedAdapter(adapters.kotlinUByteToJsNumber.owner)
-            symbols.uShortType -> return FunctionBasedAdapter(adapters.kotlinUShortToJsNumber.owner)
-            symbols.uIntType -> return FunctionBasedAdapter(adapters.kotlinUIntToJsNumber.owner)
-            symbols.uLongType -> return FunctionBasedAdapter(adapters.kotlinULongToJsBigInt.owner)
+            builtIns.ubyteType -> return FunctionBasedAdapter(adapters.kotlinUByteToJsNumber.owner)
+            builtIns.ushortType -> return FunctionBasedAdapter(adapters.kotlinUShortToJsNumber.owner)
+            builtIns.uintType -> return FunctionBasedAdapter(adapters.kotlinUIntToJsNumber.owner)
+            builtIns.ulongType -> return FunctionBasedAdapter(adapters.kotlinULongToJsBigInt.owner)
 
             builtIns.byteType,
             builtIns.shortType,
@@ -363,10 +363,10 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 builtIns.longType -> adapters.externRefToKotlinLongAdapter.owner
                 builtIns.booleanType -> adapters.externRefToKotlinBooleanAdapter.owner
 
-                symbols.uByteType -> adapters.externRefToKotlinUByteAdapter.owner
-                symbols.uShortType -> adapters.externRefToKotlinUShortAdapter.owner
-                symbols.uIntType -> adapters.externRefToKotlinUIntAdapter.owner
-                symbols.uLongType -> adapters.externRefToKotlinULongAdapter.owner
+                builtIns.ubyteType -> adapters.externRefToKotlinUByteAdapter.owner
+                builtIns.ushortType -> adapters.externRefToKotlinUShortAdapter.owner
+                builtIns.uintType -> adapters.externRefToKotlinUIntAdapter.owner
+                builtIns.ulongType -> adapters.externRefToKotlinULongAdapter.owner
 
                 else -> adapters.externRefToKotlinIntAdapter.owner
             }
@@ -433,10 +433,10 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             builtIns.shortType -> return FunctionBasedAdapter(adapters.jsToKotlinShortAdapter.owner)
             builtIns.charType -> return FunctionBasedAdapter(adapters.jsToKotlinCharAdapter.owner)
 
-            symbols.uByteType,
-            symbols.uShortType,
-            symbols.uIntType,
-            symbols.uLongType,
+            builtIns.ubyteType,
+            builtIns.ushortType,
+            builtIns.uintType,
+            builtIns.ulongType,
             builtIns.booleanType,
             builtIns.intType,
             builtIns.longType,
