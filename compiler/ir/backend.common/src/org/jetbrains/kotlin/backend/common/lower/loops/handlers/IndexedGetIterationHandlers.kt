@@ -55,6 +55,7 @@ abstract class IndexedGetIterationHandler(
             }
 
             IndexedGetHeaderInfo(
+                this@IndexedGetIterationHandler.context.irBuiltIns,
                 this@IndexedGetIterationHandler.context.symbols,
                 first = irInt(0),
                 last = last,

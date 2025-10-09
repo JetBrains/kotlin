@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -188,6 +189,7 @@ class ProgressionHeaderInfo(
  * The internal induction variable used is an Int.
  */
 class IndexedGetHeaderInfo(
+    irBuiltIns: IrBuiltIns,
     symbols: Symbols,
     first: IrExpression,
     last: IrExpression,
@@ -196,7 +198,7 @@ class IndexedGetHeaderInfo(
     val objectVariable: IrVariable,
     val expressionHandler: IndexedGetIterationHandler
 ) : NumericHeaderInfo(
-    IntProgressionType(symbols), first, last, step,
+    IntProgressionType(irBuiltIns, symbols), first, last, step,
     isLastInclusive = false,
     canCacheLast = canCacheLast,
     isReversed = false,
@@ -261,6 +263,7 @@ internal abstract class HeaderInfoBuilder(
     private val scopeOwnerSymbol: () -> IrSymbol,
     private val allowUnsignedBounds: Boolean = false
 ) : IrVisitor<HeaderInfo?, IrCall?>() {
+    private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
 
     protected open val progressionHandlers = listOf(
@@ -288,7 +291,7 @@ internal abstract class HeaderInfoBuilder(
             return callHeaderInfo
 
         // Try to match a call to build a progression (e.g., `.indices`, `downTo`).
-        val progressionType = ProgressionType.fromIrType(expression.type, symbols, allowUnsignedBounds)
+        val progressionType = ProgressionType.fromIrType(expression.type, irBuiltIns, symbols, allowUnsignedBounds)
         val progressionHeaderInfo =
             progressionType?.run { progressionHandlers.firstNotNullOfOrNull { it.handle(expression, data, this, scopeOwnerSymbol()) } }
 
