@@ -804,6 +804,7 @@ private fun ConstraintSystemError.toDiagnostic(
 
                 is ConeExplicitTypeParameterConstraintPosition -> {
                     val argumentType = position.typeArgument.toConeTypeProjection().type
+                        ?.substituteTypeVariableTypes(candidate, typeContext)
                         ?: return null
                     val parameter = candidate.symbol.typeParameterSymbols?.get(position.index)
                         ?: error("No type parameters in symbol: ${candidate.symbol}")
@@ -832,15 +833,20 @@ private fun ConstraintSystemError.toDiagnostic(
                             //   (in which case we, need to check it against the inferred combined upper bound),
                             // - or it may have been fixed implicitly to something coming from another argument variable fixation
                             //   (in which case, we need to check the explicit argument against this fixation).
-                            // Below, we're taking the intersection of the two and thus account for both scenarios.
-                            ConeTypeIntersector.intersectTypes(typeContext, it + variableFixationType)
+                            // Below, we're taking the intersection of the two and thus account for the second scenario
+                            // (but we do it conditionally to avoid confusing messages like `E` must be a subtype of `E & ...`)
+                            val typesToIntersect = when {
+                                variableFixationType == argumentType -> it
+                                else -> it + variableFixationType
+                            }
+                            ConeTypeIntersector.intersectTypes(typeContext, typesToIntersect)
                         }
                         ?: error("Couldn't find the upper bound for $argumentVariable")
 
                     FirErrors.UPPER_BOUND_VIOLATED.createOn(
                         position.typeArgument.source ?: qualifiedAccessSource ?: source,
                         combinedUpperBound,
-                        argumentType.substituteTypeVariableTypes(candidate, typeContext),
+                        argumentType,
                         "",
                         session,
                     )

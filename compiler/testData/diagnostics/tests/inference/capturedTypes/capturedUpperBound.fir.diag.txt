@@ -2,8 +2,8 @@
 
 /test.kt:(153,167): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'.
 
-/test.kt:(183,199): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*) & BodySpec<Int, *>'.
+/test.kt:(183,199): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'.
 
 /test.kt:(228,238): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*) & Any'.
 
-/test.kt:(267,281): error: Type argument is not within its bounds: must be subtype of '(CapturedType(*)..CapturedType(*) & Any)'.
+/test.kt:(267,281): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)!'.
