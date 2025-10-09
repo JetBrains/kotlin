@@ -417,6 +417,9 @@ message Property {
   repeated Annotation backing_field_annotation = 34;
   repeated Annotation delegate_field_annotation = 35;
 
+  optional Contract getterContract = 40;
+  optional Contract setterContract = 41;
+
   extensions 100 to 18999;
 }
 
