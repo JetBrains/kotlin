@@ -33,4 +33,10 @@ public class SwiftExportCoroutinesWithResultValidationTest extends AbstractSwift
   public void testCoroutines() {
     runTest("native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation/coroutines/");
   }
+
+  @Test
+  @TestMetadata("coroutinesWithPackageFlattening")
+  public void testCoroutinesWithPackageFlattening() {
+    runTest("native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation/coroutinesWithPackageFlattening/");
+  }
 }
