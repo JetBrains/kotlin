@@ -1,0 +1,13 @@
+var bar = "global var initialization value"
+
+class X {
+    var qux = "member var initialization value"
+}
+
+fun foo(x: X) {
+    bar = "changed global value"
+    x.qux = "changed member value"
+    
+}
+
+

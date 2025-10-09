@@ -1,0 +1,10 @@
+interface A {
+    fun foo(): String
+    val bar: String
+}
+
+data class X(val a: String, var b: String) {
+    fun foo(): String = a + b
+    val bar: String = b + a
+}
+

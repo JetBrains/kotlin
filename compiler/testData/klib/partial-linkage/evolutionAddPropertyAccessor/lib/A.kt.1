@@ -1,0 +1,24 @@
+val bar 
+    get() = "changed global value of val"
+var muc = "initialized global value of var with field"
+    get() = field
+    set(value) {
+        field = "changed global value of var with field"
+    }
+var toc 
+    get() = "changed global value of var without field"
+    set(value) { }
+
+
+class X() {
+    val qux 
+        get() = "changed member value of val"
+    var nis = "initialized member value of var with field"
+        get() = field
+        set(value) {
+            field = "changed member value of var with field"
+        }
+    var roo = "initialized member value of var without field"
+        get() = "changed member value of var without field"
+}
+

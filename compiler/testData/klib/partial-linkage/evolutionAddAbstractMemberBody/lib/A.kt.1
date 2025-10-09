@@ -1,0 +1,6 @@
+abstract class X {
+    open fun foo(): String = "now with a body"
+    open val bar: String get() = "now with a body"
+    fun qux() = foo() + bar
+}
+

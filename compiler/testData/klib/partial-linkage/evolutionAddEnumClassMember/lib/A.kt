@@ -1,0 +1,5 @@
+enum class X {
+    Y,
+    Z
+}
+

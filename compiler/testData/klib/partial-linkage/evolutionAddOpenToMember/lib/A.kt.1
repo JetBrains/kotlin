@@ -1,0 +1,10 @@
+open class X {
+    open fun foo(): String = "open method"
+    open val bar: String = "open property"
+}
+
+class Y: X() {
+    override fun foo(): String = "derived method"
+    override val bar: String = "derived property"
+}
+

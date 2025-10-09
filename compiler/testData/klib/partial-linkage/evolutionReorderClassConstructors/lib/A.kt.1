@@ -1,0 +1,6 @@
+open class X(x: String, _y: String, z: String) {
+    constructor(x: String): this("fifth", x, "sixth")
+    constructor(y: String, z: String): this(y+z, "tenth", "eleventh")
+    val y = _y
+}
+

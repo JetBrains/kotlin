@@ -1,0 +1,9 @@
+fun X.foo(param: String) = "foo after removal of infix $param"
+fun bar(param: String) = "bar after removal of tailrec $param"
+
+class X() {
+    fun qux(param: String) = "qux after removal of infix $param"
+    fun muc(param: String) = "muc after removal of tailrec $param"
+}
+
+
