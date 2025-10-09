@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
 import org.apache.commons.io.file.FilesUncheck.copy
-import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.*
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
@@ -25,11 +25,13 @@ internal abstract class NativeVersionValueSource :
         val simpleKotlinNativeVersion: Property<String>
         val kotlinNativeVersion: Property<String>
         val kotlinNativeCompilerConfiguration: Property<ConfigurableFileCollection>
+//        val kotlinNativeCompilerConfiguration: ConfigurableFileCollection
     }
 
     override fun obtain(): String {
         val kotlinNativeVersion = parameters.kotlinNativeVersion.get()
         prepareKotlinNativeBundle(
+//            parameters.kotlinNativeCompilerConfiguration,
             parameters.kotlinNativeCompilerConfiguration.get(),
             kotlinNativeVersion,
             File(parameters.bundleDirectory.get()),
@@ -51,7 +53,7 @@ internal abstract class NativeVersionValueSource :
      * @return kotlin native version if toolchain was used, path to konan home if konan home was used
      */
     private fun prepareKotlinNativeBundle(
-        kotlinNativeBundleConfiguration: ConfigurableFileCollection,
+        kotlinNativeBundleConfiguration: FileCollection,
         kotlinNativeVersion: String,
         bundleDir: File,
         reinstallFlag: Boolean,
@@ -63,7 +65,7 @@ internal abstract class NativeVersionValueSource :
         bundleDir: File,
         reinstallFlag: Boolean,
         kotlinNativeVersion: String,
-        kotlinNativeBundleConfiguration: ConfigurableFileCollection,
+        kotlinNativeBundleConfiguration: FileCollection,
     ) {
         val lock =
             NativeDistributionCommonizerLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
@@ -98,7 +100,7 @@ internal abstract class NativeVersionValueSource :
 
     private fun resolveKotlinNativeConfiguration(
         kotlinNativeVersion: String,
-        kotlinNativeCompilerConfiguration: ConfigurableFileCollection,
+        kotlinNativeCompilerConfiguration: FileCollection,
     ): File {
         val resolutionErrorMessage = "Kotlin Native dependency has not been properly resolved. " +
                 "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."

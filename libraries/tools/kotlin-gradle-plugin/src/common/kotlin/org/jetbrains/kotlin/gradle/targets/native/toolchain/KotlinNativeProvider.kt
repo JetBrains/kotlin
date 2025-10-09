@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -79,6 +80,18 @@ internal class KotlinNativeFromToolchainProvider(
     @get:Internal
     internal val simpleKotlinNativeVersion: Provider<String> = project.nativeProperties.kotlinNativeVersion
 
+//    private val kotlinNativeBundleFiles: ConfigurableFileCollection = project.objects.fileCollection()
+//
+//    init {
+//        // if cinterop is disabled there is no configuration with this name,
+//        // so we should handle the case where KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME doesn't exist
+//        project.configurations
+//            .matching { it.name == KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME }
+//            .configureEach { c ->
+//                kotlinNativeBundleFiles.from(c)
+//            }
+//    }
+
     @get:Input
     internal val kotlinNativeBundleVersion: Provider<String> =
         toolchainEnabled.flatMap { toolchainEnabled ->
@@ -92,6 +105,7 @@ internal class KotlinNativeFromToolchainProvider(
                         it.parameters.reinstallBundle.set(reinstallBundle)
                         it.parameters.kotlinNativeVersion.set(NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project))
                         it.parameters.simpleKotlinNativeVersion.set(simpleKotlinNativeVersion)
+//                        it.parameters.kotlinNativeCompilerConfiguration.from(kotlinNativeBundleFiles)
                         it.parameters.kotlinNativeCompilerConfiguration.set(
                             project.objects.fileCollection()
                                 .from(
