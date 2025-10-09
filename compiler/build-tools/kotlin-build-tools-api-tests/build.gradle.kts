@@ -75,6 +75,7 @@ val businessLogicTestSuits = setOf(
     "testInputChangesTracking",
     "testCrossModuleIncrementalChanges",
     "testFirRunner",
+    "testCriToolchain",
 )
 
 testing {
