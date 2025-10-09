@@ -317,6 +317,8 @@ fun compileWasmLoweredFragmentsForSingleModule(
     stdlibIsMainModule: Boolean,
     generateWat: Boolean,
     wasmDebug: Boolean,
+    outputFileNameBase: String? = null,
+    singleModulePreloadJs: String? = null,
 ): WasmCompilerResult {
     val mainModuleFragment = backendContext.irModuleFragment
     val moduleName = mainModuleFragment.name.asString()
@@ -360,7 +362,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
         moduleName = moduleName,
         configuration = configuration,
         typeScriptFragment = null,
-        baseFileName = mainModuleFragment.outputFileName,
+        baseFileName = outputFileNameBase ?: mainModuleFragment.outputFileName,
         emitNameSection = wasmDebug,
         generateWat = generateWat,
         generateSourceMaps = false,
@@ -369,5 +371,6 @@ fun compileWasmLoweredFragmentsForSingleModule(
         stdlibModuleNameForImport = loweredIrFragments.first().name.asString().takeIf { !stdlibIsMainModule },
         dependencyModules = dependencyImports,
         initializeUnit = stdlibIsMainModule,
+        singleModulePreloadJs = singleModulePreloadJs,
     )
 }
