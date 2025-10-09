@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.buildtools.api.cri.LookupEntry
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 
 internal class CriLookupDataDeserializationOperationImpl(
+    private val deserializer: CriDataDeserializerImpl,
     private val data: ByteArray,
-    private val deserializer: CriDataDeserializerImpl = CriDataDeserializerImpl(),
 ) : BuildOperationImpl<Collection<LookupEntry>>(), CriLookupDataDeserializationOperation {
 
     override fun execute(

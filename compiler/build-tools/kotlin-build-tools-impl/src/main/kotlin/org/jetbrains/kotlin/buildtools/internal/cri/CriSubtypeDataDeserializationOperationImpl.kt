@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 
 internal class CriSubtypeDataDeserializationOperationImpl(
+    private val deserializer: CriDataDeserializerImpl,
     private val data: ByteArray,
-    private val deserializer: CriDataDeserializerImpl = CriDataDeserializerImpl(),
 ) : BuildOperationImpl<Collection<SubtypeEntry>>(), CriSubtypeDataDeserializationOperation {
 
     override fun execute(

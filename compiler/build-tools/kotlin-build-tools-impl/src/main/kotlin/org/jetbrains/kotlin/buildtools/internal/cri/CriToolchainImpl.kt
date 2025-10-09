@@ -14,14 +14,14 @@ internal class CriToolchainImpl() : CriToolchain {
     private val deserializer: CriDataDeserializerImpl = CriDataDeserializerImpl()
 
     override fun createCriLookupDataDeserializationOperation(data: ByteArray): CriLookupDataDeserializationOperation {
-        return CriLookupDataDeserializationOperationImpl(data, deserializer)
+        return CriLookupDataDeserializationOperationImpl(deserializer, data)
     }
 
     override fun createCriFileIdToPathDataDeserializationOperation(data: ByteArray): CriFileIdToPathDataDeserializationOperation {
-        return CriFileIdToPathDataDeserializationOperationImpl(data, deserializer)
+        return CriFileIdToPathDataDeserializationOperationImpl(deserializer, data)
     }
 
     override fun createCriSubtypeDataDeserializationOperation(data: ByteArray): CriSubtypeDataDeserializationOperation {
-        return CriSubtypeDataDeserializationOperationImpl(data, deserializer)
+        return CriSubtypeDataDeserializationOperationImpl(deserializer, data)
     }
 }
