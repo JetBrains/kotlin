@@ -42,6 +42,12 @@ val precompiledStdlibOutputDir: File
 val precompiledKotlinTestOutputDir: File
     get() = File(outputDir, "out/precompile/$precompiledKotlinTestOutputName")
 
+val precompiledStdlibNewExceptionsOutputDir: File
+    get() = File(outputDir, "out/precompile_new_exception/$precompiledStdlibOutputName")
+
+val precompiledKotlinTestNewExceptionsOutputDir: File
+    get() = File(outputDir, "out/precompile_new_exception/$precompiledKotlinTestOutputName")
+
 fun precompileWasmModules() {
     val stdlibPath =
         File(System.getProperty("kotlin.wasm-js.stdlib.path") ?: error("Please set stdlib path")).canonicalPath
@@ -72,7 +78,7 @@ fun precompileWasmModules() {
         EnvironmentConfigFiles.WASM_CONFIG_FILES,
     )
 
-    fun compileWasmModule(includes: String, libraries: List<String>, outputName: String, outputDir: File) {
+    fun compileWasmModule(includes: String, libraries: List<String>, outputName: String, newExceptionProposal: Boolean, outputDir: File) {
         val klibs = loadWebKlibsInTestPipeline(
             configuration = configuration,
             includedPath = includes,
@@ -91,6 +97,7 @@ fun precompileWasmModules() {
             put<File>(JSConfigurationKeys.OUTPUT_DIR, outputDir)
             put<String>(JSConfigurationKeys.OUTPUT_NAME, outputName)
             put<Boolean>(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY, true)
+            put<Boolean>(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, newExceptionProposal)
             this.includes = includes
         }
 
@@ -112,13 +119,30 @@ fun precompileWasmModules() {
     compileWasmModule(
         includes = stdlibPath,
         libraries = listOf(stdlibPath),
+        newExceptionProposal = false,
         outputName = precompiledStdlibOutputName,
-        outputDir = precompiledStdlibOutputDir
+        outputDir = precompiledStdlibOutputDir,
     )
     compileWasmModule(
         includes = kotlinTestPath,
         libraries = listOf(stdlibPath, kotlinTestPath),
+        newExceptionProposal = false,
         outputName = precompiledKotlinTestOutputName,
         outputDir = precompiledKotlinTestOutputDir
+    )
+
+    compileWasmModule(
+        includes = stdlibPath,
+        libraries = listOf(stdlibPath),
+        newExceptionProposal = true,
+        outputName = precompiledStdlibOutputName,
+        outputDir = precompiledStdlibNewExceptionsOutputDir,
+    )
+    compileWasmModule(
+        includes = kotlinTestPath,
+        libraries = listOf(stdlibPath, kotlinTestPath),
+        newExceptionProposal = true,
+        outputName = precompiledKotlinTestOutputName,
+        outputDir = precompiledKotlinTestNewExceptionsOutputDir,
     )
 }
