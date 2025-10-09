@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts
-// LANGUAGE: +AllowContractsOnPropertyAccessors
+// LANGUAGE: +AllowContractsOnPropertyAccessors, +ContextParameters
 // Issue: KT-79506
 
 // MODULE: m1
@@ -19,9 +19,23 @@ val Status.isError: Boolean
         return this is Status.Error
     }
 
+context(s: Status)
+val isContextError: Boolean
+    get() {
+        contract { returns (true) implies (s is Status.Error) }
+        return s is Status.Error
+    }
+
 // FILE: usageSameModule.kt
 fun testFromTheSameModule(status: Status) {
     if (status.isError) {
+        status.message
+    }
+}
+
+context(status: Status)
+fun testWithContextFromTheSameModule() {
+    if (isContextError) {
         status.message
     }
 }
@@ -37,6 +51,13 @@ fun testFromOtherModule(status: Status) {
     }
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, functionDeclaration, getter, ifExpression,
-isExpression, lambdaLiteral, nestedClass, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, sealed,
-smartcast, thisExpression */
+context(status: Status)
+fun testWithContextFromOtherModule() {
+    if (isContextError) {
+        status.message
+    }
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, functionDeclaration,
+functionDeclarationWithContext, getter, ifExpression, isExpression, lambdaLiteral, nestedClass, primaryConstructor,
+propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver, sealed, smartcast, thisExpression */
