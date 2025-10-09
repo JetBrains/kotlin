@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.generators.builtins.contextParameters
 
-import org.jetbrains.kotlin.generators.builtins.functions.MAX_PARAM_COUNT
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
 import java.io.PrintWriter
 
@@ -14,7 +13,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
 
     override fun generateBody() {
         generateSingleFunction(listOf("with"), listOf("T"), "R")
-        for (i in 2..MAX_PARAM_COUNT) {
+        for (i in 2..6) {
             val parameterNames = ('a' .. 'z').take(i)
             generateSingleFunction(
                 parameterNames.map { it.toString() },

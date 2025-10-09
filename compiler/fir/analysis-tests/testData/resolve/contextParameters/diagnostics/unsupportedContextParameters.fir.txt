@@ -54,8 +54,8 @@ FILE: unsupportedContextParameters.kt
 
     }
     public final typealias TA = R|kotlin/Any|
-    public final val objectExpression: <ERROR TYPE REF: Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]> = <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(<Unresolved name: _>#)
-        public get(): <ERROR TYPE REF: Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>
+    public final val objectExpression: <ERROR TYPE REF: Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]> = <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(<Unresolved name: _>#)
+        public get(): <ERROR TYPE REF: Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>
     public final object <no name provided> : R|kotlin/Any| {
         private constructor(): R|<no name provided>| {
             super<R|kotlin/Any|>()
