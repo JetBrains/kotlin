@@ -408,6 +408,9 @@ abstract class TypeCheckerStateForConstraintSystem(
         }
     }
 
+    private val simplifyFlexibleUpperConstraintWithDnnBoundToNullable: Boolean =
+        extensionTypeContext.simplifyFlexibleUpperConstraintWithDnnBoundToNullable()
+
     /**
      * T! <: Foo <=> T <: Foo!
      * T? <: Foo <=> T <: Foo && Nothing? <: Foo
@@ -422,7 +425,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
 
         val simplifiedSuperType = if (typeVariable.isFlexible()) {
-            if (typeVariableLowerBound.isDefinitelyNotNullType() && simplifyFlexibleUpperConstraintWithDnnBoundToNullable()) {
+            if (typeVariableLowerBound.isDefinitelyNotNullType() && simplifyFlexibleUpperConstraintWithDnnBoundToNullable) {
                 // This is the legacy behavior typically disabled in K2 because the LF is turned off and has no sinceVersion.
                 superType.withNullability(true)
             } else if (superType.isRigidType()) {
