@@ -1,0 +1,399 @@
+KtFile: emptyArguments.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('simple')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting an argument
+            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting an argument
+            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiErrorElement:Expecting an argument
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting an argument
+            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting an argument
+            PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('named')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('y')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('y')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('y')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('spread')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            PsiElement(MUL)('*')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            PsiElement(MUL)('*')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            PsiElement(MUL)('*')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            PsiElement(MUL)('*')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('mixed')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            PsiElement(MUL)('*')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting an argument
+            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            PsiElement(MUL)('*')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(COMMA)(',')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            PsiElement(MUL)('*')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting an argument
+            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            PsiElement(MUL)('*')
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting an argument
+            PsiElement(COMMA)(',')
+          VALUE_ARGUMENT
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -397,6 +397,24 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Test
+  @TestMetadata("emptyArguments.kt")
+  public void testEmptyArguments() {
+    runTest("compiler/testData/psi/emptyArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("emptyArgumentsInAnnotations.kt")
+  public void testEmptyArgumentsInAnnotations() {
+    runTest("compiler/testData/psi/emptyArgumentsInAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("emptyArgumentsInArrayAccesses.kt")
+  public void testEmptyArgumentsInArrayAccesses() {
+    runTest("compiler/testData/psi/emptyArgumentsInArrayAccesses.kt");
+  }
+
+  @Test
   @TestMetadata("emptyEnum.kt")
   public void testEmptyEnum() {
     runTest("compiler/testData/psi/emptyEnum.kt");

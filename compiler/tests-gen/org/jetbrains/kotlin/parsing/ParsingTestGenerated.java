@@ -341,6 +341,21 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/EOLsOnRollback.kt");
     }
 
+    @TestMetadata("emptyArguments.kt")
+    public void testEmptyArguments() {
+      runTest("compiler/testData/psi/emptyArguments.kt");
+    }
+
+    @TestMetadata("emptyArgumentsInAnnotations.kt")
+    public void testEmptyArgumentsInAnnotations() {
+      runTest("compiler/testData/psi/emptyArgumentsInAnnotations.kt");
+    }
+
+    @TestMetadata("emptyArgumentsInArrayAccesses.kt")
+    public void testEmptyArgumentsInArrayAccesses() {
+      runTest("compiler/testData/psi/emptyArgumentsInArrayAccesses.kt");
+    }
+
     @TestMetadata("emptyEnum.kt")
     public void testEmptyEnum() {
       runTest("compiler/testData/psi/emptyEnum.kt");
