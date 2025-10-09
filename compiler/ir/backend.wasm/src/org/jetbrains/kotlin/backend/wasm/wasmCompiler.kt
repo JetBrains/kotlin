@@ -173,6 +173,7 @@ fun compileWasm(
     stdlibModuleNameForImport: String? = null,
     dependencyModules: Set<WasmModuleDependencyImport> = emptySet(),
     initializeUnit: Boolean = true,
+    singleModulePreloadJs: String? = null,
 ): WasmCompilerResult {
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
@@ -243,6 +244,7 @@ fun compileWasm(
             jsModuleAndQualifierReferences,
             useJsTag,
             baseFileName,
+            singleModulePreloadJs,
         )
         jsWrapper = generateEsmExportsWrapper(
             "./$baseFileName.uninstantiated.mjs",
@@ -307,6 +309,7 @@ fun generateAsyncJsWrapper(
     jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>,
     useJsTag: Boolean,
     baseFileName: String,
+    singleModulePreloadJs: String?,
 ): String {
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
@@ -384,7 +387,7 @@ export async function instantiate(imports={}, runInitializer=true) {
         cachedJsObjects.set(ref, ifNotCached);
         return ifNotCached;
     }
-
+${singleModulePreloadJs ?: ""}
 $dependenciesLoaders
 $importModuleLoaders
 
