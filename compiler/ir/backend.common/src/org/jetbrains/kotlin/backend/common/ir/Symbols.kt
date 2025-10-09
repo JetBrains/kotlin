@@ -99,24 +99,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
     }
     val memberStringPlus: IrSimpleFunctionSymbol = CallableIds.memberPlus.functionSymbol()
 
-    fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
-        val plusSymbol = when {
-            functionSymbol.owner.hasShape(
-                dispatchReceiver = true,
-                regularParameters = 1,
-                parameterTypes = listOf(irBuiltIns.stringType, null)
-            ) -> irBuiltIns.memberStringPlus
-            functionSymbol.owner.hasShape(
-                extensionReceiver = true,
-                regularParameters = 1,
-                parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), null)
-            ) -> irBuiltIns.extensionStringPlus
-            else -> return false
-        }
-
-        return functionSymbol == plusSymbol
-    }
-
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol
 
