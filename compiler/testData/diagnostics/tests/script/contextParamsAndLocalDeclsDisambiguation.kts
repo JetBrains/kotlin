@@ -2,8 +2,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
 
-import kotlin.reflect.KClass
-
 class C
 
 context(x: Any)

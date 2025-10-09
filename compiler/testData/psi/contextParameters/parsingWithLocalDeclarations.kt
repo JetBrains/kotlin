@@ -1,5 +1,6 @@
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-80853, KT-81521
+// COMPILATION_ERRORS
 
 import kotlin.reflect.KClass
 
