@@ -1,11 +1,12 @@
 // FIR_IDENTICAL
+// ISSUE: KT-70395
 
-// FILE: Jaba.java
-public class Jaba {
-    public int foo = 42;
+interface A {
+    fun m(x: B<out List<Number>>): Int
 }
 
-// FILE: main.kt
-class Foo : Jaba() {
-    // var foo = 42
+interface B<T : List<out Number>>
+
+abstract class C : A {
+    override fun m(x: B<out List<Number>>): Int = TODO()
 }
