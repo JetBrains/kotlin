@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.api.cri
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+
+@ExperimentalBuildToolsApi
 public interface LookupEntry {
     public val key: Long?
     public val fileIds: Collection<Int>

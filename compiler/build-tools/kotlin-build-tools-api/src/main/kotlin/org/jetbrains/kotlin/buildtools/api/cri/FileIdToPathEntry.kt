@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.api.cri
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+
+@ExperimentalBuildToolsApi
 public interface FileIdToPathEntry {
     public val fileId: Int?
     public val path: String?

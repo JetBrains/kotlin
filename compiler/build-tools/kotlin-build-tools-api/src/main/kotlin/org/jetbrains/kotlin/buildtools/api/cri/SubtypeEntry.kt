@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.api.cri
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+
+@ExperimentalBuildToolsApi
 public interface SubtypeEntry {
     public val className: String?
     public val subtypes: Collection<String>
