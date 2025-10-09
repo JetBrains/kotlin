@@ -152,16 +152,24 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCumSum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMax0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMax1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMax2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMaxOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMean0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMean1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMean2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMeanOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMedian0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByPercentile0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMedian1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMedian2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByPercentile1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMedianOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByPercentileOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMin0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMin1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMin2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMinOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByPercentile2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceExpression
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReducePredicate
@@ -174,9 +182,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Last2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.LeftJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStd0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStd1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStd2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStdOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySumOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Implode
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ImplodeDefault
@@ -582,24 +592,34 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "GroupByCount0" -> GroupByCount0()
         "GroupByMean0" -> GroupByMean0()
         "GroupByMean1" -> GroupByMean1()
+        "GroupByMean2" -> GroupByMean2()
         "GroupByMeanOf" -> GroupByMeanOf()
         "GroupByMedian0" -> GroupByMedian0()
         "GroupByMedian1" -> GroupByMedian1()
+        "GroupByMedian2" -> GroupByMedian2()
+        "GroupByPercentile0" -> GroupByPercentile0()
+        "GroupByPercentile1" -> GroupByPercentile1()
+        "GroupByPercentile2" -> GroupByPercentile2()
         "GroupByMedianOf" -> GroupByMedianOf()
+        "GroupByPercentileOf" -> GroupByPercentileOf()
         "GroupBySumOf" -> GroupBySumOf()
         "GroupBySum0" -> GroupBySum0()
         "GroupBySum1" -> GroupBySum1()
+        "GroupBySum2" -> GroupBySum2()
         "GroupByReducePredicate" -> GroupByReducePredicate()
         "GroupByReduceExpression" -> GroupByReduceExpression()
         "GroupByReduceInto" -> GroupByReduceInto()
         "GroupByMax0" -> GroupByMax0()
         "GroupByMax1" -> GroupByMax1()
+        "GroupByMax2" -> GroupByMax2()
         "GroupByMaxOf" -> GroupByMaxOf()
         "GroupByMin0" -> GroupByMin0()
         "GroupByMin1" -> GroupByMin1()
+        "GroupByMin2" -> GroupByMin2()
         "GroupByMinOf" -> GroupByMinOf()
         "GroupByStd0" -> GroupByStd0()
         "GroupByStd1" -> GroupByStd1()
+        "GroupByStd2" -> GroupByStd2()
         "GroupByStdOf" -> GroupByStdOf()
         "GroupByCumSum0" -> GroupByCumSum0()
         "GroupByCumSum" -> GroupByCumSum()
