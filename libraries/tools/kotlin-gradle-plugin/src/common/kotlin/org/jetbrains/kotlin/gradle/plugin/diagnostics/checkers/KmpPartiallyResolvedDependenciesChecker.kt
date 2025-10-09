@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.isAllGradleProjectsEvaluated
 import org.jetbrains.kotlin.gradle.utils.multiplatformAndroidLibraryPluginId
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -66,14 +67,10 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
          * like KT-79315.
          */
         KotlinPluginLifecycle.Stage.ReadyForExecution.await()
-        val projectsEvaluationPhasePassed = AtomicBoolean(false)
-        project.gradle.projectsEvaluated {
-            projectsEvaluationPhasePassed.set(true)
-        }
         if (project.kotlinPropertiesProvider.eagerUnresolvedDependenciesDiagnostic) {
             val postProjectsEvaluationExecutionTask = project.locateOrRegisterPartiallyResolvedDependenciesCheckerTask()
             postProjectsEvaluationExecutionTask.configure { task ->
-                if (!projectsEvaluationPhasePassed.get()) {
+                if (!project.isAllGradleProjectsEvaluated) {
                     return@configure
                 }
                 val metadataTransformations = runCatching {
@@ -115,7 +112,7 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
             }
         } else {
             project.tasks.withType<MetadataDependencyTransformationTask>().configureEach {
-                if (!projectsEvaluationPhasePassed.get()) {
+                if (!project.isAllGradleProjectsEvaluated) {
                     return@configureEach
                 }
                 val isAndroidPluginApplied = project.findAppliedAndroidPluginIdOrNull() != null
