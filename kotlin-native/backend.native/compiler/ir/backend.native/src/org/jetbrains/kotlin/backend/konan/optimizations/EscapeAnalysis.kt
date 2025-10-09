@@ -349,10 +349,8 @@ internal object EscapeAnalysis {
             val lifetimes: MutableMap<IrElement, Lifetime>,
             val propagateExiledToHeapObjects: Boolean
     ) {
-
-        private val symbols = context.symbols
         private val irBuiltIns = context.irBuiltIns
-        private val throwable = symbols.throwable.owner
+        private val throwable = irBuiltIns.throwableClass.owner
 
         val escapeAnalysisResults = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, FunctionEscapeAnalysisResult>()
 
@@ -898,7 +896,7 @@ internal object EscapeAnalysis {
                     }
                 }
 
-                val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.symbols.nothing.owner)
+                val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.irBuiltIns.nothingClass.owner)
                 body.forEachNonScopeNode { node ->
                     when (node) {
                         is DataFlowIR.Node.FieldWrite -> {

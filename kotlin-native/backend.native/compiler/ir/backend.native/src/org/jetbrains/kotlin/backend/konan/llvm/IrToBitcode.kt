@@ -1079,7 +1079,7 @@ internal class CodeGeneratorVisitor(
          */
         private val handler by lazy {
             using(outerContext) {
-                continuationBlock(context.symbols.throwable.owner.defaultType, endLocationInfoFromScope()) {
+                continuationBlock(context.irBuiltIns.throwableClass.owner.defaultType, endLocationInfoFromScope()) {
                     genHandler(it.value)
                 }
             }

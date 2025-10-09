@@ -192,7 +192,7 @@ internal abstract class AbstractValueUsageTransformer(
     override fun visitThrow(expression: IrThrow): IrExpression {
         expression.transformChildrenVoid(this)
 
-        expression.value = expression.value.useAs(symbols.throwable.owner.defaultType)
+        expression.value = expression.value.useAs(irBuiltIns.throwableClass.owner.defaultType)
 
         return expression
     }

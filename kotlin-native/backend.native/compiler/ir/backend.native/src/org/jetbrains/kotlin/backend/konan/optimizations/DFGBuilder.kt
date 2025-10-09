@@ -401,6 +401,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         }
     }
 
+    private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
     private val arrayGetSymbols = symbols.arrayGet.values
     private val arraySetSymbols = symbols.arraySet.values
@@ -491,7 +492,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             )
             val throwsNode = DataFlowIR.Node.Variable(
                     values = thrownValues.map { expressionToEdge(it) },
-                    type = symbolTable.mapClassReferenceType(symbols.throwable.owner),
+                    type = symbolTable.mapClassReferenceType(irBuiltIns.throwableClass.owner),
                     kind = DataFlowIR.VariableKind.Temporary
             )
             variables.forEach { (irVariable, node) ->

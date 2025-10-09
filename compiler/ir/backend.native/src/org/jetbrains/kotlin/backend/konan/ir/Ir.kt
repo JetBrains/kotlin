@@ -298,9 +298,6 @@ class KonanSymbols(
         }
     }
 
-    val nothing get() = irBuiltIns.nothingClass
-    val throwable get() = irBuiltIns.throwableClass
-    val enum get() = irBuiltIns.enumClass
     private val nativePtr = ClassIds.nativePtr.classSymbol()
     val nativePointed = ClassIds.nativePointed.classSymbol()
     val nativePtrType = nativePtr.typeWith(arguments = emptyList())
