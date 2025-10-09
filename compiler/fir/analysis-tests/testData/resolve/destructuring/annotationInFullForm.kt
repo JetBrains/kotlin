@@ -7,7 +7,7 @@ annotation class Ann
 data class Person(val fullName: String)
 
 fun annSimpleNegative(person: Person) {
-    <!OTHER_ERROR_WITH_REASON{LT}!><!WRAPPED_LHS_IN_ASSIGNMENT_ERROR{PSI}!>(<!EXPRESSION_EXPECTED{PSI}, VARIABLE_EXPECTED{PSI}!>@Ann val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER{PSI}!>fullName<!><!>)<!> = person<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!EXPRESSION_EXPECTED{PSI}, VARIABLE_EXPECTED!>@Ann val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER{PSI}!>fullName<!><!>)<!> = person
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, data, functionDeclaration, primaryConstructor,

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementTy
 import org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.util.getSingleChildOrNull
 
 object ElementTypeUtils {
@@ -48,24 +49,16 @@ object ElementTypeUtils {
         return getSingleChildOrNull(tree)!!.tokenType as KtToken
     }
 
-    private val expressionSet = listOf(
-        REFERENCE_EXPRESSION,
-        CALL_EXPRESSION,
-        DOT_QUALIFIED_EXPRESSION,
-        LAMBDA_EXPRESSION,
-        FUN,
-    )
-
     fun LighterASTNode.isExpression(): Boolean {
-        return when (this.tokenType) {
+        return when (val tokenType = this.tokenType) {
             is KtNodeType,
             is KtConstantExpressionElementType,
             is KtStringTemplateExpressionElementType,
             is KtClassLiteralExpressionElementType,
             is KtCollectionLiteralExpressionElementType,
-            in expressionSet,
+            LAMBDA_EXPRESSION,
                 -> true
-
+            is KtStubElementType<*, *> -> tokenType.isExpression
             else -> false
         }
     }

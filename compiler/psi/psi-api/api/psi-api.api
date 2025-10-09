@@ -4191,6 +4191,7 @@ public abstract class org/jetbrains/kotlin/psi/stubs/elements/KtStubElementType 
 	public fun getExternalId ()Ljava/lang/String;
 	public synthetic fun indexStub (Lcom/intellij/psi/stubs/Stub;Lcom/intellij/psi/stubs/IndexSink;)V
 	public fun indexStub (Lcom/intellij/psi/stubs/StubElement;Lcom/intellij/psi/stubs/IndexSink;)V
+	public fun isExpression ()Z
 	public fun shouldCreateStub (Lcom/intellij/lang/ASTNode;)Z
 }
 
