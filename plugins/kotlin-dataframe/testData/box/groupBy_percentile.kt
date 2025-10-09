@@ -27,51 +27,54 @@ fun box(): String {
         "Isla", 22, "London", 75.1, "1.85", 43, 1.toShort(), 0.toByte(), 30000L,
     )
 
-    // scenario #0: all numerical columns
-    personsDf.groupBy { city }.mean().let { df ->
+    // scenario #0: all intraComparable columns
+    personsDf.groupBy { city }.percentile(0.5).let { df ->
         df.compareSchemas()
-        val mean01: Double? = df.age[0]
-        val mean02: Double? = df.weight[0]
-        val mean03: Double? = df.yearsToRetirement[0]
-        val mean04: Double? = df.workExperienceYears[0]
-        val mean05: Double? = df.dependentsCount[0]
-        val mean06: Double? = df.annualIncome[0]
+
+        val percentile01: Double? = df.age[0]
+        val percentile02: Double? = df.weight[0]
+        val percentile03: String? = df.height[0]
     }
 
     // scenario #1: particular column
-    personsDf.groupBy { city }.meanFor { age }.let { df ->
-        val mean11: Double? = df.age[0]
+    personsDf.groupBy { city }.percentileFor(0.5) { age }.let { df ->
         df.compareSchemas()
+
+        val percentile11: Double? = df.age[0]
     }
 
-    // scenario #1.1: particular column via mean
-    personsDf.groupBy { city }.mean { age }.let { df ->
-        val mean111: Double? = df.age[0]
+    // scenario #1.1: particular column via percentile
+    personsDf.groupBy { city }.percentile(0.5) { age }.let { df ->
         df.compareSchemas()
+
+        val percentile111: Double? = df.age[0]
     }
 
     // scenario #2: particular column with new name - schema changes
     // TODO: not supported scenario
-    // val res2 = personsDf.groupBy { city }.mean("age", name = "newAge")
-    // val mean21: Double? = res2.newAge[0]
+    // val res2 = personsDf.groupBy { city }.percentile("age", name = "newAge")
+    // val percentile21: Int? = res2.newAge[0]
 
     // scenario #2.1: particular column with new name - schema changes but via columnSelector
-    personsDf.groupBy { city }.mean("newAge") { age }.let { df ->
-        val mean211: Double? = df.newAge[0]
+    personsDf.groupBy { city }.percentile(0.5, "newAge") { age }.let { df ->
         df.compareSchemas()
+
+        val percentile211: Double? = df.newAge[0]
     }
 
     // scenario #2.2: two columns with new name - schema changes but via columnSelector
     // TODO: handle multiple columns https://github.com/Kotlin/dataframe/issues/1090
-    personsDf.groupBy { city }.mean("newAge") { age and yearsToRetirement }.let { df ->
-        val mean221: Double? = df.newAge[0]
+    personsDf.groupBy { city }.percentile(0.5, "newAge") { age and yearsToRetirement }.let { df ->
         df.compareSchemas()
+
+        val percentile221: Double? = df.newAge[0]
     }
 
     // scenario #3: create new column via expression
-    personsDf.groupBy { city }.meanOf("newAge") { age * 10 }.let { df ->
-        val mean3: Double? = df.newAge[0]
+    personsDf.groupBy { city }.percentileOf(0.5, "newAgeExpr") { age * 10 }.let { df ->
         df.compareSchemas()
+
+        val percentile3: Double? = df.newAgeExpr[0]
     }
 
     return "OK"
