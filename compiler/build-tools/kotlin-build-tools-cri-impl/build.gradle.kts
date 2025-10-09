@@ -18,9 +18,7 @@ dependencies {
 
 publish()
 
-runtimeJar(rewriteDefaultJarDepsToShadedCompiler {
-    from(mainSourceSet.output)
-})
+runtimeJar()
 sourcesJar()
 javadocJar()
 
