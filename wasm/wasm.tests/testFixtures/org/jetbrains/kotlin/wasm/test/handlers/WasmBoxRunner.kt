@@ -20,9 +20,6 @@ internal class WasmBoxRunner(
     override val vmsToCheck: List<WasmVM> =
         listOf(WasmVM.V8, WasmVM.SpiderMonkey, WasmVM.JavaScriptCore)
 
-    override val jsModuleImport: String =
-        "let jsModule = await import('./index.mjs');"
-
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             runWasmCode()

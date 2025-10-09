@@ -13,15 +13,47 @@ import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultsProvider
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
+import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestNewExceptionsOutputDir
+import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputDir
+import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputName
+import org.jetbrains.kotlin.wasm.test.precompiledStdlibNewExceptionsOutputDir
+import org.jetbrains.kotlin.wasm.test.precompiledStdlibOutputDir
+import org.jetbrains.kotlin.wasm.test.precompiledStdlibOutputName
+import java.io.File
 
 class WasmLoweringSingleModuleFacade(testServices: TestServices) :
     BackendFacade<IrBackendInput, BinaryArtifacts.Wasm>(testServices, BackendKinds.IrBackend, ArtifactKinds.Wasm) {
+
+
+    private fun getJsModuleImportString(newExceptionProposal: Boolean): String {
+        val outputDirBase = testServices.getWasmTestOutputDirectory()
+
+        val (stdlibOutputDir, testOutputDir) = when (newExceptionProposal) {
+            true -> precompiledStdlibNewExceptionsOutputDir to precompiledKotlinTestNewExceptionsOutputDir
+            false -> precompiledStdlibOutputDir to precompiledKotlinTestOutputDir
+        }
+
+        val stdlibInitFile = File(stdlibOutputDir, "$precompiledStdlibOutputName.uninstantiated.mjs")
+        val kotlinTestInitFile = File(testOutputDir, "$precompiledKotlinTestOutputName.uninstantiated.mjs")
+
+        return """
+    let stdlib = await import('${stdlibInitFile.relativeTo(outputDirBase).path.replace('\\', '/')}');
+    imports['<kotlin>'] = (await stdlib.instantiate()).exports;
+    
+    let test = await import('${kotlinTestInitFile.relativeTo(outputDirBase).path.replace('\\', '/')}');
+    imports['<kotlin-test>'] = (await test.instantiate(imports)).exports;
+        """
+    }
 
     override fun shouldTransform(module: TestModule): Boolean {
         require(with(testServices.defaultsProvider) { backendKind == inputKind && artifactKind == outputKind })
@@ -58,6 +90,10 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val generateWat = debugMode >= DebugMode.DEBUG || configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT)
 
+        val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
+        val singleModulePreloadJs = getJsModuleImportString(newExceptionProposal = useNewExceptionProposal)
+        val outputName = "index".takeIf { WasmEnvironmentConfigurator.isMainModule(module, testServices) }
+
         val compilerResult = compileWasmLoweredFragmentsForSingleModule(
             configuration = configuration,
             loweredIrFragments = allModules,
@@ -66,6 +102,8 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             stdlibIsMainModule = false,
             generateWat = generateWat,
             wasmDebug = true,
+            outputFileNameBase = outputName,
+            singleModulePreloadJs = singleModulePreloadJs,
         )
 
         return BinaryArtifacts.Wasm(
