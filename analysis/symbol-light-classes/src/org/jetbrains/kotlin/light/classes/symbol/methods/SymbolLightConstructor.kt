@@ -169,7 +169,7 @@ internal class SymbolLightConstructor private constructor(
             return !classOrObject.hasModifier(INNER_KEYWORD) &&
                     !classOrObject.hasModifier(SEALED_KEYWORD) &&
                     !lightClass.isEnum &&
-                    primaryConstructor.valueParameters.all(KaValueParameterSymbol::hasDefaultValue) &&
+                    primaryConstructor.valueParameters.all(KaValueParameterSymbol::hasDeclaredDefaultValue) &&
                     constructors.none { it.isEffectivelyParameterless } &&
                     primaryConstructor.visibility != KaSymbolVisibility.PRIVATE
         }
@@ -179,7 +179,7 @@ internal class SymbolLightConstructor private constructor(
          * */
         private val KaConstructorSymbol.isEffectivelyParameterless: Boolean
             get() = valueParameters.isEmpty() ||
-                    valueParameters.all(KaValueParameterSymbol::hasDefaultValue) && hasJvmOverloadsAnnotation()
+                    valueParameters.all(KaValueParameterSymbol::hasDeclaredDefaultValue) && hasJvmOverloadsAnnotation()
 
         private fun SymbolLightClassBase.defaultConstructor(): KtLightMethod {
             val classOrObject = kotlinOrigin

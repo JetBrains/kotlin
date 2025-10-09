@@ -223,7 +223,7 @@ internal fun AnnotationValue.Annotation.normalizedArguments(): List<AnnotationAr
         val constructorSymbol = restoreSymbolOrThrowIfDisposed(ctorSymbolPointer)
         val params = constructorSymbol.valueParameters
         val missingVarargParameterName =
-            params.singleOrNull { it.isVararg && !it.hasDefaultValue }?.name?.takeIf { name -> args.none { it.name == name } }
+            params.singleOrNull { it.isVararg && !it.hasDeclaredDefaultValue }?.name?.takeIf { name -> args.none { it.name == name } }
         if (missingVarargParameterName == null) args
         else args + AnnotationArgument(missingVarargParameterName, AnnotationValue.Array(emptyList(), null))
     }

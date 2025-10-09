@@ -25,7 +25,7 @@ public interface KaParameterDefaultValueRenderer {
     @KaExperimentalApi
     public object THREE_DOTS : KaParameterDefaultValueRenderer {
         override fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter) {
-            if (symbol.hasDefaultValue) {
+            if (symbol.hasDeclaredDefaultValue) {
                 printer.append("...")
             }
         }
