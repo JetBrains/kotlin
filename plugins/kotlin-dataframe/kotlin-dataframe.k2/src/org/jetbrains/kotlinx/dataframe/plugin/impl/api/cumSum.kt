@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
-import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.fir.types.withNullability
+import org.jetbrains.kotlin.fir.types.isPrimitiveOrMixedNumber
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlinx.dataframe.api.single
 import org.jetbrains.kotlinx.dataframe.math.cumSumTypeConversion
@@ -41,10 +39,7 @@ class DataFrameCumSum0 : AbstractSchemaModificationInterpreter() {
 internal val Arguments.cumSumDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         colsAtAnyDepth().valueCols().cols {
-            (it.single() as Marker).type.isSubtypeOf(
-                superType = session.builtinTypes.numberType.coneType.withNullability(true, session.typeContext),
-                session = session,
-            )
+            (it.single() as Marker).type.isPrimitiveOrMixedNumber(session)
         }
     }
 
