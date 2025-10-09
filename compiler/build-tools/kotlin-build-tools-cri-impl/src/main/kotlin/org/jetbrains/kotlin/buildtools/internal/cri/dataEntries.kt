@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalSerializationApi::class, ExperimentalBuildToolsApi::class)
 
-package org.jetbrains.kotlin.buildtools.cri.internal
+package org.jetbrains.kotlin.buildtools.internal.cri
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable

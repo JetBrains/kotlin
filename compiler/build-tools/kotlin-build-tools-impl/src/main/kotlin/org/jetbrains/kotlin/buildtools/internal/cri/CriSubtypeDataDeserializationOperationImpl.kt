@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.cri.CriSubtypeDataDeserializationOperation
 import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry
-import org.jetbrains.kotlin.buildtools.cri.internal.CriDataDeserializerImpl
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 
 internal class CriSubtypeDataDeserializationOperationImpl(

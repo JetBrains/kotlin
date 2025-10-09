@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.cri.CriLookupDataDeserializationOperation
 import org.jetbrains.kotlin.buildtools.api.cri.LookupEntry
-import org.jetbrains.kotlin.buildtools.cri.internal.CriDataDeserializerImpl
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 
 internal class CriLookupDataDeserializationOperationImpl(
