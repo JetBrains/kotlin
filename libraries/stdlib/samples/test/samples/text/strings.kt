@@ -95,6 +95,7 @@ class Strings {
         val string = "kotlin"
         assertPrints(string.elementAt(0), "k")
         assertPrints(string.elementAt(5), "n")
+        assertFailsWith<IndexOutOfBoundsException> { string.elementAt(-1) }
         assertFailsWith<IndexOutOfBoundsException> { string.elementAt(6) }
 
         val empty = ""
