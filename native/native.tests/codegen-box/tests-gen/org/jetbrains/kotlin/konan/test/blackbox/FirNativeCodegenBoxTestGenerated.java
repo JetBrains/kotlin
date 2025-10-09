@@ -55008,6 +55008,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           }
 
           @Test
+          @TestMetadata("contextPropertyWithSameNameAsPrimary.kt")
+          public void testContextPropertyWithSameNameAsPrimary() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/contextPropertyWithSameNameAsPrimary.kt");
+          }
+
+          @Test
           @TestMetadata("inlineClassConstructor.kt")
           public void testInlineClassConstructor() {
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/inlineClassConstructor.kt");

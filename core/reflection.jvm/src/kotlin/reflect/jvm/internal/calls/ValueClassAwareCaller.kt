@@ -393,5 +393,5 @@ private fun CallableDescriptor.isGetterOfUnderlyingPropertyOfValueClass() =
     this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfValueClass()
 
 private fun VariableDescriptor.isUnderlyingPropertyOfValueClass(): Boolean =
-    extensionReceiverParameter == null &&
+    extensionReceiverParameter == null && contextReceiverParameters.isEmpty() &&
             (containingDeclaration as? ClassDescriptor)?.valueClassRepresentation?.containsPropertyWithName(this.name) == true

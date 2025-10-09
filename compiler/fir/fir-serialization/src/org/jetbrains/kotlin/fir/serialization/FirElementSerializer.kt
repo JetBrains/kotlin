@@ -297,7 +297,8 @@ class FirElementSerializer private constructor(
                 builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(representation.underlyingPropertyName)
 
                 val property = callableMembers.single {
-                    it is FirProperty && it.receiverParameter == null && it.name == representation.underlyingPropertyName
+                    it is FirProperty && it.receiverParameter == null && it.contextParameters.isEmpty() &&
+                            it.name == representation.underlyingPropertyName
                 }
 
                 if (!property.visibility.isPublicAPI) {
