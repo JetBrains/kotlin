@@ -32,7 +32,7 @@ class JsBridgesConstruction(val context: JsIrBackendContext) : BridgesConstructi
     private val jsArrayLike2Array = context.symbols.jsArrayLike2Array
     private val jsSliceArrayLikeFromIndex = context.symbols.jsSliceArrayLikeFromIndex
     private val jsSliceArrayLikeFromIndexToIndex = context.symbols.jsSliceArrayLikeFromIndexToIndex
-    private val primitiveArrays = context.symbols.primitiveArrays
+    private val primitiveArrays = context.irBuiltIns.primitiveArraysToPrimitiveTypes
     private val primitiveToLiteralConstructor = context.symbols.primitiveToLiteralConstructor
 
     override fun getFunctionSignature(function: IrSimpleFunction) =
