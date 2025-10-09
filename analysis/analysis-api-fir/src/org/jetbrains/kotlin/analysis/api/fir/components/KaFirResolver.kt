@@ -1081,7 +1081,10 @@ internal class KaFirResolver(
 
     private fun List<FirExpression>.toKaContextParameterValues(): List<KaReceiverValue> {
         return mapNotNull { expression ->
-            val receiverValue = expression.toKtReceiverValue()
+            val receiverValue = when (expression) {
+                is FirNamedArgumentExpression -> expression.expression.toKtReceiverValue()
+                else -> expression.toKtReceiverValue()
+            }
             if (receiverValue == null) {
                 logger<KaFirResolver>().logErrorWithAttachment("Unexpected null receiver value for context argument") {
                     withFirEntry("expression", expression)
