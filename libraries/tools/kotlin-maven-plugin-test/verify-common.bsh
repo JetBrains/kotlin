@@ -75,12 +75,12 @@ void assertFileExists(String relativePath) {
     }
 }
 
-void assertArtifactsDownloadedFromCacheRedirector() {
-    for (String line : lines) {
-        if (line.startsWith("[INFO] Downloading from")) {
-            if (!line.contains("cache-redirector.jetbrains.com")) {
-                throw new Exception("cache-redirector is not enabled: " + line);
-            }
+//region assert artifacts are downloaded from cache-redirector
+for (String line : lines) {
+    if (line.startsWith("[INFO] Downloading from")) {
+        if (!line.contains("cache-redirector.jetbrains.com")) {
+            throw new Exception("cache-redirector is not enabled: " + line);
         }
     }
 }
+//endregion
