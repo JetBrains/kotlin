@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonSymbols
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -77,13 +75,6 @@ class WasmSymbols(
     override val stringBuilder = ClassIds.StringBuilder.classSymbol()
     override val getContinuation = CallableIds.getContinuation.functionSymbol()
     override val returnIfSuspended = CallableIds.returnIfSuspended.functionSymbol()
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private val _arraysContentEquals = CallableIds.contentEquals.functionSymbols().filter {
-        it.descriptor.extensionReceiverParameter?.type?.isMarkedNullable == true
-    }
-    override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
-        get() = _arraysContentEquals.associateBy { it.owner.parameters[0].type.makeNotNull() }
 
     val throwLinkageError = CallableIds.throwIrLinkageError.functionSymbol()
 
@@ -503,7 +494,6 @@ private object CallableIds {
 
     // Collection functions
     private val String.collectionCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
-    val contentEquals = "contentEquals".collectionCallableId
     val copyInto = "copyInto".collectionCallableId
     val contentToString = "contentToString".collectionCallableId
     val contentHashCode = "contentHashCode".collectionCallableId

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
@@ -213,9 +214,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
     open val setWithoutBoundCheckName: Name?
         get() = null
 
-    open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>?
-        get() = null
-
     /**
      * Determines whether the provided function call is free of side effects.
      * If it is, then we consider this function to be pure and that unblocks some backend optimizations.
@@ -234,5 +232,15 @@ abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols
 
     val primitiveSharedVariableBoxes: Map<IrType, PreSerializationKlibSymbols.SharedVariableBoxClassInfo> = PrimitiveType.entries.associate {
         irBuiltIns.primitiveTypeToIrType[it]!! to findSharedVariableBoxClass(it)
+    }
+
+    val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> by contentEquals.functionSymbolAssociatedBy(
+        condition = { it.hasShape(extensionReceiver = true, regularParameters = 1) && it.parameters[0].type.isNullable() },
+        getKey = { it.parameters[0].type.makeNotNull() }
+    )
+
+    companion object {
+        private val String.collectionsCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
+        private val contentEquals = "contentEquals".collectionsCallableId
     }
 }

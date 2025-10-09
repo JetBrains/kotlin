@@ -74,11 +74,6 @@ class JsSymbols(
     override val stringBuilder
         get() = TODO("not implemented")
 
-    override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> by CallableIds.contentEquals.functionSymbolAssociatedBy(
-        condition = { it.hasShape(extensionReceiver = true, regularParameters = 1) && it.parameters[0].type.isNullable() },
-        getKey = { it.parameters[0].type.makeNotNull() }
-    )
-
     override val getContinuation = CallableIds.getContinuation.functionSymbol()
 
     val coroutineEmptyContinuation: IrPropertySymbol = CallableIds.EmptyContinuation.propertySymbol()
@@ -723,7 +718,6 @@ private object CallableIds {
 
     // Collections functions
     private val String.collectionsCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
-    val contentEquals = "contentEquals".collectionsCallableId
     val createListFrom = "createListFrom".collectionsCallableId
     val createMutableListFrom = "createMutableListFrom".collectionsCallableId
     val createSetFrom = "createSetFrom".collectionsCallableId

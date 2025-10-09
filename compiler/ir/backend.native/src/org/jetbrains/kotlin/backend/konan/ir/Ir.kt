@@ -242,7 +242,6 @@ private object CallableIds {
     private val String.collectionsId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
     val contentToString = "contentToString".collectionsId
     val contentHashCode = "contentHashCode".collectionsId
-    val contentEquals = "contentEquals".collectionsId
     val copyInto = "copyInto".collectionsId
     val copyOf = "copyOf".collectionsId
 }
@@ -546,11 +545,6 @@ class KonanSymbols(
     val arrayContentHashCode by arrayToExtensionSymbolMap(CallableIds.contentHashCode) {
         it.extensionReceiverType?.isMarkedNullable() == true
     }
-    val arrayContentEquals by arrayToExtensionSymbolMap(CallableIds.contentEquals) {
-        it.extensionReceiverType?.isMarkedNullable() == true
-    }
-
-    override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> by lazy { arrayContentEquals.mapKeys { it.key.defaultType } }
 
     val copyInto by arrayToExtensionSymbolMap(CallableIds.copyInto)
     val copyOf by arrayToExtensionSymbolMap(CallableIds.copyOf) { it.hasShape(extensionReceiver = true) }
