@@ -57,7 +57,7 @@ object Aggregates : TemplateGroupBase() {
         }
 
         specialFor(CharSequences) {
-            sample("samples.text.Strings.all")
+            sample("samples.text.Strings.allWithPredicate")
         }
     }
 
@@ -85,6 +85,10 @@ object Aggregates : TemplateGroupBase() {
             for (element in this) if (predicate(element)) return false
             return true
             """
+        }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.noneWithPredicate")
         }
     }
 
@@ -116,6 +120,10 @@ object Aggregates : TemplateGroupBase() {
         body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             "return isEmpty()"
         }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.none")
+        }
     }
 
     val f_any_predicate = fn("any(predicate: (T) -> Boolean)") {
@@ -142,6 +150,10 @@ object Aggregates : TemplateGroupBase() {
             for (element in this) if (predicate(element)) return true
             return false
             """
+        }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.anyWithPredicate")
         }
     }
 
@@ -170,6 +182,10 @@ object Aggregates : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) {
             inlineOnly()
             body { "return storage.any()" }
+        }
+
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.any")
         }
     }
 
