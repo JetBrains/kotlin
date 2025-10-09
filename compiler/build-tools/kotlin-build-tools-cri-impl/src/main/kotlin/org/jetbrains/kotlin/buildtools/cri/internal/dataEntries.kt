@@ -3,13 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalSerializationApi::class)
+@file:OptIn(ExperimentalSerializationApi::class, ExperimentalBuildToolsApi::class)
 
 package org.jetbrains.kotlin.buildtools.cri.internal
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.protobuf.ProtoNumber
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.cri.FileIdToPathEntry
 import org.jetbrains.kotlin.buildtools.api.cri.LookupEntry
 import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry

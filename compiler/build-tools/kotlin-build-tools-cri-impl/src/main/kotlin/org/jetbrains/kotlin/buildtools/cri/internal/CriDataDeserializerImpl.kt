@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.buildtools.cri.internal
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.cri.FileIdToPathEntry
 import org.jetbrains.kotlin.buildtools.api.cri.LookupEntry
 import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry
 
-@OptIn(ExperimentalSerializationApi::class)
+@OptIn(ExperimentalSerializationApi::class, ExperimentalBuildToolsApi::class)
 public class CriDataDeserializerImpl {
     public fun deserializeLookupData(data: ByteArray): Collection<LookupEntry> {
         return ProtoBuf.decodeFromByteArray<Collection<LookupEntryImpl>>(data)
