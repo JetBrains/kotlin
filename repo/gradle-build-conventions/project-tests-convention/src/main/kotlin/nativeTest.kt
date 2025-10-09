@@ -66,7 +66,7 @@ private open class NativeArgsProvider @Inject constructor(
     project: Project,
     objects: ObjectFactory,
     providers: ProviderFactory,
-    @Internal val requirePlatformLibs: Boolean = false,
+    requirePlatformLibs: Boolean,
 ) : CommandLineArgumentProvider {
     @get:Input
     @get:Optional
@@ -140,6 +140,12 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Optional
     protected val xctestFramework = providers.testProperty(XCTEST_FRAMEWORK)
 
+    private val xcTestEnabled = xctestFramework.map { it == "true" }.orElse(false)
+
+    // XCTest depends on platform libraries, so platform libraries must be available.
+    @get:Input
+    protected val dependOnPlatformLibs = xcTestEnabled.orElse(requirePlatformLibs)
+
     @get:Input
     protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild
 
@@ -174,17 +180,17 @@ private open class NativeArgsProvider @Inject constructor(
             val nativeHomeBuiltBy: Provider<List<String>> = testTarget.map {
                 listOfNotNull(
                     ":kotlin-native:${it}CrossDist",
-                    if (requirePlatformLibs) ":kotlin-native:${it}PlatformLibs" else null,
+                    if (dependOnPlatformLibs.get()) ":kotlin-native:${it}PlatformLibs" else null,
                 )
             }.orElse(
                 listOfNotNull(
                     ":kotlin-native:dist",
-                    if (requirePlatformLibs) ":kotlin-native:distPlatformLibs" else null,
+                    if (dependOnPlatformLibs.get()) ":kotlin-native:distPlatformLibs" else null,
                 )
             )
 
             val distDir = project.project(":kotlin-native").isolated.projectDirectory.dir("dist")
-            if (!requirePlatformLibs) {
+            if (!dependOnPlatformLibs.get()) {
                 from(distDir.dir("bin/"))
                 from(distDir.dir("konan/"))
                 from(distDir.dir("tools/"))
@@ -213,7 +219,6 @@ private open class NativeArgsProvider @Inject constructor(
 
     @get:Classpath
     val xcTestConfiguration: ConfigurableFileCollection = objects.fileCollection().apply {
-        val xcTestEnabled = xctestFramework.map { it == "true" }.orElse(false)
         val isAppleTarget: Provider<Boolean> =
             testTargetWithDefault.map { KonanTarget.predefinedTargets[it]?.family?.isAppleFamily ?: false }.orElse(false)
         if (xcTestEnabled.get() && isAppleTarget.get()) {

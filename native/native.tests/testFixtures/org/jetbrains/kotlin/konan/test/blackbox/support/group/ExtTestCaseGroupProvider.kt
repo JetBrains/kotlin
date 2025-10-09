@@ -198,7 +198,7 @@ private class ExtTestDataFile(
         }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isStack()`
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
-        if (!structure.directives.contains(WITH_PLATFORM_LIBS))
+        if (!settings.withPlatformLibs && !structure.directives.contains(WITH_PLATFORM_LIBS))
             args += "-no-default-libs"
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
             .orEmpty().flatMap { it.split(" ") }

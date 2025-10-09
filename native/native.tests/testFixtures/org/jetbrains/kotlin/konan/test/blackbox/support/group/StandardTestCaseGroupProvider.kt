@@ -211,7 +211,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 it.files.any { it.location.extension == "def" && !it.text.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
             }) return null
 
-        val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location)
+        val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location, settings)
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives, location)
 
         val testKind = parseTestKind(registeredDirectives, location) ?: settings.get<TestKind>()
