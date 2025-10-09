@@ -110,7 +110,7 @@ private fun Candidate.prepareExpectedType(
         getExpectedTypeWithSAMConversion(session, argument, basicExpectedType)?.also {
             session.lookupTracker?.let { lookupTracker ->
                 parameter.returnTypeRef.coneType.classLikeLookupTagIfAny?.takeIf {
-                    it.toSymbol(session)?.isLocal == false
+                    it.toSymbol()?.isLocal == false
                 }?.let { lookupTag ->
                     val classId = lookupTag.classId
                     lookupTracker.recordClassMemberLookup(
