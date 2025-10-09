@@ -1,0 +1,13 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsKt]]
+  facadeFqName: EmptyArgumentsKt
+  partSimpleName: "EmptyArgumentsKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=simple, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=named, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=named]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=spread, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=spread]
+    VALUE_PARAMETER_LIST
+  FUN[fqName=mixed, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=mixed]
+    VALUE_PARAMETER_LIST
