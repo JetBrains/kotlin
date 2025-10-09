@@ -673,3 +673,7 @@ fun avoidPublishingTestFixtures() {
     javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
 }
 avoidPublishingTestFixtures()
+
+tasks.configureEach {
+    workaroundWorkerApiMemoryLeak()
+}
