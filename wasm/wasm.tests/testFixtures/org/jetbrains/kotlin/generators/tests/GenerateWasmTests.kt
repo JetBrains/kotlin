@@ -121,6 +121,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
+            testClass<AbstractFirWasmJsCodegenSingleModuleInteropTest> {
+                model("codegen/boxWasmJsInterop")
+            }
+
             testClass<AbstractFirWasmWasiCodegenBoxTest> {
                 model("codegen/boxWasmWasi")
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)

@@ -11,29 +11,27 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_SINGLE_MODULE_MODE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendSingleModuleFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerWithPrecompiled
 import org.junit.jupiter.api.BeforeAll
 
-open class AbstractFirWasmJsCodegenSingleModuleBoxTest(
-    testGroupOutputDirPrefix: String = "codegen/singleModuleBox/"
+
+abstract class AbstractWasmJsCodegenSingleModuleTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
 ) : AbstractFirWasmTest(
     targetBackend = TargetBackend.WASM_JS,
     targetPlatform = WasmPlatforms.wasmJs,
-    pathToTestDir = "compiler/testData/codegen/box/",
+    pathToTestDir = pathToTestDir,
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     companion object {
@@ -75,12 +73,21 @@ open class AbstractFirWasmJsCodegenSingleModuleBoxTest(
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureFirHandlersStep {
-            commonFirHandlersForCodegenTest()
-        }
-
+        builder.configureCodegenFirHandlerSteps()
         builder.useAfterAnalysisCheckers(
-            ::IgnoredTestSuppressor, ::FirMetaInfoDiffSuppressor,
+            ::IgnoredTestSuppressor,
         )
     }
 }
+
+open class AbstractFirWasmJsCodegenSingleModuleBoxTest(
+    testGroupOutputDirPrefix: String = "codegen/singleModuleBox/"
+) : AbstractWasmJsCodegenSingleModuleTest(
+    pathToTestDir = "compiler/testData/codegen/box/",
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+)
+
+open class AbstractFirWasmJsCodegenSingleModuleInteropTest : AbstractWasmJsCodegenSingleModuleTest(
+    pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop",
+    testGroupOutputDirPrefix = "codegen/wasmJsSingleModuleInterop"
+)
