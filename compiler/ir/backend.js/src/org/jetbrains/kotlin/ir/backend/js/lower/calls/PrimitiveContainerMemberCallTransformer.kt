@@ -27,7 +27,7 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
             add(context.irBuiltIns.arrayClass.getFunction, context.symbols.jsArrayGet)
             add(context.irBuiltIns.arrayClass.setFunction, context.symbols.jsArraySet)
             add(context.irBuiltIns.arrayClass.iterator, context.symbols.jsArrayIteratorFunction)
-            for ((key, elementType) in context.symbols.primitiveArrays) {
+            for ((key, elementType) in context.irBuiltIns.primitiveArraysToPrimitiveTypes) {
                 add(key.sizeProperty, context.symbols.jsArrayLength)
                 add(key.getFunction, context.symbols.jsArrayGet)
                 add(key.setFunction, context.symbols.jsArraySet)

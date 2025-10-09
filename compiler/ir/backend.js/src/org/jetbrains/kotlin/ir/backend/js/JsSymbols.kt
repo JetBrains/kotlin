@@ -340,8 +340,6 @@ class JsSymbols(
         getKey = { it.parameters[0].type to it.parameters[1].type }
     )
 
-    val longClassSymbol = irBuiltIns.longClass
-
     val promiseClassSymbol: IrClassSymbol = JsStandardClassIds.Promise.classSymbol()
 
     val longCompareToLong: IrSimpleFunctionSymbol? = CallableIds.compare(compileLongAsBigint).functionSymbolOrNull()
@@ -349,11 +347,8 @@ class JsSymbols(
     val jsLongToString: IrSimpleFunctionSymbol = CallableIds.jsLongToString.functionSymbol()
     val longToStringImpl: IrSimpleFunctionSymbol = CallableIds.toStringImpl(compileLongAsBigint).functionSymbol()
 
-    val charClassSymbol = irBuiltIns.charClass
-
     val stringConstructorSymbol by StandardClassIds.String.primaryConstructorSymbol()
 
-    val anyClassSymbol = irBuiltIns.anyClass
     val anyConstructorSymbol by StandardClassIds.Any.primaryConstructorSymbol()
 
     val jsObjectConstructorSymbol by JsStandardClassIds.JsObject.primaryConstructorSymbol()
@@ -365,8 +360,6 @@ class JsSymbols(
     val jsEnsureNonNull = CallableIds.ensureNotNull.functionSymbol()
 
     // Arrays:
-    val primitiveArrays get() = irBuiltIns.primitiveArraysToPrimitiveTypes
-
     val jsArrayLength = CallableIds.jsArrayLength.functionSymbol()
     val jsArrayGet = CallableIds.jsArrayGet.functionSymbol()
     val jsArraySet = CallableIds.jsArraySet.functionSymbol()
