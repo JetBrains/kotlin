@@ -41,7 +41,7 @@ internal class WasmVarargExpressionLowering(
             arrayType.getClass() ?: throw IllegalArgumentException("Argument ${arrayType.render()} must have a class")
 
         init {
-            check(arrayClass.symbol in context.wasmSymbols.arrays) { "Argument ${ir2string(arrayClass)} must be an array" }
+            check(arrayClass.symbol in context.irBuiltIns.arrays) { "Argument ${ir2string(arrayClass)} must be an array" }
         }
 
         val isUnsigned

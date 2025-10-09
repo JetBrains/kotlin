@@ -137,8 +137,6 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
 }
 
 interface PreSerializationSymbols {
-    val arrays: List<IrClassSymbol>
-
     val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
     val throwUnsupportedOperationException: IrSimpleFunctionSymbol
 
@@ -163,10 +161,7 @@ interface PreSerializationSymbols {
         }
     }
 
-    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationSymbols, BaseSymbolsImpl(irBuiltIns) {
-        override val arrays: List<IrClassSymbol>
-            get() = irBuiltIns.primitiveTypesToPrimitiveArrays.values + irBuiltIns.unsignedTypesToUnsignedArrays.values + irBuiltIns.arrayClass
-    }
+    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationSymbols, BaseSymbolsImpl(irBuiltIns)
 }
 
 interface PreSerializationKlibSymbols : PreSerializationSymbols {

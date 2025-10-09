@@ -123,7 +123,7 @@ open class UpgradeCallableReferences(
             if (this !is IrSimpleType) return 0
             return when (classOrNull) {
                 context.irBuiltIns.arrayClass -> 1 + (arguments[0].typeOrNull?.arrayDepth() ?: 0)
-                in context.symbols.arrays -> 1
+                in context.irBuiltIns.arrays -> 1
                 else -> 0
             }
         }

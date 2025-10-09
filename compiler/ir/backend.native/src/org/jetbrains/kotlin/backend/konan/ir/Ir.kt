@@ -518,6 +518,7 @@ class KonanSymbols(
 
     override val stringBuilder = ClassIds.stringBuilder.classSymbol()
 
+    private val arrays = irBuiltIns.arrays
     private fun arrayToExtensionSymbolMap(callableId: CallableId, condition: (IrFunction) -> Boolean = { true }): Lazy<Map<IrClassSymbol, IrSimpleFunctionSymbol>> {
         val allSymbols = callableId.functionSymbols()
         return lazy {
