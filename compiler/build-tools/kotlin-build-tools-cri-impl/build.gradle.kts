@@ -1,7 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
-    id("generated-sources")
     id("project-tests-convention")
     kotlin("plugin.serialization")
 }
