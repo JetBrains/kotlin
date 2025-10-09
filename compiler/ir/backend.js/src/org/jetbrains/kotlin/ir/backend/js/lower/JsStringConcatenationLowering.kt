@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.overrides
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -76,7 +77,23 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
     }
 
     private val IrFunctionSymbol.isStringPlus: Boolean
-        get() = context.symbols.isStringPlus(this)
+        get() {
+            val plusSymbol = when {
+                owner.hasShape(
+                    dispatchReceiver = true,
+                    regularParameters = 1,
+                    parameterTypes = listOf(context.irBuiltIns.stringType, null)
+                ) -> context.symbols.memberStringPlus
+                owner.hasShape(
+                    extensionReceiver = true,
+                    regularParameters = 1,
+                    parameterTypes = listOf(context.irBuiltIns.stringType.makeNullable(), null)
+                ) -> context.symbols.extensionStringPlus
+                else -> return false
+            }
+
+            return this == plusSymbol
+        }
 
     override fun visitCall(expression: IrCall): IrExpression {
         fun explicitlyConvertToStringIfNeeded(): IrExpression {
