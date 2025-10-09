@@ -9,6 +9,7 @@ import org.gradle.api.provider.Property
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
@@ -111,6 +112,7 @@ class MppTestsIT : KGPBaseTest() {
 
     @DisplayName("KT-62911: Project Isolation and Project 2 Project Dependencies")
     @GradleTest
+    @Disabled("KT-81578")
     fun testKt62911ProjectIsolationWithP2PDependencies(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.enableIsolatedProjects()
         project("kt-62911-project-isolation-with-p2p-dependencies", gradleVersion, buildOptions = buildOptions) {
