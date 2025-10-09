@@ -341,7 +341,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                 executionPolicy = kotlinToolchains.createInProcessExecutionPolicy();
             }
 
-            JvmPlatformToolchain jvmToolchain = JvmPlatformToolchain.get(kotlinToolchains);
+            JvmPlatformToolchain jvmToolchain = JvmPlatformToolchain.from(kotlinToolchains);
             Set<String> kotlinExtensions = SourcesUtilsKt.getDEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS();
             Set<String> allExtensions = new HashSet<>(kotlinExtensions);
             allExtensions.add("java");
