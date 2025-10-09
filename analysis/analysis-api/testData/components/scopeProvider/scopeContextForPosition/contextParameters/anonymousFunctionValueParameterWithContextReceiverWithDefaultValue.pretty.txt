@@ -7,19 +7,13 @@ implicit values:
       <anonymous function>(anonParam: kotlin.Boolean, anonParam2: kotlin.Long): kotlin.Unit
 
   KaImplicitReceiver:
-    scopeIndexInTower = 1
-    type = B
-    ownerSymbol = KaContextParameterSymbol:
-      B: B
-
-  KaImplicitReceiver:
-    scopeIndexInTower = 5
+    scopeIndexInTower = 4
     type = C
     ownerSymbol = KaNamedFunctionSymbol:
       /foo(<extension receiver>: C, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
 
   KaImplicitReceiver:
-    scopeIndexInTower = 6
+    scopeIndexInTower = 5
     type = A
     ownerSymbol = KaContextParameterSymbol:
       A: A
@@ -35,7 +29,28 @@ scopes:
     constructors: 1
       constructor()
 
-  TypeScope, index = 1
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 2
+      anonParam: kotlin.Boolean
+      anonParam2: kotlin.Long
+    constructors: 0
+
+  TypeParameterScope, index = 2
+    packages: 0
+    classifiers: 1
+      T2
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 4
     packages: 0
     classifiers: 0
     callables: 3
@@ -44,27 +59,6 @@ scopes:
       fun toString(): kotlin.String
     constructors: 1
       constructor()
-
-  LocalScope, index = 2
-    packages: 0
-    classifiers: 0
-    callables: 2
-      anonParam: kotlin.Boolean
-      anonParam2: kotlin.Long
-    constructors: 0
-
-  TypeParameterScope, index = 3
-    packages: 0
-    classifiers: 1
-      T2
-    callables: 0
-    constructors: 0
-
-  LocalScope, index = 4
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
 
   TypeScope, index = 5
     packages: 0
@@ -76,17 +70,7 @@ scopes:
     constructors: 1
       constructor()
 
-  TypeScope, index = 6
-    packages: 0
-    classifiers: 0
-    callables: 3
-      fun equals(other: kotlin.Any?): kotlin.Boolean
-      fun hashCode(): kotlin.Int
-      fun toString(): kotlin.String
-    constructors: 1
-      constructor()
-
-  LocalScope, index = 7
+  LocalScope, index = 6
     packages: 0
     classifiers: 0
     callables: 2
@@ -94,20 +78,20 @@ scopes:
       param2: kotlin.String
     constructors: 0
 
-  TypeParameterScope, index = 8
+  TypeParameterScope, index = 7
     packages: 0
     classifiers: 1
       T1
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 9
+  ExplicitSimpleImportingScope, index = 8
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 10
+  PackageMemberScope, index = 9
     packages: 6
       META-INF
       java
@@ -127,15 +111,15 @@ scopes:
       fun <T1> C.foo(param: kotlin.Int, param2: kotlin.String)
     constructors: 0
 
+  DefaultSimpleImportingScope, index = 10
+
   DefaultSimpleImportingScope, index = 11
 
-  DefaultSimpleImportingScope, index = 12
-
-  ExplicitStarImportingScope, index = 13
+  ExplicitStarImportingScope, index = 12
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 14
+  DefaultStarImportingScope, index = 13
 

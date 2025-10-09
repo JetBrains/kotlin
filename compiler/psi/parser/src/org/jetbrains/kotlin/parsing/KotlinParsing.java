@@ -620,7 +620,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
             else if (at(CONTEXT_KEYWORD) && annotationParsingMode.allowContextList && lookahead(1) == LPAR) {
                 PsiBuilder.Marker contextMarker = mark();
-                if (!tryParseContextReceiverList(false) && localDeclaration) {
+                if (!parseContextParameterOrReceiverList(false) && localDeclaration) {
                     // Rollback the entire context declaration to make it possible to prevent parsing of potential local declarations
                     // that in fact are not declarations (we are trying to parse declarations at first and statements as second).
                     contextMarker.rollbackTo();
@@ -701,11 +701,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * contextReceiverList
      *   : "context" "(" (contextReceiver{","})+ ")"
      *
-     * @return <tt>true</tt> if there is no syntax error during parsing
+     * @return <tt>true</tt> if it parsed a context with value parameters
+     * Otherwise returns <tt>false</tt> if it parsed a context with type refs (that work as receivers) or encountered a syntax error during parsing.
      */
-    private boolean tryParseContextReceiverList(boolean inFunctionType) {
+    private boolean parseContextParameterOrReceiverList(boolean inFunctionType) {
         assert _at(CONTEXT_KEYWORD);
-        PsiBuilder.Marker contextReceiverList = mark();
+        PsiBuilder.Marker valueParameterOrTypeRefList = mark();
         advance(); // CONTEXT_KEYWORD
 
         assert _at(LPAR);
@@ -722,10 +723,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
             // Treat parsing of context receivers (deprecated syntax) as an error,
             // But an outer caller decides if the entire list should be dropped:
             // If we're trying to parse a local declaration, we should drop it to prevent unexpected parsing of ahead declarations
-            noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, () -> parseValueParameterOrContextReceiver(inFunctionType));
+            noError = valueParameterLoop(inFunctionType, CONTEXT_PARAMETERS_FOLLOW_SET, () -> parseValueParameterOrTypeRef(inFunctionType));
         }
 
-        contextReceiverList.done(CONTEXT_RECEIVER_LIST);
+        valueParameterOrTypeRefList.done(CONTEXT_RECEIVER_LIST);
         return noError;
     }
 
@@ -735,7 +736,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *
      * @return <tt>true</tt> if it parsed a value parameter or type ref in the correct position (in function type) and <tt>false</tt> otherwise.
      */
-    private boolean parseValueParameterOrContextReceiver(boolean inFunctionType) {
+    private boolean parseValueParameterOrTypeRef(boolean inFunctionType) {
         if (tryParseValueParameter(true)) {
             return true;
         }
@@ -2258,7 +2259,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker contextReceiversStart = mark();
 
         if (withContextReceiver) {
-            tryParseContextReceiverList(true);
+            parseContextParameterOrReceiverList(true);
         }
 
         PsiBuilder.Marker typeElementMarker = mark();
@@ -2659,7 +2660,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     break;
                 }
 
-                noError = parseParameter.get() & noError;
+                noError = parseParameter.get() && noError;
 
                 if (at(COMMA)) {
                     advance(); // COMMA
@@ -2681,7 +2682,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
         }
 
-        return expect(RPAR, "Expecting ')'", recoverySet) & noError;
+        return expect(RPAR, "Expecting ')'", recoverySet) && noError;
     }
 
     /*
