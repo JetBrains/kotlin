@@ -62,7 +62,7 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
     if (WERROR in this) { arguments.allWarningsAsErrors = get(WERROR)}
-    try { if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: WEXTRA. Current compiler version is: $KC_VERSION}, but the argument was introduced in 2.1.0""").initCause(e) }
+    try { if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: WEXTRA. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0""").initCause(e) }
     if (X in this) { arguments.extraHelp = get(X)}
     if (HELP in this) { arguments.help = get(HELP)}
     if (NOWARN in this) { arguments.suppressWarnings = get(NOWARN)}

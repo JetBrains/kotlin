@@ -321,7 +321,7 @@ private fun FunSpec.Builder.addSafeSetStatement(
         val errorMessage = CodeBlock.of(
             "%P",
             buildString {
-                append($$"Compiler parameter not recognized: $$name. Current compiler version is: $KC_VERSION}, but")
+                append($$"Compiler parameter not recognized: $$name. Current compiler version is: $KC_VERSION, but")
                 if (wasIntroducedRecently) {
                     append(" the argument was introduced in ${argument.releaseVersionsMetadata.introducedVersion.releaseName}")
                 }
