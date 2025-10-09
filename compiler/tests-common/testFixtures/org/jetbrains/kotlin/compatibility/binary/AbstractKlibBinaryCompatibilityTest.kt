@@ -27,6 +27,7 @@ class TestModule(name: String, dependenciesSymbols: List<String>, friends: List<
     fun versionFiles(version: Int) = files.filter { it.version == null || it.version == version }
 }
 
+// TODO: consider removing this base test runner class in KT-71957
 abstract class AbstractKlibBinaryCompatibilityTest : KotlinTestWithEnvironment() {
 
     private val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")

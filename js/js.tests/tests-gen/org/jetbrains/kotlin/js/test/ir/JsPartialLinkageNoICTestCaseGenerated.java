@@ -80,6 +80,246 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
   }
 
   @Test
+  @TestMetadata("evolutionAddAbstractMemberBody")
+  public void testEvolutionAddAbstractMemberBody() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddAbstractMemberBody/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddCompanionObject")
+  public void testEvolutionAddCompanionObject() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddCompanionObject/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddDefaultImplementations")
+  public void testEvolutionAddDefaultImplementations() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddDefaultImplementations/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddEnumClassMember")
+  public void testEvolutionAddEnumClassMember() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddEnumClassMember/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddLateinitToVar")
+  public void testEvolutionAddLateinitToVar() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddLateinitToVar/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddOpenToClass")
+  public void testEvolutionAddOpenToClass() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddOpenToClass/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddOpenToMember")
+  public void testEvolutionAddOpenToMember() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddOpenToMember/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddOrRemoveConst")
+  public void testEvolutionAddOrRemoveConst() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddOrRemoveConst/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddOrRemoveInitBlock")
+  public void testEvolutionAddOrRemoveInitBlock() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddOrRemoveInitBlock/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddOverloads")
+  public void testEvolutionAddOverloads() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddOverloads/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddParameterDefaulValue")
+  public void testEvolutionAddParameterDefaulValue() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddParameterDefaulValue/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddPropertyAccessor")
+  public void testEvolutionAddPropertyAccessor() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddPropertyAccessor/");
+  }
+
+  @Test
+  @TestMetadata("evolutionAddingSealedClassMember")
+  public void testEvolutionAddingSealedClassMember() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionAddingSealedClassMember/");
+  }
+
+  @Test
+  @TestMetadata("evolutionChangeBaseClassOrder")
+  public void testEvolutionChangeBaseClassOrder() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionChangeBaseClassOrder/");
+  }
+
+  @Test
+  @TestMetadata("evolutionChangeCompanionToNestedObject")
+  public void testEvolutionChangeCompanionToNestedObject() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionChangeCompanionToNestedObject/");
+  }
+
+  @Test
+  @TestMetadata("evolutionChangeConstInitialization")
+  public void testEvolutionChangeConstInitialization() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionChangeConstInitialization/");
+  }
+
+  @Test
+  @TestMetadata("evolutionChangeFakeOverrides")
+  public void testEvolutionChangeFakeOverrides() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionChangeFakeOverrides/");
+  }
+
+  @Test
+  @TestMetadata("evolutionChangeNamesOfTypeParameters")
+  public void testEvolutionChangeNamesOfTypeParameters() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionChangeNamesOfTypeParameters/");
+  }
+
+  @Test
+  @TestMetadata("evolutionChangeObjectToCompanion")
+  public void testEvolutionChangeObjectToCompanion() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionChangeObjectToCompanion/");
+  }
+
+  @Test
+  @TestMetadata("evolutionChangeParameterDefaultValue")
+  public void testEvolutionChangeParameterDefaultValue() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionChangeParameterDefaultValue/");
+  }
+
+  @Test
+  @TestMetadata("evolutionChangePropertyFromValToVar")
+  public void testEvolutionChangePropertyFromValToVar() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionChangePropertyFromValToVar/");
+  }
+
+  @Test
+  @TestMetadata("evolutionChangePropertyInitialization")
+  public void testEvolutionChangePropertyInitialization() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionChangePropertyInitialization/");
+  }
+
+  @Test
+  @TestMetadata("evolutionConstructorParameterMarkValVar")
+  public void testEvolutionConstructorParameterMarkValVar() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionConstructorParameterMarkValVar/");
+  }
+
+  @Test
+  @TestMetadata("evolutionDeleteOverrideMember")
+  public void testEvolutionDeleteOverrideMember() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionDeleteOverrideMember/");
+  }
+
+  @Test
+  @TestMetadata("evolutionDeletePrivateMembers")
+  public void testEvolutionDeletePrivateMembers() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionDeletePrivateMembers/");
+  }
+
+  @Test
+  @TestMetadata("evolutionInlineFunction")
+  public void testEvolutionInlineFunction() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionInlineFunction/");
+  }
+
+  @Test
+  @TestMetadata("evolutionMakeFunctionInfixOrTailrec")
+  public void testEvolutionMakeFunctionInfixOrTailrec() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionMakeFunctionInfixOrTailrec/");
+  }
+
+  @Test
+  @TestMetadata("evolutionMoreSpecificBaseClass")
+  public void testEvolutionMoreSpecificBaseClass() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionMoreSpecificBaseClass/");
+  }
+
+  @Test
+  @TestMetadata("evolutionMoveMemberUpInHierarchy")
+  public void testEvolutionMoveMemberUpInHierarchy() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionMoveMemberUpInHierarchy/");
+  }
+
+  @Test
+  @TestMetadata("evolutionNewFakeOverride")
+  public void testEvolutionNewFakeOverride() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionNewFakeOverride/");
+  }
+
+  @Test
+  @TestMetadata("evolutionNewOverrideMember")
+  public void testEvolutionNewOverrideMember() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionNewOverrideMember/");
+  }
+
+  @Test
+  @TestMetadata("evolutionOverrideByPrivateMembers")
+  public void testEvolutionOverrideByPrivateMembers() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionOverrideByPrivateMembers/");
+  }
+
+  @Test
+  @TestMetadata("evolutionRemoveAbstractFromClass")
+  public void testEvolutionRemoveAbstractFromClass() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionRemoveAbstractFromClass/");
+  }
+
+  @Test
+  @TestMetadata("evolutionRemoveInfixOrTailrecFromFunction")
+  public void testEvolutionRemoveInfixOrTailrecFromFunction() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionRemoveInfixOrTailrecFromFunction/");
+  }
+
+  @Test
+  @TestMetadata("evolutionRemoveLateinitFromVar")
+  public void testEvolutionRemoveLateinitFromVar() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionRemoveLateinitFromVar/");
+  }
+
+  @Test
+  @TestMetadata("evolutionRemovePropertyAccessor")
+  public void testEvolutionRemovePropertyAccessor() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionRemovePropertyAccessor/");
+  }
+
+  @Test
+  @TestMetadata("evolutionRenameArguments")
+  public void testEvolutionRenameArguments() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionRenameArguments/");
+  }
+
+  @Test
+  @TestMetadata("evolutionReorderClassConstructors")
+  public void testEvolutionReorderClassConstructors() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionReorderClassConstructors/");
+  }
+
+  @Test
+  @TestMetadata("evolutionTurnClassIntoDataClass")
+  public void testEvolutionTurnClassIntoDataClass() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionTurnClassIntoDataClass/");
+  }
+
+  @Test
+  @TestMetadata("evolutionWidenSuperMemberVisibility")
+  public void testEvolutionWidenSuperMemberVisibility() {
+    runTest("compiler/testData/klib/partial-linkage/evolutionWidenSuperMemberVisibility/");
+  }
+
+  @Test
   @TestMetadata("externalDeclarations")
   public void testExternalDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/externalDeclarations/");

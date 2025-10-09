@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrSignaturesTe
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataSignaturesTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataTest
-import org.jetbrains.kotlin.konan.test.evolution.AbstractNativeKlibEvolutionTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibComparisonTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibCompilationTest
 import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
@@ -131,13 +130,6 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "native/native.tests/testData/klib/header-klibs/compilation") {
             testClass<AbstractNativeHeaderKlibCompilationTest> {
                 model(extension = null, recursive = false)
-            }
-        }
-
-        // KLIB evolution tests.
-        testGroup(testsRoot, "compiler/testData/klib/evolution") {
-            testClass<AbstractNativeKlibEvolutionTest> {
-                model(recursive = false)
             }
         }
 

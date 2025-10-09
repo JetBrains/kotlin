@@ -1,0 +1,10 @@
+sealed class X(val name: String ="X")
+
+class Y: X("Y")
+
+class Z: X("Z")
+
+class W: X("W")
+          
+fun last(): X = W()
+

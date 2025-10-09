@@ -1,0 +1,16 @@
+package serialization.fake_overrides
+
+open class X {
+    fun bar() = "barMoved"
+}
+
+class Y: X() {
+}
+
+class B: A() {
+    override fun qux() = "quxChild"
+}
+
+class C: A() {
+}
+

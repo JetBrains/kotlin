@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
-import org.jetbrains.kotlin.js.testOld.klib.AbstractFirJsKlibEvolutionTest
-import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 
@@ -29,14 +26,6 @@ fun main(args: Array<String>) {
     // TODO: repair these tests
     //generateTestDataForReservedWords()
     generateTypeScriptJsExportOnFiles("js/js.translator/testData/typescript-export/js")
-
-    generateTestGroupSuiteWithJUnit4(args) {
-        testGroup("js/js.tests/tests-gen", "compiler/testData/klib/evolution", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirJsKlibEvolutionTest> {
-                model(targetBackend = TargetBackend.JS_IR)
-            }
-        }
-    }
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/partial-linkage") {

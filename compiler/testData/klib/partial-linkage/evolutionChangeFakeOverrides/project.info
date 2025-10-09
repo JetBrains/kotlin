@@ -1,0 +1,7 @@
+MODULES: base, move, use, main
+
+STEP 0:
+    libs: base, move, use
+
+STEP 1:
+    libs: move, main
