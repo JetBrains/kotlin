@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.analysis.utils.classId
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.isLocal
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -295,7 +294,7 @@ internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
         // Script parameters should be treated as non-locals as they are visible from FirScript
         FirDeclarationOrigin.ScriptCustomization.Parameter, FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false
 
-        else -> fir.status.visibility == Visibilities.Local
+        else -> !isNonLocal
     }
 
 val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
