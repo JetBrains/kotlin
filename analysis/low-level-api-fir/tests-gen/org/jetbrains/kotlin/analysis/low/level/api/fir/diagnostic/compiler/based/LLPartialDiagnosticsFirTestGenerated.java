@@ -3884,6 +3884,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("annotationInFullForm.kt")
+      public void testAnnotationInFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/annotationInFullForm.kt");
+      }
+
+      @Test
       @TestMetadata("deprecationOfParensShortFormOfMapEntry.kt")
       public void testDeprecationOfParensShortFormOfMapEntry() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/deprecationOfParensShortFormOfMapEntry.kt");
