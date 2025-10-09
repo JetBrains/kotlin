@@ -336,6 +336,15 @@ fun generateAsyncJsWrapper(
             "    imports[$moduleSpecifier] = imports[$moduleSpecifier] ?? (await (await import('./${import.fileName}.uninstantiated.mjs')).instantiate(imports, true)).exports;\n"
         }
 
+    val jsModulesLoaders = jsModuleImports
+        .filterNot { it.startsWith("wasm:") }
+        .toList()
+        .sorted()
+        .joinToString("") { module ->
+            val moduleSpecifier = module.toJsStringLiteral()
+            "    imports[$moduleSpecifier] = imports[$moduleSpecifier] ?? (await import($moduleSpecifier));\n"
+        }
+
     val referencesToQualifiedAndImportedDeclarations = jsModuleAndQualifierReferences
         .map {
             val module = it.module
@@ -410,7 +419,7 @@ $jsCodeBodyIndented
 
     const wasmFilePath = $pathJsStringLiteral;
 
-$dependenciesLoaders
+$jsModulesLoaders$dependenciesLoaders
 
     const importObject = {
         js_code,
