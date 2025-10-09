@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.cri
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 
+// TODO (KT-81585): once the CRI schema is stable, document public interfaces
 @ExperimentalBuildToolsApi
 public interface FileIdToPathEntry {
     public val fileId: Int?
