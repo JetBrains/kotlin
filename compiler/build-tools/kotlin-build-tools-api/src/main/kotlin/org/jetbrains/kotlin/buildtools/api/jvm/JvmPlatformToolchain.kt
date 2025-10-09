@@ -62,7 +62,7 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
          * Equivalent to `kotlinToolchains.getToolchain<JvmPlatformToolchain>()`
          */
         @JvmStatic
-        @get:JvmName("get")
+        @get:JvmName("from")
         public inline val KotlinToolchains.jvm: JvmPlatformToolchain get() = getToolchain<JvmPlatformToolchain>()
     }
 }
