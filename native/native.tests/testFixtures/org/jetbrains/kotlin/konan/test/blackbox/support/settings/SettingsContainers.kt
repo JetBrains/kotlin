@@ -89,3 +89,9 @@ val Settings.configurables: Configurables
         )
         return PlatformManager(distribution).platform(get<KotlinNativeTargets>().testTarget).configurables
     }
+
+/**
+ * True, when all tests are required to have platform libraries available.
+ */
+val Settings.withPlatformLibs: Boolean
+    get() = get<XCTestRunner>().isEnabled // XCTest depends on platform libraries, so platform libraries must be available.

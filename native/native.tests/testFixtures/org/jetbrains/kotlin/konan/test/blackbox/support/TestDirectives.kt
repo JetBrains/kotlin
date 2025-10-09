@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNN
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -404,7 +406,7 @@ internal fun parseExpectedExitCode(registeredDirectives: RegisteredDirectives, l
     }
 }
 
-internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location): TestCompilerArgs {
+internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, location: Location, settings: Settings): TestCompilerArgs {
     val assertionsMode = registeredDirectives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT
     val freeCInteropArgs = registeredDirectives[FREE_CINTEROP_ARGS]
     val freeCompilerArgs = registeredDirectives[FREE_COMPILER_ARGS]
@@ -417,7 +419,8 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
         """.trimIndent()
         }
     }
-    val noDefaultLibsArgs = if (WITH_PLATFORM_LIBS in registeredDirectives) emptyList() else listOf("-no-default-libs")
+    val noDefaultLibsArgs =
+        if (settings.withPlatformLibs || WITH_PLATFORM_LIBS in registeredDirectives) emptyList() else listOf("-no-default-libs")
     return TestCompilerArgs(freeCompilerArgs + noDefaultLibsArgs, freeCInteropArgs, assertionsMode)
 }
 
