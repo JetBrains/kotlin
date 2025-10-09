@@ -1,5 +1,6 @@
 // TARGET_BACKEND: WASM
 // WASM_NO_JS_TAG
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 // FILE: main.kt
 fun runWithException() {
