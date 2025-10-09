@@ -655,7 +655,7 @@ internal object DevirtualizationAnalysis {
             }
 
             val result = mutableMapOf<DataFlowIR.Node.VirtualCall, Pair<DevirtualizedCallSite, DataFlowIR.FunctionSymbol>>()
-            val nothing = symbolTable.classMap[context.symbols.nothing.owner]
+            val nothing = symbolTable.classMap[context.irBuiltIns.nothingClass.owner]
             for (function in functions.values) {
                 if (!constraintGraph.functions.containsKey(function.symbol)) continue
                 function.body.forEachNonScopeNode { node ->
