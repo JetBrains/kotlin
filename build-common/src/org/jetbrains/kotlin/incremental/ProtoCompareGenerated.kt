@@ -619,6 +619,16 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsPropertyDelegateFieldAnnotation(old, new)) return false
 
+        if (old.hasGetterContract() != new.hasGetterContract()) return false
+        if (old.hasGetterContract()) {
+            if (!checkEquals(old.getterContract, new.getterContract)) return false
+        }
+
+        if (old.hasSetterContract() != new.hasSetterContract()) return false
+        if (old.hasSetterContract()) {
+            if (!checkEquals(old.setterContract, new.setterContract)) return false
+        }
+
         if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
         if (old.hasExtension(JvmProtoBuf.propertySignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.propertySignature), new.getExtension(JvmProtoBuf.propertySignature))) return false
@@ -2397,6 +2407,14 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     for(i in 0..delegateFieldAnnotationCount - 1) {
         hashCode = 31 * hashCode + getDelegateFieldAnnotation(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasGetterContract()) {
+        hashCode = 31 * hashCode + getterContract.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasSetterContract()) {
+        hashCode = 31 * hashCode + setterContract.hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasExtension(JvmProtoBuf.propertySignature)) {

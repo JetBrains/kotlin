@@ -601,6 +601,9 @@ class FirElementSerializer private constructor(
             if (accessorFlags != defaultAccessorFlags) {
                 builder.getterFlags = accessorFlags
             }
+            contractSerializer.buildAccessorContractProtoIfAny(getter, local)?.let {
+                builder.setGetterContract(it)
+            }
         }
 
         val setter = property.setter ?: with(property) {
@@ -633,6 +636,10 @@ class FirElementSerializer private constructor(
                     val annotations = nonSourceAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
                     builder.setSetterValueParameter(setterLocal.valueParameterProto(valueParameterDescriptor, index, setter, annotations))
                 }
+            }
+
+            contractSerializer.buildAccessorContractProtoIfAny(setter, local)?.let {
+                builder.setSetterContract(it)
             }
         }
 

@@ -541,6 +541,21 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             setLazyPublishedVisibility(c.session)
             getter?.setLazyPublishedVisibility(annotations, this, c.session)
             setter?.setLazyPublishedVisibility(annotations, this, c.session)
+            // Contract deserialization needs access to the property FIR, therefore these contracts deserialized after building the property
+            getter?.let {
+                if (proto.hasGetterContract()) {
+                    contractDeserializer.loadContract(proto.getterContract, it)?.let { contract ->
+                        it.replaceContractDescription(contract)
+                    }
+                }
+            }
+            setter?.let {
+                if (proto.hasSetterContract()) {
+                    contractDeserializer.loadContract(proto.setterContract, it)?.let { contract ->
+                        it.replaceContractDescription(contract)
+                    }
+                }
+            }
         }
     }
 
