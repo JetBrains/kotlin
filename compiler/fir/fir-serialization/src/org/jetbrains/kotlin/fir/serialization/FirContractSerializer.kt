@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -30,6 +31,15 @@ class FirContractSerializer {
         }
         val worker = ContractSerializerWorker(parentSerializer)
         proto.setContract(worker.contractProto(contractDescription))
+    }
+
+    fun buildAccessorContractProtoIfAny(accessor: FirPropertyAccessor, parentSerializer: FirElementSerializer): ProtoBuf.Contract.Builder? {
+        val contractDescription = accessor.contractDescription
+        if (contractDescription == null || contractDescription.effects.isNullOrEmpty()) {
+            return null
+        }
+        val worker = ContractSerializerWorker(parentSerializer)
+        return worker.contractProto(contractDescription)
     }
 
     private class ContractSerializerWorker(private val parentSerializer: FirElementSerializer) {

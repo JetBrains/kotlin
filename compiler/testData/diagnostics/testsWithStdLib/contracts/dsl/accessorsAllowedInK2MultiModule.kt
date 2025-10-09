@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // LANGUAGE: +AllowContractsOnPropertyAccessors
 // Issue: KT-79506
@@ -34,8 +33,7 @@ import isError
 
 fun testFromOtherModule(status: Status) {
     if (status.isError) {
-        // Note that currently the error correctly reproduced only in phased tests
-        status.<!UNRESOLVED_REFERENCE!>message<!> // unexpected error, see KT-79506
+        status.message
     }
 }
 
