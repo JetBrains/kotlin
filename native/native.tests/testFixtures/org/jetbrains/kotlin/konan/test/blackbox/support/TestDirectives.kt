@@ -417,8 +417,7 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
         """.trimIndent()
         }
     }
-    // TODO(KT-81518): restore the directive handling.
-    val noDefaultLibsArgs = /*if (WITH_PLATFORM_LIBS in registeredDirectives) emptyList() else listOf("-no-default-libs")*/ emptyList<String>()
+    val noDefaultLibsArgs = if (WITH_PLATFORM_LIBS in registeredDirectives) emptyList() else listOf("-no-default-libs")
     return TestCompilerArgs(freeCompilerArgs + noDefaultLibsArgs, freeCInteropArgs, assertionsMode)
 }
 
