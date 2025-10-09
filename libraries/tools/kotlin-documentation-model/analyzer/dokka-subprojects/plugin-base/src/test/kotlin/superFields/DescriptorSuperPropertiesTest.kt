@@ -11,6 +11,7 @@ import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.IsVar
 import org.jetbrains.dokka.model.KotlinVisibility
 import utils.OnlyDescriptors
+import utils.OnlySymbols
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -143,6 +144,9 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
         }
     }
 
+    /**
+     * @see `should have special getter, setter and property names for boolean property inherited from java` for descriptors
+     */
     @Test
     @OnlyDescriptors("Incorrect test, see https://github.com/Kotlin/dokka/issues/3128")
     fun `should have special getter and setter names for boolean property inherited from java`() {
@@ -179,6 +183,44 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
         }
     }
 
+    @Test
+    @OnlySymbols("#3128")
+    fun `should have special getter, setter and property names for boolean property inherited from java`() {
+        testInline(
+            """
+            |/src/test/A.java
+            |package test;
+            |public class A {
+            |   private boolean bool = true;
+            |   public boolean isBool() { return bool; }
+            |   public void setBool(boolean bool) { this.bool = bool; }
+            |}
+            |
+            |/src/test/B.kt
+            |package test
+            |class B : A {}
+        """.trimIndent(),
+            commonTestConfiguration
+        ) {
+            documentablesMergingStage = { module ->
+                val kotlinProperties = module.packages.single().classlikes.single { it.name == "B" }.properties
+                val boolProperty = kotlinProperties.single { it.name == "isBool" }
+
+                val getter = boolProperty.getter
+                assertNotNull(getter)
+                assertEquals("isBool", getter.name)
+
+                val setter = boolProperty.setter
+                assertNotNull(setter)
+                assertEquals("setBool", setter.name)
+
+                assertNotNull(boolProperty.extra[IsVar])
+            }
+        }
+    }
+    /**
+     * @see `kotlin inheriting java should have a synthetic property when even field is public api`  for descriptors
+     */
     @OnlyDescriptors("Incorrect test, see https://github.com/Kotlin/dokka/issues/3128")
     @Test
     fun `kotlin inheriting java should not append anything since field is public api`() {
@@ -222,6 +264,61 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
 
                 assertEquals("getA", testedClass.functions[0].name)
                 assertEquals("setA", testedClass.functions[1].name)
+
+                val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
+                assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
+
+                assertNotNull(property.extra[IsVar])
+            }
+        }
+    }
+
+    @OnlySymbols("#3128")
+    @Test
+    fun `kotlin inheriting java should have a synthetic property whenever field is public api`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                    analysisPlatform = "jvm"
+                    name = "jvm"
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PROTECTED
+                    )
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/test/A.java
+            |package test;
+            |public class A {
+            |   protected int a = 1;
+            |   public int getA() { return a; }
+            |   public void setA(int a) { this.a = a; }
+            |}
+            |
+            |/src/test/B.kt
+            |package test
+            |class B : A {}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.packages.single().classlikes.single { it.name == "B" }
+                val property = testedClass.properties.single { it.name == "a" }
+
+                assertNotNull(property.getter)
+                assertNotNull(property.setter)
+
+
+                assertEquals("getA", property.getter?.name)
+                assertEquals("setA", property.setter?.name)
+
+
+                assertEquals(0, testedClass.functions.size)
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), inheritedFrom)
