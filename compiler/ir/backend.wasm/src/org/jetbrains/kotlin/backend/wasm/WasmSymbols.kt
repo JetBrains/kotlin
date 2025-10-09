@@ -356,7 +356,7 @@ class WasmSymbols(
 
 private object ClassIds {
     // WASM internal class
-    private val String.wasmClassId get() = ClassId(PreSerializationWasmSymbols.Impl.wasmInternalFqName, Name.identifier(this))
+    private val String.wasmClassId get() = ClassId(WasmStandardClassIds.BASE_WASM_INTERNAL_PACKAGE, Name.identifier(this))
     val TypeInfoData = "TypeInfoData".wasmClassId
     val KClassImpl = "KClassImpl".wasmClassId
     val KClassInterfaceImpl = "KClassInterfaceImpl".wasmClassId
@@ -395,12 +395,12 @@ private object ClassIds {
     val JsFun = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("JsFun"))
     val StringBuilder = ClassId(StandardClassIds.BASE_TEXT_PACKAGE, Name.identifier("StringBuilder"))
     val Appendable = ClassId(StandardClassIds.BASE_TEXT_PACKAGE, Name.identifier("Appendable"))
-    val structref = ClassId(PreSerializationWasmSymbols.Impl.wasmInternalFqName.child(Name.identifier("reftypes")), Name.identifier("structref"))
-    val anyref = ClassId(PreSerializationWasmSymbols.Impl.wasmInternalFqName.child(Name.identifier("reftypes")), Name.identifier("anyref"))
+    val structref = ClassId(WasmStandardClassIds.BASE_WASM_INTERNAL_PACKAGE.child(Name.identifier("reftypes")), Name.identifier("structref"))
+    val anyref = ClassId(WasmStandardClassIds.BASE_WASM_INTERNAL_PACKAGE.child(Name.identifier("reftypes")), Name.identifier("anyref"))
     val WasmExport = ClassId(WasmStandardClassIds.BASE_WASM_PACKAGE, Name.identifier("WasmExport"))
 }
 
-private val String.wasmCallableId get() = CallableId(PreSerializationWasmSymbols.Impl.wasmInternalFqName, Name.identifier(this))
+private val String.wasmCallableId get() = CallableId(WasmStandardClassIds.BASE_WASM_INTERNAL_PACKAGE, Name.identifier(this))
 
 private object CallableIds {
     // WASM internal functions

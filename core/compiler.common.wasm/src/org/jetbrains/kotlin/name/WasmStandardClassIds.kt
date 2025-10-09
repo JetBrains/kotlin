@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifi
 
 object WasmStandardClassIds {
     val BASE_WASM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("wasm"))
+    val BASE_WASM_INTERNAL_PACKAGE = BASE_WASM_PACKAGE.child(Name.identifier("internal"))
 
     object Annotations {
         @JvmField
