@@ -19,21 +19,23 @@ fun box(): String {
     )
 
     // scenario #0: all numerical columns
-    val res0 = personsDf.groupBy { city }.max()
-    val max01: Int? = res0.age[0]
-    val max02: Double? = res0.weight[0]
-    res0.compareSchemas()
-
+    personsDf.groupBy { city }.max().let { df ->
+        val max01: Int? = df.age[0]
+        val max02: Double? = df.weight[0]
+        df.compareSchemas()
+    }
 
     // scenario #1: particular column
-    val res1 = personsDf.groupBy { city }.maxFor { age }
-    val max11: Int? = res1.age[0]
-    res1.compareSchemas()
+    personsDf.groupBy { city }.maxFor { age }.let { df ->
+        val max11: Int? = df.age[0]
+        df.compareSchemas()
+    }
 
     // scenario #1.1: particular column via max
-    val res11 = personsDf.groupBy { city }.max { age }
-    val max111: Int? = res11.age[0]
-    res11.compareSchemas()
+    personsDf.groupBy { city }.max { age }.let { df ->
+        val max111: Int? = df.age[0]
+        df.compareSchemas()
+    }
 
     // scenario #2: particular column with new name - schema changes
     // TODO: not supported scenario
@@ -41,20 +43,23 @@ fun box(): String {
     // val max21: Int? = res2.newAge[0]
 
     // scenario #2.1: particular column with new name - schema changes but via columnSelector
-    val res21 = personsDf.groupBy { city }.max("newAge") { age }
-    val max211: Int? = res21.newAge[0]
-    res21.compareSchemas()
+    personsDf.groupBy { city }.max("newAge") { age }.let { df ->
+        val max211: Int? = df.newAge[0]
+        df.compareSchemas()
+    }
 
     // scenario #2.2: two columns with new name - schema changes but via columnSelector
     // TODO: handle multiple columns https://github.com/Kotlin/dataframe/issues/1090
-    val res22 = personsDf.groupBy { city }.max("newAge") { age and yearsToRetirement }
-    val max221: Int? = res22.newAge[0]
-    res22.compareSchemas()
+    personsDf.groupBy { city }.max("newAge") { age and yearsToRetirement }.let { df ->
+        val max221: Int? = df.newAge[0]
+        df.compareSchemas()
+    }
 
     // scenario #3: create new column via expression
-    val res3 = personsDf.groupBy { city }.maxOf("newAge") { age / 10 }
-    val max3: Int? = res3.newAge[0]
-    res3.compareSchemas()
+    personsDf.groupBy { city }.maxOf("newAge") { age / 10 }.let { df ->
+        val max3: Int? = df.newAge[0]
+        df.compareSchemas()
+    }
 
     return "OK"
 }

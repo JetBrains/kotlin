@@ -28,25 +28,28 @@ fun box(): String {
     )
 
     // scenario #0: all numerical columns
-    val res0 = personsDf.groupBy { city }.sum()
-    res0.compareSchemas()
+    personsDf.groupBy { city }.sum().let { df ->
+        df.compareSchemas()
 
-    val sum01: Int? = res0.age[0]
-    val sum02: Double? = res0.weight[0]
-    val sum03: Int? = res0.yearsToRetirement[0]
-    val sum04: Int? = res0.workExperienceYears[0]
-    val sum05: Int? = res0.dependentsCount[0]
-    val sum06: Long? = res0.annualIncome[0]
+        val sum01: Int? = df.age[0]
+        val sum02: Double? = df.weight[0]
+        val sum03: Int? = df.yearsToRetirement[0]
+        val sum04: Int? = df.workExperienceYears[0]
+        val sum05: Int? = df.dependentsCount[0]
+        val sum06: Long? = df.annualIncome[0]
+    }
 
     // scenario #1: particular column
-    val res1 = personsDf.groupBy { city }.sumFor { annualIncome }
-    val sum11: Long? = res1.annualIncome[0]
-    res1.compareSchemas()
+    personsDf.groupBy { city }.sumFor { annualIncome }.let { df ->
+        val sum11: Long? = df.annualIncome[0]
+        df.compareSchemas()
+    }
 
     // scenario #1.1: particular column via sum
-    val res11 = personsDf.groupBy { city }.sum { weight }
-    val sum111: Double? = res11.weight[0]
-    res11.compareSchemas()
+    personsDf.groupBy { city }.sum { weight }.let { df ->
+        val sum111: Double? = df.weight[0]
+        df.compareSchemas()
+    }
 
     // scenario #2: particular column with new name - schema changes
     // TODO: not supported scenario for String API
@@ -54,30 +57,35 @@ fun box(): String {
     // val sum21: Int? = res2.newAge[0]
 
     // scenario #2.1: particular column with new name - schema changes but via columnSelector
-    val res21 =  personsDf.groupBy { city }.sum("newAnnualIncome") { annualIncome }
-    val sum211: Long? = res21.newAnnualIncome[0]
-    res21.compareSchemas()
+    personsDf.groupBy { city }.sum("newAnnualIncome") { annualIncome }.let { df ->
+        val sum211: Long? = df.newAnnualIncome[0]
+        df.compareSchemas()
+    }
 
     // scenario #2.2: two columns with new name - schema changes but via columnSelector
     // TODO: handle multiple columns https://github.com/Kotlin/dataframe/issues/1090
-    val res22 = personsDf.groupBy { city }.sum("newAge") { age and yearsToRetirement }
-    val sum221: Int? = res22.newAge[0]
-    res22.compareSchemas()
+    personsDf.groupBy { city }.sum("newAge") { age and yearsToRetirement }.let { df ->
+        val sum221: Int? = df.newAge[0]
+        df.compareSchemas()
+    }
 
     // scenario #3: create new column via expression
-    val res3 = personsDf.groupBy { city }.sumOf("newAge") { age * 10 }
-    val sum3: Int? = res3.newAge[0]
+    personsDf.groupBy { city }.sumOf("newAge") { age * 10 }.let { df ->
+        val sum3: Int? = df.newAge[0]
+    }
 
     // scenario #3.1: create new column via expression on Double column
-    val res31 = personsDf.groupBy { city }.sumOf("newAge") { weight * 10 }
-    val sum31: Double? = res31.newAge[0]
-    res31.compareSchemas()
+    personsDf.groupBy { city }.sumOf("newAge") { weight * 10 }.let { df ->
+        val sum31: Double? = df.newAge[0]
+        df.compareSchemas()
+    }
 
     val df = dataFrameOf("a")(1, 2, 3)
-    val res41 = df.groupBy { a named "b" }.sum { a }
-    res41.compareSchemas()
+    df.groupBy { a named "b" }.sum { a }.let { df ->
+        df.compareSchemas()
 
-    val sum41: Int = res41.a[0]
+        val sum41: Int = df.a[0]
+    }
 
     return "OK"
 }
