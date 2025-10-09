@@ -199,6 +199,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
             configuration()
             project.applyMultiplatform {
                 iosArm64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 linuxArm64()
                 linuxX64()

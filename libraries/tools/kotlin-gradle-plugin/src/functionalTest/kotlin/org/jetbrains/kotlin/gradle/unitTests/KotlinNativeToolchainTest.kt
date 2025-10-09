@@ -68,6 +68,7 @@ class KotlinNativeToolchainTest {
         val project = buildProjectWithMPP {
             setUpKotlinNativeToolchainWithStableVersion()
         }
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         project.multiplatformExtension.iosX64()
         project.multiplatformExtension.iosArm64()
 

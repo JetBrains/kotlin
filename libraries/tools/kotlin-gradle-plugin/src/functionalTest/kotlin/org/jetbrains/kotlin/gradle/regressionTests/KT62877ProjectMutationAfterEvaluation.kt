@@ -24,6 +24,7 @@ class KT62877ProjectMutationAfterEvaluation {
             kotlin {
                 jvm()
                 linuxX64(); linuxArm64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64(); iosArm64()
 
                 targets.filterIsInstance<KotlinNativeTarget>().forEach { target ->

@@ -22,6 +22,7 @@ class FrameworkBinariesTests {
     fun `assemble task dependencies includes framework tasks`() {
         val linkageTasksInAssemble = buildProjectWithMPP {
             kotlin {
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 listOf(
                     // Thin linkage task
                     iosArm64(),
@@ -95,6 +96,7 @@ class FrameworkBinariesTests {
                     }
                 }
 
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 {
                     binaries.framework("main")
                 }
@@ -159,6 +161,7 @@ class FrameworkBinariesTests {
                         attributes.attribute(disambiguation2Attribute, "someValue2")
                     }
                 }
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 {
                     binaries.framework("main")
                 }

@@ -656,6 +656,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                         jvm()
                         linuxX64()
                         linuxArm64()
+                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                         iosX64()
                     }
                 }
@@ -666,6 +667,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     jvm()
                     linuxX64()
                     linuxArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
 
                     sourceSets.commonTest.dependencies {

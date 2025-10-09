@@ -669,6 +669,7 @@ open class CommonizerIT : KGPBaseTest() {
             val app = project("emptyKts", gradleVersion) {
                 buildScriptInjection {
                     project.applyMultiplatform {
+                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                         macosX64()
                         macosArm64()
                     }
@@ -677,6 +678,7 @@ open class CommonizerIT : KGPBaseTest() {
             val lib = project("emptyKts", gradleVersion) {
                 buildScriptInjection {
                     project.applyMultiplatform {
+                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                         macosX64()
                         macosArm64()
                     }
@@ -707,6 +709,7 @@ open class CommonizerIT : KGPBaseTest() {
                     linuxArm64()
                     linuxX64()
                     macosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     macosX64()
                 }
             }
@@ -750,6 +753,7 @@ open class CommonizerIT : KGPBaseTest() {
                     }
                     linuxX64().addCInterop()
                     linuxArm64().addCInterop()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     macosX64().addCInterop()
                     macosArm64().addCInterop()
                 }

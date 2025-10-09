@@ -64,6 +64,7 @@ fun provisionKotlinNativeDistribution() {
 
         kotlin {
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             linuxX64()
             linuxArm64()

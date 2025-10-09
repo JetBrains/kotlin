@@ -22,6 +22,7 @@ class FatFrameworksTest {
     fun `two apple frameworks get bundled to a fat framework`() {
         val project = buildProjectWithMPP {
             kotlin {
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 { binaries.framework("foo", listOf(DEBUG)) }
                 iosArm64 { binaries.framework("foo", listOf(DEBUG)) }
             }
@@ -36,6 +37,7 @@ class FatFrameworksTest {
     fun `single binary framework doesn't produce a fat framework`() {
         val project = buildProjectWithMPP {
             kotlin {
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 { binaries.framework("foo", listOf(DEBUG)) }
             }
         }
@@ -49,8 +51,10 @@ class FatFrameworksTest {
         "fooDebugFrameworkIosFat",
         "fooDebugFrameworkOsxFat",
     ) {
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         iosX64 { binaries.framework("foo", listOf(DEBUG)) }
         iosArm64 { binaries.framework("foo", listOf(DEBUG)) }
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         macosX64 { binaries.framework("foo", listOf(DEBUG)) }
         macosArm64 { binaries.framework("foo", listOf(DEBUG)) }
     }
@@ -59,8 +63,10 @@ class FatFrameworksTest {
     fun `fat framework grouping -- different families and different names within one family`() = testFatFrameworkGrouping(
         "fooDebugFrameworkOsxFat",
     ) {
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         iosX64 { binaries.framework("foo", listOf(DEBUG)) }
         iosArm64 { binaries.framework("bar", listOf(DEBUG)) }
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         macosX64 { binaries.framework("foo", listOf(DEBUG)) }
         macosArm64 { binaries.framework("foo", listOf(DEBUG)) }
     }
@@ -69,6 +75,7 @@ class FatFrameworksTest {
     fun `fat framework grouping -- build types intersection`() = testFatFrameworkGrouping(
         "fooReleaseFrameworkIosFat",
     ) {
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         iosX64 { binaries.framework("foo", listOf(RELEASE)) }
         iosArm64 { binaries.framework("foo", listOf(DEBUG, RELEASE)) }
     }
@@ -78,6 +85,7 @@ class FatFrameworksTest {
         "fooReleaseFrameworkIosFat",
         "fooDebugFrameworkIosFat",
     ) {
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         iosX64 { binaries.framework("foo", listOf(DEBUG, RELEASE)) }
         iosArm64 { binaries.framework("foo", listOf(DEBUG, RELEASE)) }
     }
@@ -86,6 +94,7 @@ class FatFrameworksTest {
     fun `fat framework contains framework name attribute`() {
         val project = buildProjectWithMPP {
             kotlin {
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 {
                     binaries.framework("foo", listOf(DEBUG)) { baseName = "f1" }
                     binaries.framework("bar", listOf(DEBUG)) { baseName = "f2" }
@@ -108,6 +117,7 @@ class FatFrameworksTest {
     fun `consumable configurations of frameworks have correct dependencies on producing tasks`() {
         val project = buildProjectWithMPP {
             kotlin {
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 { binaries.framework("foo", listOf(DEBUG)) }
                 iosArm64 { binaries.framework("foo", listOf(DEBUG)) }
             }
@@ -139,6 +149,7 @@ class FatFrameworksTest {
                 // 1. Eagerly configure universal framework task
                 eagerlyCreatedTask = tasks.register("testUniversalFrameworkTask", FatFrameworkTask::class.java).get()
 
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 listOf(
                     iosX64(),
                     iosSimulatorArm64(),

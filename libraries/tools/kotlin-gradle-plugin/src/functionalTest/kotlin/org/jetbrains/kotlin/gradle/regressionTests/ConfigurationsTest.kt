@@ -129,6 +129,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     @Test
     fun `consumable configurations except sourcesElements with platform target are marked with Category LIBRARY`() {
         kotlin.linuxX64()
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.iosX64()
         kotlin.iosArm64()
         kotlin.jvm()
@@ -529,6 +530,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 kotlin {
                     jvm()
                     js().nodejs()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
                     iosArm64()
                 }
@@ -600,10 +602,12 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 jvm { attributes { attribute(distinguishingAttribute, "jvm") } }
                 jvm("jvm2") { attributes { attribute(distinguishingAttribute, "jvm2") } }
 
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 macosX64 {
                     binaries.framework("main", listOf(NativeBuildType.DEBUG))
                 }
 
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 {
                     binaries.framework("foo", listOf(NativeBuildType.DEBUG)) { baseName = "foo" }
                     binaries.framework("bar", listOf(NativeBuildType.DEBUG)) { baseName = "bar" }
@@ -651,6 +655,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             plugins.apply("maven-publish")
             kotlin {
                 jvm()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 {
                     attributes { attribute(attribute, "foo") }
                 }

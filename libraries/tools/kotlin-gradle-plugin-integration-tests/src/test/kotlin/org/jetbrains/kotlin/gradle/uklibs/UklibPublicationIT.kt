@@ -48,6 +48,7 @@ class UklibPublicationIT : KGPBaseTest() {
             linuxArm64()
             linuxX64()
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             jvm()
             js()
@@ -115,6 +116,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 project.setUklibPublicationStrategy()
                 project.applyMultiplatform {
                     iosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
                     sourceSets.commonMain.get().compileSource("class Common")
                 }
@@ -149,6 +151,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 project.setUklibPublicationStrategy()
                 project.applyMultiplatform {
                     iosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
 
                     if (project.hasProperty(compileAppleMain)) {
@@ -278,6 +281,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 project.setupMavenPublication("Stub", PublisherConfiguration())
                 project.applyMultiplatform {
                     iosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
 
                     sourceSets.all {
@@ -509,6 +513,7 @@ class UklibPublicationIT : KGPBaseTest() {
             publisherConfig = PublisherConfiguration(group = "dependency")
         ) {
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }.publishedProject
@@ -519,6 +524,7 @@ class UklibPublicationIT : KGPBaseTest() {
         ) {
             // FIXME: Enable uklib consumption?
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
             sourceSets.commonMain.dependencies {
@@ -644,6 +650,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     jvm()
                     iosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
                 }
             }

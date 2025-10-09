@@ -272,6 +272,7 @@ class ExternalKotlinTargetApiTests {
         }
 
         kotlin.linuxX64()
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.macosX64()
 
         fun KotlinHierarchyBuilder.withFakeTarget() = withCompilations { it == mainCompilation || it == testCompilation }

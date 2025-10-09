@@ -37,6 +37,7 @@ class UklibInterprojectResolutionTests {
     fun `interproject uklib resolution - transitive dependency through jvm library - resolves uklib variants in transitive dependency`() {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             jvm()
             js()
@@ -251,6 +252,7 @@ class UklibInterprojectResolutionTests {
     fun `interproject uklib resolution - direct dependency a uklib producing component - with matching set of targets`() {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             jvm()
             js()
@@ -406,6 +408,7 @@ class UklibInterprojectResolutionTests {
             kotlin {
                 iosArm64()
                 iosSimulatorArm64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 jvm()
                 js()
@@ -477,6 +480,7 @@ class UklibInterprojectResolutionTests {
     fun `interproject uklib resolution - transitive dependency though a uklib producing component - with a subset of targets`() {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             jvm()
             js()

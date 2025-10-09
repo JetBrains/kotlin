@@ -29,6 +29,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
     ) {
         val targetSubset: KotlinMultiplatformExtension.() -> Unit = {
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             linuxArm64()
             linuxX64()
@@ -54,6 +55,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     targetSubset()
                     macosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     macosX64()
 
                     sourceSets.all {
@@ -125,8 +127,10 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             PublisherConfiguration(group = "transitive"),
         ) {
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             macosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             macosX64()
             linuxArm64()
             linuxX64()
@@ -157,8 +161,10 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             transitivePublisher,
         ) {
             iosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             macosArm64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             macosX64()
             linuxArm64()
             linuxX64()
@@ -194,6 +200,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     iosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
                     macosArm64()
                     linuxArm64()
@@ -278,10 +285,12 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                         }
                     }
                     iosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
                     linuxArm64()
                     linuxX64()
                     macosArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     macosX64()
                     jvm()
 
@@ -300,6 +309,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     jvm()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     macosX64()
 
                     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()

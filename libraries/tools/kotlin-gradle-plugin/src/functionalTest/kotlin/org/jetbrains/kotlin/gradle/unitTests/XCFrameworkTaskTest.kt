@@ -86,6 +86,7 @@ class XCFrameworkTaskTest {
             kotlin {
                 listOf(
                     iosSimulatorArm64(),
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64(),
                     iosArm64(),
                 ).forEach {
@@ -114,6 +115,7 @@ class XCFrameworkTaskTest {
             kotlin {
                 listOf(
                     iosSimulatorArm64(),
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64(),
                     watchosArm64(),
                     watchosDeviceArm64(),
@@ -145,6 +147,7 @@ class XCFrameworkTaskTest {
         val watchosUniversalFrameworkTask = universalFrameworkTasks.single { it.frameworks.first().target.family == Family.WATCHOS }
         val iosUniversalFrameworkTask = universalFrameworkTasks.single { it.frameworks.first().target.family == Family.IOS }
 
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         assertEquals(
             setOf(
                 project.multiplatformExtension.iosSimulatorArm64().binaries.getFramework(NativeBuildType.RELEASE).linkTaskProvider.get(),
@@ -204,6 +207,7 @@ class XCFrameworkTaskTest {
         val project = buildProjectWithMPP {
             val xcframework = XCFramework()
             kotlin {
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 listOf(
                     iosSimulatorArm64(),
                     iosX64(),

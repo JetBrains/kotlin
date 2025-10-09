@@ -35,6 +35,7 @@ class KT77539UklibSkikoResolution {
             kotlin {
                 jvm()
                 iosArm64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 val skiko = dependencies.create("org.jetbrains.skiko:skiko:0.9.4.2") {
                     isTransitive = false

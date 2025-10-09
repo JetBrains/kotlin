@@ -54,8 +54,8 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
             ).associateBy { it.name }
         }
 
-        val deprecatedTargets = setOf(LINUX_ARM32_HFP)
-        val toleratedDeprecatedTargets = setOf(LINUX_ARM32_HFP)
+        val deprecatedTargets = setOf(LINUX_ARM32_HFP, IOS_X64, WATCHOS_X64, TVOS_X64, MACOS_X64)
+        val toleratedDeprecatedTargets = setOf(LINUX_ARM32_HFP, IOS_X64, WATCHOS_X64, TVOS_X64, MACOS_X64)
     }
 
     override fun equals(other: Any?): Boolean {

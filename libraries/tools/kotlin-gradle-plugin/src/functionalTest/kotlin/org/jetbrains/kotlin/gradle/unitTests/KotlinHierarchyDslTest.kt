@@ -61,32 +61,32 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("iosArm64Main", "iosSimulatorArm64Main", "iosX64Main"),
+            stringSetOf("iosArm64Main", "iosSimulatorArm64Main"),
             kotlin.dependingSourceSetNames("iosMain")
         )
 
         assertEquals(
-            stringSetOf("iosArm64Test", "iosSimulatorArm64Test", "iosX64Test"),
+            stringSetOf("iosArm64Test", "iosSimulatorArm64Test"),
             kotlin.dependingSourceSetNames("iosTest")
         )
 
         assertEquals(
-            stringSetOf("tvosArm64Main", "tvosSimulatorArm64Main", "tvosX64Main"),
+            stringSetOf("tvosArm64Main", "tvosSimulatorArm64Main"),
             kotlin.dependingSourceSetNames("tvosMain")
         )
 
         assertEquals(
-            stringSetOf("tvosArm64Test", "tvosSimulatorArm64Test", "tvosX64Test"),
+            stringSetOf("tvosArm64Test", "tvosSimulatorArm64Test"),
             kotlin.dependingSourceSetNames("tvosTest")
         )
 
         assertEquals(
-            stringSetOf("watchosArm32Main", "watchosArm64Main", "watchosDeviceArm64Main", "watchosSimulatorArm64Main", "watchosX64Main"),
+            stringSetOf("watchosArm32Main", "watchosArm64Main", "watchosDeviceArm64Main", "watchosSimulatorArm64Main"),
             kotlin.dependingSourceSetNames("watchosMain")
         )
 
         assertEquals(
-            stringSetOf("watchosArm32Test", "watchosArm64Test", "watchosDeviceArm64Test", "watchosSimulatorArm64Test", "watchosX64Test"),
+            stringSetOf("watchosArm32Test", "watchosArm64Test", "watchosDeviceArm64Test", "watchosSimulatorArm64Test"),
             kotlin.dependingSourceSetNames("watchosTest")
         )
 
@@ -101,12 +101,12 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("macosArm64Main", "macosX64Main"),
+            stringSetOf("macosArm64Main"),
             kotlin.dependingSourceSetNames("macosMain")
         )
 
         assertEquals(
-            stringSetOf("macosArm64Test", "macosX64Test"),
+            stringSetOf("macosArm64Test"),
             kotlin.dependingSourceSetNames("macosTest")
         )
 
@@ -162,21 +162,17 @@ class KotlinHierarchyDslTest {
                 │   ├── appleMain
                 │   │   ├── iosMain
                 │   │   │   ├── iosArm64Main
-                │   │   │   ├── iosSimulatorArm64Main
-                │   │   │   └── iosX64Main
+                │   │   │   └── iosSimulatorArm64Main
                 │   │   ├── macosMain
-                │   │   │   ├── macosArm64Main
-                │   │   │   └── macosX64Main
+                │   │   │   └── macosArm64Main
                 │   │   ├── tvosMain
                 │   │   │   ├── tvosArm64Main
-                │   │   │   ├── tvosSimulatorArm64Main
-                │   │   │   └── tvosX64Main
+                │   │   │   └── tvosSimulatorArm64Main
                 │   │   └── watchosMain
                 │   │       ├── watchosArm32Main
                 │   │       ├── watchosArm64Main
                 │   │       ├── watchosDeviceArm64Main
-                │   │       ├── watchosSimulatorArm64Main
-                │   │       └── watchosX64Main
+                │   │       └── watchosSimulatorArm64Main
                 │   ├── linuxMain
                 │   │   ├── linuxArm64Main
                 │   │   └── linuxX64Main
@@ -203,21 +199,17 @@ class KotlinHierarchyDslTest {
                 │   ├── appleTest
                 │   │   ├── iosTest
                 │   │   │   ├── iosArm64Test
-                │   │   │   ├── iosSimulatorArm64Test
-                │   │   │   └── iosX64Test
+                │   │   │   └── iosSimulatorArm64Test
                 │   │   ├── macosTest
-                │   │   │   ├── macosArm64Test
-                │   │   │   └── macosX64Test
+                │   │   │   └── macosArm64Test
                 │   │   ├── tvosTest
                 │   │   │   ├── tvosArm64Test
-                │   │   │   ├── tvosSimulatorArm64Test
-                │   │   │   └── tvosX64Test
+                │   │   │   └── tvosSimulatorArm64Test
                 │   │   └── watchosTest
                 │   │       ├── watchosArm32Test
                 │   │       ├── watchosArm64Test
                 │   │       ├── watchosDeviceArm64Test
-                │   │       ├── watchosSimulatorArm64Test
-                │   │       └── watchosX64Test
+                │   │       └── watchosSimulatorArm64Test
                 │   ├── linuxTest
                 │   │   ├── linuxArm64Test
                 │   │   └── linuxX64Test
@@ -378,6 +370,7 @@ class KotlinHierarchyDslTest {
         }
 
         kotlin.linuxX64()
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.macosX64()
         kotlin.mingwX64()
 
@@ -538,8 +531,10 @@ class KotlinHierarchyDslTest {
             }
         }
 
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.iosX64()
         kotlin.iosArm64()
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.macosX64()
         kotlin.jvm()
 
@@ -585,20 +580,16 @@ class KotlinHierarchyDslTest {
                         iosMain,
                         iosArm64Main,
                         iosSimulatorArm64Main,
-                        iosX64Main,
                         macosMain,
                         macosArm64Main,
-                        macosX64Main,
                         tvosMain,
                         tvosArm64Main,
                         tvosSimulatorArm64Main,
-                        tvosX64Main,
                         watchosMain,
                         watchosArm32Main,
                         watchosArm64Main,
                         watchosDeviceArm64Main,
                         watchosSimulatorArm64Main,
-                        watchosX64Main,
                         linuxMain,
                         linuxArm64Main,
                         linuxX64Main,
@@ -621,20 +612,16 @@ class KotlinHierarchyDslTest {
                         iosTest,
                         iosArm64Test,
                         iosSimulatorArm64Test,
-                        iosX64Test,
                         macosTest,
                         macosArm64Test,
-                        macosX64Test,
                         tvosTest,
                         tvosArm64Test,
                         tvosSimulatorArm64Test,
-                        tvosX64Test,
                         watchosTest,
                         watchosArm32Test,
                         watchosArm64Test,
                         watchosDeviceArm64Test,
                         watchosSimulatorArm64Test,
-                        watchosX64Test,
                         linuxTest,
                         linuxArm64Test,
                         linuxX64Test,
