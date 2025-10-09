@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
@@ -51,6 +52,11 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
     protected fun ClassId.noParametersConstructorSymbol(): Lazy<IrConstructorSymbol> {
         val clazz = classSymbol()
         return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
+    }
+
+    protected fun ClassId.defaultType(): Lazy<IrType> {
+        val clazz = classSymbol()
+        return lazy { clazz.defaultType }
     }
 
     protected fun CallableId.propertySymbol(): IrPropertySymbol {

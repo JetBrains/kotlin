@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.*
@@ -102,8 +101,7 @@ class WasmSymbols(
 
     val wasmUnreachable = CallableIds.wasm_unreachable.functionSymbol()
 
-    val voidClass = ClassIds.Void.classSymbol()
-    val voidType by lazy { voidClass.defaultType }
+    val voidType by ClassIds.Void.defaultType()
 
     private val consumeAnyIntoVoid = CallableIds.consumeAnyIntoVoid.functionSymbol()
 
@@ -244,8 +242,7 @@ class WasmSymbols(
 
     fun findContentHashCodeOverload(arrayType: IrType): IrSimpleFunctionSymbol = findNullableOverloadForReceiver(arrayType, contentHashCode)
 
-    private val wasmStructRefClass = ClassIds.structref.classSymbol()
-    val wasmStructRefType by lazy { wasmStructRefClass.defaultType }
+    val wasmStructRefType by ClassIds.structref.defaultType()
 
     val wasmAnyRefClass = ClassIds.anyref.classSymbol()
 
@@ -300,20 +297,11 @@ class WasmSymbols(
 
         val jsReferenceClass = ClassIds.JsReference.classSymbol()
 
-        private val jsAnyClass = ClassIds.JsAny.classSymbol()
-        val jsAnyType: IrType by lazy { jsAnyClass.defaultType }
-
-        private val jsBooleanClass = ClassIds.JsBoolean.classSymbol()
-        val jsBooleanType: IrType by lazy { jsBooleanClass.defaultType }
-
-        private val jsStringClass = ClassIds.JsString.classSymbol()
-        val jsStringType: IrType by lazy { jsStringClass.defaultType }
-
-        private val jsNumberClass = ClassIds.JsNumber.classSymbol()
-        val jsNumberType: IrType by lazy { jsNumberClass.defaultType }
-
-        private val jsBigIntClass = ClassIds.JsBigInt.classSymbol()
-        val jsBigIntType: IrType by lazy { jsBigIntClass.defaultType }
+        val jsAnyType: IrType by ClassIds.JsAny.defaultType()
+        val jsBooleanType: IrType by ClassIds.JsBoolean.defaultType()
+        val jsStringType: IrType by ClassIds.JsString.defaultType()
+        val jsNumberType: IrType by ClassIds.JsNumber.defaultType()
+        val jsBigIntType: IrType by ClassIds.JsBigInt.defaultType()
 
         val newJsArray = CallableIds.newJsArray.functionSymbol()
 
