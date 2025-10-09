@@ -69,7 +69,7 @@ public inline fun CharSequence.findLast(predicate: (Char) -> Boolean): Char? {
 
 /**
  * Returns the first character.
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
  */
 public fun CharSequence.first(): Char {
@@ -134,7 +134,7 @@ public inline fun CharSequence.firstOrNull(predicate: (Char) -> Boolean): Char? 
 
 /**
  * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this char sequence.
- *
+ * 
  * @sample samples.collections.Collections.Elements.getOrElse
  */
 @kotlin.internal.InlineOnly
@@ -1081,7 +1081,7 @@ public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {
  * Note that if the char sequence contains no characters, the function returns `true`
  * because there are no characters in it that _do not_ match the predicate.
  * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
- *
+ * 
  * @sample samples.text.Strings.allWithPredicate
  */
 public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
@@ -1210,9 +1210,9 @@ public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit
 
 /**
  * Returns the largest character.
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
@@ -1230,16 +1230,16 @@ public fun CharSequence.max(): Char {
 
 /**
  * Returns the first character yielding the largest value of the given [selector] function.
- *
+ * 
  * If there are multiple equal maximal values returned by the [selector] function,
  * this function returns the first of characters corresponding to these values.
- *
+ * 
  * Note that the function [selector] is not invoked when the char sequence contains zero or one characters
  * because in these cases it is clear which character to return without invoking the [selector].
  * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each character.
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
@@ -1267,11 +1267,11 @@ public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R):
  * 
  * If there are multiple equal maximal values returned by the [selector] function,
  * this function returns the first of characters corresponding to these values.
- *
+ * 
  * Note that the function [selector] is not invoked when the char sequence contains zero or one characters
  * because in these cases it is clear which character to return without invoking the [selector].
  * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each character.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
@@ -1299,7 +1299,7 @@ public inline fun <R : Comparable<R>> CharSequence.maxByOrNull(selector: (Char) 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
@@ -1323,7 +1323,7 @@ public inline fun CharSequence.maxOf(selector: (Char) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
@@ -1345,9 +1345,9 @@ public inline fun CharSequence.maxOf(selector: (Char) -> Float): Float {
  * applied to each character in the char sequence.
  * 
  * If multiple characters produce the maximal value, this function returns the first of those values.
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
@@ -1371,7 +1371,7 @@ public inline fun <R : Comparable<R>> CharSequence.maxOf(selector: (Char) -> R):
  * applied to each character in the char sequence or `null` if the char sequence is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
@@ -1393,7 +1393,7 @@ public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Double): Double? 
  * applied to each character in the char sequence or `null` if the char sequence is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
@@ -1413,9 +1413,9 @@ public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Float): Float? {
 /**
  * Returns the largest value among all values produced by [selector] function
  * applied to each character in the char sequence or `null` if the char sequence is empty.
- *
+ * 
  * If multiple characters produce the maximal value, this function returns the first of those values.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
@@ -1439,9 +1439,9 @@ public inline fun <R : Comparable<R>> CharSequence.maxOfOrNull(selector: (Char) 
  * among all values produced by [selector] function applied to each character in the char sequence.
  * 
  * If multiple characters produce the maximal value, this function returns the first of those values.
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
@@ -1463,9 +1463,9 @@ public inline fun <R> CharSequence.maxOfWith(comparator: Comparator<in R>, selec
 /**
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each character in the char sequence or `null` if the char sequence is empty.
- *
+ * 
  * If multiple characters produce the maximal value, this function returns the first of those values.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
@@ -1486,7 +1486,7 @@ public inline fun <R> CharSequence.maxOfWithOrNull(comparator: Comparator<in R>,
 
 /**
  * Returns the largest character or `null` if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
@@ -1502,7 +1502,7 @@ public fun CharSequence.maxOrNull(): Char? {
 
 /**
  * Returns the first character having the largest value according to the provided [comparator].
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
  */
 @SinceKotlin("1.7")
@@ -1534,9 +1534,9 @@ public fun CharSequence.maxWithOrNull(comparator: Comparator<in Char>): Char? {
 
 /**
  * Returns the smallest character.
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
@@ -1554,16 +1554,16 @@ public fun CharSequence.min(): Char {
 
 /**
  * Returns the first character yielding the smallest value of the given [selector] function.
- *
+ * 
  * If there are multiple equal minimal values returned by the [selector] function,
  * this function returns the first of characters corresponding to these values.
- *
+ * 
  * Note that the function [selector] is not invoked when the char sequence contains zero or one characters
  * because in these cases it is clear which character to return without invoking the [selector].
  * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each character.
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
@@ -1591,11 +1591,11 @@ public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R):
  * 
  * If there are multiple equal minimal values returned by the [selector] function,
  * this function returns the first of characters corresponding to these values.
- *
+ * 
  * Note that the function [selector] is not invoked when the char sequence contains zero or one characters
  * because in these cases it is clear which character to return without invoking the [selector].
  * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each character.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
@@ -1623,7 +1623,7 @@ public inline fun <R : Comparable<R>> CharSequence.minByOrNull(selector: (Char) 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
@@ -1647,7 +1647,7 @@ public inline fun CharSequence.minOf(selector: (Char) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
@@ -1669,9 +1669,9 @@ public inline fun CharSequence.minOf(selector: (Char) -> Float): Float {
  * applied to each character in the char sequence.
  * 
  * If multiple characters produce the minimal value, this function returns the first of those values.
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
@@ -1695,7 +1695,7 @@ public inline fun <R : Comparable<R>> CharSequence.minOf(selector: (Char) -> R):
  * applied to each character in the char sequence or `null` if the char sequence is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
@@ -1717,7 +1717,7 @@ public inline fun CharSequence.minOfOrNull(selector: (Char) -> Double): Double? 
  * applied to each character in the char sequence or `null` if the char sequence is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
@@ -1737,9 +1737,9 @@ public inline fun CharSequence.minOfOrNull(selector: (Char) -> Float): Float? {
 /**
  * Returns the smallest value among all values produced by [selector] function
  * applied to each character in the char sequence or `null` if the char sequence is empty.
- *
+ * 
  * If multiple characters produce the minimal value, this function returns the first of those values.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
@@ -1763,9 +1763,9 @@ public inline fun <R : Comparable<R>> CharSequence.minOfOrNull(selector: (Char) 
  * among all values produced by [selector] function applied to each character in the char sequence.
  * 
  * If multiple characters produce the minimal value, this function returns the first of those values.
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
@@ -1787,9 +1787,9 @@ public inline fun <R> CharSequence.minOfWith(comparator: Comparator<in R>, selec
 /**
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each character in the char sequence or `null` if the char sequence is empty.
- *
+ * 
  * If multiple characters produce the minimal value, this function returns the first of those values.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
@@ -1810,7 +1810,7 @@ public inline fun <R> CharSequence.minOfWithOrNull(comparator: Comparator<in R>,
 
 /**
  * Returns the smallest character or `null` if the char sequence is empty.
- *
+ * 
  * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
@@ -1826,7 +1826,7 @@ public fun CharSequence.minOrNull(): Char? {
 
 /**
  * Returns the first character having the smallest value according to the provided [comparator].
- *
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
  */
 @SinceKotlin("1.7")
