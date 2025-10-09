@@ -77,6 +77,6 @@ open class ConeTypeRendererForReadability(
     }
 
     override fun renderDiagnostic(diagnostic: ConeDiagnostic, prefix: String, suffix: String): String {
-        return diagnostic.readableDescriptionAsTypeConstructor
+        return "??? (${diagnostic.readableDescriptionAsTypeConstructor})"
     }
 }

@@ -1678,7 +1678,7 @@ KtCallExpression(765,818): 'myRun {'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function0<ERROR CLASS: CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y>', but 'Function0<uninferred T (of fun <T> myRun)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function0<??? (CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y)>', but 'Function0<uninferred T (of fun <T> myRun)>' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(765,770): 'myRun'
@@ -1719,7 +1719,7 @@ KtNameReferenceExpression(765,770): 'myRun'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function0<ERROR CLASS: CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y>', but 'Function0<uninferred T (of fun <T> myRun)>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function0<??? (CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y)>', but 'Function0<uninferred T (of fun <T> myRun)>' was expected.>
     isInBestCandidates = true
 
 KtLambdaArgument(771,818): '{'

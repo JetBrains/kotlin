@@ -33,7 +33,7 @@ fun testFunctionType(box: Inv<() -> Any?>) {
 fun <T> noOverloads(box: Inv<T>, value: T) {}
 
 fun testError(box: Inv<String>) {
-    noOverloads(box) <!ARGUMENT_TYPE_MISMATCH("Function0<Unknown lambda return type>; String"), CANNOT_INFER_IT_PARAMETER_TYPE!>{ "hello" }<!>
+    noOverloads(box) <!ARGUMENT_TYPE_MISMATCH("Function0<??? (Unknown lambda return type)>; String"), CANNOT_INFER_IT_PARAMETER_TYPE!>{ "hello" }<!>
 }
 
 fun testOk(box1: Inv<Any>, box2: Inv<() -> Any?>) {
