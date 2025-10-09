@@ -92,7 +92,7 @@ abstract class BaseNodeJsRootExtension internal constructor(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR,
     )
-    var version = "24.9.0"
+    var version = "24.10.0"
 
     @Deprecated(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
