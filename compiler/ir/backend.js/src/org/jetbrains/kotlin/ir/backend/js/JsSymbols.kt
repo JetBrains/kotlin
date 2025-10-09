@@ -84,14 +84,6 @@ class JsSymbols(
 
     override val defaultConstructorMarker = ClassIds.DefaultConstructorMarker.classSymbol()
 
-    override fun functionN(n: Int): IrClassSymbol {
-        return stageController.withInitialIr { super.functionN(n) }
-    }
-
-    override fun suspendFunctionN(n: Int): IrClassSymbol {
-        return stageController.withInitialIr { super.suspendFunctionN(n) }
-    }
-
     internal val subStringFunction: IrSimpleFunctionSymbol by CallableIds.subString.functionSymbol {
         it.hasShape(
             extensionReceiver = true,
