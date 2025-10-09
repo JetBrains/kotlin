@@ -19813,6 +19813,24 @@ public final class ProtoBuf {
      * <code>repeated .org.jetbrains.kotlin.metadata.Annotation delegate_field_annotation = 35;</code>
      */
     int getDelegateFieldAnnotationCount();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+     */
+    boolean hasGetterContract();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Contract getGetterContract();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+     */
+    boolean hasSetterContract();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Contract getSetterContract();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.Property}
@@ -20059,6 +20077,32 @@ public final class ProtoBuf {
                 mutable_bitField0_ |= 0x00200000;
               }
               delegateFieldAnnotation_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.PARSER, extensionRegistry));
+              break;
+            }
+            case 322: {
+              org.jetbrains.kotlin.metadata.ProtoBuf.Contract.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000400) == 0x00000400)) {
+                subBuilder = getterContract_.toBuilder();
+              }
+              getterContract_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Contract.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(getterContract_);
+                getterContract_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000400;
+              break;
+            }
+            case 330: {
+              org.jetbrains.kotlin.metadata.ProtoBuf.Contract.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000800) == 0x00000800)) {
+                subBuilder = setterContract_.toBuilder();
+              }
+              setterContract_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Contract.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(setterContract_);
+                setterContract_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000800;
               break;
             }
           }
@@ -20744,6 +20788,36 @@ public final class ProtoBuf {
       return delegateFieldAnnotation_.get(index);
     }
 
+    public static final int GETTERCONTRACT_FIELD_NUMBER = 40;
+    private org.jetbrains.kotlin.metadata.ProtoBuf.Contract getterContract_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+     */
+    public boolean hasGetterContract() {
+      return ((bitField0_ & 0x00000400) == 0x00000400);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Contract getGetterContract() {
+      return getterContract_;
+    }
+
+    public static final int SETTERCONTRACT_FIELD_NUMBER = 41;
+    private org.jetbrains.kotlin.metadata.ProtoBuf.Contract setterContract_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+     */
+    public boolean hasSetterContract() {
+      return ((bitField0_ & 0x00000800) == 0x00000800);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Contract getSetterContract() {
+      return setterContract_;
+    }
+
     private void initFields() {
       flags_ = 518;
       oldFlags_ = 2054;
@@ -20767,6 +20841,8 @@ public final class ProtoBuf {
       extensionReceiverAnnotation_ = java.util.Collections.emptyList();
       backingFieldAnnotation_ = java.util.Collections.emptyList();
       delegateFieldAnnotation_ = java.util.Collections.emptyList();
+      getterContract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
+      setterContract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -20856,6 +20932,18 @@ public final class ProtoBuf {
           return false;
         }
       }
+      if (hasGetterContract()) {
+        if (!getGetterContract().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasSetterContract()) {
+        if (!getSetterContract().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       if (!extensionsAreInitialized()) {
         memoizedIsInitialized = 0;
         return false;
@@ -20939,6 +21027,12 @@ public final class ProtoBuf {
       }
       for (int i = 0; i < delegateFieldAnnotation_.size(); i++) {
         output.writeMessage(35, delegateFieldAnnotation_.get(i));
+      }
+      if (((bitField0_ & 0x00000400) == 0x00000400)) {
+        output.writeMessage(40, getterContract_);
+      }
+      if (((bitField0_ & 0x00000800) == 0x00000800)) {
+        output.writeMessage(41, setterContract_);
       }
       extensionWriter.writeUntil(19000, output);
       output.writeRawBytes(unknownFields);
@@ -21052,6 +21146,14 @@ public final class ProtoBuf {
       for (int i = 0; i < delegateFieldAnnotation_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(35, delegateFieldAnnotation_.get(i));
+      }
+      if (((bitField0_ & 0x00000400) == 0x00000400)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(40, getterContract_);
+      }
+      if (((bitField0_ & 0x00000800) == 0x00000800)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(41, setterContract_);
       }
       size += extensionsSerializedSize();
       size += unknownFields.size();
@@ -21191,6 +21293,10 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00100000);
         delegateFieldAnnotation_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00200000);
+        getterContract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00400000);
+        setterContract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00800000);
         return this;
       }
 
@@ -21314,6 +21420,14 @@ public final class ProtoBuf {
           bitField0_ = (bitField0_ & ~0x00200000);
         }
         result.delegateFieldAnnotation_ = delegateFieldAnnotation_;
+        if (((from_bitField0_ & 0x00400000) == 0x00400000)) {
+          to_bitField0_ |= 0x00000400;
+        }
+        result.getterContract_ = getterContract_;
+        if (((from_bitField0_ & 0x00800000) == 0x00800000)) {
+          to_bitField0_ |= 0x00000800;
+        }
+        result.setterContract_ = setterContract_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -21470,6 +21584,12 @@ public final class ProtoBuf {
           }
           
         }
+        if (other.hasGetterContract()) {
+          mergeGetterContract(other.getGetterContract());
+        }
+        if (other.hasSetterContract()) {
+          mergeSetterContract(other.getSetterContract());
+        }
         this.mergeExtensionFields(other);
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -21555,6 +21675,18 @@ public final class ProtoBuf {
         }
         for (int i = 0; i < getDelegateFieldAnnotationCount(); i++) {
           if (!getDelegateFieldAnnotation(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasGetterContract()) {
+          if (!getGetterContract().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasSetterContract()) {
+          if (!getSetterContract().isInitialized()) {
             
             return false;
           }
@@ -23508,6 +23640,126 @@ public final class ProtoBuf {
         ensureDelegateFieldAnnotationIsMutable();
         delegateFieldAnnotation_.remove(index);
 
+        return this;
+      }
+
+      private org.jetbrains.kotlin.metadata.ProtoBuf.Contract getterContract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+       */
+      public boolean hasGetterContract() {
+        return ((bitField0_ & 0x00400000) == 0x00400000);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Contract getGetterContract() {
+        return getterContract_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+       */
+      public Builder setGetterContract(org.jetbrains.kotlin.metadata.ProtoBuf.Contract value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        getterContract_ = value;
+
+        bitField0_ |= 0x00400000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+       */
+      public Builder setGetterContract(
+          org.jetbrains.kotlin.metadata.ProtoBuf.Contract.Builder builderForValue) {
+        getterContract_ = builderForValue.build();
+
+        bitField0_ |= 0x00400000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+       */
+      public Builder mergeGetterContract(org.jetbrains.kotlin.metadata.ProtoBuf.Contract value) {
+        if (((bitField0_ & 0x00400000) == 0x00400000) &&
+            getterContract_ != org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance()) {
+          getterContract_ =
+            org.jetbrains.kotlin.metadata.ProtoBuf.Contract.newBuilder(getterContract_).mergeFrom(value).buildPartial();
+        } else {
+          getterContract_ = value;
+        }
+
+        bitField0_ |= 0x00400000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract getterContract = 40;</code>
+       */
+      public Builder clearGetterContract() {
+        getterContract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00400000);
+        return this;
+      }
+
+      private org.jetbrains.kotlin.metadata.ProtoBuf.Contract setterContract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+       */
+      public boolean hasSetterContract() {
+        return ((bitField0_ & 0x00800000) == 0x00800000);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Contract getSetterContract() {
+        return setterContract_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+       */
+      public Builder setSetterContract(org.jetbrains.kotlin.metadata.ProtoBuf.Contract value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        setterContract_ = value;
+
+        bitField0_ |= 0x00800000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+       */
+      public Builder setSetterContract(
+          org.jetbrains.kotlin.metadata.ProtoBuf.Contract.Builder builderForValue) {
+        setterContract_ = builderForValue.build();
+
+        bitField0_ |= 0x00800000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+       */
+      public Builder mergeSetterContract(org.jetbrains.kotlin.metadata.ProtoBuf.Contract value) {
+        if (((bitField0_ & 0x00800000) == 0x00800000) &&
+            setterContract_ != org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance()) {
+          setterContract_ =
+            org.jetbrains.kotlin.metadata.ProtoBuf.Contract.newBuilder(setterContract_).mergeFrom(value).buildPartial();
+        } else {
+          setterContract_ = value;
+        }
+
+        bitField0_ |= 0x00800000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Contract setterContract = 41;</code>
+       */
+      public Builder clearSetterContract() {
+        setterContract_ = org.jetbrains.kotlin.metadata.ProtoBuf.Contract.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00800000);
         return this;
       }
 

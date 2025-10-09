@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescripti
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.toFirElement
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
@@ -40,11 +41,12 @@ class FirContractDeserializer(private val c: FirDeserializationContext) :
         owner: FirContractDescriptionOwner
     ): KtValueParameterReference<ConeKotlinType, ConeDiagnostic>? {
         val name: String
-        val ownerFunction = owner as FirSimpleFunction
+        val ownerFunction = owner as FirFunction
+        val ownerCallable = if (owner is FirPropertyAccessor) owner.propertySymbol.fir else ownerFunction
         val typeRef = when (valueParameterIndex) {
             -1 -> {
                 name = "this"
-                ownerFunction.receiverParameter?.typeRef
+                ownerCallable.receiverParameter?.typeRef
             }
             in ownerFunction.valueParameters.indices -> {
                 val parameter = ownerFunction.valueParameters.getOrNull(valueParameterIndex) ?: return null
@@ -53,7 +55,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) :
             }
             else -> {
                 val parameter =
-                    ownerFunction.contextParameters.getOrNull(valueParameterIndex - ownerFunction.valueParameters.size) ?: return null
+                    ownerCallable.contextParameters.getOrNull(valueParameterIndex - ownerFunction.valueParameters.size) ?: return null
                 name = parameter.name.asString()
                 parameter.returnTypeRef
             }
