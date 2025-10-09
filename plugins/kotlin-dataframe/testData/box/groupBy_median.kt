@@ -28,24 +28,27 @@ fun box(): String {
     )
 
     // scenario #0: all intraComparable columns
-    val res0 = personsDf.groupBy { city }.median()
-    res0.compareSchemas()
+    personsDf.groupBy { city }.median().let { df ->
+        df.compareSchemas()
 
-    val median01: Double? = res0.age[0]
-    val median02: Double? = res0.weight[0]
-    val median03: String? = res0.height[0]
+        val median01: Double? = df.age[0]
+        val median02: Double? = df.weight[0]
+        val median03: String? = df.height[0]
+    }
 
     // scenario #1: particular column
-    val res1 = personsDf.groupBy { city }.medianFor { age }
-    res1.compareSchemas()
+    personsDf.groupBy { city }.medianFor { age }.let { df ->
+        df.compareSchemas()
 
-    val median11: Double? = res1.age[0]
+        val median11: Double? = df.age[0]
+    }
 
     // scenario #1.1: particular column via median
-    val res11 = personsDf.groupBy { city }.median { age }
-    res11.compareSchemas()
+    personsDf.groupBy { city }.median { age }.let { df ->
+        df.compareSchemas()
 
-    val median111: Double? = res11.age[0]
+        val median111: Double? = df.age[0]
+    }
 
     // scenario #2: particular column with new name - schema changes
     // TODO: not supported scenario
@@ -53,23 +56,26 @@ fun box(): String {
     // val median21: Int? = res2.newAge[0]
 
     // scenario #2.1: particular column with new name - schema changes but via columnSelector
-    val res21 = personsDf.groupBy { city }.median("newAge") { age }
-    res21.compareSchemas()
+    personsDf.groupBy { city }.median("newAge") { age }.let { df ->
+        df.compareSchemas()
 
-    val median211: Double? = res21.newAge[0]
+        val median211: Double? = df.newAge[0]
+    }
 
     // scenario #2.2: two columns with new name - schema changes but via columnSelector
     // TODO: handle multiple columns https://github.com/Kotlin/dataframe/issues/1090
-    val res22 = personsDf.groupBy { city }.median("newAge") { age and yearsToRetirement }
-    res22.compareSchemas()
+    personsDf.groupBy { city }.median("newAge") { age and yearsToRetirement }.let { df ->
+        df.compareSchemas()
 
-    val median221: Double? = res22.newAge[0]
+        val median221: Double? = df.newAge[0]
+    }
 
     // scenario #3: create new column via expression
-    val res3 = personsDf.groupBy { city }.medianOf("newAgeExpr") { age * 10 }
-    res3.compareSchemas()
+    personsDf.groupBy { city }.medianOf("newAgeExpr") { age * 10 }.let { df ->
+        df.compareSchemas()
 
-    val median3: Double? = res3.newAgeExpr[0]
+        val median3: Double? = df.newAgeExpr[0]
+    }
 
     return "OK"
 }

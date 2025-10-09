@@ -28,28 +28,37 @@ fun box(): String {
     )
 
     // scenario #0: all numerical columns
-    val res0 = personsDf.groupBy { city }.min()
-    res0.compareSchemas()
+    personsDf.groupBy { city }.min().let { df ->
+        df.compareSchemas()
 
-    val min01: Int? = res0.age[0]
-    val min02: Double? = res0.weight[0]
-    val min03: Int? = res0.yearsToRetirement[0]
-    val min04: Short? = res0.workExperienceYears[0]
-    val min05: Byte? = res0.dependentsCount[0]
-    val min06: Long? = res0.annualIncome[0]
-    val min07: String? = res0.name[0]
-    val min08: String? = res0.city[0]
-    val min09: String? = res0.height[0]
+        val min01: Int? = df.age[0]
+        val min02: Double? = df.weight[0]
+        val min03: Int? = df.yearsToRetirement[0]
+        val min04: Short? = df.workExperienceYears[0]
+        val min05: Byte? = df.dependentsCount[0]
+        val min06: Long? = df.annualIncome[0]
+        val min07: String? = df.name[0]
+        val min08: String? = df.city[0]
+        val min09: String? = df.height[0]
+    }
 
     // scenario #1: particular column
     val res1 = personsDf.groupBy { city }.minFor { age }
     val min11: Int? = res1.age[0]
     res1.compareSchemas()
+    personsDf.groupBy { city }.minFor { age }.let { df ->
+        val min11: Int? = df.age[0]
+        df.compareSchemas()
+    }
 
     // scenario #1.1: particular column via min
     val res11 = personsDf.groupBy { city }.min { dependentsCount }
     val min111: Byte? = res11.dependentsCount[0]
     res11.compareSchemas()
+    personsDf.groupBy { city }.min { dependentsCount }.let { df ->
+        val min111: Byte? = df.dependentsCount[0]
+        df.compareSchemas()
+    }
 
     // scenario #2: particular column with new name - schema changes
     // TODO: not supported scenario
@@ -57,20 +66,23 @@ fun box(): String {
     // val min21: Int? = res2.newAge[0]
 
     // scenario #2.1: particular column with new name - schema changes but via columnSelector
-    val res21 = personsDf.groupBy { city }.min("newName") { name }
-    val min211: String? = res21.newName[0]
-    res21.compareSchemas()
+    personsDf.groupBy { city }.min("newName") { name }.let { df ->
+        val min211: String? = df.newName[0]
+        df.compareSchemas()
+    }
 
     // scenario #2.2: two columns with new name - schema changes but via columnSelector
     // TODO: handle multiple columns https://github.com/Kotlin/dataframe/issues/1090
-    val res22 = personsDf.groupBy { city }.min("newAge") { age and yearsToRetirement }
-    val min221: Int? = res22.newAge[0]
-    res22.compareSchemas()
+    personsDf.groupBy { city }.min("newAge") { age and yearsToRetirement }.let { df ->
+        val min221: Int? = df.newAge[0]
+        df.compareSchemas()
+    }
 
     // scenario #3: create new column via expression
-    val res3 = personsDf.groupBy { city }.minOf("newAnnualIncome") { annualIncome / 2 }
-    val min3: Long? = res3.newAnnualIncome[0]
-    res3.compareSchemas()
+    personsDf.groupBy { city }.minOf("newAnnualIncome") { annualIncome / 2 }.let { df ->
+        val min3: Long? = df.newAnnualIncome[0]
+        df.compareSchemas()
+    }
 
     return "OK"
 }
