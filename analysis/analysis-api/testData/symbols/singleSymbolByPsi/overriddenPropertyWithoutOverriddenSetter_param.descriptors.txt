@@ -110,6 +110,7 @@ KaValueParameterSymbol:
         compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
+        hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCrossinline: false
@@ -146,6 +147,7 @@ KaValueParameterSymbol:
           compilerVisibility: Local
           contextReceivers: []
           generatedPrimaryConstructorProperty: null
+          hasDeclaredDefaultValue: false
           hasDefaultValue: false
           isActual: false
           isCrossinline: false
@@ -197,6 +199,7 @@ KaValueParameterSymbol:
     setterDeprecationStatus: null
     isInline: false
     importableFqName: null
+  hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
   isCrossinline: false

@@ -131,6 +131,7 @@ KaConstructorSymbol:
         setterDeprecationStatus: null
         isInline: false
         importableFqName: null
+      hasDeclaredDefaultValue: true
       hasDefaultValue: true
       isActual: false
       isCrossinline: false

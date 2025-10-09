@@ -127,6 +127,7 @@ KaConstructorSymbol:
         setterDeprecationStatus: null
         isInline: false
         importableFqName: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -259,6 +260,7 @@ KaConstructorSymbol:
         setterDeprecationStatus: null
         isInline: false
         importableFqName: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -391,6 +393,7 @@ KaConstructorSymbol:
         setterDeprecationStatus: null
         isInline: false
         importableFqName: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false

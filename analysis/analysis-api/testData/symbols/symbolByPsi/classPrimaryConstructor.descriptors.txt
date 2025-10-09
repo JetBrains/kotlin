@@ -127,6 +127,7 @@ KaConstructorSymbol:
         setterDeprecationStatus: null
         isInline: false
         importableFqName: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -157,6 +158,7 @@ KaConstructorSymbol:
       compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false

@@ -105,6 +105,7 @@ KaKotlinPropertySymbol:
       compilerVisibility: Private
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -141,6 +142,7 @@ KaKotlinPropertySymbol:
         compilerVisibility: Private
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
+        hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCrossinline: false
