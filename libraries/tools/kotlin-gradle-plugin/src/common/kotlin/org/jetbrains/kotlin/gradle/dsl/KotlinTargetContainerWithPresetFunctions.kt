@@ -137,20 +137,29 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun iosArm64(configure: Action<KotlinNativeTarget>) = iosArm64 { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun iosX64(
         name: String = "iosX64",
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
     ): KotlinNativeTargetWithSimulatorTests
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun iosX64() = iosX64("iosX64") { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun iosX64(name: String) = iosX64(name) { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun iosX64(
         name: String,
         configure: Action<KotlinNativeTargetWithSimulatorTests>
     ) = iosX64(name) { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun iosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = iosX64 { configure.execute(this) }
 
     fun iosSimulatorArm64(
@@ -201,20 +210,29 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun watchosArm64(configure: Action<KotlinNativeTarget>) = watchosArm64 { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun watchosX64(
         name: String = "watchosX64",
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
     ): KotlinNativeTargetWithSimulatorTests
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun watchosX64() = watchosX64("watchosX64") { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun watchosX64(name: String) = watchosX64(name) { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun watchosX64(
         name: String,
         configure: Action<KotlinNativeTargetWithSimulatorTests>
     ) = watchosX64(name) { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun watchosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosX64 { configure.execute(this) }
 
     fun watchosSimulatorArm64(
@@ -265,20 +283,29 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun tvosArm64(configure: Action<KotlinNativeTarget>) = tvosArm64 { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun tvosX64(
         name: String = "tvosX64",
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
     ): KotlinNativeTargetWithSimulatorTests
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun tvosX64() = tvosX64("tvosX64") { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun tvosX64(name: String) = tvosX64(name) { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun tvosX64(
         name: String,
         configure: Action<KotlinNativeTargetWithSimulatorTests>
     ) = tvosX64(name) { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun tvosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = tvosX64 { configure.execute(this) }
 
     fun tvosSimulatorArm64(
@@ -329,20 +356,29 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun mingwX64(configure: Action<KotlinNativeTargetWithHostTests>) = mingwX64 { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun macosX64(
         name: String = "macosX64",
         configure: KotlinNativeTargetWithHostTests.() -> Unit = { }
     ): KotlinNativeTargetWithHostTests
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun macosX64() = macosX64("macosX64") { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun macosX64(name: String) = macosX64(name) { }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun macosX64(
         name: String,
         configure: Action<KotlinNativeTargetWithHostTests>
     ) = macosX64(name) { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
+    @Suppress("DEPRECATION")
     fun macosX64(configure: Action<KotlinNativeTargetWithHostTests>) = macosX64 { configure.execute(this) }
 
     fun macosArm64(
@@ -486,6 +522,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun iosX64(
         name: String,
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit
@@ -526,6 +563,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun watchosX64(
         name: String,
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit
@@ -566,6 +604,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun tvosX64(
         name: String,
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit
@@ -606,6 +645,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
+    @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     override fun macosX64(
         name: String,
         configure: KotlinNativeTargetWithHostTests.() -> Unit

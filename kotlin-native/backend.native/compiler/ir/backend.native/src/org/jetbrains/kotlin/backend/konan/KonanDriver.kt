@@ -35,6 +35,10 @@ import java.util.*
 
 private val softDeprecatedTargets = setOf(
         KonanTarget.LINUX_ARM32_HFP,
+        KonanTarget.MACOS_X64,
+        KonanTarget.IOS_X64,
+        KonanTarget.TVOS_X64,
+        KonanTarget.WATCHOS_X64,
 )
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
