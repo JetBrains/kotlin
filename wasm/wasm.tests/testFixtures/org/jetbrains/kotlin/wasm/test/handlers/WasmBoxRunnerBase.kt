@@ -18,7 +18,6 @@ abstract class WasmBoxRunnerBase(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
     internal abstract val vmsToCheck: List<WasmVM>
-    internal abstract val jsModuleImport: String
 
     protected fun saveAdditionalFilesAndRun(
         outputDir: File,
@@ -44,7 +43,7 @@ abstract class WasmBoxRunnerBase(
                     let actualResult;
                     try {
                         // Use "dynamic import" to catch exception happened during JS & Wasm modules initialization
-                        $jsModuleImport
+                        let jsModule = await import('./index.mjs');
                         ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
                         actualResult = jsModule.box();
                     } catch(e) {
@@ -64,7 +63,7 @@ abstract class WasmBoxRunnerBase(
                     if (actualResult !== "OK")
                         throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
 
-                        ${if (debugMode >= DebugMode.DEBUG) "console.log('test passed');" else ""}                        
+                    ${if (debugMode >= DebugMode.DEBUG) "console.log('test passed');" else ""}                        
                 """.trimIndent()
 
         File(outputDir, "test.mjs")
