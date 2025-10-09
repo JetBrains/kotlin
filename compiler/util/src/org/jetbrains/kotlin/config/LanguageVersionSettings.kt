@@ -482,7 +482,7 @@ enum class LanguageFeature(
     // 2.5
 
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-11914"), // KT-11914. Deprecation phase 2
-    ForbidBridgesConflictingWithInheritedMethodsInJvmCode(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-13712"),
+    ForbidBridgesConflictingWithInheritedMethodsInJvmCode(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-371"),
 
     // End of 2.* language features --------------------------------------------------
 
