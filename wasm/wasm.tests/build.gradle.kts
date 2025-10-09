@@ -441,6 +441,9 @@ val wasmtimeArchive by task<Task> {
     }
 }
 
+val wasmtimeDirectory = toolsDirectory.map { it.dir("Wasmtime").asFile }
+val wasmtimeDirectoryName = wasmtimeVersion.map { version -> "wasmtime-$version-$wasmtimePlatformSuffix" }
+val wasmtimeUnpackedDirectory = wasmtimeDirectory.map { it.resolve(wasmtimeDirectoryName.get()) }
 val unzipWasmtime by task<Copy> {
     val wasmtime = wasmtimeArchive.map { it.outputs.files }
     dependsOn(wasmtime)
@@ -454,7 +457,7 @@ val unzipWasmtime by task<Copy> {
              }
          })
 
-    into(layout.buildDirectory.dir("tools"))
+    into(wasmtimeUnpackedDirectory)
 }
 
 fun Test.setupSpiderMonkey() {
