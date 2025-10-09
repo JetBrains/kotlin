@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.shallowCopy
 internal class DefaultProgressionHandler(
     private val context: CommonBackendContext, private val allowUnsignedBounds: Boolean = false
 ) : HeaderInfoHandler<IrExpression, Nothing?> {
+    private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
     private val rangeClassesTypes = symbols.rangeClasses.map { it.defaultType }.toSet()
 
@@ -31,7 +32,7 @@ internal class DefaultProgressionHandler(
     // Type `Iterable<Any>` would prevent the optimization, so initial type should be taken (IntRange in the example above),
     // which would give `Int` as loop variable type, since IntRange implements Iterable<Int>
     override fun matchIterable(expression: IrExpression): Boolean =
-        ProgressionType.fromIrType(expression.getMostPreciseTypeFromValInitializer(), symbols, allowUnsignedBounds) != null
+        ProgressionType.fromIrType(expression.getMostPreciseTypeFromValInitializer(), irBuiltIns, symbols, allowUnsignedBounds) != null
 
     override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
@@ -61,7 +62,7 @@ internal class DefaultProgressionHandler(
             val direction = if (isRange) ProgressionDirection.INCREASING else ProgressionDirection.UNKNOWN
 
             ProgressionHeaderInfo(
-                ProgressionType.fromIrType(unwrappedType, symbols, allowUnsignedBounds)!!,
+                ProgressionType.fromIrType(unwrappedType, irBuiltIns, symbols, allowUnsignedBounds)!!,
                 first,
                 last,
                 step,
