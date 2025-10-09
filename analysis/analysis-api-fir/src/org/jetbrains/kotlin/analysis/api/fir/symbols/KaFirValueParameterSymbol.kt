@@ -89,7 +89,7 @@ internal class KaFirValueParameterSymbol private constructor(
     override val hasDefaultValue: Boolean
         get() = withValidityAssertion {
             with(analysisSession) {
-                if (backingPsi?.hasDefaultValue() == true || firSymbol.hasDefaultValue) {
+                if (hasDeclaredDefaultValue) {
                     return true
                 }
 
@@ -97,12 +97,15 @@ internal class KaFirValueParameterSymbol private constructor(
                 val ownerFunction = containingDeclaration as? KaFunctionSymbol ?: return false
 
                 fun KaDeclarationSymbol.hasMatchingParameterWithDefaultValue(): Boolean =
-                    (this as? KaFunctionSymbol)?.valueParameters?.getOrNull(parameterIndex)?.hasDefaultValue == true
+                    (this as? KaFunctionSymbol)?.valueParameters?.getOrNull(parameterIndex)?.hasDeclaredDefaultValue == true
 
                 ownerFunction.allOverriddenSymbols.any { it.hasMatchingParameterWithDefaultValue() } ||
                         ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingParameterWithDefaultValue() }
             }
         }
+
+    override val hasDeclaredDefaultValue: Boolean
+        get() = withValidityAssertion { backingPsi?.hasDefaultValue() ?: firSymbol.hasDefaultValue }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }

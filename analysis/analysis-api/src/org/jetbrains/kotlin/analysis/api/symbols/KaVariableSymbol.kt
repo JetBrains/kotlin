@@ -555,8 +555,19 @@ public abstract class KaValueParameterSymbol : KaParameterSymbol() {
      * - For a regular function, a default value is explicitly declared for the parameter.
      * - For an overriding function, the corresponding parameter in the overridden function has a default value.
      * - For an `actual` function, the corresponding parameter in the `expect` function has a default value.
+     *
+     * @see hasDeclaredDefaultValue
      */
     public abstract val hasDefaultValue: Boolean
+
+    /**
+     * Indicates whether the parameter has an explicitly declared [default value](https://kotlinlang.org/docs/functions.html#parameters-with-default-values).
+     * Unlike [hasDefaultValue], this property does not consider overridden functions or `expect`/`actual` declarations.
+     *
+     * @see hasDefaultValue
+     */
+    @KaExperimentalApi
+    public abstract val hasDeclaredDefaultValue: Boolean
 
     /**
      * Whether the value parameter represents a [variable number of arguments (`vararg`)](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs).

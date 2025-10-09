@@ -53,6 +53,9 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
     override val hasDefaultValue: Boolean
         get() = withValidityAssertion { false }
 
+    override val hasDeclaredDefaultValue: Boolean
+        get() = withValidityAssertion { false }
+
     override val isVararg: Boolean
         get() = withValidityAssertion { true }
 

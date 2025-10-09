@@ -53,6 +53,9 @@ internal class KaFe10PsiValueParameterSymbol(
     override val hasDefaultValue: Boolean
         get() = withValidityAssertion { psi.hasDefaultValue() }
 
+    override val hasDeclaredDefaultValue: Boolean
+        get() = withValidityAssertion { psi.hasDefaultValue() }
+
     override val isVararg: Boolean
         get() = withValidityAssertion { psi.isVarArg }
 
