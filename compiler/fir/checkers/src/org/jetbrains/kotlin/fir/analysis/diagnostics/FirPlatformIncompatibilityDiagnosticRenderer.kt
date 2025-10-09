@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.ContextIndependentParameterRenderer
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.ThreatOfTailLoss
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
@@ -77,6 +78,7 @@ open class MultiplatformDiagnosticRenderingMode {
     open fun renderSymbol(sb: StringBuilder, symbol: FirBasedSymbol<*>, indent: String) {
         sb.append(indent)
         sb.append(INDENTATION_UNIT)
+        @OptIn(ThreatOfTailLoss::class)
         sb.appendLine(FirDiagnosticRenderers.SYMBOL.render(symbol))
     }
 }

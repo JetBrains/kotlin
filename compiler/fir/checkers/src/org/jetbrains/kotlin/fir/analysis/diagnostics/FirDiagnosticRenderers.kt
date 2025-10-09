@@ -258,6 +258,7 @@ object FirDiagnosticRenderers {
         }
     }
 
+    @OptIn(ThreatOfTailLoss::class)
     val RENDER_COLLECTION_OF_TYPES = ContextDependentRenderer { types: Collection<ConeKotlinType>, ctx ->
         types.joinToString(separator = ", ") { type ->
             RENDER_TYPE.render(type, ctx)
