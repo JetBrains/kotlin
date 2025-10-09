@@ -250,7 +250,7 @@ interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
         override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.coroutineGetContext.functionSymbol()
 
         companion object {
-            val wasmInternalFqName = FqName.fromSegments(listOf("kotlin", "wasm", "internal"))
+            private val wasmInternalFqName = FqName.fromSegments(listOf("kotlin", "wasm", "internal"))
             private const val COROUTINE_SUSPEND_OR_RETURN_NAME = "suspendCoroutineUninterceptedOrReturn"
 
             private object CallableIds {
