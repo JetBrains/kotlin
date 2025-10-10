@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
@@ -95,9 +94,7 @@ constructor(
     internal val konanTarget = compilation.konanTarget
 
     private val objects = project.objects
-    private val providers = project.providers
-
-    private val kotlinPluginVersion = project.getKotlinPluginVersion()
+    private val simpleKotlinNativeVersion = project.nativeProperties.kotlinNativeVersion
 
     @get:Internal
     internal val excludeDependencies
@@ -137,9 +134,9 @@ constructor(
 
     @get:Input
     internal val disableCache: Property<Boolean> = objects.propertyWithConvention(
-        providers.provider {
+        simpleKotlinNativeVersion.map { version ->
             binary.disableCacheSettings.any { disableSetting ->
-                disableSetting.version == KotlinToolingVersion(kotlinPluginVersion)
+                disableSetting.version == KotlinToolingVersion(version)
             }
         }
     )
@@ -420,7 +417,6 @@ constructor(
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
-    private val simpleKotlinNativeVersion = project.nativeProperties.kotlinNativeVersion
 
     @get:Internal
     internal val nativeCompilerRunner
