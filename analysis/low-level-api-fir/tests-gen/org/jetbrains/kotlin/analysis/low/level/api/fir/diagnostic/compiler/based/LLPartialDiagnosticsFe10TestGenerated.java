@@ -7471,6 +7471,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("charPseudoConstructor_after.kt")
+        public void testCharPseudoConstructor_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/charPseudoConstructor_after.kt");
+        }
+
+        @Test
+        @TestMetadata("charPseudoConstructor_before.kt")
+        public void testCharPseudoConstructor_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/charPseudoConstructor_before.kt");
+        }
+
+        @Test
         @TestMetadata("classObjectProperty.kt")
         public void testClassObjectProperty() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/classObjectProperty.kt");

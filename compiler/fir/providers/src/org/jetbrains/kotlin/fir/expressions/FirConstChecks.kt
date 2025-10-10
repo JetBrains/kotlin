@@ -446,6 +446,7 @@ private class FirConstCheckVisitor(
     private fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
         // FIXME, KT-81071: These functions cannot yet be marked with the annotation because of bootstrapping problems.
         val futureIntrinsicConst = listOf(
+            "Char(Int)",
             "String.lowercase()", "String.uppercase()",
             "String.trim()", "String.trimEnd()", "String.trimStart()"
         )

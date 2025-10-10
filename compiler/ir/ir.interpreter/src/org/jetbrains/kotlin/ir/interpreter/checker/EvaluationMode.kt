@@ -154,6 +154,7 @@ sealed class EvaluationMode {
             // FIXME, KT-81071: These functions cannot yet be marked with the annotation because of bootstrapping problems.
             val signature = function.getSignature()
             val futureIntrinsicConst = listOf(
+                "Char(Int)",
                 "String.lowercase()", "String.uppercase()",
                 "String.trim()", "String.trimStart()", "String.trimEnd()"
             )
