@@ -7573,6 +7573,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("trim_after.kt")
+        public void testTrim_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/trim_after.kt");
+        }
+
+        @Test
+        @TestMetadata("trim_before.kt")
+        public void testTrim_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/trim_before.kt");
+        }
+
+        @Test
         @TestMetadata("typeAliasToUnsigned.kt")
         public void testTypeAliasToUnsigned() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/typeAliasToUnsigned.kt");
