@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.test.backend.ir
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.JsSymbols
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
+import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
@@ -108,3 +110,15 @@ class IrPreSerializationNativeSymbolValidationHandler(testServices: TestServices
     }
 }
 
+abstract class IrSecondPhaseSymbolValidationHandler(testServices: TestServices) : IrSymbolValidationHandler(testServices) {
+    override fun validate(symbol: IrSymbol, symbolsClass: KClass<out PreSerializationSymbols>) {
+        val owner = symbol.owner as IrDeclarationWithVisibility
+        checkForSpecialAnnotation(owner)
+    }
+}
+
+class JsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
+    override fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols {
+        return JsSymbols(irBuiltIns, StageController(), compileLongAsBigint = true)
+    }
+}

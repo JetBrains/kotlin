@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacad
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationJsSymbolValidationHandler
+import org.jetbrains.kotlin.test.backend.ir.JsSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.klib.AbstractPreSerializationSymbolsTest
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
@@ -26,7 +27,8 @@ class JsPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
     ::JsIrPreSerializationLoweringFacade,
     ::FirKlibSerializerCliWebFacade,
     ::JsIrDeserializerFacade,
-    ::IrPreSerializationJsSymbolValidationHandler
+    ::IrPreSerializationJsSymbolValidationHandler,
+    ::JsSymbolValidationHandler,
 ) {
     override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(::JsFirstStageEnvironmentConfigurator)
