@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.powerassert.PowerAssertPluginNames.PLUGIN_ID
 
 val KEY_FUNCTIONS = CompilerConfigurationKey<List<String>>("fully-qualified function names")
+val KEY_FUNCTION_REGEXES = CompilerConfigurationKey<List<Regex>>("function fqn regexes")
 
 class PowerAssertCompilerPluginRegistrar(
     private val functions: Set<FqName>,
+    private val functionRegexs: Set<Regex>,
 ) : CompilerPluginRegistrar() {
     @Suppress("unused")
-    constructor() : this(emptySet()) // Used by service loader
+    constructor() : this(emptySet(), emptySet()) // Used by service loader
 
     override val pluginId: String get() = PLUGIN_ID
 
@@ -40,13 +42,15 @@ class PowerAssertCompilerPluginRegistrar(
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val functions = configuration[KEY_FUNCTIONS]?.map { FqName(it) } ?: functions
-        if (functions.isEmpty()) return
+        val functionRegexs = configuration[KEY_FUNCTION_REGEXES] ?: functionRegexs
+        if (functions.isEmpty() && functionRegexs.isEmpty()) return
 
         IrGenerationExtension.registerExtension(
             PowerAssertIrGenerationExtension(
                 PowerAssertConfiguration(
                     configuration,
-                    functions.toSet()
+                    functions.toSet(),
+                    functionRegexs.toSet()
                 )
             )
         )
