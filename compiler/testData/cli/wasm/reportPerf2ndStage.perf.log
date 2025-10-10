@@ -1,0 +1,8 @@
+Kotlin to JS compiler performance report
+                INIT        $UINT>>$ ms
+   TRANSLATION to IR        $UINT>>$ ms
+         IR LOWERING        $UINT>>$ ms
+             BACKEND        $UINT>>$ ms
+GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
+GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
+JIT time is $UINT$ ms

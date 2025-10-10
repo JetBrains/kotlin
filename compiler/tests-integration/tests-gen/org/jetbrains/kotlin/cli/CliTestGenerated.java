@@ -2202,6 +2202,11 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/wasm"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
+    @TestMetadata("reportPerf2ndStage.args")
+    public void testReportPerf2ndStage() {
+      runTest("compiler/testData/cli/wasm/reportPerf2ndStage.args");
+    }
+
     @TestMetadata("reportPerfLowerings.args")
     public void testReportPerfLowerings() {
       runTest("compiler/testData/cli/wasm/reportPerfLowerings.args");
