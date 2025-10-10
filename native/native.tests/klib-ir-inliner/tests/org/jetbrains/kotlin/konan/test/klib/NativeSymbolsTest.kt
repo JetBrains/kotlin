@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.backend.common.ErrorReportingContext
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.create
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
@@ -12,9 +19,11 @@ import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLowering
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationNativeSymbolValidationHandler
+import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 
 @Suppress("JUnitTestCaseWithNoTests")
@@ -27,8 +36,20 @@ class NativeSymbolsTest : AbstractSymbolsValidationTest(
     ::NativeKlibSerializerFacade,
     ::NativeDeserializerFacade,
     ::IrPreSerializationNativeSymbolValidationHandler,
+    ::NativeSymbolValidationHandler,
 ) {
     override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(::NativeEnvironmentConfigurator)
+    }
+}
+
+class NativeSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
+    private val errorReportingContext = object : ErrorReportingContext {
+        override val messageCollector: MessageCollector
+            get() = error("should not be called")
+    }
+
+    override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
+        return listOf(BackendNativeSymbols(errorReportingContext, irBuiltIns, CompilerConfiguration.create()))
     }
 }
