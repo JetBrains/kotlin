@@ -44,15 +44,18 @@ private fun digitToChar(input: Int): Char {
     return (CharCodes._0.code + input).toChar()
 }
 
-internal fun itoa32(inputValue: Int): String {
-    if (inputValue == 0) return "0"
+internal expect fun itoa32(inputValue: Int): String
+//= js("inputValue.toString()")
 
-    val isNegative = inputValue < 0
-    val absValue = if (isNegative) -inputValue else inputValue
-    val absValueString = utoa32(absValue.toUInt())
-
-    return if (isNegative) "-$absValueString" else absValueString
-}
+//{
+//    if (inputValue == 0) return "0"
+//
+//    val isNegative = inputValue < 0
+//    val absValue = if (isNegative) -inputValue else inputValue
+//    val absValueString = utoa32(absValue.toUInt())
+//
+//    return if (isNegative) "-$absValueString" else absValueString
+//}
 
 internal fun utoa32(inputValue: UInt): String {
     if (inputValue == 0U) return "0"
