@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirOverridesProviderImplementationDetail
+import org.jetbrains.kotlin.analysis.api.fir.components.getDirectlyOverriddenSymbols
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
@@ -333,8 +335,10 @@ internal val KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.isO
             }
         } ?: firSymbol.isOverride // Resolved status is needed as compiler plugins might add the modifier
 
-        return isOverride || origin == KaSymbolOrigin.LIBRARY && with(analysisSession) {
-            // A workaround for the case when the library declaration is analyzed as sources
-            directlyOverriddenSymbols.any()
+        return isOverride || origin == KaSymbolOrigin.LIBRARY && context(analysisSession) {
+            // A workaround for the case when the library declaration is analyzed as sources.
+            // We need to skip isOverride check to avoid infinite recursion.
+            @OptIn(KaFirOverridesProviderImplementationDetail::class)
+            getDirectlyOverriddenSymbols(this, skipIsOverrideCheck = true).any()
         }
     }
