@@ -20,6 +20,7 @@ sealed class FirEvaluatorResult {
 
     sealed class CompileTimeException : FirEvaluatorResult()
     data object DivisionByZero : CompileTimeException()
+    data object TrimMarginBlankPrefix : CompileTimeException()
     data object RecursionInInitializer : CompileTimeException()
 }
 
