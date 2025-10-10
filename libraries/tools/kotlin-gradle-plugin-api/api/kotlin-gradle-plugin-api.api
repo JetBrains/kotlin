@@ -1468,18 +1468,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/attributes/Kl
 public final class org/jetbrains/kotlin/gradle/plugin/attributes/KlibPackaging$Companion {
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/DisableNativeCacheInKotlinVersion : java/io/Serializable {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableNativeCacheInKotlinVersion$Companion;
-	public fun <init> (Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;)V
-	public final fun getVersion ()Lorg/jetbrains/kotlin/tooling/core/KotlinToolingVersion;
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/DisableNativeCacheInKotlinVersion$Companion {
-	public final fun get2_3_0 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableNativeCacheInKotlinVersion;
-	public final fun getSnapshot ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/DisableNativeCacheInKotlinVersion;
-}
-
 public abstract interface annotation class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCacheApi : java/lang/annotation/Annotation {
 }
 
