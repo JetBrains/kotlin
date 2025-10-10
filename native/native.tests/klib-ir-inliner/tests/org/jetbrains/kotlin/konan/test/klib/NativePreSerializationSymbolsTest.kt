@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
+import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
+import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationNativeSymbolValidationHandler
@@ -20,6 +23,9 @@ class NativePreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
     NativePlatforms.unspecifiedNativePlatform,
     ::FirFrontendFacade,
     ::Fir2IrNativeResultsConverter,
+    ::NativePreSerializationLoweringFacade,
+    ::NativeKlibSerializerFacade,
+    ::NativeDeserializerFacade,
     ::IrPreSerializationNativeSymbolValidationHandler,
 ) {
     override fun TestConfigurationBuilder.applyConfigurators() {
