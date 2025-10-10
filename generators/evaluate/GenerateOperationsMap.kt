@@ -72,6 +72,11 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
 
     unaryOperationsMap.add(Operation("code", listOf("Char"), false))
 
+    for (name in listOf("trim", "trimEnd", "trimIndent", "trimMargin", "trimStart")) {
+        unaryOperationsMap.add(Operation(name, listOf("String"), true))
+    }
+    binaryOperationsMap.add(Operation("trimMargin", listOf("String", "String")))
+
     for (type in integerTypes) {
         for (otherType in integerTypes) {
             val parameters = listOf(type, otherType).map { it.typeName }

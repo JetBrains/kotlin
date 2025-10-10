@@ -347,6 +347,9 @@ internal object DataClassArrayToString : IntrinsicBase() {
 internal object Indent : IntrinsicBase() {
     override fun getListOfAcceptableFunctions(): List<String> {
         return listOf(
+            "kotlin.text.StringsKt.trim", "kotlin.text.trim",
+            "kotlin.text.StringsKt.trimStart", "kotlin.text.trimStart",
+            "kotlin.text.StringsKt.trimEnd", "kotlin.text.trimEnd",
             "kotlin.text.StringsKt.trimIndent", "kotlin.text.trimIndent",
             "kotlin.text.StringsKt.trimMargin", "kotlin.text.trimMargin",
             "kotlin.text.StringsKt.trimMargin\$default", "kotlin.text.trimMargin\$default",
@@ -356,6 +359,9 @@ internal object Indent : IntrinsicBase() {
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         val str = environment.callStack.loadState(irFunction.parameters[0].symbol).asString()
         val trimmed = when (irFunction.fqName) {
+            "kotlin.text.StringsKt.trim", "kotlin.text.trim" -> str.trim()
+            "kotlin.text.StringsKt.trimStart", "kotlin.text.trimStart" -> str.trimStart()
+            "kotlin.text.StringsKt.trimEnd", "kotlin.text.trimEnd" -> str.trimEnd()
             "kotlin.text.StringsKt.trimIndent", "kotlin.text.trimIndent" -> str.trimIndent()
             "kotlin.text.StringsKt.trimMargin", "kotlin.text.trimMargin" -> {
                 val marginPrefix = environment.callStack.loadState(irFunction.parameters[1].symbol).asString()
