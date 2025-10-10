@@ -93,14 +93,14 @@ fun takeIfSample(x: String): Int {
     val nonEmpty = x.takeIf { it.isNotEmpty() }
     if (nonEmpty == null) return 1
     return when (x) {
-        is String -> 2
+        <!USELESS_IS_CHECK!>is String<!> -> 2
     }
 }
 
 fun letContract(x: String?) {
     x?.let {
         when (x) {
-            is String -> 1
+            <!USELESS_IS_CHECK!>is String<!> -> 1
         }
     }
 }
