@@ -11712,6 +11712,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("forInSequenceWithIndexNameBasedDestructuringShortForm.kt")
+      public void testForInSequenceWithIndexNameBasedDestructuringShortForm() {
+        runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndexNameBasedDestructuringShortForm.kt");
+      }
+
+      @Test
       @TestMetadata("forInSequenceWithIndexNoElementVar.kt")
       public void testForInSequenceWithIndexNoElementVar() {
         runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndexNoElementVar.kt");
