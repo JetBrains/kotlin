@@ -35628,6 +35628,12 @@ public class FirWasmJsCodegenSplittingWithInlinedFunInKlibTestGenerated extends 
         }
 
         @Test
+        @TestMetadata("charPseudoConstructor.kt")
+        public void testCharPseudoConstructor() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/charPseudoConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("constTrim.kt")
         public void testConstTrim() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrim.kt");
