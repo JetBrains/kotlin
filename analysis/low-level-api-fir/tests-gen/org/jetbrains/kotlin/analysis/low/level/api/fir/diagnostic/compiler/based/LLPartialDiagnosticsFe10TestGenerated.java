@@ -7459,6 +7459,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("byteBitwiseOperations_after.kt")
+        public void testByteBitwiseOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/byteBitwiseOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("byteBitwiseOperations_before.kt")
+        public void testByteBitwiseOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/byteBitwiseOperations_before.kt");
+        }
+
+        @Test
         @TestMetadata("classObjectProperty.kt")
         public void testClassObjectProperty() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/classObjectProperty.kt");
@@ -7579,6 +7591,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("lowerUpper_after.kt")
+        public void testLowerUpper_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/lowerUpper_after.kt");
+        }
+
+        @Test
+        @TestMetadata("lowerUpper_before.kt")
+        public void testLowerUpper_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/lowerUpper_before.kt");
+        }
+
+        @Test
         @TestMetadata("nonConstAnnotationConstructorParam.kt")
         public void testNonConstAnnotationConstructorParam() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/nonConstAnnotationConstructorParam.kt");
@@ -7600,6 +7624,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("objectProperty.kt")
         public void testObjectProperty() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/objectProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("shortBitwiseOperations_after.kt")
+        public void testShortBitwiseOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/shortBitwiseOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("shortBitwiseOperations_before.kt")
+        public void testShortBitwiseOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/shortBitwiseOperations_before.kt");
         }
 
         @Test

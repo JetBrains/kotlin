@@ -37423,6 +37423,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("byteBitwiseOperations.kt")
+        public void testByteBitwiseOperations() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/byteBitwiseOperations.kt");
+        }
+
+        @Test
         @TestMetadata("constTrim.kt")
         public void testConstTrim() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrim.kt");
@@ -37477,9 +37483,21 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("lowerUpper.kt")
+        public void testLowerUpper() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/lowerUpper.kt");
+        }
+
+        @Test
         @TestMetadata("nullableEnumName.kt")
         public void testNullableEnumName() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/nullableEnumName.kt");
+        }
+
+        @Test
+        @TestMetadata("shortBitwiseOperations.kt")
+        public void testShortBitwiseOperations() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/shortBitwiseOperations.kt");
         }
       }
 

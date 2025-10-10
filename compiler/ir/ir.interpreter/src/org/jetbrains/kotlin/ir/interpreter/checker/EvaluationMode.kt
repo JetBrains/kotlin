@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.getOnlyName
+import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
 import org.jetbrains.kotlin.ir.interpreter.isConst
