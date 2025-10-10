@@ -517,6 +517,12 @@ class ExpressionCodegen(
         val callable = methodSignatureMapper.mapToCallableMethod(expression, irFunction)
         val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
 
+        // Generate LINENUMBER instruction before any stack spilling - otherwise, the spilling will have previous instruction's LINENUMBER
+        // See KT-66413.
+        if (callee.isSuspend) {
+            expression.markLineNumber(true)
+        }
+
         val suspensionPointKind = expression.getSuspensionPointKind()
         if (suspensionPointKind != SuspensionPointKind.NEVER) {
             addInlineMarker(mv, isStartNotEnd = true)
