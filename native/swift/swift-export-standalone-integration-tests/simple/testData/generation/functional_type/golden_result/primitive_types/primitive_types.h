@@ -3,6 +3,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int8_t __root___consume_block_with_Unit_id__TypesOfArguments__U28Swift_VoidU29202D_U20Swift_Int8__(int8_t (^block)(void));
+
+int8_t __root___consume_block_with_Unit_idInTheMix1__TypesOfArguments__U28Swift_Void_U20Swift_Int8U29202D_U20Swift_Int8__(int8_t (^block)(int8_t));
+
+int8_t __root___consume_block_with_Unit_idInTheMix2__TypesOfArguments__U28Swift_Int8_U20Swift_VoidU29202D_U20Swift_Int8__(int8_t (^block)(int8_t));
+
+int8_t __root___consume_block_with_Unit_idInTheMix3__TypesOfArguments__U28Swift_Void_U20Swift_VoidU29202D_U20Swift_Int8__(int8_t (^block)(void));
+
+int8_t __root___consume_block_with_Unit_idInTheMix4__TypesOfArguments__U28Swift_Int8_U20Swift_Void_U20Swift_Int8U29202D_U20Swift_Int8__(int8_t (^block)(int8_t, int8_t));
+
 int8_t __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__(int8_t (^block)(int8_t));
 
 uint32_t __root___consume_block_with_uint_id__TypesOfArguments__U28Swift_UInt32U29202D_U20Swift_UInt32__(uint32_t (^block)(uint32_t));

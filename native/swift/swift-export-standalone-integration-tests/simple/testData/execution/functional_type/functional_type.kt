@@ -57,6 +57,8 @@ fun savePrimBlock(block: (Byte) -> Byte) {
 }
 fun callPrimBlock(with: Byte): Byte = prim_block(with)
 
+fun callVoidBlock(block: (Unit, Unit) -> Unit): Unit = block(Unit, Unit)
+
 // MODULE: collection_types
 // EXPORT_TO_SWIFT
 // FILE: collection_types.kt

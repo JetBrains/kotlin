@@ -24,9 +24,12 @@ fun consume_block_with_string_id(block: (String) -> String): String = TODO()
 
 fun consume_block_with_uint_id(block: (UInt) -> UInt): UInt = TODO()
 fun consume_block_with_byte_id(block: (Byte) -> Byte): Byte = TODO()
-// todo: crashes konan backend: Internal compiler error: doesn't correspond to any C type: kotlin.Unit
-// at convertBlockPtrToKotlinFunction<(Unit)->Byte>(block)
-// fun consume_block_with_Unit_id(block: (Unit) -> Byte): Byte = TODO()
+
+fun consume_block_with_Unit_id(block: (Unit) -> Byte): Byte = TODO()
+fun consume_block_with_Unit_idInTheMix1(block: (Unit, Byte) -> Byte): Byte = TODO()
+fun consume_block_with_Unit_idInTheMix2(block: (Byte, Unit) -> Byte): Byte = TODO()
+fun consume_block_with_Unit_idInTheMix3(block: (Unit, Unit) -> Byte): Byte = TODO()
+fun consume_block_with_Unit_idInTheMix4(block: (Byte, Unit, Byte) -> Byte): Byte = TODO()
 
 // MODULE: never_type
 // EXPORT_TO_SWIFT

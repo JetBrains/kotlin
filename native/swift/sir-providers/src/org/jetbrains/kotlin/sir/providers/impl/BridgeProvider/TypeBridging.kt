@@ -548,7 +548,7 @@ internal sealed class Bridge(
         swiftType = swiftType,
         kotlinType = KotlinType.KotlinObject,
         cType = CType.BlockPointer(
-            parameters = parameters.map { it.cType },
+            parameters = parameters.map { it.cType }.filter { it != CType.Void },
             returnType = returnType.cType,
         )
     ) {
@@ -622,11 +622,16 @@ internal sealed class Bridge(
                 val argsInClosure = parameters
                     .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
                 val defineArgs = argsInClosure
+                    ?.filter { it.second.kotlinType != KotlinType.Unit }
+                    ?.takeIf { it.isNotEmpty() }
                     ?.let { " ${it.joinToString { it.first }} in" } ?: ""
                 val callArgs = argsInClosure
                     ?.let {
                         it.joinToString { param ->
-                            param.second.inSwiftSources.kotlinToSwift(typeNamer, param.first)
+                            if (param.second.kotlinType != KotlinType.Unit)
+                                param.second.inSwiftSources.kotlinToSwift(typeNamer, param.first)
+                            else
+                                "()"
                         }
                     } ?: ""
                 return """{

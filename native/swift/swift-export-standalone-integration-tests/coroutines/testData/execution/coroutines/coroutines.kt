@@ -10,6 +10,10 @@ import kotlinx.coroutines.*
 
 object Foo
 
+suspend fun testVoid(): Unit {
+    delay(33L)
+}
+
 suspend fun testPrimitive(): Int {
     delay(33L)
     return 42

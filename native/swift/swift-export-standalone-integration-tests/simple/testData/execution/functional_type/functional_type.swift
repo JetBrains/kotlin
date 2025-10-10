@@ -78,6 +78,8 @@ func testBlockWithOptPrimType() throws {
     received = callOptPrimBlock(with: nil)
     try #require(received == nil)
     try #require(last == nil)
+
+    callVoidBlock { l, r in print(l, r) }
 }
 
 @Test

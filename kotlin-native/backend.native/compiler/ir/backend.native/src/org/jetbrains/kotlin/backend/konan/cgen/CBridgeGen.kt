@@ -773,12 +773,17 @@ private fun CBridgeGenState.mapBlockType(
     val parameterValuePassings = type.arguments.dropLast(1).map { argument ->
         require(argument is IrTypeProjection) { renderCompilerError(location) }
         require(argument.variance == Variance.INVARIANT) { renderCompilerError(location) }
-        mapType(
-                argument.type,
-                retained = false,
-                variadic = false,
-                location = location
-        )
+
+        if (argument.type.isUnit()) {
+            IgnoredUnitValuePassing
+        } else {
+            mapType(
+                    argument.type,
+                    retained = false,
+                    variadic = false,
+                    location = location
+            )
+        }
     }
 
     ObjCBlockPointerValuePassing(
@@ -874,6 +879,8 @@ private interface ArgumentPassing : KotlinToCArgumentPassing {
 }
 
 private interface ValuePassing : ArgumentPassing, ValueReturning
+
+private object IgnoredUnitValuePassing : ValuePassing, ArgumentPassing by IgnoredUnitArgumentPassing, ValueReturning by VoidReturning
 
 private abstract class SimpleValuePassing : ValuePassing {
     abstract val kotlinBridgeType: IrType
