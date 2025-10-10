@@ -19,7 +19,7 @@ class CrossCompilationPublishingTests {
     fun `test KT-81134 Gradle configuration failure when accessing publishable property`() {
         with(buildProjectWithMPP {
             kotlin {
-                macosX64()
+                macosArm64()
                 linuxX64()
                 mingwX64()
             }

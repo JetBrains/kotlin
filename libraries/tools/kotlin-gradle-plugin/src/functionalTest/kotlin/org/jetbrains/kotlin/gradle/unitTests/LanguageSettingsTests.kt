@@ -40,7 +40,7 @@ class LanguageSettingsTests {
                 linuxX64()
                 linuxArm64()
 
-                iosX64()
+                iosSimulatorArm64()
                 iosArm64()
 
                 applyDefaultHierarchyTemplate()
@@ -88,7 +88,7 @@ class LanguageSettingsTests {
                 linuxX64()
                 linuxArm64()
 
-                iosX64()
+                iosSimulatorArm64()
                 iosArm64()
 
                 applyDefaultHierarchyTemplate()
@@ -312,7 +312,6 @@ class LanguageSettingsTests {
                     linuxX64()
                     linuxArm64()
                     mingwX64()
-                    macosX64()
                     macosArm64()
 
                     applyDefaultHierarchyTemplate()

@@ -28,6 +28,7 @@ class UklibFromKGPFragmentsGMTTests {
         buildProjectWithMPP {
             kotlin {
                 iosArm64()
+                @Suppress("DEPRECATION")
                 iosX64()
                 jvm()
 
@@ -111,6 +112,7 @@ class UklibFromKGPFragmentsGMTTests {
             androidLibrary { compileSdk = 31 }
             kotlin {
                 iosArm64()
+                @Suppress("DEPRECATION")
                 iosX64()
                 iosSimulatorArm64()
                 linuxArm64()

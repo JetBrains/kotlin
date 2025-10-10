@@ -64,7 +64,7 @@ fun provisionKotlinNativeDistribution() {
 
         kotlin {
             iosArm64()
-            iosX64()
+            iosSimulatorArm64()
             linuxX64()
             linuxArm64()
             mingwX64()

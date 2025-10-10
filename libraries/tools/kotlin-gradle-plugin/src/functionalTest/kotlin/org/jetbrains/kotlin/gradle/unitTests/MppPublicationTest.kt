@@ -110,7 +110,7 @@ class MppPublicationTest {
             targets.all { target -> target.attributes { attribute(userAttribute, target.name) } }
             js(IR)
             linuxX64()
-            iosX64()
+            iosArm64()
         }
 
         project.evaluate()
@@ -287,7 +287,7 @@ class MppPublicationTest {
 
                 linuxX64()
                 mingwX64()
-                macosX64()
+                macosArm64()
 
                 js { browser() }
 

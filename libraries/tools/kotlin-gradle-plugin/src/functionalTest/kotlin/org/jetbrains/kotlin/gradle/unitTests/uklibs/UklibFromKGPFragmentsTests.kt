@@ -62,7 +62,7 @@ class UklibFromKGPFragmentsTests {
         ) {
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
 
                 applyHierarchyTemplate {
@@ -128,7 +128,7 @@ class UklibFromKGPFragmentsTests {
         ) {
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
 
                 sourceSets.create("orphan")
@@ -151,6 +151,7 @@ class UklibFromKGPFragmentsTests {
             androidLibrary { compileSdk = 31 }
             kotlin {
                 iosArm64()
+                @Suppress("DEPRECATION")
                 iosX64()
                 jvm()
                 js()
@@ -240,6 +241,7 @@ class UklibFromKGPFragmentsTests {
         ) {
             kotlin {
                 iosArm64()
+                @Suppress("DEPRECATION")
                 iosX64()
                 iosSimulatorArm64()
 
@@ -303,7 +305,7 @@ class UklibFromKGPFragmentsTests {
                 linuxX64()
                 linuxArm64()
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
             }
         }.evaluate().assertNoDiagnostics(
             filterDiagnosticIds = defaultFilteredDiagnostics + listOf(

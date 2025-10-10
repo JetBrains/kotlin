@@ -380,7 +380,7 @@ class KotlinHierarchyDslTest {
         }
 
         kotlin.linuxX64()
-        kotlin.macosX64()
+        kotlin.macosArm64()
         kotlin.mingwX64()
 
         assertEquals(
@@ -389,12 +389,12 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("linuxX64Main", "macosX64Main", "mingwX64Main"),
+            stringSetOf("linuxX64Main", "macosArm64Main", "mingwX64Main"),
             kotlin.dependingSourceSetNames("nativeMain")
         )
 
         assertEquals(
-            stringSetOf("linuxX64Main", "macosX64Main"),
+            stringSetOf("linuxX64Main", "macosArm64Main"),
             kotlin.dependingSourceSetNames("nixMain")
         )
     }
@@ -540,9 +540,9 @@ class KotlinHierarchyDslTest {
             }
         }
 
-        kotlin.iosX64()
+        kotlin.iosSimulatorArm64()
         kotlin.iosArm64()
-        kotlin.macosX64()
+        kotlin.macosArm64()
         kotlin.jvm()
 
         assertEquals(

@@ -43,7 +43,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
         listOf(
             kotlin.linuxX64().compilations.main.cinterops.create("anyInteropName"),
-            kotlin.macosX64().compilations.main.cinterops.create("anyInteropName"),
+            kotlin.macosArm64().compilations.main.cinterops.create("anyInteropName"),
         ).forEach {
             project.tasks.named(it.interopProcessingTaskName).configure {
                 fail("Interop task configuration should not avoided by commonizeCInteropTask configuration")
@@ -57,7 +57,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     fun `nativeMain linux macos`() = project.runLifecycleAwareTest {
         val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName")
-        val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName")
+        val macosInterop = kotlin.macosArm64("macos").compilations.getByName("main").cinterops.create("anyInteropName")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val nativeMain = kotlin.sourceSets.create("nativeMain")
@@ -86,7 +86,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     @Test
     fun `nativeMain linux macos (no macos interop defined)`() = project.runLifecycleAwareTest {
         kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName")
-        kotlin.macosX64("macos")
+        kotlin.macosArm64("macos")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val nativeMain = kotlin.sourceSets.create("nativeMain")
@@ -112,8 +112,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     fun `nativeMain iosMain linux macos iosX64 iosArm64`() = project.runLifecycleAwareTest {
         val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
-        val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
-        val iosX64Interop = kotlin.iosX64("iosX64").compilations.getByName("main").cinterops.create("anyInteropName").identifier
+        val macosInterop = kotlin.macosArm64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val iosArm64Interop = kotlin.iosArm64("iosArm64").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -142,7 +141,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
                 CommonizerTarget(IOS_X64, IOS_ARM64)
             ),
             setOf(
-                linuxInterop, macosInterop, iosX64Interop, iosArm64Interop
+                linuxInterop, macosInterop, iosArm64Interop
             )
         )
 
@@ -168,7 +167,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     ) = project.runLifecycleAwareTest {
         val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
-        val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
+        val macosInterop = kotlin.macosArm64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val nativeMain = kotlin.sourceSets.create("nativeMain")
@@ -232,7 +231,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     ) = project.runLifecycleAwareTest {
         val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
-        val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
+        val macosInterop = kotlin.macosArm64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         kotlin.linuxX64("linux").compilations.getByName("test").cinterops.create("anyOtherName").identifier
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -295,18 +294,18 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         val task = this@CInteropCommonizerTaskTest.task.await()
         /* Define targets */
         val linux = kotlin.linuxX64("linux")
-        val macos = kotlin.macosX64("macos")
-        val iosX64 = kotlin.iosX64()
+        val macos = kotlin.macosArm64("macos")
+        val iosSimulator = kotlin.iosSimulatorArm64()
         val iosArm64 = kotlin.iosArm64()
         val windows64 = kotlin.mingwX64("windows64")
         kotlin.jvm()
         kotlin.js().browser()
 
-        val nativeTargets = listOf(linux, macos, iosX64, iosArm64, windows64)
+        val nativeTargets = listOf(linux, macos, iosSimulator, iosArm64, windows64)
         val windowsTargets = listOf(windows64)
-        val unixLikeTargets = listOf(linux, macos, iosX64, iosArm64)
-        val appleTargets = listOf(macos, iosX64, iosArm64)
-        val iosTargets = listOf(iosX64, iosArm64)
+        val unixLikeTargets = listOf(linux, macos, iosSimulator, iosArm64)
+        val appleTargets = listOf(macos, iosSimulator, iosArm64)
+        val iosTargets = listOf(iosSimulator, iosArm64)
 
         /* Define interops */
         nativeTargets.map { target ->
@@ -337,8 +336,8 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
             target.compilations.getByName("main").cinterops.create("iosHelper").identifier
         }
 
-        iosX64.compilations.getByName("main").cinterops.create("iosX64Helper").identifier
-        iosX64.compilations.getByName("test").cinterops.create("iosX64TestHelper").identifier
+        iosSimulator.compilations.getByName("main").cinterops.create("iosX64Helper").identifier
+        iosSimulator.compilations.getByName("test").cinterops.create("iosX64TestHelper").identifier
 
         /* Define source set hierarchy */
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -413,14 +412,14 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
                     windowsTargets.map { target -> target.mainCinteropIdentifier("windowsHelper") } +
                     appleTargets.map { target -> target.mainCinteropIdentifier("appleHelper") } +
                     iosTargets.map { target -> target.mainCinteropIdentifier("iosHelper") } +
-                    iosX64.mainCinteropIdentifier("iosX64Helper")
+                    iosSimulator.mainCinteropIdentifier("iosX64Helper")
         )
 
         val expectedTestGroup = CInteropCommonizerGroup(
             targets = setOf(nativeCommonizerTarget, appleCommonizerTarget, iosCommonizerTarget),
             interops = nativeTargets.map { target -> target.testCinteropIdentifier("nativeTestHelper") }.toSet() +
                     appleTargets.map { target -> target.testCinteropIdentifier("appleTestHelper") } +
-                    iosX64.testCinteropIdentifier("iosX64TestHelper")
+                    iosSimulator.testCinteropIdentifier("iosX64TestHelper")
         )
 
         val mainGroup = groups.maxByOrNull { it.targets.size }!!

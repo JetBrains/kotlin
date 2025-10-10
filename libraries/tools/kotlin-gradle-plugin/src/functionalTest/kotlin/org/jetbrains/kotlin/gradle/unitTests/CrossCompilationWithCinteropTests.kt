@@ -26,7 +26,7 @@ class CrossCompilationWithCinteropTests {
     fun `cross compilation with cinterops`() {
         val project = buildProjectWithMPP {
             kotlin {
-                macosX64()
+                macosArm64()
                 linuxX64()
                 mingwX64()
 
@@ -81,32 +81,32 @@ class CrossCompilationWithCinteropTests {
             propertiesExtension.set(KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION, "false")
             applyMultiplatformPlugin()
             kotlin {
-                macosX64()
+                macosArm64()
                 linuxX64()
                 mingwX64()
             }
         }.evaluate()
 
-        val compileKotlinMacosX64 = project.tasks.findByName("compileKotlinMacosX64") as? KotlinNativeCompile
+        val compileKotlinMacosArm64 = project.tasks.findByName("compileKotlinMacosArm64") as? KotlinNativeCompile
         val compileKotlinMingwX64 = project.tasks.findByName("compileKotlinMingwX64") as? KotlinNativeCompile
         val compileKotlinLinuxX64 = project.tasks.findByName("compileKotlinLinuxX64") as? KotlinNativeCompile
 
         assertNotNull(compileKotlinMingwX64, "compileKotlinMingwX64 task should be present")
         assertNotNull(compileKotlinLinuxX64, "compileKotlinLinuxX64 task should be present")
-        assertNotNull(compileKotlinMacosX64, "compileKotlinMacosX64 task should be present")
+        assertNotNull(compileKotlinMacosArm64, "compileKotlinMacosArm64 task should be present")
 
         project.assertNoDiagnostics(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
 
         if (HostManager.hostIsMac) {
             assertEquals(
                 true,
-                compileKotlinMacosX64.onlyIf.isSatisfiedBy(compileKotlinMacosX64),
+                compileKotlinMacosArm64.onlyIf.isSatisfiedBy(compileKotlinMacosArm64),
                 "compileKotlinMacosX64 task should be enabled on macOS"
             )
         } else {
             assertEquals(
                 false,
-                compileKotlinMacosX64.onlyIf.isSatisfiedBy(compileKotlinMacosX64),
+                compileKotlinMacosArm64.onlyIf.isSatisfiedBy(compileKotlinMacosArm64),
                 "compileKotlinMacosX64 task should be disabled on non-macOS"
             )
         }

@@ -139,7 +139,6 @@ class KotlinMultiplatformSourceSetConventionsTest {
 
                 linuxX64("linux64")
                 mingwX64("mingw64")
-                macosX64("macos64")
                 macosArm64("macosArm64")
 
                 applyDefaultHierarchyTemplate()

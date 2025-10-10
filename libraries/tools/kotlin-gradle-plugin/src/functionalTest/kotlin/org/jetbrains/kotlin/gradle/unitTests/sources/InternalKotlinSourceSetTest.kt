@@ -35,7 +35,7 @@ class InternalKotlinSourceSetTest {
 
         val jvm = kotlin.jvm()
         val linux = kotlin.linuxX64()
-        val macos = kotlin.macosX64()
+        val macos = kotlin.macosArm64()
 
         val metadataCompilation = kotlin.metadata().compilations.getByName("main")
         val jvmCompilation = jvm.compilations.getByName("main")
@@ -131,7 +131,7 @@ class InternalKotlinSourceSetTest {
                 jvm()
                 linuxX64()
                 linuxArm64()
-                iosX64()
+                iosSimulatorArm64()
                 iosArm64()
             }
         }

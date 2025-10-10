@@ -24,7 +24,7 @@ class KT62877ProjectMutationAfterEvaluation {
             kotlin {
                 jvm()
                 linuxX64(); linuxArm64()
-                iosX64(); iosArm64()
+                iosArm64()
 
                 targets.filterIsInstance<KotlinNativeTarget>().forEach { target ->
                     target.compilations.getByName("main").cinterops.create("foo")

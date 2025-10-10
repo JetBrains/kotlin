@@ -33,6 +33,7 @@ class XCFrameworkCocoaPodsTest {
         val project = buildProjectWithMPP {
             applyCocoapodsPlugin()
             kotlin {
+                @Suppress("DEPRECATION")
                 listOf(
                     iosSimulatorArm64(),
                     iosX64(),

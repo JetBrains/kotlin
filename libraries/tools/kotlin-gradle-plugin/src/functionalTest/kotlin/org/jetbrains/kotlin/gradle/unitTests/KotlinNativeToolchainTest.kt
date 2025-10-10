@@ -68,7 +68,7 @@ class KotlinNativeToolchainTest {
         val project = buildProjectWithMPP {
             setUpKotlinNativeToolchainWithStableVersion()
         }
-        project.multiplatformExtension.iosX64()
+        project.multiplatformExtension.iosSimulatorArm64()
         project.multiplatformExtension.iosArm64()
 
         project.evaluate()

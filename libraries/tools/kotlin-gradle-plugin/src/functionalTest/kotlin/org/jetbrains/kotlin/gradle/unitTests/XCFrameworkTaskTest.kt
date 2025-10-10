@@ -84,6 +84,7 @@ class XCFrameworkTaskTest {
         val project = buildProjectWithMPP {
             val xcframework = XCFramework()
             kotlin {
+                @Suppress("DEPRECATION")
                 listOf(
                     iosSimulatorArm64(),
                     iosX64(),
@@ -112,6 +113,7 @@ class XCFrameworkTaskTest {
         val project = buildProjectWithMPP {
             val xcframework = XCFramework()
             kotlin {
+                @Suppress("DEPRECATION")
                 listOf(
                     iosSimulatorArm64(),
                     iosX64(),
@@ -145,6 +147,7 @@ class XCFrameworkTaskTest {
         val watchosUniversalFrameworkTask = universalFrameworkTasks.single { it.frameworks.first().target.family == Family.WATCHOS }
         val iosUniversalFrameworkTask = universalFrameworkTasks.single { it.frameworks.first().target.family == Family.IOS }
 
+        @Suppress("DEPRECATION")
         assertEquals(
             setOf(
                 project.multiplatformExtension.iosSimulatorArm64().binaries.getFramework(NativeBuildType.RELEASE).linkTaskProvider.get(),
@@ -204,6 +207,7 @@ class XCFrameworkTaskTest {
         val project = buildProjectWithMPP {
             val xcframework = XCFramework()
             kotlin {
+                @Suppress("DEPRECATION")
                 listOf(
                     iosSimulatorArm64(),
                     iosX64(),

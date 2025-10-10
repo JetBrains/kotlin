@@ -50,7 +50,7 @@ class DeprecatedKotlinTargetHierarchyDslTest {
         listOf(legacyProject, project).forEach { project ->
             project.multiplatformExtension.jvm()
             project.multiplatformExtension.linuxX64()
-            project.multiplatformExtension.macosX64()
+            project.multiplatformExtension.macosArm64()
             project.evaluate()
 
             if ("nativeMain" !in project.multiplatformExtension.sourceSets.names)

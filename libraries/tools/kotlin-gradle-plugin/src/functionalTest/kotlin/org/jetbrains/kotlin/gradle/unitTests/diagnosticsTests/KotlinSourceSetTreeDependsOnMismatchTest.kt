@@ -16,7 +16,7 @@ import kotlin.test.*
 
 class KotlinSourceSetTreeDependsOnMismatchTest {
     private fun checkDiagnostics(configure: KotlinMultiplatformExtension.() -> Unit): List<ToolingDiagnostic> {
-        val project = buildProjectWithMPP {
+        @Suppress("DEPRECATION") val project = buildProjectWithMPP {
             kotlin {
                 project.androidApplication { compileSdk = 32 }
                 applyDefaultHierarchyTemplate()

@@ -23,7 +23,6 @@ class DependsOnClosureCompilePathTest {
     @Test
     fun `test - default hierarchy - iosMain`() {
         kotlin.iosArm64()
-        kotlin.iosX64()
         kotlin.iosSimulatorArm64()
         project.evaluate()
 

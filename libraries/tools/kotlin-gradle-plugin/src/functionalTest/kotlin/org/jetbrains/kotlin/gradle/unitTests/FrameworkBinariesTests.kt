@@ -22,6 +22,7 @@ class FrameworkBinariesTests {
     fun `assemble task dependencies includes framework tasks`() {
         val linkageTasksInAssemble = buildProjectWithMPP {
             kotlin {
+                @Suppress("DEPRECATION")
                 listOf(
                     // Thin linkage task
                     iosArm64(),
@@ -95,7 +96,7 @@ class FrameworkBinariesTests {
                     }
                 }
 
-                iosX64 {
+                iosSimulatorArm64() {
                     binaries.framework("main")
                 }
             }
@@ -159,7 +160,7 @@ class FrameworkBinariesTests {
                         attributes.attribute(disambiguation2Attribute, "someValue2")
                     }
                 }
-                iosX64 {
+                iosSimulatorArm64() {
                     binaries.framework("main")
                 }
             }

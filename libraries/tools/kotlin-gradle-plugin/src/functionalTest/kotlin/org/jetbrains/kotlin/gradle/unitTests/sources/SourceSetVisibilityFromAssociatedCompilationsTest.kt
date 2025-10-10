@@ -40,7 +40,7 @@ class SourceSetVisibilityFromAssociatedCompilationsTest {
         kotlin.apply {
             jvm()
             iosArm64()
-            iosX64()
+            iosSimulatorArm64()
 
             sourceSets.apply {
                 // NB: nativeTest sees iosMain because it participates only in iosX64 and iosArm64 test compilations.

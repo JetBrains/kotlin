@@ -167,7 +167,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             repositories.mavenLocal()
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
 
                 sourceSets.commonMain.dependencies {
                     implementation(project(":directProducer"))
@@ -233,7 +233,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             repositories.mavenLocal()
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
 
                 sourceSets.commonMain.dependencies {
                     implementation(project(":directProducer"))
@@ -280,7 +280,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             repositories.mavenLocal()
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
 
                 sourceSets.commonMain.dependencies {
                     implementation(project(":directProducer"))

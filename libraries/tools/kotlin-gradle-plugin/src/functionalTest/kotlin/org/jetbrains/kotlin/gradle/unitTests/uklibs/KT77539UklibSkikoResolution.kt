@@ -35,7 +35,7 @@ class KT77539UklibSkikoResolution {
             kotlin {
                 jvm()
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 val skiko = dependencies.create("org.jetbrains.skiko:skiko:0.9.4.2") {
                     isTransitive = false
                 }

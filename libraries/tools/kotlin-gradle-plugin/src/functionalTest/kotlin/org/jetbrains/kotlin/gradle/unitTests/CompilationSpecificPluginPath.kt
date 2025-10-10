@@ -183,7 +183,7 @@ internal class CompilationSpecificPluginPath {
             kotlin {
                 jvm()
                 linuxX64("linux")
-                macosX64("mac")
+                macosArm64("mac")
             }
         }
 

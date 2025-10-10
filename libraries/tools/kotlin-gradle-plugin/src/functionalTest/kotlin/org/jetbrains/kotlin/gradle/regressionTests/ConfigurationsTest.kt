@@ -129,7 +129,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     @Test
     fun `consumable configurations except sourcesElements with platform target are marked with Category LIBRARY`() {
         kotlin.linuxX64()
-        kotlin.iosX64()
+        kotlin.iosSimulatorArm64()
         kotlin.iosArm64()
         kotlin.jvm()
         kotlin.js()
@@ -528,7 +528,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 kotlin {
                     jvm()
                     js().nodejs()
-                    iosX64()
+                    iosSimulatorArm64()
                     iosArm64()
                 }
             }
@@ -599,11 +599,11 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 jvm { attributes { attribute(distinguishingAttribute, "jvm") } }
                 jvm("jvm2") { attributes { attribute(distinguishingAttribute, "jvm2") } }
 
-                macosX64 {
+                macosArm64 {
                     binaries.framework("main", listOf(NativeBuildType.DEBUG))
                 }
 
-                iosX64 {
+                iosSimulatorArm64() {
                     binaries.framework("foo", listOf(NativeBuildType.DEBUG)) { baseName = "foo" }
                     binaries.framework("bar", listOf(NativeBuildType.DEBUG)) { baseName = "bar" }
                 }
@@ -650,7 +650,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             plugins.apply("maven-publish")
             kotlin {
                 jvm()
-                iosX64 {
+                iosSimulatorArm64() {
                     attributes { attribute(attribute, "foo") }
                 }
 

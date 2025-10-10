@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.internal.component.resolution.failure.exception.VariantSelectionByAttributesException
 import org.gradle.internal.exceptions.MultiCauseException
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.maven
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -66,7 +64,7 @@ class UklibResolutionTestsWithMockComponents {
         val consumer = uklibConsumer {
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
             }
@@ -128,7 +126,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 js()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
             }
@@ -207,7 +205,7 @@ class UklibResolutionTestsWithMockComponents {
         val consumer = uklibConsumer {
             kotlin {
                 js()
-                iosX64()
+                iosSimulatorArm64()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
             }
             repositories.maven(repo)
@@ -219,7 +217,7 @@ class UklibResolutionTestsWithMockComponents {
                     configuration = kmpMetadataJarVariant.name,
                     artifacts = mutableListOf(kmpMetadataJarVariant.attributes + jarArtifact + libraryElementsJar)
                 ),
-            ).prettyPrinted, consumer.multiplatformExtension.iosX64().compilationResolution().prettyPrinted
+            ).prettyPrinted, consumer.multiplatformExtension.iosSimulatorArm64().compilationResolution().prettyPrinted
         )
         assertEquals(
             mapOf<String, ResolvedComponentWithArtifacts>(
@@ -348,7 +346,7 @@ class UklibResolutionTestsWithMockComponents {
         val consumer = uklibConsumer {
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 wasmJs()
@@ -378,7 +376,7 @@ class UklibResolutionTestsWithMockComponents {
 
         // All the missing in producer targets resolve into metadata variant with metadata jar
         listOf(
-            { consumer.multiplatformExtension.iosX64() },
+            { consumer.multiplatformExtension.iosSimulatorArm64() },
             { consumer.multiplatformExtension.jvm() },
             { consumer.multiplatformExtension.js() },
             { consumer.multiplatformExtension.wasmJs() },
@@ -476,7 +474,7 @@ class UklibResolutionTestsWithMockComponents {
         val consumer = uklibConsumer {
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
             }
@@ -498,7 +496,7 @@ class UklibResolutionTestsWithMockComponents {
                     )
                 ),
             ).prettyPrinted,
-            consumer.multiplatformExtension.iosX64().compilationResolution().prettyPrinted
+            consumer.multiplatformExtension.iosSimulatorArm64().compilationResolution().prettyPrinted
         )
     }
 
@@ -508,7 +506,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.mavenLocal()
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 wasmJs()
@@ -583,7 +581,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.mavenCentral()
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 wasmJs()
@@ -723,7 +721,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
@@ -801,7 +799,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0:foo") }
@@ -870,7 +868,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.mavenCentral()
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 sourceSets.commonMain.dependencies { implementation("org.jetbrains:annotations:13.0") }
@@ -936,7 +934,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.mavenCentral()
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 wasmWasi()
@@ -1095,7 +1093,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
@@ -1182,7 +1180,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
@@ -1207,7 +1205,7 @@ class UklibResolutionTestsWithMockComponents {
                          */
                     )
                 ),
-            ).prettyPrinted, consumer.multiplatformExtension.iosX64().compilationResolution().prettyPrinted
+            ).prettyPrinted, consumer.multiplatformExtension.iosSimulatorArm64().compilationResolution().prettyPrinted
         )
         assertEquals(
             mapOf<String, ResolvedComponentWithArtifacts>(
@@ -2114,7 +2112,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
@@ -2170,14 +2168,14 @@ class UklibResolutionTestsWithMockComponents {
                 it.prettyPrinted
             )
         }
-        val iosX64ResolutionExceptions = findMatchingExceptions(
+        val iosSimulatorArm64ResolutionExceptions = findMatchingExceptions(
             runCatching {
-                consumer.multiplatformExtension.iosX64().compilationResolution()
+                consumer.multiplatformExtension.iosSimulatorArm64().compilationResolution()
             }.exceptionOrNull() ?: error("Expect a failure"),
             VariantSelectionByAttributesException::class.java
         )
-        assert(iosX64ResolutionExceptions.size == 1) {
-            iosX64ResolutionExceptions
+        assert(iosSimulatorArm64ResolutionExceptions.size == 1) {
+            iosSimulatorArm64ResolutionExceptions
         }
     }
 
@@ -2205,7 +2203,7 @@ class UklibResolutionTestsWithMockComponents {
             repositories.maven(repo)
             kotlin {
                 iosArm64()
-                iosX64()
+                iosSimulatorArm64()
                 jvm()
                 js()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }

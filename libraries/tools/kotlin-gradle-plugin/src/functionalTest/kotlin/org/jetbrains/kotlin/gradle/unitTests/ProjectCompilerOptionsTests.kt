@@ -34,7 +34,7 @@ class ProjectCompilerOptionsTests {
                     }
                 }
 
-                iosX64 {
+                iosArm64() {
                     compilerOptions {
                         suppressWarnings.set(true)
                     }
@@ -245,7 +245,7 @@ class ProjectCompilerOptionsTests {
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
                 linuxX64()
-                iosX64()
+                iosSimulatorArm64()
                 iosArm64()
 
                 targets.named("metadata", KotlinMetadataTarget::class.java) {
@@ -274,7 +274,7 @@ class ProjectCompilerOptionsTests {
 
             with(multiplatformExtension) {
                 linuxX64()
-                iosX64()
+                iosSimulatorArm64()
                 iosArm64()
 
                 targets.named("metadata", KotlinMetadataTarget::class.java) {

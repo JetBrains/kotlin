@@ -38,7 +38,7 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `linux macos`() {
         kotlin.linuxX64("linux")
-        kotlin.macosX64("macos")
+        kotlin.macosArm64("macos")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -60,7 +60,7 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `nativeMain linux macos`() {
         kotlin.linuxX64("linux")
-        kotlin.macosX64("macos")
+        kotlin.macosArm64("macos")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -77,14 +77,14 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosMain))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosTest))
 
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(nativeMain))
 
         project.evaluate()
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonMain))
-        assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), inferCommonizerTarget(commonTest))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonMain))
+        assertEquals(CommonizerTarget(LINUX_X64, MACOS_ARM64), inferCommonizerTarget(commonTest))
     }
 
     @Test
@@ -119,8 +119,8 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `nativeMain iosMain linux macos iosX64 iosArm64`() {
         kotlin.linuxX64("linux")
-        kotlin.macosX64("macos")
-        kotlin.iosX64("iosX64")
+        kotlin.macosArm64("macos")
+        kotlin.iosSimulatorArm64("iosSimulatorArm64")
         kotlin.iosArm64("iosArm64")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -131,8 +131,8 @@ class SourceSetCommonizerTargetTest {
         val macosMain = kotlin.sourceSets.getByName("macosMain")
         val linuxTest = kotlin.sourceSets.getByName("linuxTest")
         val macosTest = kotlin.sourceSets.getByName("macosTest")
-        val iosX64Main = kotlin.sourceSets.getByName("iosX64Main")
-        val iosX64Test = kotlin.sourceSets.getByName("iosX64Test")
+        val iosSimulatorArm64Main = kotlin.sourceSets.getByName("iosSimulatorArm64Main")
+        val iosSimulatorArm64Test = kotlin.sourceSets.getByName("iosSimulatorArm64Test")
         val iosArm64Main = kotlin.sourceSets.getByName("iosArm64Main")
         val iosArm64Test = kotlin.sourceSets.getByName("iosArm64Test")
 
@@ -140,15 +140,15 @@ class SourceSetCommonizerTargetTest {
         linuxMain.dependsOn(nativeMain)
         macosMain.dependsOn(nativeMain)
         iosMain.dependsOn(nativeMain)
-        iosX64Main.dependsOn(iosMain)
+        iosSimulatorArm64Main.dependsOn(iosMain)
         iosArm64Main.dependsOn(iosMain)
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
         assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
         assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
-        assertEquals(CommonizerTarget(IOS_X64), inferCommonizerTarget(iosX64Test))
-        assertEquals(CommonizerTarget(IOS_X64), inferCommonizerTarget(iosX64Test))
+        assertEquals(CommonizerTarget(IOS_X64), inferCommonizerTarget(iosSimulatorArm64Test))
+        assertEquals(CommonizerTarget(IOS_X64), inferCommonizerTarget(iosSimulatorArm64Test))
         assertEquals(CommonizerTarget(IOS_ARM64), inferCommonizerTarget(iosArm64Main))
         assertEquals(CommonizerTarget(IOS_ARM64), inferCommonizerTarget(iosArm64Test))
         assertEquals(CommonizerTarget(IOS_X64, IOS_ARM64), inferCommonizerTarget(iosMain))
@@ -174,7 +174,7 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `nativeMain linux macos jvm`() {
         kotlin.linuxX64("linux")
-        kotlin.macosX64("macos")
+        kotlin.macosArm64("macos")
         kotlin.jvm("jvm")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -193,8 +193,8 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), inferCommonizerTarget(linuxTest))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosMain))
-        assertEquals(CommonizerTarget(MACOS_X64), inferCommonizerTarget(macosTest))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosMain))
+        assertEquals(CommonizerTarget(MACOS_ARM64), inferCommonizerTarget(macosTest))
         assertNull(inferCommonizerTarget(jvmMain), "Expected jvmMain to have no commonizer target")
         assertNull(inferCommonizerTarget(jvmTest), "Expected jvmTest to have no commonizer target")
 

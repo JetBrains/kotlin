@@ -272,7 +272,7 @@ class ExternalKotlinTargetApiTests {
         }
 
         kotlin.linuxX64()
-        kotlin.macosX64()
+        kotlin.macosArm64()
 
         fun KotlinHierarchyBuilder.withFakeTarget() = withCompilations { it == mainCompilation || it == testCompilation }
         kotlin.applyHierarchyTemplate {

@@ -76,6 +76,7 @@ class CocoapodsUnitTests {
             applyCocoapodsPlugin()
             kotlin {
                 iosSimulatorArm64()
+                @Suppress("DEPRECATION")
                 iosX64()
 
                 cocoapods {
