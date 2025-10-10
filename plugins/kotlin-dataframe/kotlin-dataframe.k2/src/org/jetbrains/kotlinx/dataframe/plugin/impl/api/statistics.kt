@@ -140,10 +140,8 @@ abstract class Aggregator0(val aggregator: Aggregator<*, *>) : AbstractSchemaMod
     private val Arguments.receiver: PluginDataFrameSchema by dataFrame()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val resolvedColumns = receiver.columns()
-            .filterIsInstance<SimpleDataColumn>()
-            .filter { it.type.type.isPrimitiveOrMixedNumber(session) }
-
+        val resolvedColumns = numericStatisticsDefaultColumns.resolve(receiver)
+            .map { (it.column as SimpleDataColumn) }
         val newColumns = generateStatisticResultColumns(aggregator, resolvedColumns)
 
         return PluginDataFrameSchema(newColumns)
@@ -161,10 +159,8 @@ abstract class AggregatorIntraComparable0(val aggregator: Aggregator<*, *>) : Ab
     private val Arguments.receiver: PluginDataFrameSchema by dataFrame()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val resolvedColumns = receiver.columns()
-            .filterIsInstance<SimpleDataColumn>()
-            .filter { it.isIntraComparable(session) }
-
+        val resolvedColumns = comparableStatisticsDefaultColumns.resolve(receiver)
+            .map { (it.column as SimpleDataColumn) }
         val newColumns = generateStatisticResultColumns(aggregator, resolvedColumns)
 
         return PluginDataFrameSchema(newColumns)
@@ -187,7 +183,7 @@ abstract class Aggregator1(val aggregator: Aggregator<*, *>) : AbstractSchemaMod
     private val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val resolvedColumns = columns.resolve(receiver).map { it.column }.filterIsInstance<SimpleDataColumn>().toList()
+        val resolvedColumns = columns.resolve(receiver).map { it.column }.filterIsInstance<SimpleDataColumn>()
 
         val newColumns = generateStatisticResultColumns(aggregator, resolvedColumns)
 
