@@ -300,7 +300,7 @@ class WasmSymbols(
         val jsAnyType: IrType by ClassIds.JsAny.defaultType()
         val jsBooleanType: IrType by ClassIds.JsBoolean.defaultType()
         val jsStringType: IrType by ClassIds.JsString.defaultType()
-        val jsNumberType: IrType by ClassIds.JsString.defaultType()
+        val jsNumberType: IrType by ClassIds.JsNumber.defaultType()
         val jsBigIntType: IrType by ClassIds.JsBigInt.defaultType()
 
         val newJsArray = CallableIds.newJsArray.functionSymbol()
