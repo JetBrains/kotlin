@@ -24,6 +24,6 @@ fun test(d: Any, dl: Collection<dynamic>) {
     <!USELESS_IS_CHECK!>dl is List<dynamic><!>
 
     when (dl) {
-        is List<dynamic> -> {}
+        <!USELESS_IS_CHECK!>is List<dynamic><!> -> {}
     }
 }
