@@ -1239,6 +1239,8 @@ private fun typeStrToCompileTimeType(str: String) = when (str) {
 // K1 will not support the new intrinsic const functions since we are planning on deprecating that frontend soon (KT-75372).
 // The functions must be explicitly excluded as otherwise K1 would evaluate them even if the IntrinsicConstFlag is disabled.
 private val FORBIDDEN_FUNCTIONS = listOf(
+    "Byte.dec()", "Short.dec()", "Int.dec()", "Long.dec()",
+    "Byte.inc()", "Short.inc()", "Int.inc()", "Long.inc()",
     "String.trim()", "String.trimEnd()", "String.trimIndent()", "String.trimMargin()", "String.trimMargin(String)", "String.trimStart()",
 )
 

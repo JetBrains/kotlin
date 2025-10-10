@@ -1173,7 +1173,10 @@ scopes:
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
-        annotations: []
+        annotations: [
+          kotlin/internal/IntrinsicConstEvaluation()
+            psi: null
+        ]
         callableId: kotlin/Int.dec
         compilerVisibility: Public
         contextParameters: []
@@ -1632,7 +1635,10 @@ scopes:
         ]
         visibility: PUBLIC
       KaNamedFunctionSymbol:
-        annotations: []
+        annotations: [
+          kotlin/internal/IntrinsicConstEvaluation()
+            psi: null
+        ]
         callableId: kotlin/Int.inc
         compilerVisibility: Public
         contextParameters: []
