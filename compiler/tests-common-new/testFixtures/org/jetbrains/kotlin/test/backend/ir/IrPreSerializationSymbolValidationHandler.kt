@@ -24,10 +24,8 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.KVisibility
 
-abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
-    companion object {
-        private val preSerializationAnnotation = FqName.fromSegments(listOf("kotlin", "internal", "UsedFromCompilerGeneratedCode"))
-    }
+abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
+    private val preSerializationAnnotation = FqName.fromSegments(listOf("kotlin", "internal", "UsedFromCompilerGeneratedCode"))
 
     abstract fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols
 
@@ -61,7 +59,17 @@ abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServi
         }
     }
 
-    private fun validate(symbol: IrSymbol, symbolsClass: KClass<out PreSerializationSymbols>) {
+    abstract fun validate(symbol: IrSymbol, symbolsClass: KClass<out PreSerializationSymbols>)
+
+    protected fun checkForSpecialAnnotation(declaration: IrDeclaration) {
+        if (declaration.annotations.none { it.isAnnotationWithEqualFqName(preSerializationAnnotation) }) {
+            error("Declaration ${declaration.render()} is not annotated with @${preSerializationAnnotation.shortName()}")
+        }
+    }
+}
+
+abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServices) : IrSymbolValidationHandler(testServices) {
+    override fun validate(symbol: IrSymbol, symbolsClass: KClass<out PreSerializationSymbols>) {
         val owner = symbol.owner as IrDeclarationWithVisibility
         validateVisibility(owner, symbolsClass)
     }
@@ -79,12 +87,6 @@ abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServi
         }
 
         (declaration.parentClassOrNull)?.let { validateVisibility(it, symbolsClass) }
-    }
-
-    private fun checkForSpecialAnnotation(declaration: IrDeclaration) {
-        if (declaration.annotations.none { it.isAnnotationWithEqualFqName(preSerializationAnnotation) }) {
-            error("Declaration ${declaration.render()} is not annotated with @${preSerializationAnnotation.shortName()}")
-        }
     }
 }
 
@@ -105,3 +107,4 @@ class IrPreSerializationNativeSymbolValidationHandler(testServices: TestServices
         return PreSerializationNativeSymbols.Impl(irBuiltIns)
     }
 }
+
