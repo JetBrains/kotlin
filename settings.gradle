@@ -9,9 +9,24 @@ pluginManagement {
                 includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
             }
         }
-        maven { url "https://redirector.kotlinlang.org/maven/kotlin-dependencies" }
-        google { url "https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2" }
-        mavenCentral { url "https://cache-redirector.jetbrains.com/maven-central" }
+        maven {
+            url "https://redirector.kotlinlang.org/maven/kotlin-dependencies"
+            content {
+                includeGroup("org.jetbrains.kotlin")
+                includeGroup("org.spdx")
+                includeGroup("org.jetbrains.kotlinx")
+                includeGroup("org.jetbrains.kotlinx.benchmark")
+            }
+        }
+        google {
+            url "https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2"
+            content {
+                includeGroup("com.android.tools")
+            }
+        }
+        mavenCentral {
+            url "https://cache-redirector.jetbrains.com/maven-central"
+        }
         gradlePluginPortal()
     }
 
