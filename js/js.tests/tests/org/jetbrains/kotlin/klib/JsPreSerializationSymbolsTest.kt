@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.klib.AbstractPreSerializationSymbolsTest
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 
 @Suppress("JUnitTestCaseWithNoTests")
 class JsPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
@@ -36,12 +37,18 @@ class JsPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
     ::JsSymbolValidationHandler,
 ) {
     override fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(::JsFirstStageEnvironmentConfigurator)
+        useConfigurators(
+            ::JsFirstStageEnvironmentConfigurator,
+            ::JsSecondStageEnvironmentConfigurator,
+        )
     }
 }
 
 private class JsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
-    override fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols {
-        return BackendJsSymbols(irBuiltIns, StageController(), compileLongAsBigint = true)
+    override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
+        return listOf(
+            BackendJsSymbols(irBuiltIns, StageController(), compileLongAsBigint = true),
+            BackendJsSymbols(irBuiltIns, StageController(), compileLongAsBigint = false),
+        )
     }
 }

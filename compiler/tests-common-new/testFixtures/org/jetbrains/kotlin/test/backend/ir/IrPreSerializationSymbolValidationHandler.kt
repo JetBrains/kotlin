@@ -6,17 +6,22 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
 import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.backend.handlers.AbstractIrHandler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -27,25 +32,27 @@ import kotlin.reflect.KVisibility
 abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
     private val preSerializationAnnotation = FqName.fromSegments(listOf("kotlin", "internal", "UsedFromCompilerGeneratedCode"))
 
-    abstract fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols
+    protected abstract fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols>
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        validate(getSymbols(info.irBuiltIns))
+        for (symbols in getSymbols(info.irBuiltIns)) {
+            validateContainer(symbols)
+        }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
-    private fun validate(symbols: PreSerializationSymbols) {
-        val klass = symbols::class
+    private fun validateContainer(symbolsContainer: Any) {
+        val klass = symbolsContainer::class
         klass.members.forEach {
-            if (it !is KProperty<*> || it.visibility != KVisibility.PUBLIC) return@forEach
-            it.getter.call(symbols).also { result ->
+            if (it !is KProperty<*> || (it.visibility != KVisibility.PUBLIC && it.visibility != KVisibility.INTERNAL)) return@forEach
+            it.getter.call(symbolsContainer).also { result ->
                 validateRecursive(result, klass)
             }
         }
     }
 
-    private fun validateRecursive(result: Any?, klass: KClass<out PreSerializationSymbols>) {
+    private fun validateRecursive(result: Any?, klass: KClass<*>) {
         when (result) {
             is PreSerializationKlibSymbols.SharedVariableBoxClassInfo -> validate(result.klass, klass)
             is Iterable<*> -> result.forEach { validateRecursive(it, klass) }
@@ -54,27 +61,35 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
                 validateRecursive(value, klass)
             }
             is IrSymbol -> validate(result, klass)
-            null, is FqName, is IrDynamicType -> Unit // do nothing
+            is Pair<*, *> -> {
+                validateRecursive(result.first, klass)
+                validateRecursive(result.second, klass)
+            }
+            is ReflectionSymbols -> validateContainer(result)
+            is IrType -> validateRecursive(result.classifierOrNull, klass)
+            null, is FqName, is PrimitiveType, is Name, is String -> Unit // do nothing
             else -> error("Unexpected type: ${result::class.qualifiedName}")
         }
     }
 
-    abstract fun validate(symbol: IrSymbol, symbolsClass: KClass<out PreSerializationSymbols>)
+    abstract fun validate(symbol: IrSymbol, symbolsClass: KClass<*>)
 
     protected fun checkForSpecialAnnotation(declaration: IrDeclaration) {
-        if (declaration.annotations.none { it.isAnnotationWithEqualFqName(preSerializationAnnotation) }) {
+        val annotations = declaration.annotations +
+                (declaration as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.annotations.orEmpty()
+        if (annotations.none { it.isAnnotationWithEqualFqName(preSerializationAnnotation) }) {
             error("Declaration ${declaration.render()} is not annotated with @${preSerializationAnnotation.shortName()}")
         }
     }
 }
 
 abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServices) : IrSymbolValidationHandler(testServices) {
-    override fun validate(symbol: IrSymbol, symbolsClass: KClass<out PreSerializationSymbols>) {
+    override fun validate(symbol: IrSymbol, symbolsClass: KClass<*>) {
         val owner = symbol.owner as IrDeclarationWithVisibility
         validateVisibility(owner, symbolsClass)
     }
 
-    private fun validateVisibility(declaration: IrDeclarationWithVisibility, symbolsClass: KClass<out PreSerializationSymbols>) {
+    private fun validateVisibility(declaration: IrDeclarationWithVisibility, symbolsClass: KClass<*>) {
         if (declaration.visibility == DescriptorVisibilities.INTERNAL) {
             require(declaration.isPublishedApi()) {
                 "Internal API loaded from ${symbolsClass.qualifiedName} must have '@PublishedApi' annotation: ${declaration.render()}"
@@ -91,26 +106,34 @@ abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServi
 }
 
 class IrPreSerializationJsSymbolValidationHandler(testServices: TestServices) : IrPreSerializationSymbolValidationHandler(testServices) {
-    override fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols {
-        return PreSerializationJsSymbols.Impl(irBuiltIns)
+    override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
+        return listOf(PreSerializationJsSymbols.Impl(irBuiltIns))
     }
 }
 
 class IrPreSerializationWasmSymbolValidationHandler(testServices: TestServices) : IrPreSerializationSymbolValidationHandler(testServices) {
-    override fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols {
-        return PreSerializationWasmSymbols.Impl(irBuiltIns)
+    override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
+        return listOf(PreSerializationWasmSymbols.Impl(irBuiltIns))
     }
 }
 
 class IrPreSerializationNativeSymbolValidationHandler(testServices: TestServices) : IrPreSerializationSymbolValidationHandler(testServices) {
-    override fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols {
-        return PreSerializationNativeSymbols.Impl(irBuiltIns)
+    override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
+        return listOf(PreSerializationNativeSymbols.Impl(irBuiltIns))
     }
 }
 
 abstract class IrSecondPhaseSymbolValidationHandler(testServices: TestServices) : IrSymbolValidationHandler(testServices) {
-    override fun validate(symbol: IrSymbol, symbolsClass: KClass<out PreSerializationSymbols>) {
+    override fun validate(symbol: IrSymbol, symbolsClass: KClass<*>) {
         val owner = symbol.owner as IrDeclarationWithVisibility
-        checkForSpecialAnnotation(owner)
+        validateVisibility(owner, symbolsClass)
+    }
+
+    private fun validateVisibility(declaration: IrDeclarationWithVisibility, symbolsClass: KClass<*>) {
+        if (declaration.visibility == DescriptorVisibilities.INTERNAL) {
+            checkForSpecialAnnotation(declaration)
+        }
+
+        (declaration.parentClassOrNull)?.let { validateVisibility(it, symbolsClass) }
     }
 }
