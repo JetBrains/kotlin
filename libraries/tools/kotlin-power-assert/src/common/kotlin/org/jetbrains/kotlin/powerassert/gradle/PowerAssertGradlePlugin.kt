@@ -30,6 +30,7 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
         private const val POWER_ASSERT_ARTIFACT_NAME = "kotlin-power-assert-compiler-plugin-embeddable"
 
         private const val FUNCTION_ARG_NAME = "function"
+        private const val FUNCTION_REGEX_ARG_NAME = "functionRegex"
     }
 
     override fun apply(target: Project) {
@@ -52,9 +53,11 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(PowerAssertGradleExtension::class.java)
-        return extension.functions.map { functions ->
+        return extension.functions.zip(extension.functionRegexes) { functions, patterns ->
             functions.map {
                 SubpluginOption(key = FUNCTION_ARG_NAME, value = it)
+            } + patterns.map {
+                SubpluginOption(key = FUNCTION_REGEX_ARG_NAME, value = "${it.flags()}:${it.pattern()}")
             }
         }
     }

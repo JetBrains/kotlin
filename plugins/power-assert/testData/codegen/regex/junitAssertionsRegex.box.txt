@@ -1,0 +1,16 @@
+assertTrue: ---
+assertTrue(booleanValue)
+           |
+           false
+ ==> expected: <true> but was: <false>---
+assertEquals: ---
+assertEquals(a, b)
+             |  |
+             |  5
+             3
+ ==> expected: <3> but was: <5>---
+assertFalse: ---
+assertFalse(booleanValue)
+            |
+            true
+ ==> expected: <false> but was: <true>---
