@@ -451,7 +451,7 @@
 
 /test-instrumenter/ "Kotlin Build Infrastructure"
 
-/tests/ "Kotlin Build Infrastructure"
+/tests/ "Kotlin" "Kotlin Build Infrastructure"
 
 /third-party/ "Kotlin Frontend"
 
