@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.konan.BoxCache
+import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -69,7 +71,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
             }
             is ReflectionSymbols -> validateContainer(result)
             is IrType -> validateRecursive(result.classifierOrNull, klass)
-            null, is FqName, is PrimitiveType, is Name, is String -> Unit // do nothing
+            null, is FqName, is PrimitiveType, is Name, is String, is PrimitiveBinaryType, is BoxCache -> Unit // do nothing
             else -> error("Unexpected type: ${result::class.qualifiedName}")
         }
     }
