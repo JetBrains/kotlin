@@ -1236,12 +1236,22 @@ private fun typeStrToCompileTimeType(str: String) = when (str) {
     else -> throw IllegalArgumentException("Unsupported type: $str")
 }
 
-private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType, value: Any, reportIntegerOverflow: () -> Unit): Any? =
-    evalUnaryOp(name, type, value).also { result ->
+// K1 will not support the new intrinsic const functions since we are planning on deprecating that frontend soon (KT-75372).
+// The functions must be explicitly excluded as otherwise K1 would evaluate them even if the IntrinsicConstFlag is disabled.
+private val FORBIDDEN_FUNCTIONS = listOf(
+    "String.trim()", "String.trimEnd()", "String.trimIndent()", "String.trimMargin()", "String.trimMargin(String)", "String.trimStart()",
+)
+
+private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType, value: Any, reportIntegerOverflow: () -> Unit): Any? {
+    val signature = "${type.name.lowercase().replaceFirstChar { it.uppercase() }}.$name()"
+    if (signature in FORBIDDEN_FUNCTIONS) return null
+
+    return evalUnaryOp(name, type, value).also { result ->
         if (isIntegerType(value) && (name == "minus" || name == "unaryMinus") && value == result && !isZero(value)) {
             reportIntegerOverflow()
         }
     }
+}
 
 private fun evaluateBinaryAndCheck(
     name: String,
@@ -1251,6 +1261,9 @@ private fun evaluateBinaryAndCheck(
     parameterValue: Any,
     reportIntegerOverflow: () -> Unit,
 ): Any? {
+    val signature = "${receiverType.name.lowercase().replaceFirstChar { it.uppercase() }}.$name(${ parameterType.name.lowercase().replaceFirstChar { it.uppercase() }})"
+    if (signature in FORBIDDEN_FUNCTIONS) return null
+
     val actualResult = try {
         evalBinaryOp(name, receiverType, receiverValue, parameterType, parameterValue)
     } catch (e: Exception) {

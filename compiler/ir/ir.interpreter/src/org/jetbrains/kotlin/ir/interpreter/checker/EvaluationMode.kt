@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.interpreter.getOnlyName
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
 import org.jetbrains.kotlin.ir.interpreter.isConst
@@ -134,9 +136,20 @@ sealed class EvaluationMode {
     }
 
     class OnlyIntrinsicConst(private val isFloatingPointOptimizationDisabled: Boolean = false) : EvaluationMode() {
+        private fun IrFunction.getSignature(): String {
+            val (receiverParameters, otherParameters) = parameters
+                .partition { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
+            val receiver = receiverParameters.firstOrNull()?.type?.getOnlyName()?.let { "$it." } ?: ""
+            return otherParameters.joinToString(prefix = "$receiver${this.name}(", postfix = ")") { it.type.getOnlyName() }
+        }
+
         override fun canEvaluateFunction(function: IrFunction): Boolean {
             if (isFloatingPointOptimizationDisabled && function.isFloatingPointOperation()) return false
-            return function.isCompileTimePropertyAccessor() || function.isMarkedAsIntrinsicConstEvaluation()
+
+            // FIXME, KT-81071: These functions cannot yet be marked with the annotation because of bootstrapping problems.
+            val signature = function.getSignature()
+            val futureIntrinsicConst = listOf("String.trim()", "String.trimStart()", "String.trimEnd()")
+            return function.isCompileTimePropertyAccessor() || function.isMarkedAsIntrinsicConstEvaluation() || signature in futureIntrinsicConst
         }
 
         private fun IrFunction.isFloatingPointOperation(): Boolean {
