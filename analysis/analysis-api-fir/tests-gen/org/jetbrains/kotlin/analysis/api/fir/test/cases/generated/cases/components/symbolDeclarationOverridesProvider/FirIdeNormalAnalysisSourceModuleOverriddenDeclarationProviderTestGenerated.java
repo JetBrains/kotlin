@@ -70,6 +70,24 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
   }
 
   @Test
+  @TestMetadata("functionWithMissedOverride.kt")
+  public void testFunctionWithMissedOverride() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/functionWithMissedOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("getter.kt")
+  public void testGetter() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/getter.kt");
+  }
+
+  @Test
+  @TestMetadata("getterWithMissedOverride.kt")
+  public void testGetterWithMissedOverride() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/getterWithMissedOverride.kt");
+  }
+
+  @Test
   @TestMetadata("inAnonymousClass.kt")
   public void testInAnonymousClass() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/inAnonymousClass.kt");
@@ -151,6 +169,12 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
   @TestMetadata("parameterWithGeneratedProperty.kt")
   public void testParameterWithGeneratedProperty() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/parameterWithGeneratedProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithMissedOverride.kt")
+  public void testPropertyWithMissedOverride() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/propertyWithMissedOverride.kt");
   }
 
   @Test
