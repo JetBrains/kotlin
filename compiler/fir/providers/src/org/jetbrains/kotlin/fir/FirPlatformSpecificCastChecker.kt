@@ -9,9 +9,14 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 abstract class FirPlatformSpecificCastChecker : FirSessionComponent {
     abstract fun shouldSuppressImpossibleCast(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean
+    abstract fun shouldSuppressImpossibleIsCheck(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean
 
     object Default : FirPlatformSpecificCastChecker() {
         override fun shouldSuppressImpossibleCast(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean {
+            return false
+        }
+
+        override fun shouldSuppressImpossibleIsCheck(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean {
             return false
         }
     }

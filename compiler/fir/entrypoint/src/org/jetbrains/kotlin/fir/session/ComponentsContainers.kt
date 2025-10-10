@@ -95,6 +95,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirGenericArrayClassLiteralSupport::class, FirGenericArrayClassLiteralSupport.Disabled)
     register(FirMissingDependencyStorage::class, FirMissingDependencyStorage(this))
     register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
+    register(FirPlatformSpecificEqualityChecker::class, FirPlatformSpecificEqualityChecker.Default)
     register(FirMustUseReturnValueStatusComponent::class, FirMustUseReturnValueStatusComponent.create(languageVersionSettings))
     register(FirInlineCheckerPlatformSpecificComponent::class, FirInlineCheckerPlatformSpecificComponent.NonJvmDefault)
     register(FirExpectActualMappingStorage::class, FirExpectActualMappingStorage(this))

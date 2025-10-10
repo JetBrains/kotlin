@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.firPlatformSpecificEqualityChecker
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.*
 
@@ -130,8 +132,10 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         else -> block(this)
     }
 
-    private fun getGeneralInapplicabilityDiagnostic(forceWarning: Boolean) = when {
+    context(context: CheckerContext)
+    private fun getGeneralInapplicabilityDiagnostic(forceWarning: Boolean, lType: ConeKotlinType, rType: ConeKotlinType): KtDiagnosticFactory3<String, ConeKotlinType, ConeKotlinType>? = when {
         forceWarning -> FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
+        context.session.firPlatformSpecificEqualityChecker.shouldSuppressInapplicableEquality(lType, rType) -> null
         else -> FirErrors.EQUALITY_NOT_APPLICABLE
     }
 
@@ -228,13 +232,15 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             lUserType,
             rUserType
         )
-        applicability == Applicability.GENERALLY_INAPPLICABLE -> reportOn(
-            expression.source,
-            getGeneralInapplicabilityDiagnostic(forceWarning),
-            operation.operator,
-            lUserType,
-            rUserType
-        )
+        applicability == Applicability.GENERALLY_INAPPLICABLE ->
+            getGeneralInapplicabilityDiagnostic(forceWarning, lUserType, rUserType)?.let {
+                reportOn(
+                    expression.source,
+                    it,
+                    operation.operator,
+                    lUserType,
+                    rUserType)
+            } ?: Unit
         else -> error("Shouldn't be here")
     }
 

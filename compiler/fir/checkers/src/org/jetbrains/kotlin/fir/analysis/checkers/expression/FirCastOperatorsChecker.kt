@@ -169,7 +169,9 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             }
             Applicability.IMPOSSIBLE_IS_CHECK -> when {
                 forceWarning -> reportOn(expression.source, FirErrors.USELESS_IS_CHECK, expression.operation != FirOperation.IS)
-                else -> reportOn(expression.source, FirErrors.IMPOSSIBLE_IS_CHECK, expression.operation != FirOperation.IS)
+                else -> getImpossibleIsCheckDiagnostic(l.originalTypeInfo, r)?.let {
+                    reportOn(expression.source, it, expression.operation != FirOperation.IS)
+                }
             }
             Applicability.USELESS_IS_CHECK -> when {
                 !isLastBranchOfExhaustiveWhen(l, r) -> reportOn(
@@ -209,6 +211,12 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
         context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleCast(context.session, l.type, rType) -> null
         else -> FirErrors.CAST_NEVER_SUCCEEDS
+    }
+
+    context(context: CheckerContext)
+    private fun getImpossibleIsCheckDiagnostic(l: TypeInfo, rType: ConeKotlinType) = when {
+        context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleIsCheck(context.session, l.type, rType) -> null
+        else -> FirErrors.IMPOSSIBLE_IS_CHECK
     }
 
     context(context: CheckerContext)
