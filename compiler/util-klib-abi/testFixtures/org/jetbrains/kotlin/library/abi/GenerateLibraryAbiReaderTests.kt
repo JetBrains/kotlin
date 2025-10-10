@@ -21,6 +21,9 @@ fun main(args: Array<String>) {
             testClass<AbstractClassicJsLibraryAbiReaderTest> {
                 model("content")
             }
+            testClass<AbstractKlibDumpParserTest> {
+                model("content")
+            }
         }
     }
 }
