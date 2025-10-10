@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaF
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.getAllOverriddenSymbolsForParameter
+import org.jetbrains.kotlin.analysis.api.impl.base.components.getDirectlyOverriddenSymbolsForParameter
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -209,11 +211,19 @@ internal class KaFe10SymbolRelationProvider(
 
     override val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
         get() = withValidityAssertion {
+            if (this is KaValueParameterSymbol) {
+                return getDirectlyOverriddenSymbolsForParameter(this)
+            }
+
             overridesProvider.getDirectlyOverriddenSymbols(this)
         }
 
     override val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
         get() = withValidityAssertion {
+            if (this is KaValueParameterSymbol) {
+                return getAllOverriddenSymbolsForParameter(this)
+            }
+
             overridesProvider.getAllOverriddenSymbols(this)
         }
 
