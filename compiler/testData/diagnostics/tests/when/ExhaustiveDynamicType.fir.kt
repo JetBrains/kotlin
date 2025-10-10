@@ -24,7 +24,7 @@ fun testAny() {
 
 fun testNullableAny() {
     val result = when (subject()) {
-        is Any? -> ""
+        <!USELESS_IS_CHECK!>is Any?<!> -> ""
     }
 }
 

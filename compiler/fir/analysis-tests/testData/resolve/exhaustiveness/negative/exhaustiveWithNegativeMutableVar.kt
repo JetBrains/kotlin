@@ -49,7 +49,7 @@ fun simpleSealedVarMutation(initial: MySealedInterface): Int {
     if (x is MySealedInterface.A) return 1
     x = MySealedInterface.A
     return when (x) {
-        is MySealedInterface.A -> 2
+        <!USELESS_IS_CHECK!>is MySealedInterface.A<!> -> 2
     }
 }
 
