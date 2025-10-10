@@ -12,6 +12,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
@@ -98,7 +99,7 @@ class DisabledNativeCacheTest {
 }
 
 private val ProjectInternal.currentVersionForDisableCache
-    get() = KotlinToolingVersion(getKotlinPluginVersion())
+    get() = nativeProperties.kotlinNativeVersion.map { KotlinToolingVersion(it) }.get()
 
 private fun ProjectInternal.konanCacheKind(linkTask: String): Provider<NativeCacheKind> =
     tasks.named(linkTask, KotlinNativeLink::class.java).flatMap { it.konanCacheKind }
