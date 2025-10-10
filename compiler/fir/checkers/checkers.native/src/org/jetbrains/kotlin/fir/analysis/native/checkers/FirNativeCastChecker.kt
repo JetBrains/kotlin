@@ -15,6 +15,10 @@ object FirNativeCastChecker : FirPlatformSpecificCastChecker() {
         return isCastToAForwardDeclaration(session, toType)
     }
 
+    override fun shouldSuppressImpossibleIsCheck(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean {
+        return false
+    }
+
     /**
      * Here, we only check that we are casting to a forward declaration to suppress a CAST_NEVER_SUCCEEDS warning.
      * The cast would be further checked with FirNativeForwardDeclarationTypeOperatorChecker and FirNativeForwardDeclarationGetClassCallChecker.
