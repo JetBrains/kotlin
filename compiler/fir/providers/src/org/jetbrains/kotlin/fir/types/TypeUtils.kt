@@ -798,6 +798,15 @@ fun ConeKotlinType.isPrimitiveOrMixedNumber(session: FirSession, errorTypesEqual
                 errorTypesEqualToAnything = errorTypesEqualToAnything,
             )
 
+/** Returns `true` if `this` is a type `T` where `T : Comparable<T & Any>` */
+fun ConeKotlinType.isSelfComparable(session: FirSession, errorTypesEqualToAnything: Boolean = false): Boolean {
+    val comparable = StandardClassIds.Comparable.constructClassLikeType(
+        typeArguments = arrayOf(this.withNullability(nullable = false, session.typeContext)),
+        isMarkedNullable = this.isMarkedNullable,
+    )
+    return this.isSubtypeOf(comparable, session, errorTypesEqualToAnything)
+}
+
 fun FirCallableDeclaration.isSubtypeOf(
     other: FirCallableDeclaration,
     typeCheckerContext: TypeCheckerState

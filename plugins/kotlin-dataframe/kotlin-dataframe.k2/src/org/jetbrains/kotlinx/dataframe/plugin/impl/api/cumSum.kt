@@ -49,7 +49,7 @@ internal fun Arguments.getSchemaAfterCumSum(dataSchema: PluginDataFrameSchema, s
         when (col) {
             is SimpleDataColumn -> {
                 val oldConeType = col.type.type()
-                val oldKType = oldConeType.toKType() ?: return@map col
+                val oldKType = oldConeType.asPrimitiveToKTypeOrNull() ?: return@map col
                 val newKType = cumSumTypeConversion(oldKType, true)
                 val newConeType = newKType.toConeKotlinType() ?: return@map col
                 col.changeType(newConeType.wrap())
