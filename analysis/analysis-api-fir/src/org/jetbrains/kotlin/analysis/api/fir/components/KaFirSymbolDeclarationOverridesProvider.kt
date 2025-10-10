@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubclassOf
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolDeclarationOverridesProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -25,16 +25,12 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSymbolDeclarationOverridesProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSymbolDeclarationOverridesProvider<KaFirSession>(), KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaFirSessionComponent {
     @OptIn(ScopeFunctionRequiresPrewarm::class)
     fun <T : KaCallableSymbol> getAllOverriddenSymbols(
         callableSymbol: T,
     ): Sequence<KaCallableSymbol> {
         require(callableSymbol is KaFirSymbol<*>)
-        if (callableSymbol is KaValueParameterSymbol) {
-            return getAllOverriddenSymbolsForParameter(callableSymbol)
-        }
-
         val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
         processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
             firTypeScope.processAllOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
@@ -52,10 +48,6 @@ internal class KaFirSymbolDeclarationOverridesProvider(
 
     fun <T : KaCallableSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
         require(callableSymbol is KaFirSymbol<*>)
-        if (callableSymbol is KaValueParameterSymbol) {
-            return getDirectlyOverriddenSymbolsForParameter(callableSymbol)
-        }
-
         val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
         processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
             firTypeScope.processDirectOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
