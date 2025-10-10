@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.klib
 
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.BackendJsSymbols
+import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
@@ -13,8 +17,10 @@ import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacad
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationJsSymbolValidationHandler
+import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.klib.AbstractPreSerializationSymbolsTest
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 
 @Suppress("JUnitTestCaseWithNoTests")
@@ -26,9 +32,16 @@ class JsPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
     ::JsIrPreSerializationLoweringFacade,
     ::FirKlibSerializerCliWebFacade,
     ::JsIrDeserializerFacade,
-    ::IrPreSerializationJsSymbolValidationHandler
+    ::IrPreSerializationJsSymbolValidationHandler,
+    ::JsSymbolValidationHandler,
 ) {
     override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(::JsFirstStageEnvironmentConfigurator)
+    }
+}
+
+private class JsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
+    override fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols {
+        return BackendJsSymbols(irBuiltIns, StageController(), compileLongAsBigint = true)
     }
 }

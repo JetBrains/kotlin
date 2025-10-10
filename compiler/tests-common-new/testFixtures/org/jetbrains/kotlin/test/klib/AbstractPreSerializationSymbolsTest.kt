@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationSymbolValidationHandler
+import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -30,7 +31,8 @@ abstract class AbstractSymbolsValidationTextTest(
     private val irInliningFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
     private val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
     private val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
-    private val handler: Constructor<IrPreSerializationSymbolValidationHandler>
+    private val firstStageHandler: Constructor<IrPreSerializationSymbolValidationHandler>,
+    private val secondStageHandler: Constructor<IrSecondPhaseSymbolValidationHandler>? = null, // TODO KT-79801 make not nullable after all backends are supported
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     open fun TestConfigurationBuilder.applyConfigurators() {}
 
@@ -53,17 +55,17 @@ abstract class AbstractSymbolsValidationTextTest(
         firHandlersStep()
         facadeStep(frontendToIrConverter)
         irHandlersStep {
-            useHandlers(handler)
+            useHandlers(firstStageHandler)
         }
         facadeStep(irInliningFacade)
         loweredIrHandlersStep()
 
         enableMetaInfoHandler()
         facadeStep(serializerFacade)
-        facadeStep(deserializerFacade)
-        deserializedIrHandlersStep {
-//            useHandlers(handler) // TODO create a new handler
+        irHandlersStep {
+            secondStageHandler?.let { useHandlers(it) }
         }
+        facadeStep(deserializerFacade)
 
         configureFirParser(FirParser.LightTree)
 
@@ -80,7 +82,8 @@ abstract class AbstractPreSerializationSymbolsTest(
     irInliningFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
     serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
     deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
-    handler: Constructor<IrPreSerializationSymbolValidationHandler>,
+    firstStageHandler: Constructor<IrPreSerializationSymbolValidationHandler>,
+    secondStageHandler: Constructor<IrSecondPhaseSymbolValidationHandler>? = null,
 ) : AbstractSymbolsValidationTextTest(
     targetBackend,
     targetPlatform,
@@ -89,7 +92,8 @@ abstract class AbstractPreSerializationSymbolsTest(
     irInliningFacade,
     serializerFacade,
     deserializerFacade,
-    handler
+    firstStageHandler,
+    secondStageHandler,
 ) {
     @Test
     fun testValidation() {
