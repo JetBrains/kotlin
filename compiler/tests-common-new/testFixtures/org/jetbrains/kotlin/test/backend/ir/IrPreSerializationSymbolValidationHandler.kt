@@ -108,3 +108,9 @@ class IrPreSerializationNativeSymbolValidationHandler(testServices: TestServices
     }
 }
 
+abstract class IrSecondPhaseSymbolValidationHandler(testServices: TestServices) : IrSymbolValidationHandler(testServices) {
+    override fun validate(symbol: IrSymbol, symbolsClass: KClass<out PreSerializationSymbols>) {
+        val owner = symbol.owner as IrDeclarationWithVisibility
+        checkForSpecialAnnotation(owner)
+    }
+}
