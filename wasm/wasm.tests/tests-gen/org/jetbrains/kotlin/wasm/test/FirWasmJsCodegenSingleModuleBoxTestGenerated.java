@@ -35830,6 +35830,12 @@ public class FirWasmJsCodegenSingleModuleBoxTestGenerated extends AbstractFirWas
       }
 
       @Test
+      @TestMetadata("byteBitwiseOperations.kt")
+      public void testByteBitwiseOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/byteBitwiseOperations.kt");
+      }
+
+      @Test
       @TestMetadata("constTrim.kt")
       public void testConstTrim() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrim.kt");
@@ -35851,6 +35857,12 @@ public class FirWasmJsCodegenSingleModuleBoxTestGenerated extends AbstractFirWas
       @TestMetadata("equals_after.kt")
       public void testEquals_after() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/equals_after.kt");
+      }
+
+      @Test
+      @TestMetadata("incDec.kt")
+      public void testIncDec() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/incDec.kt");
       }
 
       @Test
@@ -35878,9 +35890,21 @@ public class FirWasmJsCodegenSingleModuleBoxTestGenerated extends AbstractFirWas
       }
 
       @Test
+      @TestMetadata("lowerUpper.kt")
+      public void testLowerUpper() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/lowerUpper.kt");
+      }
+
+      @Test
       @TestMetadata("nullableEnumName.kt")
       public void testNullableEnumName() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/nullableEnumName.kt");
+      }
+
+      @Test
+      @TestMetadata("shortBitwiseOperations.kt")
+      public void testShortBitwiseOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/shortBitwiseOperations.kt");
       }
     }
 

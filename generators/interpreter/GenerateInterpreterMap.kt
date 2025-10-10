@@ -295,8 +295,6 @@ private fun getUnsignedConversionOperationMap(): List<Operation> {
         }
     }
 
-
-
     return operationMap
 }
 
