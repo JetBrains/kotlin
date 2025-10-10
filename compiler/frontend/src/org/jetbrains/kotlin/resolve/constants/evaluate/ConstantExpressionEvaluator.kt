@@ -1241,6 +1241,7 @@ private fun typeStrToCompileTimeType(str: String) = when (str) {
 private val FORBIDDEN_FUNCTIONS = listOf(
     "Byte.dec()", "Short.dec()", "Int.dec()", "Long.dec()",
     "Byte.inc()", "Short.inc()", "Int.inc()", "Long.inc()",
+    "String.uppercase()", "String.lowercase()",
     "String.trim()", "String.trimEnd()", "String.trimIndent()", "String.trimMargin()", "String.trimMargin(String)", "String.trimStart()",
 )
 
