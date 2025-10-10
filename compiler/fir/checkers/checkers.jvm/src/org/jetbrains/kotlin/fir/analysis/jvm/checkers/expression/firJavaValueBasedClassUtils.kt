@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
+import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -18,21 +18,23 @@ import org.jetbrains.kotlin.name.ClassId
 
 private val jdkInternalValueBasedAnnotationClassId = ClassId.fromString("jdk/internal/ValueBased")
 
-internal fun ConeKotlinType.isJavaValueBasedClass(session: FirSession): Boolean {
-    val classSymbol = toClassSymbol(session) ?: return false
-    return classSymbol.hasAnnotation(jdkInternalValueBasedAnnotationClassId, session)
+context(sessionHolder: SessionHolder)
+internal fun ConeKotlinType.isJavaValueBasedClass(): Boolean {
+    val classSymbol = toClassSymbol() ?: return false
+    return classSymbol.hasAnnotation(jdkInternalValueBasedAnnotationClassId, sessionHolder.session)
 }
 
-internal fun ConeKotlinType.isJavaValueBasedClassAndWarningsEnabled(session: FirSession): Boolean {
-    return !session.languageVersionSettings.supportsFeature(LanguageFeature.DisableWarningsForValueBasedJavaClasses)
-            && this.isJavaValueBasedClass(session)
+context(sessionHolder: SessionHolder)
+internal fun ConeKotlinType.isJavaValueBasedClassAndWarningsEnabled(): Boolean {
+    return enableWarningsForValueBasedJavaClasses() && this.isJavaValueBasedClass()
 }
 
-internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(session: FirSession): Boolean {
-    if (!session.languageVersionSettings.supportsFeature(LanguageFeature.DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives) &&
-        (this.isPrimitiveOrNullablePrimitive || this.isValueClass(session) || this.isFlexiblePrimitive())
+context(sessionHolder: SessionHolder)
+internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(): Boolean {
+    if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() &&
+        (this.isPrimitiveOrNullablePrimitive || this.isValueClass(sessionHolder.session) || this.isFlexiblePrimitive())
     ) return true
-    return this.isJavaValueBasedClassAndWarningsEnabled(session)
+    return this.isJavaValueBasedClassAndWarningsEnabled()
 }
 
 internal fun ConeKotlinType.isFlexiblePrimitive(): Boolean {

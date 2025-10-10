@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.disableCompatibilityModeForNewInference
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
@@ -100,9 +101,7 @@ class ConeOverloadConflictResolver(
 
         // The same logic as at
         val candidatesWithoutOverrides = filterOverrides(fixedCandidates)
-        val noCompatibilityMode = inferenceComponents.session.languageVersionSettings.supportsFeature(
-            LanguageFeature.DisableCompatibilityModeForNewInference
-        )
+        val noCompatibilityMode = with(transformerComponents) { disableCompatibilityModeForNewInference() }
         return chooseMaximallySpecificCandidates(
             candidatesWithoutOverrides,
             DiscriminationFlags(

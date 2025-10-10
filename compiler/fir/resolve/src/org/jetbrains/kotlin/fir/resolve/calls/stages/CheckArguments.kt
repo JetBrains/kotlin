@@ -255,6 +255,6 @@ private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCa
 
 context(context: ResolutionContext)
 private fun CheckerSink.markCandidateForCompatibilityResolve() {
-    if (LanguageFeature.DisableCompatibilityModeForNewInference.isEnabled()) return
+    if (disableCompatibilityModeForNewInference()) return
     reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
 }
