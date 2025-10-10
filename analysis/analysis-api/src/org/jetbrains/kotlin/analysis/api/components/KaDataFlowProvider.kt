@@ -54,6 +54,12 @@ public interface KaSmartCastInfo : KaLifetimeOwner {
     public val isStable: Boolean
 
     /**
+     * The original type of the expression before the smart cast was applied.
+     */
+    @KaExperimentalApi
+    public val originalType: KaType
+
+    /**
      * The type with the smart cast applied.
      */
     public val smartCastType: KaType

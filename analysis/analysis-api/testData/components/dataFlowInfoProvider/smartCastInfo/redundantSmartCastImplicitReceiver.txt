@@ -1,3 +1,4 @@
 expression: foo
 isStable: null
+originalType: null
 smartCastType: null

@@ -1,5 +1,6 @@
 expression: foo
 isStable: null
+originalType: null
 smartCastType: null
 receiver: DISPATCH
     smartCastType: Foo

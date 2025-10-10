@@ -1,3 +1,4 @@
 expression: b
 isStable: true
+originalType: B
 smartCastType: C

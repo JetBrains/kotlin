@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ExplicitSmartCasts
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
+import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 
@@ -27,17 +28,18 @@ internal class KaFe10DataFlowProvider(
     override val KtExpression.smartCastInfo: KaSmartCastInfo?
         get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this)
+            val originalType = (this.getType(bindingContext) ?: analysisContext.builtIns.unitType).toKtType(analysisContext)
             val stableSmartCasts = bindingContext[BindingContext.SMARTCAST, this]
             val unstableSmartCasts = bindingContext[BindingContext.UNSTABLE_SMARTCAST, this]
 
             when {
                 stableSmartCasts != null -> {
-                    val type = stableSmartCasts.asSingleType() ?: return null
-                    KaBaseSmartCastInfo(type, true)
+                    val smartCastType = stableSmartCasts.asSingleType() ?: return null
+                    KaBaseSmartCastInfo(originalType, smartCastType, true)
                 }
                 unstableSmartCasts != null -> {
-                    val type = unstableSmartCasts.asSingleType() ?: return null
-                    KaBaseSmartCastInfo(type, false)
+                    val smartCastType = unstableSmartCasts.asSingleType() ?: return null
+                    KaBaseSmartCastInfo(originalType, smartCastType, false)
                 }
                 else -> null
             }
