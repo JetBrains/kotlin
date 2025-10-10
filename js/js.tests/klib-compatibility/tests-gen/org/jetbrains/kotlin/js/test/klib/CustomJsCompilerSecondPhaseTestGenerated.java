@@ -56758,6 +56758,12 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
         public void testSimpleSupertypes() {
           runTest("compiler/testData/codegen/box/reflection/supertypes/simpleSupertypes.kt");
         }
+
+        @Test
+        @TestMetadata("suspendFunctionSupertype.kt")
+        public void testSuspendFunctionSupertype() {
+          runTest("compiler/testData/codegen/box/reflection/supertypes/suspendFunctionSupertype.kt");
+        }
       }
 
       @Nested
