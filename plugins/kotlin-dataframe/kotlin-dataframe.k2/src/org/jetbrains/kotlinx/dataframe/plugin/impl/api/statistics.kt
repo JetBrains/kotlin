@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isPrimitiveOrMixedNumber
+import org.jetbrains.kotlin.fir.types.isSelfComparable
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlinx.dataframe.api.single
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregators
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -24,6 +28,7 @@ private object PrimitiveClassIds {
     const val FLOAT = "kotlin/Float"
     const val SHORT = "kotlin/Short"
     const val BYTE = "kotlin/Byte"
+    const val CHAR = "kotlin/Char"
 }
 
 private fun KClass<*>.toClassId(): ClassId? = when (this) {
@@ -33,6 +38,7 @@ private fun KClass<*>.toClassId(): ClassId? = when (this) {
     Float::class -> ClassId.fromString(PrimitiveClassIds.FLOAT)
     Short::class -> ClassId.fromString(PrimitiveClassIds.SHORT)
     Byte::class -> ClassId.fromString(PrimitiveClassIds.BYTE)
+    Char::class -> ClassId.fromString(PrimitiveClassIds.CHAR)
     else -> null
 }
 
@@ -42,10 +48,14 @@ private val primitiveTypeMap = mapOf(
     PrimitiveClassIds.DOUBLE to Double::class,
     PrimitiveClassIds.FLOAT to Float::class,
     PrimitiveClassIds.SHORT to Short::class,
-    PrimitiveClassIds.BYTE to Byte::class
+    PrimitiveClassIds.BYTE to Byte::class,
+    PrimitiveClassIds.CHAR to Byte::class,
 )
 
-fun ConeKotlinType.toKType(): KType? {
+@Deprecated("Use more expressive asPrimitiveToKTypeOrNull", level = DeprecationLevel.ERROR)
+fun ConeKotlinType.toKType(): KType? = asPrimitiveToKTypeOrNull()
+
+fun ConeKotlinType.asPrimitiveToKTypeOrNull(): KType? {
     return (this as? ConeClassLikeType)?.let { coneType ->
         val nullable = coneType.isMarkedNullable
         primitiveTypeMap[coneType.lookupTag.classId.asString()]
@@ -67,17 +77,31 @@ internal fun Arguments.generateStatisticResultColumns(
     statisticAggregator: Aggregator<*, *>,
     inputColumns: List<SimpleDataColumn>,
 ): List<SimpleCol> {
-    return inputColumns.map { col -> createUpdatedColumn(col, statisticAggregator) }
+    return inputColumns.map { col -> createColumnWithUpdatedType(col, statisticAggregator) }
 }
 
-private fun Arguments.createUpdatedColumn(
+internal fun Arguments.generateStatisticResultColumn(
+    statisticAggregator: Aggregator<*, *>,
+    inputColumn: SimpleDataColumn,
+): SimpleCol {
+    return createColumnWithUpdatedType(inputColumn, statisticAggregator)
+}
+
+private fun Arguments.createColumnWithUpdatedType(
     column: SimpleDataColumn,
     statisticAggregator: Aggregator<*, *>,
 ): SimpleCol {
     val originalType = column.type.type
-    val inputKType = originalType.toKType()
-    val resultKType = inputKType?.let { statisticAggregator.calculateReturnType(it, emptyInput = true) }
-    val updatedType = resultKType?.toConeKotlinType() ?: originalType
+    val inputKType = originalType.asPrimitiveToKTypeOrNull()
+    // we can only get KTypes of primitives, keep the original type otherwise
+        ?: return simpleColumnOf(column.name, originalType)
+
+    // we don't know whether the column is empty or not at runtime,
+    // it's safest to assume the worst-case scenario and consider it empty
+    // this will introduce nullability, but never runtime errors
+    val resultKType = statisticAggregator.calculateReturnType(inputKType, emptyInput = true)
+    val updatedType = resultKType.toConeKotlinType()
+        ?: error("Can't convert $resultKType to ConeKotlinType. This should not happen.")
     return simpleColumnOf(column.name, updatedType)
 }
 
@@ -88,9 +112,28 @@ internal val sum = Aggregators.sum(skipNaN)
 internal val mean = Aggregators.mean(skipNaN)
 internal val std = Aggregators.std(skipNaN, ddofDefault)
 internal val median = Aggregators.median(skipNaN)
-internal val min = Aggregators.min<Double>(skipNaN)
-internal val max = Aggregators.max<Double>(skipNaN)
+internal val min = Aggregators.min.invoke(skipNaN)
+internal val max = Aggregators.max.invoke(skipNaN)
 internal val percentile = Aggregators.percentile(percentileArg, skipNaN)
+
+/** [ColumnsResolver] that takes all top-level [primitive- or mixed-number][isPrimitiveOrMixedNumber] columns. */
+internal val Arguments.numericStatisticsDefaultColumns: ColumnsResolver
+    get() = columnsResolver {
+        cols {
+            (it.single() as Marker).type.isPrimitiveOrMixedNumber(session)
+        }
+    }
+
+/** [ColumnsResolver] that takes all top-level [self-comparable][isSelfComparable] columns. */
+internal val Arguments.comparableStatisticsDefaultColumns: ColumnsResolver
+    get() = columnsResolver {
+        cols {
+            (it.single() as Marker).type.isSelfComparable(session)
+        }
+    }
+
+/** Returns `true` if this column is of type `DataColumn<T>` where `T : Comparable<T & Any>` */
+internal fun SimpleDataColumn.isIntraComparable(session: FirSession): Boolean = type.type.isSelfComparable(session)
 
 /** Adds to the schema only numerical columns. */
 abstract class Aggregator0(val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {
@@ -120,7 +163,7 @@ abstract class AggregatorIntraComparable0(val aggregator: Aggregator<*, *>) : Ab
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val resolvedColumns = receiver.columns()
             .filterIsInstance<SimpleDataColumn>()
-            .filter { isIntraComparable(it, session) }
+            .filter { it.isIntraComparable(session) }
 
         val newColumns = generateStatisticResultColumns(aggregator, resolvedColumns)
 
