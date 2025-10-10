@@ -375,15 +375,13 @@ internal class KaFirSymbolRelationProvider(
             analysisSession.firSymbolBuilder.functionBuilder.buildConstructorSymbol(originalConstructor.symbol)
         }
 
-    private val overridesProvider = KaFirSymbolDeclarationOverridesProvider(analysisSessionProvider)
-
     override val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
         get() = withValidityAssertion {
             if (this is KaValueParameterSymbol) {
                 return getAllOverriddenSymbolsForParameter(this)
             }
 
-            overridesProvider.getAllOverriddenSymbols(this)
+            getAllOverriddenSymbols(this)
         }
 
     override val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
@@ -392,20 +390,20 @@ internal class KaFirSymbolRelationProvider(
                 return getDirectlyOverriddenSymbolsForParameter(this)
             }
 
-            overridesProvider.getDirectlyOverriddenSymbols(this)
+            getDirectlyOverriddenSymbols(this)
         }
 
     override fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean = withValidityAssertion {
-        return overridesProvider.isSubClassOf(this, superClass)
+        return isSubClassOf(this, superClass)
     }
 
     override fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean = withValidityAssertion {
-        return overridesProvider.isDirectSubClassOf(this, superClass)
+        return isDirectSubClassOf(this, superClass)
     }
 
     override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
         get() = withValidityAssertion {
-            overridesProvider.getIntersectionOverriddenSymbols(this)
+            getIntersectionOverriddenSymbols(this)
         }
 
     override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
