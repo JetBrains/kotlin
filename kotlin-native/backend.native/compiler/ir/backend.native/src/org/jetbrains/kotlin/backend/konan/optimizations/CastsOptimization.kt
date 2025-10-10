@@ -995,7 +995,13 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 return VisitorResult.Nothing
             }
 
+            var loopsDepth = 0
+
             override fun visitLoop(loop: IrLoop, data: Predicate): VisitorResult = usingUpperLevelPredicate(data) {
+                if (++loopsDepth > 3) {
+                    throw DivergingAnalysisError("The analysis doesn't support nested loops deeper than 3")
+                }
+
                 val startPredicate = if (loop is IrWhileLoop)
                     buildBooleanPredicate(loop.condition)
                 else BooleanPredicate(ifTrue = Predicate.Empty, ifFalse = Predicate.False)
@@ -1076,6 +1082,8 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 if (iter >= 10) {
                     throw DivergingAnalysisError("Failed to analyse a loop: has not converged in 10 iterations")
                 }
+
+                --loopsDepth
 
                 val result = finishControlFlowMerging(loop, breaksCFMPInfo)
                 VisitorResult(Predicates.and(data, Predicates.or(startPredicate.ifFalse, result.predicate)), null)
