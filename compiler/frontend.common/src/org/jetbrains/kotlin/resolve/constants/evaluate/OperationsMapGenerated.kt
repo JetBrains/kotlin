@@ -18,6 +18,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Boolean).toString()
         }
         BYTE -> when (name) {
+            "dec" -> return (value as Byte).dec()
+            "inc" -> return (value as Byte).inc()
             "toByte" -> return (value as Byte).toByte()
             "toChar" -> return (value as Byte).toChar()
             "toDouble" -> return (value as Byte).toDouble()
@@ -34,6 +36,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toUByte" -> return (value as Byte).toUByte()
         }
         CHAR -> when (name) {
+            "dec" -> return (value as Char).dec()
+            "inc" -> return (value as Char).inc()
             "toByte" -> return (value as Char).toByte()
             "toChar" -> return (value as Char).toChar()
             "toDouble" -> return (value as Char).toDouble()
@@ -45,6 +49,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "code" -> return (value as Char).code
         }
         DOUBLE -> when (name) {
+            "dec" -> return (value as Double).dec()
+            "inc" -> return (value as Double).inc()
             "toByte" -> return (value as Double).toByte()
             "toChar" -> return (value as Double).toChar()
             "toDouble" -> return (value as Double).toDouble()
@@ -59,6 +65,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toUInt" -> return (value as Double).toUInt()
         }
         FLOAT -> when (name) {
+            "dec" -> return (value as Float).dec()
+            "inc" -> return (value as Float).inc()
             "toByte" -> return (value as Float).toByte()
             "toChar" -> return (value as Float).toChar()
             "toDouble" -> return (value as Float).toDouble()
@@ -73,6 +81,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toUInt" -> return (value as Float).toUInt()
         }
         INT -> when (name) {
+            "dec" -> return (value as Int).dec()
+            "inc" -> return (value as Int).inc()
             "inv" -> return (value as Int).inv()
             "toByte" -> return (value as Int).toByte()
             "toChar" -> return (value as Int).toChar()
@@ -90,6 +100,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toUByte" -> return (value as Int).toUByte()
         }
         LONG -> when (name) {
+            "dec" -> return (value as Long).dec()
+            "inc" -> return (value as Long).inc()
             "inv" -> return (value as Long).inv()
             "toByte" -> return (value as Long).toByte()
             "toChar" -> return (value as Long).toChar()
@@ -107,6 +119,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toUByte" -> return (value as Long).toUByte()
         }
         SHORT -> when (name) {
+            "dec" -> return (value as Short).dec()
+            "inc" -> return (value as Short).inc()
             "toByte" -> return (value as Short).toByte()
             "toChar" -> return (value as Short).toChar()
             "toDouble" -> return (value as Short).toDouble()
@@ -132,6 +146,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "trimStart" -> return (value as String).trimStart()
         }
         UINT -> when (name) {
+            "dec" -> return (value as UInt).dec()
+            "inc" -> return (value as UInt).inc()
             "inv" -> return (value as UInt).inv()
             "toByte" -> return (value as UInt).toByte()
             "toDouble" -> return (value as UInt).toDouble()
@@ -146,6 +162,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toUShort" -> return (value as UInt).toUShort()
         }
         ULONG -> when (name) {
+            "dec" -> return (value as ULong).dec()
+            "inc" -> return (value as ULong).inc()
             "inv" -> return (value as ULong).inv()
             "toByte" -> return (value as ULong).toByte()
             "toDouble" -> return (value as ULong).toDouble()
@@ -160,6 +178,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toUShort" -> return (value as ULong).toUShort()
         }
         UBYTE -> when (name) {
+            "dec" -> return (value as UByte).dec()
+            "inc" -> return (value as UByte).inc()
             "inv" -> return (value as UByte).inv()
             "toByte" -> return (value as UByte).toByte()
             "toDouble" -> return (value as UByte).toDouble()
@@ -174,6 +194,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toUShort" -> return (value as UByte).toUShort()
         }
         USHORT -> when (name) {
+            "dec" -> return (value as UShort).dec()
+            "inc" -> return (value as UShort).inc()
             "inv" -> return (value as UShort).inv()
             "toByte" -> return (value as UShort).toByte()
             "toDouble" -> return (value as UShort).toDouble()

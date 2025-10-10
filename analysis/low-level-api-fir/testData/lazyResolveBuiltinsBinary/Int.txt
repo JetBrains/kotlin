@@ -95,9 +95,9 @@ TARGET: public final [ResolvedTo(RAW_FIR)] class Int : kotlin.Number, kotlin.Com
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -250,9 +250,9 @@ TARGET: public final [ResolvedTo(RAW_FIR)] class Int : kotlin.Number, kotlin.Com
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -405,9 +405,9 @@ TARGET: public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Int : kot
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -560,9 +560,9 @@ TARGET: public final [ResolvedTo(COMPANION_GENERATION)] class Int : kotlin.Numbe
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -715,9 +715,9 @@ TARGET: public final [ResolvedTo(SUPER_TYPES)] class Int : R|kotlin/Number|, R|k
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -870,9 +870,9 @@ TARGET: public final [ResolvedTo(TYPES)] class Int : R|kotlin/Number|, R|kotlin/
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -1025,9 +1025,9 @@ TARGET: public final [ResolvedTo(STATUS)] class Int : R|kotlin/Number|, R|kotlin
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -1180,9 +1180,9 @@ TARGET: public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Int : R|kotlin/N
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -1335,9 +1335,9 @@ TARGET: public final [ResolvedTo(CONTRACTS)] class Int : R|kotlin/Number|, R|kot
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -1490,9 +1490,9 @@ TARGET: public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Int : R|kot
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -1645,9 +1645,9 @@ TARGET: public final [ResolvedTo(CONSTANT_EVALUATION)] class Int : R|kotlin/Numb
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -1800,9 +1800,9 @@ TARGET: public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Int : R|kotlin/Num
 
     @kotlin.SinceKotlin[Unresolved]() @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun rem([ResolvedTo(RAW_FIR)] other: kotlin.Double): kotlin.Double { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun inc(): kotlin.Int { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
+    @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun dec(): kotlin.Int { LAZY_BLOCK }
 
     @kotlin.internal.IntrinsicConstEvaluation[Unresolved]() public final operator [ResolvedTo(RAW_FIR)] fun unaryPlus(): kotlin.Int { LAZY_BLOCK }
 
@@ -1955,9 +1955,9 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
 
     @R|kotlin/SinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Double|): R|kotlin/Double| { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(STATUS)] fun inc(): R|kotlin/Int| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun inc(): R|kotlin/Int| { LAZY_BLOCK }
 
-    public final operator [ResolvedTo(STATUS)] fun dec(): R|kotlin/Int| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun dec(): R|kotlin/Int| { LAZY_BLOCK }
 
     @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun unaryPlus(): R|kotlin/Int| { LAZY_BLOCK }
 
@@ -2269,10 +2269,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/SinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rem([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Double|): R|kotlin/Double| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Byte| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Byte| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Byte| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Byte| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun unaryPlus(): R|kotlin/Int| {
@@ -2685,10 +2685,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/SinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rem([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Double|): R|kotlin/Double| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Double| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Double| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Double| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Double| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun unaryPlus(): R|kotlin/Double| {
@@ -2946,10 +2946,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/SinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rem([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Double|): R|kotlin/Double| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Float| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Float| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Float| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Float| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun unaryPlus(): R|kotlin/Float| {
@@ -3148,10 +3148,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/SinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rem([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Double|): R|kotlin/Double| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Int| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Int| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun unaryPlus(): R|kotlin/Int| {
@@ -3387,10 +3387,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/SinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rem([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Double|): R|kotlin/Double| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Long| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Long| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Long| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Long| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun unaryPlus(): R|kotlin/Long| {
@@ -3725,10 +3725,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/SinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rem([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Double|): R|kotlin/Double| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Short| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun inc(): R|kotlin/Short| {
         }
 
-        public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Short| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun dec(): R|kotlin/Short| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun unaryPlus(): R|kotlin/Int| {
