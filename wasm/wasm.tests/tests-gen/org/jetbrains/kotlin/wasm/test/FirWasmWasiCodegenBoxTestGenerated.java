@@ -11432,6 +11432,12 @@ public class FirWasmWasiCodegenBoxTestGenerated extends AbstractFirWasmWasiCodeg
         }
 
         @Test
+        @TestMetadata("forInStringWithIndexNameBasedDestructuringShortForm.kt")
+        public void testForInStringWithIndexNameBasedDestructuringShortForm() {
+          runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndexNameBasedDestructuringShortForm.kt");
+        }
+
+        @Test
         @TestMetadata("forInStringWithIndexNoElementVar.kt")
         public void testForInStringWithIndexNoElementVar() {
           runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndexNoElementVar.kt");
