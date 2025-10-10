@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolDeclarationOverridesProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -21,12 +20,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 
 internal class KaFe10SymbolDeclarationOverridesProvider(
     override val analysisSessionProvider: () -> KaFe10Session
-) : KaBaseSymbolDeclarationOverridesProvider<KaFe10Session>(), KaFe10SessionComponent {
+) : KaBaseSessionComponent<KaFe10Session>(), KaFe10SessionComponent {
     fun <T : KaSymbol> getAllOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
-        if (callableSymbol is KaValueParameterSymbol) {
-            return getAllOverriddenSymbolsForParameter(callableSymbol)
-        }
-
         val descriptor = getSymbolDescriptor(callableSymbol) as? CallableMemberDescriptor ?: return emptySequence()
 
         return getOverriddenDescriptors(descriptor, true)
@@ -36,10 +31,6 @@ internal class KaFe10SymbolDeclarationOverridesProvider(
     }
 
     fun <T : KaSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
-        if (callableSymbol is KaValueParameterSymbol) {
-            return getDirectlyOverriddenSymbolsForParameter(callableSymbol)
-        }
-
         val descriptor = getSymbolDescriptor(callableSymbol) as? CallableMemberDescriptor ?: return emptySequence()
 
         return getOverriddenDescriptors(descriptor, false)
