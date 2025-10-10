@@ -414,7 +414,7 @@
 
 /test-instrumenter/ @JetBrains/kotlin-build-infrastructure
 
-/tests/ @JetBrains/kotlin-build-infrastructure
+/tests/ @JetBrains/kotlin @JetBrains/kotlin-build-infrastructure
 
 /third-party/ @JetBrains/kotlin-frontend
 
