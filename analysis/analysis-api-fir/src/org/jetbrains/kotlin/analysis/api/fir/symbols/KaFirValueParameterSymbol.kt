@@ -96,7 +96,7 @@ internal class KaFirValueParameterSymbol private constructor(
                 fun KaDeclarationSymbol.hasMatchingParameterWithDefaultValue(): Boolean =
                     (this as? KaFunctionSymbol)?.valueParameters?.getOrNull(parameterIndex)?.hasDeclaredDefaultValue == true
 
-                ownerFunction.allOverriddenSymbols.any { it.hasMatchingParameterWithDefaultValue() } ||
+                ownerFunction.isOverride && ownerFunction.allOverriddenSymbols.any { it.hasMatchingParameterWithDefaultValue() } ||
                         ownerFunction.isActual && ownerFunction.getExpectsForActual().any { it.hasMatchingParameterWithDefaultValue() }
             }
         }
