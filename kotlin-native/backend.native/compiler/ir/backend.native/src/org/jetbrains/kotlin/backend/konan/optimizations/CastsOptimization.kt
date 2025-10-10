@@ -371,6 +371,9 @@ private object Predicates {
     }
 }
 
+private const val MAX_LOOPS_DEPTH = 5
+private const val MAX_LOOP_ITERATIONS = 10
+
 internal class CastsOptimization(val context: Context) : BodyLoweringPass {
     private val not = context.irBuiltIns.booleanNotSymbol
     private val eqeq = context.irBuiltIns.eqeqSymbol
@@ -995,7 +998,13 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 return VisitorResult.Nothing
             }
 
+            var loopsDepth = 0
+
             override fun visitLoop(loop: IrLoop, data: Predicate): VisitorResult = usingUpperLevelPredicate(data) {
+                if (++loopsDepth > MAX_LOOPS_DEPTH) {
+                    throw DivergingAnalysisError("The analysis doesn't support nested loops deeper than $MAX_LOOPS_DEPTH")
+                }
+
                 val startPredicate = if (loop is IrWhileLoop)
                     buildBooleanPredicate(loop.condition)
                 else BooleanPredicate(ifTrue = Predicate.Empty, ifFalse = Predicate.False)
@@ -1070,12 +1079,14 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                     if (!somethingChanged) break
 
                     ++iter
-                } while (iter < 10)
+                } while (iter < MAX_LOOP_ITERATIONS)
                 breaksCFMPInfos.remove(loop)
 
-                if (iter >= 10) {
-                    throw DivergingAnalysisError("Failed to analyse a loop: has not converged in 10 iterations")
+                if (iter >= MAX_LOOP_ITERATIONS) {
+                    throw DivergingAnalysisError("Failed to analyse a loop: has not converged in $MAX_LOOP_ITERATIONS iterations")
                 }
+
+                --loopsDepth
 
                 val result = finishControlFlowMerging(loop, breaksCFMPInfo)
                 VisitorResult(Predicates.and(data, Predicates.or(startPredicate.ifFalse, result.predicate)), null)
