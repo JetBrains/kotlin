@@ -432,8 +432,22 @@ private class FirConstCheckVisitor(
     }
 
     // --- Utils ---
+    private fun FirNamedFunctionSymbol.signature(): String {
+        var prefix  = ""
+        if (this.resolvedReceiverType != null) {
+            prefix += this.resolvedReceiverType.toString().removePrefix("kotlin/") + "."
+        }
+        val parameters = this.valueParameterSymbols
+            .map {it.resolvedReturnType.toString().removePrefix("kotlin/")}
+            .joinToString(", ")
+        return "$prefix${this.name}($parameters)"
+    }
+
     private fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
-        return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
+        // FIXME, KT-81071: These functions cannot yet be marked with the annotation because of bootstrapping problems.
+        val futureIntrinsicConst = listOf("String.trim()", "String.trimEnd()", "String.trimStart()")
+        val isFutureIntrinsicConst = this is FirNamedFunctionSymbol && futureIntrinsicConst.contains(this.signature())
+        return intrinsicConstEvaluation && (this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session) || isFutureIntrinsicConst)
     }
 
     private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
