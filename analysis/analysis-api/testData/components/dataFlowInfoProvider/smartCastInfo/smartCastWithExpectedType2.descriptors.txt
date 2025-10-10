@@ -1,3 +1,4 @@
 expression: arg
 isStable: null
+originalType: null
 smartCastType: null

@@ -16,12 +16,15 @@ import java.util.Objects
 
 @KaImplementationDetail
 class KaBaseSmartCastInfo(
+    private val backingOriginalType: KaType,
     private val backingSmartCastType: KaType,
     private val backingIsStable: Boolean,
 ) : KaSmartCastInfo {
     override val token: KaLifetimeToken get() = backingSmartCastType.token
 
     override val isStable: Boolean get() = withValidityAssertion { backingIsStable }
+
+    override val originalType: KaType get() = withValidityAssertion { backingOriginalType }
 
     override val smartCastType: KaType get() = withValidityAssertion { backingSmartCastType }
 
