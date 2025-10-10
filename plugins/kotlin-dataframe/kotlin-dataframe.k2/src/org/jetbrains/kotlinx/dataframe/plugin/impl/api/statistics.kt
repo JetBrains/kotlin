@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.isPrimitiveOrMixedNumber
-import org.jetbrains.kotlin.fir.types.isSelfComparable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlinx.dataframe.api.single
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregators
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
+import org.jetbrains.kotlinx.dataframe.plugin.utils.isPrimitiveOrMixedNumber
+import org.jetbrains.kotlinx.dataframe.plugin.utils.isSelfComparable
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
