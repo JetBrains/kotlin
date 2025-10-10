@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.net.URI
 
@@ -89,8 +90,8 @@ sealed class NativeBinary(
      */
     @Suppress("unused")
     @KotlinNativeCacheApi
-    fun disableNativeCache(version: DisableNativeCacheInKotlinVersion, reason: String, issueUrl: URI? = null) {
-        disableCacheSettings.add(DisableNativeCacheSettings(version.version, reason, issueUrl))
+    fun disableNativeCache(version: KotlinToolingVersion, reason: String, issueUrl: URI? = null) {
+        disableCacheSettings.add(DisableNativeCacheSettings(version, reason, issueUrl))
     }
 
     var binaryOptions: MutableMap<String, String> = mutableMapOf()
