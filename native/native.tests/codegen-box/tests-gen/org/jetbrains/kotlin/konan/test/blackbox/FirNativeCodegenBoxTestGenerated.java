@@ -12463,6 +12463,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("forInArrayWithIndexNameBasedDestructuringShortForm.kt")
+        public void testForInArrayWithIndexNameBasedDestructuringShortForm() {
+          runTest("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInArrayWithIndexNameBasedDestructuringShortForm.kt");
+        }
+
+        @Test
         @TestMetadata("forInArrayWithIndexNoElementVar.kt")
         public void testForInArrayWithIndexNoElementVar() {
           runTest("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInArrayWithIndexNoElementVar.kt");
