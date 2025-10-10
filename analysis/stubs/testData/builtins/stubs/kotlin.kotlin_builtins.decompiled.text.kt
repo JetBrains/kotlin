@@ -172,9 +172,9 @@ public final class Byte private constructor() : kotlin.Number, kotlin.Comparable
 
     @kotlin.SinceKotlin @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    public final operator fun inc(): kotlin.Byte { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Byte { /* compiled code */ }
 
-    public final operator fun dec(): kotlin.Byte { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Byte { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Int { /* compiled code */ }
 
@@ -428,9 +428,9 @@ public final class Double private constructor() : kotlin.Number, kotlin.Comparab
 
     @kotlin.SinceKotlin @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    public final operator fun inc(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Double { /* compiled code */ }
 
-    public final operator fun dec(): kotlin.Double { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Double { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Double { /* compiled code */ }
 
@@ -587,9 +587,9 @@ public final class Float private constructor() : kotlin.Number, kotlin.Comparabl
 
     @kotlin.SinceKotlin @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    public final operator fun inc(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Float { /* compiled code */ }
 
-    public final operator fun dec(): kotlin.Float { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Float { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Float { /* compiled code */ }
 
@@ -715,9 +715,9 @@ public final class Int private constructor() : kotlin.Number, kotlin.Comparable<
 
     @kotlin.SinceKotlin @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    public final operator fun inc(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Int { /* compiled code */ }
 
-    public final operator fun dec(): kotlin.Int { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Int { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Int { /* compiled code */ }
 
@@ -867,9 +867,9 @@ public final class Long private constructor() : kotlin.Number, kotlin.Comparable
 
     @kotlin.SinceKotlin @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    public final operator fun inc(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Long { /* compiled code */ }
 
-    public final operator fun dec(): kotlin.Long { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Long { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Long { /* compiled code */ }
 
@@ -1070,9 +1070,9 @@ public final class Short private constructor() : kotlin.Number, kotlin.Comparabl
 
     @kotlin.SinceKotlin @kotlin.internal.IntrinsicConstEvaluation public final operator fun rem(other: kotlin.Double): kotlin.Double { /* compiled code */ }
 
-    public final operator fun inc(): kotlin.Short { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Short { /* compiled code */ }
 
-    public final operator fun dec(): kotlin.Short { /* compiled code */ }
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Short { /* compiled code */ }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun unaryPlus(): kotlin.Int { /* compiled code */ }
 
