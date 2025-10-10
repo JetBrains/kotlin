@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.analysis.utils.classId
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -294,7 +296,7 @@ internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
         // Script parameters should be treated as non-locals as they are visible from FirScript
         FirDeclarationOrigin.ScriptCustomization.Parameter, FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false
 
-        else -> !isNonLocal
+        else -> !isNonLocal || getContainingClassSymbol()?.isLocal == true
     }
 
 val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>
