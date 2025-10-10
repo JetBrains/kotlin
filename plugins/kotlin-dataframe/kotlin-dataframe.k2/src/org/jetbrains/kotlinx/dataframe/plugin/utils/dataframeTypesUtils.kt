@@ -7,10 +7,8 @@ package org.jetbrains.kotlinx.dataframe.plugin.utils
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun ConeKotlinType.isDataFrame(session: FirSession) =
     isSubtypeOf(
@@ -21,3 +19,32 @@ fun ConeKotlinType.isDataFrame(session: FirSession) =
 fun ConeKotlinType.isGroupBy(session: FirSession) = fullyExpandedClassId(session) == Names.GROUP_BY_CLASS_ID
 
 fun ConeKotlinType.isDataRow(session: FirSession) = fullyExpandedClassId(session) == Names.DATA_ROW_CLASS_ID
+
+/**
+ * Returns `true` only if [this] represents an optionally nullable primitive number,
+ * (like `Double?`, or `Int`), or a "mixed Number" type: `Number?` or `Number`.
+ *
+ * We don't check for "subtype of Number" to prevent `BigInteger` etc. to be included, but since columns with
+ * mixed primitives are allowed in statistics, we do include `Number?` and `Number`
+ */
+fun ConeKotlinType.isPrimitiveOrMixedNumber(session: FirSession, errorTypesEqualToAnything: Boolean = false): Boolean =
+    this.isPrimitiveNumberOrNullableType ||
+            this.equalTypes(
+                otherType = session.builtinTypes.numberType.coneType,
+                session = session,
+                errorTypesEqualToAnything = errorTypesEqualToAnything,
+            ) ||
+            this.equalTypes(
+                otherType = session.builtinTypes.numberType.coneType.withNullability(true, session.typeContext),
+                session = session,
+                errorTypesEqualToAnything = errorTypesEqualToAnything,
+            )
+
+/** Returns `true` if `this` is a type `T` where `T : Comparable<T & Any>` */
+fun ConeKotlinType.isSelfComparable(session: FirSession, errorTypesEqualToAnything: Boolean = false): Boolean {
+    val comparable = StandardClassIds.Comparable.constructClassLikeType(
+        typeArguments = arrayOf(this.withNullability(nullable = false, session.typeContext)),
+        isMarkedNullable = this.isMarkedNullable,
+    )
+    return this.isSubtypeOf(comparable, session, errorTypesEqualToAnything)
+}
