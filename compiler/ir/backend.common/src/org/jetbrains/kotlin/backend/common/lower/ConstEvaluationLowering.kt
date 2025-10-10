@@ -28,7 +28,10 @@ class ConstEvaluationLowering(
     private val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
     private val evaluatedConstTracker = context.configuration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER]
     private val inlineConstTracker = context.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
-    private val mode = EvaluationMode.OnlyIntrinsicConst(isFloatingPointOptimizationDisabled = configuration.platform.isJs() || configuration.platform.isWasm())
+    private val mode = EvaluationMode.OnlyIntrinsicConst(
+        isFloatingPointOptimizationDisabled = configuration.platform.isJs() || configuration.platform.isWasm(),
+        isStringCaseOperationsDisabled = true
+    )
 
     override fun lower(irFile: IrFile) {
         irFile.runConstOptimizations(interpreter, mode, evaluatedConstTracker, inlineConstTracker, suppressErrors)
