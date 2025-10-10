@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -183,6 +184,7 @@ fun createStubForTypeName(
     upperBoundFun: ((Int) -> KotlinTypeBean?)? = null,
     bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> },
 ): KotlinUserTypeStub {
+    @OptIn(ClassIdBasedLocality::class)
     val substituteWithAny = typeClassId.isLocal
 
     val fqName = if (substituteWithAny) {

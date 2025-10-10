@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -88,6 +89,7 @@ internal class KClassImpl<T : Any>(
             val moduleData = data.value.moduleData
             val module = moduleData.module
 
+            @OptIn(ClassIdBasedLocality::class)
             val descriptor =
                 if (classId.isLocal && jClass.isAnnotationPresent(Metadata::class.java)) {
                     // If it's a Kotlin local class or anonymous object, deserialize its metadata directly because it cannot be found via
@@ -108,6 +110,7 @@ internal class KClassImpl<T : Any>(
             if (jClass.isAnonymousClass) return@lazySoft null
 
             val classId = classId
+            @OptIn(ClassIdBasedLocality::class)
             when {
                 classId.isLocal -> calculateLocalClassName(jClass)
                 else -> classId.shortClassName.asString()
@@ -118,6 +121,7 @@ internal class KClassImpl<T : Any>(
             if (jClass.isAnonymousClass) return@lazySoft null
 
             val classId = classId
+            @OptIn(ClassIdBasedLocality::class)
             when {
                 classId.isLocal -> null
                 else -> classId.asSingleFqName().asString()

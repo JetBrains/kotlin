@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.declarations
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -37,6 +38,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
     }
 
     private fun getClassLikeDeclarationsByClassId(classId: ClassId): Sequence<KtClassLikeDeclaration> {
+        @OptIn(ClassIdBasedLocality::class)
         if (classId.isLocal) {
             return emptySequence()
         }

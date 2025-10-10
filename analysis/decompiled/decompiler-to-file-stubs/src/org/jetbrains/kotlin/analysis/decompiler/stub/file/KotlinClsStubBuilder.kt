@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -89,6 +90,7 @@ object KotlinClsStubBuilder : ClsStubBuilder() {
             LOG.error("String table not found in file ${file.name}")
             return null
         }
+        @OptIn(ClassIdBasedLocality::class)
         return when (header.kind) {
             KotlinClassHeader.Kind.CLASS -> {
                 if (classId.isLocal) return null

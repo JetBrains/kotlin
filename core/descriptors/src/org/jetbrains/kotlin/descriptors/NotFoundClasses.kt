@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -31,6 +32,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
     }
 
     private val classes = storageManager.createMemoizedFunction<ClassRequest, ClassDescriptor> { (classId, typeParametersCount) ->
+        @OptIn(ClassIdBasedLocality::class)
         if (classId.isLocal) {
             throw UnsupportedOperationException("Unresolved local class: $classId")
         }

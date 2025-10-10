@@ -34,6 +34,14 @@ fun container() {
 
     <!LOCAL_SERIALIZER_USAGE, SERIALIZER_TYPE_INCOMPATIBLE!>@Serializable(with = LocalSerializer::class)<!>
     data class WithLocalSerializer(val i: Int)
+    
+    class Owner {
+        <!INNER_CLASSES_NOT_SUPPORTED!>@Serializable(with = LocalSerializer::class)<!>
+        inner class Inner(val j: Int)
+
+        <!LOCAL_SERIALIZER_USAGE, SERIALIZER_TYPE_INCOMPATIBLE!>@Serializable(with = LocalSerializer::class)<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>class Nested<!>(val k: Int)
+    }
 }
 
 val topLevelAnon = <!ANONYMOUS_OBJECTS_NOT_SUPPORTED!>@Serializable<!> object {}

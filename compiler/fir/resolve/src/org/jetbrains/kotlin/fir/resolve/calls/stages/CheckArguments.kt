@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
@@ -108,7 +109,10 @@ private fun Candidate.prepareExpectedType(
     val expectedType =
         getExpectedTypeWithSAMConversion(session, argument, basicExpectedType)?.also {
             session.lookupTracker?.let { lookupTracker ->
-                parameter.returnTypeRef.coneType.lowerBoundIfFlexible().classId?.takeIf { !it.isLocal }?.let { classId ->
+                parameter.returnTypeRef.coneType.classLikeLookupTagIfAny?.takeIf {
+                    it.toSymbol()?.isLocal == false
+                }?.let { lookupTag ->
+                    val classId = lookupTag.classId
                     lookupTracker.recordClassMemberLookup(
                         SAM_LOOKUP_NAME.asString(),
                         classId,

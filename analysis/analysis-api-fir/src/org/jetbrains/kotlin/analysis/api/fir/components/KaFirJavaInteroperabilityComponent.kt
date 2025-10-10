@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
@@ -566,7 +567,7 @@ private class AnonymousTypesSubstitutor(
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeClassLikeType) return null
 
-        val hasStableName = type.classId?.isLocal == true
+        val hasStableName = type.classLikeLookupTagIfAny?.toSymbol(session)?.isLocal == true
         if (!hasStableName) {
             // Make sure we're not going to expand type argument over and over again.
             // If so, i.e., if there is a recursive type argument, return the current, non-null [type]

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.ownerGenerator
 import org.jetbrains.kotlin.fir.render
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
@@ -102,7 +102,10 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
 
     private fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
         return when {
+            // TODO: KT-81840 consider writing require(!classId.isLocal) here or supporting this case
+            @OptIn(ClassIdBasedLocality::class)
             classId.isLocal -> null
+
             classId.isNestedClass -> {
                 // Note: session.symbolProvider is important here, as we need a full composite provider and not only this extension provider
                 val owner = session.symbolProvider.getClassLikeSymbolByClassId(classId.outerClassId!!) as? FirClassSymbol<*> ?: return null

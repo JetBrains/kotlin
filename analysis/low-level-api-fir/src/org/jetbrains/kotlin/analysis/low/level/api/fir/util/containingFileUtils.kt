@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -24,8 +26,7 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
         is FirCallableDeclaration -> provider.getFirCallableContainerFile(symbol)
         is FirClassLikeDeclaration -> provider.getFirClassifierContainerFileIfAny(symbol)
         is FirAnonymousInitializer -> {
-            val classId = containingClassIdOrNull()
-            if (classId?.isLocal == true) {
+            if (getContainingClassSymbol()?.isLocal == true) {
                 containingKtFileIfAny?.let {
                     val moduleComponents = llFirResolvableSession?.moduleComponents
                     moduleComponents?.cache?.getCachedFirFile(it)

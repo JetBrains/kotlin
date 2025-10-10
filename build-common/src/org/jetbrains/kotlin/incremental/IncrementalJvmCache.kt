@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
@@ -144,6 +145,7 @@ open class IncrementalJvmCache(
             if (!icContext.useCompilerMapsOnly) internalNameToSource[className.internalName] = sourceFiles
         }
 
+        @OptIn(ClassIdBasedLocality::class)
         if (kotlinClassInfo.classId.isLocal) return
 
         when (kotlinClassInfo.classKind) {
@@ -233,6 +235,7 @@ open class IncrementalJvmCache(
             internalNameToSource[className.internalName] = sourceFiles
         }
 
+        @OptIn(ClassIdBasedLocality::class)
         if (classId.isLocal) return
 
         val newProtoData = ClassProtoData(classProto, stringTable.toNameResolver())

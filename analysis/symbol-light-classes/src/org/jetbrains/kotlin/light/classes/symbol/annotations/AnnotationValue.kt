@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
@@ -140,6 +141,7 @@ internal fun KaAnnotationValue.toLightClassAnnotationValue(): AnnotationValue {
     }
 }
 
+@OptIn(ClassIdBasedLocality::class)
 internal fun KaAnnotationValue.ClassLiteralValue.toLightClassAnnotationValue(): AnnotationValue.KClass {
     when (val type = type) {
         is KaClassType -> {

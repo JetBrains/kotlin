@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -818,8 +819,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         serializerType: ConeKotlinType,
         reporter: DiagnosticReporter
     ) {
-        val serializerClassId = serializerType.classId ?: return
-        if (serializerClassId.isLocal) {
+        if (serializerType.classLikeLookupTagIfAny?.toSymbol()?.isLocal == true) {
             reporter.reportOn(
                 source ?: classSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.LOCAL_SERIALIZER_USAGE,

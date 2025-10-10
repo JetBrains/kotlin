@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
@@ -105,6 +106,7 @@ internal class FirElementFinder : FirSessionComponent {
             expectedDeclarationAcceptor: (FirDeclaration) -> Boolean,
         ): FirDesignation? {
             if (containerClassId != null) {
+                @OptIn(ClassIdBasedLocality::class)
                 requireWithAttachment(!containerClassId.isLocal, { "ClassId should not be local" }) {
                     withEntry("classId", containerClassId) { it.asString() }
                 }

@@ -20,13 +20,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 /**
  * A class name which is used to uniquely identify a Kotlin class.
  *
- * If local = true, the class represented by this id is either itself local or is an inner class of some local class. This also means that
+ * If [isLocal] = true, the class represented by this id is either itself local or is an inner class of some local class. This also means that
  * the first non-class container of the class is not a package.
  * In the case of a local class, relativeClassName consists of a single name including all callables' and class' names all the way up to
  * the package, separated by dollar signs. If a class is an inner of local, relativeClassName would consist of two names,
  * the second one being the class' short name.
  */
-data class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val isLocal: Boolean) {
+@OptIn(ClassIdBasedLocality::class)
+data class ClassId(val packageFqName: FqName, val relativeClassName: FqName, @property:ClassIdBasedLocality val isLocal: Boolean) {
     constructor(packageFqName: FqName, topLevelName: Name) : this(packageFqName, FqName.topLevel(topLevelName), isLocal = false)
 
     init {
@@ -138,3 +139,11 @@ data class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val
         }
     }
 }
+
+@RequiresOptIn(
+    level = RequiresOptIn.Level.WARNING,
+    message = "Usage of ClassId.isLocal is discouraged in K2 as it has unclear semantics for cases like \"nested class of local class\". " +
+            "Please use firClassLike.isLocal or firClassLikeSymbol.isLocal instead, or add OptIn if you are sure the use is proper.",
+)
+// See also comment to FirClassLikeSymbol.isLocal
+annotation class ClassIdBasedLocality

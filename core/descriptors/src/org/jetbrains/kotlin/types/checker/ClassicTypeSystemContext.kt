@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeParameterDescriptor
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -57,6 +58,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
+        @OptIn(ClassIdBasedLocality::class)
         return declarationDescriptor?.classId?.isLocal == true
     }
 
