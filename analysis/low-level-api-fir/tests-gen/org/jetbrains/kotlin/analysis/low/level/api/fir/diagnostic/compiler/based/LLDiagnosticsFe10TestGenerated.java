@@ -48384,6 +48384,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("uselessIsCheckWithSubject.kt")
+      public void testUselessIsCheckWithSubject() {
+        runTest("compiler/testData/diagnostics/tests/when/uselessIsCheckWithSubject.kt");
+      }
+
+      @Test
       @TestMetadata("When.kt")
       public void testWhen() {
         runTest("compiler/testData/diagnostics/tests/when/When.kt");
