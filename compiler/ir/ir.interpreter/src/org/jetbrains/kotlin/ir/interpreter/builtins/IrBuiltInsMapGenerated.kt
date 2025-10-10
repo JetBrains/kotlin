@@ -265,6 +265,12 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
         "code" -> when (type) {
             "kotlin.Char" -> return (a as Char).code
         }
+        "lowercase" -> when (type) {
+            "kotlin.String" -> return (a as String).lowercase()
+        }
+        "uppercase" -> when (type) {
+            "kotlin.String" -> return (a as String).uppercase()
+        }
     }
     throw InterpreterMethodNotFoundError("Unknown function: $name($type)")
 }

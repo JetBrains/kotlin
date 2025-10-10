@@ -72,6 +72,9 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
 
     unaryOperationsMap.add(Operation("code", listOf("Char"), false))
 
+    unaryOperationsMap.add(Operation("lowercase", listOf("String")))
+    unaryOperationsMap.add(Operation("uppercase", listOf("String")))
+
     for (name in listOf("trim", "trimEnd", "trimIndent", "trimMargin", "trimStart")) {
         unaryOperationsMap.add(Operation(name, listOf("String"), true))
     }
