@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import java.util.HashMap
 
 class KlibMetadataClassDataFinder(
     private val fragment: PackageFragment,
