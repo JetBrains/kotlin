@@ -65,14 +65,14 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte>, java.io
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun dec(): kotlin.Byte
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Byte
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun inc(): kotlin.Byte
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Byte
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -266,14 +266,14 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double>, jav
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun dec(): kotlin.Double
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Double
-    public final operator fun inc(): kotlin.Double
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Double
@@ -378,14 +378,14 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float>, java.
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun dec(): kotlin.Float
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Float
-    public final operator fun inc(): kotlin.Float
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -466,14 +466,14 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int>, java.io.S
     @kotlin.internal.IntrinsicConstEvaluation public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun dec(): kotlin.Int
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun inc(): kotlin.Int
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final fun inv(): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
@@ -555,14 +555,14 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long>, java.io
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun dec(): kotlin.Long
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Long
-    public final operator fun inc(): kotlin.Long
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final fun inv(): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
@@ -718,14 +718,14 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short>, java.
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun dec(): kotlin.Short
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun dec(): kotlin.Short
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Byte): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Float): kotlin.Float
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun inc(): kotlin.Short
+    @kotlin.internal.IntrinsicConstEvaluation public final operator fun inc(): kotlin.Short
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float

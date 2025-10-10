@@ -7531,6 +7531,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("incDec_after.kt")
+        public void testIncDec_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/incDec_after.kt");
+        }
+
+        @Test
+        @TestMetadata("incDec_before.kt")
+        public void testIncDec_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/incDec_before.kt");
+        }
+
+        @Test
         @TestMetadata("integer.kt")
         public void testInteger() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/integer.kt");

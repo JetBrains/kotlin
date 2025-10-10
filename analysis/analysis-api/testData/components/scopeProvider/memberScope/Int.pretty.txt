@@ -19,6 +19,7 @@ operator fun compareTo(other: kotlin.Float): kotlin.Int
 @kotlin.internal.IntrinsicConstEvaluation
 operator fun compareTo(other: kotlin.Double): kotlin.Int
 
+@kotlin.internal.IntrinsicConstEvaluation
 operator fun dec(): kotlin.Int
 
 @kotlin.internal.IntrinsicConstEvaluation
@@ -42,6 +43,7 @@ operator fun div(other: kotlin.Double): kotlin.Double
 @kotlin.internal.IntrinsicConstEvaluation
 override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
+@kotlin.internal.IntrinsicConstEvaluation
 operator fun inc(): kotlin.Int
 
 @kotlin.internal.IntrinsicConstEvaluation

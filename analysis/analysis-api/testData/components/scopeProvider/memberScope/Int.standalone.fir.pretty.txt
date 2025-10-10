@@ -112,8 +112,10 @@ operator fun rem(other: kotlin.Float): kotlin.Float
 @kotlin.internal.IntrinsicConstEvaluation
 operator fun rem(other: kotlin.Double): kotlin.Double
 
+@kotlin.internal.IntrinsicConstEvaluation
 operator fun inc(): kotlin.Int
 
+@kotlin.internal.IntrinsicConstEvaluation
 operator fun dec(): kotlin.Int
 
 @kotlin.internal.IntrinsicConstEvaluation

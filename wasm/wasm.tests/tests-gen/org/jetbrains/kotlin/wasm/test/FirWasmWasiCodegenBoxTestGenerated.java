@@ -35878,6 +35878,12 @@ public class FirWasmWasiCodegenBoxTestGenerated extends AbstractFirWasmWasiCodeg
         }
 
         @Test
+        @TestMetadata("incDec.kt")
+        public void testIncDec() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/incDec.kt");
+        }
+
+        @Test
         @TestMetadata("kCallableName.kt")
         public void testKCallableName() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableName.kt");
