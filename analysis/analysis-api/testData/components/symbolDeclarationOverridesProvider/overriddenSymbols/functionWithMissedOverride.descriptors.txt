@@ -1,0 +1,5 @@
+ALL:
+  /Base.foo(): Unit
+DIRECT:
+  /Base.foo(): Unit
+INTERSECTION:

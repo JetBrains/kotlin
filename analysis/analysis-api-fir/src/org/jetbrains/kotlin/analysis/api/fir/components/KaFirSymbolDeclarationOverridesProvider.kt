@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
@@ -22,12 +24,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
+@RequiresOptIn("The overrides API shouldn't be accessible directly, use options from KaSession instead")
+internal annotation class KaFirOverridesProviderImplementationDetail
+
 @OptIn(ScopeFunctionRequiresPrewarm::class)
 context(relationProvider: KaFirSymbolRelationProvider)
-internal fun <T : KaCallableSymbol> getAllOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
+internal fun <T : KaCallableSymbol> getAllOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> = with(analysisSession) {
     require(callableSymbol is KaFirSymbol<*>)
     val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
-    processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
+    processOverrides(callableSymbol, skipIsOverrideCheck = false) { firTypeScope, firCallableDeclaration ->
         firTypeScope.processAllOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
             overriddenDeclaration.symbol.collectIntersectionOverridesSymbolsTo(
                 overriddenElement,
@@ -36,16 +41,26 @@ internal fun <T : KaCallableSymbol> getAllOverriddenSymbols(callableSymbol: T): 
         }
     }
 
-    return overriddenElement
-        .map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
+    overriddenElement
+        .map { firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
         .asSequence()
 }
 
 context(relationProvider: KaFirSymbolRelationProvider)
-internal fun <T : KaCallableSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
+internal fun <T : KaCallableSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> = context(analysisSession) {
+    @OptIn(KaFirOverridesProviderImplementationDetail::class)
+    getDirectlyOverriddenSymbols(callableSymbol, skipIsOverrideCheck = false)
+}
+
+@KaFirOverridesProviderImplementationDetail
+context(analysisSession: KaFirSession)
+internal fun <T : KaCallableSymbol> getDirectlyOverriddenSymbols(
+    callableSymbol: T,
+    skipIsOverrideCheck: Boolean,
+): Sequence<KaCallableSymbol> {
     require(callableSymbol is KaFirSymbol<*>)
     val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
-    processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
+    processOverrides(callableSymbol, skipIsOverrideCheck) { firTypeScope, firCallableDeclaration ->
         firTypeScope.processDirectOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
             overriddenDeclaration.symbol.collectIntersectionOverridesSymbolsTo(
                 overriddenElement,
@@ -96,36 +111,32 @@ private fun FirTypeScope.processDirectOverriddenDeclarations(
     else -> ProcessorAction.STOP
 }
 
-private val KaCallableSymbol.mayHaveOverriddenCallables: Boolean
-    get() = when (this) {
-        is KaNamedFunctionSymbol -> true
-        is KaPropertySymbol -> true
-        is KaPropertyAccessorSymbol -> false
-        is KaParameterSymbol -> false
-        is KaConstructorSymbol -> false
-        is KaAnonymousFunctionSymbol -> false
-        is KaSamConstructorSymbol -> false
-        is KaBackingFieldSymbol -> false
-        is KaEnumEntrySymbol -> false
-        is KaJavaFieldSymbol -> false
-        is KaLocalVariableSymbol -> false
-    }
+private fun KaCallableSymbol.mayHaveOverriddenCallables(skipIsOverrideCheck: Boolean): Boolean = when (this) {
+    is KaNamedFunctionSymbol -> skipIsOverrideCheck || isOverride
+    is KaPropertySymbol -> skipIsOverrideCheck || isOverride
+    is KaPropertyAccessorSymbol -> false
+    is KaParameterSymbol -> false
+    is KaConstructorSymbol -> false
+    is KaAnonymousFunctionSymbol -> false
+    is KaSamConstructorSymbol -> false
+    is KaBackingFieldSymbol -> false
+    is KaEnumEntrySymbol -> false
+    is KaJavaFieldSymbol -> false
+    is KaLocalVariableSymbol -> false
+}
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private inline fun <T> processOverrides(
     callableSymbol: T,
+    skipIsOverrideCheck: Boolean,
     crossinline process: (FirTypeScope, FirDeclaration) -> Unit,
 ) where T : KaCallableSymbol, T : KaFirSymbol<*> {
-    if (!callableSymbol.mayHaveOverriddenCallables) {
+    if (!callableSymbol.mayHaveOverriddenCallables(skipIsOverrideCheck)) {
         return
     }
 
-    val analysisSession = callableSymbol.analysisSession
-    val containingDeclaration = with(analysisSession) {
-        callableSymbol.containingDeclaration
-    } as? KaClassSymbol ?: return
-
-    when (containingDeclaration) {
+    when (val containingDeclaration = callableSymbol.containingDeclaration) {
+        !is KaClassSymbol -> return
         is KaFirNamedClassSymbol, is KaFirAnonymousObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
         else -> errorWithAttachment("Expected the containing symbol to be a ${KaFirNamedClassSymbol::class.simpleName} or ${KaFirAnonymousObjectSymbol::class.simpleName}") {
             withSymbolAttachment("callable", analysisSession, callableSymbol)
@@ -134,7 +145,7 @@ private inline fun <T> processOverrides(
     }
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private inline fun processOverrides(
     containingDeclaration: KaFirSymbol<FirClassSymbol<*>>,
     callableSymbol: KaFirSymbol<*>,
@@ -155,7 +166,7 @@ private inline fun processOverrides(
     process(firTypeScope, firCallableDeclaration)
 }
 
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private fun FirCallableSymbol<*>.collectIntersectionOverridesSymbolsTo(
     to: MutableCollection<FirCallableSymbol<*>>,
     useSiteSession: FirSession,
@@ -195,20 +206,20 @@ private fun isSubClassOf(subClass: KaClassSymbol, superClass: KaClassSymbol, all
 }
 
 context(relationProvider: KaFirSymbolRelationProvider)
-internal fun getIntersectionOverriddenSymbols(symbol: KaCallableSymbol): List<KaCallableSymbol> {
-    if (!symbol.mayHaveOverriddenCallables) {
+internal fun getIntersectionOverriddenSymbols(symbol: KaCallableSymbol): List<KaCallableSymbol> = with(analysisSession) {
+    if (!symbol.mayHaveOverriddenCallables(skipIsOverrideCheck = false)) {
         return emptyList()
     }
 
     require(symbol is KaFirSymbol<*>)
     if (symbol.origin != KaSymbolOrigin.INTERSECTION_OVERRIDE) return emptyList()
-    return symbol.firSymbol
+    symbol.firSymbol
         .getIntersectionOverriddenSymbols(symbol.analysisSession.firSession)
-        .map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
+        .map { firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
 }
 
 @OptIn(ScopeFunctionRequiresPrewarm::class)
-context(relationProvider: KaFirSymbolRelationProvider)
+context(analysisSession: KaFirSession)
 private fun FirBasedSymbol<*>.getIntersectionOverriddenSymbols(useSiteSession: FirSession): Collection<FirCallableSymbol<*>> {
     require(this is FirCallableSymbol<*>) {
         "Required FirCallableSymbol but ${this::class} found"
