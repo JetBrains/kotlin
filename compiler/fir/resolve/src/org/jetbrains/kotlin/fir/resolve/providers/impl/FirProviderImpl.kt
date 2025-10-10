@@ -269,6 +269,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     }
 
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
+        @OptIn(ClassIdBasedLocality::class)
         require(!classId.isLocal) {
             "Local $classId should never be used to find its corresponding classifier"
         }

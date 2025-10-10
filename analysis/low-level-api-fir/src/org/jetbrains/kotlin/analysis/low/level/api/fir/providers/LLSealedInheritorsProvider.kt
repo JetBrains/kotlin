@@ -47,7 +47,7 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
         val classId = firClass.classId
 
         // Local classes cannot be sealed.
-        if (classId.isLocal) {
+        if (firClass.isLocal) {
             return emptyList()
         }
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -18,6 +19,7 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 /** Basic information about a class (e.g., [classId], [kotlinClassHeader] and [supertypes]). */
+@OptIn(ClassIdBasedLocality::class)
 internal class BasicClassInfo(
     val classId: ClassId,
     val kotlinClassHeader: KotlinClassHeader?, // null if this is not a Kotlin class

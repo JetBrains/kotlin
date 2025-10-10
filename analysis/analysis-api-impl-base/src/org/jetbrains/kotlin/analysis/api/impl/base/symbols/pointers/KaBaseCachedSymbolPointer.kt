@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer.Companion.NOT_CACHED
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.psi.KtClassInitializer
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.lang.ref.WeakReference
@@ -63,6 +64,7 @@ abstract class KaBaseCachedSymbolPointer<out S : KaSymbol>(originalSymbol: S?) :
     companion object {
         private val NOT_CACHED = Any()
 
+        @OptIn(ClassIdBasedLocality::class)
         internal val KaSymbol.isCacheable: Boolean
             get() = when (this) {
                 is KaConstructorSymbol -> this.containingClassId?.isLocal == false

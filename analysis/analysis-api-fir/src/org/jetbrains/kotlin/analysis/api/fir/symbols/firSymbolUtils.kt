@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
@@ -92,7 +93,7 @@ internal fun FirCallableSymbol<*>.getCallableId(): CallableId? {
 }
 
 internal fun FirClassLikeSymbol<*>.getClassId(): ClassId? =
-    classId.takeUnless { it.isLocal }
+    classId.takeUnless { isLocal }
 
 internal fun FirCallableSymbol<*>.dispatchReceiverType(
     builder: KaSymbolByFirBuilder,
