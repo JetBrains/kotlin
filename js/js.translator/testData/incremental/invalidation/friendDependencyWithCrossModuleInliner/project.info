@@ -1,8 +1,4 @@
 IGNORE_PER_FILE: true
-// Mismatched rebuilt modules at step 4
-// Expected :[main/publicClass, main/test]
-// Actual   :[lib1/l1, main/test]
-
 IGNORE_BACKEND: WASM
 // Mismatched file stats for module [kotlin_main] at step 5
 // Expected :[modified ir=[test.kt]]
