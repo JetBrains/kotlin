@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.util.validatedOffsetsOrUndefined
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.psi.KtFile
@@ -140,8 +141,12 @@ internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {
-        startOffset = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
-        endOffset = source?.endOffset ?: calleeReference.source?.endOffset ?: UNDEFINED_OFFSET
+        val (validStartOffset, validEndOffset) = validatedOffsetsOrUndefined(
+            startOffset = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET,
+            endOffset = source?.endOffset ?: UNDEFINED_OFFSET
+        )
+        startOffset = validStartOffset
+        endOffset = validEndOffset
     }
     return f(startOffset, endOffset)
 }
