@@ -18,7 +18,7 @@ import java.io.File
 import kotlin.reflect.full.memberFunctions
 
 val DEST_FILE: File = File("compiler/frontend.common/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
-private val EXCLUDED_FUNCTIONS: List<String> = listOf("rangeTo", "rangeUntil", "hashCode", "inc", "dec", "subSequence")
+private val EXCLUDED_FUNCTIONS: List<String> = listOf("rangeTo", "rangeUntil", "hashCode", "subSequence")
 
 fun main() {
     GeneratorsFileUtil.writeFileIfContentChanged(DEST_FILE, generate())

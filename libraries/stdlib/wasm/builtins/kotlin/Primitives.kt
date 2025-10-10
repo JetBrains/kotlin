@@ -278,6 +278,7 @@ public actual class Byte private constructor(private val value: Byte) : Number()
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun inc(): Byte =
         (this + 1).toByte()
 
@@ -286,6 +287,7 @@ public actual class Byte private constructor(private val value: Byte) : Number()
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun dec(): Byte =
         (this - 1).toByte()
 
@@ -710,6 +712,7 @@ public actual class Short private constructor(private val value: Short) : Number
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun inc(): Short =
         (this + 1).toShort()
 
@@ -718,6 +721,7 @@ public actual class Short private constructor(private val value: Short) : Number
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun dec(): Short =
         (this - 1).toShort()
 
@@ -1150,6 +1154,7 @@ public actual class Int private constructor(private val value: Int) : Number(), 
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun inc(): Int =
         this + 1
 
@@ -1159,6 +1164,7 @@ public actual class Int private constructor(private val value: Int) : Number(), 
      * @sample samples.misc.Builtins.dec
      */
     // TODO: Fix test compiler/testData/codegen/box/functions/invoke/invoke.kt with inline dec
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun dec(): Int =
         this - 1
 
@@ -1662,6 +1668,7 @@ public actual class Long private constructor(private val value: Long) : Number()
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun inc(): Long =
         this + 1L
 
@@ -1670,6 +1677,7 @@ public actual class Long private constructor(private val value: Long) : Number()
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun dec(): Long =
         this - 1L
 
@@ -2181,6 +2189,7 @@ public actual class Float private constructor(private val value: Float) : Number
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun inc(): Float =
         this + 1.0f
 
@@ -2189,6 +2198,7 @@ public actual class Float private constructor(private val value: Float) : Number
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun dec(): Float =
         this - 1.0f
 
@@ -2581,6 +2591,7 @@ public actual class Double private constructor(private val value: Double) : Numb
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun inc(): Double =
         this + 1.0
 
@@ -2589,6 +2600,7 @@ public actual class Double private constructor(private val value: Double) : Numb
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual inline operator fun dec(): Double =
         this - 1.0
 

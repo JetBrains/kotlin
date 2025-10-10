@@ -412,6 +412,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
         for (operatorName in listOf("inc", "dec")) {
             method {
                 appendDoc(incDecOperatorsDoc(operatorName))
+                annotations += intrinsicConstEvaluationAnnotation
                 signature {
                     isOperator = true
                     methodName = operatorName

@@ -92,6 +92,8 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
       public abstract fun compareTo (other: T of kotlin.Comparable): kotlin.Int [operator] declared in kotlin.Comparable
   FUN IR_EXTERNAL_DECLARATION_STUB name:dec visibility:public modality:FINAL returnType:kotlin.Int [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    annotations:
+      IntrinsicConstEvaluation
   FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL returnType:kotlin.Int [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:other index:1 type:kotlin.Byte
@@ -132,6 +134,8 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Comparable
   FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL returnType:kotlin.Int [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
+    annotations:
+      IntrinsicConstEvaluation
   FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL returnType:kotlin.Int
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Int
     annotations:
