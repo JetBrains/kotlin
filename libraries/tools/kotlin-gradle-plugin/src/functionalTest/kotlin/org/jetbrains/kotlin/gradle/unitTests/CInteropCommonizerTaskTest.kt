@@ -55,7 +55,6 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
     @Test
     fun `nativeMain linux macos`() = project.runLifecycleAwareTest {
-        val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName")
         val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName")
 
@@ -68,7 +67,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         linuxMain.dependsOn(nativeMain)
         macosMain.dependsOn(nativeMain)
 
-
+        val task = this@CInteropCommonizerTaskTest.task.await()
         val groups = task.allInteropGroups.await()
         assertEquals(1, groups.size, "Expected only one InteropsGroup")
 
@@ -110,7 +109,6 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
     @Test
     fun `nativeMain iosMain linux macos iosX64 iosArm64`() = project.runLifecycleAwareTest {
-        val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val iosX64Interop = kotlin.iosX64("iosX64").compilations.getByName("main").cinterops.create("anyInteropName").identifier
@@ -131,6 +129,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         iosX64Main.dependsOn(iosMain)
         iosArm64Main.dependsOn(iosMain)
 
+        val task = this@CInteropCommonizerTaskTest.task.await()
         assertEquals(
             1, task.allInteropGroups.await().size,
             "Expected exactly one InteropsGroup for task"
@@ -166,7 +165,6 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     private fun `nativeTest nativeMain linux macos`(
         nativeTestDependsOnNativeMain: Boolean,
     ) = project.runLifecycleAwareTest {
-        val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
@@ -191,6 +189,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
             nativeTest.dependsOn(nativeMain)
         }
 
+        val task = this@CInteropCommonizerTaskTest.task.await()
         assertEquals(
             1, task.allInteropGroups.await().size,
             "Expected exactly 1 'SharedInteropsGroup' for task"
@@ -230,7 +229,6 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     private fun `nativeTest nativeMain linux macos - test compilation defines custom cinterop`(
         nativeTestDependsOnNativeMain: Boolean,
     ) = project.runLifecycleAwareTest {
-        val task = this@CInteropCommonizerTaskTest.task.await()
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         kotlin.linuxX64("linux").compilations.getByName("test").cinterops.create("anyOtherName").identifier
@@ -256,7 +254,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
             nativeTest.dependsOn(nativeMain)
         }
 
-
+        val task = this@CInteropCommonizerTaskTest.task.await()
         assertEquals(
             1, task.allInteropGroups.await().size,
             "Expected exactly 1 'SharedInteropsGroup' for task"
@@ -292,7 +290,6 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     }
 
     private fun `hierarchical project`(testSourceSetsDependOnMainSourceSets: Boolean) = project.runLifecycleAwareTest {
-        val task = this@CInteropCommonizerTaskTest.task.await()
         /* Define targets */
         val linux = kotlin.linuxX64("linux")
         val macos = kotlin.macosX64("macos")
@@ -395,6 +392,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         assertCInteropDependentEqualsForSourceSetAndCompilation(appleMain)
         assertCInteropDependentEqualsForSourceSetAndCompilation(iosMain)
 
+        val task = this@CInteropCommonizerTaskTest.task.await()
         val groups = task.allInteropGroups.await()
         assertEquals(2, groups.size, "Expected exactly two interop groups: main and test")
 
