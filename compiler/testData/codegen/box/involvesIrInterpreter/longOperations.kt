@@ -1,6 +1,7 @@
 fun <T> T.id() = this
 
 const val minusOneVal = <!EVALUATED("-1")!>-1L<!>
+const val zeroVal = <!EVALUATED("0")!>0L<!>
 const val oneVal = <!EVALUATED("1")!>1L<!>
 const val twoVal = <!EVALUATED("2")!>2L<!>
 const val threeVal = <!EVALUATED("3")!>3L<!>
@@ -88,6 +89,24 @@ const val equals4 = <!EVALUATED("false")!>fourVal == twoVal<!>
 const val toString1 = oneVal.<!EVALUATED("1")!>toString()<!>
 const val toString2 = twoVal.<!EVALUATED("2")!>toString()<!>
 
+const val and1 = oneVal.<!EVALUATED("0")!>and(twoVal)<!>
+const val and2 = twoVal.<!EVALUATED("2")!>and(twoVal)<!>
+const val and3 = threeVal.<!EVALUATED("2")!>and(twoVal)<!>
+const val and4 = 12L.<!EVALUATED("8")!>and(10L)<!>
+
+const val or1 = oneVal.<!EVALUATED("3")!>or(twoVal)<!>
+const val or2 = twoVal.<!EVALUATED("2")!>or(twoVal)<!>
+const val or3 = threeVal.<!EVALUATED("3")!>or(twoVal)<!>
+const val or4 = 12L.<!EVALUATED("14")!>or(10L)<!>
+
+const val xor1 = oneVal.<!EVALUATED("3")!>xor(twoVal)<!>
+const val xor2 = twoVal.<!EVALUATED("0")!>xor(twoVal)<!>
+const val xor3 = threeVal.<!EVALUATED("1")!>xor(twoVal)<!>
+const val xor4 = 12L.<!EVALUATED("6")!>xor(10L)<!>
+
+const val inv1 = zeroVal.<!EVALUATED("-1")!>inv()<!>
+const val inv2 = oneVal.<!EVALUATED("-2")!>inv()<!>
+
 // STOP_EVALUATION_CHECKS
 fun box(): String {
     if (compareTo1.id() != -1)   return "Fail 1.1"
@@ -164,6 +183,24 @@ fun box(): String {
 
     if (toString1.id() != "1")   return "Fail 10.1"
     if (toString2.id() != "2")   return "Fail 10.2"
+
+    if (and1.id() != 0L)    return "Fail 11.1"
+    if (and2.id() != 2L)    return "Fail 11.2"
+    if (and3.id() != 2L)    return "Fail 11.3"
+    if (and4.id() != 8L)    return "Fail 11.4"
+
+    if (or1.id() != 3L)     return "Fail 12.1"
+    if (or2.id() != 2L)     return "Fail 12.2"
+    if (or3.id() != 3L)     return "Fail 12.3"
+    if (or4.id() != 14L)    return "Fail 12.4"
+
+    if (xor1.id() != 3L)    return "Fail 12.1"
+    if (xor2.id() != 0L)    return "Fail 12.2"
+    if (xor3.id() != 1L)    return "Fail 12.3"
+    if (xor4.id() != 6L)    return "Fail 12.4"
+
+    if (inv1.id() != -1L)   return "Fail 12.1"
+    if (inv2.id() != -2L)   return "Fail 12.2"
 
     return "OK"
 }
