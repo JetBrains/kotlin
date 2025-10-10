@@ -35893,15 +35893,9 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
-      @TestMetadata("constTrimIndent.kt")
-      public void testConstTrimIndent() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrimIndent.kt");
-      }
-
-      @Test
-      @TestMetadata("constTrimMargin.kt")
-      public void testConstTrimMargin() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrimMargin.kt");
+      @TestMetadata("constTrim.kt")
+      public void testConstTrim() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrim.kt");
       }
 
       @Test
