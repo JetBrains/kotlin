@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCod
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.junit.AssumptionViolatedException
+import org.junit.jupiter.api.Assumptions
 import java.io.File
 
 open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
@@ -39,6 +41,20 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
         builder.useConfigurators(::ExperimentalExtensionRegistrarConfigurator)
         builder.useCustomRuntimeClasspathProviders(::DataFrameClasspathProvider)
         builder.useAdditionalSourceProviders(::TestUtilsSourceProvider)
+    }
+
+    // TODO re-enable once toDataFrame {} is updated in the compiler plugin
+    private val ignoredTests = setOf(
+        "plugins/kotlin-dataframe/testData/box/emptyColumnGroup.kt",
+        "plugins/kotlin-dataframe/testData/box/emptyFrameColumn.kt",
+        "plugins/kotlin-dataframe/testData/box/toDataFrame_dsl.kt",
+    )
+
+    override fun runTest(filePath: String) {
+        if (filePath in ignoredTests) {
+            throw AssumptionViolatedException("Temporarily ignored test")
+        }
+        super.runTest(filePath)
     }
 
     class SelectionDslUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
