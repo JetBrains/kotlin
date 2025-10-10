@@ -271,6 +271,9 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
         "code" -> when (type) {
             "kotlin.Char" -> return (a as Char).code
         }
+        "Char" -> when (type) {
+            "kotlin.Int" -> return Char(a as Int)
+        }
         "lowercase" -> when (type) {
             "kotlin.String" -> return (a as String).lowercase()
         }

@@ -70,6 +70,7 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
         }
     }
 
+    unaryOperationsMap.add(Operation("Char", listOf("Int"), true, "Char(value as Int)"))
     unaryOperationsMap.add(Operation("code", listOf("Char"), false))
 
     for (type in listOf("Short", "Byte")) {

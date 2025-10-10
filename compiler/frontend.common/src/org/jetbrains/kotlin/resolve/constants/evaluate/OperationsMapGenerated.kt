@@ -99,6 +99,7 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Int).toString()
             "unaryMinus" -> return (value as Int).unaryMinus()
             "unaryPlus" -> return (value as Int).unaryPlus()
+            "Char" -> return Char(value as Int)
             "toULong" -> return (value as Int).toULong()
             "toUInt" -> return (value as Int).toUInt()
             "toUShort" -> return (value as Int).toUShort()
