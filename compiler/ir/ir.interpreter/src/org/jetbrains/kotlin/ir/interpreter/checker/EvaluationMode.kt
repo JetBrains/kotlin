@@ -136,7 +136,10 @@ sealed class EvaluationMode {
             arguments.any { it != null && it.type.isUnsigned() }
     }
 
-    class OnlyIntrinsicConst(private val isFloatingPointOptimizationDisabled: Boolean = false) : EvaluationMode() {
+    class OnlyIntrinsicConst(
+        private val isFloatingPointOptimizationDisabled: Boolean = false,
+        private val isStringCaseOperationsDisabled: Boolean = false,
+    ) : EvaluationMode() {
         private fun IrFunction.getSignature(): String {
             val (receiverParameters, otherParameters) = parameters
                 .partition { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
@@ -146,6 +149,7 @@ sealed class EvaluationMode {
 
         override fun canEvaluateFunction(function: IrFunction): Boolean {
             if (isFloatingPointOptimizationDisabled && function.isFloatingPointOperation()) return false
+            if (isStringCaseOperationsDisabled && function.fqName in listOf("kotlin.text.uppercase", "kotlin.text.lowercase")) return false
 
             // FIXME, KT-81071: These functions cannot yet be marked with the annotation because of bootstrapping problems.
             val signature = function.getSignature()
