@@ -440,28 +440,41 @@ class GroupByMax1 : GroupByAggregatorComparable1(max)
  * Creates one column with aggregated type with optionally given name.
  */
 abstract class GroupByAggregator2(val defaultName: String, val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {
+    // return type for `columns`
+    // will be `null` when mixed number columns are provided
+    val Arguments.typeArg1: TypeApproximation? by arg(defaultValue = Present(null))
+
     val Arguments.receiver by groupBy()
     val Arguments.name: String? by arg(defaultValue = Present(null))
-
     val Arguments.skipNaN by ignore()
-
     val Arguments.columns: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        if (name == null) {
-            val resolvedColumns = columns.resolve(receiver.keys).map { (it.column as SimpleDataColumn) }.toList()
-            val newColumns = generateStatisticResultColumns(aggregator, resolvedColumns)
+        val selectedColumns = columns.resolve(receiver.groups)
+        val newColumnName = name ?: selectedColumns.singleOrNull()?.column?.name ?: defaultName
+        val selectedColumnTypes = selectedColumns.mapNotNull {
+            (it.column as? SimpleDataColumn)?.type?.type
+        }.toSet()
 
-            return PluginDataFrameSchema(receiver.keys.columns() + newColumns)
-        } else {
-            val resolvedColumns = columns.resolve(receiver.keys).map { it.column }.toList()
-            // TODO: handle multiple columns https://github.com/Kotlin/dataframe/issues/1090
-            val aggregated =
-                makeNullable(simpleColumnOf(name ?: defaultName, (resolvedColumns[0] as SimpleDataColumn).type.type))
-            // case with the multiple columns will be removed for GroupBy
-            val newColumns = generateStatisticResultColumns(aggregator, listOf(aggregated as SimpleDataColumn))
-            return PluginDataFrameSchema(receiver.keys.columns() + newColumns)
-        }
+        val returnType = typeArg1?.type
+
+        // if all our columns are primitives, ask the aggregator what the return type will be given the selected columns
+        // else, the type will always be the same as the return type of the selection dsl
+        val newColumnType = when {
+            selectedColumnTypes.all { it.isPrimitiveOrNullablePrimitive } ->
+                aggregator.calculateReturnTypeMultipleColumns(
+                    colTypes = selectedColumnTypes.map { it.asPrimitiveToKTypeOrNull()!! }.toSet(),
+                    // we don't know whether the column is empty or not at runtime,
+                    // it's safest to assume the worst-case scenario and consider it empty
+                    // this will introduce nullability, but never runtime errors
+                    colsEmpty = true,
+                ).toConeKotlinType() ?: returnType
+
+            else -> returnType
+        } ?: session.builtinTypes.nullableAnyType.coneType
+
+        val newColumn = simpleColumnOf(newColumnName, newColumnType)
+        return PluginDataFrameSchema(receiver.keys.columns() + newColumn)
     }
 }
 
