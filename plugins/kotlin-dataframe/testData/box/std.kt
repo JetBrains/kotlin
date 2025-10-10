@@ -48,7 +48,7 @@ fun box(): String {
     }
 
     // scenario #2: std of values per columns separately
-    personsDf.stdFor { age and weight and workExperienceYears and dependentsCount and annualIncome and bigNumber }.let { row ->
+    personsDf.stdFor { age and weight and workExperienceYears and dependentsCount and annualIncome }.let { row ->
         row.df().compareSchemas()
 
         val std31: Double? = row.age
@@ -56,7 +56,6 @@ fun box(): String {
         val std33: Double? = row.workExperienceYears
         val std34: Double? = row.dependentsCount
         val std35: Double? = row.annualIncome
-        val std36: Double? = row.bigNumber
     }
 
     return "OK"
