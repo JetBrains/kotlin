@@ -11408,6 +11408,12 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("forInCharSequenceWithIndexNameBasedDestructuringShortForm.kt")
+        public void testForInCharSequenceWithIndexNameBasedDestructuringShortForm() {
+          runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSequenceWithIndexNameBasedDestructuringShortForm.kt");
+        }
+
+        @Test
         @TestMetadata("forInCharSequenceWithIndexNoElementVarCheckSideEffects.kt")
         public void testForInCharSequenceWithIndexNoElementVarCheckSideEffects() {
           runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSequenceWithIndexNoElementVarCheckSideEffects.kt");
