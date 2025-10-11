@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)fooA:(NSString *)a b:(int32_t)b __attribute__((swift_name("foo(a:b:)")));
 - (void)fooB:(NSString *)b a:(NSString *)a __attribute__((swift_name("foo(b:a:)")));

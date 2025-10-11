@@ -29,31 +29,31 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (int64_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (KotlinLongIterator *)iterator __attribute__((swift_name("iterator()")));
+- (KotlinLongIterator *)iterator;
 - (void)setIndex:(int32_t)index value:(int64_t)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
+@property (readonly) int32_t size;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) KotlinLongArray * _Nullable la __attribute__((swift_name("la")));
+@property (class, readonly) KotlinLongArray * _Nullable la;
 @end
 
 @protocol KotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 @interface KotlinLongIterator : Base <KotlinIterator>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (Long *)next __attribute__((swift_name("next()")));
-- (int64_t)nextLong __attribute__((swift_name("nextLong()")));
+- (Long *)next;
+- (int64_t)nextLong;
 @end
 
 @interface KotlinLongArray (Extensions)
-- (void)extFun __attribute__((swift_name("extFun()")));
+- (void)extFun;
 @end
 
 #pragma pop_macro("_Nullable_result")

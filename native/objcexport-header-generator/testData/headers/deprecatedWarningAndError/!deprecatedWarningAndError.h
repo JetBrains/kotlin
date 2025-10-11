@@ -20,25 +20,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (instancetype)initWithParam:(int32_t)param __attribute__((swift_name("init(param:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("message: error-constructor")));
 - (instancetype)initWithParamA:(int32_t)paramA paramB:(int32_t)paramB __attribute__((swift_name("init(paramA:paramB:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("message: warning-constructor")));
-- (void)fooError __attribute__((swift_name("fooError()"))) __attribute__((unavailable("message: error")));
-- (void)fooWarning __attribute__((swift_name("fooWarning()"))) __attribute__((deprecated("message: warning")));
-@property int32_t varError __attribute__((swift_name("varError"))) __attribute__((unavailable("message: warning-property")));
-@property int32_t varWarning __attribute__((swift_name("varWarning"))) __attribute__((deprecated("message: warning-property")));
+- (void)fooError __attribute__((unavailable("message: error")));
+- (void)fooWarning __attribute__((deprecated("message: warning")));
+@property int32_t varError __attribute__((unavailable("message: warning-property")));
+@property int32_t varWarning __attribute__((deprecated("message: warning-property")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FooError : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("message: error-class")));
+- (instancetype)init __attribute__((objc_designated_initializer)) __attribute__((unavailable("message: error-class")));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FooWarning : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("message: warning-class")));
+- (instancetype)init __attribute__((objc_designated_initializer)) __attribute__((deprecated("message: warning-class")));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 

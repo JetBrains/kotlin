@@ -37,21 +37,21 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface ConstructorParam0 : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface ConstructorParam1 : Base
 - (instancetype)initWithA:(int32_t)a __attribute__((swift_name("init(a:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) int32_t a __attribute__((swift_name("a")));
+@property (readonly) int32_t a;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface ConstructorParam2 : Base
 - (instancetype)initWithA:(int32_t)a b:(int32_t)b __attribute__((swift_name("init(a:b:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) int32_t a __attribute__((swift_name("a")));
-@property (readonly) int32_t b __attribute__((swift_name("b")));
+@property (readonly) int32_t a;
+@property (readonly) int32_t b;
 @end
 
 #pragma pop_macro("_Nullable_result")

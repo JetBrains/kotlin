@@ -20,18 +20,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Bar : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)someMethodWithDiffReturnType __attribute__((swift_name("someMethodWithDiffReturnType()")));
-- (void)someMethodWithSameReturnType __attribute__((swift_name("someMethodWithSameReturnType()")));
+- (int32_t)someMethodWithDiffReturnType;
+- (void)someMethodWithSameReturnType;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (NSString *)someMethodWithDiffReturnType __attribute__((swift_name("someMethodWithDiffReturnType()")));
-- (void)someMethodWithSameReturnType __attribute__((swift_name("someMethodWithSameReturnType()")));
+- (NSString *)someMethodWithDiffReturnType;
+- (void)someMethodWithSameReturnType;
 @end
 
 #pragma pop_macro("_Nullable_result")
