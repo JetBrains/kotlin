@@ -21,6 +21,7 @@ package org.jetbrains.kotlin.powerassert.gradle
 
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.SetProperty
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -41,9 +42,9 @@ abstract class PowerAssertGradleExtension @Inject constructor(
      * Any function whose fully-qualified path entirely matches a regex in this set will be transformed.
      *
      * Some examples of common patterns include
-     * `kotlin\.test\.assert.*` (kotlin-test),
-     * `org\.junit\.Assert\.assert.*` (Junit 4), and
-     * `org\.junit\.jupiter\.api\.Assertions\.assert.*` (Junit platform).
+     * * `kotlin\.test\.assert.*` (kotlin-test)
+     * * `org\.junit\.jupiter\.api\.Assertions\.assert.*` (Junit platform)
+     * * `my\.test\.framework.+\.assert.*` (custom framework)
      */
     // Java's Pattern is used here instead of Kotlin's Regex for Groovy compatability
     val functionRegexes: SetProperty<Pattern> = objectFactory.setProperty(Pattern::class.java).convention(setOf())
