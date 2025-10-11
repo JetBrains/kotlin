@@ -50,7 +50,7 @@ class PowerAssertCompilerPluginRegistrar(
                 PowerAssertConfiguration(
                     configuration,
                     functions.toSet(),
-                    functionRegexs.toSet()
+                    functionRegexs.toSet(),
                 )
             )
         )
