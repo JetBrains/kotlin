@@ -1,7 +1,5 @@
 // FUNCTION_REGEX: org\.junit\.jupiter\.api\.Assertions\.assert.*
 // WITH_JUNIT5
-// IGNORE_BACKEND_K1: ANY
-// LANGUAGE: +ContextParameters
 
 import org.junit.jupiter.api.Assertions
 

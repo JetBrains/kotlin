@@ -1,6 +1,4 @@
 // FUNCTION_REGEX: kotlin\.test\.assert.*
-// IGNORE_BACKEND_K1: ANY
-// LANGUAGE: +ContextParameters
 
 import kotlin.test.*
 
