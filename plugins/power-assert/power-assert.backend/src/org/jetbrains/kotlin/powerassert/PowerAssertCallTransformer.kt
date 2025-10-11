@@ -59,9 +59,7 @@ class PowerAssertCallTransformer(
     override fun visitCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
         val fqName = function.kotlinFqName
-        val matchesDirectly = configuration.functions.any { fqName == it }
-        val matchesRegex = configuration.functionRegexes.any { it.matches(fqName.asString()) }
-        if (function.parameters.isEmpty() || !(matchesDirectly || matchesRegex)) {
+        if (function.parameters.isEmpty() || !configuration.isTransformEnabledFor(fqName)) {
             return super.visitCall(expression)
         }
 
@@ -295,3 +293,7 @@ val IrFunction.callableId: CallableId
             CallableId(parent.kotlinFqName, name)
         }
     }
+
+private fun PowerAssertConfiguration.isTransformEnabledFor(fqName: FqName): Boolean {
+    return functions.any { fqName == it } || functionRegexes.any { it.matches(fqName.asString()) }
+}
