@@ -193,9 +193,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                     taskProvider,
                                     toolsJar,
                                     CompilerExecutionSettings(
-                                        normalizedKotlinDaemonJvmArguments.orNull,
-                                        params.second,
-                                        useDaemonFallbackStrategy.get()
+                                        daemonJvmArgs = normalizedKotlinDaemonJvmArguments.orNull,
+                                        strategy = params.second,
+                                        useDaemonFallbackStrategy = useDaemonFallbackStrategy.get(),
+                                        generateCompilerRefIndex = generateCompilerRefIndex.get(),
                                     ),
                                     params.first,
                                     workerExecutor,

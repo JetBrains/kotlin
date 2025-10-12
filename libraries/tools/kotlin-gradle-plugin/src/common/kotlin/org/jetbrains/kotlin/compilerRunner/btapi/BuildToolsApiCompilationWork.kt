@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompil
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.COMPILER_ARGUMENTS_LOG_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.GENERATE_COMPILER_REF_INDEX
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -118,6 +119,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 @Suppress("DEPRECATION_ERROR")
                 jvmCompilationOperation[BuildOperation.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = true
             }
+            jvmCompilationOperation[GENERATE_COMPILER_REF_INDEX] = workArguments.compilerExecutionSettings.generateCompilerRefIndex
 
             val icEnv = workArguments.incrementalCompilationEnvironment
             val classpathChanges = icEnv?.classpathChanges
