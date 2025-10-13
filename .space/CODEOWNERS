@@ -113,6 +113,7 @@
 /compiler/ir/serialization.native/ "Kotlin Native"
 /compiler/ir/ir.inline/ "Kotlin Common Backend"
 /compiler/ir/ir.validation/ "Kotlin Common Backend"
+/compiler/ir/ir.semantics/ "Kotlin Common Backend"
 /compiler/javac-wrapper/ "Kotlin Frontend"
 /compiler/light-classes/ "Kotlin Analysis API"
 /compiler/plugin-api/ "Kotlin Frontend"
