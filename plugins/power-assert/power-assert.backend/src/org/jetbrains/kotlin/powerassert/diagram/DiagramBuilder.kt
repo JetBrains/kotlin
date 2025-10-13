@@ -251,24 +251,38 @@ private fun IrBlockBuilder.nest(
     val children = node.children
     val conditionNode = children[index]
     val resultNode = children[index + 1]
-    return buildExpression(sourceFile, conditionNode, variables) { condition, conditionVariables ->
-        if (index + 2 == children.size) {
-            buildExpression(sourceFile, resultNode, conditionVariables) { result, resultVariables ->
+    return if (children.size == 2) {
+        irIfThen(
+            node.expression.type,
+            buildExpression(sourceFile, conditionNode, variables) { result, resultVariables ->
                 call(result, resultVariables)
+            },
+            irBlock {
+                +buildExpression(sourceFile, resultNode, variables) { result, resultVariables ->
+                    call(result, resultVariables)
+                }
             }
-        } else {
-            irIfThenElse(
-                context.irBuiltIns.anyType,
-                condition,
-                irBlock {
-                    +buildExpression(sourceFile, resultNode, conditionVariables) { result, resultVariables ->
-                        call(result, resultVariables)
-                    }
-                }.transform(BranchOptimizer(index / 2), null),
-                irBlock {
-                    +nest(sourceFile, node, index + 2, conditionVariables, call)
-                }.transform(BranchOptimizer(index / 2 + 1), null),
-            )
+        )
+    } else {
+        buildExpression(sourceFile, conditionNode, variables) { condition, conditionVariables ->
+            if (index + 2 == children.size) {
+                buildExpression(sourceFile, resultNode, conditionVariables) { result, resultVariables ->
+                    call(result, resultVariables)
+                }
+            } else {
+                irIfThenElse(
+                    context.irBuiltIns.anyType,
+                    condition,
+                    irBlock {
+                        +buildExpression(sourceFile, resultNode, conditionVariables) { result, resultVariables ->
+                            call(result, resultVariables)
+                        }
+                    }.transform(BranchOptimizer(index / 2), null),
+                    irBlock {
+                        +nest(sourceFile, node, index + 2, conditionVariables, call)
+                    }.transform(BranchOptimizer(index / 2 + 1), null),
+                )
+            }
         }
     }
 }
