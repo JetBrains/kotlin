@@ -27,24 +27,22 @@ fun ConeKotlinType.isDataRow(session: FirSession) = fullyExpandedClassId(session
  * We don't check for "subtype of Number" to prevent `BigInteger` etc. to be included, but since columns with
  * mixed primitives are allowed in statistics, we do include `Number?` and `Number`
  */
-fun ConeKotlinType.isPrimitiveOrMixedNumber(session: FirSession, errorTypesEqualToAnything: Boolean = false): Boolean =
+fun ConeKotlinType.isPrimitiveOrMixedNumber(session: FirSession): Boolean =
     this.isPrimitiveNumberOrNullableType ||
             this.equalTypes(
                 otherType = session.builtinTypes.numberType.coneType,
                 session = session,
-                errorTypesEqualToAnything = errorTypesEqualToAnything,
             ) ||
             this.equalTypes(
                 otherType = session.builtinTypes.numberType.coneType.withNullability(true, session.typeContext),
                 session = session,
-                errorTypesEqualToAnything = errorTypesEqualToAnything,
             )
 
-/** Returns `true` if `this` is a type `T` where `T : Comparable<T & Any>` */
-fun ConeKotlinType.isSelfComparable(session: FirSession, errorTypesEqualToAnything: Boolean = false): Boolean {
+/** Returns `true` if `this` is a type `T` where `T : Comparable<T & Any>?` */
+fun ConeKotlinType.isSelfComparable(session: FirSession): Boolean {
     val comparable = StandardClassIds.Comparable.constructClassLikeType(
         typeArguments = arrayOf(this.withNullability(nullable = false, session.typeContext)),
         isMarkedNullable = this.isMarkedNullable,
     )
-    return this.isSubtypeOf(comparable, session, errorTypesEqualToAnything)
+    return this.isSubtypeOf(comparable, session)
 }
