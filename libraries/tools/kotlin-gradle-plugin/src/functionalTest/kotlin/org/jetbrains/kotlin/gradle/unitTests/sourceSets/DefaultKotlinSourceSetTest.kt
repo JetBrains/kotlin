@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class DefaultKotlinSourceSetTest {
@@ -385,6 +386,31 @@ class DefaultKotlinSourceSetTest {
             setOf(expectedFile),
             mainSourceSet.allKotlinSources.asFileTree.files,
             "Default all JVM sources are not expected",
+        )
+    }
+
+    @Test
+    fun sourceDirectorySetUniqueNames() {
+        val jvmProject = buildProjectWithJvm {
+            kotlinJvmExtension.sourceSets.register("custom")
+        }
+
+        assertNotEquals(
+            jvmProject.mainKotlinSourceSet.kotlin.name,
+            jvmProject.testKotlinSourceSet.kotlin.name,
+            "KotlinSourceSet.kotlin SourceDirectorySet names are not unique, both are ${jvmProject.mainKotlinSourceSet.kotlin.name}"
+        )
+
+        assertNotEquals(
+            jvmProject.mainKotlinSourceSet.generatedKotlin.name,
+            jvmProject.testKotlinSourceSet.generatedKotlin.name,
+            "KotlinSourceSet.generatedKotlin SourceDirectorySet names are not unique, both are ${jvmProject.mainKotlinSourceSet.generatedKotlin.name}"
+        )
+
+        assertNotEquals(
+            jvmProject.mainKotlinSourceSet.kotlin.name,
+            jvmProject.kotlinJvmExtension.sourceSets.getByName("custom").kotlin.name,
+            "KotlinSourceSet.kotlin SourceDirectorySet names are not unique for custom source set, both are ${jvmProject.mainKotlinSourceSet.kotlin.name}"
         )
     }
 
