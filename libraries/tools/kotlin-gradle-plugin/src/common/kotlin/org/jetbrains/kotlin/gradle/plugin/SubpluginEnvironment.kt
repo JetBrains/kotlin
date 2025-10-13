@@ -6,7 +6,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.internal.kaptGenerateStubsTaskName
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -117,7 +117,7 @@ internal fun addCompilationSourcesToExternalCompileTask(
         }
     } else {
         task.configure { taskInstance ->
-            compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.source(sourceSet.internal.allKotlin) }
+            compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.source(sourceSet.defaultImpl.allKotlin) }
         }
     }
 }
