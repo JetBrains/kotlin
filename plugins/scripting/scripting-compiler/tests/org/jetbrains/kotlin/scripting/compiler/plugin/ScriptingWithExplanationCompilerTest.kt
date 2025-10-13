@@ -108,8 +108,10 @@ class ScriptingWithExplanationCompilerTest {
     fun testScriptExplainShouldCoverBodyOfTheNonExhaustiveIf() {
         explainAndCheck(
             "${TEST_DATA_DIR}/compiler/explain/explainWithNonExhaustiveIf.kts",
-            // Unexpected results: if body is skipped altogether
             expectedExplanations = listOf(
+                "(17, 19) = 42",
+                "(24, 37) = kotlin.Unit",
+                "(42, 44) = 44",
                 "(11, 46) = kotlin.Unit",
                 "\$\$result(48, 50) = 43"
             ),
