@@ -1,7 +1,7 @@
 package test
 
-context(T)
+context(_: T)
 fun <T> foo() {}
 
-context(T)
+context(_: T)
 val <T> T.foo get() = 1

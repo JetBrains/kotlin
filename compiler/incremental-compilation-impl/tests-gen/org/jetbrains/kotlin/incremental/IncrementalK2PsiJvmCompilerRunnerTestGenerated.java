@@ -257,9 +257,9 @@ public class IncrementalK2PsiJvmCompilerRunnerTestGenerated extends AbstractIncr
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/functionReferencingClass/");
     }
 
-    @TestMetadata("genericContextReceiver")
-    public void testGenericContextReceiver() {
-      runTest("jps/jps-plugin/testData/incremental/pureKotlin/genericContextReceiver/");
+    @TestMetadata("genericContextReceiverSinceK2")
+    public void testGenericContextReceiverSinceK2() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/genericContextReceiverSinceK2/");
     }
 
     @TestMetadata("independentClasses")
