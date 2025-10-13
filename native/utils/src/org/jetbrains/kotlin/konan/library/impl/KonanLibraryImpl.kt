@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.konan.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
@@ -84,15 +85,16 @@ fun createKonanLibrary(
     libraryFilePossiblyDenormalized: File,
     component: String,
     target: KonanTarget? = null,
-    isDefault: Boolean = false
+    isDefault: Boolean = false,
+    zipFileSystemAccessor: ZipFileSystemAccessor? = null,
 ): KonanLibrary {
     // KT-58979: The following access classes need normalized klib path to correctly provide symbols from resolved klibs
     val libraryFile = Paths.get(libraryFilePossiblyDenormalized.absolutePath).normalize().File()
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component)
-    val targetedAccess = TargetedLibraryAccess<TargetedKotlinLibraryLayout>(libraryFile, component, target)
-    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component)
-    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component)
-    val bitcodeAccess = BitcodeLibraryAccess<BitcodeKotlinLibraryLayout>(libraryFile, component, target)
+    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, zipFileSystemAccessor)
+    val targetedAccess = TargetedLibraryAccess<TargetedKotlinLibraryLayout>(libraryFile, component, target, zipFileSystemAccessor)
+    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component, zipFileSystemAccessor)
+    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component, zipFileSystemAccessor)
+    val bitcodeAccess = BitcodeLibraryAccess<BitcodeKotlinLibraryLayout>(libraryFile, component, target, zipFileSystemAccessor)
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val targeted = TargetedLibraryImpl(targetedAccess, base)
@@ -106,11 +108,12 @@ fun createKonanLibrary(
 fun createKonanLibraryComponents(
     libraryFile: File,
     target: KonanTarget? = null,
-    isDefault: Boolean = true
+    isDefault: Boolean = true,
+    zipFileSystemAccessor: ZipFileSystemAccessor? = null,
 ) : List<KonanLibrary> {
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null)
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     return base.componentList.map {
-        createKonanLibrary(libraryFile, it, target, isDefault)
+        createKonanLibrary(libraryFile, it, target, isDefault, zipFileSystemAccessor)
     }
 }

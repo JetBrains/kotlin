@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -74,7 +75,13 @@ class KonanDriver(
             when {
                 !filesToCache.isNullOrEmpty() -> filesToCache
                 configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true -> {
-                    val lib = createKonanLibrary(File(libPath), "default", null, true)
+                    val lib = createKonanLibrary(
+                            File(libPath),
+                            "default",
+                            null,
+                            true,
+                            configuration.zipFileSystemAccessor
+                    )
                     val mainIr = lib.mainIr
                     (0 until mainIr.fileCount()).map { fileIndex ->
                         val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, fileIndex))
