@@ -253,26 +253,41 @@ private fun IrBlockBuilder.nest(
     val children = node.children
     val conditionNode = children[index]
     val resultNode = children[index + 1]
-    return buildExpression(sourceFile, conditionNode, variables, transformExpression) { condition, conditionVariables ->
-        if (index + 2 == children.size) {
-            buildExpression(sourceFile, resultNode, conditionVariables, transformExpression) { result, resultVariables ->
+    return if (children.size == 2) {
+        irIfThen(
+            node.expression.type,
+            buildExpression(sourceFile, conditionNode, variables, { it }) { result, resultVariables ->
                 call(result, resultVariables)
+            },
+            irBlock {
+                +buildExpression(sourceFile, resultNode, variables, transformExpression) { result, resultVariables ->
+                    call(result, resultVariables)
+                }
             }
-        } else {
-            irIfThenElse(
-                context.irBuiltIns.anyType,
-                condition,
-                irBlock {
-                    +buildExpression(sourceFile, resultNode, conditionVariables, transformExpression) { result, resultVariables ->
-                        call(result, resultVariables)
-                    }
-                }.transform(BranchOptimizer(index / 2), null),
-                irBlock {
-                    +nest(sourceFile, node, index + 2, conditionVariables, transformExpression, call)
-                }.transform(BranchOptimizer(index / 2 + 1), null),
-            )
+        )
+    } else {
+        buildExpression(sourceFile, conditionNode, variables, { it }) { condition, conditionVariables ->
+            if (index + 2 == children.size) {
+                buildExpression(sourceFile, resultNode, conditionVariables, transformExpression) { result, resultVariables ->
+                    call(result, resultVariables)
+                }
+            } else {
+                irIfThenElse(
+                    context.irBuiltIns.anyType,
+                    condition,
+                    irBlock {
+                        +buildExpression(sourceFile, resultNode, conditionVariables, transformExpression) { result, resultVariables ->
+                            call(result, resultVariables)
+                        }
+                    }.transform(BranchOptimizer(index / 2), null),
+                    irBlock {
+                        +nest(sourceFile, node, index + 2, conditionVariables, transformExpression, call)
+                    }.transform(BranchOptimizer(index / 2 + 1), null),
+                )
+            }
         }
-    }}
+    }
+}
 
 /**
  * ```
