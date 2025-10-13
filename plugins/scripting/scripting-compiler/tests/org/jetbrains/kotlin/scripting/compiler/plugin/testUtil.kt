@@ -253,6 +253,15 @@ internal fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R): R {
     }
 }
 
+internal fun <R> withTempFile(keyName: String = "explain", body: (File) -> R): R {
+    val tempFile = Files.createTempFile(keyName, ".txt").toFile()
+    try {
+        return body(tempFile)
+    } finally {
+        tempFile.delete()
+    }
+}
+
 internal fun <R> withDisposable(body: (Disposable) -> R) {
     val disposable = Disposer.newDisposable("Disposable for scripting compiler tests")
     try {

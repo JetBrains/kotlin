@@ -6,26 +6,21 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.scripting.definitions.getEnvironment
+import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.createTempDirectory
-import kotlin.io.path.readLines
-import kotlin.io.path.writeText
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.JvmGetScriptingClass
 import kotlin.test.assertEquals
-
-val pathToExplainingFile: Path by lazy {
-    createTempDirectory("explainTemp").resolve("explain.txt")
-}
 
 @KotlinScript(
     displayName = "FakeExplanationScript",
@@ -40,13 +35,14 @@ private class KotlinExplainEvaluationConfiguration : ScriptEvaluationConfigurati
     {
         refineConfigurationBeforeEvaluate { (_, config, _) ->
             config.with {
+                val explainFilePath = get(hostConfiguration)!!.get(ScriptingHostConfiguration.getEnvironment)!!.invoke()!!.get("explainFile") as String
                 val map = mutableMapOf<String, Any?>()
                 constructorArgs(map)
                 scriptExecutionWrapper<Any?> {
                     try {
                         it()
                     } finally {
-                        pathToExplainingFile
+                        File(explainFilePath)
                             .writeText(map.entries.joinToString(separator = "\n") { entry -> "${entry.key} = ${entry.value}" })
                     }
                 }
@@ -66,11 +62,12 @@ private class KotlinExplainHostConfiguration : ScriptingHostConfiguration(
         getScriptingClass(JvmGetScriptingClass())
     })
 
+private val additionalClasspath = System.getProperty("kotlin.test.script.classpath")
+private val powerAssertJar = File("dist/kotlinc/lib/power-assert-compiler-plugin.jar").absolutePath
 
 class ScriptingWithExplanationCompilerTest {
     companion object {
         const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
-        const val TEST_SCRIPT_TO_EXPLAIN = "$TEST_DATA_DIR/compiler/explain/simpleExplain.kts"
     }
 
     init {
@@ -79,44 +76,55 @@ class ScriptingWithExplanationCompilerTest {
 
     @Test
     fun scriptShouldFlushExplainInformationAfterEvaluation() {
-        val additionalClasspath = System.getProperty("kotlin.test.script.classpath")
-        val powerAssertJar = File("dist/kotlinc/lib/power-assert-compiler-plugin.jar").absolutePath
-        withTempDir { _ ->
-            val (out, err, ret) = captureOutErrRet {
-                CLICompiler.doMainNoExit(
-                    K2JVMCompiler(),
-                    arrayOf(
-                        "-P",
-                        "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
-                        "-P",
-                        "plugin:kotlin.scripting:disable-standard-script=true",
-                        "-P",
-                        "plugin:kotlin.scripting:enable-script-explanation=true",
-                        "-Xplugin=$powerAssertJar",
-                        "-P",
-                        "plugin:kotlin.scripting:script-templates=${KotlinExplainScript::class.java.name}",
-                        K2JVMCompilerArguments::classpath.cliArgument, additionalClasspath,
-                        "-script",
-                        TEST_SCRIPT_TO_EXPLAIN,
-                    )
-                )
-            }
-            val lines = pathToExplainingFile.readLines()
-            assertEquals(
-                listOf(
-                    "a(8, 9) = 1",
-                    "b(18, 19) = 1",
-                    "b(18, 23) = 6",
-                    "result(38, 39) = 1",
-                    "result(42, 43) = 6",
-                    "result(38, 43) = 7",
-                    "(45, 60) = true",
-                    "(82, 83) = 1",
-                    "(78, 83) = 4",
-                    "(74, 83) = kotlin.Unit",
-                    "\$\$result(85, 87) = 42",
-                ), lines
+        explainAndCheck(
+            "${TEST_DATA_DIR}/compiler/explain/simpleExplain.kts",
+            expectedExplanations = listOf(
+                "a(8, 9) = 1",
+                "b(18, 19) = 1",
+                "b(18, 23) = 6",
+                "result(38, 39) = 1",
+                "result(42, 43) = 6",
+                "result(38, 43) = 7",
+                "(45, 60) = true",
+                "(82, 83) = 1",
+                "(78, 83) = 4",
+                "(74, 83) = kotlin.Unit",
+                "\$\$result(85, 87) = 42",
             )
-        }
+        )
     }
 }
+
+private fun explainAndCheck(scriptPath: String, expectedExplanations: List<String>, expectedExitCode: ExitCode = ExitCode.OK, expectedOut: List<String>? = null) {
+    withTempFile { explainFile ->
+        val (out, err, ret) = captureOutErrRet {
+            runScriptWithExplain(scriptPath, explainFile.absolutePath)
+        }
+        assertEquals(expectedExitCode, ret) { "Expected exit code $expectedExitCode, actual $ret\n$err" }
+        if (expectedOut != null) {
+            assertEquals(expectedOut, out.trim().lines())
+        }
+        val lines = explainFile.readLines()
+        assertEquals(expectedExplanations, lines)
+    }
+}
+
+private fun runScriptWithExplain(scriptPath: String, explainFilePath: String): ExitCode = CLICompiler.doMainNoExit(
+    K2JVMCompiler(),
+    arrayOf(
+        "-P",
+        "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+        "-P",
+        "plugin:kotlin.scripting:disable-standard-script=true",
+        "-P",
+        "plugin:kotlin.scripting:enable-script-explanation=true",
+        "-P",
+        "plugin:kotlin.scripting:script-resolver-environment=explainFile=\"$explainFilePath\"",
+        "-Xplugin=$powerAssertJar",
+        "-P",
+        "plugin:kotlin.scripting:script-templates=${KotlinExplainScript::class.java.name}",
+        K2JVMCompilerArguments::classpath.cliArgument, additionalClasspath,
+        "-script",
+        scriptPath,
+    )
+)
