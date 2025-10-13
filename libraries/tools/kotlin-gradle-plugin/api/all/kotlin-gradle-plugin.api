@@ -1645,7 +1645,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/sources/DefaultKotlinSo
 	public fun dependencies (Lkotlin/jvm/functions/Function1;)V
 	public fun dependencies (Lorg/gradle/api/Action;)V
 	public final fun getAdditionalVisibleSourceSets ()Ljava/util/List;
-	public fun getAllKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
 	public fun getAllKotlinSources ()Lorg/gradle/api/file/FileCollection;
 	public fun getApiConfigurationName ()Ljava/lang/String;
 	public fun getCompileOnlyConfigurationName ()Ljava/lang/String;
