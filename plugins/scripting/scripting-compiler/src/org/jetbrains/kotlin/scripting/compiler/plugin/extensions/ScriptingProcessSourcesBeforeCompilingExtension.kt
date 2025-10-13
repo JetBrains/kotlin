@@ -27,15 +27,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irString
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrScript
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.createExpressionBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -56,72 +49,17 @@ class KotlinScriptExpressionExplainTransformer(
     private val context: IrPluginContext,
     val explainInfoVariableName: String,
 ) : IrElementTransformerVoidWithContext() {
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitScriptNew(declaration: IrScript): IrStatement {
         val explanationsProp = declaration.explicitCallParameters.firstOrNull { it.name.identifier == explainInfoVariableName }
             ?: return visitDeclaration(declaration)
 
-        val mapType = context.irBuiltIns.mutableMapClass.typeWith(context.irBuiltIns.stringType, context.irBuiltIns.anyNType)
-        val mapClass = mapType.getClass()!!
-        val mapPut = mapClass.functions.single { it.name.asString() == "put" }
-
         val builder = DeclarationIrBuilder(context, declaration.symbol, declaration.startOffset, declaration.endOffset)
 
-        fun IrBuilderWithScope.makeExplainMapPutCall(
-            resVar: IrVariable,
-            resExpression: IrExpression,
-            statementName: String
-        ): IrFunctionAccessExpression = irCall(mapPut).apply {
-            arguments[0] = irGet(explanationsProp)
-            arguments[1] = irString("$statementName(${resExpression.startOffset}, ${resExpression.endOffset})")
-            arguments[2] = irGet(resVar)
-        }
+        val newStatements = declaration.statements.explainStatements(builder, explanationsProp, declaration)
 
-        fun explainWithFallBack(expression: IrExpression, parent: IrDeclarationParent, statementName: String): IrExpression =
-            builder.irExplain(expression, sourceFile) { variables ->
-                variables.forEach { explainVar ->
-                    +builder.makeExplainMapPutCall(explainVar.variable, explainVar.variable.initializer!!, statementName)
-                }
-            }.let { explainedExpression ->
-                if (explainedExpression == expression) {
-                    builder.irComposite(expression) {
-                        val resVar =
-                            buildVariable(
-                                parent, startOffset, endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                                Name.special("<res>"), expression.type
-                            ).also { it.initializer = expression }
-                        +resVar
-                        +builder.makeExplainMapPutCall(resVar, expression, statementName)
-                        +builder.irGet(resVar)
-                    }
-                } else explainedExpression
-            }
-
-        declaration.statements.replaceAll { statement ->
-            when (statement) {
-                is IrProperty -> {
-                    statement.backingField?.let { field ->
-                        field.initializer?.let { initializer ->
-                            field.initializer = context.irFactory.createExpressionBody(
-                                explainWithFallBack(initializer.expression, field, statement.name.asString())
-                            )
-                        }
-                    }
-                    statement
-                }
-                is IrVariable -> {
-                    statement.initializer?.let { initializer ->
-                        statement.initializer = explainWithFallBack(initializer, declaration, statement.name.asString())
-                    }
-                    statement
-                }
-                is IrExpression -> {
-                    explainWithFallBack(statement, declaration, "")
-                }
-                else -> statement
-            }
-        }
-        return super.visitScriptNew(declaration)
+        declaration.statements.clear()
+        declaration.statements.addAll(newStatements)
+        return declaration
     }
 
     override fun visitExpression(expression: IrExpression): IrExpression {
@@ -131,7 +69,105 @@ class KotlinScriptExpressionExplainTransformer(
             variables.last()
         }
     }
+
+    val mapType = context.irBuiltIns.mutableMapClass.typeWith(context.irBuiltIns.stringType, context.irBuiltIns.anyNType)
+    val mapClass = mapType.getClass()!!
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    val mapPut = mapClass.functions.single { it.name.asString() == "put" }
+
+    fun IrBuilderWithScope.makeExplainMapPutCall(
+        resVar: IrVariable,
+        resExpression: IrExpression,
+        statementName: String,
+        explanationsProp: IrVariable
+    ): IrFunctionAccessExpression = irCall(mapPut).apply {
+        arguments[0] = irGet(explanationsProp)
+        arguments[1] = irString("$statementName(${resExpression.startOffset}, ${resExpression.endOffset})")
+        arguments[2] = irGet(resVar)
+    }
+
+    fun explainWithFallBack(
+        expression: IrExpression,
+        parent: IrDeclarationParent,
+        statementName: String,
+        builder: DeclarationIrBuilder,
+        explanationsProp: IrVariable,
+        declaration: IrScript
+    ): IrExpression {
+        return builder.irExplain(
+            expression, sourceFile,
+            transformExpression = {
+                if (it is IrBlock) {
+                    val newStatements = it.statements.explainStatements(builder, explanationsProp, declaration)
+                    it.statements.clear()
+                    it.statements.addAll(newStatements)
+                }
+                it
+            },
+        ) { variables ->
+            variables.forEach { explainVar ->
+                +builder.makeExplainMapPutCall(explainVar.variable, explainVar.variable.initializer!!, statementName, explanationsProp)
+            }
+        }.let { explainedExpression ->
+            if (explainedExpression == expression) {
+                builder.irComposite(expression) {
+                    val resVar =
+                        buildVariable(
+                            parent, startOffset, endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                            Name.special("<res>"), expression.type
+                        ).also { it.initializer = expression }
+                    +resVar
+                    +builder.makeExplainMapPutCall(resVar, expression, statementName, explanationsProp)
+                    +builder.irGet(resVar)
+                }
+            } else explainedExpression
+        }
+    }
+
+    private fun MutableList<IrStatement>.explainStatements(
+        builder: DeclarationIrBuilder,
+        explanationsProp: IrVariable,
+        declaration: IrScript
+    ): List<IrStatement> = map { statement ->
+        when (statement) {
+            is IrProperty -> {
+                statement.backingField?.let { field ->
+                    field.initializer?.let { initializer ->
+                        field.initializer = context.irFactory.createExpressionBody(
+                            explainWithFallBack(initializer.expression, field, statement.name.asString(), builder, explanationsProp, declaration)
+                        )
+                    }
+                }
+                statement
+            }
+            is IrVariable -> {
+                statement.initializer?.let { initializer ->
+                    statement.initializer = explainWithFallBack(
+                        initializer,
+                        declaration,
+                        statement.name.asString(),
+                        builder,
+                        explanationsProp,
+                        declaration
+                    )
+                }
+                statement
+            }
+            is IrExpression -> {
+                if (statement is IrTypeOperatorCall && statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
+                    statement.argument = explainWithFallBack(statement.argument, declaration, "", builder, explanationsProp, declaration)
+                    statement
+                } else {
+                    explainWithFallBack(statement, declaration, "", builder, explanationsProp, declaration)
+                }
+            }
+            else -> statement
+        }
+    }
+
 }
+
 
 class ScriptingIrExplainGenerationExtension(val project: MockProject) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {

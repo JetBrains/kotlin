@@ -22,8 +22,6 @@ package org.jetbrains.kotlin.powerassert.diagram
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -36,10 +34,11 @@ fun IrBuilderWithScope.buildDiagramNesting(
     sourceFile: SourceFile,
     root: Node,
     variables: PersistentList<IrTemporaryVariable> = persistentListOf(),
+    transformExpression: IrBlockBuilder.(IrExpression) -> IrExpression = { it },
     call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
     return irBlock {
-        +buildExpression(sourceFile, root, variables) { argument, subStack ->
+        +buildExpression(sourceFile, root, variables, transformExpression) { argument, subStack ->
             call(argument, subStack)
         }
     }
@@ -49,13 +48,14 @@ private fun IrBlockBuilder.buildExpression(
     sourceFile: SourceFile,
     node: Node,
     variables: PersistentList<IrTemporaryVariable>,
+    transformExpression: IrBlockBuilder.(IrExpression) -> IrExpression,
     call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression = when (node) {
     is ConstantNode -> add(node, variables, call)
     is HiddenNode -> add(node, variables, call)
-    is ExpressionNode -> add(sourceFile, node, variables, call)
+    is ExpressionNode -> add(sourceFile, node, variables, transformExpression, call)
     is ChainNode -> nest(sourceFile, node, index = 0, variables, call)
-    is WhenNode -> nest(sourceFile, node, index = 0, variables, call)
+    is WhenNode -> nest(sourceFile, node, index = 0, variables, transformExpression, call)
     is ElvisNode -> nest(sourceFile, node, index = 0, variables, call)
     is RootNode -> error("Unsupported node type=$node")
 }
@@ -125,9 +125,10 @@ private fun IrBlockBuilder.add(
     sourceFile: SourceFile,
     node: ExpressionNode,
     variables: PersistentList<IrTemporaryVariable>,
+    transformExpression: IrBlockBuilder.(IrExpression) -> IrExpression,
     call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
-    val expression = node.expression
+    val expression = transformExpression(node.expression)
     val sourceRangeInfo = sourceFile.getSourceRangeInfo(expression)
     val text = sourceFile.getText(sourceRangeInfo)
 
@@ -164,7 +165,7 @@ private fun IrBlockBuilder.nest(
 ): IrExpression {
     val children = node.children
     val child = children[index]
-    return buildExpression(sourceFile, child, variables) { argument, argumentVariables ->
+    return buildExpression(sourceFile, child, variables, { it }) { argument, argumentVariables ->
         if (index + 1 == children.size) {
             call(argument, argumentVariables)
         } else {
@@ -204,6 +205,7 @@ private fun IrBlockBuilder.nest(
     node: WhenNode,
     index: Int,
     variables: PersistentList<IrTemporaryVariable>,
+    transformExpression: IrBlockBuilder.(IrExpression) -> IrExpression,
     call: IrBlockBuilder.(IrExpression, PersistentList<IrTemporaryVariable>) -> IrExpression,
 ): IrExpression {
     class BranchOptimizer(private val branchIndex: Int) : IrElementTransformerVoid() {
@@ -251,9 +253,9 @@ private fun IrBlockBuilder.nest(
     val children = node.children
     val conditionNode = children[index]
     val resultNode = children[index + 1]
-    return buildExpression(sourceFile, conditionNode, variables) { condition, conditionVariables ->
+    return buildExpression(sourceFile, conditionNode, variables, transformExpression) { condition, conditionVariables ->
         if (index + 2 == children.size) {
-            buildExpression(sourceFile, resultNode, conditionVariables) { result, resultVariables ->
+            buildExpression(sourceFile, resultNode, conditionVariables, transformExpression) { result, resultVariables ->
                 call(result, resultVariables)
             }
         } else {
@@ -261,17 +263,16 @@ private fun IrBlockBuilder.nest(
                 context.irBuiltIns.anyType,
                 condition,
                 irBlock {
-                    +buildExpression(sourceFile, resultNode, conditionVariables) { result, resultVariables ->
+                    +buildExpression(sourceFile, resultNode, conditionVariables, transformExpression) { result, resultVariables ->
                         call(result, resultVariables)
                     }
                 }.transform(BranchOptimizer(index / 2), null),
                 irBlock {
-                    +nest(sourceFile, node, index + 2, conditionVariables, call)
+                    +nest(sourceFile, node, index + 2, conditionVariables, transformExpression, call)
                 }.transform(BranchOptimizer(index / 2 + 1), null),
             )
         }
-    }
-}
+    }}
 
 /**
  * ```
@@ -354,7 +355,7 @@ private fun IrBlockBuilder.nest(
 
     val children = node.children
     val child = children[index]
-    val result = buildExpression(sourceFile, child, variables) { argument, argumentVariables ->
+    val result = buildExpression(sourceFile, child, variables, { it }) { argument, argumentVariables ->
         if (index + 1 == children.size) {
             call(argument, argumentVariables)
         } else {
