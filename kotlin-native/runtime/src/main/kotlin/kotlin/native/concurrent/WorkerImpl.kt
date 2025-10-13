@@ -148,7 +148,8 @@ private class WorkerImpl(
         fun <T : Comparable<T>> minOf(first: T?, second: T?): T? {
             if (first == null) return second
             if (second == null) return first
-            return minOf(first, second)
+
+            return kotlin.comparisons.minOf(first, second)
         }
 
         while (queue.isEmpty()) {

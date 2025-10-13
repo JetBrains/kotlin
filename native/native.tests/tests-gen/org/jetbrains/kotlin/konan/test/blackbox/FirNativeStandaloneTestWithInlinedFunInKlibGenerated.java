@@ -100,12 +100,6 @@ public class FirNativeStandaloneTestWithInlinedFunInKlibGenerated extends Abstra
     }
 
     @Test
-    @TestMetadata("leak_worker.kt")
-    public void testLeak_worker() {
-      runTest("native/native.tests/testData/standalone/checkers/leak_worker.kt");
-    }
-
-    @Test
     @TestMetadata("worker_threadlocal_no_leak.kt")
     public void testWorker_threadlocal_no_leak() {
       runTest("native/native.tests/testData/standalone/checkers/worker_threadlocal_no_leak.kt");
