@@ -52897,6 +52897,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
           }
 
           @Test
+          @TestMetadata("contextParameters.kt")
+          public void testContextParameters() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/contextParameters.kt");
+          }
+
+          @Test
           @TestMetadata("fieldAccessors.kt")
           public void testFieldAccessors() {
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/fieldAccessors.kt");
@@ -52975,6 +52981,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
           }
 
           @Test
+          @TestMetadata("contextParameters.kt")
+          public void testContextParameters() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/contextParameters.kt");
+          }
+
+          @Test
           @TestMetadata("fieldAccessors.kt")
           public void testFieldAccessors() {
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/fieldAccessors.kt");
@@ -53050,6 +53062,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
           @TestMetadata("constructorWithInlineClassParameters.kt")
           public void testConstructorWithInlineClassParameters() {
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/constructorWithInlineClassParameters.kt");
+          }
+
+          @Test
+          @TestMetadata("contextParameters.kt")
+          public void testContextParameters() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/contextParameters.kt");
           }
 
           @Test

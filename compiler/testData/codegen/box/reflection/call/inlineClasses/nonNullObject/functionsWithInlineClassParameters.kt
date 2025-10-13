@@ -10,6 +10,8 @@ value class S(val value: String) {
 
 class C {
     fun member(x: S, y: String, z: S?): S = x + S(y) + z!!
+
+    fun S.memberExtension(y: String, z: S?): S = this + S(y) + z!!
 }
 
 fun topLevel(x: String, y: S, z: S?): S = S(x) + y + z!!
@@ -35,6 +37,9 @@ fun box(): String {
     assertEquals(S("stu"), S("s")::extension2.call(S("t"), S("u")))
     assertEquals("_", S("_")::extension3.call())
     assertEquals("_", S("_")::extension4.call())
+
+    val memberExtension = C::class.members.single { it.name == "memberExtension" }
+    assertEquals(S("vwx"), memberExtension.call(C(), S("v"), "w", S("x")))
 
     return "OK"
 }

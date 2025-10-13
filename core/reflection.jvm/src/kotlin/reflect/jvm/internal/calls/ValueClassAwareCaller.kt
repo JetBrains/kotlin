@@ -280,32 +280,34 @@ private fun Caller<*>.checkParametersSize(
 }
 
 private fun makeKotlinParameterTypes(
-    descriptor: CallableMemberDescriptor, member: Member?, isSpecificClass: ClassDescriptor.() -> Boolean
-): List<KotlinType> = ArrayList<KotlinType>().also { kotlinParameterTypes ->
-    val extensionReceiverType = descriptor.extensionReceiverParameter?.type
-    if (extensionReceiverType != null) {
-        kotlinParameterTypes.add(extensionReceiverType)
-    } else if (descriptor is ConstructorDescriptor) {
+    descriptor: CallableMemberDescriptor, member: Member?, isValueClass: ClassDescriptor.() -> Boolean,
+): List<KotlinType> {
+    val result = mutableListOf<KotlinType>()
+    if (descriptor is ConstructorDescriptor) {
         val constructedClass = descriptor.constructedClass
         if (constructedClass.isInner) {
-            kotlinParameterTypes.add((constructedClass.containingDeclaration as ClassDescriptor).defaultType)
+            result.add((constructedClass.containingDeclaration as ClassDescriptor).defaultType)
         }
     } else {
         val containingDeclaration = descriptor.containingDeclaration
-        if (containingDeclaration is ClassDescriptor && containingDeclaration.isSpecificClass()) {
+        if (containingDeclaration is ClassDescriptor && containingDeclaration.isValueClass()) {
             if (member?.acceptsBoxedReceiverParameter() == true) {
                 // hack to forbid unboxing dispatchReceiver if it is used upcasted
                 // kotlinParameterTypes are used to determine shifts and calls according to whether type is MFVC/IC or not.
                 // If it is a MFVC/IC, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
                 // it accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
-                kotlinParameterTypes.add(containingDeclaration.defaultType.makeNullable())
+                result.add(containingDeclaration.defaultType.makeNullable())
             } else {
-                kotlinParameterTypes.add(containingDeclaration.defaultType)
+                result.add(containingDeclaration.defaultType)
             }
         }
+        descriptor.extensionReceiverParameter?.type?.let(result::add)
+        descriptor.contextReceiverParameters.mapTo(result) { it.type }
     }
 
-    descriptor.valueParameters.mapTo(kotlinParameterTypes, ValueParameterDescriptor::getType)
+    descriptor.valueParameters.mapTo(result, ValueParameterDescriptor::getType)
+
+    return result
 }
 
 private fun Member.acceptsBoxedReceiverParameter(): Boolean {
@@ -321,20 +323,17 @@ private fun Member.acceptsBoxedReceiverParameter(): Boolean {
 
 internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(
     descriptor: CallableMemberDescriptor,
-    isDefault: Boolean = false
+    isDefault: Boolean = false,
 ): Caller<M> {
     val needsValueClassAwareCaller: Boolean =
-        descriptor.isGetterOfUnderlyingPropertyOfValueClass() ||
+        descriptor.dispatchReceiverParameter?.type?.isValueClassType() == true ||
+                descriptor.extensionReceiverParameter?.type?.isValueClassType() == true ||
                 descriptor.contextReceiverParameters.any { it.type.isValueClassType() } ||
                 descriptor.valueParameters.any { it.type.isValueClassType() } ||
-                descriptor.returnType?.isInlineClassType() == true ||
-                descriptor.hasValueClassReceiver()
+                descriptor.returnType?.isInlineClassType() == true
 
     return if (needsValueClassAwareCaller) ValueClassAwareCaller(descriptor, this, isDefault) else this
 }
-
-private fun CallableMemberDescriptor.hasValueClassReceiver() =
-    expectedReceiverType?.isValueClassType() == true
 
 internal fun Class<*>.getInlineClassUnboxMethod(descriptor: CallableMemberDescriptor): Method =
     try {
@@ -389,3 +388,10 @@ internal fun Any?.coerceToExpectedReceiverType(descriptor: CallableMemberDescrip
 
     return unboxMethod.invoke(this)
 }
+
+private fun CallableDescriptor.isGetterOfUnderlyingPropertyOfValueClass() =
+    this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfValueClass()
+
+private fun VariableDescriptor.isUnderlyingPropertyOfValueClass(): Boolean =
+    extensionReceiverParameter == null &&
+            (containingDeclaration as? ClassDescriptor)?.valueClassRepresentation?.containsPropertyWithName(this.name) == true
