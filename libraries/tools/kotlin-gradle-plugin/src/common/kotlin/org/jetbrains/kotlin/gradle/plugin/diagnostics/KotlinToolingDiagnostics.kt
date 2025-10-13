@@ -205,6 +205,36 @@ internal object KotlinToolingDiagnostics {
             get() = "Run the build with '--info' for more details."
     }
 
+    internal object NativeBundleResolution : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(message: String, hostname: String) =
+            build {
+                title("Kotlin/Native bundle artifact could not be resolved")
+                    .description(
+                        """
+                        |The Kotlin Gradle Plugin failed to resolve the Kotlin/Native compiler bundle required for building native targets.
+                        |
+                        |Artifact: $message
+                        |Host: $hostname
+                        |
+                        |This typically occurs when:
+                        |• The Kotlin/Native distribution is not available for your platform or architecture
+                        |• Network connectivity issues prevent downloading the compiler bundle
+                        |• The specified Kotlin version doesn't have a native bundle for your system
+                        |• Repository configuration is incorrect or incomplete
+                        """.trimMargin()
+                    )
+                    .solutions {
+                        listOf(
+                            "Verify your platform is supported",
+                            "Check your internet connection and repository accessibility",
+                            "Ensure you're using a Kotlin/Native version that supports your platform (host: $hostname)",
+                            "Add or verify repository configuration in your build.gradle(.kts)"
+                        )
+                    }
+                    .documentationLink(URI("https://kotlinlang.org/docs/native-target-support.html"))
+            }
+    }
+
     object CrossCompilationWithCinterops : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(projectName: String, target: String, interops: List<String>, hostname: String) =
             build {
