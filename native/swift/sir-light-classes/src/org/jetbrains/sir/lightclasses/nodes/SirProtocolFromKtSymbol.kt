@@ -140,7 +140,7 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val bridges: List<SirBridge> by lazyWithSessions {
         listOfNotNull(
             sirSession.generateTypeBridge(
-                ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
+                ktSymbol.classId?.asSingleFqName(),
                 swiftFqName = swiftFqName,
                 swiftSymbolName = objcClassSymbolName,
             ))

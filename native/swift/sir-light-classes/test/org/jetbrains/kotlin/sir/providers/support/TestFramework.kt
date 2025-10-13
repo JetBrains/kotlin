@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirBridgeProvider
 import org.jetbrains.kotlin.sir.providers.SirChildrenProvider
+import org.jetbrains.kotlin.sir.providers.SirCustomTypeTranslator
 import org.jetbrains.kotlin.sir.providers.SirDeclarationNamer
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
@@ -53,6 +54,7 @@ class TestSirSession(
         unsupportedTypeStrategy = SirTypeProvider.ErrorTypeStrategy.ErrorType,
         sirSession = sirSession,
     )
+    override val customTypeTranslator: SirCustomTypeTranslator = SirCustomTypeTranslatorImpl(sirSession)
     override val visibilityChecker: SirVisibilityChecker = SirVisibilityCheckerImpl(
         sirSession = sirSession,
         unsupportedDeclarationReporter = SilentUnsupportedDeclarationReporter,
