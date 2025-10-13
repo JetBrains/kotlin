@@ -5,6 +5,9 @@
 
 package kotlin.native.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
+@UsedFromCompilerGeneratedCode
 internal abstract class KSuspendFunctionImpl<out R>(description: KFunctionDescription): KFunctionImpl<R>(description) {
     override fun toString(): String {
         val nameStrict = description.checkCorrect().name

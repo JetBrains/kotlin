@@ -8,10 +8,12 @@
 package kotlin.native.internal
 
 import kotlinx.cinterop.*
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 @TypedIntrinsic(IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR)
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal external fun getNativeNullPtr(): NativePtr
 
 @ExperimentalForeignApi

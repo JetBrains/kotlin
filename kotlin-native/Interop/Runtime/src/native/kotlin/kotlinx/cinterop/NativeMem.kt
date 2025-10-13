@@ -5,6 +5,7 @@
 @file:OptIn(ExperimentalForeignApi::class)
 package kotlinx.cinterop
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.*
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.Intrinsic
@@ -21,6 +22,7 @@ internal external fun getPointerSize(): Int
 
 // TODO: do not use singleton because it leads to init-check on any access.
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal object nativeMemUtils {
     @TypedIntrinsic(IntrinsicType.INTEROP_READ_PRIMITIVE) external fun getByte(mem: NativePointed): Byte
     @TypedIntrinsic(IntrinsicType.INTEROP_WRITE_PRIMITIVE) external fun putByte(mem: NativePointed, value: Byte)

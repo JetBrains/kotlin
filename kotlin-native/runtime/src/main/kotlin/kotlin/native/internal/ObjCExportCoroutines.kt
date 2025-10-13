@@ -9,6 +9,7 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCppRuntime
@@ -43,22 +44,26 @@ private object EmptyCompletion : Continuation<Any?> {
 
 @PublishedApi
 @ExportForCppRuntime("Kotlin_ObjCExport_resumeContinuationSuccess") // Also makes it a data flow root.
+@UsedFromCompilerGeneratedCode
 internal fun resumeContinuation(continuation: Continuation<Any?>, value: Any?) {
     continuation.resume(value)
 }
 
 @PublishedApi
 @ExportForCppRuntime("Kotlin_ObjCExport_resumeContinuationFailure") // Also makes it a data flow root.
+@UsedFromCompilerGeneratedCode
 internal fun resumeContinuationWithException(continuation: Continuation<Any?>, exception: Throwable) {
     continuation.resumeWithException(exception)
 }
 
 @PublishedApi
 @ExportForCompiler // Mark as data flow root.
+@UsedFromCompilerGeneratedCode
 internal fun getCoroutineSuspended(): Any = COROUTINE_SUSPENDED
 
 @PublishedApi
 @ExportForCompiler // Mark as data flow root.
+@UsedFromCompilerGeneratedCode
 internal fun interceptedContinuation(continuation: Continuation<Any?>): Continuation<Any?> = continuation.intercepted()
 
 @FilterExceptions

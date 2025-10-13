@@ -6,6 +6,7 @@
 package kotlin.native.internal
 
 import kotlin.experimental.ExperimentalNativeApi
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
 /**
  * Makes this function to be possible to call by given name from C++ part of runtime using C ABI.
@@ -25,6 +26,7 @@ import kotlin.experimental.ExperimentalNativeApi
 )
 @Retention(AnnotationRetention.BINARY)
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal annotation class ExportForCppRuntime(val name: String = "")
 
 /**
@@ -61,6 +63,7 @@ internal annotation class ExportTypeInfo(val name: String)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
+@UsedFromCompilerGeneratedCode
 internal annotation class TypedIntrinsic(val kind: String)
 
 @Target(AnnotationTarget.CONSTRUCTOR)
@@ -84,7 +87,9 @@ internal annotation class Independent
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-@PublishedApi internal annotation class FilterExceptions(val mode: String = "terminate")
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+internal annotation class FilterExceptions(val mode: String = "terminate")
 
 /**
  * Marks a class whose instances to be added to the list of leak detector candidates.
@@ -167,4 +172,5 @@ public annotation class ExportedBridge(val bridgeName: String)
  */
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION)
 @Retention(value = AnnotationRetention.BINARY)
+@UsedFromCompilerGeneratedCode
 internal annotation class TransparentForDebugger

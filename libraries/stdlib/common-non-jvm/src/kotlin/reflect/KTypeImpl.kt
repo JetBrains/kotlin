@@ -5,6 +5,9 @@
 
 package kotlin.reflect
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
+@UsedFromCompilerGeneratedCode
 internal class KTypeImpl(
     override val classifier: KClassifier?,
     override val arguments: List<KTypeProjection>,

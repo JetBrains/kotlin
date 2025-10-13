@@ -8,9 +8,11 @@ package kotlin.native.internal
 
 import kotlin.reflect.KClass
 import kotlinx.cinterop.*
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCompiler
+@UsedFromCompilerGeneratedCode
 internal class KClassImpl<T : Any>(override val typeInfo: NativePtr) : KClass<T>, TypeInfoHolder {
 
     @ExportForCompiler
@@ -48,6 +50,7 @@ internal fun KClass<*>.findAssociatedObject(keyClass: KClass<*>): Any? {
 }
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal class KClassUnsupportedImpl(private val message: String) : KClass<Any> {
     override val simpleName: String? get() = error(message)
 
@@ -69,6 +72,7 @@ private external fun findAssociatedObjectImpl(typeInfo: NativePtr, key: NativePt
 @ExportForCompiler
 @GCUnsafeCall("Kotlin_Any_getTypeInfo")
 @Escapes.Nothing
+@UsedFromCompilerGeneratedCode
 internal external fun getObjectTypeInfo(obj: Any): NativePtr
 
 
@@ -78,6 +82,7 @@ internal external fun isInstance(obj: Any, typeInfo: NativePtr): Boolean
 
 @ExportForCompiler
 @TransparentForDebugger
+@UsedFromCompilerGeneratedCode
 internal fun <T : Any> checkNotNull(obj: T?): T {
     if (obj == null)
         throw NullPointerException()
@@ -86,6 +91,7 @@ internal fun <T : Any> checkNotNull(obj: T?): T {
 
 @ExportForCompiler
 @TransparentForDebugger
+@UsedFromCompilerGeneratedCode
 internal fun <T : Any> downcast(obj: T?, typeInfo: NativePtr, nullable: Boolean): T? {
     if (obj == null) {
         if (nullable) return obj
