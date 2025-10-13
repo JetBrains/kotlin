@@ -95,6 +95,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
     register(FirComposedDiagnosticRendererFactory::class, FirComposedDiagnosticRendererFactory())
     register(FirMustUseReturnValueStatusComponent::class, FirMustUseReturnValueStatusComponent.create(languageVersionSettings))
+    register(FirInlineCheckerPlatformSpecificComponent::class, FirInlineCheckerPlatformSpecificComponent.Default)
 }
 
 @OptIn(SessionConfiguration::class)
