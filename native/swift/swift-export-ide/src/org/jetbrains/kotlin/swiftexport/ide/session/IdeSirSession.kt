@@ -47,6 +47,7 @@ public class IdeSirSession(
         unsupportedTypeStrategy = SirTypeProvider.ErrorTypeStrategy.ErrorType,
         sirSession = sirSession,
     )
+    override val customTypeTranslator: SirCustomTypeTranslator = SirCustomTypeTranslatorImpl(sirSession)
     override val visibilityChecker: SirVisibilityChecker = SirVisibilityCheckerImpl(
         sirSession = sirSession,
         unsupportedDeclarationReporter = unsupportedDeclarationReporter,

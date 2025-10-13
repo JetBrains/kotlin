@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.providers.SirBridgeProvider
+import org.jetbrains.kotlin.sir.providers.SirCustomTypeTranslator
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -64,6 +65,7 @@ internal class StandaloneSirSession(
         errorTypeStrategy = errorTypeStrategy,
         unsupportedTypeStrategy = unsupportedTypeStrategy
     )
+    override val customTypeTranslator: SirCustomTypeTranslator = SirCustomTypeTranslatorImpl(sirSession)
     override val visibilityChecker = SirVisibilityCheckerImpl(
         sirSession,
         unsupportedDeclarationReporter = unsupportedDeclarationReporter,

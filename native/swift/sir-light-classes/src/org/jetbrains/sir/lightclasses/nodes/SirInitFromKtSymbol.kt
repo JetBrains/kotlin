@@ -141,14 +141,15 @@ internal class SirRegularInitFromKtSymbol(
             if (origin is InnerInitSource) {
                 bridgeInitProxy?.createSirBridge {
                     val args = this.argNames
-                    require(kotlinFqName.size >= 2) {
-                        "Expected >=2 kotlinFqName.size, but were ${kotlinFqName.size}: ${kotlinFqName.joinToString(",")}"
+                    val kotlinFqName = kotlinFqName ?: error("Expected qualified name, but were null instead")
+                    require(kotlinFqName.asString().indexOf('.') >= 2) {
+                        "Expected qualified name with a dot, but were ${kotlinFqName.asString()} instead"
                     }
                     require(args.size >= 2) {
                         "Expected >=2 inner constructor arguments, but were ${args.size}: ${args.joinToString(",")}"
                     }
-                    val outerClassName = kotlinFqName.dropLast(1).joinToString(".")
-                    val innerClassName = kotlinFqName.last()
+                    val outerClassName = kotlinFqName.parent()
+                    val innerClassName = kotlinFqName.shortName()
                     val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
                     val innerConstructorCall = "(${args.last()} as $outerClassName).$innerClassName($innerConstructorArgs)"
 
@@ -193,12 +194,11 @@ internal class SirRegularInitFromKtSymbol(
         if (!isBridged || bridgeInitProxy == null) return@lazyWithSessions null
 
         val fqName = ktSymbol.containingClassId?.asSingleFqName()
-            ?.pathSegments()?.map { it.toString() }
             ?: return@lazyWithSessions null
 
         val suffix = "_init" + "_allocate"
 
-        val baseName = fqName.forBridge.joinToString("_") + suffix
+        val baseName = fqName.baseBridgeName + suffix
 
         generateFunctionBridge(
             baseBridgeName = baseName,
@@ -216,12 +216,11 @@ internal class SirRegularInitFromKtSymbol(
         if (!isBridged) return@lazyWithSessions null
 
         val fqName = ktSymbol.containingClassId?.asSingleFqName()
-            ?.pathSegments()?.map { it.toString() }
             ?: return@lazyWithSessions null
 
         val suffix = "_init" + "_initialize"
 
-        val baseName = fqName.forBridge.joinToString("_") + suffix
+        val baseName = fqName.baseBridgeName + suffix
 
         generateFunctionBridge(
             baseBridgeName = baseName,

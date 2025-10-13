@@ -7,6 +7,7 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
@@ -123,17 +124,16 @@ internal abstract class SirAbstractGetter(
     override val isAsync: Boolean get() = false
     private val variable get() = parent as? SirVariable
 
-    open val fqName: List<String>? by lazyWithSessions {
+    open val fqName: FqName? by lazyWithSessions {
         variable?.kaSymbolOrNull<KaVariableSymbol>()
             ?.callableId?.asSingleFqName()
-            ?.pathSegments()?.map { it.toString() }
     }
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val suffix = "_get"
         val variable = variable ?: return@lazyWithSessions null
         val fqName = fqName ?: return@lazyWithSessions null
-        val baseName = fqName.forBridge.joinToString("_") + suffix
+        val baseName = fqName.baseBridgeName + suffix
 
         generateFunctionBridge(
             baseBridgeName = baseName,
@@ -191,17 +191,16 @@ internal abstract class SirAbstractSetter(
     override val isAsync: Boolean get() = false
     private val variable get() = parent as? SirVariable
 
-    open val fqName: List<String>? by lazyWithSessions {
+    open val fqName: FqName? by lazyWithSessions {
         variable?.kaSymbolOrNull<KaVariableSymbol>()
             ?.callableId?.asSingleFqName()
-            ?.pathSegments()?.map { it.toString() }
     }
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val suffix = "_set"
         val variable = variable ?: return@lazyWithSessions null
         val fqName = fqName ?: return@lazyWithSessions null
-        val baseName = fqName.forBridge.joinToString("_") + suffix
+        val baseName = fqName.baseBridgeName + suffix
 
         generateFunctionBridge(
             baseBridgeName = baseName,

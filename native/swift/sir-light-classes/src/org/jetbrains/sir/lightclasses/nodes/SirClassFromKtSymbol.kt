@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.components.expandedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -171,11 +172,13 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(sirSession.generateTypeBridge(
-            ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
-            swiftFqName = swiftFqName,
-            swiftSymbolName = objcClassSymbolName,
-        ))
+        listOfNotNull(
+            sirSession.generateTypeBridge(
+                ktSymbol.classId?.asSingleFqName(),
+                swiftFqName = swiftFqName,
+                swiftSymbolName = objcClassSymbolName,
+            )
+        )
     }
 }
 
@@ -219,10 +222,8 @@ internal class SirObjectAccessorVariableFromKtSymbol(
         override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
         override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
         override val isAsync: Boolean get() = false
-        override val fqName: List<String>? by lazyWithSessions {
-            ktSymbol
-                .classId?.asSingleFqName()
-                ?.pathSegments()?.map { it.toString() }
+        override val fqName: FqName? by lazyWithSessions {
+            ktSymbol.classId?.asSingleFqName()
                 ?: return@lazyWithSessions null
         }
     }
