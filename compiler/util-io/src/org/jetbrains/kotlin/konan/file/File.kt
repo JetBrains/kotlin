@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.konan.file
 
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.BufferedReader
+import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.OutputStream
+import java.io.PrintWriter
 import java.io.RandomAccessFile
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 
-data class File constructor(internal val javaPath: Path) {
+data class File(internal val javaPath: Path) {
     constructor(parent: Path, child: String): this(parent.resolve(child))
     constructor(parent: File, child: String): this(parent.javaPath.resolve(child))
     constructor(parent: File, child: File): this(parent.javaPath.resolve(child.javaPath))
@@ -45,13 +48,13 @@ data class File constructor(internal val javaPath: Path) {
     val parentFile: File
         get() = File(javaPath.parent)
 
-    val exists
+    val exists: Boolean
         get() = Files.exists(javaPath)
-    val isDirectory
+    val isDirectory: Boolean
         get() = Files.isDirectory(javaPath)
-    val isFile
+    val isFile: Boolean
         get() = Files.isRegularFile(javaPath)
-    val isAbsolute
+    val isAbsolute: Boolean
         get() = javaPath.isAbsolute
     val listFiles: List<File>
         get() = Files.newDirectoryStream(javaPath).use { stream -> stream.map(::File) }
@@ -72,31 +75,31 @@ data class File constructor(internal val javaPath: Path) {
 
     val size: Long get() = Files.size(javaPath)
 
-    fun child(name: String) = File(this, name)
-    fun startsWith(another: File) = javaPath.startsWith(another.javaPath)
+    fun child(name: String): File = File(this, name)
+    fun startsWith(another: File): Boolean = javaPath.startsWith(another.javaPath)
 
     fun copyTo(destination: File) {
         Files.copy(javaPath, destination.javaPath, StandardCopyOption.REPLACE_EXISTING)
     }
 
-    fun renameTo(destination: File) = javaPath.toFile().renameTo(destination.javaPath.toFile())
+    fun renameTo(destination: File): Boolean = javaPath.toFile().renameTo(destination.javaPath.toFile())
 
-    fun mkdirs() = Files.createDirectories(javaPath)
-    fun delete() = Files.deleteIfExists(javaPath)
-    fun deleteRecursively() = postorder{Files.delete(it)}
-    fun deleteOnExitRecursively() = preorder{File(it).deleteOnExit()}
+    fun mkdirs(): Path = Files.createDirectories(javaPath)
+    fun delete(): Boolean = Files.deleteIfExists(javaPath)
+    fun deleteRecursively(): Unit = postorder{Files.delete(it)}
+    fun deleteOnExitRecursively(): Unit = preorder{File(it).deleteOnExit()}
 
     fun preorder(task: (Path) -> Unit) {
         if (!this.exists) return
 
         Files.walkFileTree(javaPath, object: SimpleFileVisitor<Path>() {
-            override fun visitFile(file: Path?, attrs: BasicFileAttributes?): FileVisitResult {
-                task(file!!)
+            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                task(file)
                 return FileVisitResult.CONTINUE
             }
 
-            override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult {
-                task(dir!!)
+            override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
+                task(dir)
                 return FileVisitResult.CONTINUE
             }
         })
@@ -107,13 +110,13 @@ data class File constructor(internal val javaPath: Path) {
         if (!this.exists) return
 
         Files.walkFileTree(javaPath, object: SimpleFileVisitor<Path>() {
-            override fun visitFile(file: Path?, attrs: BasicFileAttributes?): FileVisitResult {
-                task(file!!)
+            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                task(file)
                 return FileVisitResult.CONTINUE
             }
 
-            override fun postVisitDirectory(dir: Path?, exc: java.io.IOException?): FileVisitResult {
-                task(dir!!)
+            override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
+                task(dir)
                 return FileVisitResult.CONTINUE
             }
         })
@@ -135,12 +138,12 @@ data class File constructor(internal val javaPath: Path) {
         javaPath.toFile().deleteOnExit()
         return this // Allow streaming.
     }
-    fun createNew() = javaPath.toFile().createNewFile()
+    fun createNew(): Boolean = javaPath.toFile().createNewFile()
 
-    fun readBytes() = Files.readAllBytes(javaPath)
-    fun writeBytes(bytes: ByteArray) = Files.write(javaPath, bytes)
-    fun appendBytes(bytes: ByteArray)
-            = Files.write(javaPath, bytes, StandardOpenOption.APPEND)
+    fun readBytes(): ByteArray = Files.readAllBytes(javaPath)
+    fun writeBytes(bytes: ByteArray): Path = Files.write(javaPath, bytes)
+    fun appendBytes(bytes: ByteArray): Path
+        = Files.write(javaPath, bytes, StandardOpenOption.APPEND)
 
     fun writeLines(lines: Iterable<String>) {
         Files.write(javaPath, lines)
@@ -168,46 +171,46 @@ data class File constructor(internal val javaPath: Path) {
         Files.createSymbolicLink(this.javaPath, targetPath)
     }
 
-    override fun toString() = path
+    override fun toString(): String = path
 
     // TODO: Consider removeing these after konanazing java.util.Properties.
-    fun bufferedReader() = Files.newBufferedReader(javaPath)
-    fun outputStream() = Files.newOutputStream(javaPath)
-    fun printWriter() = javaPath.toFile().printWriter()
+    fun bufferedReader(): BufferedReader = Files.newBufferedReader(javaPath)
+    fun outputStream(): OutputStream = Files.newOutputStream(javaPath)
+    fun printWriter(): PrintWriter = javaPath.toFile().printWriter()
 
     companion object {
-        val userDir
+        val userDir: File
             get() = File(System.getProperty("user.dir"))
 
-        val userHome
+        val userHome: File
             get() = File(System.getProperty("user.home"))
 
-        val javaHome
+        val javaHome: File
             get() = File(System.getProperty("java.home"))
-        val pathSeparator = java.io.File.pathSeparator
-        val separator = java.io.File.separator
-        val separatorChar = java.io.File.separatorChar
+        val pathSeparator: String = java.io.File.pathSeparator
+        val separator: String = java.io.File.separator
+        val separatorChar: Char = java.io.File.separatorChar
     }
 
-    fun readStrings() = mutableListOf<String>().also { list -> forEachLine{list.add(it)}}
+    fun readStrings(): MutableList<String> = mutableListOf<String>().also { list -> forEachLine{list.add(it)}}
 
     override fun equals(other: Any?): Boolean {
         val otherFile = other as? File ?: return false
         return otherFile.javaPath.toAbsolutePath() == javaPath.toAbsolutePath()
     }
 
-    override fun hashCode() = javaPath.toAbsolutePath().hashCode()
+    override fun hashCode(): Int = javaPath.toAbsolutePath().hashCode()
 }
 
 fun String.File(): File = File(this)
 fun Path.File(): File = File(this)
 
-fun createTempFile(name: String, suffix: String? = null)
+fun createTempFile(name: String, suffix: String? = null): File
         = Files.createTempFile(name, suffix).File()
 fun createTempDir(name: String): File
         = Files.createTempDirectory(name).File()
 
-fun bufferedReader(errorStream: InputStream?) = BufferedReader(InputStreamReader(errorStream))
+fun bufferedReader(errorStream: InputStream): BufferedReader = BufferedReader(InputStreamReader(errorStream))
 
 // stdlib `use` function adapted for AutoCloseable.
 inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
