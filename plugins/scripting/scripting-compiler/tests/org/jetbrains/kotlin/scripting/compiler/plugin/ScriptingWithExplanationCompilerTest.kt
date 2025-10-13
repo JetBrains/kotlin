@@ -93,6 +93,16 @@ class ScriptingWithExplanationCompilerTest {
             )
         )
     }
+
+    @Test
+    fun testScriptExplainShouldCoverNonLastExpressions() {
+        explainAndCheck(
+            "${TEST_DATA_DIR}/compiler/explain/explainWithNonLastExpr.kts",
+            expectedExplanations = listOf(
+                "a(8, 9) = 7", "(11, 16) = 42", "\$\$result(18, 24) = 6"
+            )
+        )
+    }
 }
 
 private fun explainAndCheck(scriptPath: String, expectedExplanations: List<String>, expectedExitCode: ExitCode = ExitCode.OK, expectedOut: List<String>? = null) {
