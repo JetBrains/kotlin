@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import javax.inject.Inject
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
@@ -29,7 +28,7 @@ const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 abstract class DefaultKotlinSourceSet @Inject constructor(
     final override val project: Project,
     val displayName: String,
-) : AbstractKotlinSourceSet() {
+) : AbstractKotlinSourceSet () {
 
     override val extras: MutableExtras = mutableExtrasOf()
 
@@ -116,7 +115,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
             destinationDirectory.convention(kotlin.destinationDirectory)
         }
 
-    override val allKotlin = project.objects.kotlinSourceDirectorySet(name, "allKotlin", "all sources")
+    internal val allKotlin = project.objects.kotlinSourceDirectorySet(name, "allKotlin", "all sources")
         .apply {
             source(kotlin)
             source(generatedKotlin)
@@ -157,3 +156,8 @@ val Iterable<KotlinSourceSet>.withDependsOnClosure: Set<KotlinSourceSet>
 fun KotlinMultiplatformExtension.findSourceSetsDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
     return sourceSet.closure { seedSourceSet -> sourceSets.filter { otherSourceSet -> seedSourceSet in otherSourceSet.dependsOn } }
 }
+
+internal val KotlinSourceSet.defaultImpl: DefaultKotlinSourceSet
+    get() = (this as? DefaultKotlinSourceSet) ?: throw IllegalArgumentException(
+        "KotlinSourceSet $name (${this::class}) does not implement ${DefaultKotlinSourceSet::class.simpleName}"
+    )
