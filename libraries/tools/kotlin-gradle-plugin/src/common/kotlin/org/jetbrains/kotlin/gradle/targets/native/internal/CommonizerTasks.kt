@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -31,9 +33,9 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleAr
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import java.io.File
 import javax.inject.Inject
 
@@ -84,33 +86,54 @@ internal val Project.runCommonizerTask: TaskProvider<Task>
     )
 
 private const val commonizeCInteropTaskName = "commonizeCInterop"
+
 internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommonizerTask>? {
-    if (cInteropCommonizationEnabled()) {
-        val nativeDownloadTask = getOrRegisterDownloadKotlinNativeDistributionTask()
+    KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
 
-        return locateOrRegisterTask(
-            commonizeCInteropTaskName,
-            invokeWhenRegistered = {
-                val task = this
-                commonizeTask.dependsOn(this)
-                whenEvaluated {
-                    commonizeNativeDistributionTask?.let(task::dependsOn)
-                }
-            },
-            configureTask = {
-                group = "interop"
-                description = "Invokes the commonizer on c-interop bindings of the project"
-
-                commonizerClasspath.from(project.maybeCreateCommonizerClasspathConfiguration())
-                customJvmArgs.set(PropertiesProvider(project).commonizerJvmArgs)
-                kotlinCompilerArgumentsLogLevel
-                    .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
-                    .finalizeValueOnRead()
-                dependsOn(nativeDownloadTask)
-            }
-        )
+    if (!isCommonizeCInteropTaskRegistrationEnabled()) {
+        return null
     }
-    return null
+
+    val nativeDownloadTask = getOrRegisterDownloadKotlinNativeDistributionTask()
+
+    return locateOrRegisterTask(
+        commonizeCInteropTaskName,
+        invokeWhenRegistered = {
+            val task = this
+            commonizeTask.dependsOn(this)
+            whenEvaluated {
+                commonizeNativeDistributionTask?.let(task::dependsOn)
+            }
+        },
+        configureTask = {
+            group = "interop"
+            description = "Invokes the commonizer on c-interop bindings of the project"
+
+            commonizerClasspath.from(project.maybeCreateCommonizerClasspathConfiguration())
+            customJvmArgs.set(PropertiesProvider(project).commonizerJvmArgs)
+            kotlinCompilerArgumentsLogLevel
+                .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
+                .finalizeValueOnRead()
+
+            dependsOn(nativeDownloadTask)
+        }
+    )
+}
+
+private suspend fun Project.isCommonizeCInteropTaskRegistrationEnabled(): Boolean {
+    if (!cInteropCommonizationEnabled()) {
+        logger.info("[${project.path}] $commonizeCInteropTaskName task registration disabled. cInteropCommonizationEnabled == false")
+        return false
+    }
+
+    val projectHasNativeTargets = multiplatformExtensionOrNull?.targets.orEmpty().any { it.platformType == KotlinPlatformType.native }
+    if (!projectHasNativeTargets) {
+        logger.info("[${project.path}] $commonizeCInteropTaskName task registration disabled. Project has no native Kotlin targets.")
+        return false
+    }
+
+    logger.info("[${project.path}] $commonizeCInteropTaskName task registration enabled.")
+    return true
 }
 
 internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<CopyCommonizeCInteropForIdeTask>? {
