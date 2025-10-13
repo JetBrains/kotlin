@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.ir.MetadataSourceWithKtSourceElement
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-sealed class FirMetadataSource : MetadataSource {
+sealed class FirMetadataSource : MetadataSourceWithKtSourceElement {
     abstract val fir: FirDeclaration
     override val source: KtSourceElement?
         get() = fir.source

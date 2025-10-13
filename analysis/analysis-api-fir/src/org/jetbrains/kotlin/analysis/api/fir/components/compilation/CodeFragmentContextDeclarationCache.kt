@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.ir.source
 
 /**
  * A cache for data to be passed between from the context file to the [KtCodeFragment].

@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 
 interface MetadataSource {
     val name: Name?
-    val source: KtSourceElement? get() = null
 
     interface File : MetadataSource {
         var serializedIr: ByteArray?
