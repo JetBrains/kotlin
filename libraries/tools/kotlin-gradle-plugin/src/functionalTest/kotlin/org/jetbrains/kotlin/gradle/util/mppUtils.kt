@@ -1,7 +1,9 @@
 package org.jetbrains.kotlin.gradle.util
 
+import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinMetadataCompilations
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
@@ -25,4 +27,11 @@ internal fun ProjectInternal.mockGenerateProjectStructureMetadataTaskOutputs() {
             .sourceSetMetadataOutputsFile.get().asFile.also { it.parentFile.mkdirs() }
             .writeText(JsonUtils.gson.toJson(sourceSetOutputs))
     }
+}
+
+internal const val STABLE_NATIVE_VERSION = "2.2.20"
+
+internal fun Project.setUpKotlinNativeToolchainWithStableVersion() {
+    project.extraProperties.set("kotlin.native.version", STABLE_NATIVE_VERSION)
+    project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", true)
 }
