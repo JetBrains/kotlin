@@ -106,8 +106,6 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
 
     abstract val stringBuilder: IrClassSymbol
 
-    abstract val coroutineImpl: IrClassSymbol
-
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
 
     abstract val getContinuation: IrSimpleFunctionSymbol

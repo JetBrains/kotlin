@@ -3,13 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.lower
+package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
+import org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLowering
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
@@ -42,8 +43,8 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import kotlin.collections.plus
 
-abstract class WebCallableReferenceLowering(context: CommonBackendContext) :
-    AbstractFunctionReferenceLowering<CommonBackendContext>(context) {
+abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
+    AbstractFunctionReferenceLowering<JsCommonBackendContext>(context) {
 
     protected val IrRichFunctionReference.isLambda: Boolean
         get() = origin.isLambda

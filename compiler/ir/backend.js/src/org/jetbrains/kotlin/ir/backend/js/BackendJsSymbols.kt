@@ -35,7 +35,7 @@ abstract class BackendWebSymbols(
     abstract val throwISE: IrSimpleFunctionSymbol
     abstract val throwIAE: IrSimpleFunctionSymbol
 
-    override val coroutineImpl: IrClassSymbol = ClassIds.coroutineImpl.classSymbol()
+    val coroutineImpl: IrClassSymbol = ClassIds.coroutineImpl.classSymbol()
     override val continuationClass = ClassIds.continuation.classSymbol()
     override val coroutineSuspendedGetter by CallableIds.coroutineSuspended.getterSymbol()
 
