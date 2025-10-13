@@ -10,7 +10,7 @@ package javapackage;
 // FILE: javapackage/KotlinParentClass.kt
 package javapackage
 
-internal open class KotlinParentClass : <!EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING!>PackagePrivateGrandparentAbstractClass<!>()
+internal open class KotlinParentClass : PackagePrivateGrandparentAbstractClass()
 
 // FILE: Child.kt
 import javapackage.KotlinParentClass

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -ForbidExposingPackagePrivateInInternal
+// LANGUAGE: +ForbidExposingPackagePrivateInInternal
 // FILE: Foo.java
 class Foo {}
 
