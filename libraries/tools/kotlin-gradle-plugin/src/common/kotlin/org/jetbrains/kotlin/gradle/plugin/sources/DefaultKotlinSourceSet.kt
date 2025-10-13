@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import javax.inject.Inject
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
@@ -145,7 +146,7 @@ private fun ObjectFactory.kotlinSourceDirectorySet(
     name: String,
     type: String,
     typeDescription: String,
-): SourceDirectorySet = sourceDirectorySet(type, "$name Kotlin $typeDescription")
+): SourceDirectorySet = sourceDirectorySet("$name $type", "$name Kotlin $typeDescription")
 
 val Iterable<KotlinSourceSet>.dependsOnClosure: Set<KotlinSourceSet>
     get() = flatMap { it.internal.dependsOnClosure }.toSet() - this.toSet()
