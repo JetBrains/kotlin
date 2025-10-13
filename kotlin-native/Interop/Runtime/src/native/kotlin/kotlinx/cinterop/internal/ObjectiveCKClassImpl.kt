@@ -8,8 +8,10 @@ package kotlinx.cinterop.internal
 import kotlin.native.internal.*
 import kotlin.reflect.KClass
 import kotlinx.cinterop.*
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @ExportForCompiler
+@UsedFromCompilerGeneratedCode
 internal class ObjectiveCKClassImpl<T : Any>(private val objcClassPtr: kotlin.native.internal.NativePtr) : KClass<T>, TypeInfoHolder {
     @ExportForCompiler
     @ConstantConstructorIntrinsic("OBJC_KCLASS_IMPL")

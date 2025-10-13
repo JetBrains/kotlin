@@ -5,6 +5,7 @@
 
 package kotlin.io
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
 
@@ -23,6 +24,7 @@ public actual fun print(message: Any?) {
 @GCUnsafeCall("Kotlin_io_Console_println")
 @PublishedApi
 @Escapes.Nothing
+@UsedFromCompilerGeneratedCode
 internal external fun println(message: String)
 
 /** Prints the given [message] and the line separator to the standard error output stream. */

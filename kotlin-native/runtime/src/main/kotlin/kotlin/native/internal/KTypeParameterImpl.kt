@@ -5,8 +5,10 @@
 
 package kotlin.native.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.*
 
+@UsedFromCompilerGeneratedCode
 internal class KTypeParameterImpl(
         override val name: String,
         override val containerFqName: String,

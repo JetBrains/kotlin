@@ -8,6 +8,7 @@
 
 package kotlinx.cinterop
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.*
 import kotlin.native.internal.*
 import kotlin.native.internal.InternalForKotlinNative
@@ -25,6 +26,7 @@ public typealias ObjCObjectMeta = ObjCClass
 public interface ObjCProtocol : ObjCObject
 
 @ExportTypeInfo("theForeignObjCObjectTypeInfo")
+@UsedFromCompilerGeneratedCode
 internal open class ForeignObjCObject : kotlin.native.internal.ObjCObjectWrapper
 
 @BetaInteropApi
@@ -50,6 +52,7 @@ public external fun <T : ObjCObjectBase> T.initBy(constructorCall: T): T
 @BetaInteropApi
 @PublishedApi
 @kotlin.native.internal.ExportForCompiler
+@UsedFromCompilerGeneratedCode
 internal fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
     if (superInitCallResult == null)
         throw RuntimeException("Super initialization failed")
@@ -85,6 +88,7 @@ public inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: Any?): T {
 
 @PublishedApi
 @GCUnsafeCall("Kotlin_Interop_unwrapKotlinObjectHolder")
+@UsedFromCompilerGeneratedCode
 external internal fun unwrapKotlinObjectHolderImpl(ptr: NativePtr): Any
 
 @ExperimentalForeignApi
@@ -113,6 +117,7 @@ public typealias ObjCBlockVar<T> = ObjCNotImplementedVar<T>
 
 @TypedIntrinsic(IntrinsicType.OBJC_CREATE_SUPER_STRUCT)
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal external fun createObjCSuperStruct(receiver: NativePtr, superClass: NativePtr): NativePtr
 
 @Target(AnnotationTarget.CLASS)
@@ -148,6 +153,7 @@ public annotation class InteropStubs()
 @PublishedApi
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
+@UsedFromCompilerGeneratedCode
 internal annotation class ObjCMethodImp(val selector: String, val encoding: String)
 
 @PublishedApi
@@ -156,6 +162,7 @@ internal external fun objCGetSelector(selector: String): COpaquePointer
 
 @PublishedApi
 @kotlin.native.internal.ExportForCompiler
+@UsedFromCompilerGeneratedCode
 internal fun allocObjCObject(clazz: NativePtr): NativePtr {
     val rawResult = objc_allocWithZone(clazz)
     if (rawResult == nativeNullPtr) {
@@ -170,14 +177,17 @@ internal fun allocObjCObject(clazz: NativePtr): NativePtr {
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.OBJC_GET_OBJC_CLASS)
 @kotlin.native.internal.ExportForCompiler
+@UsedFromCompilerGeneratedCode
 internal external fun <T : ObjCObject> getObjCClass(): NativePtr
 
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.OBJC_GET_MESSENGER)
+@UsedFromCompilerGeneratedCode
 internal external fun getMessenger(superClass: NativePtr): COpaquePointer?
 
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.OBJC_GET_MESSENGER_STRET)
+@UsedFromCompilerGeneratedCode
 internal external fun getMessengerStret(superClass: NativePtr): COpaquePointer?
 
 
@@ -199,6 +209,7 @@ private external fun ObjCWeakReferenceImpl.init(objcPtr: NativePtr)
 
 @PublishedApi
 @GCUnsafeCall("Kotlin_Interop_CreateObjCObjectHolder")
+@UsedFromCompilerGeneratedCode
 internal external fun createObjCObjectHolder(ptr: NativePtr): Any?
 
 // Objective-C runtime:
@@ -229,4 +240,5 @@ public external fun objc_release(ptr: NativePtr)
 
 @PublishedApi
 @GCUnsafeCall("Kotlin_Block_copy")
+@UsedFromCompilerGeneratedCode
 internal external fun Block_copy(ptr: NativePtr): NativePtr

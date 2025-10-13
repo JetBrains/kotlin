@@ -8,8 +8,10 @@ package kotlin.coroutines.native.internal
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.CoroutineSingletons
 import kotlin.coroutines.intrinsics.*
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @SinceKotlin("1.3")
+@UsedFromCompilerGeneratedCode
 internal abstract class BaseContinuationImpl(
     // This is `public val` so that it is private on JVM and cannot be modified by untrusted code, yet
     // it has a public getter (since even untrusted code is allowed to inspect its call stack).
@@ -69,6 +71,7 @@ internal abstract class BaseContinuationImpl(
 
 @SinceKotlin("1.3")
 // State machines for named restricted suspend functions extend from this class
+@UsedFromCompilerGeneratedCode
 internal abstract class RestrictedContinuationImpl(
     completion: Continuation<Any?>?
 ) : BaseContinuationImpl(completion) {
@@ -85,6 +88,7 @@ internal abstract class RestrictedContinuationImpl(
 }
 
 @SinceKotlin("1.3")
+@UsedFromCompilerGeneratedCode
 // State machines for named suspend functions extend from this class
 internal abstract class ContinuationImpl(
     completion: Continuation<Any?>?,
