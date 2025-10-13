@@ -229,4 +229,53 @@ class CommonizerTaskTests {
             project.copyCommonizeCInteropForIdeTask()?.get()?.cInteropCommonizerTaskOutputDirectories
         }
     }
+
+    @Test
+    fun `test multi-module project - when commonization is enabled - expect commonizeCInterop task only registered in subprojects with native targets`() {
+        val project = ProjectBuilder.builder()
+            .withName("root")
+            .build()
+
+        with(project) {
+            enableCInteropCommonization()
+            (this as ProjectInternal).evaluate()
+        }
+
+        val subprojectWithNativeTarget = ProjectBuilder
+            .builder()
+            .withName("subprojectWithNativeTarget")
+            .withParent(project)
+            .build()
+        with(subprojectWithNativeTarget) {
+            applyMultiplatformPlugin()
+            kotlin {
+                jvm()
+                js()
+                linuxX64()
+            }
+            enableCInteropCommonization()
+            (this as ProjectInternal).evaluate()
+        }
+
+        val subprojectWithoutNativeTarget = ProjectBuilder.builder()
+            .withName("subprojectWithoutNativeTarget")
+            .withParent(project)
+            .build()
+        with(subprojectWithoutNativeTarget) {
+            applyMultiplatformPlugin()
+            kotlin {
+                jvm()
+                js()
+            }
+            enableCInteropCommonization()
+            (this as ProjectInternal).evaluate()
+        }
+
+        subprojectWithNativeTarget.runLifecycleAwareTest {
+            assertContainsTaskWithName("commonizeCInterop")
+        }
+        subprojectWithoutNativeTarget.runLifecycleAwareTest {
+            assertContainsNoTaskWithName("commonizeCInterop")
+        }
+    }
 }
