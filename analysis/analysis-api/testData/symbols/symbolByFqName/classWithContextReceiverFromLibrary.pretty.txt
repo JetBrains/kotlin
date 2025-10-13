@@ -1,2 +1,0 @@
-context(`<unused var>`@kotlin.Int, `<unused var>`@kotlin.String)
-class Foo
