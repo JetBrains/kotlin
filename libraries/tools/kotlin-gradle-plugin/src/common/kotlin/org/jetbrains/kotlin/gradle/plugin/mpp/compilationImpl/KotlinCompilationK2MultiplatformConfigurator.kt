@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
@@ -92,7 +93,7 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                 compilation.allKotlinSourceSets
                     .groupBy { it.fragmentName() }
                     .map { (fragmentName, sourceSets) ->
-                        val sourceFiles = sourceSets.map { it.internal.allKotlin.asFileTree }
+                        val sourceFiles = sourceSets.map { it.defaultImpl.allKotlin.asFileTree }
                             .reduce { acc, fileTree -> acc + fileTree }
                         K2MultiplatformStructure.Fragment(
                             fragmentName,
