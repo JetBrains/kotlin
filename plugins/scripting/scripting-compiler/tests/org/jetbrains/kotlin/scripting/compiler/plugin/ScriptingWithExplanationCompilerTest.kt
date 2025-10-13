@@ -118,6 +118,33 @@ class ScriptingWithExplanationCompilerTest {
             expectedOut = listOf("43", "43")
         )
     }
+
+    @Test
+    fun testScriptExplainShouldSkipBodyOfTheDeadNonExhaustiveIf() {
+        explainAndCheck(
+            "${TEST_DATA_DIR}/compiler/explain/explainWithDeadNonExhaustiveIf.kts",
+            // Unexpected results - then body should be skipped in the explanation and in the output
+            expectedExplanations = listOf(
+                "(18, 20) = 42",
+                "(25, 38) = kotlin.Unit",
+                "(12, 40) = kotlin.Unit",
+                "\$\$result(42, 44) = 43"
+            ),
+            expectedOut = listOf("43", "43")
+        )
+    }
+
+    @Test
+    fun testScriptExplainShouldSkipBodyOfTheDeadNonExhaustiveIf2() {
+        // Unexpected results - second then body should be skipped in the explanation and in the output
+        explainAndCheck(
+            "${TEST_DATA_DIR}/compiler/explain/explainWithDeadNonExhaustiveIf2.kts",
+            expectedExplanations = listOf(
+                "(63, 65) = 44", "(70, 83) = kotlin.Unit", "(57, 85) = kotlin.Unit", "\$\$result(87, 89) = 46"
+            ),
+            expectedOut = listOf("45", "46")
+        )
+    }
 }
 
 private fun explainAndCheck(scriptPath: String, expectedExplanations: List<String>, expectedExitCode: ExitCode = ExitCode.OK, expectedOut: List<String>? = null) {
