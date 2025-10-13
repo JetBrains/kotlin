@@ -366,18 +366,6 @@ public class SourceLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
     }
 
     @Test
-    @TestMetadata("contextReceiverAsImplicitReturnType.kt")
-    public void testContextReceiverAsImplicitReturnType() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/contextReceiverAsImplicitReturnType.kt");
-    }
-
-    @Test
-    @TestMetadata("contextReceiverAsImplicitReturnTypePropagation.kt")
-    public void testContextReceiverAsImplicitReturnTypePropagation() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/contextReceiverAsImplicitReturnTypePropagation.kt");
-    }
-
-    @Test
     @TestMetadata("copyTypeCollisionAndAnnotations.kt")
     public void testCopyTypeCollisionAndAnnotations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/copyTypeCollisionAndAnnotations.kt");

@@ -1,6 +1,0 @@
-Captured values:
-ContainingClass[name: <this>; isMutated: false; displayText: this@Test]
-    context(R|Ctx1|)
-    class Test : R|kotlin/Any|
-    R|Test|
-No captured files

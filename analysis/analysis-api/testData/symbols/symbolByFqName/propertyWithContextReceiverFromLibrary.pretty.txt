@@ -1,3 +1,0 @@
-context(Int@kotlin.Int, String@kotlin.String)
-val foo: kotlin.Boolean
-  get()

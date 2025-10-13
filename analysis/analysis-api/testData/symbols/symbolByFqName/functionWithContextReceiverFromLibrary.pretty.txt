@@ -1,2 +1,0 @@
-context(Int@kotlin.Int, String@kotlin.String)
-fun foo()

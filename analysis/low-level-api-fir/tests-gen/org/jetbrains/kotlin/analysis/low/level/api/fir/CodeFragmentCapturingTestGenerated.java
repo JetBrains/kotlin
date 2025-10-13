@@ -36,18 +36,6 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   }
 
   @Test
-  @TestMetadata("contextReceiver.kt")
-  public void testContextReceiver() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/contextReceiver.kt");
-  }
-
-  @Test
-  @TestMetadata("contextReceiverExplicit.kt")
-  public void testContextReceiverExplicit() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/contextReceiverExplicit.kt");
-  }
-
-  @Test
   @TestMetadata("extensionReceiver.kt")
   public void testExtensionReceiver() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiver.kt");
@@ -252,18 +240,6 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   }
 
   @Test
-  @TestMetadata("multipleClassAndFunctionContextReceivers.kt")
-  public void testMultipleClassAndFunctionContextReceivers() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleClassAndFunctionContextReceivers.kt");
-  }
-
-  @Test
-  @TestMetadata("multipleClassContextReceivers.kt")
-  public void testMultipleClassContextReceivers() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleClassContextReceivers.kt");
-  }
-
-  @Test
   @TestMetadata("multipleFunctionContextParameters.kt")
   public void testMultipleFunctionContextParameters() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleFunctionContextParameters.kt");
@@ -321,18 +297,6 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   @TestMetadata("propertyReference.kt")
   public void testPropertyReference() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/propertyReference.kt");
-  }
-
-  @Test
-  @TestMetadata("secondClassContextReceiver.kt")
-  public void testSecondClassContextReceiver() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/secondClassContextReceiver.kt");
-  }
-
-  @Test
-  @TestMetadata("singleClassContextReceiver.kt")
-  public void testSingleClassContextReceiver() {
-    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/singleClassContextReceiver.kt");
   }
 
   @Test

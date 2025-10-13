@@ -1,5 +1,0 @@
-public final class CodeFragment {
-    // source: 'fragment.kt'
-    public method <init>(): void
-    public final static method run(p0: Test): int
-}

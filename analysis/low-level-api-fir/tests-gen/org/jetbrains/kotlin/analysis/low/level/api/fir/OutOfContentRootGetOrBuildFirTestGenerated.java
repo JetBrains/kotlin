@@ -576,18 +576,6 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
-    @TestMetadata("contextReceiverSubstitutionFunction.kt")
-    public void testContextReceiverSubstitutionFunction() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/contextReceiverSubstitutionFunction.kt");
-    }
-
-    @Test
-    @TestMetadata("contextReceiverSubstitutionProperty.kt")
-    public void testContextReceiverSubstitutionProperty() {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/contextReceiverSubstitutionProperty.kt");
-    }
-
-    @Test
     @TestMetadata("functionCallArgumentList.kt")
     public void testFunctionCallArgumentList() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/functionCallArgumentList.kt");
