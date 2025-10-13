@@ -5,6 +5,9 @@ plugins {
 
 dependencies {
     api(project(":compiler:ir.tree"))
+    api(project(":compiler:frontend.common"))
+
+    compileOnly(intellijCore())
 }
 
 optInToUnsafeDuringIrConstructionAPI()

@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":compiler:util"))
     api(project(":compiler:ir.tree"))
     api(project(":core:compiler.common"))
+    api(project(":compiler:ir.semantics"))
     implementation(project(":compiler:resolution.common"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:frontend.common-psi"))

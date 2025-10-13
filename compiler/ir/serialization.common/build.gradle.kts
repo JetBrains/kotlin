@@ -10,6 +10,7 @@ dependencies {
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-klib-metadata"))
     api(project(":compiler:util"))
+    api(project(":compiler:ir.semantics"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:frontend.common-psi"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
