@@ -3,11 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalTime::class, ExperimentalForeignApi::class, ExperimentalNativeApi::class)
+@file:OptIn(ExperimentalTime::class, ExperimentalForeignApi::class, ExperimentalNativeApi::class, BetaInteropApi::class)
 
 package kotlin.native.concurrent
 
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.autoreleasepool
 import kotlin.concurrent.Volatile
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.InternalForKotlinNative
@@ -18,7 +20,6 @@ import kotlin.native.internal.concurrent.Monitor
 import kotlin.native.internal.concurrent.Synchronizable
 import kotlin.native.internal.concurrent.currentThreadId
 import kotlin.native.internal.concurrent.startThread
-import kotlin.native.internal.runUnhandledExceptionHook
 import kotlin.native.ref.WeakReference
 import kotlin.native.ref.createCleaner
 import kotlin.time.Duration
@@ -31,6 +32,15 @@ import kotlin.time.TimeSource
 @ObsoleteWorkersApi
 @ThreadLocal
 private var thisThreadWorker: WorkerImpl? = null
+
+@ObsoleteWorkersApi
+private fun thisThreadWorkerEnsureInitialized(): WorkerImpl {
+    return thisThreadWorker ?: run {
+        val worker = theState.addWorker(WorkerExceptionHandling.DEFAULT, null, WorkerKind.OTHER)
+        thisThreadWorker = worker
+        worker
+    }
+}
 
 @ObsoleteWorkersApi
 private fun MutableList<Job>.cancelAll() {
@@ -82,6 +92,7 @@ private class WorkerImpl(
     fun startEventLoop() {
         startThread {
             threadId = currentThreadId()
+            require(thisThreadWorker == null)
             thisThreadWorker = this
 
             while (processQueueElement(true) != JobKind.TERMINATE) {
@@ -178,17 +189,21 @@ private class WorkerImpl(
             }
             is Job.ExecuteAfter -> {
                 try {
-                    job.operation()
+                    autoreleasepool {
+                        job.operation()
+                    }
                 } catch (e: Throwable) {
                     if (exceptionHandling == WorkerExceptionHandling.DEFAULT) {
-                        runUnhandledExceptionHook(e)
+                        processUnhandledException(e)
                     }
                 }
             }
             is Job.Regular -> {
                 var ok = true
                 val result = try {
-                    job.job(job.argument)
+                    autoreleasepool {
+                        job.job(job.argument)
+                    }
                 } catch (e: Throwable) {
                     ok = false
                     if (exceptionHandling == WorkerExceptionHandling.DEFAULT) {
@@ -238,7 +253,7 @@ private class FutureImpl(val id: Int) : Synchronizable() {
             if (state == FutureState.THROWN) {
                 ThrowIllegalStateException()
             }
-            return result
+            return result.also { result = null }
         }
     }
 
@@ -271,35 +286,35 @@ private class FutureImpl(val id: Int) : Synchronizable() {
 
 @ObsoleteWorkersApi
 private class StateImpl : Synchronizable() {
-    // State owns futures
-    private val futures = mutableListOf<FutureImpl?>()
+    private var nextWorkerId = 1
+    private var nextFutureId = 1
+    private var currentVersion = 0
+
+    // Futures are owned by the state
+    private val futures = mutableMapOf<Int, FutureImpl?>()
 
     // Workers are owned by their threads
-    private val workers = mutableListOf<WeakReference<WorkerImpl>>()
-
-    private var currentVersion = 0
+    private val workers = mutableMapOf<Int, WeakReference<WorkerImpl>>()
 
     fun addWorker(exceptionHandling: WorkerExceptionHandling, name: String?, kind: WorkerKind): WorkerImpl {
         synchronized {
-            val worker = WorkerImpl(workers.size, exceptionHandling, name, kind)
-            workers += WeakReference(worker)
-            assert(workers[worker.id].value == worker)
+            val worker = WorkerImpl(nextWorkerId++, exceptionHandling, name, kind)
+            workers[worker.id] = WeakReference(worker)
             return worker
         }
     }
 
     fun removeWorker(id: Int) {
         synchronized {
-            workers[id].clear()
+            workers.remove(id)
         }
     }
 
     fun addJobToWorker(workerId: Int, jobFunction: ExecuteJob?, jobArgument: Any?, toFront: Boolean): FutureImpl? {
         synchronized {
-            val worker = workers[workerId].value ?: return null
-            val future = FutureImpl(futures.size)
-            futures += future
-            assert(futures[future.id] == future)
+            val worker = workers[workerId]?.value ?: return null
+            val future = FutureImpl(nextFutureId++)
+            futures[future.id] = future
 
             val job = if (jobFunction == null) {
                 Job.TerminationRequest(future, !toFront)
@@ -317,7 +332,7 @@ private class StateImpl : Synchronizable() {
         synchronized {
             assert(after.isPositive())
 
-            val worker = workers[workerId].value ?: return false
+            val worker = workers[workerId]?.value ?: return false
             if (after == Duration.ZERO) {
                 worker.putJob(Job.ExecuteAfter(operation, null), false)
             } else {
@@ -327,28 +342,19 @@ private class StateImpl : Synchronizable() {
         }
     }
 
-    fun scheduleJobInWorker(workerId: Int, operation: () -> Unit): Boolean {
-        synchronized {
-            val worker = workers[workerId].value ?: return false
-            val job = Job.ExecuteAfter(operation, null)
-            worker.putJob(job, false)
-            return true
-        }
-    }
-
     // Returns `true` if something was indeed processed.
     fun processQueue(workerId: Int): Boolean {
         // Can only process queue of the current worker.
-        val worker = thisThreadWorker
-        if (worker == null || workerId != worker.id) ThrowWrongWorkerOrAlreadyTerminated()
+        val worker = thisThreadWorkerEnsureInitialized()
+        if (workerId != worker.id) ThrowWrongWorkerOrAlreadyTerminated()
         val kind = worker.processQueueElement(false)
         return kind != JobKind.NONE && kind != JobKind.TERMINATE
     }
 
     fun park(workerId: Int, timeout: Duration, process: Boolean): Boolean {
         // Can only park current worker.
-        val worker = thisThreadWorker
-        if (worker == null || workerId != worker.id) ThrowWrongWorkerOrAlreadyTerminated()
+        val worker = thisThreadWorkerEnsureInitialized()
+        if (workerId != worker.id) ThrowWrongWorkerOrAlreadyTerminated()
         return worker.park(timeout, process)
     }
 
@@ -378,7 +384,7 @@ private class StateImpl : Synchronizable() {
 
     fun getWorkerName(workerId: Int): String? {
         synchronized {
-            val worker = workers[workerId].value ?: ThrowWorkerAlreadyTerminated()
+            val worker = workers[workerId]?.value ?: ThrowWorkerAlreadyTerminated()
             return worker.name
         }
     }
@@ -407,19 +413,19 @@ private class StateImpl : Synchronizable() {
 
     fun getWorkerPlatformThreadId(workerId: Int): ULong {
         synchronized {
-            return workers[workerId].value?.threadId ?: ThrowWorkerAlreadyTerminated()
+            return workers[workerId]?.value?.threadId ?: ThrowWorkerAlreadyTerminated()
         }
     }
 
     fun getActiveWorkers(): IntArray {
         synchronized {
-            return workers.mapNotNull { it.value?.id }.toIntArray()
+            return workers.values.mapNotNull { it.value?.id }.toIntArray()
         }
     }
 
     fun waitWorkerTermination(workerId: Int) {
         synchronized {
-            val worker = workers[workerId].value ?: return
+            val worker = workers[workerId]?.value ?: return
             while (!worker.terminated) wait()
         }
     }
@@ -432,7 +438,7 @@ private class StateImpl : Synchronizable() {
 }
 
 @ObsoleteWorkersApi
-private val theState by lazy(LazyThreadSafetyMode.PUBLICATION) { StateImpl() }
+private val theState = StateImpl()
 
 private enum class JobKind {
     NONE,
@@ -471,12 +477,7 @@ internal fun startInternal(errorReporting: Boolean, name: String?): Int {
 }
 
 @ObsoleteWorkersApi
-internal fun currentInternal(): Int {
-    if (thisThreadWorker == null) {
-        thisThreadWorker = theState.addWorker(WorkerExceptionHandling.DEFAULT, null, WorkerKind.OTHER)
-    }
-    return thisThreadWorker!!.id
-}
+internal fun currentInternal(): Int = thisThreadWorkerEnsureInitialized().id
 
 @ObsoleteWorkersApi
 internal fun requestTerminationInternal(id: Int, processScheduledJobs: Boolean): Int {
