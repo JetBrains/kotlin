@@ -478,6 +478,11 @@ private fun evaluateBinary(
         }
     }
 
+    // Check for trimMargin invalid argument
+    if (functionName == "trimMargin" && (opr2 as? String)?.isBlank() == true) {
+        return TrimMarginBlankPrefix
+    }
+
     return evalBinaryOp(
         functionName,
         arg1.kind.toCompileTimeType(),
