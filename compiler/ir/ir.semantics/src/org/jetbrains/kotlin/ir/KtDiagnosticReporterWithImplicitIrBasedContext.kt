@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.AbstractKotlinSuppressCache
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.hasEqualFqName
-import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
@@ -157,3 +157,7 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
 }
 
 private val SUPPRESS = FqName("kotlin.Suppress")
+
+fun IrElement.sourceElement(): AbstractKtSourceElement? =
+    if (startOffset >= 0) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
+    else null
