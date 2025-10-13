@@ -198,6 +198,7 @@ void deinitRuntimeIfNeeded() {
 
 // TODO: Consider exporting it to interop API.
 void Kotlin_shutdownRuntime() {
+  konan::consoleErrorf("Shutting down\n");
     auto* runtime = ::runtimeState;
     RuntimeAssert(runtime != kInvalidRuntime, "Current thread must have Kotlin runtime initialized on it");
 
