@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.kmp
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.kmp.LexerTests.Companion.initializeLexers
-import org.jetbrains.kotlin.kmp.infra.NewParserTestNode
-import org.jetbrains.kotlin.kmp.infra.NewTestParser
-import org.jetbrains.kotlin.kmp.infra.ParseMode
-import org.jetbrains.kotlin.kmp.infra.PsiTestParser
-import org.jetbrains.kotlin.kmp.infra.TestParseNode
+import org.jetbrains.kotlin.kmp.infra.*
 import org.junit.jupiter.api.Test
 
 abstract class AbstractParserTests<OldParseElement> : AbstractRecognizerTests<
