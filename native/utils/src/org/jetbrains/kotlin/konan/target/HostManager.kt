@@ -110,8 +110,14 @@ open class HostManager() {
 
         @JvmStatic
         fun platformName(): String {
-            val hostOs = hostOs()
-            val arch = hostArch()
+            val hostOs = runCatching {
+                HostManager.hostOs()
+            }.getOrDefault(System.getProperty("os.name", "unknown_os"))
+
+            val arch = runCatching {
+                HostManager.hostArch()
+            }.getOrDefault(System.getProperty("os.arch", "unknown_arch"))
+
             return when (hostOs) {
                 "osx" -> "macos-$arch"
                 else -> "$hostOs-$arch"

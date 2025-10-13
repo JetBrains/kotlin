@@ -376,7 +376,9 @@ internal object KotlinStdlibConfigurationMetrics : FusMetrics {
 internal object KotlinCrossCompilationMetrics : FusMetrics {
     internal fun collectMetrics(project: Project, compilation: KotlinNativeCompilation) {
         val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
-        val isSupportedHost = HostManager().isEnabled(compilation.target.konanTarget)
+        val isSupportedHost = runCatching {
+            HostManager().isEnabled(compilation.target.konanTarget)
+        }.getOrDefault(false)
 
         if (isSupportedHost || !crossCompilationEnabled) return
 

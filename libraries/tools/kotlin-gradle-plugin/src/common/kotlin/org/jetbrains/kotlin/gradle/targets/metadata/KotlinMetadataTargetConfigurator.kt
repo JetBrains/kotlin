@@ -200,7 +200,7 @@ class KotlinMetadataTargetConfigurator :
                     // This logic can be simplified, see KT-64523
                     val shouldBeDisabled = platformCompilations
                         .filterIsInstance<KotlinNativeCompilation>()
-                        .none { it.crossCompilationOnCurrentHostSupported.await() }
+                        .none { it.target.crossCompilationOnCurrentHostSupported.await() }
                     if (shouldBeDisabled) {
                         // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
                         compileTaskProvider.configure { it.enabled = false }

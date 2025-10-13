@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.TargetSupportException
 
 internal object CinteropCrossCompilationChecker : KotlinGradleProjectChecker {
 
@@ -19,7 +20,18 @@ internal object CinteropCrossCompilationChecker : KotlinGradleProjectChecker {
 
         multiplatformExtension.targets
             .withType(KotlinNativeTarget::class.java)
-            .matching { !HostManager().isEnabled(it.konanTarget) }
+            .matching { target ->
+                try {
+                    // This is the normal path:
+                    // The host is supported, and we are checking if it can
+                    // compile the specific 'target.konanTarget'.
+                    // We match if it's NOT enabled (i.e., it's a cross-compilation target).
+                    !HostManager().isEnabled(target.konanTarget)
+                } catch (_: TargetSupportException) {
+                    // This means the HostManager().isEnabled failed because the *host itself* is unsupported.
+                    false
+                }
+            }
             .configureEach { target ->
                 var reportDiagnosticOncePerTarget = true
                 target.compilations.configureEach { compilation ->

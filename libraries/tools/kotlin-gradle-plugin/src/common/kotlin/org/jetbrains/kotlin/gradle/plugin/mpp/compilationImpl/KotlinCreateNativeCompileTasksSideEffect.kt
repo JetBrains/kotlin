@@ -44,7 +44,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         task.description = "Compiles a klibrary from the '${compilationInfo.compilationName}' " +
                 "compilation in target '${compilationInfo.targetDisambiguationClassifier}'."
         val enabledOnCurrentHost = project.provider {
-            compilation.crossCompilationOnCurrentHostSupported.getOrThrow()
+            compilation.crossCompilationOnCurrentHostSupported
         }
         task.onlyIf { enabledOnCurrentHost.get() }
 
