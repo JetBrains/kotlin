@@ -79,7 +79,7 @@ internal open class SirFunctionFromKtSymbol(
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val fqName = bridgeFqName ?: return@lazyWithSessions null
         val suffix = ""
-        val baseName = fqName.forBridge.joinToString("_") + suffix
+        val baseName = fqName.baseBridgeName + suffix
 
         val extensionReceiverParameter = extensionReceiverParameter?.let {
             SirParameter("", "receiver", it.type)

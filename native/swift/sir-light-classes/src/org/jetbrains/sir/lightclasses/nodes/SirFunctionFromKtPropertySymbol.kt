@@ -36,8 +36,8 @@ import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.sirModality
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.OverrideStatus
+import org.jetbrains.sir.lightclasses.utils.baseBridgeName
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
-import org.jetbrains.sir.lightclasses.utils.forBridge
 import org.jetbrains.sir.lightclasses.utils.selfType
 import org.jetbrains.sir.lightclasses.utils.translateExtensionParameter
 import org.jetbrains.sir.lightclasses.utils.translateParameters
@@ -108,16 +108,14 @@ internal class SirFunctionFromKtPropertySymbol(
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val fqName = ktPropertySymbol
-            .callableId?.asSingleFqName()
-            ?.pathSegments()?.map { it.toString() }
-            ?: return@lazyWithSessions null
+            .callableId?.asSingleFqName() ?: return@lazyWithSessions null
 
         val suffix = when (ktSymbol) {
             is KaPropertyGetterSymbol -> "_get"
             is KaPropertySetterSymbol -> "_set"
         }
 
-        val baseName = fqName.forBridge.joinToString("_") + suffix
+        val baseName = fqName.baseBridgeName + suffix
 
         val extensionReceiverParameter = extensionReceiverParameter?.let {
             SirParameter("", "receiver", it.type)

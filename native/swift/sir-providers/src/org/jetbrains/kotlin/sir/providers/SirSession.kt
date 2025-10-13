@@ -48,6 +48,7 @@ public interface SirSession :
     public val trampolineDeclarationsProvider: SirTrampolineDeclarationsProvider
     public val moduleProvider: SirModuleProvider
     public val typeProvider: SirTypeProvider
+    public val customTypeTranslator: SirCustomTypeTranslator
     public val visibilityChecker: SirVisibilityChecker
     public val childrenProvider: SirChildrenProvider
     public val bridgeProvider: SirBridgeProvider
@@ -105,7 +106,7 @@ public interface SirSession :
         baseBridgeName: String,
         explicitParameters: List<SirParameter>,
         returnType: SirType,
-        kotlinFqName: List<String>,
+        kotlinFqName: FqName,
         selfParameter: SirParameter?,
         extensionReceiverParameter: SirParameter?,
         errorParameter: SirParameter?,
@@ -124,7 +125,7 @@ public interface SirSession :
     }
 
     override fun generateTypeBridge(
-        kotlinFqName: List<String>,
+        kotlinFqName: FqName?,
         swiftFqName: String,
         swiftSymbolName: String,
     ): SirTypeBindingBridge? = with(bridgeProvider) {
@@ -368,6 +369,10 @@ public fun KaType.translateType(
     processTypeImports: (List<SirImport>) -> Unit,
 ): SirType = with(sir) { translateType(ka, position, reportErrorType, reportUnsupportedType, processTypeImports) }
 
+public interface SirCustomTypeTranslator {
+    public fun isFqNameSupported(fqName: FqName): Boolean
+}
+
 /**
  * Generates a list of [SirBridge] for given [SirDeclaration].
  */
@@ -376,7 +381,7 @@ public interface SirBridgeProvider {
         baseBridgeName: String,
         explicitParameters: List<SirParameter>,
         returnType: SirType,
-        kotlinFqName: List<String>,
+        kotlinFqName: FqName,
         selfParameter: SirParameter?,
         extensionReceiverParameter: SirParameter?,
         errorParameter: SirParameter?,
@@ -384,7 +389,7 @@ public interface SirBridgeProvider {
     ): BridgeFunctionProxy?
 
     public fun generateTypeBridge(
-        kotlinFqName: List<String>,
+        kotlinFqName: FqName?,
         swiftFqName: String,
         swiftSymbolName: String,
     ): SirTypeBindingBridge?
@@ -395,7 +400,7 @@ public fun generateFunctionBridge(
     baseBridgeName: String,
     explicitParameters: List<SirParameter>,
     returnType: SirType,
-    kotlinFqName: List<String>,
+    kotlinFqName: FqName,
     selfParameter: SirParameter?,
     extensionReceiverParameter: SirParameter?,
     errorParameter: SirParameter?,
@@ -415,7 +420,7 @@ public fun generateFunctionBridge(
 
 context(sir: SirSession)
 public fun generateTypeBridge(
-    kotlinFqName: List<String>,
+    kotlinFqName: FqName?,
     swiftFqName: String,
     swiftSymbolName: String,
 ): SirTypeBindingBridge? = with(sir) { generateTypeBridge(kotlinFqName, swiftFqName, swiftSymbolName) }

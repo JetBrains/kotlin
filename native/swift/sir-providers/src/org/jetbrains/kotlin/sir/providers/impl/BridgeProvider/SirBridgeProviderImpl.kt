@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -28,14 +28,14 @@ private const val foundationHeader = "Foundation/Foundation.h"
 
 public class SirBridgeProviderImpl(private val session: SirSession, private val typeNamer: SirTypeNamer) : SirBridgeProvider {
     override fun generateTypeBridge(
-        kotlinFqName: List<String>,
+        kotlinFqName: FqName?,
         swiftFqName: String,
         swiftSymbolName: String,
     ): SirTypeBindingBridge? {
-        if (kotlinFqName in fqNamesExcludedFromTypeBinding) return null
+        if (kotlinFqName != null && session.customTypeTranslator.isFqNameSupported(kotlinFqName)) return null
 
         val annotationName = "kotlin.native.internal.objc.BindClassToObjCName"
-        val kotlinFqName = kotlinFqName.joinToString(".")
+        val kotlinFqName = kotlinFqName?.asString() ?: ""
         return SirTypeBindingBridge(
             name = swiftFqName,
             kotlinFileAnnotation = "$annotationName($kotlinFqName::class, \"$swiftSymbolName\")"
@@ -46,7 +46,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         baseBridgeName: String,
         explicitParameters: List<SirParameter>,
         returnType: SirType,
-        kotlinFqName: List<String>,
+        kotlinFqName: FqName,
         selfParameter: SirParameter?,
         extensionReceiverParameter: SirParameter?,
         errorParameter: SirParameter?,
@@ -101,7 +101,7 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
 
 public interface BridgeFunctionBuilder {
     public val baseBridgeName: String
-    public val kotlinFqName: List<String>
+    public val kotlinFqName: FqName
     public val typeNamer: SirTypeNamer
 
     public val parameters: List<Any>
@@ -125,7 +125,7 @@ private class BridgeFunctionDescriptor(
     override val baseBridgeName: String,
     override val parameters: List<BridgeParameter>,
     override val returnType: Bridge,
-    override val kotlinFqName: List<String>,
+    override val kotlinFqName: FqName,
     override val selfParameter: BridgeParameter?,
     override val extensionReceiverParameter: BridgeParameter?,
     override val errorParameter: BridgeParameter?,
@@ -143,7 +143,7 @@ private class BridgeFunctionDescriptor(
     }
 
     override val name
-        get() = kotlinFqName.joinToString(separator = ".") { it.kotlinIdentifier }
+        get() = kotlinFqName.pathSegments().joinToString(separator = ".") { it.asString().kotlinIdentifier }
 
     override val argNames
         get() = buildList {
@@ -170,7 +170,7 @@ private class BridgeFunctionDescriptor(
                 "__${extensionReceiverParameter.name}.$safeImportName$args"
             }
         } else {
-            val memberName = kotlinFqName.last().kotlinIdentifier
+            val memberName = kotlinFqName.shortName().asString().kotlinIdentifier
             if (extensionReceiverParameter == null) {
                 "__${selfParameter.name}.$memberName$args"
             } else {
@@ -318,7 +318,7 @@ private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
 }
 
 private fun BridgeFunctionDescriptor.additionalImports(): List<String> = listOfNotNull(
-    (extensionReceiverParameter != null && selfParameter == null && kotlinFqName.size > 1).ifTrue {
+    (extensionReceiverParameter != null && selfParameter == null && !kotlinFqName.parent().isRoot).ifTrue {
         "$name as $safeImportName"
     },
     isAsync.ifTrue {
@@ -327,19 +327,4 @@ private fun BridgeFunctionDescriptor.additionalImports(): List<String> = listOfN
 )
 
 private val BridgeFunctionDescriptor.safeImportName: String
-    get() = kotlinFqName.run { if (size <= 1) single() else joinToString("_") { it.replace("_", "__") } }
-
-// These classes already have ObjC counterparts assigned statically in ObjC Export.
-private val fqNamesExcludedFromTypeBinding: List<List<String>> by lazy {
-    listOf(
-        FqNames.set,
-        FqNames.mutableSet,
-        FqNames.map,
-        FqNames.mutableList,
-        FqNames.list,
-        FqNames.mutableMap,
-        FqNames.string.toSafe()
-    ).map {
-        it.pathSegments().map { it.toString() }
-    }
-}
+    get() = kotlinFqName.pathSegments().joinToString(separator = "_") { it.asString().replace("_", "__") }
