@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.ENUM_ENTRIES_INITIALIZER_ORIGIN
-import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction

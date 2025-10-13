@@ -112,8 +112,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
 
     abstract val stringBuilder: IrClassSymbol
 
-    abstract val coroutineImpl: IrClassSymbol
-
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
 
     abstract val getContinuation: IrSimpleFunctionSymbol

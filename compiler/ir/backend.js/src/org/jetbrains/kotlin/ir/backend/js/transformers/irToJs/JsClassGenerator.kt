@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.isAllowedFakeOverriddenDeclaration
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.isOverriddenEnumProperty
 import org.jetbrains.kotlin.ir.backend.js.ir.isOverriddenExported
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.suspendArityStore
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction

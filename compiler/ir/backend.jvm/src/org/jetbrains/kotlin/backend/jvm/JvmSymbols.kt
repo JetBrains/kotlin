@@ -252,9 +252,6 @@ class JvmSymbols(
     override val syntheticConstructorMarker: IrClassSymbol
         get() = error("not implemented")
 
-    override val coroutineImpl: IrClassSymbol
-        get() = error("not implemented")
-
     override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
         get() = error("not implemented")
 

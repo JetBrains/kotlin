@@ -33,7 +33,7 @@ import java.util.*
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
 ) : PreSerializationWebSymbols, KlibSymbols(irBuiltIns) {
-    override val coroutineImpl: IrClassSymbol = ClassIds.coroutineImpl.classSymbol()
+    val coroutineImpl: IrClassSymbol = ClassIds.coroutineImpl.classSymbol()
     override val continuationClass = ClassIds.continuation.classSymbol()
     override val coroutineSuspendedGetter by CallableIds.coroutineSuspended.getterSymbol()
 
