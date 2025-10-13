@@ -143,6 +143,7 @@ private class WorkerImpl(
         }
     }
 
+    @IgnorableReturnValue
     fun Monitor.MonitoredSection.waitForQueue(until: ComparableTimeMark?): Boolean {
         fun <T : Comparable<T>> minOf(first: T?, second: T?): T? {
             if (first == null) return second
