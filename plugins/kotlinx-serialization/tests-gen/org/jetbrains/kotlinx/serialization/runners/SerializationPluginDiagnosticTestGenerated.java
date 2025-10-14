@@ -234,6 +234,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
   }
 
   @Test
+  @TestMetadata("starProjections.kt")
+  public void testStarProjections() {
+    runTest("plugins/kotlinx-serialization/testData/diagnostics/starProjections.kt");
+  }
+
+  @Test
   @TestMetadata("trainsientLateinit.kt")
   public void testTrainsientLateinit() {
     runTest("plugins/kotlinx-serialization/testData/diagnostics/trainsientLateinit.kt");
