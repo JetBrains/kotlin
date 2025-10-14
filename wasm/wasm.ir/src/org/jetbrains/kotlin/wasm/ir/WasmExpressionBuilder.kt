@@ -90,8 +90,21 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun buildIf(label: String?, resultType: WasmType? = null) {
-        buildInstrWithNoLocation(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))
+    fun buildIf(label: String?, resultType: WasmType? = null, location: SourceLocation? = null) {
+        if (location != null) {
+            buildInstr(WasmOp.IF, location, WasmImmediate.BlockType.Value(resultType))
+        } else {
+            buildInstrWithNoLocation(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))
+        }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun buildIfElseBlock(label: String?, resultType: WasmType? = null, location: SourceLocation? = null, thenBuilder: () -> Unit, elseBuilder: () -> Unit) {
+        buildIf(label, resultType, location)
+        thenBuilder()
+        buildElse(location)
+        elseBuilder()
+        buildEnd(location)
     }
 
     fun buildElse(location: SourceLocation? = null) {

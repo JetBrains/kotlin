@@ -683,37 +683,54 @@ class BodyGenerator(
 
     private fun handleManagedExternRefStore(location: SourceLocation) {
         // stack: [externrefToStore, ...]
-        body.buildConstI32(1, location)
-        body.buildInstr(WasmOp.TABLE_GROW, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
-        // TODO maybe process errors (grows failed) by checking return value (-1 means error)
-        body.buildInstr(WasmOp.I64_EXTEND_I32_U, location)
-        body.buildGetGlobal(wasmFileCodegenContext.referenceModuleIdMaskGlobal(), location)
-        body.buildInstr(WasmOp.I64_OR, location)
-        // stack: [managedRefDesc(i64)=[moduleId(i32), externrefTableIdx(i32)], ...]
+        val tmpExternrefLocal = functionContext.referenceLocal(SyntheticLocalType.MANAGEDREF_VALUE)
+        body.buildTeeLocal(tmpExternrefLocal, location)
+        body.buildInstr(WasmOp.REF_IS_NULL, location)
+        body.buildIfElseBlock("managedStoreNullcheck", resultType = WasmI64, thenBuilder = {
+            body.buildConstI64(0, location) // TODO extract const? maybe near the table index
+            // stack: [<nullRefDesc> = 0(i64), ...]
+        }, elseBuilder = {
+            body.buildGetLocal(tmpExternrefLocal, location)
+            body.buildConstI32(1, location)
+            body.buildInstr(WasmOp.TABLE_GROW, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
+            // TODO maybe process errors (grows failed) by checking return value (-1 means error)
+            body.buildInstr(WasmOp.I64_EXTEND_I32_U, location)
+            body.buildGetGlobal(wasmFileCodegenContext.referenceModuleIdMaskGlobal(), location)
+            body.buildInstr(WasmOp.I64_OR, location)
+            // stack: [managedRefDesc(i64)=[moduleId(i32), externrefTableIdx(i32)], ...]
+        })
     }
 
     private fun handleManagedExternRefLoad(location: SourceLocation) {
-        // stack: [managedRefDesc(i64)=[moduleId(i32), externrefTableIdx(i32)], ...]
+        // stack: [nullRefDesc or managedRefDesc(i64)=[moduleId(i32), externrefTableIdx(i32)], ...]
         val tmpDescLocal = functionContext.referenceLocal(SyntheticLocalType.MANAGEDREF_DESC)
-        // compare stored module id with the current one
         body.buildTeeLocal(tmpDescLocal, location)
-        body.buildConstI64(HIGH_32_BITS_MASK.toLong(), location)
-        body.buildInstr(WasmOp.I64_AND, location)
-        body.buildGetGlobal(wasmFileCodegenContext.referenceModuleIdMaskGlobal(), location)
-        body.buildInstr(WasmOp.I64_EQ, location)
-        // if not equal, report an error (NPE for now, may be changed to something else eventually)
-        body.buildIf("equalModuleId", WasmExternRef)
-        body.buildGetLocal(tmpDescLocal, location)
-        body.buildConstI64(LOW_32_BITS_MASK.toLong(), location)
-        body.buildInstr(WasmOp.I64_AND, location)
-        body.buildInstr(WasmOp.I32_WRAP_I64, location)
-        // stack: [externrefTableIdx(i32), ...]
-        body.buildInstr(WasmOp.TABLE_GET, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
-        // stack: [externref, ...]
-        body.buildElse(location)
-        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.throwNullPointerException), location)
-        body.buildUnreachable(location)
-        body.buildEnd(location)
+
+        // if stored i64 desc is 0, then the stored ref is null and can be used in any thread
+        body.buildInstr(WasmOp.I64_EQZ, location)
+        body.buildIfElseBlock("managedLoadNullcheck", resultType = WasmExternRef, thenBuilder = {
+            body.buildRefNull(WasmHeapType.Simple.NoExtern, location)
+        }, elseBuilder = {
+            body.buildGetLocal(tmpDescLocal, location)
+            // compare stored module id with the current one
+            body.buildConstI64(HIGH_32_BITS_MASK.toLong(), location)
+            body.buildInstr(WasmOp.I64_AND, location)
+            body.buildGetGlobal(wasmFileCodegenContext.referenceModuleIdMaskGlobal(), location)
+            body.buildInstr(WasmOp.I64_EQ, location)
+            // if not equal, report an error (NPE for now, may be changed to something else eventually)
+            body.buildIfElseBlock("equalModuleId", WasmExternRef, location, thenBuilder = {
+                body.buildGetLocal(tmpDescLocal, location)
+                body.buildConstI64(LOW_32_BITS_MASK.toLong(), location)
+                body.buildInstr(WasmOp.I64_AND, location)
+                body.buildInstr(WasmOp.I32_WRAP_I64, location)
+                // stack: [externrefTableIdx(i32), ...]
+                body.buildInstr(WasmOp.TABLE_GET, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
+                // stack: [externref, ...]
+            }, elseBuilder = {
+                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.throwNullPointerException), location)
+                body.buildUnreachable(location)
+            })
+        })
     }
 
     private fun generateAnyParameters(klassSymbol: IrClassSymbol, location: SourceLocation) {

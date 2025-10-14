@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.wasm.ir.*
 import java.util.LinkedList
 
 enum class LoopLabelType { BREAK, CONTINUE }
-enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR, MANAGEDREF_DESC }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR, MANAGEDREF_DESC, MANAGEDREF_VALUE }
 
 class WasmFunctionCodegenContext(
     val irFunction: IrFunction?,
@@ -77,6 +77,7 @@ class WasmFunctionCodegenContext(
                 WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType))
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
             SyntheticLocalType.MANAGEDREF_DESC -> WasmI64
+            SyntheticLocalType.MANAGEDREF_VALUE -> WasmExternRef
         }
 
     fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {
