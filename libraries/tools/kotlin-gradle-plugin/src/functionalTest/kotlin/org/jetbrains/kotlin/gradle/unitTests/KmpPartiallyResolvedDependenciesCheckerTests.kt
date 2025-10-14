@@ -129,7 +129,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             ).prettyPrinted,
             partiallyUnresolvedPlatformDependencies(
                 commonMainTransformationParameters.dependingPlatformCompilations,
-                commonMainTransformationParameters.resolvedMetadataConfiguration,
+                commonMainTransformationParameters.resolvedMetadataConfiguration.resolvedComponent,
             ).normalize().prettyPrinted
         )
 
@@ -141,7 +141,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             ).prettyPrinted,
             partiallyUnresolvedPlatformDependencies(
                 nativeMainTransformationParameters.dependingPlatformCompilations,
-                nativeMainTransformationParameters.resolvedMetadataConfiguration,
+                nativeMainTransformationParameters.resolvedMetadataConfiguration.resolvedComponent,
             ).normalize().prettyPrinted
         )
     }
@@ -204,7 +204,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             ).prettyPrinted,
             partiallyUnresolvedPlatformDependencies(
                 commonMainTransformationParameters.dependingPlatformCompilations,
-                commonMainTransformationParameters.resolvedMetadataConfiguration,
+                commonMainTransformationParameters.resolvedMetadataConfiguration.resolvedComponent,
             ).normalize().prettyPrinted
         )
     }
@@ -364,7 +364,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             ).prettyPrinted,
             partiallyUnresolvedPlatformDependencies(
                 commonMainTransformationParameters.dependingPlatformCompilations,
-                commonMainTransformationParameters.resolvedMetadataConfiguration,
+                commonMainTransformationParameters.resolvedMetadataConfiguration.resolvedComponent,
             ).normalize().prettyPrinted
         )
     }
