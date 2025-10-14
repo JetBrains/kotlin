@@ -1,4 +1,5 @@
 expression: b
-isStable: true
-originalType: B
-smartCastType: C
+smartCastInfo:
+    originalType: B
+    smartCastType: C
+    isStable: true

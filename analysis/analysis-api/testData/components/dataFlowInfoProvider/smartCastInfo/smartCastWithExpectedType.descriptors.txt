@@ -1,4 +1,2 @@
 expression: b
-isStable: null
-originalType: null
-smartCastType: null
+smartCastInfo: null

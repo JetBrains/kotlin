@@ -23,9 +23,15 @@ abstract class AbstractHLSmartCastInfoTest : AbstractAnalysisApiBasedTest() {
                 val smartCastInfo = contextExpression.smartCastInfo
                 buildString {
                     appendLine("expression: ${contextExpression.text}")
-                    appendLine("isStable: ${smartCastInfo?.isStable}")
-                    appendLine("originalType: ${smartCastInfo?.originalType?.render(position = Variance.INVARIANT)}")
-                    appendLine("smartCastType: ${smartCastInfo?.smartCastType?.render(position = Variance.INVARIANT)}")
+
+                    if (smartCastInfo != null) {
+                        appendLine("smartCastInfo:")
+                        appendLine("    originalType: ${smartCastInfo.originalType.render(position = Variance.INVARIANT)}")
+                        appendLine("    smartCastType: ${smartCastInfo.smartCastType.render(position = Variance.INVARIANT)}")
+                        appendLine("    isStable: ${smartCastInfo.isStable}")
+                    } else {
+                        appendLine("smartCastInfo: null")
+                    }
 
                     val receiverSmartCasts = contextExpression.implicitReceiverSmartCasts
                     for (receiverSmartCast in receiverSmartCasts) {
