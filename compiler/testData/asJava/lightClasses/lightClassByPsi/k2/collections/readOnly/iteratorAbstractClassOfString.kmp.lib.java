@@ -1,8 +1,8 @@
-public abstract class SIterator /* test.SIterator*/ implements java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SIterator /* test.SIterator*/ implements java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   public  SIterator();//  .ctor()
 }
 
-public abstract class SIterator2 /* test.SIterator2*/ implements java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SIterator2 /* test.SIterator2*/ implements java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String next();//  next()
 
@@ -11,7 +11,7 @@ public abstract class SIterator2 /* test.SIterator2*/ implements java.util.Itera
   public boolean hasNext();//  hasNext()
 }
 
-public class SIterator3 /* test.SIterator3*/ implements java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public class SIterator3 /* test.SIterator3*/ implements java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String next();//  next()
 

@@ -64,5 +64,5 @@ public class CListIterator3 /* test.CListIterator3*/<Elem>  implements test.IMut
   public  CListIterator3();//  .ctor()
 }
 
-public abstract interface IMutableListIterator /* test.IMutableListIterator*/<Elem>  extends java.util.ListIterator<Elem>, kotlin.collections.MutableListIterator<Elem>, kotlin.jvm.internal.markers.KMutableListIterator {
+public abstract interface IMutableListIterator /* test.IMutableListIterator*/<Elem>  extends java.util.ListIterator<Elem>, kotlin.jvm.internal.markers.KMutableListIterator {
 }

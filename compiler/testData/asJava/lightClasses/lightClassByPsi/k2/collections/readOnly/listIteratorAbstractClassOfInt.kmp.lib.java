@@ -1,8 +1,8 @@
-public abstract class SListIterator /* test.SListIterator*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SListIterator /* test.SListIterator*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   public  SListIterator();//  .ctor()
 }
 
-public abstract class SListIterator2 /* test.SListIterator2*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SListIterator2 /* test.SListIterator2*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer next();//  next()
 
@@ -20,7 +20,7 @@ public abstract class SListIterator2 /* test.SListIterator2*/ implements java.ut
   public int previousIndex();//  previousIndex()
 }
 
-public class SListIterator3 /* test.SListIterator3*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.collections.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
+public class SListIterator3 /* test.SListIterator3*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer next();//  next()
 

@@ -1,4 +1,10 @@
 public abstract class CListIterator /* test.CListIterator*/ implements test.IMutableListIterator {
+  @java.lang.Override()
+  public abstract void remove();//  remove()
+
+  @java.lang.Override()
+  public final void remove();//  remove()
+
   public  CListIterator();//  .ctor()
 }
 
@@ -68,5 +74,5 @@ public class CListIterator3 /* test.CListIterator3*/ implements test.IMutableLis
   public  CListIterator3();//  .ctor()
 }
 
-public abstract interface IMutableListIterator /* test.IMutableListIterator*/ extends java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableListIterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableListIterator {
+public abstract interface IMutableListIterator /* test.IMutableListIterator*/ extends java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableListIterator {
 }
