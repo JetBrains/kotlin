@@ -72,6 +72,7 @@ object ComposeCallableIds {
         CallableId(internalRootFqName, Name.identifier(name))
 
     val cache = topLevelCallableId("cache")
+    val key = topLevelCallableId("key")
     val composableLambda = internalTopLevelCallableId("composableLambda")
     val composableLambdaInstance =
         internalTopLevelCallableId("composableLambdaInstance")
@@ -131,7 +132,7 @@ object ComposeFqNames {
         internalFqNameFor("ComposableLambdaKt.composableLambda")
     val remember = ComposeCallableIds.remember.asSingleFqName()
     val cache = ComposeCallableIds.cache.asSingleFqName()
-    val key = fqNameFor("key")
+    val key = ComposeCallableIds.key.asSingleFqName()
     val StableMarker = fqNameFor("StableMarker")
     val Stable = fqNameFor("Stable")
     val Immutable = fqNameFor("Immutable")
