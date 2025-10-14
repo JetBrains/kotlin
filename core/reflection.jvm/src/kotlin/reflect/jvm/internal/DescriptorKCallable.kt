@@ -21,6 +21,8 @@ import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
+
+    // todo make immutable propagating parameters
     internal var forceInstanceReceiverParameter: ReceiverParameterDescriptor? = null
     internal var kTypeSubstitutor: KTypeSubstitutor? = null
 
