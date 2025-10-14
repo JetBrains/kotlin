@@ -271,7 +271,13 @@ class StateMachineBuilder(
 
         transformLastExpression {
             val irContinue = buildDispatchBlock(head)
-            JsIrBuilder.buildIfElse(unit, it, irContinue)
+            JsIrBuilder.buildIfElse(
+                type = unit,
+                cond = it,
+                thenBranch = irContinue,
+                thenBranchStartOffset = it.startOffset,
+                thenBranchEndOffset = it.endOffset
+            )
         }
 
         doDispatch(exit)
@@ -443,7 +449,7 @@ class StateMachineBuilder(
                 val dispatchState = currentState
                 transformLastExpression {
                     // TODO: make sure elseBlock is added iff it really needs
-                    JsIrBuilder.buildIfElse(unit, it, branchBlock, elseBlock)
+                    JsIrBuilder.buildIfElse(unit, it, branchBlock, elseBlock, it.startOffset, it.endOffset)
                 }
 
                 currentBlock = branchBlock

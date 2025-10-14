@@ -249,7 +249,7 @@ object JsIrBuilder {
         thenBranchStartOffset: Int = cond.startOffset,
         thenBranchEndOffset: Int = thenBranch.endOffset,
         elseBranchStartOffset: Int = UNDEFINED_OFFSET,
-        elseBranchEndOffset: Int = elseBranch?.endOffset ?: UNDEFINED_OFFSET,
+        elseBranchEndOffset: Int = UNDEFINED_OFFSET,
     ): IrWhen =
         buildIfElse(
             startOffset = UNDEFINED_OFFSET,
@@ -273,10 +273,10 @@ object JsIrBuilder {
         thenBranch: IrExpression,
         elseBranch: IrExpression? = null,
         origin: IrStatementOrigin? = null,
-        thenBranchStartOffset: Int = cond.startOffset,
-        thenBranchEndOffset: Int = thenBranch.endOffset,
+        thenBranchStartOffset: Int,
+        thenBranchEndOffset: Int,
         elseBranchStartOffset: Int = UNDEFINED_OFFSET,
-        elseBranchEndOffset: Int = elseBranch?.endOffset ?: UNDEFINED_OFFSET,
+        elseBranchEndOffset: Int = UNDEFINED_OFFSET,
     ): IrWhen {
         val element = IrWhenImpl(startOffset, endOffset, type, origin)
         element.branches.add(IrBranchImpl(thenBranchStartOffset, thenBranchEndOffset, cond, thenBranch))
