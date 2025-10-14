@@ -224,7 +224,10 @@ public expect enum class RegexOption {
      *
      * In multiline mode the expressions `^` and `$` match just after or just before,
      * respectively, a line terminator or the end of the input sequence. */
-    MULTILINE
+    MULTILINE,
+
+    /** Enables the mode, when the expression `.` matches any character, including a line terminator. */
+    DOT_MATCHES_ALL
 }
 
 
@@ -413,7 +416,7 @@ public expect fun CharSequence.repeat(n: Int): String
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
- * 
+ *
  * @sample samples.text.Strings.replace
  */
 public expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
