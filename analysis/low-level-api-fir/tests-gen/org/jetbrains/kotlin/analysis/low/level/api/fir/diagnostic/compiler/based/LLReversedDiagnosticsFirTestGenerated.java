@@ -5769,6 +5769,18 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         public void testManyDelegateInsidePCLA() {
           runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/manyDelegateInsidePCLA.kt.can-freeze-ide");
         }
+
+        @Test
+        @TestMetadata("noCompilerAssertionInAttemptToSemifixLowerVariablesOnlyConstraints.kt")
+        public void testNoCompilerAssertionInAttemptToSemifixLowerVariablesOnlyConstraints() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/noCompilerAssertionInAttemptToSemifixLowerVariablesOnlyConstraints.kt");
+        }
+
+        @Test
+        @TestMetadata("noCompilerAssertionWithErrorTypes.kt")
+        public void testNoCompilerAssertionWithErrorTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/noCompilerAssertionWithErrorTypes.kt");
+        }
       }
     }
 
