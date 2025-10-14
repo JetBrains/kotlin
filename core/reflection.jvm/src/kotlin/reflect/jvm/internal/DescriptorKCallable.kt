@@ -118,7 +118,7 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         get() = _returnType()
 
     private val _typeParameters = ReflectProperties.lazySoft {
-        descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(this, descriptor) }
+        descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(this, descriptor, kTypeSubstitutor) }
     }
 
     override val typeParameters: List<KTypeParameter>

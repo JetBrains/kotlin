@@ -7,13 +7,17 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.types.model.isFlexible
 import java.util.*
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.full.isSubtypeOf
+import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
+import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
+import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext
 import kotlin.reflect.jvm.javaField
 
 internal fun getAllMembers_newKotlinReflectImpl(
@@ -29,7 +33,7 @@ internal fun getAllMembers_newKotlinReflectImpl(
             isStaticMember == (memberKind == MemberKind.STATIC)
         }
         .associateTo(HashMap()) {
-            Pair(it.toCallableSignature(), TopologicalKCallable(topologicalLevel = PartiallyOrderedNumber.zero, it))
+            Pair(it.toEquatableCallableSignature(), TopologicalKCallable(topologicalLevel = PartiallyOrderedNumber.zero, it))
         }
     val visitedClassifiers = HashSet<KClass<*>>()
     visitedClassifiers.add(kClass)
@@ -62,7 +66,7 @@ private data class RecursionContext(
     val memberKind: MemberKind,
 )
 
-class PartiallyOrderedNumber private constructor(val prev: PartiallyOrderedNumber?) {
+private class PartiallyOrderedNumber private constructor(val prev: PartiallyOrderedNumber?) {
     fun compareToOrNullIfNotComparable(other: PartiallyOrderedNumber): Int? = when {
         this == other -> 0
         this.isStricklyBiggerThan(other) -> 1
@@ -86,50 +90,75 @@ class PartiallyOrderedNumber private constructor(val prev: PartiallyOrderedNumbe
 }
 
 // The Comparator assumes similar signature KCallables
-private object CovariantOverrideComparator : Comparator<TopologicalKCallable<*>> {
+private object CovariantOverrideComparator : Comparator<TopologicalKCallable<*>> { // todo IntersectionOverrideComparator?
     override fun compare(a: TopologicalKCallable<*>, b: TopologicalKCallable<*>): Int {
-        if (a === b) return 0
         a.topologicalLevel.compareToOrNullIfNotComparable(b.topologicalLevel)?.let {
+            check(it != 0) { "CONFLICTING_OVERLOADS" }
             return it
         }
         val typeParametersEliminator = b.callable.typeParameters.substituteTypeParametersInto(a.callable.typeParameters)
         val aReturnType =
             typeParametersEliminator.substitute(a.callable.returnType).type ?: starProjectionSupertypesAreNotPossible()
+        val bReturnType = b.callable.returnType
+        val aIsSubtypeOfB = aReturnType.isSubtypeOf(bReturnType)
+        val bIsSubtypeOfA = bReturnType.isSubtypeOf(aReturnType)
+
         return when {
-            aReturnType.isSubtypeOf(b.callable.returnType) -> -1
-            b.callable.returnType.isSubtypeOf(aReturnType) -> 1
+            aIsSubtypeOfB && bIsSubtypeOfA -> {
+                val isAFlexible = with(ReflectTypeSystemContext) { (aReturnType as? AbstractKType)?.isFlexible() == true }
+                val isBFlexible = with(ReflectTypeSystemContext) { (bReturnType as? AbstractKType)?.isFlexible() == true }
+                when {
+                    isAFlexible && isBFlexible -> 0
+                    isBFlexible -> -1
+                    isAFlexible -> 1
+                    else -> 0
+                }
+            }
+            aIsSubtypeOfB -> -1
+            bIsSubtypeOfA -> 1
             else -> error("RETURN_TYPE_MISMATCH_ON_INHERITANCE")
         }
     }
 }
 
 private data class TopologicalKCallable<out T>(
-    // The closer to Any type the member is, the bigger the number is
+    // The closer to the 'Any' type the member is, the bigger the number is
     val topologicalLevel: PartiallyOrderedNumber,
     val callable: DescriptorKCallable<T>,
 )
 
+private val collectionKType = typeOf<Collection<*>>()
+
 private fun collectVisitedSignaturesForSuperclassRecursively(
-    currentType: KType,
+    rawCurrentType: KType,
     accumulateClassGenericsSubstitutor: KTypeSubstitutor,
     prevTopologicalLevel: PartiallyOrderedNumber,
     context: RecursionContext,
 
     outVisitedSignatures: MutableMap<EquatableCallableSignature, TopologicalKCallable<*>>,
 ) {
-    val currentClass = currentType.classifier as? KClassImpl<*> ?: nonDenotableSupertypesAreNotPossible()
+    val currentType = (rawCurrentType as? AbstractKType)?.let {
+        // It's a hack for Flexible Collection types.
+        // They don't have proper KClasses KT-11754
+        // which leads to type substitution quirks (because we have proper KTypes for them)
+        when (it.isSubtypeOf(collectionKType)) {
+            true ->
+                it.upperBoundIfFlexible()
+            else ->
+                it//.lowerBoundIfFlexible() // todo formatting
+        }
+    } ?: rawCurrentType
+
+    val currentClass = (currentType as AbstractKType).correctClassifier as? KClass<*>
+        ?: nonDenotableSupertypesAreNotPossible()
     val topologicalLevel = prevTopologicalLevel.createBiggerNumber()
-        // when (currentClass.classKind == ClassKind.INTERFACE) { // Members from classes have higher priority
-        //     true -> prevTopologicalLevel.createBiggerNumber().createBiggerNumber()
-        //     else -> prevTopologicalLevel.createBiggerNumber()
-        // }
     if (!context.visitedClassifiers.add(currentClass)) return
-    val classGenericsSubstitutor =
-        accumulateClassGenericsSubstitutor.createCombinedSubstitutorOrNull(currentType) ?: starProjectionSupertypesAreNotPossible()
+    val classGenericsSubstitutor = accumulateClassGenericsSubstitutor.createCombinedSubstitutorOrNull(currentType)
+        ?: starProjectionSupertypesAreNotPossible()
     for (notSubstitutedMember in currentClass.declaredDescriptorKCallableMembers) {
         if (notSubstitutedMember.visibility == KVisibility.PRIVATE) continue
         if (notSubstitutedMember.fullVisibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY &&
-            currentClass.jClass.`package` != context.receiver.jClass.`package`
+            currentClass.java.`package` != context.receiver.java.`package`
         ) {
             continue
         }
@@ -162,7 +191,16 @@ private fun collectVisitedSignaturesForSuperclassRecursively(
     }
 }
 
-private fun KCallable<*>.toCallableSignature(): EquatableCallableSignature {
+private val KClass<*>.classKind: ClassKind // todo do I need it?
+    get() {
+        return when (this) {
+            is KClassImpl<*> -> classKind
+            is MutableCollectionKClass<*> -> klass.classKind
+            else -> error("Unknown type ${this::class}")
+        }
+    }
+
+private fun KCallable<*>.toEquatableCallableSignature(): EquatableCallableSignature {
     val parameterTypes = parameters.filter { it.kind != KParameter.Kind.INSTANCE }.map { it.type }
     val kind = when (this) {
         is KProperty<*> if javaField?.declaringClass?.isKotlin == false -> SignatureKind.FIELD_IN_JAVA_CLASS

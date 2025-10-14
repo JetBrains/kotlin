@@ -46,7 +46,11 @@ internal class KTypeParameterImpl private constructor(
         isReified: Boolean,
     ) : this(descriptor = null, container, null, name, variance, isReified)
 
-    constructor(container: KTypeParameterOwnerImpl?, descriptor: TypeParameterDescriptor) : this(
+    constructor(
+        container: KTypeParameterOwnerImpl?,
+        descriptor: TypeParameterDescriptor,
+        kTypeSubstitutor: KTypeSubstitutor? = null,
+    ) : this(
         descriptor,
         container,
         ReflectProperties.lazySoft { descriptor.toContainer() },
@@ -54,7 +58,11 @@ internal class KTypeParameterImpl private constructor(
         descriptor.variance.toKVariance(),
         descriptor.isReified,
     ) {
-        upperBounds = descriptor.upperBounds.map(::DescriptorKType)
+        upperBounds = descriptor.upperBounds.map {
+            val type = DescriptorKType(it)
+            kTypeSubstitutor?.let { substitutor -> substitutor.substitute(type).type ?: error("todo figure out later") }
+                ?: type
+        }
     }
 
     private val _descriptor: TypeParameterDescriptor? = descriptor
