@@ -732,7 +732,6 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 ":lib:$compileKotlinTaskName",
                 buildOptions = defaultBuildOptions.copy(
                     compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
-                    incremental = false
                 ),
             ) {
                 projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/classpath-snapshot").let {
@@ -743,12 +742,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             // Perform the next build using Kotlin daemon without making a change and check that tasks are up-to-date. This is to ensure
             // that the `kotlin.compiler.execution.strategy` property used above is not an input to the KotlinCompile task; otherwise the
             // test in the next build would not be effective.
-            build(
-                ":lib:$compileKotlinTaskName",
-                buildOptions = defaultBuildOptions.copy(
-                    incremental = false,
-                )
-            ) {
+            build(":lib:$compileKotlinTaskName") {
                 assertTasksUpToDate(":lib:$compileKotlinTaskName")
             }
 
