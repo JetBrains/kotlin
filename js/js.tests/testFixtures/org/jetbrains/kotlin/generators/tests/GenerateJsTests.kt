@@ -28,13 +28,13 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
-            testClass<AbstractJsPartialLinkageWithICTestCase>(annotations = listOf(*legacyFrontend())) {
+            testClass<AbstractJsPartialLinkageWithICTestCase> {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
-            testClass<AbstractJsPartialLinkageNoICTestCase>(annotations = listOf(*legacyFrontend())) {
+            testClass<AbstractJsPartialLinkageNoICTestCase> {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
-            testClass<AbstractJsPartialLinkageNoICES6TestCase>(annotations = listOf(*legacyFrontend(), *es6())) {
+            testClass<AbstractJsPartialLinkageNoICES6TestCase>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
         }
