@@ -1,0 +1,2 @@
+public abstract interface IMutableMapEntry /* test.IMutableMapEntry*/<KElem, VElem>  extends java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap.Entry {
+}
