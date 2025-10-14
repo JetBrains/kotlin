@@ -19,6 +19,8 @@ FILE: classDeclaration.kt
 
         private final fun funC(): R|kotlin/String|
 
+        public final fun funD(): R|kotlin/Int|
+
     }
     public abstract interface B : R|kotlin/Any| {
         public open fun funA(): R|kotlin/String|
