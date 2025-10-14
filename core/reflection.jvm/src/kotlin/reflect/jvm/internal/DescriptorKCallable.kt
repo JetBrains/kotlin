@@ -108,7 +108,10 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         val type = DescriptorKType(descriptor.returnType!!) {
             extractContinuationArgument() ?: caller.returnType
         }
-        kTypeSubstitutor?.substitute(type)?.type ?: type
+        kTypeSubstitutor?.let {
+            it.substitute(type).type
+                ?: error("fuck you Nikita")
+        } ?: type
     }
 
     override val returnType: KType
