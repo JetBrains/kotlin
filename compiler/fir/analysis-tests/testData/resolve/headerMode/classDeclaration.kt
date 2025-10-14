@@ -23,6 +23,8 @@ class A {
     private fun funC(): String {
         return "A.funC body"
     }
+
+    fun funD() = 1 + 2
 }
 
 interface B {

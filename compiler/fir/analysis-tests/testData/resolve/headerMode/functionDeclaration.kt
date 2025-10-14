@@ -23,5 +23,7 @@ private fun funC(): String {
     return "funC body"
 }
 
+fun funD() = 1 + 2
+
 /* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, functionDeclaration, inline, nullableType,
 stringLiteral */
