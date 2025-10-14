@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.artifacts.ivyservice.TypedResolveException
 import org.gradle.api.internal.artifacts.transform.TransformException
 import org.gradle.internal.resolve.ArtifactNotFoundException
+import org.gradle.internal.resolve.ModuleVersionNotFoundException
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
@@ -48,11 +49,7 @@ internal object NativeBundleResolutionChecker : KotlinGradleProjectChecker {
         } catch (e: TypedResolveException) {
             handleResolveException(e, collector)
         } catch (e: Exception) {
-            // Log unexpected exceptions for debugging
-            logger.debug(
-                "Unexpected exception while resolving native bundle configuration",
-                e
-            )
+            logger.error("Unexpected exception while resolving native bundle configuration", e)
         }
     }
 
@@ -61,41 +58,54 @@ internal object NativeBundleResolutionChecker : KotlinGradleProjectChecker {
         collector: KotlinToolingDiagnosticsCollector
     ) {
         val transformException = exception.cause as? TransformException
+        val moduleVersionException = exception.cause as? ModuleVersionNotFoundException
         val artifactNotFoundException = transformException?.cause as? ArtifactNotFoundException
 
         when {
             artifactNotFoundException != null -> {
                 reportArtifactNotFound(artifactNotFoundException, collector)
             }
+            moduleVersionException != null -> {
+                reportVersionNotFound(moduleVersionException, collector)
+            }
             transformException != null -> {
-                // Handle other transform exceptions if needed
-                logger.warn(
-                    "Transform exception during native bundle resolution: ${transformException.message}"
-                )
+                // Handle other transform exceptions
+                logger.error("Transform exception during native bundle resolution", transformException)
             }
             else -> {
                 // Generic resolution error
-                logger.warn(
-                    "Failed to resolve native bundle configuration: ${exception.message}"
-                )
+                logger.error("Failed to resolve native bundle configuration", exception)
             }
         }
     }
 
-    private fun Project.reportArtifactNotFound(
-        exception: ArtifactNotFoundException,
+    private fun Project.reportVersionNotFound(
+        exception: Throwable,
         collector: KotlinToolingDiagnosticsCollector
     ) {
-        // Report diagnostic instead of println
         collector.report(
             project,
-            KotlinToolingDiagnostics.NativeBundleResolution(
-                exception.message ?: "Kotlin/Native bundle not found",
-                HostManager.hostName
+            KotlinToolingDiagnostics.NativeBundleVersionNotFoundError(
+                HostManager.platformName(),
+                exception
             )
         )
 
-        // Keep debug logging for development
+        logger.debug("Version not found details", exception)
+    }
+
+    private fun Project.reportArtifactNotFound(
+        exception: Throwable,
+        collector: KotlinToolingDiagnosticsCollector
+    ) {
+        collector.report(
+            project,
+            KotlinToolingDiagnostics.NativeBundleArtifactNotFoundError(
+                HostManager.platformName(),
+                exception
+            )
+        )
+
         logger.debug("Artifact not found details", exception)
     }
 }
