@@ -301,6 +301,10 @@ open class NativeInteropPlugin : Plugin<Project> {
                         // Set install_name to a non-absolute path.
                         add("-Wl,-install_name,@rpath/$library")
                     }
+                    if (HostManager.hostIsMingw) {
+                        // Use binary hash as the timestamp in COFF headers.
+                        add("-Wl,/Brepro")
+                    }
                 }
                 flags("-shared", "-o", ruleOut(), *ruleInAll(), *ldflags.toTypedArray())
             }

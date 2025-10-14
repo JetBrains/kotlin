@@ -50,6 +50,10 @@ native {
             // Set install_name to a non-absolute path.
             flags("-Wl,-install_name,@rpath/$library")
         }
+        if (HostManager.hostIsMingw) {
+            // Use binary hash as the timestamp in COFF headers.
+            flags("-Wl,/Brepro")
+        }
     }
     tasks.named(library).configure {
         dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
