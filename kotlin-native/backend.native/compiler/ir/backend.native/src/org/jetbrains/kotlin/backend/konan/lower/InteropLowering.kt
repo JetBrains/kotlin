@@ -328,7 +328,7 @@ private class InteropTransformerPart1(
     }
 
     private companion object {
-        private val OVERRIDING_INITIALIZER_BY_CONSTRUCTOR by IrDeclarationOriginImpl
+        private val OVERRIDING_INITIALIZER_BY_CONSTRUCTOR by IrDeclarationOriginImpl.Regular
     }
 
     private fun IrConstructor.overridesConstructor(other: IrConstructor): Boolean {

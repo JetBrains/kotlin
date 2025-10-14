@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-val JS_EXPORT_ADAPTER by IrDeclarationOriginImpl
-val KOTLIN_TO_JS_CLOSURE_ORIGIN by IrDeclarationOriginImpl
+val JS_EXPORT_ADAPTER by IrDeclarationOriginImpl.Regular
+val KOTLIN_TO_JS_CLOSURE_ORIGIN by IrDeclarationOriginImpl.Regular
 
 /**
  * Create wrappers for external and @JsExport functions when type adaptation is needed

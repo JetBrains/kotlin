@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val DECLARATION_ORIGIN_FUNCTION_CLASS by IrDeclarationOriginImpl
+internal val DECLARATION_ORIGIN_FUNCTION_CLASS by IrDeclarationOriginImpl.Regular
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrPackageFragment.isFunctionInterfaceFile get() = packageFragmentDescriptor is FunctionInterfacePackageFragment

@@ -194,8 +194,8 @@ abstract class WebCallableReferenceLowering(context: CommonBackendContext) :
     }
 
     companion object {
-        val LAMBDA_IMPL by IrDeclarationOriginImpl
-        val FUNCTION_REFERENCE_IMPL by IrDeclarationOriginImpl
-        val GENERATED_MEMBER_IN_CALLABLE_REFERENCE by IrDeclarationOriginImpl
+        val LAMBDA_IMPL by IrDeclarationOriginImpl.Regular
+        val FUNCTION_REFERENCE_IMPL by IrDeclarationOriginImpl.Regular
+        val GENERATED_MEMBER_IN_CALLABLE_REFERENCE by IrDeclarationOriginImpl.Regular
     }
 }
