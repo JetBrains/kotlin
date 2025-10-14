@@ -1,8 +1,8 @@
-public abstract class CMutableSet /* test.CMutableSet*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.MutableSet<Elem>, kotlin.jvm.internal.markers.KMutableSet {
+public abstract class CMutableSet /* test.CMutableSet*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMutableSet {
   public  CMutableSet();//  .ctor()
 }
 
-public abstract class CMutableSet2 /* test.CMutableSet2*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.MutableSet<Elem>, kotlin.jvm.internal.markers.KMutableSet {
+public abstract class CMutableSet2 /* test.CMutableSet2*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMutableSet {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   public boolean add(Elem);//  add(Elem)
@@ -56,7 +56,7 @@ public abstract class CMutableSet2 /* test.CMutableSet2*/<Elem>  implements java
   public  CMutableSet2();//  .ctor()
 }
 
-public class CMutableSet3 /* test.CMutableSet3*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.MutableSet<Elem>, kotlin.jvm.internal.markers.KMutableSet {
+public class CMutableSet3 /* test.CMutableSet3*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMutableSet {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()

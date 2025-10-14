@@ -30,5 +30,5 @@ public class CIterator3 /* test.CIterator3*/ implements test.IMutableIterator {
   public  CIterator3();//  .ctor()
 }
 
-public abstract interface IMutableIterator /* test.IMutableIterator*/ extends java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableIterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableIterator {
+public abstract interface IMutableIterator /* test.IMutableIterator*/ extends java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableIterator {
 }

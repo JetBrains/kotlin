@@ -34,5 +34,5 @@ public class CCollection3 /* test.CCollection3*/<Elem>  implements test.ICollect
   public int getSize();//  getSize()
 }
 
-public abstract interface ICollection /* test.ICollection*/<Elem>  extends java.util.Collection<Elem>, kotlin.collections.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract interface ICollection /* test.ICollection*/<Elem>  extends java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
 }
