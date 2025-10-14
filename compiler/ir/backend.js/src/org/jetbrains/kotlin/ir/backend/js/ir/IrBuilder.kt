@@ -240,6 +240,7 @@ object JsIrBuilder {
     fun buildBreak(type: IrType, loop: IrLoop) = IrBreakImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
     fun buildContinue(type: IrType, loop: IrLoop) = IrContinueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
 
+    // TODO: Remove default params
     fun buildIfElse(
         type: IrType,
         cond: IrExpression,
