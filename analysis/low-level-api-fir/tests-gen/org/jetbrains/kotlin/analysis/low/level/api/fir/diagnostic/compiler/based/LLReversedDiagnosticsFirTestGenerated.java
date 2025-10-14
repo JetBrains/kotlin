@@ -4014,6 +4014,132 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("nameBasedDestructuringAnnotationErrorShortFrom.kt")
+      public void testNameBasedDestructuringAnnotationErrorShortFrom() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringAnnotationErrorShortFrom.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringContextErrorFullFrom.kt")
+      public void testNameBasedDestructuringContextErrorFullFrom() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringContextErrorFullFrom.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringContextErrorShortFrom.kt")
+      public void testNameBasedDestructuringContextErrorShortFrom() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringContextErrorShortFrom.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringContextFullFrom.kt")
+      public void testNameBasedDestructuringContextFullFrom() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringContextFullFrom.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringContextShortFrom.kt")
+      public void testNameBasedDestructuringContextShortFrom() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringContextShortFrom.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromDelegatedFullForm.kt")
+      public void testNameBasedDestructuringDeclarationFromDelegatedFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromDelegatedFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromDelegatedShortForm.kt")
+      public void testNameBasedDestructuringDeclarationFromDelegatedShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromDelegatedShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromFunFullForm.kt")
+      public void testNameBasedDestructuringDeclarationFromFunFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromFunFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromFunShortForm.kt")
+      public void testNameBasedDestructuringDeclarationFromFunShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromFunShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromGenericFullForm.kt")
+      public void testNameBasedDestructuringDeclarationFromGenericFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromGenericFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromGenericShortForm.kt")
+      public void testNameBasedDestructuringDeclarationFromGenericShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromGenericShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromNestedReceiverFullForm.kt")
+      public void testNameBasedDestructuringDeclarationFromNestedReceiverFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromNestedReceiverFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromNestedReceiverShortForm.kt")
+      public void testNameBasedDestructuringDeclarationFromNestedReceiverShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromNestedReceiverShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromReceiversFullForm.kt")
+      public void testNameBasedDestructuringDeclarationFromReceiversFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromReceiversFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromReceiversShortForm.kt")
+      public void testNameBasedDestructuringDeclarationFromReceiversShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromReceiversShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromTopLevelFullForm.kt")
+      public void testNameBasedDestructuringDeclarationFromTopLevelFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromTopLevelFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringDeclarationFromTopLevelShortForm.kt")
+      public void testNameBasedDestructuringDeclarationFromTopLevelShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringDeclarationFromTopLevelShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringExplicitTypeErrorFullForm.kt")
+      public void testNameBasedDestructuringExplicitTypeErrorFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringExplicitTypeErrorFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringExplicitTypeErrorShortForm.kt")
+      public void testNameBasedDestructuringExplicitTypeErrorShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringExplicitTypeErrorShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringExplicitTypeFullForm.kt")
+      public void testNameBasedDestructuringExplicitTypeFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringExplicitTypeFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringExplicitTypeShortForm.kt")
+      public void testNameBasedDestructuringExplicitTypeShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringExplicitTypeShortForm.kt");
+      }
+
+      @Test
       @TestMetadata("nameBasedDestructuringFullForm.kt")
       public void testNameBasedDestructuringFullForm() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringFullForm.kt");
@@ -4026,6 +4152,198 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("nameBasedDestructuringIllegalSyntaxFullForm.kt")
+      public void testNameBasedDestructuringIllegalSyntaxFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringIllegalSyntaxFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringIllegalSyntaxShortForm.kt")
+      public void testNameBasedDestructuringIllegalSyntaxShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringIllegalSyntaxShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringJavaInteropErrorFullForm.kt")
+      public void testNameBasedDestructuringJavaInteropErrorFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringJavaInteropErrorFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringJavaInteropErrorShortForm.kt")
+      public void testNameBasedDestructuringJavaInteropErrorShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringJavaInteropErrorShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringJavaInteropFullForm.kt")
+      public void testNameBasedDestructuringJavaInteropFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringJavaInteropFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringJavaInteropShortForm.kt")
+      public void testNameBasedDestructuringJavaInteropShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringJavaInteropShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromDelegateFullForm.kt")
+      public void testNameBasedDestructuringLambdaFromDelegateFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromDelegateFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromDelegateShortForm.kt")
+      public void testNameBasedDestructuringLambdaFromDelegateShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromDelegateShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromFunFullForm.kt")
+      public void testNameBasedDestructuringLambdaFromFunFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromFunFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromFunShortForm.kt")
+      public void testNameBasedDestructuringLambdaFromFunShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromFunShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromNestedReceiverFullForm.kt")
+      public void testNameBasedDestructuringLambdaFromNestedReceiverFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromNestedReceiverFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromNestedReceiverShortForm.kt")
+      public void testNameBasedDestructuringLambdaFromNestedReceiverShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromNestedReceiverShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromReceiversFullForm.kt")
+      public void testNameBasedDestructuringLambdaFromReceiversFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromReceiversFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromReceiversShortForm.kt")
+      public void testNameBasedDestructuringLambdaFromReceiversShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromReceiversShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromTopLevelFullForm.kt")
+      public void testNameBasedDestructuringLambdaFromTopLevelFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromTopLevelFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaFromTopLevelShortForm.kt")
+      public void testNameBasedDestructuringLambdaFromTopLevelShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaFromTopLevelShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaParamsMultipleFullForm.kt")
+      public void testNameBasedDestructuringLambdaParamsMultipleFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaParamsMultipleFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaParamsMultipleShortForm.kt")
+      public void testNameBasedDestructuringLambdaParamsMultipleShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaParamsMultipleShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaSamAndSuspendFullForm.kt")
+      public void testNameBasedDestructuringLambdaSamAndSuspendFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaSamAndSuspendFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLambdaSamAndSuspendShortForm.kt")
+      public void testNameBasedDestructuringLambdaSamAndSuspendShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLambdaSamAndSuspendShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromDelegateFullForm.kt")
+      public void testNameBasedDestructuringLoopFromDelegateFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromDelegateFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromDelegateShortForm.kt")
+      public void testNameBasedDestructuringLoopFromDelegateShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromDelegateShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromFunFullForm.kt")
+      public void testNameBasedDestructuringLoopFromFunFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromFunFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromFunShortForm.kt")
+      public void testNameBasedDestructuringLoopFromFunShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromFunShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromGenericFullForm.kt")
+      public void testNameBasedDestructuringLoopFromGenericFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromGenericFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromGenericShortForm.kt")
+      public void testNameBasedDestructuringLoopFromGenericShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromGenericShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromNestedReceiverFullForm.kt")
+      public void testNameBasedDestructuringLoopFromNestedReceiverFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromNestedReceiverFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromNestedReceiverShortForm.kt")
+      public void testNameBasedDestructuringLoopFromNestedReceiverShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromNestedReceiverShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromReceiversFullForm.kt")
+      public void testNameBasedDestructuringLoopFromReceiversFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromReceiversFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromReceiversShortForm.kt")
+      public void testNameBasedDestructuringLoopFromReceiversShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromReceiversShortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromTopLevelFullForm.kt")
+      public void testNameBasedDestructuringLoopFromTopLevelFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromTopLevelFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringLoopFromTopLevelShortForm.kt")
+      public void testNameBasedDestructuringLoopFromTopLevelShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringLoopFromTopLevelShortForm.kt");
+      }
+
+      @Test
       @TestMetadata("nameBasedDestructuringShortFormAfter.kt")
       public void testNameBasedDestructuringShortFormAfter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringShortFormAfter.kt");
@@ -4035,6 +4353,18 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("nameBasedDestructuringShortFormErrorsAfter.kt")
       public void testNameBasedDestructuringShortFormErrorsAfter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringShortFormErrorsAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringVisibilityFullForm.kt")
+      public void testNameBasedDestructuringVisibilityFullForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringVisibilityFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringVisibilityShortForm.kt")
+      public void testNameBasedDestructuringVisibilityShortForm() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringVisibilityShortForm.kt");
       }
 
       @Test
