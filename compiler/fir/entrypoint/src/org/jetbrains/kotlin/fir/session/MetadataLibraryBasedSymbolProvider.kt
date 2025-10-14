@@ -41,7 +41,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, KlibMetadataSerializerProtocol
 ) {
-    private class MetadataLibraryPackagePartCacheDataExtra(val library: MetadataLibrary) : PackagePartsCacheData.Extra
+    private class MetadataLibraryPackagePartCacheDataExtra(val library: KotlinLibrary) : PackagePartsCacheData.Extra
 
     protected abstract fun moduleData(library: L): FirModuleData?
 
@@ -108,7 +108,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
                         constDeserializer,
                         createDeserializedContainerSource(resolvedLibrary, packageFqName),
                     ),
-                    MetadataLibraryPackagePartCacheDataExtra(resolvedLibrary)
+                    (resolvedLibrary as? KotlinLibrary)?.let(::MetadataLibraryPackagePartCacheDataExtra)
                 )
             }
         }
@@ -201,7 +201,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
     private fun <T : GeneratedMessageLite.ExtendableMessage<T>> loadKlibSourceFileExtensionOrNull(
         packagePart: PackagePartsCacheData, proto: T, sourceFileExtension: GeneratedExtension<T, Int>,
     ): DeserializedSourceFile? {
-        val library = (packagePart.extra as? MetadataLibraryPackagePartCacheDataExtra)?.library as? KotlinLibrary ?: return null
+        val library = (packagePart.extra as? MetadataLibraryPackagePartCacheDataExtra)?.library ?: return null
         return loadKlibSourceFileExtensionOrNull(library, packagePart.context.nameResolver, proto, sourceFileExtension)
     }
 
