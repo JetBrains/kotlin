@@ -266,7 +266,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/diagnostics", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsKlibDiagnosticsTestGenerated") {
+            testClass<AbstractPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "PsiJsKlibDiagnosticsTestGenerated") {
                 model(
                     relativeRootPath = "klibSerializationTests",
                     pattern = "^([^_](.+))\\.kt$",
@@ -274,7 +274,7 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirPsiJsDiagnosticTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsTestGenerated") {
+            testClass<AbstractPsiJsDiagnosticTest>(suiteTestClassName = "PsiJsOldFrontendDiagnosticsTestGenerated") {
                 model(
                     relativeRootPath = "testsWithJsStdLib",
                     pattern = "^([^_](.+))\\.kt$",
@@ -282,7 +282,7 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirLightTreeJsDiagnosticTest>(suiteTestClassName = "FirLightTreeJsOldFrontendDiagnosticsTestGenerated") {
+            testClass<AbstractLightTreeJsDiagnosticTest>(suiteTestClassName = "LightTreeJsOldFrontendDiagnosticsTestGenerated") {
                 model(
                     relativeRootPath = "testsWithJsStdLib",
                     pattern = "^([^_](.+))\\.kt$",
@@ -290,7 +290,7 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsWithBackendTestGenerated") {
+            testClass<AbstractPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "PsiJsOldFrontendDiagnosticsWithBackendTestGenerated") {
                 model(
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
@@ -298,7 +298,7 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirLightTreeJsDiagnosticWithBackendTest>(suiteTestClassName = "FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated") {
+            testClass<AbstractLightTreeJsDiagnosticWithBackendTest>(suiteTestClassName = "LightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated") {
                 model(
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
@@ -306,7 +306,7 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirJsDiagnosticWithBackendWithInlinedFunInKlibTestBase>(suiteTestClassName = "FirJsOldFrontendDiagnosticsWithBackendWithInlinedFunInKlibTestGenerated") {
+            testClass<AbstractJsDiagnosticWithBackendWithInlinedFunInKlibTestBase>(suiteTestClassName = "JsOldFrontendDiagnosticsWithBackendWithInlinedFunInKlibTestGenerated") {
                 model(
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
@@ -319,7 +319,7 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractFirJsDiagnosticWithIrInlinerTest>(suiteTestClassName = "FirJsDiagnosticWithIrInlinerTestGenerated") {
+            testClass<AbstractJsDiagnosticWithIrInlinerTest>(suiteTestClassName = "JsDiagnosticWithIrInlinerTestGenerated") {
                 model(
                     relativeRootPath = "irInliner",
                     pattern = "^([^_](.+))\\.kt$",

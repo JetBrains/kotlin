@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
+abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             targetBackend = TargetBackend.JS_IR
@@ -72,7 +72,7 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
     }
 }
 
-abstract class AbstractFirJsDiagnosticTestWithoutBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
+abstract class AbstractJsDiagnosticTestWithoutBackendTestBase(parser: FirParser) : AbstractJsDiagnosticTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
@@ -81,7 +81,7 @@ abstract class AbstractFirJsDiagnosticTestWithoutBackendTestBase(parser: FirPars
     }
 }
 
-abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
+abstract class AbstractJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractJsDiagnosticTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         klibArtifactsHandlersStep {
@@ -93,7 +93,7 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
     }
 }
 
-abstract class AbstractFirJsDiagnosticWithBackendWithInlinedFunInKlibTestBase : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.LightTree) {
+abstract class AbstractJsDiagnosticWithBackendWithInlinedFunInKlibTestBase : AbstractJsDiagnosticWithBackendTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
@@ -105,7 +105,7 @@ abstract class AbstractFirJsDiagnosticWithBackendWithInlinedFunInKlibTestBase : 
     }
 }
 
-abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestWithoutBackendTestBase(parser) {
+abstract class AbstractJsDiagnosticWithIrInlinerTestBase(parser: FirParser) : AbstractJsDiagnosticTestWithoutBackendTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
@@ -117,10 +117,10 @@ abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) :
     }
 }
 
-abstract class AbstractFirPsiJsDiagnosticTest : AbstractFirJsDiagnosticTestWithoutBackendTestBase(FirParser.Psi)
-abstract class AbstractFirLightTreeJsDiagnosticTest : AbstractFirJsDiagnosticTestWithoutBackendTestBase(FirParser.LightTree)
+abstract class AbstractPsiJsDiagnosticTest : AbstractJsDiagnosticTestWithoutBackendTestBase(FirParser.Psi)
+abstract class AbstractLightTreeJsDiagnosticTest : AbstractJsDiagnosticTestWithoutBackendTestBase(FirParser.LightTree)
 
-abstract class AbstractFirJsDiagnosticWithIrInlinerTest : AbstractFirJsDiagnosticWithIrInlinerTestBase(FirParser.LightTree)
+abstract class AbstractJsDiagnosticWithIrInlinerTest : AbstractJsDiagnosticWithIrInlinerTestBase(FirParser.LightTree)
 
-abstract class AbstractFirPsiJsDiagnosticWithBackendTest : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.Psi)
-abstract class AbstractFirLightTreeJsDiagnosticWithBackendTest : AbstractFirJsDiagnosticWithBackendTestBase(FirParser.LightTree)
+abstract class AbstractPsiJsDiagnosticWithBackendTest : AbstractJsDiagnosticWithBackendTestBase(FirParser.Psi)
+abstract class AbstractLightTreeJsDiagnosticWithBackendTest : AbstractJsDiagnosticWithBackendTestBase(FirParser.LightTree)

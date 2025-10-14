@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation")
 @TestDataPath("$PROJECT_ROOT")
-public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extends AbstractFirLightTreeJsDiagnosticWithBackendTest {
+public class LightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extends AbstractLightTreeJsDiagnosticWithBackendTest {
   @Test
   public void testAllFilesPresentInTestsWithJsStdLibAndBackendCompilation() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);

@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/irInliner")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiagnosticWithIrInlinerTest {
+public class JsDiagnosticWithIrInlinerTestGenerated extends AbstractJsDiagnosticWithIrInlinerTest {
   @Test
   public void testAllFilesPresentInIrInliner() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
