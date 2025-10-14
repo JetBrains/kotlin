@@ -27,7 +27,7 @@ public final class Bar: main.Foo {
     }
 }
 @_spi(Foonnotation)
-open class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class Foo: KotlinRuntime.KotlinBase {
     @_spi(Foonnotation)
     public init() {
         if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
@@ -43,7 +43,7 @@ open class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     }
 }
 @_spi(Foonnotation)
-public final class FooObject: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class FooObject: KotlinRuntime.KotlinBase {
     @_spi(Foonnotation)
     public var objectProperty: Swift.String {
         @_spi(Foonnotation)
@@ -72,7 +72,7 @@ public final class FooObject: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Ko
         return FooObject_objectMethod(self.__externalRCRef())
     }
 }
-public final class OptInConstructor: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class OptInConstructor: KotlinRuntime.KotlinBase {
     public var name: Swift.String {
         get {
             return OptInConstructor_name_get(self.__externalRCRef())
@@ -99,9 +99,9 @@ public final class OptInConstructor: KotlinRuntime.KotlinBase, KotlinRuntimeSupp
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class WithCompanion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class WithCompanion: KotlinRuntime.KotlinBase {
     @_spi(Foonnotation)
-    public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Companion: KotlinRuntime.KotlinBase {
         @_spi(Foonnotation)
         public static var shared: main.WithCompanion.Companion {
             @_spi(Foonnotation)

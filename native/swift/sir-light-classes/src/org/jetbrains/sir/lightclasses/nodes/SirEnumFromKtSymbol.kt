@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
@@ -51,6 +52,7 @@ import org.jetbrains.sir.lightclasses.utils.bridgeFqName
 import org.jetbrains.sir.lightclasses.utils.forBridge
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
+import org.jetbrains.sir.lightclasses.utils.translatedOptInAttributes
 
 internal fun createSirEnumFromKtSymbol(
     ktSymbol: KaNamedClassSymbol,
@@ -296,6 +298,7 @@ private class SirEnumCaseFromKtSymbol(
             explicitParameters = emptyList(),
             returnType = SirType.Companion.any,
             kotlinFqName = fqName,
+            kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = null,
             extensionReceiverParameter = null,
             errorParameter = null,
