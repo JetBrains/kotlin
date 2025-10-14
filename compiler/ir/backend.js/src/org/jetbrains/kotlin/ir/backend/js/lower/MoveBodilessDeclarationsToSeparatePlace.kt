@@ -96,9 +96,6 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
 
                 return emptyList()
             } else if (d.isEffectivelyExternal()) {
-                if (d.getJsModule() != null)
-                    context.declarationLevelJsModules.add(d)
-
                 externalPackageFragment.declarations += d
                 d.parent = externalPackageFragment
 
