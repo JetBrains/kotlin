@@ -5,7 +5,10 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @OptIn(ExperimentalWasmJsInterop::class)
+@UsedFromCompilerGeneratedCode
 internal external fun getCachedJsObject(
     ref: JsAny,
     ifNotCached: JsAny

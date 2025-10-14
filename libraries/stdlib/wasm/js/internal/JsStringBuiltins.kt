@@ -7,6 +7,8 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 /**
  * The following Js builtins are internal and used for the implementation of String class in Wasm target.
  * Range/bound checks in Js code are omitted, as the String class performs checks in Kotlin code, before calling builtins.
@@ -27,6 +29,7 @@ internal external fun jsLength(a: JsString): Int
     "concat",
     "export const concat = (a, b) => a + b"
 )
+@UsedFromCompilerGeneratedCode
 internal external fun jsConcat(a: JsString, b: JsString): JsStringRef
 
 
