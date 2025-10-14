@@ -101,7 +101,7 @@ class FirOverloadByLambdaReturnTypeResolver(
                     components.initialTypeOfCandidate(candidate)
                 )
                 for (inputType in lambda.inputTypes) {
-                    inferenceSession.semiFixTypeVariablesAllowingFixationToOuterOnes(inputType, myCs = candidate.system)
+                    inferenceSession.semiFixTypeVariablesAllowingFixationToOtherOnes(inputType, myCs = candidate.system)
                 }
             }
 
