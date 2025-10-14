@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.STABLE_NATIVE_VERSION
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.setUpKotlinNativeToolchainWithStableVersion
+import org.jetbrains.kotlin.gradle.util.setUpKotlinNativeToolchain
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
 import kotlin.test.Test
@@ -27,7 +27,7 @@ class KotlinNativeToolchainTest {
     @Test
     fun `check that kotlin native compiler stable version has been resolved correctly`() {
         val project = buildProjectWithMPP(preApplyCode = {
-            setUpKotlinNativeToolchainWithStableVersion()
+            setUpKotlinNativeToolchain()
         }) {
             configureRepositoriesForTests()
             project.multiplatformExtension.linuxX64()
@@ -67,7 +67,7 @@ class KotlinNativeToolchainTest {
         Assume.assumeTrue(!HostManager.hostIsMac)
 
         val project = buildProjectWithMPP {
-            setUpKotlinNativeToolchainWithStableVersion()
+            setUpKotlinNativeToolchain()
         }
         project.multiplatformExtension.iosX64()
         project.multiplatformExtension.iosArm64()

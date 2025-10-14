@@ -31,7 +31,7 @@ internal fun ProjectInternal.mockGenerateProjectStructureMetadataTaskOutputs() {
 
 internal const val STABLE_NATIVE_VERSION = "2.2.20"
 
-internal fun Project.setUpKotlinNativeToolchainWithStableVersion() {
-    project.extraProperties.set("kotlin.native.version", STABLE_NATIVE_VERSION)
+internal fun Project.setUpKotlinNativeToolchain(version: String = STABLE_NATIVE_VERSION) {
+    project.extraProperties.set("kotlin.native.version", version)
     project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", true)
 }
