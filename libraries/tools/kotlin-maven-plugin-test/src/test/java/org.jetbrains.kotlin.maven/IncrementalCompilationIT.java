@@ -44,6 +44,14 @@ public class IncrementalCompilationIT extends MavenITBase {
         };
     }
 
+    @NotNull
+    private String[] withJavaOutputPaths() {
+        return new String[]{
+                "target/classes/SomeMain.class",
+                "target/test-classes/SomeTests.class"
+        };
+    }
+
     @Test
     public void testNoChanges() throws Exception {
         MavenProject project = new MavenProject("kotlinSimple");
@@ -105,5 +113,16 @@ public class IncrementalCompilationIT extends MavenITBase {
                 .succeeded()
                 .filesExist(kotlinSimpleOutputPaths())
                 .compiledKotlin("src/main/kotlin/A.kt");
+    }
+
+    @Test // Regression test for KT-81681
+    public void secondRunWithTests() throws Exception {
+        MavenProject project = new MavenProject("kotlinWithTests");
+        project.exec(executionStrategy, "package");
+
+        project.exec(executionStrategy, "package", "-X")
+                .succeeded()
+                .filesExist(withJavaOutputPaths())
+                .compiledKotlin();
     }
 }
