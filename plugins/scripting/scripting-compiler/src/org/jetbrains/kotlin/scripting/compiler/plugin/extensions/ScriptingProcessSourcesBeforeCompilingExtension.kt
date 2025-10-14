@@ -156,6 +156,8 @@ class KotlinScriptExpressionExplainTransformer(
             }
             statement
         }
+        // Loops are not properly supported and behave weirdly on explanation
+        is IrLoop -> statement
         is IrWhen -> {
             statement.branches.transformInPlace {
                 IrBranchImpl(it.condition, explainStatement(it.result, builder, explanationsProp, declaration) as IrExpression)

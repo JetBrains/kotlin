@@ -141,7 +141,23 @@ class ScriptingWithExplanationCompilerTest {
             expectedOut = listOf("45", "46")
         )
     }
+
+    @Test
+    fun testScriptExplainSholdHandleLoops() {
+        explainAndCheck(
+            "${TEST_DATA_DIR}/compiler/explain/explainWithLoops.kts",
+            expectedExplanations = listOf(
+                "<iterator>(11, 16) = kotlin.ranges.IntProgressionIterator@",
+                "i(56, 58) = 11",
+                "(104, 110) = kotlin.Unit",
+                "\$\$result(159, 161) = 45"
+            ),
+            expectedOut = (1..10).map { "42"} + (1..11).map { "43" } + (1..12).map { "44" } + "45"
+        )
+    }
 }
+
+private val reAddress = Regex("@\\p{XDigit}{4,8}")
 
 private fun explainAndCheck(scriptPath: String, expectedExplanations: List<String>, expectedExitCode: ExitCode = ExitCode.OK, expectedOut: List<String>? = null) {
     withTempFile { explainFile ->
@@ -152,7 +168,7 @@ private fun explainAndCheck(scriptPath: String, expectedExplanations: List<Strin
         if (expectedOut != null) {
             assertEquals(expectedOut, out.trim().lines())
         }
-        val lines = explainFile.readLines()
+        val lines = explainFile.readLines().map { it.replace(reAddress, "@") }
         assertEquals(expectedExplanations, lines)
     }
 }
