@@ -15,8 +15,9 @@ fun parseModuleHeader(libraryMetadata: ByteArray): KlibMetadataProtoBuf.Header =
     KlibMetadataProtoBuf.Header.parseFrom(libraryMetadata, KlibMetadataSerializerProtocol.extensionRegistry)
 
 interface PackageAccessHandler {
-    fun loadModuleHeader(library: KotlinLibrary): KlibMetadataProtoBuf.Header
-            = parseModuleHeader(library.moduleHeaderData)
+    fun loadModuleHeader(
+        library: KotlinLibrary
+    ): KlibMetadataProtoBuf.Header = parseModuleHeader(library.moduleHeaderData)
 
     fun loadPackageFragment(
         library: KotlinLibrary,
