@@ -21,7 +21,7 @@
         <entry key="$PROJECT_DIR$/compiler/testData/debug/stepping">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/{firStepping,firSteppingWithInlinedFunInKlib}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/{stepping,steppingWithInlinedFunInKlib,steppingSplit,steppingSplitWithInlinedFunInKlib}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>

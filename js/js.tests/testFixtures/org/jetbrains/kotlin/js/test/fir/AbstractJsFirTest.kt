@@ -295,8 +295,8 @@ open class AbstractFirMultiModuleOrderTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsSteppingTest(
-    testGroupOutputDirPrefix: String = "debug/firStepping/"
+open class AbstractJsSteppingTest(
+    testGroupOutputDirPrefix: String = "debug/stepping/"
 ) : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
@@ -310,9 +310,9 @@ open class AbstractFirJsSteppingTest(
     }
 }
 
-open class AbstractFirJsSteppingWithInlinedFunInKlibTest(
-    testGroupOutputDirPrefix: String = "debug/firSteppingWithInlinedFunInKlib/"
-) : AbstractFirJsSteppingTest(
+open class AbstractJsSteppingWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix: String = "debug/steppingWithInlinedFunInKlib/"
+) : AbstractJsSteppingTest(
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -328,8 +328,8 @@ open class AbstractFirJsSteppingWithInlinedFunInKlibTest(
     }
 }
 
-open class AbstractFirJsSteppingSplitTest : AbstractFirJsSteppingTest(
-    testGroupOutputDirPrefix = "debug/firSteppingSplit/"
+open class AbstractJsSteppingSplitTest : AbstractJsSteppingTest(
+    testGroupOutputDirPrefix = "debug/steppingSplit/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
         get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
@@ -346,8 +346,8 @@ open class AbstractFirJsSteppingSplitTest : AbstractFirJsSteppingTest(
     }
 }
 
-open class AbstractFirJsSteppingSplitWithInlinedFunInKlibTest : AbstractFirJsSteppingWithInlinedFunInKlibTest(
-    testGroupOutputDirPrefix = "debug/firSteppingSplit/"
+open class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsSteppingWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix = "debug/steppingSplitWithInlinedFunInKlib/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
         get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)

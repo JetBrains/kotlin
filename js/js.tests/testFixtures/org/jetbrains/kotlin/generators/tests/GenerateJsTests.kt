@@ -233,19 +233,19 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/debug", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirJsSteppingTest> {
+            testClass<AbstractJsSteppingTest> {
                 model("stepping")
             }
 
-            testClass<AbstractFirJsSteppingWithInlinedFunInKlibTest> {
+            testClass<AbstractJsSteppingWithInlinedFunInKlibTest> {
                 model("stepping")
             }
 
-            testClass<AbstractFirJsSteppingSplitTest> {
+            testClass<AbstractJsSteppingSplitTest> {
                 model("stepping")
             }
 
-            testClass<AbstractFirJsSteppingSplitWithInlinedFunInKlibTest> {
+            testClass<AbstractJsSteppingSplitWithInlinedFunInKlibTest> {
                 model("stepping")
             }
         }

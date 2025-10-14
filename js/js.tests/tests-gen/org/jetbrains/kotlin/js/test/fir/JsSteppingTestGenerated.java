@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/debug/stepping")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
+public class JsSteppingTestGenerated extends AbstractJsSteppingTest {
   @Test
   public void testAllFilesPresentInStepping() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, true);
