@@ -161,7 +161,7 @@ class FirPCLAInferenceSession(
         return semiFixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
     }
 
-    override fun semiFixTypeVariablesAllowingFixationToOuterOnes(
+    override fun semiFixTypeVariablesAllowingFixationToOtherOnes(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
     ) {
