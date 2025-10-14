@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -165,67 +165,6 @@ class JsIrBackendContext(
                     .filterIsInstanceMapNotNull<IrSimpleFunction, IrSimpleFunctionSymbol> { function ->
                         function.symbol.takeIf { function.name == name }
                     }
-            }
-        }
-    }
-
-    private fun parseJsFromAnnotation(declaration: IrDeclaration, annotationClassId: ClassId): Pair<IrConstructorCall, JsFunction>? {
-        val annotation = declaration.getAnnotation(annotationClassId.asSingleFqName())
-            ?: return null
-        val jsCode = annotation.arguments[0]
-            ?: compilationException("@${annotationClassId.shortClassName} annotation must contain the JS code argument", annotation)
-        val statements = translateJsCodeIntoStatementList(jsCode, declaration)
-            ?: compilationException("Could not parse JS code", annotation)
-        val parsedJsFunction = statements.singleOrNull()
-            ?.safeAs<JsExpressionStatement>()
-            ?.expression
-            ?.safeAs<JsFunction>()
-            ?: compilationException("Provided JS code is not a js function", annotation)
-        return annotation to parsedJsFunction
-    }
-
-    private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
-    fun getJsCodeForFunction(symbol: IrFunctionSymbol): JsFunction? {
-        val jsFunction = outlinedJsCodeFunctions[symbol]
-        if (jsFunction != null) return jsFunction
-
-        parseJsFromAnnotation(symbol.owner, JsStandardClassIds.Annotations.JsOutlinedFunction)
-            ?.let { (annotation, parsedJsFunction) ->
-                val sourceMap = (annotation.arguments[1] as? IrConst)?.value as? String
-                val parsedSourceMap = sourceMap?.let { parseSourceMap(it, symbol.owner.fileOrNull, annotation) }
-                if (parsedSourceMap != null) {
-                    val remapper = SourceMapLocationRemapper(parsedSourceMap)
-                    remapper.remap(parsedJsFunction)
-                }
-                outlinedJsCodeFunctions[symbol] = parsedJsFunction
-                return parsedJsFunction
-            }
-
-        parseJsFromAnnotation(symbol.owner, JsStandardClassIds.Annotations.JsFun)
-            ?.let { (_, parsedJsFunction) ->
-                outlinedJsCodeFunctions[symbol] = parsedJsFunction
-                return parsedJsFunction
-            }
-        return null
-    }
-
-    private fun parseSourceMap(sourceMap: String, file: IrFile?, annotation: IrConstructorCall): SourceMap? {
-        if (sourceMap.isEmpty()) return null
-        return when (val result = SourceMapParser.parse(sourceMap)) {
-            is SourceMapSuccess -> result.value
-            is SourceMapError -> {
-                reportWarning(
-                    """
-                    Invalid source map in annotation:
-                    ${annotation.dumpKotlinLike()}
-                    ${result.message.replaceFirstChar(Char::uppercase)}.
-                    Some debug information may be unavailable.
-                    If you believe this is not your fault, please create an issue: https://kotl.in/issue
-                    """.trimIndent(),
-                    file,
-                    annotation,
-                )
-                null
             }
         }
     }

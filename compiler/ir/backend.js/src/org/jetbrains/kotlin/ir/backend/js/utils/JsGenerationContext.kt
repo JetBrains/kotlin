@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getJsCode
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getSourceLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -98,7 +99,7 @@ class JsGenerationContext(
     fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.symbols.jsCode
 
     fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean {
-        return staticContext.backendContext.getJsCodeForFunction(symbol) != null
+        return with(staticContext.backendContext) { symbol.owner.getJsCode() != null }
     }
 
     fun getStartLocationForIrElement(irElement: IrElement, originalName: String? = null) =

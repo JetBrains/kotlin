@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
+import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isVararg
@@ -32,8 +35,16 @@ import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMap
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapLocationRemapper
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
+import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.io.FileInputStream
 import java.io.IOException
@@ -116,10 +127,77 @@ fun defineProperty(
     )
 }
 
+private var IrFunction.cachedOutlinedJsCode: JsFunction? by irAttribute(copyByDefault = false)
+
+context(reportingContext: ErrorReportingContext)
+fun IrFunction.getJsCode(): JsFunction? {
+    cachedOutlinedJsCode?.let {
+        return it
+    }
+
+    parseJsFromAnnotation(this, JsStandardClassIds.Annotations.JsOutlinedFunction)
+        ?.let { (annotation, parsedJsFunction) ->
+            val sourceMap = (annotation.arguments[1] as? IrConst)?.value as? String
+            val parsedSourceMap = sourceMap?.let { parseSourceMap(it, fileOrNull, annotation) }
+            if (parsedSourceMap != null) {
+                val remapper = SourceMapLocationRemapper(parsedSourceMap)
+                remapper.remap(parsedJsFunction)
+            }
+            cachedOutlinedJsCode = parsedJsFunction
+            return parsedJsFunction
+        }
+
+    parseJsFromAnnotation(this, JsStandardClassIds.Annotations.JsFun)
+        ?.let { (_, parsedJsFunction) ->
+            cachedOutlinedJsCode = parsedJsFunction
+            return parsedJsFunction
+        }
+    return null
+}
+
+private fun parseJsFromAnnotation(declaration: IrDeclaration, annotationClassId: ClassId): Pair<IrConstructorCall, JsFunction>? {
+    val annotation = declaration.getAnnotation(annotationClassId.asSingleFqName())
+        ?: return null
+    val jsCode = annotation.arguments[0]
+        ?: compilationException("@${annotationClassId.shortClassName} annotation must contain the JS code argument", annotation)
+    val statements = translateJsCodeIntoStatementList(jsCode, declaration)
+        ?: compilationException("Could not parse JS code", annotation)
+    val parsedJsFunction = statements.singleOrNull()
+        ?.safeAs<JsExpressionStatement>()
+        ?.expression
+        ?.safeAs<JsFunction>()
+        ?: compilationException("Provided JS code is not a js function", annotation)
+    return annotation to parsedJsFunction
+}
+
+context(reportingContext: ErrorReportingContext)
+private fun parseSourceMap(sourceMap: String, file: IrFile?, annotation: IrConstructorCall): SourceMap? {
+    if (sourceMap.isEmpty()) return null
+    return when (val result = SourceMapParser.parse(sourceMap)) {
+        is SourceMapSuccess -> result.value
+        is SourceMapError -> {
+            reportingContext.reportWarning(
+                """
+                    Invalid source map in annotation:
+                    ${annotation.dumpKotlinLike()}
+                    ${result.message.replaceFirstChar(Char::uppercase)}.
+                    Some debug information may be unavailable.
+                    If you believe this is not your fault, please create an issue: https://kotl.in/issue
+                    """.trimIndent(),
+                file,
+                annotation,
+            )
+            null
+        }
+    }
+}
+
 fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
-    context.staticContext.backendContext.getJsCodeForFunction(declaration.symbol)?.let { function ->
-        function.name = name
-        return function
+    with(context.staticContext.backendContext) {
+        declaration.getJsCode()?.let { function ->
+            function.name = name
+            return function
+        }
     }
 
     val localNameGenerator = context.localNames
