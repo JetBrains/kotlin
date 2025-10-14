@@ -67,7 +67,7 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
         return sourceSet.internal.metadataTransformation?.params?.let { transformationParameters ->
             partiallyUnresolvedPlatformDependencies(
                 dependingPlatformCompilations = transformationParameters.dependingPlatformCompilations,
-                metadataConfiguration = transformationParameters.resolvedMetadataConfiguration,
+                metadataConfiguration = transformationParameters.resolvedMetadataConfiguration.resolvedComponent,
             ).map { partiallyUnresolvedDependency ->
                 IdeaKotlinUnresolvedBinaryDependency(
                     cause = KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies.failureMessage(

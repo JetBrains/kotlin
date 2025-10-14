@@ -632,7 +632,7 @@ private fun Project.collectAllPlatformCompilationData(): List<PlatformCompilatio
 
 private fun KotlinCompilation<*>.toPlatformCompilationData() = PlatformCompilationData(
     allSourceSets = allKotlinSourceSets.map { it.name }.toSet(),
-    resolvedDependenciesConfiguration = LazyResolvedConfigurationWithArtifacts(internal.configurations.compileDependencyConfiguration),
+    resolvedDependenciesConfiguration = LazyResolvedConfigurationComponent(internal.configurations.compileDependencyConfiguration),
     hostSpecificMetadataConfiguration = internal
         .configurations
         .hostSpecificMetadataConfiguration
