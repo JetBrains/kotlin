@@ -434,7 +434,37 @@ class GccBasedLinker(targetProperties: GccConfigurables)
                     +provideCompilerRtLibrary("tsan_cxx")!!
                 }
             }
-            +libraries
+            // the static libraries have order dependency, so we need to put them in the correct order,
+            // from left to right
+            // the order is defined by the linkerStaticSortingRegexFlags, which is a list of strings in the form of
+            // type1: "order@regex&order@regex&..."
+            // type2: "--whole-archive"
+            // type3: "--use-group"
+            // start of the static libraries
+            // 1. use --whole-archive
+            // 2. use --start-group
+            +linkerStaticSortingRegexFlags.contains("--whole-archive").let {
+                if (it) listOf("--whole-archive")+libraries else if (linkerStaticSortingRegexFlags.contains("--use-group")) listOf("--start-group")+libraries else {
+                    // get the regex rules sorted by order
+                    val regexRules = toSortingRegex().sortedBy { it.first }
+                    // collect all matched libraries, group by order
+                    val matchedLibraries = regexRules.flatMap { (_/*order*/, regex) -> libraries.filter { it.matches(regex) } }
+                    // collect unmatched libraries, keep the original order
+                    val remainingLibraries = libraries.filterNot { lib -> matchedLibraries.contains(lib) }
+                    // merge sorted and unmatched libraries
+                    matchedLibraries + remainingLibraries
+                }
+            }
+            // +libraries commented out because it is already included in the linkerStaticSortingRegexFlags
+            // 1. use --no-whole-archive
+            // 2. use --end-group
+            +linkerStaticSortingRegexFlags.contains("--whole-archive").let {
+                if (it) listOf("--no-whole-archive") else if (linkerStaticSortingRegexFlags.contains("--use-group")) listOf("--end-group") else {
+                    // in this case we don't need to do anything
+                    emptyList()
+                }
+            }
+            // end of the static libraries
             +linkerArgs
             // See explanation about `-u__llvm_profile_runtime` here:
             // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
