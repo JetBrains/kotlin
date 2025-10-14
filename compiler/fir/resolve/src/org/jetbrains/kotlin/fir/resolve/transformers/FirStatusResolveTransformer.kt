@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -428,7 +429,7 @@ abstract class AbstractFirStatusResolveTransformer(
             overriddenFunctions.map { it.status as FirResolvedDeclarationStatus },
         )
         // Once the modality is determined, we can remove the body.
-        if (simpleFunction.isHeader == true) simpleFunction.replaceBody(null)
+        if (simpleFunction.isHeader == true && simpleFunction.returnTypeRef !is FirImplicitTypeRef) simpleFunction.replaceBody(null)
 
         namedFunction.transformStatus(this, resolvedStatus)
         transformDeclaration(namedFunction, data) as FirStatement
