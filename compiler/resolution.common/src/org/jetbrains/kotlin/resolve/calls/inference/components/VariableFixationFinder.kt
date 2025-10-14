@@ -10,17 +10,13 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogRecord
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.IncorporationConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
-import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogRecord
 
 class VariableFixationFinder(
     private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
@@ -308,9 +304,14 @@ class VariableFixationFinder(
     context(c: Context)
     private fun TypeConstructorMarker.hasProperArgumentConstraints(): Boolean {
         val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
+        val anyProperConstraint = constraints.any { it.isProperArgumentConstraint() }
+        if (!anyProperConstraint) return false
+
         // temporary hack to fail calls which contain callable references resolved though OI with uninferred type parameters
         val areThereConstraintsWithUninferredTypeParameter = constraints.any { c -> c.type.contains { it.isUninferredParameter() } }
-        return constraints.any { it.isProperArgumentConstraint() } && !areThereConstraintsWithUninferredTypeParameter
+        if (areThereConstraintsWithUninferredTypeParameter) return false
+
+        return true
     }
 
     context(c: Context)
