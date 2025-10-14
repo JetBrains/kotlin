@@ -24,7 +24,8 @@ internal fun getAllMembers_newKotlinReflectImpl(
     kClass: KClassImpl<*>,
     memberKind: MemberKind,
 ): List<DescriptorKCallable<*>> {
-    val isKotlin = kClass.jClass.isKotlin
+    // return emptyList()
+    val isKotlin = kClass.java.isKotlin
     // Kotlin doesn't have statics (unless it's enum), and it never inherits statics from Java
     if (kClass.classKind != ClassKind.ENUM_CLASS && memberKind == MemberKind.STATIC && isKotlin) return emptyList()
     val visitedSignatures = kClass.declaredDescriptorKCallableMembers
@@ -156,6 +157,7 @@ private fun collectVisitedSignaturesForSuperclassRecursively(
     val classGenericsSubstitutor = accumulateClassGenericsSubstitutor.createCombinedSubstitutorOrNull(currentType)
         ?: starProjectionSupertypesAreNotPossible()
     for (notSubstitutedMember in currentClass.declaredDescriptorKCallableMembers) {
+        // if (notSubstitutedMember.name != "containsAll" && notSubstitutedMember.name != "addAll") continue // todo debug
         if (notSubstitutedMember.visibility == KVisibility.PRIVATE) continue
         if (notSubstitutedMember.fullVisibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY &&
             currentClass.java.`package` != context.receiver.java.`package`
@@ -172,7 +174,15 @@ private fun collectVisitedSignaturesForSuperclassRecursively(
             kTypeSubstitutor = classGenericsSubstitutor
         }
 
-        val signature = member.toCallableSignature()
+        // Unit // todo
+        //
+        // val foo = member.shallowCopy().apply {
+        //     forceInstanceReceiverParameter = member.forceInstanceReceiverParameter
+        //     kTypeSubstitutor = member.kTypeSubstitutor
+        // }
+        // println(foo.toString())
+
+        val signature = member.toEquatableCallableSignature()
         val topologicalMember = TopologicalKCallable(topologicalLevel, member)
         val existingMember = outVisitedSignatures[signature]
 
