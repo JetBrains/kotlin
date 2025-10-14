@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
@@ -58,8 +59,8 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
 
     override fun MutableMap<Name, FirJavaMethod>.addSpecialBuilderMethods(
         builder: SuperBuilder,
-        classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
+        builderDeclaration: FirDeclaration,
         existingFunctionNames: Set<Name>,
     ) {
         // Don't care about manually written builder classes without specified type parameters
