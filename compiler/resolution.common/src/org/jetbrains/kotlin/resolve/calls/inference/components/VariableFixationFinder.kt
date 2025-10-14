@@ -311,7 +311,22 @@ class VariableFixationFinder(
         val areThereConstraintsWithUninferredTypeParameter = constraints.any { c -> c.type.contains { it.isUninferredParameter() } }
         if (areThereConstraintsWithUninferredTypeParameter) return false
 
-        return true
+        // The code below is only relevant to [FirInferenceSession.semiFixTypeVariablesAllowingFixationToOtherOnes] case,
+        // which is expected to be used only for semi-fixation of input types for input types for OverloadResolutionByLambdaReturnType.
+        if (!c.allowSemiFixationToOtherTypeVariables) return true
+
+        val properConstraints = constraints.filter { it.isProperArgumentConstraint() }
+        if (properConstraints.any { it.kind != ConstraintKind.LOWER }) return true
+
+        // NB: All proper constraints are LOWER here.
+        // As a resulting type for such a type variable is the common supertype of all lower constraints, which is undefined
+        // for a case when all the constraints are type variables _and_ there are more than one of them.
+        // For details, see [NewCommonSuperTypeCalculator.commonSuperTypeForNotNullTypes]
+        val commonSupertypeIsUndefined = properConstraints.size > 1 && properConstraints.all {
+            it.type.typeConstructor() in c.notFixedTypeVariables
+        }
+
+        return !commonSupertypeIsUndefined
     }
 
     context(c: Context)
