@@ -1,14 +1,16 @@
 KtNamedFunction 'getProgressionLastElement' in 'kotlin-stdlib.jar!/kotlin/internal/ProgressionUtilKt.class':
-  @R|kotlin/PublishedApi|() internal final fun getProgressionLastElement(start: R|kotlin/Int|, end: R|kotlin/Int|, step: R|kotlin/Int|): R|kotlin/Int|
+  @R|kotlin/PublishedApi|() @R|kotlin/internal/UsedFromCompilerGeneratedCode|() internal final fun getProgressionLastElement(start: R|kotlin/Int|, end: R|kotlin/Int|, step: R|kotlin/Int|): R|kotlin/Int|
 
 
 KtNamedFunction 'getProgressionLastElement' in 'kotlin-stdlib.jar!/kotlin/internal/ProgressionUtilKt.class':
-  @R|kotlin/PublishedApi|() internal final fun getProgressionLastElement(start: R|kotlin/Long|, end: R|kotlin/Long|, step: R|kotlin/Long|): R|kotlin/Long|
+  @R|kotlin/PublishedApi|() @R|kotlin/internal/UsedFromCompilerGeneratedCode|() internal final fun getProgressionLastElement(start: R|kotlin/Long|, end: R|kotlin/Long|, step: R|kotlin/Long|): R|kotlin/Long|
 
 
 KtNamedFunction 'getProgressionLastElement' in 'kotlin-stdlib.jar!/kotlin/internal/UProgressionUtilKt.class':
-  @R|kotlin/PublishedApi|() @R|kotlin/SinceKotlin|(version = String(1.3)) internal final fun getProgressionLastElement(start: R|kotlin/UInt|, end: R|kotlin/UInt|, step: R|kotlin/Int|): R|kotlin/UInt|
+  @R|kotlin/PublishedApi|() @R|kotlin/SinceKotlin|(version = String(1.3)) @R|kotlin/internal/UsedFromCompilerGeneratedCode|() internal final fun getProgressionLastElement(start: R|kotlin/UInt|, end: R|kotlin/UInt|, step: R|kotlin/Int|): R|kotlin/UInt|
 
 
 KtNamedFunction 'getProgressionLastElement' in 'kotlin-stdlib.jar!/kotlin/internal/UProgressionUtilKt.class':
-  @R|kotlin/PublishedApi|() @R|kotlin/SinceKotlin|(version = String(1.3)) internal final fun getProgressionLastElement(start: R|kotlin/ULong|, end: R|kotlin/ULong|, step: R|kotlin/Long|): R|kotlin/ULong|
+  @R|kotlin/PublishedApi|() @R|kotlin/SinceKotlin|(version = String(1.3)) @R|kotlin/internal/UsedFromCompilerGeneratedCode|() internal final fun getProgressionLastElement(start: R|kotlin/ULong|, end: R|kotlin/ULong|, step: R|kotlin/Long|): R|kotlin/ULong|
+
+

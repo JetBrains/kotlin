@@ -7,9 +7,11 @@ package kotlin.coroutines.js.internal
 
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @PublishedApi
 @SinceKotlin("1.3")
+@UsedFromCompilerGeneratedCode
 internal val EmptyContinuation: Continuation<Any?> = Continuation(EmptyCoroutineContext) { result ->
     val _ = result.getOrThrow()
 }
