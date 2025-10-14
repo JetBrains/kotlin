@@ -16,43 +16,43 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 @ExperimentalKotlinGradlePluginApi
 interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
     /**
-     * Used to add dependency to [commonMain][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME]
-     * [implementation][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.implementationConfigurationName] configuration
+     * Add a dependency to the [`commonMain`][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME] source set's
+     * [implementation][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.implementationConfigurationName] configuration.
      *
-     * [`implementation`](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-types) scoped dependencies are used during
-     * compilation and at runtime. They are not exported to compilations of library consumers, but are exported for their runtime.
+     * [`implementation`](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-types)-scoped dependencies apply during
+     * compilation and runtime. Gradle doesn't export them to the compilations of library consumers, but it does include their runtime components.
      */
     val implementation: DependencyCollector
 
     /**
-     * Used to add dependency to [commonMain][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME]
+     * Add a dependency to the [`commonMain`][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME] source set's
      * [api][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.apiConfigurationName] configuration
      *
-     * [`api`](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-types) scoped dependencies are used both during
-     * compilation and at runtime. They are exported to compilations and runtime of library consumers.
+     * [`api`](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-types)-scoped dependencies apply during
+     * compilation and runtime. Gradle exports them to both the compilation and runtime of library consumers.
      */
     val api: DependencyCollector
 
     /**
-     * Used to add dependency to [commonMain][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME]
-     * [compileOnly][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.compileOnlyConfigurationName] configuration
+     * Add a dependency to the [`commonMain`][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME] source set's
+     * [compileOnly][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.compileOnlyConfigurationName] configuration.
      *
-     * [`compileOnly`](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-types) scoped dependencies are used during
-     * compilation and are not visible at runtime. They are not exported to compilations or runtime of library consumers.
+     * [`compileOnly`](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-types)-scoped dependencies apply only during
+     * compilation. Gradle doesn't include them at runtime or export them to the compilations or runtime of library consumers.
      */
     val compileOnly: DependencyCollector
 
     /**
-     * Used to add dependency to [commonMain][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME]
-     * [runtimeOnly][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.runtimeOnlyConfigurationName] configuration
+     * Add a dependency to the [`commonMain`][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME] source set's
+     * [runtimeOnly][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.runtimeOnlyConfigurationName] configuration.
      *
-     * [`runtimeOnly`](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-types) scoped dependencies are used only at
-     * runtime and not visible during compilation. They are exported to runtime of library consumers.
+     * [`runtimeOnly`](https://kotlinlang.org/docs/gradle-configure-project.html#dependency-types)-scoped dependencies apply only at
+     * runtime and aren't visible during compilation. Gradle includes them in the runtime of library consumers but doesn't export them for compilation.
      */
     val runtimeOnly: DependencyCollector
 
     /**
-     * Used to add dependency to [commonTest][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME]
+     * Add a dependency to the [`commonTest`][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME] source set's
      * [implementation][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.implementationConfigurationName] configuration
      *
      * @see implementation
@@ -60,28 +60,28 @@ interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
     val testImplementation: DependencyCollector
 
     /**
-     * Used to add dependency to [commonTest][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME]
-     * [compileOnly][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.compileOnlyConfigurationName] configuration
+     * Add a dependency to the [`commonTest`][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME] source sets
+     * [compileOnly][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.compileOnlyConfigurationName] configuration.
      *
      * @see compileOnly
      */
     val testCompileOnly: DependencyCollector
 
     /**
-     * Used to add dependency to [commonTest][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME]
-     * [runtimeOnly][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.runtimeOnlyConfigurationName] configuration
+     * Add a dependency to the [`commonTest`][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME] source set's
+     * [runtimeOnly][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.runtimeOnlyConfigurationName] configuration.
      *
      * @see runtimeOnly
      */
     val testRuntimeOnly: DependencyCollector
 
     /**
-     * Convenience for generating "org.jetbrains.kotlin:kotlin-${module}" dependency
+     * Generates a "org.jetbrains.kotlin:kotlin-${module}" dependency.
      */
     fun kotlin(module: String): Dependency
 
     /**
-     * Convenience for generating "org.jetbrains.kotlin:kotlin-${module}:${version}" dependency
+     * Generates a "org.jetbrains.kotlin:kotlin-${module}:${version}" dependency.
      */
     fun kotlin(module: String, version: String?): Dependency
 }
