@@ -10,7 +10,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -57,9 +56,10 @@ class KaptConfigurationIT : KGPBaseTest() {
                 }
 
                 val composeSuppressOption = compilerArguments
-                    .sumOf {
-                        it.countOccurrencesOf("plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=true")
+                    .filter {
+                        it == "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=true"
                     }
+                    .size
                 assert(composeSuppressOption == 1) {
                     printBuildOutput()
                     "KaptGenerateStubs task compiler arguments contains $composeSuppressOption times option to suppress compose warning:" +

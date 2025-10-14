@@ -4,8 +4,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -65,8 +63,6 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
 
 @DisplayName("Kotlin JVM compile execution strategy")
 class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
-    override val expectedOutOfProcessDiagnostic: ToolingDiagnosticFactory = KotlinToolingDiagnostics.UsingOutOfProcessDisablesBuildToolsApi
-
     override fun BuildResult.checkOutput(project: TestProject) {
         with(project) {
             val classesDir = subProject("app").kotlinClassesDir().resolve("foo")
@@ -87,8 +83,6 @@ class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
 }
 
 abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
-    internal open val expectedOutOfProcessDiagnostic: ToolingDiagnosticFactory? = null
-
     @DisplayName("Compilation via Kotlin daemon")
     @GradleTest
     fun testDaemon(gradleVersion: GradleVersion) {
@@ -231,8 +225,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
     fun testOutOfProcess(gradleVersion: GradleVersion) {
         doTestExecutionStrategy(
             gradleVersion,
-            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS,
-            expectDiagnostic = expectedOutOfProcessDiagnostic
+            KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
         )
     }
 
@@ -242,7 +235,6 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         addHeapDumpOptions: Boolean = true,
         testFallbackStrategy: Boolean = false,
         shouldConfigureStrategyViaGradleProperty: Boolean = true,
-        expectDiagnostic: ToolingDiagnosticFactory? = null,
         additionalProjectConfiguration: TestProject.() -> Unit = {},
     ) {
         project(
@@ -280,18 +272,11 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             } else {
                 emptyArray()
             }
-            val expectedFinishStrategy = when {
-                testFallbackStrategy && this@ExecutionStrategyIT is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.IN_PROCESS
-                testFallbackStrategy && this@ExecutionStrategyIT !is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
-                else -> executionStrategy
-            }
+            val expectedFinishStrategy = if (testFallbackStrategy) KotlinCompilerExecutionStrategy.OUT_OF_PROCESS else executionStrategy
             val finishMessage = expectedFinishStrategy.asFinishLogMessage
 
             build("build", *args) {
                 assertOutputContains(expectedFinishStrategy.asFinishLogMessage)
-                if (expectDiagnostic != null) {
-                    assertHasDiagnostic(expectDiagnostic)
-                }
                 checkOutput(this@project)
                 assertNoBuildWarnings()
 
