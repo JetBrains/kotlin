@@ -73,4 +73,5 @@ object ExpressionIds {
     const val SUPER_REF = 23
     const val YIELD = 24
     const val BIGINT_LITERAL = 25
+    const val YIELD_STAR = 26
 }

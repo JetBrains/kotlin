@@ -27,6 +27,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_CONSTRUCTOR = "constructor".toCharArray();
     private static final char[] CHARS_CONTINUE = "continue".toCharArray();
     private static final char[] CHARS_YIELD = "yield".toCharArray();
+    private static final char[] CHARS_YIELD_STAR = "yield*".toCharArray();
     private static final char[] CHARS_DEBUGGER = "debugger".toCharArray();
     private static final char[] CHARS_DEFAULT = "default".toCharArray();
     private static final char[] CHARS_DO = "do".toCharArray();
@@ -344,6 +345,24 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         printCommentsBeforeNode(x);
 
         p.print(CHARS_YIELD);
+
+        JsExpression expression = x.getExpression();
+
+        if (expression != null) {
+            space();
+            accept(x.getExpression());
+        }
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitYieldStar(@NotNull JsYieldStar x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        p.print(CHARS_YIELD_STAR);
 
         JsExpression expression = x.getExpression();
 

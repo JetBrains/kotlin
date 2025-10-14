@@ -551,6 +551,11 @@ private class JsIrAstSerializer {
                 writeByte(ExpressionIds.YIELD)
                 ifNotNull(x.expression) { writeExpression(it) }
             }
+
+            override fun visitYieldStar(x: JsYieldStar) {
+                writeByte(ExpressionIds.YIELD_STAR)
+                ifNotNull(x.expression) { writeExpression(it) }
+            }
         }
 
         withComments(expression) {
