@@ -1,8 +1,8 @@
-public abstract class CCollection /* test.CCollection*/<Elem>  implements java.util.Collection<Elem>, kotlin.collections.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CCollection /* test.CCollection*/<Elem>  implements java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CCollection();//  .ctor()
 }
 
-public abstract class CCollection2 /* test.CCollection2*/<Elem>  implements java.util.Collection<Elem>, kotlin.collections.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CCollection2 /* test.CCollection2*/<Elem>  implements java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
   @org.jetbrains.annotations.NotNull()
@@ -19,7 +19,7 @@ public abstract class CCollection2 /* test.CCollection2*/<Elem>  implements java
   public int getSize();//  getSize()
 }
 
-public class CCollection3 /* test.CCollection3*/<Elem>  implements java.util.Collection<Elem>, kotlin.collections.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CCollection3 /* test.CCollection3*/<Elem>  implements java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
