@@ -105,6 +105,7 @@ class JavaLikeCounterLoopBuilder(private val context: CommonBackendContext) {
             conditionStartOffset, conditionEndOffset, context.irBuiltIns.unitType, null,
             listOf(
                 IrBranchImpl(
+                    conditionStartOffset, conditionEndOffset,
                     negatedCondition,
                     IrBreakImpl(conditionStartOffset, conditionEndOffset, context.irBuiltIns.nothingType, doWhileLoop)
                 )

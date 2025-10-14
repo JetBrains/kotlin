@@ -477,9 +477,9 @@ open class SerializerIrGenerator(
                 +irSet(indexVar.symbol, irInvoke(readElementF, localInput.get(), localSerialDesc.get()))
                 +irWhen {
                     // if index == -1 (READ_DONE) break loop
-                    +IrBranchImpl(irEquals(indexVar.get(), irInt(-1)), irSet(flagVar.symbol, irBoolean(false)))
+                    +IrBranchImpl(startOffset, endOffset, irEquals(indexVar.get(), irInt(-1)), irSet(flagVar.symbol, irBoolean(false)))
 
-                    decoderCalls.forEach { (i, e) -> +IrBranchImpl(irEquals(indexVar.get(), irInt(i)), e) }
+                    decoderCalls.forEach { (i, e) -> +IrBranchImpl(startOffset, endOffset, irEquals(indexVar.get(), irInt(i)), e) }
 
                     // throw exception on unknown field
 

@@ -123,9 +123,11 @@ fun Fir2IrComponents.createWhenForSafeFall(
             arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
         }
         branches += IrBranchImpl(
+            startOffset, endOffset,
             condition, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
         )
         branches += IrElseBranchImpl(
+            startOffset, endOffset,
             IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
             expressionOnNotNull
         )

@@ -97,7 +97,7 @@ inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockB
 
 fun IrBuilderWithScope.irIfThen(condition: IrExpression, thenPart: IrExpression) =
     IrWhenImpl(startOffset, endOffset, context.irBuiltIns.unitType).apply {
-        branches += IrBranchImpl(condition, thenPart)
+        branches += IrBranchImpl(startOffset, endOffset, condition, thenPart)
     }
 
 fun IrBuilderWithScope.irNot(arg: IrExpression) =

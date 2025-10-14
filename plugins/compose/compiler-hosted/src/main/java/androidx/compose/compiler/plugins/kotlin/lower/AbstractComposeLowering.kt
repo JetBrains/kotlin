@@ -694,7 +694,7 @@ abstract class AbstractComposeLowering(
             origin = IrStatementOrigin.IF
         ).also {
             it.branches.add(
-                IrBranchImpl(condition, body)
+                IrBranchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, condition, body)
             )
         }
     }
@@ -735,7 +735,7 @@ abstract class AbstractComposeLowering(
         condition: IrExpression,
         result: IrExpression,
     ): IrBranch {
-        return IrBranchImpl(condition, result)
+        return IrBranchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, condition, result)
     }
 
     protected fun irElseBranch(

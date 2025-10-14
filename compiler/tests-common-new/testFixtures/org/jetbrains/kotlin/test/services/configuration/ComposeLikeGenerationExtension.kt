@@ -219,7 +219,7 @@ private class ComposeLikeDefaultArgumentRewriter(
             origin = IrStatementOrigin.IF
         ).also {
             it.branches.add(
-                IrBranchImpl(condition, body)
+                IrBranchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, condition, body)
             )
         }
     }

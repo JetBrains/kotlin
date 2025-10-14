@@ -58,17 +58,6 @@ fun IrBranchImpl(
     result = result,
 )
 
-fun IrBranchImpl(
-    condition: IrExpression,
-    result: IrExpression,
-) = IrBranchImpl(
-    constructorIndicator = null,
-    startOffset = condition.startOffset,
-    endOffset = result.endOffset,
-    condition = condition,
-    result = result,
-)
-
 fun IrBreakImpl(
     startOffset: Int,
     endOffset: Int,

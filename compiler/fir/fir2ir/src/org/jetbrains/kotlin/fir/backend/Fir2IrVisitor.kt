@@ -1880,13 +1880,20 @@ class Fir2IrVisitor(
             } else when (booleanOperatorExpression.kind) {
                 LogicOperationKind.AND -> {
                     IrWhenImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.ANDAND).apply {
-                        branches.add(IrBranchImpl(leftOperand, rightOperand))
+                        branches.add(IrBranchImpl(leftOperand.startOffset, rightOperand.endOffset, leftOperand, rightOperand))
                         branches.add(elseBranch(constFalse(rightOperand.startOffset, rightOperand.endOffset)))
                     }
                 }
                 LogicOperationKind.OR -> {
                     IrWhenImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.OROR).apply {
-                        branches.add(IrBranchImpl(leftOperand, constTrue(leftOperand.startOffset, leftOperand.endOffset)))
+                        branches.add(
+                            IrBranchImpl(
+                                startOffset,
+                                endOffset,
+                                leftOperand,
+                                constTrue(leftOperand.startOffset, leftOperand.endOffset)
+                            )
+                        )
                         branches.add(elseBranch(rightOperand))
                     }
                 }

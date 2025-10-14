@@ -144,7 +144,7 @@ internal fun IrBuiltIns.irEquals(arg1: IrExpression, arg2: IrExpression): IrCall
 
 internal fun IrBuiltIns.irIfNullThenElse(nullableArg: IrExpression, ifTrue: IrExpression, ifFalse: IrExpression): IrWhen {
     val nullCondition = this.irEquals(nullableArg, IrConstImpl.constNull(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.anyNType))
-    val trueBranch = IrBranchImpl(nullCondition, ifTrue) // use default
+    val trueBranch = IrBranchImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, nullCondition, ifTrue) // use default
     val elseBranch = IrElseBranchImpl(IrConstImpl.constTrue(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.booleanType), ifFalse)
 
     return IrWhenImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, ifTrue.type).apply { branches += listOf(trueBranch, elseBranch) }

@@ -46,7 +46,7 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
             val irCondition = ktLastIf.condition!!.genExpr()
 
             val irThenBranch = ktLastIf.then?.genExpr() ?: generateEmptyBlockForMissingBranch(ktLastIf)
-            irBranches.add(IrBranchImpl(irCondition, irThenBranch))
+            irBranches.add(IrBranchImpl(irCondition.startOffset, irThenBranch.endOffset, irCondition, irThenBranch))
 
             when (val ktElse = ktLastIf.`else`?.deparenthesize()) {
                 null -> break@whenBranches
@@ -125,7 +125,14 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
                 }
 
                 val irBranchResult = ktEntry.expression!!.genExpr()
-                irWhen.branches.add(IrBranchImpl(irBranchCondition!!, irBranchResult))
+                irWhen.branches.add(
+                    IrBranchImpl(
+                        irBranchCondition!!.startOffset,
+                        irBranchResult.endOffset,
+                        irBranchCondition,
+                        irBranchResult
+                    )
+                )
             }
         }
         if (!hasExplicitElseBranch) {
