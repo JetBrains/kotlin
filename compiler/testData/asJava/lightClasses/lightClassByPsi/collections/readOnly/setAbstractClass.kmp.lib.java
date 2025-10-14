@@ -1,8 +1,8 @@
-public abstract class CSet /* test.CSet*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CSet /* test.CSet*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CSet();//  .ctor()
 }
 
-public abstract class CSet2 /* test.CSet2*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CSet2 /* test.CSet2*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
   @kotlin.SinceKotlin()
@@ -25,7 +25,7 @@ public abstract class CSet2 /* test.CSet2*/<Elem>  implements java.util.Set<Elem
   public int getSize();//  getSize()
 }
 
-public class CSet3 /* test.CSet3*/<Elem>  implements java.util.Set<Elem>, kotlin.collections.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CSet3 /* test.CSet3*/<Elem>  implements java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
