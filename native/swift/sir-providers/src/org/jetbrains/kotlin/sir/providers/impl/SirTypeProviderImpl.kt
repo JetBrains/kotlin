@@ -55,14 +55,15 @@ public class SirTypeProviderImpl(
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
 ) : SirTypeProvider {
 
-    private data class TypeTranslationCtx(
+    @ConsistentCopyVisibility
+    public data class TypeTranslationCtx internal constructor(
         val currentPosition: SirTypeVariance,
         val reportErrorType: (String) -> Nothing,
         val reportUnsupportedType: () -> Nothing,
         val processTypeImports: (List<SirImport>) -> Unit,
         val requiresHashableAsAny: Boolean,
     ) {
-        fun anyRepresentativeType(): SirType =
+        public fun anyRepresentativeType(): SirType =
             if (requiresHashableAsAny) SirType.anyHashable else KotlinRuntimeSupportModule.kotlinBridgeableType
     }
 
@@ -72,13 +73,14 @@ public class SirTypeProviderImpl(
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
+        requiresHashableAsAny: Boolean,
     ): SirType = translateType(
         TypeTranslationCtx(
             currentPosition = position,
             reportErrorType = reportErrorType,
             reportUnsupportedType = reportUnsupportedType,
             processTypeImports = processTypeImports,
-            requiresHashableAsAny = false,
+            requiresHashableAsAny = requiresHashableAsAny,
         )
     )
 
@@ -118,11 +120,6 @@ public class SirTypeProviderImpl(
         }
 
         fun buildRegularType(kaType: KaType): SirType = sirSession.withSessions {
-            fun KaTypeProjection.sirType(ctx: TypeTranslationCtx): SirType = when (this) {
-                is KaStarTypeProjection -> ctx.anyRepresentativeType()
-                is KaTypeArgumentWithVariance -> buildSirType(type, ctx)
-            }
-
             when (kaType) {
                 is KaUsualClassType -> {
                     if (kaType.isTypealiasToFunctionalType && kaType.isUnsupportedFunctionalType(ctx)) {
@@ -130,27 +127,10 @@ public class SirTypeProviderImpl(
                     }
                     when {
                         kaType.isNothingType -> SirNominalType(SirSwiftModule.never)
-                        kaType.isStringType -> SirNominalType(SirSwiftModule.string)
                         kaType.isAnyType -> ctx.anyRepresentativeType()
 
-                        kaType.isClassType(StandardClassIds.List) -> {
-                            SirArrayType(
-                                kaType.typeArguments.single().sirType(ctx),
-                            )
-                        }
-
-                        kaType.isClassType(StandardClassIds.Set) -> {
-                            SirNominalType(
-                                SirSwiftModule.set,
-                                listOf(kaType.typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true)))
-                            )
-                        }
-
-                        kaType.isClassType(StandardClassIds.Map) -> {
-                            SirDictionaryType(
-                                kaType.typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true)),
-                                kaType.typeArguments.last().sirType(ctx),
-                            )
+                        sirSession.customTypeTranslator.isClassIdSupported(kaType.classId) -> {
+                            with(sirSession.customTypeTranslator) { kaType.toSirType(ctx) }
                         }
 
                         else -> {
