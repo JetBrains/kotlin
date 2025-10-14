@@ -56,7 +56,17 @@ fun IrBranchImpl(
     endOffset = endOffset,
     condition = condition,
     result = result,
-)
+).also {
+    val isValid = when {
+        startOffset < -2 || endOffset < -2 -> false
+        (startOffset < 0 || endOffset < 0) && startOffset != endOffset -> false
+        startOffset > endOffset -> false
+        else -> true
+    }
+    if (!isValid) {
+        error("blblbl")
+    }
+}
 
 fun IrBranchImpl(
     condition: IrExpression,
