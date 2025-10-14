@@ -4140,6 +4140,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val message: String
     }
 
+    interface NotYetSupportedInInlineWarning : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = NotYetSupportedInInlineWarning::class
+    }
+
     interface NothingToInline : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = NothingToInline::class
     }

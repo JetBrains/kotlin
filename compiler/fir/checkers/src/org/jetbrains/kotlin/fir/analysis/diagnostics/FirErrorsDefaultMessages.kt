@@ -774,6 +774,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_YET_SUPPORTED_IN_INLINE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_IGNORABLE_WITH_MUST_USE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS
@@ -3443,6 +3444,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL
         )
         map.put(NOT_YET_SUPPORTED_IN_INLINE, "{0} are not yet supported in inline functions.", STRING)
+        map.put(
+            NOT_YET_SUPPORTED_IN_INLINE_WARNING,
+            "Inline functions may not inherit default values for parameters since the inherited default value cannot be inlined.".toDeprecationWarningMessage(
+                LanguageFeature.ForbidOverriddenDefaultParametersInInline
+            )
+        )
         map.put(
             NOTHING_TO_INLINE,
             "Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types."

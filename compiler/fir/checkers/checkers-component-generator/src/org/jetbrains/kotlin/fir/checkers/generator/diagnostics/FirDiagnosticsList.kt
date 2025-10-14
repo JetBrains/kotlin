@@ -2051,6 +2051,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NOT_YET_SUPPORTED_IN_INLINE by error<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT) {
             parameter<String>("message")
         }
+        val NOT_YET_SUPPORTED_IN_INLINE_WARNING by warning<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
 
         val NOTHING_TO_INLINE by warning<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
 

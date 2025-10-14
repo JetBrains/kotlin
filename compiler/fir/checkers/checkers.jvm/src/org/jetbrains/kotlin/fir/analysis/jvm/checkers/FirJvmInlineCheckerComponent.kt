@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 
 class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent() {
@@ -39,4 +37,8 @@ class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent()
             "Suspend functional parameters with default values"
         )
     }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun shouldReportRegularOverridesWithDefaultParameters(): Boolean =
+        true
 }

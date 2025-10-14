@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirComposableSessionComponent
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
@@ -30,7 +32,7 @@ abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionC
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    open fun checkFunctionalParametersWithInheritedDefaultValues(
+    open fun checkParametersWithInheritedDefaultValues(
         function: FirNamedFunction,
         overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
     ) {
@@ -40,38 +42,59 @@ abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionC
                 idx.takeIf { param.hasDefaultValue }
             }
         }.toSet()
+        val shouldReportError = shouldReportRegularOverridesWithDefaultParameters()
         function.valueParameters.forEachIndexed { idx, param ->
             if (param.defaultValue == null && paramsWithDefaults.contains(idx)) {
-                reporter.reportOn(
-                    param.source,
-                    FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
-                    "Functional parameters with inherited default values"
-                )
+                if (shouldReportError) {
+                    reporter.reportOn(
+                        param.source,
+                        FirErrors.NOT_YET_SUPPORTED_IN_INLINE,
+                        "Parameters with inherited default values"
+                    )
+                } else {
+                    reporter.reportOn(
+                        param.source,
+                        FirErrors.NOT_YET_SUPPORTED_IN_INLINE_WARNING
+                    )
+                }
             }
         }
     }
 
-    companion object Default : FirInlineCheckerPlatformSpecificComponent()
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    open fun shouldReportRegularOverridesWithDefaultParameters(): Boolean =
+        LanguageFeature.ForbidOverriddenDefaultParametersInInline.isEnabled()
+
+    /**
+     * Default component for inline checking, currently used for all non-JVM platforms
+     *
+     * Any other component overrides this one: either JVM- or another platform-specific (if any of such appears later).
+     * See [Composed.nonDuplicatingComponents]
+     */
+    object NonJvmDefault : FirInlineCheckerPlatformSpecificComponent()
 
     class Composed(
         override val components: List<FirInlineCheckerPlatformSpecificComponent>
     ) : FirInlineCheckerPlatformSpecificComponent(), FirComposableSessionComponent.Composed<FirInlineCheckerPlatformSpecificComponent> {
+        private val nonDuplicatingComponents: List<FirInlineCheckerPlatformSpecificComponent> =
+            if (components.size == 1) components else components.filter { it !== NonJvmDefault }
+
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun isGenerallyOk(declaration: FirDeclaration): Boolean {
-            return components.all { it.isGenerallyOk(declaration) }
+            return nonDuplicatingComponents.all { it.isGenerallyOk(declaration) }
         }
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun checkSuspendFunctionalParameterWithDefaultValue(param: FirValueParameter) {
-            components.forEach { it.checkSuspendFunctionalParameterWithDefaultValue(param) }
+            nonDuplicatingComponents.forEach { it.checkSuspendFunctionalParameterWithDefaultValue(param) }
         }
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
-        override fun checkFunctionalParametersWithInheritedDefaultValues(
+        override fun checkParametersWithInheritedDefaultValues(
             function: FirNamedFunction,
             overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
         ) {
-            components.forEach { it.checkFunctionalParametersWithInheritedDefaultValues(function, overriddenSymbols) }
+            nonDuplicatingComponents.forEach { it.checkParametersWithInheritedDefaultValues(function, overriddenSymbols) }
         }
     }
 

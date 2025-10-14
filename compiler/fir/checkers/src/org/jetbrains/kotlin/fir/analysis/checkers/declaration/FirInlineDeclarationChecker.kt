@@ -353,7 +353,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
 
         //check for inherited default values
-        context.session.inlineCheckerExtension.checkFunctionalParametersWithInheritedDefaultValues(
+        context.session.inlineCheckerExtension.checkParametersWithInheritedDefaultValues(
             function, overriddenSymbols
         )
     }
