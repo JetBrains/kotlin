@@ -54,8 +54,8 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
     }
 }
 
-internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfiguration(): LazyResolvedConfiguration {
-    return LazyResolvedConfiguration(resolvableMetadataConfiguration) { attributes ->
+internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfiguration(): LazyResolvedConfigurationWithArtifacts {
+    return LazyResolvedConfigurationWithArtifacts(resolvableMetadataConfiguration) { attributes ->
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
         attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
     }
