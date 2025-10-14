@@ -1,8 +1,8 @@
-public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Elem>, kotlin.collections.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CList();//  .ctor()
 }
 
-public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<Elem>, kotlin.collections.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -50,7 +50,7 @@ public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<E
   public  CList2();//  .ctor()
 }
 
-public class CList3 /* test.CList3*/<Elem>  implements java.util.List<Elem>, kotlin.collections.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CList3 /* test.CList3*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
