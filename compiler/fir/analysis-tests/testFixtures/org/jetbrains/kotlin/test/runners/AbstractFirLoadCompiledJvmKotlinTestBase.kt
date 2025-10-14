@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -35,7 +37,9 @@ abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.Fr
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         commonConfigurationForJvmTest(frontendKind, frontendFacade, frontendToBackendConverter, backendFacade)
-
+        configureFirHandlersStep {
+            useHandlers(::NoFirCompilationErrorsHandler)
+        }
         configureJvmArtifactsHandlersStep {
             useHandlers(::JvmLoadedMetadataDumpHandler)
         }
