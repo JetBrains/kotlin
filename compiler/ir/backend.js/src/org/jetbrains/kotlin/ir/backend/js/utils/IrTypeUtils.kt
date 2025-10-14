@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.localClassName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -52,7 +53,7 @@ private fun IrClassifierSymbol.asString(context: JsIrBackendContext): String {
         is IrScriptSymbol -> unexpectedSymbolKind<IrClassifierSymbol>()
         is IrClassSymbol ->
             context.classToItsId[owner]
-                ?: context.localClassNames[owner]
+                ?: owner.localClassName
                 ?: this.owner.fqNameWhenAvailable!!.asString()
     }
 }

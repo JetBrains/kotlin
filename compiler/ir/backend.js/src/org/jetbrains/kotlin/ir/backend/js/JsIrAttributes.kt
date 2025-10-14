@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflect
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 
+var IrClass.localClassName: String? by irAttribute(copyByDefault = true)
+
 /**
  * Whether the class's ES6 constructor requires an additional `box` value parameter.
  */

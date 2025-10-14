@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.lower.InventNamesForLocalClasses
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.localClassName
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
@@ -25,7 +26,7 @@ class JsInventNamesForLocalClasses(private val context: JsIrBackendContext) : In
 
     override fun putLocalClassName(declaration: IrElement, localClassName: String) {
         if (declaration is IrClass) {
-            context.localClassNames[declaration] = localClassName
+            declaration.localClassName = localClassName
         }
     }
 }
