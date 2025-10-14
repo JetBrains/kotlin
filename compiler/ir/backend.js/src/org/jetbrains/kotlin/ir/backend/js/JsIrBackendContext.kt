@@ -70,7 +70,6 @@ class JsIrBackendContext(
 
     val polyfills = JsPolyfills()
     val globalIrInterner = IrInterningService()
-    val classToItsId = WeakHashMap<IrClass, String>()
 
     val minimizedNameGenerator: MinimizedNameGenerator =
         MinimizedNameGenerator()
