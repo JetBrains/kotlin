@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
+import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
 import org.jetbrains.kotlin.sir.providers.impl.StandaloneSirTypeNamer
 
 
@@ -80,6 +83,7 @@ public interface SirSession :
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
+        requiresHashableAsAny: Boolean,
     ): SirType =
         with(typeProvider) {
             this@translateType.translateType(
@@ -87,7 +91,8 @@ public interface SirSession :
                 position,
                 reportErrorType,
                 reportUnsupportedType,
-                processTypeImports
+                processTypeImports,
+                requiresHashableAsAny,
             )
         }
 
@@ -358,6 +363,7 @@ public interface SirTypeProvider {
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
+        requiresHashableAsAny: Boolean = false,
     ): SirType
 }
 
@@ -371,6 +377,11 @@ public fun KaType.translateType(
 
 public interface SirCustomTypeTranslator {
     public fun isFqNameSupported(fqName: FqName): Boolean
+
+    public fun isClassIdSupported(classId: ClassId): Boolean = isFqNameSupported(classId.asSingleFqName())
+
+    context(kaSession: KaSession)
+    public fun KaUsualClassType.toSirType(ctx: TypeTranslationCtx): SirType?
 }
 
 /**

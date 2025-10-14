@@ -5,10 +5,24 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.isClassType
+import org.jetbrains.kotlin.analysis.api.components.isStringType
+import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.sir.SirArrayType
+import org.jetbrains.kotlin.sir.SirDictionaryType
+import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.SirCustomTypeTranslator
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 public class SirCustomTypeTranslatorImpl(
     private val session: SirSession
@@ -29,4 +43,46 @@ public class SirCustomTypeTranslatorImpl(
         return supportedFqNames.contains(fqName)
     }
 
+    context(kaSession: KaSession)
+    public override fun KaUsualClassType.toSirType(ctx: TypeTranslationCtx): SirType? {
+        return when {
+            isStringType -> SirNominalType(SirSwiftModule.string)
+            isClassType(StandardClassIds.List) -> {
+                SirArrayType(
+                    typeArguments.single().sirType(ctx),
+                )
+            }
+
+            isClassType(StandardClassIds.Set) -> {
+                SirNominalType(
+                    SirSwiftModule.set,
+                    listOf(typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true)))
+                )
+            }
+
+            isClassType(StandardClassIds.Map) -> {
+                SirDictionaryType(
+                    typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true)),
+                    typeArguments.last().sirType(ctx),
+                )
+            }
+
+            else -> null
+        }
+    }
+
+    context(kaSession: KaSession)
+    private fun KaTypeProjection.sirType(ctx: TypeTranslationCtx): SirType = when (this) {
+        is KaStarTypeProjection -> ctx.anyRepresentativeType()
+        is KaTypeArgumentWithVariance -> with(session) {
+            type.translateType(
+                kaSession,
+                ctx.currentPosition,
+                ctx.reportErrorType,
+                ctx.reportUnsupportedType,
+                ctx.processTypeImports,
+                ctx.requiresHashableAsAny,
+            )
+        }
+    }
 }
