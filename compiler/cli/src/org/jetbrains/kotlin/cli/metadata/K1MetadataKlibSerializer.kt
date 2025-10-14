@@ -189,7 +189,7 @@ private class KlibMetadataDependencyContainer(
         val packageFragmentNames = parseModuleHeader(library.moduleHeaderData).packageFragmentNameList
 
         return klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
-            library,
+            library = library,
             packageAccessHandler = null,
             packageFragmentNames = packageFragmentNames,
             storageManager = LockBasedStorageManager("KlibMetadataPackageFragmentProvider"),

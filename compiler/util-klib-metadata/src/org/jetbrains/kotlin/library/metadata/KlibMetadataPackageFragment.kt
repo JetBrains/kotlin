@@ -62,8 +62,15 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
     module: ModuleDescriptor,
     partName: String,
     containerSource: KlibDeserializedContainerSource
-) : KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessHandler, storageManager, module, partName, containerSource),
-    BuiltInsPackageFragment {
+) : KlibMetadataDeserializedPackageFragment(
+    fqName = fqName,
+    library = library,
+    packageAccessHandler = packageAccessHandler,
+    storageManager = storageManager,
+    module = module,
+    partName = partName,
+    containerSource = containerSource,
+), BuiltInsPackageFragment {
 
     override val isFallback: Boolean
         get() = false

@@ -51,11 +51,11 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             descriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
 
         val provider = createPackageFragmentProvider(
-            library,
-            packageAccessHandler,
+            library = library,
+            packageAccessHandler = packageAccessHandler,
             packageFragmentNames = libraryProto.packageFragmentNameList,
-            storageManager,
-            moduleDescriptor,
+            storageManager = storageManager,
+            moduleDescriptor = moduleDescriptor,
             configuration = KlibCompilerDeserializationConfiguration(languageVersionSettings),
             compositePackageFragmentAddend = runIf(library.isAnyPlatformStdlib) {
                 functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
@@ -96,7 +96,12 @@ class KlibMetadataModuleDescriptorFactoryImpl(
     ): PackageFragmentProvider {
 
         val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
-            library, packageFragmentNames, moduleDescriptor, packageAccessHandler, storageManager, configuration
+            library = library,
+            packageFragmentNames = packageFragmentNames,
+            moduleDescriptor = moduleDescriptor,
+            packageAccessedHandler = packageAccessHandler,
+            storageManager = storageManager,
+            configuration = configuration
         )
 
         // Generate empty PackageFragmentDescriptor instances for packages that aren't mentioned in compilation units directly.

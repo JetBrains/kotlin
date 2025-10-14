@@ -34,23 +34,23 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
             parts.map { partName ->
                 if (isBuiltInModule)
                     BuiltInKlibMetadataDeserializedPackageFragment(
-                        packageFqName,
-                        library,
-                        packageAccessedHandler,
-                        storageManager,
-                        moduleDescriptor,
-                        partName,
-                        containerSource
+                        fqName = packageFqName,
+                        library = library,
+                        packageAccessHandler = packageAccessedHandler,
+                        storageManager = storageManager,
+                        module = moduleDescriptor,
+                        partName = partName,
+                        containerSource = containerSource,
                     )
                 else
                     KlibMetadataDeserializedPackageFragment(
-                        packageFqName,
-                        library,
-                        packageAccessedHandler,
-                        storageManager,
-                        moduleDescriptor,
-                        partName,
-                        containerSource
+                        fqName = packageFqName,
+                        library = library,
+                        packageAccessHandler = packageAccessedHandler,
+                        storageManager = storageManager,
+                        module = moduleDescriptor,
+                        partName = partName,
+                        containerSource = containerSource,
                     )
             }
         }
