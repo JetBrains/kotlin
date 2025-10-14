@@ -205,32 +205,40 @@ internal object KotlinToolingDiagnostics {
             get() = "Run the build with '--info' for more details."
     }
 
-    internal object NativeBundleResolution : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(message: String, hostname: String) =
-            build {
+    internal object NativeBundleVersionNotFoundError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(hostname: String, trace: Throwable? = null) =
+            build(throwable = trace) {
                 title("Kotlin/Native bundle artifact could not be resolved")
                     .description(
                         """
-                        |The Kotlin Gradle Plugin failed to resolve the Kotlin/Native compiler bundle required for building native targets.
+                        |The Kotlin/Native compiler bundle failed to download on your supported host platform ($hostname).
                         |
-                        |Artifact: $message
-                        |Host: $hostname
-                        |
-                        |This typically occurs when:
-                        |• The Kotlin/Native distribution is not available for your platform or architecture
-                        |• Network connectivity issues prevent downloading the compiler bundle
-                        |• The specified Kotlin version doesn't have a native bundle for your system
-                        |• Repository configuration is incorrect or incomplete
+                        |This is typically caused by:
+                        |• Network connectivity issues or timeouts
+                        |• Incorrect or missing repository configuration
+                        |• Maven Central or other configured repositories being unreachable
+                        |• Corporate proxy or firewall blocking artifact downloads
+                        |• Missing or invalid Kotlin/Native version specification
                         """.trimMargin()
                     )
                     .solutions {
                         listOf(
-                            "Verify your platform is supported",
-                            "Check your internet connection and repository accessibility",
-                            "Ensure you're using a Kotlin/Native version that supports your platform (host: $hostname)",
-                            "Add or verify repository configuration in your build.gradle(.kts)"
+                            "Check your internet connection and verify repository accessibility",
+                            "Ensure proper repository configuration in your build.gradle(.kts)",
+                            "Verify the Kotlin/Native version in your build configuration is valid and available",
+                            "Check if your firewall or antivirus is blocking Maven Central"
                         )
                     }
+                    .documentationLink(URI("https://kotlinlang.org/docs/native-target-support.html"))
+            }
+    }
+
+    internal object NativeBundleArtifactNotFoundError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(hostname: String, trace: Throwable? = null) =
+            build(throwable = trace) {
+                title("Kotlin/Native bundle is not available for your host")
+                    .description("Your host platform ($hostname) is not supported for building Kotlin/Native projects")
+                    .solution("Use a supported host platform: macOS (Intel/Apple Silicon), Linux (x64), or Windows (x64)")
                     .documentationLink(URI("https://kotlinlang.org/docs/native-target-support.html"))
             }
     }
