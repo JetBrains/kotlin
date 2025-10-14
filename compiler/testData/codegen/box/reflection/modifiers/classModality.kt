@@ -1,7 +1,8 @@
 // TARGET_BACKEND: JVM
-
 // WITH_REFLECT
 
+import kotlin.coroutines.SuspendFunction3
+import kotlin.reflect.KClass
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
 
@@ -16,43 +17,38 @@ enum class EnumClassWithAbstractMember { ; abstract fun foo() }
 annotation class AnnotationClass
 object Object
 
+private fun checkFinal(klass: KClass<*>) {
+    assertTrue(klass.isFinal)
+    assertFalse(klass.isOpen)
+    assertFalse(klass.isAbstract)
+}
+
+private fun checkOpen(klass: KClass<*>) {
+    assertFalse(klass.isFinal)
+    assertTrue(klass.isOpen)
+    assertFalse(klass.isAbstract)
+}
+
+private fun checkAbstract(klass: KClass<*>) {
+    assertFalse(klass.isFinal)
+    assertFalse(klass.isOpen)
+    assertTrue(klass.isAbstract)
+}
+
 fun box(): String {
-    assertTrue(FinalClass::class.isFinal)
-    assertFalse(FinalClass::class.isOpen)
-    assertFalse(FinalClass::class.isAbstract)
-
-    assertTrue(FinalClass.Companion::class.isFinal)
-    assertFalse(FinalClass.Companion::class.isOpen)
-    assertFalse(FinalClass.Companion::class.isAbstract)
-
-    assertFalse(OpenClass::class.isFinal)
-    assertTrue(OpenClass::class.isOpen)
-    assertFalse(OpenClass::class.isAbstract)
-
-    assertFalse(AbstractClass::class.isFinal)
-    assertFalse(AbstractClass::class.isOpen)
-    assertTrue(AbstractClass::class.isAbstract)
-
-    assertFalse(Interface::class.isFinal)
-    assertFalse(Interface::class.isOpen)
-    assertTrue(Interface::class.isAbstract)
-
-    assertTrue(EnumClass::class.isFinal)
-    assertFalse(EnumClass::class.isOpen)
-    assertFalse(EnumClass::class.isAbstract)
-
-    assertTrue(EnumClassWithAbstractMember::class.isFinal)
-    assertFalse(EnumClassWithAbstractMember::class.isOpen)
-    assertFalse(EnumClassWithAbstractMember::class.isAbstract)
-
+    checkFinal(FinalClass::class)
+    checkFinal(FinalClass.Companion::class)
+    checkOpen(OpenClass::class)
+    checkAbstract(AbstractClass::class)
+    checkAbstract(Interface::class)
+    checkFinal(EnumClass::class)
+    checkFinal(EnumClassWithAbstractMember::class)
     // Note that unlike in JVM, annotation classes are final in Kotlin
-    assertTrue(AnnotationClass::class.isFinal)
-    assertFalse(AnnotationClass::class.isOpen)
-    assertFalse(AnnotationClass::class.isAbstract)
+    checkFinal(AnnotationClass::class)
+    checkFinal(Object::class)
 
-    assertTrue(Object::class.isFinal)
-    assertFalse(Object::class.isOpen)
-    assertFalse(Object::class.isAbstract)
+    checkAbstract(Function0::class)
+    checkAbstract(SuspendFunction3::class)
 
     return "OK"
 }

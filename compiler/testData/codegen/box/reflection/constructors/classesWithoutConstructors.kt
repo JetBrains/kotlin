@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 
+import kotlin.coroutines.SuspendFunction0
 import kotlin.test.assertTrue
 
 interface Interface
@@ -15,6 +16,8 @@ fun box(): String {
     assertTrue(Obj::class.constructors.isEmpty())
     assertTrue(C.Companion::class.constructors.isEmpty())
     assertTrue(object {}::class.constructors.isEmpty())
+    assertTrue(Function0::class.constructors.isEmpty())
+    assertTrue(SuspendFunction0::class.constructors.isEmpty())
 
     return "OK"
 }
