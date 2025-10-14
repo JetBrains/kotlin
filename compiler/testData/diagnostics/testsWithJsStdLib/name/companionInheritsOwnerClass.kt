@@ -1,5 +1,4 @@
 // OPT_IN: kotlin.js.ExperimentalJsExport
-// FIR_IDENTICAL
 @file:JsExport
 
 interface Optional<out T> {

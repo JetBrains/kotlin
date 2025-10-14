@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: kotlin.kt
 package kotlin.native
 

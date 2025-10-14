@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 val x: dynamic = 23
 
 interface I {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FIR_DUMP
 
 fun jso(block: dynamic.() -> Unit): dynamic = js("({})").apply(block)

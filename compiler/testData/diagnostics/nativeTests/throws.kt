@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-65105
 
 // FILE: kotlin.kt

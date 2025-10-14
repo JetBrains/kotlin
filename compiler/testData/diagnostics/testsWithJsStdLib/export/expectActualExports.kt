@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // IGNORE_BACKEND_K1: JS_IR
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // LANGUAGE: +AllowExpectDeclarationsInJsExport +MultiPlatformProjects

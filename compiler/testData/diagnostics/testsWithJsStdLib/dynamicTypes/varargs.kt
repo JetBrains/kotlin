@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // MARK_DYNAMIC_CALLS
 
 fun test() {

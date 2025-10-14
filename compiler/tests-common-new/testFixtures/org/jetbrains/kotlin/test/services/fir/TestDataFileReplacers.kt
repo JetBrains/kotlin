@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.services.fir
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultDirectives
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.isCustomTestData
 import org.jetbrains.kotlin.test.utils.isLLFirSpecializedTestData
@@ -39,6 +40,7 @@ abstract class TestDataFileReplacer(testServices: TestServices) : MetaTestConfig
 
 class FirOldFrontendMetaConfigurator(testServices: TestServices) : TestDataFileReplacer(testServices) {
     override fun shouldReplaceFile(originalFile: File): Boolean {
+        if (testServices.defaultDirectives.contains(FirDiagnosticsDirectives.FIR_IDENTICAL)) return false
         return originalFile.useLines { lines ->
             lines.none { it == "// ${FirDiagnosticsDirectives.FIR_IDENTICAL.name}" }
         }

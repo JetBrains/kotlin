@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: KLIB
 // LANGUAGE: +MultiPlatformProjects -AllowExpectDeclarationsInJsExport

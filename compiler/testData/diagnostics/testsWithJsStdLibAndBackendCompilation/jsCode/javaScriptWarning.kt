@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 const val VALUE = 888
 

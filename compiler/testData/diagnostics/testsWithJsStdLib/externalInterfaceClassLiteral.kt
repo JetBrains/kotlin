@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-57822
 
 external interface Foo

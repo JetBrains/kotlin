@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 inline fun foo1(bar: () -> Unit, noinline baz: () -> Unit) = js("baz()")

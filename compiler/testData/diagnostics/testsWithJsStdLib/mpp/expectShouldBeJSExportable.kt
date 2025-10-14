@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: KLIB
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-64951

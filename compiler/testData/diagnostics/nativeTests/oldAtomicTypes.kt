@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-73909
 // WITH_EXTRA_CHECKERS
 // LANGUAGE: +ContextParameters

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlin.reflect.*
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)

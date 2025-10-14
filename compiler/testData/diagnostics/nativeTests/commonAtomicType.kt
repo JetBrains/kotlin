@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// FIR_IDENTICAL
 import kotlin.concurrent.atomics.AtomicIntArray
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 

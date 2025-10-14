@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -REDUNDANT_NULLABLE
 
 fun test(d: Any, dl: Collection<dynamic>) {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.identityHashCode
 

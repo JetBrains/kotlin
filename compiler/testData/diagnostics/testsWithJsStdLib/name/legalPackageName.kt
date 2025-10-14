@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 // FILE: slashes.kt

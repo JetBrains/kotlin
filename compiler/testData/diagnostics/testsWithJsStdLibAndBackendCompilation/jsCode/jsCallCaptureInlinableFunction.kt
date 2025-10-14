@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 

@@ -1,7 +1,6 @@
 // LANGUAGE: +ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
 // LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // DIAGNOSTICS: -NOTHING_TO_INLINE
-// FIR_IDENTICAL
 
 private class Private
 

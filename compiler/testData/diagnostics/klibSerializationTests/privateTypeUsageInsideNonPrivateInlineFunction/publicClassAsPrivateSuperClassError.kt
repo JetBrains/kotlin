@@ -1,6 +1,5 @@
 // LANGUAGE: +ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
 // DIAGNOSTICS: -NOTHING_TO_INLINE
-// FIR_IDENTICAL
 
 open class A
 

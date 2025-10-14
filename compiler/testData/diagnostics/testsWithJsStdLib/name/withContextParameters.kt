@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +ContextParameters
 // FILE: DeclarationOverloads.kt
 package DeclarationOverloads

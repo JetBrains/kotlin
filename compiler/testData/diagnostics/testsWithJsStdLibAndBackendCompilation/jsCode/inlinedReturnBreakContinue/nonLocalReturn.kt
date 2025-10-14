@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-68975
 // LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 inline fun foo(makeInt: () -> Int): Int {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-58623
 
 package pack

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 // FILE: Function1.kt
 @file:Suppress("OPT_IN_USAGE")

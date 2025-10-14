@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 external interface I
 
 typealias TA = I

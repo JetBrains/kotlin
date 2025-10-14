@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 <!WRONG_MODIFIER_TARGET!>external<!> class C
 <!WRONG_MODIFIER_TARGET!>external<!> object O
 <!WRONG_MODIFIER_TARGET!>external<!> interface I

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: KLIB
 // LANGUAGE: +MultiPlatformProjects
 // MODULE: commonjs

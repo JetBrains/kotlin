@@ -2,7 +2,6 @@ import A.N1.N2
 
 // LANGUAGE: +ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
 // DIAGNOSTICS: -NOTHING_TO_INLINE
-// FIR_IDENTICAL
 
 private class A {
     open class N1 {

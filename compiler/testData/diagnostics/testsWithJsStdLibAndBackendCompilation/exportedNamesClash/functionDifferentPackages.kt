@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: A.kt
 @file:Suppress("OPT_IN_USAGE")
 package foo

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +NestedTypeAliases
 
 interface I {

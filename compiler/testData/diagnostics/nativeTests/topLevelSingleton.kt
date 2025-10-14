@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: annotation.kt
 package kotlin.native.concurrent
 

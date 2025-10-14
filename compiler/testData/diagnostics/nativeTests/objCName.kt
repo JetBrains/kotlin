@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +ContextParameters
 // FILE: kotlin.kt
 package kotlin.native

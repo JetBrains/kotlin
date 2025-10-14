@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // MODULE: m1
 // FILE: a.kt
 package foo

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: -ObjCSignatureOverrideAnnotation
 // WITH_PLATFORM_LIBS
 

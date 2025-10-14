@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +ContextParameters
 external class Scope1
 class Scope2

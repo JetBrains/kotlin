@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: +ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 external interface I {
     interface J

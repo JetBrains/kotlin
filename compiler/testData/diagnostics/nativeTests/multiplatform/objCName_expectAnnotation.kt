@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 

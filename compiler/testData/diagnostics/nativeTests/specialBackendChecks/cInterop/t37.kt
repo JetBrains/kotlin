@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // OPT_IN: kotlin.native.internal.InternalForKotlinNative
 // OPT_IN: kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.*

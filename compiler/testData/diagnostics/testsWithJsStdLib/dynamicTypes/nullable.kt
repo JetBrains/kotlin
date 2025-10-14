@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo(dn: dynamic?, d: dynamic, dnn: dynamic??) {

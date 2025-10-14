@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlinx.cinterop.*
 
 fun foo(f: Function0<*>) = f

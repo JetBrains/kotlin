@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlin.*
 import kotlin.jvm.*
 import kotlin.native.concurrent.*

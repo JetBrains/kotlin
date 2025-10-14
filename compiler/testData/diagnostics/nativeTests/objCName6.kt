@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: kotlin.kt
 @file:OptIn(kotlin.experimental.ExperimentalObjCName::class)
 

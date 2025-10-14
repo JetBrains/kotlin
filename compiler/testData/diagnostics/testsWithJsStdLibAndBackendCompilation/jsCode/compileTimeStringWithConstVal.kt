@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // MODULE: lib1
 // FILE: A.kt
 const val constFromOtherModule = "constFromOtherModule"

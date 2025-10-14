@@ -1,5 +1,4 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// FIR_IDENTICAL
 
 inline fun <reified T> foo(x: T) {
     println(x)

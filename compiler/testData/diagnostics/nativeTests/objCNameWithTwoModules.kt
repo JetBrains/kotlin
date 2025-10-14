@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 // MODULE: lib
 // FILE: kotlin1.kt
