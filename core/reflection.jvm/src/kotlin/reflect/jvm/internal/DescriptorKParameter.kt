@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
+import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 

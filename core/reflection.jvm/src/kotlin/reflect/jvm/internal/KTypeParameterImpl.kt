@@ -30,6 +30,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.internal.types.DescriptorKType
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 internal class KTypeParameterImpl private constructor(
     descriptor: TypeParameterDescriptor?,

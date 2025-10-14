@@ -50,7 +50,7 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
     /**
      * Create combined [kotlin.reflect.jvm.internal.types.KTypeSubstitutor].
      *
-     * Returns `null` if star projection
+     * Returns `null` if the [type] is subtituted with star projection
      */
     fun createCombinedSubstitutorOrNull(type: KType): KTypeSubstitutor? {
         val type = substitute(type).type ?: return null
