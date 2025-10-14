@@ -20,7 +20,7 @@ internal fun getCacheDirectory(
     rootCacheDirectory: File,
     dependency: ResolvedDependencyResult,
     artifact: ResolvedArtifactResult?,
-    resolvedConfiguration: LazyResolvedConfiguration,
+    resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
     partialLinkageMode: String
 ): File {
     val moduleCacheDirectory = File(rootCacheDirectory, dependency.selected.moduleVersion?.name ?: "undefined")
@@ -50,7 +50,7 @@ internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).
 
 private fun computeDependenciesHash(
     dependency: ResolvedDependencyResult,
-    resolvedConfiguration: LazyResolvedConfiguration,
+    resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
     partialLinkageMode: String
 ): String {
     val hashedValue = buildString {
@@ -73,7 +73,7 @@ private fun computeDependenciesHash(
 internal fun getDependenciesCacheDirectories(
     rootCacheDirectory: File,
     dependency: ResolvedDependencyResult,
-    resolvedConfiguration: LazyResolvedConfiguration,
+    resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
     considerArtifact: Boolean,
     partialLinkageMode: String
 ): List<File>? {

@@ -27,7 +27,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.JsonUtils
-import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 import org.jetbrains.kotlin.gradle.utils.registerArtifact
@@ -105,7 +105,7 @@ internal class KotlinSecondaryVariantsDataSharing(
         clazz: Class<T>,
         componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
     ): KotlinProjectSharedDataProvider<T> {
-        val lazyResolvedConfiguration = LazyResolvedConfiguration(incomingConfiguration, configureArtifactView = {
+        val lazyResolvedConfiguration = LazyResolvedConfigurationWithArtifacts(incomingConfiguration, configureArtifactView = {
             attributes.configureCommonAttributes(key)
             // artifactType is set by gradle on the producer side
             // Request it explicitly to bypass Artifact Transformations that gradle may apply
@@ -140,7 +140,7 @@ private fun artifactTypeOfProjectSharedDataKey(key: String) = "kotlin-project-sh
  */
 internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondaryVariant>(
     private val key: String,
-    private val lazyResolvedConfiguration: LazyResolvedConfiguration,
+    private val lazyResolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
     private val clazz: Class<T>,
 ) {
     val rootComponent: ResolvedComponentResult get() = lazyResolvedConfiguration.root
