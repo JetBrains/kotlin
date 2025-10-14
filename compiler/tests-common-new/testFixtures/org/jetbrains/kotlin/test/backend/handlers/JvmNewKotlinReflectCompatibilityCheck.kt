@@ -32,9 +32,9 @@ import kotlin.reflect.jvm.jvmName
  * Dump testData declarations by using K1 kotlin-reflect, new kotlin-reflect implementation; and compare the dumps
  */
 class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
-    private val k1StringBuilder = StringBuilder()
-    private val newStringBuilder = StringBuilder()
-    private var fileDumpsAssertion = false
+    private val k1ReflectStringBuilder = StringBuilder()
+    private val newReflectStringBuilder = StringBuilder()
+    private var skipAsserts = false
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         // Running the test is impossible if there are errors in Java code
@@ -64,44 +64,48 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             ?.let { RuntimeException("Exception during K1 kotlin-reflect dumping", it) }
         val exceptionNewReflect = newReflectDumpResult.exceptionOrNull()
             ?.let { RuntimeException("Exception during New kotlin-reflect dumping", it) }
-        if (exceptionK1Reflect != null || exceptionNewReflect != null) {
-            if (SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in module.directives) return
-            val msg = when (exceptionK1Reflect != null && exceptionNewReflect != null) {
-                true -> "Exception during kotlin-reflect dumping in both implementations (K1 and New)"
-                else -> "One of the kotlin-reflects (K1 or New) failed, and another didn't"
+        when {
+            exceptionK1Reflect == null && exceptionNewReflect == null -> {
+                val k1ReflectDump = k1ReflectDumpResult.getOrNull()!!
+                val newReflectDump = newReflectDumpResult.getOrNull()!!
+                k1ReflectStringBuilder.append(k1ReflectDump)
+                newReflectStringBuilder.append(newReflectDump)
             }
-            assertions.failAll(listOfNotNull(exceptionK1Reflect, exceptionNewReflect), msg)
-        } else {
-            val k1ReflectDump = k1ReflectDumpResult.getOrNull()!!
-            val newReflectDump = newReflectDumpResult.getOrNull()!!
-            when {
-                k1ReflectDump == newReflectDump -> {
-                    assertions.assertTrue(SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK !in module.directives) {
-                        "K1 and new kotlin-reflect dumps are the same. Please drop SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK directive"
-                    }
+
+            // An exception occurred
+            SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in module.directives -> skipAsserts = true
+            else -> {
+                val msg = when (exceptionK1Reflect != null && exceptionNewReflect != null) {
+                    true -> "Exception during kotlin-reflect dumping in both implementations (K1 and New)"
+                    else -> "One of the kotlin-reflects (K1 or New) failed, and another didn't"
                 }
-                SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in module.directives -> {
-                    fileDumpsAssertion = true
-                    k1StringBuilder.append(k1ReflectDump)
-                    newStringBuilder.append(newReflectDump)
-                }
-                else -> {
-                    val k1ReflectHeader = "// K1 kotlin-reflect dump\n"
-                    val newReflectHeader = "// New kotlin-reflect dump\n"
-                    assertions.assertEquals(k1ReflectHeader + k1ReflectDump, newReflectHeader + newReflectDump)
-                }
+                assertions.failAll(listOfNotNull(exceptionK1Reflect, exceptionNewReflect), msg)
             }
         }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (fileDumpsAssertion) {
-            val k1ReflectFile =
-                testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-k1.txt")
-            val newReflectFile =
-                testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-new.txt")
-            assertions.assertEqualsToFile(k1ReflectFile, k1StringBuilder.toString())
-            assertions.assertEqualsToFile(newReflectFile, newStringBuilder.toString())
+        if (skipAsserts) return
+        val k1ReflectDump = k1ReflectStringBuilder.toString()
+        val newReflectDump = newReflectStringBuilder.toString()
+        when {
+            SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in testServices.moduleStructure.allDirectives -> {
+                val k1ReflectFile =
+                    testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-k1.txt")
+                val newReflectFile =
+                    testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-new.txt")
+                assertions.assertEqualsToFile(k1ReflectFile, k1ReflectDump)
+                assertions.assertEqualsToFile(newReflectFile, newReflectDump)
+
+                assertions.assertTrue(k1ReflectDump != newReflectDump) {
+                    "K1 and new kotlin-reflect dumps are the same. Please drop SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK directive"
+                }
+            }
+            k1ReflectDump != newReflectDump -> {
+                val k1ReflectHeader = "// K1 kotlin-reflect dump\n"
+                val newReflectHeader = "// New kotlin-reflect dump\n"
+                assertions.assertEquals(k1ReflectHeader + k1ReflectDump, newReflectHeader + newReflectDump)
+            }
         }
     }
 
