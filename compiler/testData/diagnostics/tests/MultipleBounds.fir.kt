@@ -37,8 +37,8 @@ class Test1<T>()
 }
 
 fun test() {
-  Test1<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>B<!>>()
-  Test1<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>A<!>>()
+  Test1<<!UPPER_BOUND_VIOLATED!>B<!>>()
+  Test1<<!UPPER_BOUND_VIOLATED!>A<!>>()
   Test1<C>()
 }
 
@@ -63,8 +63,8 @@ fun <T> test2(t : T)
   t.bar()
 }
 
-val t1 = test2<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>A<!>>(A())
-val t2 = test2<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>B<!>>(C())
+val t1 = test2<<!UPPER_BOUND_VIOLATED!>A<!>>(A())
+val t2 = test2<<!UPPER_BOUND_VIOLATED!>B<!>>(C())
 val t3 = test2<C>(C())
 
 val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>T<!>, <!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>B : T<!>> x : Int = 0

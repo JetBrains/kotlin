@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 class A<T: B<out Number>>(val x: T) {
     fun test() {

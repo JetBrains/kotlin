@@ -35,6 +35,7 @@ fun main3() {
     val x = <!UPPER_BOUND_VIOLATED!>A3<Int?>()<!> // TODO: support reporting errors on typealias constructor calls
     val x2 = A<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Int?<!>>() // TODO: support reporting errors on typealias constructor calls
     val y: <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>A3<Int?><!> = <!UPPER_BOUND_VIOLATED!>A3<Int?>()<!>
+    val x2 = A<<!UPPER_BOUND_VIOLATED!>Int?<!>>() // TODO: support reporting errors on typealias constructor calls
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, localProperty, nullableType, propertyDeclaration,

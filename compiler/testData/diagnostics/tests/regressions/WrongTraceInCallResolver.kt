@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 open class Foo {}
 open class Bar {}

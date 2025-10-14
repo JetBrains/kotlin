@@ -8,10 +8,10 @@ fun <E : CharSequence> E.foo2() {}
 
 fun <F : String?> bar(x: F) {
     <!CANNOT_INFER_PARAMETER_TYPE!>A<!>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
-    A<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>F<!>>(x)
+    A<<!UPPER_BOUND_VIOLATED!>F<!>>(x)
 
     <!CANNOT_INFER_PARAMETER_TYPE!>foo1<!>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
-    foo1<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>F<!>>(x)
+    foo1<<!UPPER_BOUND_VIOLATED!>F<!>>(x)
 
     x<!UNSAFE_CALL!>.<!>foo2()
     x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo2<!><F>()
