@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 
 /**
  * Boxes and unboxes values of value types when necessary.
@@ -180,6 +181,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 
     private fun IrClass.canBeAssignedTo(expectedClass: IrClass) =
             this.isNothing() || expectedClass == anyClass /* A workaround for plugins emitting classes with empty superTypes */
+                    || (expectedClass.isCompanion && expectedClass.parentAsClass.isObjCClass()) // TODO: a workaround for CMP-9000.
                     || this.symbol.isSubtypeOfClass(expectedClass.symbol)
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType, skipTypeCheck: Boolean = false): IrExpression {
