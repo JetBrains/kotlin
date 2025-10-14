@@ -27,11 +27,4 @@ interface PackageAccessHandler {
     fun markNeededForLink(fqName: String) = Unit
 }
 
-object SimplePackageAccessHandler : PackageAccessHandler {
-    override fun loadPackageFragment(
-        library: KotlinLibrary,
-        packageFqName: String,
-        partName: String
-    ): ProtoBuf.PackageFragment = parsePackageFragment(library.packageMetadata(packageFqName, partName))
-}
-
+object SimplePackageAccessHandler : PackageAccessHandler
