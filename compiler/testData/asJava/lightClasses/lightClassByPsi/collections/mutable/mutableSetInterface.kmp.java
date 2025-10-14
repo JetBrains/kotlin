@@ -94,5 +94,5 @@ public class CMutableSet3 /* test.CMutableSet3*/<Elem>  implements test.IMutable
   public  CMutableSet3();//  .ctor()
 }
 
-public abstract interface IMutableSet /* test.IMutableSet*/<Elem>  extends java.util.Set<Elem>, kotlin.collections.MutableSet<Elem>, kotlin.jvm.internal.markers.KMutableSet {
+public abstract interface IMutableSet /* test.IMutableSet*/<Elem>  extends java.util.Set<Elem>, kotlin.jvm.internal.markers.KMutableSet {
 }
