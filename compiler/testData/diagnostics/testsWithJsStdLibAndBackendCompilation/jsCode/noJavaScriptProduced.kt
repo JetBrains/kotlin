@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FIR_DIFFERENCE
 // IGNORE_FIR_DIAGNOSTICS
 // The diagnostic cannot be implemented with the FIR frontend checker because it requires constant evaluation over FIR.
@@ -11,12 +12,12 @@ fun test() {
                """<!>)
 
     val empty = ""
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_NO_JAVASCRIPT_PRODUCED!>empty<!>)
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>empty<!>)
 
     val whitespace = "  "
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_NO_JAVASCRIPT_PRODUCED!>whitespace<!>)
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>whitespace<!>)
 
     val multiline = """
     """
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_NO_JAVASCRIPT_PRODUCED!>multiline<!>)
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>multiline<!>)
 }

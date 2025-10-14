@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // In K2, the name collision detector is weakened, because the backend started to resolve such collisions.
 // K1 was not changed since it's in maintenance mode.
 // DIAGNOSTICS: -ERROR_SUPPRESSION
@@ -24,8 +25,8 @@ class A4 {
 }
 
 class A5 {
-    <!JS_NAME_CLASH!>fun foo()<!> {}
-    <!JS_NAME_CLASH!>val foo<!> = 1
+    fun foo() {}
+    val foo = 1
 }
 
 class A6 {
@@ -79,10 +80,10 @@ class A18 {
 }
 
 class A19 {
-    <!JS_NAME_CLASH!>fun setFoo()<!> {}
+    fun setFoo() {}
     var foo: Int
         @JsName("getFoo") get() = 1
-        <!JS_NAME_CLASH!>@JsName("setFoo") set(value: Int)<!> {}
+        @JsName("setFoo") set(value: Int) {}
 }
 
 class A20 {
@@ -93,8 +94,8 @@ class A20 {
 }
 
 class A21 {
-    <!JS_NAME_CLASH!>fun foo()<!> {}
-    <!JS_NAME_CLASH!>@JsName("foo") fun bar()<!> {}
+    fun foo() {}
+    @JsName("foo") fun bar() {}
 }
 
 class A22 {
@@ -103,13 +104,13 @@ class A22 {
 }
 
 class A23 {
-    <!JS_NAME_CLASH!>val foo<!> = 1
-    <!JS_NAME_CLASH!>@JsName("foo") fun bar()<!> {}
+    val foo = 1
+    @JsName("foo") fun bar() {}
 }
 
 class A24 {
-    <!JS_NAME_CLASH!>@JsName("foo") val bar<!> = 1
-    <!JS_NAME_CLASH!>fun foo()<!> {}
+    @JsName("foo") val bar = 1
+    fun foo() {}
 }
 
 class A25 {
@@ -118,15 +119,15 @@ class A25 {
 }
 
 class A26 {
-    <!JS_NAME_CLASH!>fun foo()<!> {}
-    <!JS_NAME_CLASH!>var foo: Int<!>
+    fun foo() {}
+    var foo: Int
         get() = 1
         set(value: Int) {}
 }
 
 class A27 {
-    <!JS_NAME_CLASH!>@JsName("foo") fun bar()<!> {}
-    <!JS_NAME_CLASH!>var foo: Int<!>
+    @JsName("foo") fun bar() {}
+    var foo: Int
         get() = 1
         set(value: Int) {}
 }
@@ -139,8 +140,8 @@ class A28 {
 }
 
 class A29 {
-    <!JS_NAME_CLASH!>val foo<!> get() = 1
-    <!JS_NAME_CLASH!>@JsName("foo") fun bar()<!> {}
+    val foo get() = 1
+    @JsName("foo") fun bar() {}
 }
 
 class A30 {
@@ -149,8 +150,8 @@ class A30 {
 }
 
 class A31 {
-    <!JS_NAME_CLASH!>object foo<!>
-    <!JS_NAME_CLASH!>fun foo()<!> {}
+    object foo
+    fun foo() {}
 }
 
 class A32 {
@@ -159,8 +160,8 @@ class A32 {
 }
 
 class A33 {
-    <!JS_NAME_CLASH!>object foo<!>
-    <!JS_NAME_CLASH!>val foo<!> = 1
+    object foo
+    val foo = 1
 }
 
 class A34 {
@@ -169,8 +170,8 @@ class A34 {
 }
 
 class A35 {
-    companion <!JS_NAME_CLASH!>object foo<!>
-    <!JS_NAME_CLASH!>fun foo()<!> {}
+    companion object foo
+    fun foo() {}
 }
 
 class A36 {
@@ -179,8 +180,8 @@ class A36 {
 }
 
 class A37 {
-    companion <!JS_NAME_CLASH!>object foo<!>
-    <!JS_NAME_CLASH!>val foo<!> = 1
+    companion object foo
+    val foo = 1
 }
 
 class A38 {
@@ -189,8 +190,8 @@ class A38 {
 }
 
 class A39 {
-    class <!JS_NAME_CLASH!>foo<!>
-    <!JS_NAME_CLASH!>fun foo()<!> {}
+    class foo
+    fun foo() {}
 }
 
 class A40 {
@@ -199,8 +200,8 @@ class A40 {
 }
 
 class A41 {
-    class <!JS_NAME_CLASH!>foo<!>
-    <!JS_NAME_CLASH!>val foo<!> = 1
+    class foo
+    val foo = 1
 }
 
 class A42 {

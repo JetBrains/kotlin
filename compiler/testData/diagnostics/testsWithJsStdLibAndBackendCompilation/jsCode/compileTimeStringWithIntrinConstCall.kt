@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FIR_DIFFERENCE
 // The difference is okay: K1 and K2 report a bit differently
 // IGNORE_FIR_DIAGNOSTICS
@@ -9,15 +10,15 @@
 )
 
 fun testTrimMargin() {
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"""
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>"""
     |   var x = 1;
-    """.trimMargin()<!>)
+    """.<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>trimMargin()<!><!>)
 }
 
 fun testTrimIndent() {
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"""
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>"""
         var x = 1;
-    """.trimIndent()<!>)
+    """.<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>trimIndent()<!><!>)
 }
 
 const val ONE = 1
@@ -28,7 +29,7 @@ const val STR = "str"
 const val CHAR = 'C'
 
 fun testStringSize() {
-    js("var a = ${STR.<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>length<!>};")
+    js("var a = ${STR.length};")
 }
 
 fun testSimpleStringConcat() {
@@ -67,56 +68,56 @@ fun testArithmeticOperations() {
 
     js("{ var a = '${"foo" + "bar"}'; }")
     js("{ var a = '${"foo" + 'c'}'; }")
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = '${'c' + "foo"}'; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>'c' + "foo"<!>}'; }"<!>)
 
     js("{ var a = ${STR + STR}; }")
     js("{ var a = ${STR + CHAR}; }")
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${CHAR + STR}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>CHAR + STR<!>}; }"<!>)
 }
 
 fun testLogicOperations() {
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${!true}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${true or false}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${true || false}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${true and false}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${true && false}; }"<!>)
+    js("{ var a = ${!true}; }")
+    js("{ var a = ${true or false}; }")
+    js("{ var a = ${true || false}; }")
+    js("{ var a = ${true and false}; }")
+    js("{ var a = ${true && false}; }")
 
     js("{ var a = ${TRUE && false}; }")
     js("{ var a = ${TRUE or false}; }")
 }
 
 fun testEq() {
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1 == 1}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1U == 1U}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${UONE == 1U}; }"<!>)
+    js("{ var a = ${1 == 1}; }")
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1U == 1U<!>}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>UONE == 1U<!>}; }"<!>)
     js("{ var a = ${"FOO" == STR}; }")
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${TRUE == null}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${STR == null}; }"<!>)
+    js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>TRUE == null<!>}; }")
+    js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>STR == null<!>}; }")
 
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1 != 1}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1U != 1U}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${UONE != 1U}; }"<!>)
+    js("{ var a = ${1 != 1}; }")
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1U != 1U<!>}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>UONE != 1U<!>}; }"<!>)
     js("{ var a = ${"FOO" != STR}; }")
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${TRUE != null}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${STR != null}; }"<!>)
+    js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>TRUE != null<!>}; }")
+    js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>STR != null<!>}; }")
 
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1 === 1}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${TRUE === false}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${CHAR === 's'}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1 === 1<!>}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>TRUE === false<!>}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>CHAR === 's'<!>}; }"<!>)
 
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1 !== 1}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${TRUE !== false}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${CHAR !== 's'}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>1 !== 1<!>}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>TRUE !== false<!>}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>CHAR !== 's'<!>}; }"<!>)
 }
 
 fun testCmp() {
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1 < 1}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1 <= 1}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1 > 1}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${1 >= 1}; }"<!>)
+    js("{ var a = ${1 < 1}; }")
+    js("{ var a = ${1 <= 1}; }")
+    js("{ var a = ${1 > 1}; }")
+    js("{ var a = ${1 >= 1}; }")
 
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${"fo=" < "bar"}; }"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"{ var a = ${'a' > 'c'}; }"<!>)
+    js("{ var a = ${"fo=" < "bar"}; }")
+    js("{ var a = ${'a' > 'c'}; }")
 
     js("{ var a = ${ONE > 1}; }")
     js("{ var a = ${STR <= "1"}; }")

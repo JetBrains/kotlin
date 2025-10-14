@@ -1,4 +1,4 @@
-FILE: jsonParseInsideIf.fir.kt
+FILE: jsonParseInsideIf.kt
     public final class Test : R|kotlin/Any| {
         public constructor(something: R|kotlin/String?|): R|Test| {
             super<R|kotlin/Any|>()

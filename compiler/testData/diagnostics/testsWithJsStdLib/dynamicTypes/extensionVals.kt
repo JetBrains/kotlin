@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DIAGNOSTICS:-USELESS_CAST
 // MARK_DYNAMIC_CALLS
 
@@ -32,9 +33,9 @@ fun testReassignmentWithSafeCall(d: dynamic) {
 }
 
 fun testReassignmentWithStaticCalls(d: dynamic) {
-    <!VAL_REASSIGNMENT!>(d as String).onStringVal<!> = 1
-    <!VAL_REASSIGNMENT!>(d as Any).onAnyVal<!> = 1
-    <!VAL_REASSIGNMENT!>(d as Any?).onNullableAnyVal<!> = 1
+    (d as String).<!VAL_REASSIGNMENT!>onStringVal<!> = 1
+    (d as Any).<!VAL_REASSIGNMENT!>onAnyVal<!> = 1
+    (d as Any?).<!VAL_REASSIGNMENT!>onNullableAnyVal<!> = 1
     (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVal<!> = 1
 }
 

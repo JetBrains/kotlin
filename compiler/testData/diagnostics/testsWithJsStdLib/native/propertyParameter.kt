@@ -1,2 +1,3 @@
+// FIR_IDENTICAL
 // Note: JsExternalPropertyParameters
-external class C(x: Int, <!EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val y: String<!>)
+external class C(x: Int, val y: String)

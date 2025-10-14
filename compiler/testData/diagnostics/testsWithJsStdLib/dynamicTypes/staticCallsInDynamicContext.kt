@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MARK_DYNAMIC_CALLS
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
@@ -24,7 +25,7 @@ fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.test() {
     <!DEBUG_INFO_DYNAMIC!>extExtVal<!>()
 
     ""()
-    <!DEBUG_INFO_DYNAMIC!>this<!>()
+    this()
 
     C() + C()
     <!UNRESOLVED_REFERENCE!>+<!>C()
@@ -59,10 +60,10 @@ class C {
 
     fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.test() {
         s()
-        <!DEBUG_INFO_DYNAMIC!>this<!>()
+        this()
 
         s.foo()
-        this.<!DEBUG_INFO_DYNAMIC!>foo<!>()
+        this.foo()
 
         withInvoke()
         this@C.withInvoke()

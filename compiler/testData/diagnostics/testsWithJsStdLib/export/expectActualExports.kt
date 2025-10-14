@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // IGNORE_BACKEND_K1: JS_IR
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // LANGUAGE: +AllowExpectDeclarationsInJsExport +MultiPlatformProjects
@@ -59,4 +60,4 @@ class NotExportedOne { fun test() {} }
 
 <!NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual typealias Test1 = NotExportedOne<!>
 actual typealias Test2 = ExportedOne
-actual typealias <!ACTUAL_WITHOUT_EXPECT!>Test3<!> = ExportedInterface
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND!>Test3<!> = ExportedInterface

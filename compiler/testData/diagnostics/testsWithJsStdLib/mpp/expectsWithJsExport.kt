@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: KLIB
 // LANGUAGE: +MultiPlatformProjects -AllowExpectDeclarationsInJsExport
@@ -10,9 +11,9 @@
 expect annotation class Export()
 
 @Export
-expect class <!WRONG_EXPORTED_DECLARATION{JS}!>WithExportOnExpect<!> {
-    <!WRONG_EXPORTED_DECLARATION{JS}!>fun foo()<!>
-    <!WRONG_EXPORTED_DECLARATION{JS}!>val bar: Int<!>
+expect class <!WRONG_EXPORTED_DECLARATION!>WithExportOnExpect<!> {
+    <!WRONG_EXPORTED_DECLARATION!>fun foo()<!>
+    <!WRONG_EXPORTED_DECLARATION, WRONG_EXPORTED_DECLARATION!>val bar: Int<!>
 }
 
 expect class WithExportOnActual {
@@ -33,9 +34,9 @@ expect class WithFileExportOnActual {
 // FILE: common2.kt
 @file:Export
 
-expect class <!WRONG_EXPORTED_DECLARATION{JS}!>WithExportOnExpectFile<!> {
-    <!WRONG_EXPORTED_DECLARATION{JS}!>fun foo()<!>
-    <!WRONG_EXPORTED_DECLARATION{JS}!>val bar: Int<!>
+expect class <!WRONG_EXPORTED_DECLARATION!>WithExportOnExpectFile<!> {
+    <!WRONG_EXPORTED_DECLARATION!>fun foo()<!>
+    <!WRONG_EXPORTED_DECLARATION, WRONG_EXPORTED_DECLARATION!>val bar: Int<!>
 }
 
 // MODULE: m1-js()()(m1-common)

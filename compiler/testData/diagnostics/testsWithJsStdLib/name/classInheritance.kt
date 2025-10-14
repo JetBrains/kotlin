@@ -1,15 +1,16 @@
+// FIR_IDENTICAL
 // In K2, the name collision detector is weakened, because the backend started to resolve such collisions.
 // K1 was not changed since it's in maintenance mode.
 
 // FILE: FinalClass.kt
 package FinalClass
 class Class {
-    <!JS_NAME_CLASH!>fun test()<!> {}
+    fun test() {}
     fun test(x: Int) = x
     fun test(x: String) = x
     fun test(vararg x: Any) = x
 
-    <!JS_NAME_CLASH!>val test<!> = 0
+    val test = 0
 
     fun Int.test() {}
     fun Int.test(x: Int)  = x
@@ -73,68 +74,68 @@ class MyClass : Class() {
 // FILE: OpenInheritedMethodClashedWithChildOverload.kt
 package OpenInheritedMethodClashedWithChildOverload
 open class ExternalClass {
-    <!JS_NAME_CLASH!>@JsName("test") open fun noTest(x: String): String<!> = x
+    @JsName("test") open fun noTest(x: String): String = x
 }
 
 class MyClass : ExternalClass() {
-    <!JS_NAME_CLASH!>fun test()<!> {}
+    fun test() {}
 }
 
 // FILE: OpenInheritedMethodClashedWithChildProperty.kt
 package OpenInheritedMethodClashedWithChildProperty
 open class Class {
-    <!JS_NAME_CLASH!>@JsName("test") open fun test(x: String): String<!> = x
+    @JsName("test") open fun test(x: String): String = x
 }
 
 class MyClass : Class() {
-    <!JS_NAME_CLASH!>val test<!> = 1
+    val test = 1
 }
 
 // FILE: OpenInheritedPropertyClashedWithChildMethod.kt
 package OpenInheritedPropertyClashedWithChildMethod
 open class Class {
-    <!JS_NAME_CLASH!>open val test: String<!> = ""
+    open val test: String = ""
 }
 
 class MyClass : Class() {
-    <!JS_NAME_CLASH!>fun test()<!> {}
+    fun test() {}
 }
 
 // FILE: OpenInheritedMethodClashedWithChildMethodJsName.kt
 package OpenInheritedMethodClashedWithChildMethodJsName
 open class Class {
-    <!JS_NAME_CLASH!>open fun test()<!> {}
+    open fun test() {}
 }
 
 class MyClass : Class() {
-    <!JS_NAME_CLASH!>@JsName("test") fun notTest(x: String)<!> = x
+    @JsName("test") fun notTest(x: String) = x
 }
 
 // FILE: OpenInheritedMethodClashedWithChildPropertyJsName.kt
 package OpenInheritedMethodClashedWithChildPropertyJsName
 open class Class {
-    <!JS_NAME_CLASH!>open fun test()<!> {}
+    open fun test() {}
 }
 
 class MyClass : Class() {
-    <!JS_NAME_CLASH!>@JsName("test") val notTest<!> = 1
+    @JsName("test") val notTest = 1
 }
 
 // FILE: OpenInheritedMethodClashedWithChildPropertyGetterJsName.kt
 package OpenInheritedMethodClashedWithChildPropertyGetterJsName
 open class Class {
-    <!JS_NAME_CLASH!>open fun test()<!> {}
+    open fun test() {}
 }
 
 class MyClass : Class() {
     val notTest: Int
-        <!JS_NAME_CLASH!>@JsName("test") get()<!> = 1
+        @JsName("test") get() = 1
 }
 
 // FILE: OpenInheritedMethodClashedWithChildPropertySetterJsName.kt
 package OpenInheritedMethodClashedWithChildPropertySetterJsName
 open class Class {
-    <!JS_NAME_CLASH!>open fun test()<!> {}
+    open fun test() {}
 }
 
 class MyClass : Class() {
@@ -142,7 +143,7 @@ class MyClass : Class() {
 
     var notTest: Int
     @JsName("getterTest") get() = 1
-    <!JS_NAME_CLASH!>@JsName("test") set(value)<!> { ignore(value) }
+    @JsName("test") set(value) { ignore(value) }
 }
 
 // FILE: OpenInheritedMethodClashedWithOtherInheritedMethod.kt
@@ -155,7 +156,7 @@ interface MyInterface {
     @JsName("test") fun noTest(x: Int) = 1
 }
 
-class <!JS_FAKE_NAME_CLASH!>MyClass<!> : Class(), MyInterface
+class MyClass : Class(), MyInterface
 
 // FILE: OpenInheritedMethodNotClashedWithAbstractMethod.kt
 package OpenInheritedMethodNotClashedWithAbstractMethod

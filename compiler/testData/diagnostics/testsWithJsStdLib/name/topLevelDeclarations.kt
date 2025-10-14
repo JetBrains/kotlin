@@ -1,10 +1,11 @@
+// FIR_IDENTICAL
 // In K2, the name collision detector is weakened, because the backend started to resolve such collisions.
 // K1 was not changed since it's in maintenance mode.
 
 // FILE: DeclarationOverloads.kt
 package DeclarationOverloads
 
-<!JS_NAME_CLASH!>fun test()<!> {}
+fun test() {}
 fun test(x: Int) = x
 fun test(x: String) = x
 fun test(x: String?) = x
@@ -13,7 +14,7 @@ fun test(vararg x: Any) = x
 @Suppress("NOTHING_TO_INLINE")
 inline fun <reified T> test() {}
 
-<!JS_NAME_CLASH!>val test<!> = 0
+val test = 0
 
 fun Int.test() {}
 fun Int.test(x: Int)  = x
@@ -32,49 +33,49 @@ var String.test
 // FILE: ClashJsNamedFunctionWithOtherFunction.kt
 package ClashJsNamedFunctionWithOtherFunction
 
-<!JS_NAME_CLASH!>@JsName("test") fun noTest(x: String): String<!> = x
+@JsName("test") fun noTest(x: String): String = x
 
-<!JS_NAME_CLASH!>fun test()<!> {}
+fun test() {}
 
 // FILE: ClashJsNamedFunctionWithOtherProperty.kt
 package ClashJsNamedFunctionWithOtherProperty
 
-<!JS_NAME_CLASH!>@JsName("test") fun noTest(x: String): String<!> = x
+@JsName("test") fun noTest(x: String): String = x
 
-<!JS_NAME_CLASH!>val test<!> = 1
+val test = 1
 
 // FILE: ClashJsNamedPropertyWithOtherFunction.kt
 package ClashJsNamedPropertyWithOtherFunction
 
-<!JS_NAME_CLASH!>fun test()<!> {}
+fun test() {}
 
-<!JS_NAME_CLASH!>@JsName("test") val notTest<!> = 1
+@JsName("test") val notTest = 1
 
 // FILE: ClashJsNamedPropertyGetterWithOtherFunction.kt
 package ClashJsNamedPropertyGetterWithOtherFunction
 
-<!JS_NAME_CLASH!>fun test()<!> {}
+fun test() {}
 
 val notTest: Int
-    <!JS_NAME_CLASH!>@JsName("test") get()<!> = 1
+    @JsName("test") get() = 1
 
 // FILE: ClashJsNamedPropertySetterWithOtherFunction.kt
 package ClashJsNamedPropertySetterWithOtherFunction
 
-<!JS_NAME_CLASH!>fun test()<!> {}
+fun test() {}
 
 fun <T> ignore(x: T) = x
 
 var notTest: Int
     @JsName("getterTest") get() = 1
-    <!JS_NAME_CLASH!>@JsName("test") set(value)<!> { ignore(value) }
+    @JsName("test") set(value) { ignore(value) }
 
 // FILE: FunctionAndInterfaceClash.kt
 package FunctionAndInterfaceClash
 
-<!JS_NAME_CLASH!>fun test()<!> {}
+fun test() {}
 
-interface <!JS_NAME_CLASH!>test<!>
+interface test
 
 // FILE: FunctionWithParamsAndInterfaceNoClash.kt
 package FunctionWithParamsAndInterfaceNoClash
@@ -88,51 +89,51 @@ interface test
 // FILE: FunctionWithJsNameAndInterfaceClash.kt
 package FunctionWithJsNameAndInterfaceClash
 
-<!JS_NAME_CLASH!>@JsName("test") fun notTest(x: Int)<!> = x
+@JsName("test") fun notTest(x: Int) = x
 
-interface <!JS_NAME_CLASH!>test<!>
+interface test
 
 // FILE: FunctionWithJsNameAndObjectClash.kt
 package FunctionWithJsNameAndObjectClash
 
-<!JS_NAME_CLASH!>@JsName("test") fun notTest(x: Int)<!> = x
+@JsName("test") fun notTest(x: Int) = x
 
-<!JS_NAME_CLASH!>object test<!>
+object test
 
 // FILE: FunctionWithJsNameAndClassClash.kt
 package FunctionWithJsNameAndClassClash
 
-<!JS_NAME_CLASH!>@JsName("test") fun notTest(x: Int)<!> = x
+@JsName("test") fun notTest(x: Int) = x
 
-class <!JS_NAME_CLASH!>test<!>
+class test
 
 // FILE: FunctionAndInterfaceWithJsNameClash.kt
 package FunctionAndInterfaceWithJsNameClash
 
-<!JS_NAME_CLASH!>fun test()<!> {}
+fun test() {}
 
-@JsName("test") interface <!JS_NAME_CLASH!>NotTest<!>
+@JsName("test") interface NotTest
 
 // FILE: FunctionAndClassWithJsNameClash.kt
 package FunctionAndClassWithJsNameClash
 
-<!JS_NAME_CLASH!>fun test()<!> {}
+fun test() {}
 
-@JsName("test") class <!JS_NAME_CLASH!>NotTest<!>
+@JsName("test") class NotTest
 
 // FILE: FunctionAndObjectWithJsNameClash.kt
 package FunctionAndObjectWithJsNameClash
 
-<!JS_NAME_CLASH!>fun test()<!> {}
+fun test() {}
 
-@JsName("test") <!JS_NAME_CLASH!>object NotTest<!>
+@JsName("test") object NotTest
 
 // FILE: PropertyWithJsNameAndInterfaceClash.kt
 package PropertyWithJsNameAndInterfaceClash
 
-<!JS_NAME_CLASH!>@JsName("test") val notTest<!> = 1
+@JsName("test") val notTest = 1
 
-interface <!JS_NAME_CLASH!>test<!>
+interface test
 
 // FILE: FunctionWithJsNameAndExternalDeclarationsNoClash.kt
 package FunctionWithJsNameAndExternalDeclarationsNoClash

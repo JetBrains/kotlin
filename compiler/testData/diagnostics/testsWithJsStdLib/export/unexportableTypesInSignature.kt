@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // RENDER_DIAGNOSTICS_MESSAGES
@@ -34,8 +35,8 @@ class A(
         get() = C()
         set(value) { }
 
-    <!NON_EXPORTABLE_TYPE!>val x4: Pair<String, String><!> = "O" to "K"
-    <!NON_EXPORTABLE_TYPE!>val x5: Triple<Pair<String, String>, String, String><!> = Triple(x4, "O", "K")
+    val x4: Pair<String, String> = "O" to "K"
+    val x5: Triple<Pair<String, String>, String, String> = Triple(x4, "O", "K")
 }
 
 @JsExport
@@ -51,7 +52,7 @@ fun foo4(x: () -> Unit) {
 }
 
 @JsExport
-fun foo5(<!NON_EXPORTABLE_TYPE("parameter; (Unit) -> Unit")!>x: (Unit) -> Unit<!>) {
+fun foo5(<!NON_EXPORTABLE_TYPE("parameter; Function1<Unit, Unit>")!>x: (Unit) -> Unit<!>) {
 }
 
 @JsExport

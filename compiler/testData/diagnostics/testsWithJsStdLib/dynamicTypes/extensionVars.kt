@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MARK_DYNAMIC_CALLS
 // DIAGNOSTICS:-USELESS_CAST
 
@@ -37,19 +38,19 @@ fun test(d: dynamic) {
 
 var Any.onAnyVar: Int
     get() = 1
-    set(<!UNUSED_PARAMETER!>v<!>) {}
+    set(v) {}
 
 var Any?.onNullableAnyVar: Int
     get() = 1
-    set(<!UNUSED_PARAMETER!>v<!>) {}
+    set(v) {}
 
 var String.onStringVar: Int
     get() = 1
-    set(<!UNUSED_PARAMETER!>v<!>) {}
+    set(v) {}
 
 var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamicVar: Int
     get() = 1
-    set(<!UNUSED_PARAMETER!>v<!>) {}
+    set(v) {}
 
 class C {
     fun test(d: dynamic) {
@@ -63,5 +64,5 @@ class C {
     var memberVar = 1
     var Any.memberExtensionVar: Int
         get() = 1
-        set(<!UNUSED_PARAMETER!>v<!>) {}
+        set(v) {}
 }

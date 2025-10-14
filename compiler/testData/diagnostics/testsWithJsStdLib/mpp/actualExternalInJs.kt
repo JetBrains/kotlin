@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: KLIB
 // IGNORE_REVERSED_RESOLVE
 // IGNORE_NON_REVERSED_RESOLVE
@@ -10,7 +11,7 @@ expect interface Dummy {
     interface ExternalInterface
 }
 
-external class ExternalClass: Dummy.ExternalInterface
+external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE{METADATA}!>ExternalClass<!>: Dummy.ExternalInterface
 
 // MODULE: main-js()()(common)
 

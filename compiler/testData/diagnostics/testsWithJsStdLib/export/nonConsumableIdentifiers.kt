@@ -1,27 +1,28 @@
+// FIR_IDENTICAL
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // RENDER_DIAGNOSTICS_MESSAGES
 
 package foo
 
-@JsExport
-fun <!NON_CONSUMABLE_EXPORTED_IDENTIFIER!>delete<!>() {}
+<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("delete")!>@JsExport
+fun delete() {}<!>
+
+<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("instanceof")!>@JsExport
+val instanceof = 4<!>
+
+<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("eval")!>@JsExport
+class eval<!>
 
 @JsExport
-val <!NON_CONSUMABLE_EXPORTED_IDENTIFIER!>instanceof<!> = 4
-
-@JsExport
-class <!NON_CONSUMABLE_EXPORTED_IDENTIFIER!>eval<!>
-
-@JsExport
-@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER!>"await"<!>)
+@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("await")!>"await"<!>)
 fun foo() {}
 
 @JsExport
-@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER!>"this"<!>)
+@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("this")!>"this"<!>)
 val bar = 4
 
 @JsExport
-@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER!>"super"<!>)
+@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("super")!>"super"<!>)
 class Baz
 
 @JsExport

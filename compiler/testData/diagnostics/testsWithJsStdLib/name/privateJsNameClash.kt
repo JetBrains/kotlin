@@ -1,8 +1,9 @@
+// FIR_IDENTICAL
 // In K2, the name collision detector is weakened, because the backend started to resolve such collisions.
 // K1 was not changed since it's in maintenance mode.
 
 package foo
 
-<!JS_NAME_CLASH!>@JsName("bar") private fun foo(x: Int)<!> = x
+@JsName("bar") private fun foo(x: Int) = x
 
-<!JS_NAME_CLASH!>fun bar()<!> = 42
+fun bar() = 42

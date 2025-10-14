@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open external class A {
     open fun f(x: Int = definedExternally)
 }
@@ -44,7 +45,7 @@ external class G : D, I {
 }
 
 open class X {
-    fun f(<!UNUSED_PARAMETER!>x<!>: Int) {}
+    fun f(x: Int) {}
 }
 
 open external class XE {

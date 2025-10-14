@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MARK_DYNAMIC_CALLS
 // DIAGNOSTICS: -ERROR_SUPPRESSION
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
@@ -8,7 +9,7 @@ fun dynamic.onDynamicFun() = 1
 @kotlin.internal.DynamicExtension
 var dynamic.onDynamicProperty
     get() = ""
-    set(<!UNUSED_PARAMETER!>value<!>) {}
+    set(value) {}
 
 
 fun test(d: dynamic, a: Any?) {
@@ -25,4 +26,4 @@ fun test(d: dynamic, a: Any?) {
     a.<!UNRESOLVED_REFERENCE!>onDynamicProperty<!>
 }
 
-fun <T> eatT(<!UNUSED_PARAMETER!>t<!>: T) {}
+fun <T> eatT(t: T) {}

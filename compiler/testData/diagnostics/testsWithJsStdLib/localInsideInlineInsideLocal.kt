@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-78976, KT-79013
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 
@@ -6,7 +7,7 @@ inline fun topLevelInlineFun() {
     localFun()
 
     <!NOT_YET_SUPPORTED_IN_INLINE!>inline<!> fun localInlineFun() {
-        fun localFun() {}
+        <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localFun() {}
         localFun()
     }
     localInlineFun()

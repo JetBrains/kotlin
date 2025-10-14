@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // In K2, the name collision detector is weakened, because the backend started to resolve such collisions.
 // K1 was not changed since it's in maintenance mode.
 
@@ -83,31 +84,31 @@ class MyClass : ExternalClass() {
 // FILE: OpenInheritedMethodClashedWithChildOverload.kt
 package OpenInheritedMethodClashedWithChildOverload
 open external class ExternalClass {
-    <!JS_NAME_CLASH!>open fun test(x: Int): String<!>
+    open fun test(x: Int): String
 }
 
 class MyClass : ExternalClass() {
-    <!JS_NAME_CLASH!>fun test()<!> {}
+    fun test() {}
 }
 
 // FILE: OpenInheritedMethodClashedWithChildProperty.kt
 package OpenInheritedMethodClashedWithChildProperty
 open external class ExternalClass {
-    <!JS_NAME_CLASH!>open fun test(x: Int): String<!>
+    open fun test(x: Int): String
 }
 
 class MyClass : ExternalClass() {
-    <!JS_NAME_CLASH!>val test<!> = 1
+    val test = 1
 }
 
 // FILE: OpenInheritedPropertyClashedWithChildMethod.kt
 package OpenInheritedPropertyClashedWithChildMethod
 open external class ExternalClass {
-    <!JS_NAME_CLASH!>open val test: String<!>
+    open val test: String
 }
 
 class MyClass : ExternalClass() {
-    <!JS_NAME_CLASH!>fun test()<!> {}
+    fun test() {}
 }
 
 // FILE: OpenInheritedMethodClashedWithChildOverridde.kt

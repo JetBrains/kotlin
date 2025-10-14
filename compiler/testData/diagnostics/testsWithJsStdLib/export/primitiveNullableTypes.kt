@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // OPT_IN: kotlin.js.ExperimentalJsExport kotlin.ExperimentalUnsignedTypes
 
 @JsExport
@@ -39,8 +40,8 @@ fun ubyte(): UByte?<!> = null
 fun ushort(): UShort?<!> = null
 <!NON_EXPORTABLE_TYPE!>@JsExport
 fun uint(): UInt?<!> = null
-<!NON_EXPORTABLE_TYPE!>@JsExport
-fun long(): Long?<!> = null
+@JsExport
+fun long(): Long? = null
 <!NON_EXPORTABLE_TYPE!>@JsExport
 fun ulong(): ULong?<!> = null
 

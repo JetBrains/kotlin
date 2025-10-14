@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MARK_DYNAMIC_CALLS
 
 fun test(d: dynamic) {
@@ -33,13 +34,13 @@ fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.extTest() {
 }
 
 fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.onDynamic() {}
-fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!REDUNDANT_NULLABLE!>?<!><!>.onNullableDynamic() {}
+fun <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic?<!>.onNullableDynamic() {}
 
 val <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.valOnDynamic: Int get() = 1
 
 var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.varOnDynamic: Int
     get() = 1
-    set(<!UNUSED_PARAMETER!>v<!>) {}
+    set(v) {}
 
 
 class ForMemberExtensions {
@@ -54,5 +55,5 @@ class ForMemberExtensions {
     val <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.memberExtensionVal: Int get() = 1
     var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.memberExtensionVar: Int
         get() = 1
-        set(<!UNUSED_PARAMETER!>v<!>) {}
+        set(v) {}
 }

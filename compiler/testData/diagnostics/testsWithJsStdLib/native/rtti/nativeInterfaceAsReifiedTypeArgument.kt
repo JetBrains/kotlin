@@ -1,4 +1,5 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// FIR_IDENTICAL
 
 inline fun <reified T> foo(x: T) {
     println(x)
@@ -14,8 +15,8 @@ fun bar() {
     foo(C())
 
     val c: I = C()
-    <!EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT!>foo(c)<!>
+    <!EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT!>foo<!>(c)
     foo<<!EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT!>I<!>>(C())
 
-    <!EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT!>C() + c<!>
+    C() <!EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT!>+<!> c
 }
