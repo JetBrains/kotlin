@@ -350,3 +350,6 @@ fun KotlinTypeMarker.isTypeVariableType(): Boolean = with(c) { isTypeVariableTyp
 
 context(c: TypeSystemContext)
 fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker = with(c) { safeSubstitute(type) }
+
+context(c: TypeSystemContext)
+fun KotlinTypeMarker.unwrapToSimpleTypeUsingLowerBound(): SimpleTypeMarker = lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
