@@ -198,14 +198,7 @@ object Filtering : TemplateGroupBase() {
             if (n == 0) return emptyList()
             if (n >= size) return toList()
             if (n == 1) return listOf(this[0])
-            var count = 0
-            val list = ArrayList<T>(n)
-            for (item in this) {
-                list.add(item)
-                if (++count == n)
-                    break
-            }
-            return list
+            return copyOfRange(0, n).asList()
             """
         }
     }
