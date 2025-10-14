@@ -213,6 +213,12 @@ public class PsiJsOldFrontendDiagnosticsTestGenerated extends AbstractPsiJsDiagn
     }
 
     @Test
+    @TestMetadata("inheritedDefaultValueLegacy.kt")
+    public void testInheritedDefaultValueLegacy() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments/inheritedDefaultValueLegacy.kt");
+    }
+
+    @Test
     @TestMetadata("inheritedDefaultValueWithIntersectionOverride.kt")
     public void testInheritedDefaultValueWithIntersectionOverride() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments/inheritedDefaultValueWithIntersectionOverride.kt");

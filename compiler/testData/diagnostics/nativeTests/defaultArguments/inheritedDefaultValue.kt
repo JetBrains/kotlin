@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidOverriddenDefaultParametersInInline
 // ISSUE: KT-49722
 
 interface I {

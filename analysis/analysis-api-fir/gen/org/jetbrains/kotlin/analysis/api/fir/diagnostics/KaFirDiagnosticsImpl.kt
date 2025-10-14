@@ -4958,6 +4958,12 @@ internal class NotYetSupportedInInlineImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.NotYetSupportedInInline
 
+internal class NotYetSupportedInInlineWarningImpl(
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.NotYetSupportedInInlineWarning
+
 internal class NothingToInlineImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
