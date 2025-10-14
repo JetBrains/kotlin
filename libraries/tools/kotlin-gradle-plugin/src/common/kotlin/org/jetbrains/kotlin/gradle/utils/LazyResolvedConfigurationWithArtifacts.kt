@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.tooling.core.withClosure
  * Has similar API as non-configuration cache friendly Gradle's [ResolvedConfiguration]
  */
 internal class LazyResolvedConfigurationWithArtifacts private constructor(
-    private val resolvedComponentsRootProvider: Lazy<ResolvedComponentResult>,
+    val resolvedComponent: LazyResolvedConfigurationComponent,
     private val artifactCollection: ArtifactCollection,
     val configurationName: String,
 ) {
@@ -39,10 +39,7 @@ internal class LazyResolvedConfigurationWithArtifacts private constructor(
         configureArtifactView: ArtifactView.ViewConfiguration.() -> Unit = {},
         configureArtifactViewAttributes: (AttributeContainer) -> Unit = {},
     ) : this(
-        // Calling resolutionResult doesn't actually trigger resolution. But accessing its root ResolvedComponentResult
-        // via ResolutionResult::root does. ResolutionResult can't be serialised for Configuration Cache
-        // but ResolvedComponentResult can. Wrapping it in `lazy` makes it resolve upon serialisation.
-        resolvedComponentsRootProvider = configuration.incoming.resolutionResult.let { rr -> lazy { rr.root } },
+        resolvedComponent = LazyResolvedConfigurationComponent(configuration),
         artifactCollection = configuration.lazyArtifactCollection {
             attributes(configureArtifactViewAttributes)
             configureArtifactView()
@@ -52,24 +49,11 @@ internal class LazyResolvedConfigurationWithArtifacts private constructor(
 
     val files: FileCollection get() = artifactCollection.artifactFiles
 
-    val root by resolvedComponentsRootProvider
-
     val resolvedArtifacts: Set<ResolvedArtifactResult> get() = artifactCollection.artifacts
 
     val resolutionFailures: Collection<Throwable> get() = artifactCollection.failures
 
     private val artifactsByComponentId by TransientLazy { resolvedArtifacts.groupBy { it.id.componentIdentifier } }
-
-    val allDependencies: Set<DependencyResult> by TransientLazy {
-        root.dependencies.withClosure<DependencyResult> {
-            if (it is ResolvedDependencyResult) it.selected.dependencies
-            else emptyList()
-        }
-    }
-
-    internal val allResolvedDependencies: Set<ResolvedDependencyResult> by TransientLazy {
-        allDependencies.filterIsInstance<ResolvedDependencyResult>().toSet()
-    }
 
     fun getArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
         val componentId = dependency.resolvedVariant.lastExternalVariantOrSelf().owner
@@ -83,6 +67,11 @@ internal class LazyResolvedConfigurationWithArtifacts private constructor(
 
     fun getArtifacts(componentId: ComponentIdentifier): List<ResolvedArtifactResult> = artifactsByComponentId[componentId].orEmpty()
 
+    /** Copy from [LazyResolvedConfigurationComponent] for convenience */
+    val root get() = resolvedComponent.root
+    val allDependencies: Set<DependencyResult> get() = resolvedComponent.allDependencies
+    val allResolvedDependencies: Set<ResolvedDependencyResult> get() = resolvedComponent.allResolvedDependencies
+
     override fun toString(): String = "LazyResolvedConfigurationWithArtifacts(configuration='$configurationName')"
 }
 
@@ -91,10 +80,6 @@ private fun Configuration.lazyArtifactCollection(configureArtifactView: Artifact
         view.isLenient = true
         view.configureArtifactView()
     }.artifacts
-
-internal tailrec fun ResolvedVariantResult.lastExternalVariantOrSelf(): ResolvedVariantResult {
-    return if (externalVariant.isPresent) externalVariant.get().lastExternalVariantOrSelf() else this
-}
 
 /**
  * Same as [LazyResolvedConfigurationWithArtifacts.getArtifacts] except it returns null for cases when dependency is resolved
