@@ -170,29 +170,6 @@ open class AbstractWebDemoExamplesTest : AbstractJsIrTest(
     }
 }
 
-open class AbstractIrJsLocalVariableTest : AbstractJsIrTest(
-    pathToTestDir = "compiler/testData/debug/localVariables/",
-    testGroupOutputDirPrefix = "debug/localVariables/"
-) {
-    override val enableBoxHandlers: Boolean
-        get() = false
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
-            }
-            useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
-            jsArtifactsHandlersStep {
-                useHandlers(
-                    ::JsDebugRunner.bind(true)
-                )
-            }
-        }
-    }
-}
-
 open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
     testGroupOutputDirPrefix = "codegen/irWasmJsInteropJs/"

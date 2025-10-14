@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -251,17 +250,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirJsSteppingSplitWithInlinedFunInKlibTest> {
                 model("stepping")
-            }
-
-            testClass<AbstractIrJsLocalVariableTest>(
-                annotations = listOf(
-                    *legacyFrontend(),
-                    annotation(Disabled::class.java, "value" to "flaky, see KTI-1959"),
-                )
-            ) {
-                // The tests in the 'inlineScopes' directory are meant to test a JVM backend
-                // specific feature, so there is no reason to enable them for JS.
-                model("localVariables", excludeDirs = listOf("inlineScopes"))
             }
         }
 
