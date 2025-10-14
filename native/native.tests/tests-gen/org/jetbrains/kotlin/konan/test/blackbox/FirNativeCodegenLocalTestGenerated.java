@@ -641,6 +641,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       }
 
       @Test
+      @TestMetadata("kt81652.kt")
+      public void testKt81652() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/kt81652.kt");
+      }
+
+      @Test
       @TestMetadata("overridabilityCondition.kt")
       public void testOverridabilityCondition() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/overridabilityCondition.kt");
