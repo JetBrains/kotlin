@@ -48,11 +48,15 @@ internal fun setAssertHook(hook: (AssertionResult) -> Unit) {
  */
 
 @JsName("suite")
+@Suppress("INVISIBLE_REFERENCE")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
     adapter().suite(name, ignored, suiteFn)
 }
 
 @JsName("test")
+@Suppress("INVISIBLE_REFERENCE")
+@kotlin.internal.UsedFromCompilerGeneratedCode
 internal fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
     adapter().test(name, ignored, testFn)
 }

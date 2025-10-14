@@ -5,7 +5,10 @@
 
 package kotlin.js.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @JsName("DoubleCompanionObject")
+@UsedFromCompilerGeneratedCode
 internal object DoubleCompanionObject {
     @JsName("MIN_VALUE")
     const val MIN_VALUE: Double = 4.9E-324
@@ -33,6 +36,7 @@ internal object DoubleCompanionObject {
 }
 
 @JsName("FloatCompanionObject")
+@UsedFromCompilerGeneratedCode
 internal  object FloatCompanionObject {
     @JsName("MIN_VALUE")
     const val MIN_VALUE: Float = 1.4E-45F
@@ -60,6 +64,7 @@ internal  object FloatCompanionObject {
 }
 
 @JsName("IntCompanionObject")
+@UsedFromCompilerGeneratedCode
 internal  object IntCompanionObject {
     @JsName("MIN_VALUE")
     val MIN_VALUE: Int = -2147483647 - 1
@@ -90,6 +95,7 @@ internal  object LongCompanionObject {
 }
 
 @JsName("ShortCompanionObject")
+@UsedFromCompilerGeneratedCode
 internal  object ShortCompanionObject {
     @JsName("MIN_VALUE")
     val MIN_VALUE: Short = -32768
@@ -105,6 +111,7 @@ internal  object ShortCompanionObject {
 }
 
 @JsName("ByteCompanionObject")
+@UsedFromCompilerGeneratedCode
 internal  object ByteCompanionObject {
     @JsName("MIN_VALUE")
     val MIN_VALUE: Byte = -128
@@ -152,7 +159,9 @@ internal  object CharCompanionObject {
     const val SIZE_BITS = 16
 }
 
+@UsedFromCompilerGeneratedCode
 internal  object StringCompanionObject {}
 
+@UsedFromCompilerGeneratedCode
 internal  object BooleanCompanionObject {}
 
