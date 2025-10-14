@@ -1800,4 +1800,20 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             """
         )
     }
+
+    @Test
+    fun keyFunctionWithZeroParams() {
+        assumeTrue(useFir)
+        check(
+            """
+                import androidx.compose.runtime.Composable
+                import androidx.compose.runtime.key
+
+                @Composable fun Test(a: String) {
+                    <!KEY_CALL_WITH_NO_ARGUMENTS!>key<!> { println(a) }
+                    key(a) { println(a) }
+                }
+            """
+        )
+    }
 }

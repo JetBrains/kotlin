@@ -43,8 +43,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
 
     val NONREADONLY_CALL_IN_READONLY_COMPOSABLE by error0<PsiElement>()
 
-    val CAPTURED_COMPOSABLE_INVOCATION by
-    error2<PsiElement, FirVariableSymbol<*>, FirCallableSymbol<*>>()
+    val CAPTURED_COMPOSABLE_INVOCATION by error2<PsiElement, FirVariableSymbol<*>, FirCallableSymbol<*>>()
 
     // composable calls are not allowed in try expressions
     // error goes on the `try` keyword
@@ -107,6 +106,13 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<PsiElement, LanguageVersion>()
 
     val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<PsiElement, LanguageVersion>()
+
+    val KEY_CALL_WITH_NO_ARGUMENTS by error0<PsiElement>(
+        SourceElementPositioningStrategy(
+            LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
+            PositioningStrategies.CALL_EXPRESSION
+        )
+    )
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = ComposeErrorMessages
 }
