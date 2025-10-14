@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -23,16 +21,17 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
+// TODO(KT-54761): Line number tests are deprecated and must be converted to stepping tests
 /**
  * Verifies the `// LINE` comments in lineNumber tests.
  *
- * The test file is expected to contain the `// LINE($linePattern)` directive,
+ * The test file is expected to contain the `// LINE:` directive,
  * followed by the line numbers that the corresponding JS statements are generated from.
  *
  * This handler traverses the JS AST and collects the actual line numbers using [LineCollector], and generates a JavaScript file
  * with those line numbers printed as comments for ease of debugging these tests.
  */
-private class JsLineNumberHandler(private val frontend: FrontendKind<*>, testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
+internal class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     private val translationModeForIr = TranslationMode.PER_MODULE_DEV
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
@@ -92,7 +91,7 @@ private class JsLineNumberHandler(private val frontend: FrontendKind<*>, testSer
             writeText(generatedCode)
         }
 
-        val linesPattern = Regex("^ *// *LINES\\((?:$frontend )? *JS_IR\\): *(.*)$", RegexOption.MULTILINE)
+        val linesPattern = Regex("^ *// *LINES: *(.*)$", RegexOption.MULTILINE)
 
         val linesMatcher = module.files
             .firstNotNullOfOrNull { linesPattern.find(it.originalContent) }
@@ -112,8 +111,4 @@ private class JsLineNumberHandler(private val frontend: FrontendKind<*>, testSer
 
         testServices.assertions.assertEquals(expectedLines, actualLines) { generatedCode }
     }
-}
-
-fun createFirJsLineNumberHandler(testServices: TestServices): JsBinaryArtifactHandler {
-    return JsLineNumberHandler(FrontendKinds.FIR, testServices)
 }

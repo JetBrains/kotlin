@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
+import org.jetbrains.kotlin.js.test.handlers.JsLineNumberHandler
 import org.jetbrains.kotlin.js.test.handlers.JsWrongModuleHandler
-import org.jetbrains.kotlin.js.test.handlers.createFirJsLineNumberHandler
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
 import org.jetbrains.kotlin.js.test.utils.configureLineNumberTests
@@ -26,10 +26,13 @@ import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
-import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
@@ -243,7 +246,7 @@ open class AbstractJsLineNumberTest(
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureLineNumberTests(::createFirJsLineNumberHandler)
+        builder.configureLineNumberTests(::JsLineNumberHandler)
     }
 }
 
@@ -253,7 +256,7 @@ open class AbstractJsLineNumberWithInlinedFunInKlibTest : AbstractJsLineNumberTe
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            configureLineNumberTests(::createFirJsLineNumberHandler)
+            configureLineNumberTests(::JsLineNumberHandler)
             defaultDirectives {
                 LANGUAGE with listOf(
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
