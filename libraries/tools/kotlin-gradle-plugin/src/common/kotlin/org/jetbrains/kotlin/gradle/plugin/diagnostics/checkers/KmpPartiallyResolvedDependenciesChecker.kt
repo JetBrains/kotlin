@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.kmpMultiVariantModuleIdentifier
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
@@ -169,7 +170,7 @@ private fun Project.validateNoTargetPlatformsResolvedPartially(
 ) {
     val partiallyUnresolvedDependencies = partiallyUnresolvedPlatformDependencies(
         dependingPlatformCompilations = dependingPlatformCompilations,
-        metadataConfiguration = metadataConfiguration,
+        metadataConfiguration = metadataConfiguration.resolvedComponent,
     )
 
     if (partiallyUnresolvedDependencies.isEmpty()) return
@@ -201,7 +202,7 @@ private fun Project.validateNoTargetPlatformsResolvedPartially(
  */
 internal fun partiallyUnresolvedPlatformDependencies(
     dependingPlatformCompilations: List<PlatformCompilationData>,
-    metadataConfiguration: LazyResolvedConfigurationWithArtifacts,
+    metadataConfiguration: LazyResolvedConfigurationComponent,
 ): List<KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies.UnresolvedKmpDependency> {
     val unresolvedDependenciesMap:
             MutableMap<KmpMultiVariantModuleIdentifier, UnresolvedKmpDependency> = mutableMapOf()
@@ -231,7 +232,7 @@ internal fun partiallyUnresolvedPlatformDependencies(
     if (unresolvedDependenciesMap.isEmpty()) return emptyList()
 
     fun onMatchingResolvedDependencyInUnresolvedDependencies(
-        configuration: LazyResolvedConfigurationWithArtifacts,
+        configuration: LazyResolvedConfigurationComponent,
         action: (UnresolvedKmpDependency, ResolvedDependencyResult) -> Unit,
     ) {
         val visitedDependencies = mutableSetOf<KmpMultiVariantModuleIdentifier>()
