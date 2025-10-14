@@ -319,28 +319,6 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractDiagnosticsTestWithJsStdLib>(
-                suiteTestClassName = "DiagnosticsWithJsStdLibTestGenerated",
-                annotations = listOf(*legacyFrontend()),
-            ) {
-                model(
-                    relativeRootPath = "testsWithJsStdLib",
-                    pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-            }
-
-            testClass<AbstractDiagnosticsTestWithJsStdLibWithBackend>(
-                suiteTestClassName = "DiagnosticsWithJsStdLibAndBackendTestGenerated",
-                annotations = listOf(*legacyFrontend()),
-            ) {
-                model(
-                    relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
-                    pattern = "^([^_](.+))\\.kt$",
-                    excludedPattern = excludedFirTestdataPattern,
-                )
-            }
-
             testClass<AbstractFirJsDiagnosticWithIrInlinerTest>(suiteTestClassName = "FirJsDiagnosticWithIrInlinerTestGenerated") {
                 model(
                     relativeRootPath = "irInliner",
