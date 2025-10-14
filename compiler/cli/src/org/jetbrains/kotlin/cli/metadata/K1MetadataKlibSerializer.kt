@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -186,13 +185,11 @@ private class KlibMetadataDependencyContainer(
         val languageVersionSettings = configuration.languageVersionSettings
 
         val libraryModuleDescriptor = moduleDescriptorsForKotlinLibraries.getValue(library)
-        val packageFragmentNames = parseModuleHeader(library.moduleHeaderData).packageFragmentNameList
 
         return klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
             library = library,
             packageAccessHandler = null,
             customMetadataProtoLoader = null,
-            packageFragmentNames = packageFragmentNames,
             storageManager = LockBasedStorageManager("KlibMetadataPackageFragmentProvider"),
             moduleDescriptor = libraryModuleDescriptor,
             configuration = KlibCompilerDeserializationConfiguration(languageVersionSettings),

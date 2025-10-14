@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.storage.StorageManager
 open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDeserializedPackageFragmentsFactory {
     override fun createDeserializedPackageFragments(
         library: KotlinLibrary,
-        packageFragmentNames: List<String>,
         moduleDescriptor: ModuleDescriptor,
         packageAccessedHandler: PackageAccessHandler?,
         customMetadataProtoLoader: CustomMetadataProtoLoader?,
@@ -27,7 +26,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         val libraryHeader = customMetadataProtoLoader?.loadModuleHeader(library)
             ?: parseModuleHeader(library.moduleHeaderData)
 
-        return packageFragmentNames.flatMap {
+        return libraryHeader.packageFragmentNameList.flatMap {
             val packageFqName = FqName(it)
             val containerSource = KlibDeserializedContainerSource(
                 library, libraryHeader, configuration, packageFqName, incompatibility = library.getIncompatibility(configuration.metadataVersion)

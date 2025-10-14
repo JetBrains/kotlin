@@ -216,7 +216,6 @@ private fun createAndInitializeKlibBasedStdlibCommonDescriptor(
         library = stdlibKlib,
         packageAccessHandler = null,
         customMetadataProtoLoader = null,
-        packageFragmentNames = parseModuleHeader(stdlibKlib.moduleHeaderData).packageFragmentNameList,
         storageManager = projectContext.storageManager,
         moduleDescriptor = stdlibCommonDescriptor,
         configuration = KlibCompilerDeserializationConfiguration(environment.configuration.languageVersionSettings),

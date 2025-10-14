@@ -54,7 +54,6 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             library = library,
             packageAccessHandler = packageAccessHandler,
             customMetadataProtoLoader = null,
-            packageFragmentNames = libraryProto.packageFragmentNameList,
             storageManager = storageManager,
             moduleDescriptor = moduleDescriptor,
             configuration = KlibCompilerDeserializationConfiguration(languageVersionSettings),
@@ -89,7 +88,6 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         library: KotlinLibrary,
         packageAccessHandler: PackageAccessHandler?,
         customMetadataProtoLoader: CustomMetadataProtoLoader?,
-        packageFragmentNames: List<String>,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
         configuration: DeserializationConfiguration,
@@ -99,7 +97,6 @@ class KlibMetadataModuleDescriptorFactoryImpl(
 
         val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
             library = library,
-            packageFragmentNames = packageFragmentNames,
             moduleDescriptor = moduleDescriptor,
             packageAccessedHandler = packageAccessHandler,
             customMetadataProtoLoader = customMetadataProtoLoader,

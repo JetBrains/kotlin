@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.storage.StorageManager
 interface KlibMetadataDeserializedPackageFragmentsFactory {
     fun createDeserializedPackageFragments(
         library: KotlinLibrary,
-        packageFragmentNames: List<String>,
         moduleDescriptor: ModuleDescriptor,
         packageAccessedHandler: PackageAccessHandler?,
         customMetadataProtoLoader: CustomMetadataProtoLoader?,
