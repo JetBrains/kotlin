@@ -312,10 +312,6 @@ open class PsiRawFirBuilder(
                 this@toFirOrErrorType?.extractAnnotationsTo(this)
             }
 
-        // Here we accept lambda as a receiver to prevent expression calculation in stub mode
-        private fun (() -> KtExpression?).toFirExpression(errorReason: String, sourceWhenInvalidExpression: KtElement): FirExpression =
-            this().toFirExpression(errorReason, sourceWhenInvalidExpression = sourceWhenInvalidExpression)
-
         private fun KtElement?.toFirExpression(
             errorReason: String,
             sourceWhenInvalidExpression: KtElement,
@@ -473,7 +469,7 @@ open class PsiRawFirBuilder(
             // No block body -> expression body and no contract
             !hasBlockBody() -> {
                 val block = buildOrLazyBlock {
-                    val result = { bodyExpression }.toFirExpression("Function has no body (but should)", this)
+                    val result = bodyExpression.toFirExpression("Function has no body (but should)", this)
                     FirSingleExpressionBlock(result.toReturn(baseSource = result.source))
                 }
 
@@ -521,7 +517,7 @@ open class PsiRawFirBuilder(
                 }
 
                 else -> {
-                    { expression }.toFirExpression("Argument is absent", sourceWhenInvalidExpression = this.asElement())
+                    expression.toFirExpression("Argument is absent", sourceWhenInvalidExpression = this.asElement())
                 }
             }
 
@@ -756,7 +752,7 @@ open class PsiRawFirBuilder(
                         }
                     } else {
                         buildOrLazyExpression(null) {
-                            { this@toFirValueParameter.defaultValue }.toFirExpression(
+                            this@toFirValueParameter.defaultValue.toFirExpression(
                                 "Should have default value",
                                 sourceWhenInvalidExpression = this@toFirValueParameter
                             )
@@ -1040,8 +1036,7 @@ open class PsiRawFirBuilder(
                 returnTypeRef = type
                 withContainerSymbol(symbol) {
                     initializer = buildOrLazyExpression(delegateSource) {
-                        { entry.delegateExpression }
-                            .toFirExpression("Should have delegate", sourceWhenInvalidExpression = entry)
+                        entry.delegateExpression.toFirExpression("Should have delegate", sourceWhenInvalidExpression = entry)
                     }
                 }
 
