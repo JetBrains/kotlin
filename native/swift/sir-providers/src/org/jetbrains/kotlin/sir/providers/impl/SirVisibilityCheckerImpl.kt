@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
-import kotlin.collections.plus
 
 private val speciallyBridgedTypes = listOf(StandardClassIds.List, StandardClassIds.Map, StandardClassIds.Set)
 
@@ -52,6 +51,10 @@ public class SirVisibilityCheckerImpl(
     @OptIn(KaExperimentalApi::class)
     override fun KaDeclarationSymbol.sirAvailability(): SirAvailability = sirSession.withSessions {
         val ktSymbol = this@sirAvailability
+
+        if (ktSymbol is KaClassSymbol && ktSymbol.classId?.let { sirSession.customTypeTranslator.isClassIdSupported(it) } == true) {
+            return@withSessions SirAvailability.Available(SirVisibility.PUBLIC)
+        }
 
         val visibility = object {
             var value: SirVisibility = SirVisibility.entries.last()
