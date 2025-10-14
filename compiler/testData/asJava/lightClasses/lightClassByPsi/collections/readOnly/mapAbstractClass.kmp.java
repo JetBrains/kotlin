@@ -1,8 +1,8 @@
-public abstract class CMap /* test.CMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CMap /* test.CMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CMap();//  .ctor()
 }
 
-public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -41,7 +41,7 @@ public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements java.util.
   public  CMap2();//  .ctor()
 }
 
-public class CMap3 /* test.CMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CMap3 /* test.CMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> getValues();//  getValues()

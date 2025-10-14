@@ -1,8 +1,8 @@
-public abstract class SSet /* test.SSet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SSet /* test.SSet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   public  SSet();//  .ctor()
 }
 
-public abstract class SSet2 /* test.SSet2*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class SSet2 /* test.SSet2*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
   @kotlin.SinceKotlin()
@@ -25,7 +25,7 @@ public abstract class SSet2 /* test.SSet2*/ implements java.util.Set<@org.jetbra
   public int getSize();//  getSize()
 }
 
-public class SSet3 /* test.SSet3*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public class SSet3 /* test.SSet3*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 

@@ -163,5 +163,5 @@ public class CMutableList3 /* test.CMutableList3*/<Elem>  implements test.IMutab
   public  CMutableList3();//  .ctor()
 }
 
-public abstract interface IMutableList /* test.IMutableList*/<Elem>  extends java.util.List<Elem>, kotlin.collections.MutableList<Elem>, kotlin.jvm.internal.markers.KMutableList {
+public abstract interface IMutableList /* test.IMutableList*/<Elem>  extends java.util.List<Elem>, kotlin.jvm.internal.markers.KMutableList {
 }

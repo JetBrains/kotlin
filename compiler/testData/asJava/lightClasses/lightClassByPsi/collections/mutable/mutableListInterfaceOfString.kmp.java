@@ -169,5 +169,5 @@ public class CMutableList3 /* test.CMutableList3*/ implements test.IMutableList 
   public  CMutableList3();//  .ctor()
 }
 
-public abstract interface IMutableList /* test.IMutableList*/ extends java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableList<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableList {
+public abstract interface IMutableList /* test.IMutableList*/ extends java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableList {
 }

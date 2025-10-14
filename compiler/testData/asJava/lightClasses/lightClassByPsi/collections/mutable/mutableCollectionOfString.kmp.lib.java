@@ -1,8 +1,8 @@
-public abstract class SMutableCollection /* test.SMutableCollection*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableCollection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
+public abstract class SMutableCollection /* test.SMutableCollection*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
   public  SMutableCollection();//  .ctor()
 }
 
-public abstract class SMutableCollection2 /* test.SMutableCollection2*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableCollection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
+public abstract class SMutableCollection2 /* test.SMutableCollection2*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
   private final int size;
 
   @kotlin.IgnorableReturnValue()
@@ -36,7 +36,7 @@ public abstract class SMutableCollection2 /* test.SMutableCollection2*/ implemen
   public void clear();//  clear()
 }
 
-public class SMutableCollection3 /* test.SMutableCollection3*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableCollection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
+public class SMutableCollection3 /* test.SMutableCollection3*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 

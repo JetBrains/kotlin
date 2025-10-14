@@ -1,8 +1,8 @@
-public abstract class CMap /* test.CMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CMap /* test.CMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CMap();//  .ctor()
 }
 
-public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> values;
 
@@ -43,7 +43,7 @@ public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements java.util.
   public int getSize();//  getSize()
 }
 
-public class CMap3 /* test.CMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CMap3 /* test.CMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> getValues();//  getValues()
 

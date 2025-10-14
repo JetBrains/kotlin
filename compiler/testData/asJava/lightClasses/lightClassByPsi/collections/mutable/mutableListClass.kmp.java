@@ -1,8 +1,8 @@
-public abstract class CMutableList /* test.CMutableList*/<Elem>  implements java.util.List<Elem>, kotlin.collections.MutableList<Elem>, kotlin.jvm.internal.markers.KMutableList {
+public abstract class CMutableList /* test.CMutableList*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMutableList {
   public  CMutableList();//  .ctor()
 }
 
-public abstract class CMutableList2 /* test.CMutableList2*/<Elem>  implements java.util.List<Elem>, kotlin.collections.MutableList<Elem>, kotlin.jvm.internal.markers.KMutableList {
+public abstract class CMutableList2 /* test.CMutableList2*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMutableList {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
   public Elem removeAt(int);//  removeAt(int)
@@ -92,7 +92,7 @@ public abstract class CMutableList2 /* test.CMutableList2*/<Elem>  implements ja
   public  CMutableList2();//  .ctor()
 }
 
-public class CMutableList3 /* test.CMutableList3*/<Elem>  implements java.util.List<Elem>, kotlin.collections.MutableList<Elem>, kotlin.jvm.internal.markers.KMutableList {
+public class CMutableList3 /* test.CMutableList3*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMutableList {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()

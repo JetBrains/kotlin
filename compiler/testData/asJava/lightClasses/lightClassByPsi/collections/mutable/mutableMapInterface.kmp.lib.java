@@ -95,5 +95,5 @@ public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements test.
   public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>)
 }
 
-public abstract interface IMutableMap /* test.IMutableMap*/<KElem, VElem>  extends java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract interface IMutableMap /* test.IMutableMap*/<KElem, VElem>  extends java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
 }
