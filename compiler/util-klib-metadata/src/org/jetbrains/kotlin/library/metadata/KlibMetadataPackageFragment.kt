@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.StorageManager
 import java.lang.ref.SoftReference
 
@@ -121,15 +120,6 @@ abstract class KlibMetadataPackageFragment(
     }
 
     override fun getMemberScope(): DeserializedPackageMemberScope = _memberScope
-
-    private val classifierNames: Set<Name> by lazy {
-        val result = mutableSetOf<Name>()
-        result.addAll(loadClassNames())
-        protoForNames.getPackage().typeAliasList.mapTo(result) { nameResolver.getName(it.name) }
-        result
-    }
-
-    fun hasTopLevelClassifier(name: Name): Boolean = name in classifierNames
 
     private fun loadClassNames(): Collection<Name> {
 
