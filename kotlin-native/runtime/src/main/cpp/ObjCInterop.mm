@@ -339,12 +339,10 @@ void Kotlin_objc_detachObjCObject(KRef ref) {
 extern "C" {
 
 void* Kotlin_objc_autoreleasePoolPush() {
-  RuntimeAssert(false, "Objective-C interop is disabled");
   return nullptr;
 }
 
 void Kotlin_objc_autoreleasePoolPop(void* ptr) {
-  RuntimeAssert(false, "Objective-C interop is disabled");
 }
 
 void* Kotlin_objc_allocWithZone(void* clazz) {
