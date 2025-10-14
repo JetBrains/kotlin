@@ -114,11 +114,6 @@ object NewCommonSuperTypeCalculator {
             commonSuperType
     }
 
-    context(_: TypeSystemCommonSuperTypesContext)
-    private fun RigidTypeMarker.isCapturedStubTypeForVariableInSubtyping() =
-        asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
-            ?.getType()?.asRigidType()?.isStubTypeForVariableInSubtyping() == true
-
     context(c: TypeSystemCommonSuperTypesContext)
     private fun refineNullabilityForUndefinedNullability(
         types: List<RigidTypeMarker>,
@@ -225,7 +220,7 @@ object NewCommonSuperTypeCalculator {
     ): RigidTypeMarker {
         if (types.size == 1) return types.single()
 
-        val nonTypeVariables = types.filter { !it.isStubTypeForVariableInSubtyping() && !it.isCapturedStubTypeForVariableInSubtyping() }
+        val nonTypeVariables = types.filter { !it.isStubTypeForVariableInSubtypingOrCaptured() }
 
         assert(nonTypeVariables.isNotEmpty()) {
             "There should be at least one non-stub type to compute common supertype but there are: $types"
