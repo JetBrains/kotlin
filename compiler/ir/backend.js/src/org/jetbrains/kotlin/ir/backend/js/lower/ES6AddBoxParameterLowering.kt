@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-val ES6_BOX_PARAMETER by IrDeclarationOriginImpl
+val ES6_BOX_PARAMETER by IrDeclarationOriginImpl.Regular
 val ES6_BOX_PARAMETER_DEFAULT_RESOLUTION by IrStatementOriginImpl
 
 val IrValueParameter.isBoxParameter: Boolean

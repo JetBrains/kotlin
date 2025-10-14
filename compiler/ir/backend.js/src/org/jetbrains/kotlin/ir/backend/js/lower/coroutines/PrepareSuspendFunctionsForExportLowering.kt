@@ -111,9 +111,9 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
         private const val PROMISIFIED_WRAPPER_SUFFIX = "\$promisified"
         private const val EXPORTED_SUSPEND_FUNCTION_BRIDGE_SUFFIX = "\$suspendBridge"
 
-        val PROMISIFIED_WRAPPER by IrDeclarationOriginImpl
-        val EXPORTED_SUSPEND_FUNCTION_BRIDGE by IrDeclarationOriginImpl
-        val EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER by IrDeclarationOriginImpl
+        val PROMISIFIED_WRAPPER by IrDeclarationOriginImpl.Regular
+        val EXPORTED_SUSPEND_FUNCTION_BRIDGE by IrDeclarationOriginImpl.Regular
+        val EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER by IrDeclarationOriginImpl.Regular
 
         var IrFunction.bridgeFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
         var IrFunction.promisifiedWrapperFunction: IrSimpleFunction? by irAttribute(copyByDefault = true)

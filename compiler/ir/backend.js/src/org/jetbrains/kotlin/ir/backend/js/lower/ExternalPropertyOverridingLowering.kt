@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-val EXTERNAL_SUPER_ACCESSORS_ORIGIN by IrDeclarationOriginImpl
+val EXTERNAL_SUPER_ACCESSORS_ORIGIN by IrDeclarationOriginImpl.Regular
 
 /**
  * The lowering saves external properties access with the super qualifier

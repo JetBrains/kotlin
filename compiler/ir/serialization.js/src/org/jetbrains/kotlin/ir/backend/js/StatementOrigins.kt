@@ -16,7 +16,7 @@ object JsStatementOrigins {
     val CALLABLE_REFERENCE_INVOKE by IrStatementOriginImpl
     val EXPLICIT_INVOKE by IrStatementOriginImpl
 
-    val FACTORY_ORIGIN by IrDeclarationOriginImpl
+    val FACTORY_ORIGIN by IrDeclarationOriginImpl.Regular
 
     val COROUTINE_ROOT_LOOP by IrStatementOriginImpl
     val COROUTINE_SWITCH by IrStatementOriginImpl

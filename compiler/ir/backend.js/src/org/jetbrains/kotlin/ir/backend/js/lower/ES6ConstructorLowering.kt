@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-val ES6_CONSTRUCTOR_REPLACEMENT by IrDeclarationOriginImpl
-val ES6_SYNTHETIC_EXPORT_CONSTRUCTOR by IrDeclarationOriginImpl
-val ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT by IrDeclarationOriginImpl
-val ES6_INIT_FUNCTION by IrDeclarationOriginImpl
+val ES6_CONSTRUCTOR_REPLACEMENT by IrDeclarationOriginImpl.Regular
+val ES6_SYNTHETIC_EXPORT_CONSTRUCTOR by IrDeclarationOriginImpl.Regular
+val ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT by IrDeclarationOriginImpl.Regular
+val ES6_INIT_FUNCTION by IrDeclarationOriginImpl.Regular
 val ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT by IrStatementOriginImpl
-val ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT by IrDeclarationOriginImpl
+val ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT by IrDeclarationOriginImpl.Regular
 
 val IrDeclaration.isEs6ConstructorReplacement: Boolean
     get() = origin == ES6_CONSTRUCTOR_REPLACEMENT || origin == ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-val ENUM_ENTRIES_INITIALIZER_ORIGIN by IrDeclarationOriginImpl
+val ENUM_ENTRIES_INITIALIZER_ORIGIN by IrDeclarationOriginImpl.Regular
 
 /**
  * Replaces enum access with invocation of corresponding function.

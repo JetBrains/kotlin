@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-private val SUSPEND_FUNCTION_AS_GENERATOR by IrDeclarationOriginImpl
+private val SUSPEND_FUNCTION_AS_GENERATOR by IrDeclarationOriginImpl.Regular
 
 /**
  * Transforms suspend function into a GeneratorCoroutineImpl instance and ES2015 generator.

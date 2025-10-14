@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-private val SCRIPT_FUNCTION by IrDeclarationOriginImpl
+private val SCRIPT_FUNCTION by IrDeclarationOriginImpl.Regular
 
 /**
  * Creates functions for initializing and evaluating scripts.

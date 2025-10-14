@@ -16,79 +16,79 @@ interface IrDeclarationOrigin {
         get() = false
 
     companion object {
-        val DEFINED by IrDeclarationOriginImpl
-        val FAKE_OVERRIDE by IrDeclarationOriginImpl
-        val FOR_LOOP_ITERATOR by IrDeclarationOriginImpl
-        val FOR_LOOP_VARIABLE by IrDeclarationOriginImpl
-        val FOR_LOOP_IMPLICIT_VARIABLE by IrDeclarationOriginImpl
-        val PROPERTY_BACKING_FIELD by IrDeclarationOriginImpl
-        val DEFAULT_PROPERTY_ACCESSOR by IrDeclarationOriginImpl
+        val DEFINED by IrDeclarationOriginImpl.Regular
+        val FAKE_OVERRIDE by IrDeclarationOriginImpl.Regular
+        val FOR_LOOP_ITERATOR by IrDeclarationOriginImpl.Regular
+        val FOR_LOOP_VARIABLE by IrDeclarationOriginImpl.Regular
+        val FOR_LOOP_IMPLICIT_VARIABLE by IrDeclarationOriginImpl.Regular
+        val PROPERTY_BACKING_FIELD by IrDeclarationOriginImpl.Regular
+        val DEFAULT_PROPERTY_ACCESSOR by IrDeclarationOriginImpl.Regular
         val DELEGATE by IrDeclarationOriginImpl.Synthetic
-        val PROPERTY_DELEGATE by IrDeclarationOriginImpl
-        val DELEGATED_PROPERTY_ACCESSOR by IrDeclarationOriginImpl
-        val DELEGATED_MEMBER by IrDeclarationOriginImpl
-        val ENUM_CLASS_SPECIAL_MEMBER by IrDeclarationOriginImpl
+        val PROPERTY_DELEGATE by IrDeclarationOriginImpl.Regular
+        val DELEGATED_PROPERTY_ACCESSOR by IrDeclarationOriginImpl.Regular
+        val DELEGATED_MEMBER by IrDeclarationOriginImpl.Regular
+        val ENUM_CLASS_SPECIAL_MEMBER by IrDeclarationOriginImpl.Regular
         val FUNCTION_FOR_DEFAULT_PARAMETER by IrDeclarationOriginImpl.Synthetic
         val MASK_FOR_DEFAULT_FUNCTION by IrDeclarationOriginImpl.Synthetic
         val DEFAULT_CONSTRUCTOR_MARKER by IrDeclarationOriginImpl.Synthetic
         val SYNTHETIC_CONSTRUCTOR_MARKER by IrDeclarationOriginImpl.Synthetic
         val METHOD_HANDLER_IN_DEFAULT_FUNCTION by IrDeclarationOriginImpl.Synthetic
-        val MOVED_DISPATCH_RECEIVER by IrDeclarationOriginImpl
-        val MOVED_EXTENSION_RECEIVER by IrDeclarationOriginImpl
-        val MOVED_CONTEXT_RECEIVER by IrDeclarationOriginImpl
+        val MOVED_DISPATCH_RECEIVER by IrDeclarationOriginImpl.Regular
+        val MOVED_EXTENSION_RECEIVER by IrDeclarationOriginImpl.Regular
+        val MOVED_CONTEXT_RECEIVER by IrDeclarationOriginImpl.Regular
 
-        val FILE_CLASS by IrDeclarationOriginImpl
+        val FILE_CLASS by IrDeclarationOriginImpl.Regular
         val SYNTHETIC_FILE_CLASS by IrDeclarationOriginImpl.Synthetic
-        val JVM_MULTIFILE_CLASS by IrDeclarationOriginImpl
-        val ERROR_CLASS by IrDeclarationOriginImpl
+        val JVM_MULTIFILE_CLASS by IrDeclarationOriginImpl.Regular
+        val ERROR_CLASS by IrDeclarationOriginImpl.Regular
 
-        val SCRIPT_CLASS by IrDeclarationOriginImpl
-        val SCRIPT_THIS_RECEIVER by IrDeclarationOriginImpl
-        val SCRIPT_STATEMENT by IrDeclarationOriginImpl
-        val SCRIPT_EARLIER_SCRIPTS by IrDeclarationOriginImpl
-        val SCRIPT_CALL_PARAMETER by IrDeclarationOriginImpl
-        val SCRIPT_IMPLICIT_RECEIVER by IrDeclarationOriginImpl
-        val SCRIPT_PROVIDED_PROPERTY by IrDeclarationOriginImpl
-        val SCRIPT_RESULT_PROPERTY by IrDeclarationOriginImpl
-        val REPL_SNIPPET_CLASS by IrDeclarationOriginImpl
-        val REPL_FROM_OTHER_SNIPPET by IrDeclarationOriginImpl
-        val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl
-        val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl
-        val GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl
-        val LOCAL_FUNCTION by IrDeclarationOriginImpl
-        val LOCAL_FUNCTION_FOR_LAMBDA by IrDeclarationOriginImpl
-        val CATCH_PARAMETER by IrDeclarationOriginImpl
-        val UNDERSCORE_PARAMETER by IrDeclarationOriginImpl
-        val DESTRUCTURED_OBJECT_PARAMETER by IrDeclarationOriginImpl
-        val INSTANCE_RECEIVER by IrDeclarationOriginImpl
-        val PRIMARY_CONSTRUCTOR_PARAMETER by IrDeclarationOriginImpl
-        val IR_DESTRUCTURED_PARAMETER_VARIABLE by IrDeclarationOriginImpl
-        val IR_TEMPORARY_VARIABLE by IrDeclarationOriginImpl
-        val IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER by IrDeclarationOriginImpl
-        val IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER by IrDeclarationOriginImpl
-        val IR_EXTERNAL_DECLARATION_STUB by IrDeclarationOriginImpl
-        val IR_EXTERNAL_JAVA_DECLARATION_STUB by IrDeclarationOriginImpl
-        val IR_BUILTINS_STUB by IrDeclarationOriginImpl
+        val SCRIPT_CLASS by IrDeclarationOriginImpl.Regular
+        val SCRIPT_THIS_RECEIVER by IrDeclarationOriginImpl.Regular
+        val SCRIPT_STATEMENT by IrDeclarationOriginImpl.Regular
+        val SCRIPT_EARLIER_SCRIPTS by IrDeclarationOriginImpl.Regular
+        val SCRIPT_CALL_PARAMETER by IrDeclarationOriginImpl.Regular
+        val SCRIPT_IMPLICIT_RECEIVER by IrDeclarationOriginImpl.Regular
+        val SCRIPT_PROVIDED_PROPERTY by IrDeclarationOriginImpl.Regular
+        val SCRIPT_RESULT_PROPERTY by IrDeclarationOriginImpl.Regular
+        val REPL_SNIPPET_CLASS by IrDeclarationOriginImpl.Regular
+        val REPL_FROM_OTHER_SNIPPET by IrDeclarationOriginImpl.Regular
+        val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
+        val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
+        val GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
+        val LOCAL_FUNCTION by IrDeclarationOriginImpl.Regular
+        val LOCAL_FUNCTION_FOR_LAMBDA by IrDeclarationOriginImpl.Regular
+        val CATCH_PARAMETER by IrDeclarationOriginImpl.Regular
+        val UNDERSCORE_PARAMETER by IrDeclarationOriginImpl.Regular
+        val DESTRUCTURED_OBJECT_PARAMETER by IrDeclarationOriginImpl.Regular
+        val INSTANCE_RECEIVER by IrDeclarationOriginImpl.Regular
+        val PRIMARY_CONSTRUCTOR_PARAMETER by IrDeclarationOriginImpl.Regular
+        val IR_DESTRUCTURED_PARAMETER_VARIABLE by IrDeclarationOriginImpl.Regular
+        val IR_TEMPORARY_VARIABLE by IrDeclarationOriginImpl.Regular
+        val IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER by IrDeclarationOriginImpl.Regular
+        val IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER by IrDeclarationOriginImpl.Regular
+        val IR_EXTERNAL_DECLARATION_STUB by IrDeclarationOriginImpl.Regular
+        val IR_EXTERNAL_JAVA_DECLARATION_STUB by IrDeclarationOriginImpl.Regular
+        val IR_BUILTINS_STUB by IrDeclarationOriginImpl.Regular
         val BRIDGE by IrDeclarationOriginImpl.Synthetic
-        val BRIDGE_SPECIAL by IrDeclarationOriginImpl
+        val BRIDGE_SPECIAL by IrDeclarationOriginImpl.Regular
         val GENERATED_SETTER_GETTER by IrDeclarationOriginImpl.Synthetic
 
-        val FIELD_FOR_ENUM_ENTRY by IrDeclarationOriginImpl
+        val FIELD_FOR_ENUM_ENTRY by IrDeclarationOriginImpl.Regular
         val SYNTHETIC_HELPER_FOR_ENUM_VALUES by IrDeclarationOriginImpl.Synthetic
         val SYNTHETIC_HELPER_FOR_ENUM_ENTRIES by IrDeclarationOriginImpl.Synthetic
         val FIELD_FOR_ENUM_VALUES by IrDeclarationOriginImpl.Synthetic
         val FIELD_FOR_ENUM_ENTRIES by IrDeclarationOriginImpl.Synthetic
-        val PROPERTY_FOR_ENUM_ENTRIES by IrDeclarationOriginImpl
-        val FIELD_FOR_OBJECT_INSTANCE by IrDeclarationOriginImpl
+        val PROPERTY_FOR_ENUM_ENTRIES by IrDeclarationOriginImpl.Regular
+        val FIELD_FOR_OBJECT_INSTANCE by IrDeclarationOriginImpl.Regular
         val FIELD_FOR_CLASS_CONTEXT_RECEIVER by IrDeclarationOriginImpl.Synthetic
 
         val ADAPTER_FOR_CALLABLE_REFERENCE by IrDeclarationOriginImpl.Synthetic
-        val ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE by IrDeclarationOriginImpl
+        val ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE by IrDeclarationOriginImpl.Regular
         val ADAPTER_FOR_SUSPEND_CONVERSION by IrDeclarationOriginImpl.Synthetic
-        val ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION by IrDeclarationOriginImpl
+        val ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION by IrDeclarationOriginImpl.Regular
         val ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR by IrDeclarationOriginImpl.Synthetic
 
-        val GENERATED_SAM_IMPLEMENTATION by IrDeclarationOriginImpl
+        val GENERATED_SAM_IMPLEMENTATION by IrDeclarationOriginImpl.Regular
         val SYNTHETIC_GENERATED_SAM_IMPLEMENTATION by IrDeclarationOriginImpl.Synthetic
 
         val SYNTHETIC_JAVA_PROPERTY_DELEGATE by IrDeclarationOriginImpl.Synthetic
@@ -111,14 +111,14 @@ interface IrDeclarationOrigin {
          * Created by `Fir2IrDeclarationStorage.fillUnboundSymbols()` to handle the code fragment
          * in the middle of code compile of `KaCompilerFacility`.
          */
-        val FILLED_FOR_UNBOUND_SYMBOL by IrDeclarationOriginImpl
+        val FILLED_FOR_UNBOUND_SYMBOL by IrDeclarationOriginImpl.Regular
 
-        val INLINE_LAMBDA by IrDeclarationOriginImpl
+        val INLINE_LAMBDA by IrDeclarationOriginImpl.Regular
 
         /**
          * Used on synthetic `invoke` methods for `[K][Suspend]FunctionN` interfaces.
          */
-        val FUNCTION_INTERFACE_MEMBER by IrDeclarationOriginImpl
+        val FUNCTION_INTERFACE_MEMBER by IrDeclarationOriginImpl.Regular
 
         val STUB_FOR_LENIENT by IrDeclarationOriginImpl.Synthetic
 
@@ -171,7 +171,7 @@ class IrDeclarationOriginImpl(
 
     override fun hashCode(): Int = name.hashCode()
 
-    companion object : PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, IrDeclarationOriginImpl>> {
+    object Regular : PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, IrDeclarationOriginImpl>> {
         override fun provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, IrDeclarationOriginImpl> =
             IrDeclarationOriginImpl(property.name)
     }

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-private val KPROPERTIES_FOR_DELEGATION by IrDeclarationOriginImpl
+private val KPROPERTIES_FOR_DELEGATION by IrDeclarationOriginImpl.Regular
 
 
 class DelegatedPropertyOptimizationLowering(val context: CommonBackendContext) : FileLoweringPass {

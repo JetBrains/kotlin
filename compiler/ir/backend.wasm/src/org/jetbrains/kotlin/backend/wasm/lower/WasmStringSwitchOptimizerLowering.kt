@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl
+private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl.Regular
 
 /**
  * Replaces `when` with constant string cases to binary search by string hashcodes.
