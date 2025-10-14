@@ -5,8 +5,11 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 /*
 * Compiler generates inplace next code:
 * ```

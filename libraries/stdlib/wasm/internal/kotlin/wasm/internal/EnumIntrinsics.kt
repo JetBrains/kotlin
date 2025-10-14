@@ -5,12 +5,16 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @PublishedApi
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 internal fun <T : Enum<T>> enumValuesIntrinsic(): Array<T> =
     implementedAsIntrinsic
 
 @PublishedApi
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 internal fun <T : Enum<T>> enumValueOfIntrinsic(@Suppress("UNUSED_PARAMETER") name: String): T =
     implementedAsIntrinsic
