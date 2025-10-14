@@ -34,5 +34,5 @@ public class CCollection3 /* test.CCollection3*/ implements test.ICollection {
   public int getSize();//  getSize()
 }
 
-public abstract interface ICollection /* test.ICollection*/ extends java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract interface ICollection /* test.ICollection*/ extends java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
 }

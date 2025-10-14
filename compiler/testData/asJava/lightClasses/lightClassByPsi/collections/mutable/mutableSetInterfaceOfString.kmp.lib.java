@@ -75,5 +75,5 @@ public class CMutableSet3 /* test.CMutableSet3*/ implements test.IMutableSet {
   public void clear();//  clear()
 }
 
-public abstract interface IMutableSet /* test.IMutableSet*/ extends java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.MutableSet<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
+public abstract interface IMutableSet /* test.IMutableSet*/ extends java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableSet {
 }

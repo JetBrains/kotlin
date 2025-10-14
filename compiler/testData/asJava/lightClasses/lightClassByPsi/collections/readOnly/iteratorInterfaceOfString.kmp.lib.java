@@ -20,5 +20,5 @@ public class CIterator3 /* test.CIterator3*/ implements test.IIterator {
   public boolean hasNext();//  hasNext()
 }
 
-public abstract interface IIterator /* test.IIterator*/ extends java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.collections.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract interface IIterator /* test.IIterator*/ extends java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
 }
