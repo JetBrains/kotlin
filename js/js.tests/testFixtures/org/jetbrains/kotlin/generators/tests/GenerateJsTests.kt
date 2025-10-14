@@ -142,10 +142,10 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/lineNumbers", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirJsLineNumberTest> {
+            testClass<AbstractJsLineNumberTest> {
                 model()
             }
-            testClass<AbstractFirJsLineNumberWithInlinedFunInKlibTest> {
+            testClass<AbstractJsLineNumberWithInlinedFunInKlibTest> {
                 model()
             }
         }

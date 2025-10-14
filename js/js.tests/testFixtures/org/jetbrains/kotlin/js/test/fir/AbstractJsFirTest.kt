@@ -235,8 +235,8 @@ open class AbstractFirJsES6TypeScriptExportTest(
     }
 }
 
-open class AbstractFirJsLineNumberTest(
-    testGroupOutputDirPrefix: String = "firLineNumbers/"
+open class AbstractJsLineNumberTest(
+    testGroupOutputDirPrefix: String = "lineNumbers/"
 ) : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
@@ -247,8 +247,8 @@ open class AbstractFirJsLineNumberTest(
     }
 }
 
-open class AbstractFirJsLineNumberWithInlinedFunInKlibTest : AbstractFirJsLineNumberTest(
-    testGroupOutputDirPrefix = "firLineNumbersInlined/"
+open class AbstractJsLineNumberWithInlinedFunInKlibTest : AbstractJsLineNumberTest(
+    testGroupOutputDirPrefix = "lineNumbersInlined/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

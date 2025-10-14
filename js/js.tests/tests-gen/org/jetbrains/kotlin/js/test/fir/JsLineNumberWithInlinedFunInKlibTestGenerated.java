@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/lineNumbers")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsLineNumberTestGenerated extends AbstractFirJsLineNumberTest {
+public class JsLineNumberWithInlinedFunInKlibTestGenerated extends AbstractJsLineNumberWithInlinedFunInKlibTest {
   @Test
   public void testAllFilesPresentInLineNumbers() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, true);

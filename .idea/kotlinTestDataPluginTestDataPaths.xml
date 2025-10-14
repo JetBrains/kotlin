@@ -42,7 +42,7 @@
         <entry key="$PROJECT_DIR$/js/js.translator/testData/lineNumbers">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/lineNumbers/$TEST_DATA_FILE${-lib,}_v5-lines.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{lineNumbers,lineNumbersInlined}/$TEST_DATA_FILE${-lib,}_v5-lines.js" />
             </array>
           </value>
         </entry>
