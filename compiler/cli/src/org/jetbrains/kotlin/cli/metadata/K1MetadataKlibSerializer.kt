@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.name.Name
@@ -109,7 +110,7 @@ private class KlibMetadataDependencyContainer(
 
     private val moduleDescriptorsForKotlinLibraries: Map<KotlinLibrary, ModuleDescriptorImpl> =
         kotlinLibraries.keysToMap { library ->
-            val moduleHeader = parseModuleHeader(library.moduleHeaderData)
+            val moduleHeader = parseModuleHeader(library.metadata.moduleHeaderData)
             val moduleName = Name.special(moduleHeader.moduleName)
             val moduleOrigin = DeserializedKlibModuleOrigin(library)
             MetadataFactories.DefaultDescriptorFactory.createDescriptor(

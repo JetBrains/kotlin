@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
-import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -94,13 +93,6 @@ interface BaseKotlinLibrary {
     val manifestProperties: Properties
 }
 
-// TODO(KT-81411): `MetadataLibrary` is kept for now only for the source compatibility. It needs to be removed.
-interface MetadataLibrary : Klib {
-    val moduleHeaderData: ByteArray get() = metadata.moduleHeaderData
-    fun packageMetadataParts(fqName: String): Set<String> = metadata.getPackageFragmentNames(fqName)
-    fun packageMetadata(fqName: String, partName: String): ByteArray = metadata.getPackageFragment(fqName, partName)
-}
-
 interface IrLibrary {
     val hasMainIr: Boolean
     val mainIr: IrDirectory
@@ -169,7 +161,7 @@ fun BaseKotlinLibrary.unresolvedDependencies(lenient: Boolean = false): List<Unr
 val BaseKotlinLibrary.hasDependencies: Boolean
     get() = !manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS).isNullOrBlank()
 
-interface KotlinLibrary : Klib, BaseKotlinLibrary, MetadataLibrary, IrLibrary
+interface KotlinLibrary : Klib, BaseKotlinLibrary, IrLibrary
 
 val BaseKotlinLibrary.interopFlag: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP)

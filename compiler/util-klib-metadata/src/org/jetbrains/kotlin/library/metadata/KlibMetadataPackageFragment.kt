@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -25,6 +26,7 @@ import java.lang.ref.SoftReference
 open class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     private val library: KotlinLibrary,
+    private val metadata: KlibMetadataComponent,
     private val packageAccessHandler: PackageAccessHandler?,
     private val customMetadataProtoLoader: CustomMetadataProtoLoader?,
     storageManager: StorageManager,
@@ -43,7 +45,7 @@ open class KlibMetadataDeserializedPackageFragment(
         var tmp = protoForNamesStorage.get()
         if (tmp == null) {
             tmp = customMetadataProtoLoader?.loadPackageFragment(library, fqName.asString(), partName)
-                ?: parsePackageFragment(library.packageMetadata(fqName.asString(), partName))
+                ?: parsePackageFragment(metadata.getPackageFragment(fqName.asString(), partName))
             protoForNamesStorage = SoftReference(tmp)
         }
         return tmp
@@ -59,6 +61,7 @@ open class KlibMetadataDeserializedPackageFragment(
 class BuiltInKlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     library: KotlinLibrary,
+    metadata: KlibMetadataComponent,
     packageAccessHandler: PackageAccessHandler?,
     customMetadataProtoLoader: CustomMetadataProtoLoader?,
     storageManager: StorageManager,
@@ -68,6 +71,7 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
 ) : KlibMetadataDeserializedPackageFragment(
     fqName = fqName,
     library = library,
+    metadata = metadata,
     packageAccessHandler = packageAccessHandler,
     customMetadataProtoLoader = customMetadataProtoLoader,
     storageManager = storageManager,

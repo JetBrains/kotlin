@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
@@ -61,11 +62,12 @@ internal fun readKlibDeclarationAddresses(path: Path, logger: Logger = DummyLogg
 }
 
 internal fun readKlibDeclarationAddresses(library: KotlinLibrary): Set<KlibDeclarationAddress> {
-    val headerProto = parseModuleHeader(library.moduleHeaderData)
+    val metadata = library.metadata
+    val headerProto = parseModuleHeader(metadata.moduleHeaderData)
 
     val packageMetadataSequence = headerProto.packageFragmentNameList.asSequence().flatMap { packageFragmentName ->
-        library.packageMetadataParts(packageFragmentName).asSequence().map { packageMetadataPart ->
-            library.packageMetadata(packageFragmentName, packageMetadataPart)
+        metadata.getPackageFragmentNames(packageFragmentName).asSequence().map { packageMetadataPart ->
+            metadata.getPackageFragment(packageFragmentName, packageMetadataPart)
         }
     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library.metadata.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.name.FqName
@@ -23,21 +24,23 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         storageManager: StorageManager,
         configuration: DeserializationConfiguration
     ): List<KlibMetadataDeserializedPackageFragment> {
+        val metadata = library.metadata
         val libraryHeader = customMetadataProtoLoader?.loadModuleHeader(library)
-            ?: parseModuleHeader(library.moduleHeaderData)
+            ?: parseModuleHeader(metadata.moduleHeaderData)
 
         return libraryHeader.packageFragmentNameList.flatMap {
             val packageFqName = FqName(it)
             val containerSource = KlibDeserializedContainerSource(
                 library, libraryHeader, configuration, packageFqName, incompatibility = library.getIncompatibility(configuration.metadataVersion)
             )
-            val parts = library.packageMetadataParts(packageFqName.asString())
+            val parts = metadata.getPackageFragmentNames(packageFqName.asString())
             val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
             parts.map { partName ->
                 if (isBuiltInModule)
                     BuiltInKlibMetadataDeserializedPackageFragment(
                         fqName = packageFqName,
                         library = library,
+                        metadata = metadata,
                         packageAccessHandler = packageAccessedHandler,
                         customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
@@ -49,6 +52,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                     KlibMetadataDeserializedPackageFragment(
                         fqName = packageFqName,
                         library = library,
+                        metadata = metadata,
                         packageAccessHandler = packageAccessedHandler,
                         customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,

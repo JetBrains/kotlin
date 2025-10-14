@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.klib.*
 import org.jetbrains.kotlin.kotlinp.klib.TypeArgumentId.VarianceId
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -91,9 +92,11 @@ internal class KotlinpBasedMetadataDumper(
 
     private fun loadModuleMetadata(library: KotlinLibrary) = KlibModuleMetadata.read(
         object : KlibModuleMetadata.MetadataLibraryProvider {
-            override val moduleHeaderData get() = library.moduleHeaderData
-            override fun packageMetadata(fqName: String, partName: String) = library.packageMetadata(fqName, partName)
-            override fun packageMetadataParts(fqName: String) = library.packageMetadataParts(fqName)
+            private val metadata = library.metadata
+
+            override val moduleHeaderData get() = metadata.moduleHeaderData
+            override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
+            override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
         }
     )
 
