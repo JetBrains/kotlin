@@ -474,9 +474,9 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG), forwardBuildOutput = true) {
+            build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 val compilerArgs = output.lineSequence()
-                    .filter { it.contains("Kotlin compiler args:") }
+                    .filter { it.contains(":compileKotlin Kotlin compiler args:") }
                     .first()
                 assert(compilerArgs.contains("-jvm-target 11")) {
                     "Kotlin compilation jvm-target argument is ${output.substringAfter("-jvm-target ").substringBefore(" ")}"
