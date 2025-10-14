@@ -124,5 +124,5 @@ public class CMutableList3 /* test.CMutableList3*/<Elem>  implements test.IMutab
   public void clear();//  clear()
 }
 
-public abstract interface IMutableList /* test.IMutableList*/<Elem>  extends java.util.List<Elem>, kotlin.collections.MutableList<Elem>, kotlin.jvm.internal.markers.KMutableList {
+public abstract interface IMutableList /* test.IMutableList*/<Elem>  extends java.util.List<Elem>, kotlin.jvm.internal.markers.KMutableList {
 }

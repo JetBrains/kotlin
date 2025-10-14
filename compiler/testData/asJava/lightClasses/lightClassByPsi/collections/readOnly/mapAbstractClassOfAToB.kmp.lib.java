@@ -2,11 +2,11 @@ public final class A /* test.A*/ {
   public  A();//  .ctor()
 }
 
-public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.collections.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class ABMap /* test.ABMap*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
   public  ABMap();//  .ctor()
 }
 
-public abstract class ABMap2 /* test.ABMap2*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.collections.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class ABMap2 /* test.ABMap2*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() test.B> values;
 
@@ -47,7 +47,7 @@ public abstract class ABMap2 /* test.ABMap2*/ implements java.util.Map<@org.jetb
   public int getSize();//  getSize()
 }
 
-public class ABMap3 /* test.ABMap3*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.collections.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
+public class ABMap3 /* test.ABMap3*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() test.B> getValues();//  getValues()
 

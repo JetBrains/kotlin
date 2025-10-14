@@ -1,8 +1,8 @@
-public abstract class CMutableMap /* test.CMutableMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class CMutableMap /* test.CMutableMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   public  CMutableMap();//  .ctor()
 }
 
-public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> values;
 
@@ -61,7 +61,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   public void putAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>);//  putAll(@org.jetbrains.annotations.NotNull() java.util.Map<? extends KElem, ? extends VElem>)
 }
 
-public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.collections.MutableMap<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
+public class CMutableMap3 /* test.CMutableMap3*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMutableMap {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<VElem> getValues();//  getValues()
 
