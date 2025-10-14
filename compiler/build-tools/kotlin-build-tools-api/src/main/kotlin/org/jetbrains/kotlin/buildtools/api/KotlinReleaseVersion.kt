@@ -18,4 +18,6 @@ public class KotlinReleaseVersion(public val major: Int, public val minor: Int, 
     override fun compareTo(other: KotlinReleaseVersion): Int {
         return this.toKotlinVersion().compareTo(other.toKotlinVersion())
     }
+
+    override fun toString(): String = "$major.$minor.$patch"
 }

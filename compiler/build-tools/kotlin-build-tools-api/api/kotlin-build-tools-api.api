@@ -96,6 +96,7 @@ public final class org/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion : ja
 	public final fun getMajor ()I
 	public final fun getMinor ()I
 	public final fun getPatch ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchains {
