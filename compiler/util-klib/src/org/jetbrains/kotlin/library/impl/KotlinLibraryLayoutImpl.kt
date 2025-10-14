@@ -22,12 +22,6 @@ open class KotlinLibraryLayoutImpl(val klib: File, override val component: Strin
 
 }
 
-class MetadataLibraryLayoutImpl(klib: File, component: String) : KotlinLibraryLayoutImpl(klib, component), MetadataKotlinLibraryLayout {
-
-    override fun directlyFromZip(zipFileSystem: FileSystem): MetadataKotlinLibraryLayout =
-        FromZipMetadataLibraryImpl(this, zipFileSystem)
-}
-
 class IrLibraryLayoutImpl(klib: File, component: String) : KotlinLibraryLayoutImpl(klib, component), IrKotlinLibraryLayout {
 
     override fun directlyFromZip(zipFileSystem: FileSystem): IrKotlinLibraryLayout =
@@ -38,7 +32,7 @@ class IrLibraryLayoutImpl(klib: File, component: String) : KotlinLibraryLayoutIm
 open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component: String?, zipAccessor: ZipFileSystemAccessor? = null) {
     open val layout = KotlinLibraryLayoutImpl(klib, component)
 
-    private val klibZipAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
+    val klibZipAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
 
     fun <T> inPlace(action: (L) -> T): T =
         if (layout.isZipped)
@@ -47,12 +41,6 @@ open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component:
             }
         else
             action(layout as L)
-}
-
-
-class MetadataLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String, zipAccessor: ZipFileSystemAccessor? = null) :
-    BaseLibraryAccess<L>(klib, component, zipAccessor) {
-    override val layout = MetadataLibraryLayoutImpl(klib, component)
 }
 
 class IrLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String, zipAccessor: ZipFileSystemAccessor? = null) :
@@ -67,9 +55,6 @@ open class FromZipBaseLibraryImpl(zipped: KotlinLibraryLayoutImpl, zipFileSystem
     override val libFile = zipFileSystem.file(zipped.libFile)
     override val component = zipped.component
 }
-
-class FromZipMetadataLibraryImpl(zipped: MetadataLibraryLayoutImpl, zipFileSystem: FileSystem) :
-    FromZipBaseLibraryImpl(zipped, zipFileSystem), MetadataKotlinLibraryLayout
 
 class FromZipIrLibraryImpl(zipped: IrLibraryLayoutImpl, zipFileSystem: FileSystem) :
     FromZipBaseLibraryImpl(zipped, zipFileSystem), IrKotlinLibraryLayout

@@ -29,6 +29,7 @@ class KlibIcCacheBasedSymbolProvider(
     kotlinScopeProvider,
     flexibleTypeFactory,
     defaultDeserializationOrigin,
+    metadataProvider = { it },
 ) {
     override fun moduleData(library: KlibIcData): FirModuleData {
         return moduleDataProvider.allModuleData.single()
