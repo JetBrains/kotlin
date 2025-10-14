@@ -7,6 +7,7 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.*
 
 @Suppress("UNUSED_PARAMETER")
@@ -17,6 +18,7 @@ private fun getJsClassName(jsKlass: JsAny): String? =
 private fun instanceOf(ref: JsAny, jsKlass: JsAny): Boolean =
     js("ref instanceof jsKlass")
 
+@UsedFromCompilerGeneratedCode
 internal class KExternalClassImpl<T : Any> @WasmPrimitiveConstructor constructor(private val jsConstructor: JsAny) : KClass<T> {
     override val simpleName: String? get() = getJsClassName(jsConstructor)
     override val qualifiedName: String? get() = null

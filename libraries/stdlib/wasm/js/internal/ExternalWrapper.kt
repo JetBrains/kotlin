@@ -8,6 +8,8 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 import kotlin.wasm.internal.reftypes.anyref
 
 @ExcludedFromCodegen
@@ -180,6 +182,7 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType {
         x.asWasmExternRef()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinToJsStringAdapter(x: String?): JsString? {
     // Using nullable String to represent default value
     // for parameters with default values
@@ -188,10 +191,12 @@ internal fun kotlinToJsStringAdapter(x: String?): JsString? {
     return x.internalStr
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): ExternalInterfaceType? =
     // We deliberately avoid usage of `takeIf` here as type erase on the inlining stage leads to infinite recursion
     if (isNullish(x)) null else x
 
+@UsedFromCompilerGeneratedCode
 internal fun jsToKotlinStringAdapter(x: JsString) = String(x)
 
 
@@ -240,49 +245,66 @@ private val jsFalse: JsBoolean
         return value
     }
 
+@UsedFromCompilerGeneratedCode
 internal fun numberToDoubleAdapter(x: Number): Double =
     x.toDouble()
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinToJsAnyAdapter(x: Any?): ExternalInterfaceType? =
     if (x == null) null else anyToExternRef(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun jsToKotlinAnyAdapter(x: ExternalInterfaceType?): Any? =
     if (x == null) null else externRefToAny(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun jsToKotlinByteAdapter(x: Int): Byte = x.toByte()
+@UsedFromCompilerGeneratedCode
 internal fun jsToKotlinShortAdapter(x: Int): Short = x.toShort()
+@UsedFromCompilerGeneratedCode
 internal fun jsToKotlinCharAdapter(x: Int): Char = x.toChar()
 
+@UsedFromCompilerGeneratedCode
 internal fun externRefToKotlinUByteAdapter(x: ExternalInterfaceType): UByte =
     externrefToUByte(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun externRefToKotlinUShortAdapter(x: ExternalInterfaceType): UShort =
     externrefToUShort(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun externRefToKotlinUIntAdapter(x: ExternalInterfaceType): UInt =
     externrefToUInt(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun externRefToKotlinULongAdapter(x: ExternalInterfaceType): ULong =
     externrefToULong(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun externRefToKotlinIntAdapter(x: ExternalInterfaceType): Int =
     externrefToInt(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun externRefToKotlinBooleanAdapter(x: ExternalInterfaceType): Boolean =
     externrefToBoolean(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun externRefToKotlinLongAdapter(x: ExternalInterfaceType): Long =
     externrefToLong(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun externRefToKotlinFloatAdapter(x: ExternalInterfaceType): Float =
     externrefToFloat(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun externRefToKotlinDoubleAdapter(x: ExternalInterfaceType): Double =
     externrefToDouble(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinIntToExternRefAdapter(x: Int): JsNumber =
     intToExternref(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinBooleanToExternRefAdapter(x: Boolean): JsBoolean =
     if (x) jsTrue else jsFalse
 
@@ -298,39 +320,51 @@ private fun kotlinUIntToJsNumberUnsafe(x: Int): JsNumber =
 private fun kotlinULongToJsBigIntUnsafe(x: Long): JsBigInt =
     js("x & 0xFFFFFFFFFFFFFFFFn")
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinUByteToJsNumber(x: UByte): JsNumber =
     kotlinUByteToJsNumberUnsafe(x.toInt())
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinUShortToJsNumber(x: UShort): JsNumber =
     kotlinUShortToJsNumberUnsafe(x.toInt())
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinUIntToJsNumber(x: UInt): JsNumber =
     kotlinUIntToJsNumberUnsafe(x.toInt())
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinULongToJsBigInt(x: ULong): JsBigInt =
     kotlinULongToJsBigIntUnsafe(x.toLong())
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinLongToExternRefAdapter(x: Long): JsBigInt =
     longToExternref(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinFloatToExternRefAdapter(x: Float): JsNumber =
     floatToExternref(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinDoubleToExternRefAdapter(x: Double): JsNumber =
     doubleToExternref(x)
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinByteToExternRefAdapter(x: Byte): JsNumber =
     intToExternref(x.toInt())
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinShortToExternRefAdapter(x: Short): JsNumber =
     intToExternref(x.toInt())
 
+@UsedFromCompilerGeneratedCode
 internal fun kotlinCharToExternRefAdapter(x: Char): JsNumber =
     intToExternref(x.code)
 
+@UsedFromCompilerGeneratedCode
 internal fun newJsArray(): ExternalInterfaceType =
     js("[]")
 
+@UsedFromCompilerGeneratedCode
 internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType) {
     js("array.push(element);")
 }

@@ -9,8 +9,11 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 // Reference type operators
 
 @WasmOp(WasmOp.REF_IS_NULL)
 @OptIn(ExperimentalWasmJsInterop::class)
+@UsedFromCompilerGeneratedCode
 internal external fun wasm_externref_is_null(a: ExternalInterfaceType?): Boolean
