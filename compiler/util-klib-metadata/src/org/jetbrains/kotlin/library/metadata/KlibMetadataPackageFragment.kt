@@ -50,7 +50,7 @@ open class KlibMetadataDeserializedPackageFragment(
 
     override val proto: ProtoBuf.PackageFragment
         get() {
-            packageAccessHandler?.markNeededForLink(library, fqName.asString())
+            packageAccessHandler?.markNeededForLink(fqName.asString())
             return protoForNames
         }
 }
