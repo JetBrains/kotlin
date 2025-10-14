@@ -40,5 +40,5 @@ public class CSet3 /* test.CSet3*/<Elem>  implements test.ISet<Elem> {
   public int getSize();//  getSize()
 }
 
-public abstract interface ISet /* test.ISet*/<Elem>  extends java.util.Set<Elem>, kotlin.collections.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract interface ISet /* test.ISet*/<Elem>  extends java.util.Set<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
 }

@@ -22,5 +22,5 @@ public class CMapEntry3 /* test.CMapEntry3*/<KElem, VElem>  implements test.IMap
   public VElem getValue();//  getValue()
 }
 
-public abstract interface IMapEntry /* test.IMapEntry*/<KElem, VElem>  extends java.util.Map.Entry<KElem, VElem>, kotlin.collections.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract interface IMapEntry /* test.IMapEntry*/<KElem, VElem>  extends java.util.Map.Entry<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
 }

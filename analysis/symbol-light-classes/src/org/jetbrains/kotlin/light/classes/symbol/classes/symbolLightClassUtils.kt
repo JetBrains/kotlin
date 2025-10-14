@@ -353,7 +353,7 @@ internal fun KaSession.createInheritanceList(
                 lightClass,
                 KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             ) ?: return@forEach
-            listBuilder.addReference(mappedType)
+
             if (mappedType.canonicalText.startsWith("kotlin.collections.")) {
                 val mappedToNoCollectionAsIs = mapType(superType, lightClass, KaTypeMappingMode.SUPER_TYPE)
                 if (mappedToNoCollectionAsIs != null &&
@@ -366,6 +366,8 @@ internal fun KaSession.createInheritanceList(
                         listBuilder.addMarkerInterfaceIfNeeded(superType.classId)
                     }
                 }
+            } else {
+                listBuilder.addReference(mappedType)
             }
         }
 

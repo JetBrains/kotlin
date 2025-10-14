@@ -2,11 +2,11 @@ public final class A /* test.A*/ {
   public  A();//  .ctor()
 }
 
-public abstract class TAMap /* test.TAMap*/<T>  implements java.util.Map<T, @org.jetbrains.annotations.NotNull() test.A>, kotlin.collections.Map<T, @org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class TAMap /* test.TAMap*/<T>  implements java.util.Map<T, @org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   public  TAMap();//  .ctor()
 }
 
-public abstract class TAMap2 /* test.TAMap2*/<T>  implements java.util.Map<T, @org.jetbrains.annotations.NotNull() test.A>, kotlin.collections.Map<T, @org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class TAMap2 /* test.TAMap2*/<T>  implements java.util.Map<T, @org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
@@ -45,7 +45,7 @@ public abstract class TAMap2 /* test.TAMap2*/<T>  implements java.util.Map<T, @o
   public  TAMap2();//  .ctor()
 }
 
-public class TAMap3 /* test.TAMap3*/<T>  implements java.util.Map<T, @org.jetbrains.annotations.NotNull() test.A>, kotlin.collections.Map<T, @org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
+public class TAMap3 /* test.TAMap3*/<T>  implements java.util.Map<T, @org.jetbrains.annotations.NotNull() test.A>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() test.A> getValues();//  getValues()
