@@ -2,11 +2,11 @@ public final class A /* test.A*/ {
   public  A();//  .ctor()
 }
 
-public abstract class ATMap /* test.ATMap*/<T>  implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.collections.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class ATMap /* test.ATMap*/<T>  implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.jvm.internal.markers.KMappedMarker {
   public  ATMap();//  .ctor()
 }
 
-public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.collections.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.util.Collection<T> values;
 
@@ -47,7 +47,7 @@ public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.
   public int getSize();//  getSize()
 }
 
-public class ATMap3 /* test.ATMap3*/<T>  implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.collections.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.jvm.internal.markers.KMappedMarker {
+public class ATMap3 /* test.ATMap3*/<T>  implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<T> getValues();//  getValues()
 
