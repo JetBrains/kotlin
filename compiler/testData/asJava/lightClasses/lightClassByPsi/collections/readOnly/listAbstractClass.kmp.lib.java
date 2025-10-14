@@ -1,8 +1,8 @@
-public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Elem>, kotlin.collections.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CList();//  .ctor()
 }
 
-public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<Elem>, kotlin.collections.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   private final int size;
 
   @kotlin.SinceKotlin()
@@ -40,7 +40,7 @@ public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<E
   public int lastIndexOf(Elem);//  lastIndexOf(Elem)
 }
 
-public class CList3 /* test.CList3*/<Elem>  implements java.util.List<Elem>, kotlin.collections.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
+public class CList3 /* test.CList3*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 

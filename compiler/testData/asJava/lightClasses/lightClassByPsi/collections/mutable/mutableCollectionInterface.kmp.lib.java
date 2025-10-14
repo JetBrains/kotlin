@@ -63,5 +63,5 @@ public class CCollection3 /* test.CCollection3*/<Elem>  implements test.IMutable
   public void clear();//  clear()
 }
 
-public abstract interface IMutableCollection /* test.IMutableCollection*/<Elem>  extends java.util.Collection<Elem>, kotlin.collections.MutableCollection<Elem>, kotlin.jvm.internal.markers.KMutableCollection {
+public abstract interface IMutableCollection /* test.IMutableCollection*/<Elem>  extends java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMutableCollection {
 }
