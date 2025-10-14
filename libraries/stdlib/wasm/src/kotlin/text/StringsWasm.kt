@@ -279,6 +279,7 @@ public actual fun String.toUpperCase(): String = uppercase()
  * @sample samples.text.Strings.uppercase
  */
 @SinceKotlin("1.5")
+//@kotlin.internal.IntrinsicConstEvaluation
 public actual fun String.uppercase(): String = uppercaseImpl()
 
 /**
@@ -297,6 +298,7 @@ public actual fun String.toLowerCase(): String = lowercase()
  * @sample samples.text.Strings.lowercase
  */
 @SinceKotlin("1.5")
+//@kotlin.internal.IntrinsicConstEvaluation
 public actual fun String.lowercase(): String = lowercaseImpl()
 
 /**

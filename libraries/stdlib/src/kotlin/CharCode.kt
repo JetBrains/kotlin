@@ -17,6 +17,7 @@ package kotlin
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+//@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Char(code: Int): Char {
     if (code < Char.MIN_VALUE.code || code > Char.MAX_VALUE.code) {
         throw IllegalArgumentException("Invalid Char code: $code")

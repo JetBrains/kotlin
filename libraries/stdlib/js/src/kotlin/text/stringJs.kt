@@ -212,6 +212,7 @@ public actual inline fun String.toUpperCase(): String = asDynamic().toUpperCase(
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+//@kotlin.internal.IntrinsicConstEvaluation
 public actual inline fun String.uppercase(): String = asDynamic().toUpperCase()
 
 /**
@@ -232,6 +233,7 @@ public actual inline fun String.toLowerCase(): String = asDynamic().toLowerCase(
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+//@kotlin.internal.IntrinsicConstEvaluation
 public actual inline fun String.lowercase(): String = asDynamic().toLowerCase()
 
 @kotlin.internal.InlineOnly
