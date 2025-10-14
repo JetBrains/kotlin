@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.checkers.projectionKindAsString
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirDynamicUnsupportedChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -31,8 +32,10 @@ import org.jetbrains.kotlin.fir.resolve.inference.AnonymousFunctionBasedMultiLam
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -764,9 +767,6 @@ private fun ConstraintSystemError.toDiagnostic(
                         ?: position.source)
                     // ConeExpectedTypeConstraintPosition is processed below,
                     // all others are reported as NEW_INFERENCE_ERROR instead (see mapSystemHasContradictionError);
-                    // About calls from mapInapplicableCandidateError:
-                    // - ConeExplicitTypeParameterConstraintPosition is reported as UPPER_BOUND_VIOLATED
-                    // (see e.g. testCheckEnhancedUpperBounds)
                     // - ConeFixVariableConstraintPosition is occurred in delegates only,
                     // and reported as DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE (see testSuccessfulProvideDelegateLeadsToRedGetValue)
                     // Finally, ConeDeclaredUpperBoundConstraintPosition never occurs here
@@ -800,6 +800,32 @@ private fun ConstraintSystemError.toDiagnostic(
                         inferredType.substituteTypeVariableTypes(candidate, typeContext),
                         typeMismatchDueToNullability,
                         session
+                    )
+                }
+
+                is ConeExplicitTypeParameterConstraintPosition -> {
+                    val argumentIndex = (candidate.callInfo.callSite as? FirQualifiedAccessExpression)
+                        ?.typeArguments?.indexOfFirst { it.source == position.typeArgument.source }
+                        ?: return null
+                    val argumentType = position.typeArgument.toConeTypeProjection().type
+                        ?: return null
+                    val parameterType = candidate.symbol.typeParameterSymbols?.getOrNull(argumentIndex)?.toConeType()
+                        ?.let { candidate.substitutor.substituteOrSelf(it) }
+                        ?: return null
+
+                    // NOTE: Supplying the `parameterType` here is not correct as we have two scenarios
+                    // (see `falseNegativeUpperBoundViolated.kt` and `upperBoundViolated2.kt`):
+                    // - a variable may have been fixed to an explicit argument which violates the bound
+                    //   (in which case we, need to check it against the inferred combined upper bound),
+                    // - or it may have been fixed implicitly to something coming from another argument variable fixation
+                    //   (in which case, we need to check the explicit argument against this fixation).
+                    // This will be accounted for in a later commit.
+                    FirErrors.UPPER_BOUND_VIOLATED.createOn(
+                        position.typeArgument.source ?: qualifiedAccessSource ?: source,
+                        parameterType.substituteTypeVariableTypes(candidate, typeContext),
+                        argumentType.substituteTypeVariableTypes(candidate, typeContext),
+                        "",
+                        session,
                     )
                 }
 

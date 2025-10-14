@@ -12,7 +12,7 @@ class BS : Builder<String, BS>("")
 class BI : Builder<Int, BI>(1)
 
 fun bar(b: Builder<String, *>, bb: Builder<*, *>) {
-    b.<!INAPPLICABLE_CANDIDATE!>test<!><<!UPPER_BOUND_VIOLATED!>Builder<*, *><!>>(bb)
+    b.test<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Builder<*, *><!>>(bb)
 }
 
 fun main() {

@@ -6,7 +6,7 @@ fun <T : Bar, T1> foo(x : Int) {}
 fun <T1, T : Foo> foo(x : Long) {}
 
 fun f(): Unit {
-    <!INAPPLICABLE_CANDIDATE!>foo<!><<!UPPER_BOUND_VIOLATED!>Int<!>, Int>(1)
+    foo<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Int<!>, Int>(1)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, typeConstraint,

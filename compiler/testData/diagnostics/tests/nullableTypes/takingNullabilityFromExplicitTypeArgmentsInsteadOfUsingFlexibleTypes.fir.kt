@@ -31,10 +31,10 @@ class Bar<T, K: Any> {
     val foos14 = ArrayList<A<T>?>()
     val foos15 = ArrayList<A<T?>>()
 
-    val foos16 = J<<!UPPER_BOUND_VIOLATED!>Foo<!>>()
-    val foos17 = J<<!UPPER_BOUND_VIOLATED!>Foo?<!>>()
-    val foos18 = J<<!UPPER_BOUND_VIOLATED!>T<!>>()
-    val foos19 = J<<!UPPER_BOUND_VIOLATED!>T?<!>>()
+    val foos16 = J<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Foo<!>>()
+    val foos17 = J<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Foo?<!>>()
+    val foos18 = J<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>T<!>>()
+    val foos19 = J<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>T?<!>>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, javaFunction, javaType, nullableType, primaryConstructor,
