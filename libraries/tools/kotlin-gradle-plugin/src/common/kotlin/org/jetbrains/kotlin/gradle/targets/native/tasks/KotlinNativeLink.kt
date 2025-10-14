@@ -199,7 +199,7 @@ constructor(
     val exportLibraries: FileCollection get() = exportLibrariesResolvedConfiguration?.files ?: objectFactory.fileCollection()
 
     private val exportLibrariesResolvedConfiguration = if (binary is AbstractNativeLibrary) {
-        LazyResolvedConfiguration(project.configurations.maybeCreateResolvable(binary.exportConfigurationName))
+        LazyResolvedConfigurationWithArtifacts(project.configurations.maybeCreateResolvable(binary.exportConfigurationName))
     } else {
         null
     }
@@ -346,7 +346,7 @@ constructor(
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
     @Suppress("DEPRECATION_ERROR")
-    private val resolvedConfiguration = LazyResolvedConfiguration(
+    private val resolvedConfiguration = LazyResolvedConfigurationWithArtifacts(
         project.configurations.getByName(compilation.compileDependencyConfigurationName)
     )
 

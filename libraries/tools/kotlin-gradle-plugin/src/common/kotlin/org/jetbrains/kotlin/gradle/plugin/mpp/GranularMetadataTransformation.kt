@@ -109,12 +109,12 @@ internal class GranularMetadataTransformation(
     class Params private constructor(
         val build: CurrentBuildIdentifier,
         val sourceSetName: String,
-        val resolvedMetadataConfiguration: LazyResolvedConfiguration,
+        val resolvedMetadataConfiguration: LazyResolvedConfigurationWithArtifacts,
         val dependingPlatformCompilations: List<PlatformCompilationData>,
         val projectStructureMetadataExtractorFactory: IKotlinProjectStructureMetadataExtractorFactory,
         val projectData: Map<String, ProjectData>,
         val platformCompilationSourceSets: Set<String>,
-        val projectStructureMetadataResolvedConfiguration: LazyResolvedConfiguration,
+        val projectStructureMetadataResolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
         val coordinatesOfProjectDependencies: KotlinProjectSharedDataProvider<KotlinProjectCoordinatesData>?,
         val objects: ObjectFactory,
         val kotlinKmpProjectIsolationEnabled: Boolean,
@@ -127,7 +127,7 @@ internal class GranularMetadataTransformation(
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
             build = project.currentBuild,
             sourceSetName = kotlinSourceSet.name,
-            resolvedMetadataConfiguration = LazyResolvedConfiguration(kotlinSourceSet.internal.resolvableMetadataConfiguration),
+            resolvedMetadataConfiguration = LazyResolvedConfigurationWithArtifacts(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             dependingPlatformCompilations = project.allPlatformCompilationData.filter { kotlinSourceSet.name in it.allSourceSets },
             projectStructureMetadataExtractorFactory =
                 if (project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) project.kotlinProjectStructureMetadataExtractorFactory
@@ -632,11 +632,11 @@ private fun Project.collectAllPlatformCompilationData(): List<PlatformCompilatio
 
 private fun KotlinCompilation<*>.toPlatformCompilationData() = PlatformCompilationData(
     allSourceSets = allKotlinSourceSets.map { it.name }.toSet(),
-    resolvedDependenciesConfiguration = LazyResolvedConfiguration(internal.configurations.compileDependencyConfiguration),
+    resolvedDependenciesConfiguration = LazyResolvedConfigurationWithArtifacts(internal.configurations.compileDependencyConfiguration),
     hostSpecificMetadataConfiguration = internal
         .configurations
         .hostSpecificMetadataConfiguration
-        ?.let(::LazyResolvedConfiguration),
+        ?.let(::LazyResolvedConfigurationWithArtifacts),
     compilationName = disambiguatedName,
     targetName = target.targetName,
 )
