@@ -839,7 +839,7 @@ internal class CacheBuilder(
         }.lastOrNull() ?: PartialLinkageMode.DEFAULT.name
 
     private fun getCacheDirectory(
-        resolvedConfiguration: LazyResolvedConfiguration,
+        resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
         dependency: ResolvedDependencyResult,
     ): File = getCacheDirectory(
         rootCacheDirectory = rootCacheDirectory,
@@ -852,7 +852,7 @@ internal class CacheBuilder(
     private fun needCache(libraryPath: String) =
         libraryPath.startsWith(settings.gradleUserHomeDir.absolutePath) && libraryPath.endsWith(".klib")
 
-    private fun LazyResolvedConfiguration.ensureDependencyPrecached(
+    private fun LazyResolvedConfigurationWithArtifacts.ensureDependencyPrecached(
         dependency: ResolvedDependencyResult,
         visitedDependencies: MutableSet<ResolvedDependencyResult>,
     ) {
@@ -1013,7 +1013,7 @@ internal class CacheBuilder(
             ensureCompilerProvidedLibPrecached(platformLibName, platformLibs, visitedLibs)
     }
 
-    fun buildCompilerArgs(resolvedConfiguration: LazyResolvedConfiguration): List<String> = mutableListOf<String>().apply {
+    fun buildCompilerArgs(resolvedConfiguration: LazyResolvedConfigurationWithArtifacts): List<String> = mutableListOf<String>().apply {
         if (konanCacheKind != NativeCacheKind.NONE && !optimized && konanPropertiesService.cacheWorksFor(konanTarget)) {
             rootCacheDirectory.mkdirs()
             ensureCompilerProvidedLibsPrecached()

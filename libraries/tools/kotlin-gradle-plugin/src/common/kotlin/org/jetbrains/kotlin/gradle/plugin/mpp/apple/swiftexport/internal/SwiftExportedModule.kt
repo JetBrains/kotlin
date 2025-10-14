@@ -12,7 +12,7 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
 import java.io.Serializable
 
@@ -57,7 +57,7 @@ internal fun createTransitiveSwiftExportedModule(
 }
 
 internal fun Project.collectModules(
-    swiftExportConfigurationProvider: Provider<LazyResolvedConfiguration>,
+    swiftExportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
     exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
 ): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider.zip(exportedModulesProvider) { configuration, modules ->
     configuration.swiftExportedModules(modules, project)
@@ -82,12 +82,12 @@ private class ResolvedArtifactWithVersionIdentifier(
     }
 }
 
-private fun LazyResolvedConfiguration.swiftExportedModules(
+private fun LazyResolvedConfigurationWithArtifacts.swiftExportedModules(
     exportedModules: Set<SwiftExportedDependency>,
     project: Project,
 ) = project.findAndCreateSwiftExportedModules(exportedModules, filteredArtifacts())
 
-private fun LazyResolvedConfiguration.filteredArtifacts(): Set<ResolvedArtifactWithVersionIdentifier> {
+private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(): Set<ResolvedArtifactWithVersionIdentifier> {
     return allResolvedDependencies.mapNotNullTo(mutableSetOf()) { dependency ->
         val artifacts = getArtifacts(dependency.selected).filterNot {
             it.file.isCinteropKlib || it.file.isJavaJar
