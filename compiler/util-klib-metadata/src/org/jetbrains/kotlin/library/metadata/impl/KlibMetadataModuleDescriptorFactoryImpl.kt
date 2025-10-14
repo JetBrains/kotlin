@@ -53,6 +53,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         val provider = createPackageFragmentProvider(
             library = library,
             packageAccessHandler = packageAccessHandler,
+            customMetadataProtoLoader = null,
             packageFragmentNames = libraryProto.packageFragmentNameList,
             storageManager = storageManager,
             moduleDescriptor = moduleDescriptor,
@@ -87,6 +88,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
     override fun createPackageFragmentProvider(
         library: KotlinLibrary,
         packageAccessHandler: PackageAccessHandler?,
+        customMetadataProtoLoader: CustomMetadataProtoLoader?,
         packageFragmentNames: List<String>,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
@@ -100,6 +102,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             packageFragmentNames = packageFragmentNames,
             moduleDescriptor = moduleDescriptor,
             packageAccessedHandler = packageAccessHandler,
+            customMetadataProtoLoader = customMetadataProtoLoader,
             storageManager = storageManager,
             configuration = configuration
         )

@@ -191,6 +191,7 @@ private class KlibMetadataDependencyContainer(
         return klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
             library = library,
             packageAccessHandler = null,
+            customMetadataProtoLoader = null,
             packageFragmentNames = packageFragmentNames,
             storageManager = LockBasedStorageManager("KlibMetadataPackageFragmentProvider"),
             moduleDescriptor = libraryModuleDescriptor,

@@ -26,6 +26,7 @@ open class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     private val library: KotlinLibrary,
     private val packageAccessHandler: PackageAccessHandler?,
+    private val customMetadataProtoLoader: CustomMetadataProtoLoader?,
     storageManager: StorageManager,
     module: ModuleDescriptor,
     private val partName: String,
@@ -41,7 +42,8 @@ open class KlibMetadataDeserializedPackageFragment(
     private fun ensureStorage(): ProtoBuf.PackageFragment {
         var tmp = protoForNamesStorage.get()
         if (tmp == null) {
-            tmp = (packageAccessHandler ?: SimplePackageAccessHandler).loadPackageFragment(library, fqName.asString(), partName)
+            tmp = customMetadataProtoLoader?.loadPackageFragment(library, fqName.asString(), partName)
+                ?: parsePackageFragment(library.packageMetadata(fqName.asString(), partName))
             protoForNamesStorage = SoftReference(tmp)
         }
         return tmp
@@ -58,6 +60,7 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     library: KotlinLibrary,
     packageAccessHandler: PackageAccessHandler?,
+    customMetadataProtoLoader: CustomMetadataProtoLoader?,
     storageManager: StorageManager,
     module: ModuleDescriptor,
     partName: String,
@@ -66,6 +69,7 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
     fqName = fqName,
     library = library,
     packageAccessHandler = packageAccessHandler,
+    customMetadataProtoLoader = customMetadataProtoLoader,
     storageManager = storageManager,
     module = module,
     partName = partName,

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.library.metadata.impl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
@@ -19,10 +20,12 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         packageFragmentNames: List<String>,
         moduleDescriptor: ModuleDescriptor,
         packageAccessedHandler: PackageAccessHandler?,
+        customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         configuration: DeserializationConfiguration
     ): List<KlibMetadataDeserializedPackageFragment> {
-        val libraryHeader = (packageAccessedHandler ?: SimplePackageAccessHandler).loadModuleHeader(library)
+        val libraryHeader = customMetadataProtoLoader?.loadModuleHeader(library)
+            ?: parseModuleHeader(library.moduleHeaderData)
 
         return packageFragmentNames.flatMap {
             val packageFqName = FqName(it)
@@ -37,6 +40,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         packageAccessHandler = packageAccessedHandler,
+                        customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,
                         partName = partName,
@@ -47,6 +51,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         packageAccessHandler = packageAccessedHandler,
+                        customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,
                         partName = partName,
