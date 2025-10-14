@@ -129,6 +129,21 @@ class ScriptingWithExplanationCompilerTest {
             expectedOut = listOf("43")
         )
     }
+
+    @Test
+    fun testScriptExplainSholdHandleLoops() {
+        explainAndCheck(
+            "${TEST_DATA_DIR}/compiler/explain/explainWithLoops.kts",
+            expectedExplanations = listOf(
+                "(1, 46) = kotlin.Unit",
+                "i(56, 58) = 11",
+                "(104, 110) = kotlin.Unit",
+                "(111, 157) = kotlin.Unit",
+                "\$\$result(159, 161) = 45"
+            ),
+            expectedOut = (1..10).map { "42"} + (1..11).map { "43" } + (1..12).map { "44" } + "45"
+        )
+    }
 }
 
 private fun explainAndCheck(scriptPath: String, expectedExplanations: List<String>, expectedExitCode: ExitCode = ExitCode.OK, expectedOut: List<String>? = null) {

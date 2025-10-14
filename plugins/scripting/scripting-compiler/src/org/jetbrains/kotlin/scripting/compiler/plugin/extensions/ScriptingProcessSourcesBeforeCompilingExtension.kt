@@ -98,7 +98,7 @@ class KotlinScriptExpressionExplainTransformer(
         return builder.irExplain(
             expression, sourceFile,
             transformExpression = {
-                if (it is IrBlock) {
+                if (it is IrBlock && it.origin == null) {
                     val newStatements = it.statements.explainStatements(builder, explanationsProp, declaration)
                     it.statements.clear()
                     it.statements.addAll(newStatements)
@@ -154,6 +154,8 @@ class KotlinScriptExpressionExplainTransformer(
                 }
                 statement
             }
+            // Loops are not properly supported and behave weirdly on explanation
+            is IrLoop -> statement
             is IrExpression -> {
                 if (statement is IrTypeOperatorCall && statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
                     statement.argument = explainWithFallBack(statement.argument, declaration, "", builder, explanationsProp, declaration)
