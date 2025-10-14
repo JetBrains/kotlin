@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.library.MetadataLibrary
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
-class KlibIcData(incrementalData: IncrementalDataProvider) : MetadataLibrary {
+class KlibIcData(incrementalData: IncrementalDataProvider) : KlibMetadataComponent {
 
-    private val parts: Map<String, Map<String, ByteArray>> by lazy {
+    private val fragments: Map<String, Map<String, ByteArray>> by lazy {
         val result = mutableMapOf<String, MutableMap<String, ByteArray>>()
 
         incrementalData
@@ -35,16 +35,16 @@ class KlibIcData(incrementalData: IncrementalDataProvider) : MetadataLibrary {
     }
 
     val packageFragmentNameList: Collection<String>
-        get() = parts.keys
+        get() = fragments.keys
 
-    override val moduleHeaderData: ByteArray
+    override val moduleHeaderData: Nothing
         get() = error("moduleHeaderData is not implemented")
 
-    override fun packageMetadataParts(fqName: String): Set<String> {
-        return parts[fqName]?.keys ?: emptySet()
+    override fun getPackageFragmentNames(packageFqName: String): Set<String> {
+        return fragments[packageFqName]?.keys ?: emptySet()
     }
 
-    override fun packageMetadata(fqName: String, partName: String): ByteArray {
-        return parts[fqName]?.get(partName) ?: error("Metadata not found for package $fqName part $partName")
+    override fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray {
+        return fragments[packageFqName]?.get(fragmentName) ?: error("Metadata not found for package $packageFqName part $fragmentName")
     }
 }

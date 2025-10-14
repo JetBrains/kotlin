@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.MetadataLibrary
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -32,12 +32,13 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.util.IdentityHashMap
 
-abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
+abstract class MetadataLibraryBasedSymbolProvider<L>(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
+    private val metadataProvider: (L) -> KlibMetadataComponent,
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, KlibMetadataSerializerProtocol
 ) {
@@ -63,7 +64,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
         return cachedFragments.getOrPut(resolvedLibrary) {
             mutableMapOf()
         }.getOrPut(packageStringName to packageMetadataPart) {
-            parsePackageFragment(resolvedLibrary.packageMetadata(packageStringName, packageMetadataPart))
+            parsePackageFragment(metadataProvider(resolvedLibrary).getPackageFragment(packageStringName, packageMetadataPart))
         }
     }
 
@@ -92,7 +93,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
 
             val moduleData = moduleData(resolvedLibrary) ?: return@flatMap emptyList()
 
-            resolvedLibrary.packageMetadataParts(packageStringName).map {
+            metadataProvider(resolvedLibrary).getPackageFragmentNames(packageStringName).map {
                 val fragment = getPackageFragment(resolvedLibrary, packageStringName, it)
 
                 val packageProto = fragment.`package`
@@ -179,7 +180,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
         val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return
 
         for (resolvedLibrary in librariesWithFragment) {
-            for (packageMetadataPart in resolvedLibrary.packageMetadataParts(packageStringName)) {
+            for (packageMetadataPart in metadataProvider(resolvedLibrary).getPackageFragmentNames(packageStringName)) {
 
                 val fragment = getPackageFragment(resolvedLibrary, packageStringName, packageMetadataPart)
 
