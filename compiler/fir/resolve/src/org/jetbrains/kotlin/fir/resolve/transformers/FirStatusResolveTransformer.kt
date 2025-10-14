@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isHeader
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -426,6 +427,8 @@ abstract class AbstractFirStatusResolveTransformer(
             isLocal = false,
             overriddenFunctions.map { it.status as FirResolvedDeclarationStatus },
         )
+        // Once the modality is determined, we can remove the body.
+        if (simpleFunction.isHeader == true) simpleFunction.replaceBody(null)
 
         namedFunction.transformStatus(this, resolvedStatus)
         transformDeclaration(namedFunction, data) as FirStatement

@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.fir.declarations.utils.*
 
 class LightTreeRawFirDeclarationBuilder(
     session: FirSession,
@@ -695,6 +696,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
             }
         }.also {
+            it.isHeader = generateHeaders
             if (classNode.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
                 it.initContainingClassForLocalAttr()
             }
@@ -2093,6 +2095,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
                 context.firFunctionTargets.removeLast()
             }.build().also {
+                it.isHeader = headerMode
                 target.bind(it)
                 fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
             }
@@ -2132,7 +2135,8 @@ class LightTreeRawFirDeclarationBuilder(
                     processLegacyContractDescription(block, diagnostic)
                 }
                 if (generateHeaders) {
-                    null to contractDescription // We want to preserve the contract info when processing as headers.
+                    // Return an empty body, which will be removed after the status resolution.
+                    buildEmptyExpressionBlock() to contractDescription // We want to preserve the contract info when processing as headers.
                 } else {
                     block to contractDescription
                 }
