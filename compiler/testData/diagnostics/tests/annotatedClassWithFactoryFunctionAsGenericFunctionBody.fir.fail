@@ -1,0 +1,1 @@
+java.lang.ClassCastException: class org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol cannot be cast to class org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol

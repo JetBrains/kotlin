@@ -111,6 +111,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("annotatedClassWithFactoryFunctionAsGenericFunctionBody.kt")
+    public void testAnnotatedClassWithFactoryFunctionAsGenericFunctionBody() {
+      runTest("compiler/testData/diagnostics/tests/annotatedClassWithFactoryFunctionAsGenericFunctionBody.kt");
+    }
+
+    @Test
     @TestMetadata("annotationArgumentWithAliasedArrayType.kt")
     public void testAnnotationArgumentWithAliasedArrayType() {
       runTest("compiler/testData/diagnostics/tests/annotationArgumentWithAliasedArrayType.kt");
@@ -312,6 +318,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     @TestMetadata("companionObjectInEnumAccess.kt")
     public void testCompanionObjectInEnumAccess() {
       runTest("compiler/testData/diagnostics/tests/companionObjectInEnumAccess.kt");
+    }
+
+    @Test
+    @TestMetadata("companionObjectWithFactoryMethodInsideLocalClassOfGenericFunction.kt")
+    public void testCompanionObjectWithFactoryMethodInsideLocalClassOfGenericFunction() {
+      runTest("compiler/testData/diagnostics/tests/companionObjectWithFactoryMethodInsideLocalClassOfGenericFunction.kt");
     }
 
     @Test
