@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 
+import kotlin.coroutines.SuspendFunction2
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 import kotlin.test.assertEquals
@@ -25,6 +26,9 @@ fun box(): String {
 
     val anonymous = object {}
     assertEquals(null, anonymous::class.visibility)
+
+    assertEquals(KVisibility.PUBLIC, Function1::class.visibility)
+    assertEquals(KVisibility.PUBLIC, SuspendFunction2::class.visibility)
 
     return "OK"
 }

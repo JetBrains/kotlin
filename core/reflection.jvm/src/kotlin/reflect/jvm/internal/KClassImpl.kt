@@ -19,6 +19,8 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -67,6 +69,14 @@ internal class KClassImpl<T : Any>(
                     (KotlinClassMetadata.readLenient(metadata) as? KotlinClassMetadata.Class)?.kmClass
                 }
             } else {
+                val descriptor = descriptor
+                if (descriptor is FunctionClassDescriptor) {
+                    // There are no special KClass instances for suspend function type classes yet (KT-79225), so all functions are
+                    // treated as normal functions (`kotlin.Function{n}`).
+                    if (descriptor.functionTypeKind !is FunctionTypeKind.Function)
+                        throw KotlinReflectionInternalError("Unsupported function type kind: ${descriptor.functionTypeKind} ($descriptor)")
+                    return@lazy createFunctionKmClass(descriptor.arity)
+                }
                 (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
                     descriptor.classProto.toKmClass(descriptor.c.nameResolver)
                 }
