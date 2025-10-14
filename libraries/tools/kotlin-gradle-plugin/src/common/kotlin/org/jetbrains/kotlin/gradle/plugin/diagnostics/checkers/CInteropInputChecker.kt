@@ -24,9 +24,9 @@ internal object CInteropInputChecker : KotlinGradleProjectChecker {
         KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
         project.tasks.withType(CInteropProcess::class.java).configureEach {
-            if (!it.definitionFile.isPresent && it.packageName.isNullOrBlank()) {
-                project.reportDiagnostic(KotlinToolingDiagnostics.CInteropRequiredParametersNotSpecifiedError())
-            }
+//            if (!it.definitionFile.isPresent && it.packageName.isNullOrBlank()) {
+//                project.reportDiagnostic(KotlinToolingDiagnostics.CInteropRequiredParametersNotSpecifiedError())
+//            }
         }
     }
 }
