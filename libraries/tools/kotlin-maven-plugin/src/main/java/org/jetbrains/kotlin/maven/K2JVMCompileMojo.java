@@ -135,7 +135,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @NotNull
     private Path getKotlinClassesCacheDir() {
-        return Paths.get(incrementalCachesRoot, "classes");
+        return getCachesDir().resolve("classes");
     }
 
     protected boolean isIncremental() {
