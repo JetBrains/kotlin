@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -321,7 +323,7 @@ fun SessionContext.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): 
         val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as? FirRegularClassSymbol
         rootSchemaSymbol?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
     } else {
-        symbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
+        symbol.unsubstitutedScope(session, ScopeSession(), false, FirResolvePhase.DECLARATIONS)
     }.let { scope ->
         val names = scope?.getCallableNames() ?: emptySet()
         names.flatMap { scope?.getProperties(it) ?: emptyList() }
