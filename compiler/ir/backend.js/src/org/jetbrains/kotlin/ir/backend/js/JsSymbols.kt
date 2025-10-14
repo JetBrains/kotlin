@@ -312,6 +312,7 @@ class JsSymbols(
     // Coroutines
 
     val jsYieldFunctionSymbol = CallableIds.jsYield.functionSymbol()
+    val jsYieldStarFunctionSymbol = CallableIds.jsYieldStar.functionSymbol()
 
     val jsInvokeSuspendSuperType: IrSimpleFunctionSymbol = CallableIds.invokeSuspendSuperType.functionSymbol()
     val jsInvokeSuspendSuperTypeWithReceiver: IrSimpleFunctionSymbol = CallableIds.invokeSuspendSuperTypeWithReceiver.functionSymbol()
@@ -635,6 +636,7 @@ private object CallableIds {
     val booleanInExternalException = "booleanInExternalException".jsCallableId
     val jsNewAnonymousClass = "jsNewAnonymousClass".jsCallableId
     val jsYield = "jsYield".jsCallableId
+    val jsYieldStar = "jsYieldStar".jsCallableId
     val numberRangeToNumber = "numberRangeToNumber".jsCallableId
     val numberRangeToLong = "numberRangeToLong".jsCallableId
     val longRangeToNumber = "longRangeToNumber".jsCallableId
