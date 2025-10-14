@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
@@ -44,11 +45,13 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
         analyze(mainModule.ktModule) {
             val binaryRoot = libraryModule.binaryRoots.singleOrNull() ?: fail("Expected single binary root")
             val library = ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) ?: fail("Failed loading klib")
-            val headerProto = parseModuleHeader(library.moduleHeaderData)
+
+            val metadata = library.metadata
+            val headerProto = parseModuleHeader(metadata.moduleHeaderData)
 
             val packageMetadataSequence = headerProto.packageFragmentNameList.asSequence().flatMap { packageFragmentName ->
-                library.packageMetadataParts(packageFragmentName).asSequence().map { packageMetadataPart ->
-                    library.packageMetadata(packageFragmentName, packageMetadataPart)
+                metadata.getPackageFragmentNames(packageFragmentName).asSequence().map { packageMetadataPart ->
+                    metadata.getPackageFragment(packageFragmentName, packageMetadataPart)
                 }
             }
 

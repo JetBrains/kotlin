@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.commonizer.konan
 
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
-import org.jetbrains.kotlin.commonizer.konan.DefaultModulesProvider.DuplicateLibraryHandler
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.util.Logger
 
@@ -62,12 +62,13 @@ internal class DefaultModulesProvider private constructor(
 
     override fun loadModuleMetadata(name: String): SerializedMetadata {
         val library = libraryMap[name]?.library ?: error("No such library: $name")
+        val metadata = library.metadata
 
-        val moduleHeader = library.moduleHeaderData
+        val moduleHeader = metadata.moduleHeaderData
         val fragmentNames = parseModuleHeader(moduleHeader).packageFragmentNameList.toSet()
         val fragments = fragmentNames.map { fragmentName ->
-            val partNames = library.packageMetadataParts(fragmentName)
-            partNames.map { partName -> library.packageMetadata(fragmentName, partName) }
+            val partNames = metadata.getPackageFragmentNames(fragmentName)
+            partNames.map { partName -> metadata.getPackageFragment(fragmentName, partName) }
         }
 
         return SerializedMetadata(

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode.WithStaticCache
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
 import org.jetbrains.kotlin.library.impl.MetadataWriterImpl
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -106,9 +107,11 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
             // Read the metadata.
             val moduleMetadata = KlibModuleMetadata.read(
                 object : KlibModuleMetadata.MetadataLibraryProvider {
-                    override val moduleHeaderData get() = oldLibrary.moduleHeaderData
-                    override fun packageMetadataParts(fqName: String) = oldLibrary.packageMetadataParts(fqName)
-                    override fun packageMetadata(fqName: String, partName: String) = oldLibrary.packageMetadata(fqName, partName)
+                    private val metadata = oldLibrary.metadata
+
+                    override val moduleHeaderData get() = metadata.moduleHeaderData
+                    override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
+                    override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
                 }
             )
 

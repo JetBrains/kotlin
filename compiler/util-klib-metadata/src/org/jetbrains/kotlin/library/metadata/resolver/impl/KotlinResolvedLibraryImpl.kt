@@ -1,13 +1,14 @@
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
 class KotlinResolvedLibraryImpl(override val library: KotlinLibrary) : KotlinResolvedLibrary {
 
     private val _resolvedDependencies = mutableListOf<KotlinResolvedLibrary>()
-    private val _emptyPackages by lazy { parseModuleHeader(library.moduleHeaderData).emptyPackageList }
+    private val _emptyPackages by lazy { parseModuleHeader(library.metadata.moduleHeaderData).emptyPackageList }
 
     override val resolvedDependencies: List<KotlinResolvedLibrary>
         get() = _resolvedDependencies

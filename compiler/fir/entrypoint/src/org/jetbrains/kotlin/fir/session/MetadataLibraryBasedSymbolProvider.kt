@@ -38,7 +38,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
-    private val metadataProvider: (L) -> KlibMetadataComponent,
+    protected val metadataProvider: (L) -> KlibMetadataComponent,
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, KlibMetadataSerializerProtocol
 ) {

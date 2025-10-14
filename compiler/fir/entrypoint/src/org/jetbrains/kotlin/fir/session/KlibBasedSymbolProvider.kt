@@ -50,7 +50,7 @@ class KlibBasedSymbolProvider(
 
 
     private val moduleHeaders by lazy {
-        resolvedLibraries.associate { it to parseModuleHeader(it.moduleHeaderData) }
+        resolvedLibraries.associateWith { parseModuleHeader(metadataProvider(it).moduleHeaderData) }
     }
 
     override val fragmentNamesInLibraries: Map<String, List<KotlinLibrary>> by lazy {
