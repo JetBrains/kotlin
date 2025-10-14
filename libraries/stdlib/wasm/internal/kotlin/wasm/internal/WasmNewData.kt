@@ -5,8 +5,11 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 // TODO: move to WasmInstructions and remove upper bound and implementation, see a version below.
 @Suppress("warnings")
+@UsedFromCompilerGeneratedCode
 internal fun <T : WasmLongArray> array_new_data(address: Int, length: Int, dataIdx: Int): T {
     return WasmLongArray(0) as T
 }
