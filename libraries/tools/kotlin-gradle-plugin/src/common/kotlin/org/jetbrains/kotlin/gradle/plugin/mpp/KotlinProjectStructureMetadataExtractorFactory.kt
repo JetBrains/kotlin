@@ -28,7 +28,7 @@ private constructor(
 ) : IKotlinProjectStructureMetadataExtractorFactory {
     fun create(
         dependency: ResolvedDependencyResult,
-        resolvedPsmConfiguration: LazyResolvedConfiguration?,
+        resolvedPsmConfiguration: LazyResolvedConfigurationWithArtifacts?,
     ): MppDependencyProjectStructureMetadataExtractor? {
         checkNotNull(resolvedPsmConfiguration) { "KotlinProjectStructureMetadataExtractorFactory must not receive null psmConfiguration" }
 
@@ -46,7 +46,7 @@ private constructor(
     }
 
     private fun findPsmFileOrNull(
-        resolvedPsmConfiguration: LazyResolvedConfiguration,
+        resolvedPsmConfiguration: LazyResolvedConfigurationWithArtifacts,
         moduleId: ComponentIdentifier,
     ) = resolvedPsmConfiguration.getArtifacts(moduleId)
         .filter { it.variant.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name == KotlinUsages.KOTLIN_PSM_METADATA }

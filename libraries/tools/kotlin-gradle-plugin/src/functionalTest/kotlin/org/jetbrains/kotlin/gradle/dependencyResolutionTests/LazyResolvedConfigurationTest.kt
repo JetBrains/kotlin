@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
-import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -29,7 +29,7 @@ class LazyResolvedConfigurationTest {
     fun `test - creating LazyResolvedConfiguration - will not resolve source configuration`() {
         val project = buildProject()
         val configuration = project.configurations.create("forTest")
-        LazyResolvedConfiguration(configuration)
+        LazyResolvedConfigurationWithArtifacts(configuration)
 
         assertEquals(
             Configuration.State.UNRESOLVED, configuration.state,
@@ -61,7 +61,7 @@ class LazyResolvedConfigurationTest {
         val commonMainCompileDependencies = kotlin.metadata().compilations.getByName("commonMain")
             .internal.configurations.compileDependencyConfiguration
 
-        val lazyCommonMainCompileDependencies = LazyResolvedConfiguration(commonMainCompileDependencies)
+        val lazyCommonMainCompileDependencies = LazyResolvedConfigurationWithArtifacts(commonMainCompileDependencies)
 
         assertEquals(
             commonMainCompileDependencies.incoming.resolutionResult.allDependencies,
@@ -105,7 +105,7 @@ class LazyResolvedConfigurationTest {
 
         /* Check okio dependency on linuxX64MainCompile */
         run {
-            val lazyLinuxX64CompileDependencies = LazyResolvedConfiguration(
+            val lazyLinuxX64CompileDependencies = LazyResolvedConfigurationWithArtifacts(
                 kotlin.linuxX64().compilations.getByName("main").internal.configurations.compileDependencyConfiguration
             )
 
@@ -131,7 +131,7 @@ class LazyResolvedConfigurationTest {
         val unresolvedDependency = project.dependencies.create("unresolved:dependency")
         configuration.dependencies.add(unresolvedDependency)
 
-        val lazyConfiguration = LazyResolvedConfiguration(configuration)
+        val lazyConfiguration = LazyResolvedConfigurationWithArtifacts(configuration)
         if (lazyConfiguration.files.toList().isNotEmpty()) fail("Expected no files to be resolved")
         if (lazyConfiguration.resolvedArtifacts.toList().isNotEmpty()) fail("Expected no artifacts to be resolved")
         if (lazyConfiguration.allResolvedDependencies.isNotEmpty()) fail("Expected no resolved dependencies")
@@ -158,7 +158,7 @@ class LazyResolvedConfigurationTest {
         project.dependencies.add(configuration.name, project.dependencies.project(":", configuration = configuration.name))
         project.artifacts.add(configuration.name, project.file("artifact.tmp"))
 
-        val lazyConfiguration = LazyResolvedConfiguration(configuration)
+        val lazyConfiguration = LazyResolvedConfigurationWithArtifacts(configuration)
 
         val dependency = lazyConfiguration.allResolvedDependencies.singleOrNull() ?: fail("Expected to have single dependency")
         val id = dependency.resolvedVariant.owner

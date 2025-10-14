@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.tooling.core.withClosure
  *
  * Has similar API as non-configuration cache friendly Gradle's [ResolvedConfiguration]
  */
-internal class LazyResolvedConfiguration private constructor(
+internal class LazyResolvedConfigurationWithArtifacts private constructor(
     private val resolvedComponentsRootProvider: Lazy<ResolvedComponentResult>,
     private val artifactCollection: ArtifactCollection,
     val configurationName: String,
 ) {
 
     /**
-     * Creates [LazyResolvedConfiguration] from given [configuration].
+     * Creates [LazyResolvedConfigurationWithArtifacts] from given [configuration].
      * The underlying ArtifactView can be configured with [configureArtifactView] or [configureArtifactViewAttributes]
      */
     constructor(
@@ -83,7 +83,7 @@ internal class LazyResolvedConfiguration private constructor(
 
     fun getArtifacts(componentId: ComponentIdentifier): List<ResolvedArtifactResult> = artifactsByComponentId[componentId].orEmpty()
 
-    override fun toString(): String = "LazyResolvedConfiguration(configuration='$configurationName')"
+    override fun toString(): String = "LazyResolvedConfigurationWithArtifacts(configuration='$configurationName')"
 }
 
 private fun Configuration.lazyArtifactCollection(configureArtifactView: ArtifactView.ViewConfiguration.() -> Unit): ArtifactCollection =
@@ -97,10 +97,10 @@ internal tailrec fun ResolvedVariantResult.lastExternalVariantOrSelf(): Resolved
 }
 
 /**
- * Same as [LazyResolvedConfiguration.getArtifacts] except it returns null for cases when dependency is resolved
+ * Same as [LazyResolvedConfigurationWithArtifacts.getArtifacts] except it returns null for cases when dependency is resolved
  * but artifact is not available. For example when host-specific part of the library is not yet published
  */
-internal fun LazyResolvedConfiguration.dependencyArtifactsOrNull(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult>? =
+internal fun LazyResolvedConfigurationWithArtifacts.dependencyArtifactsOrNull(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult>? =
     try {
         getArtifacts(dependency)
     } catch (_: ResolveException) {
