@@ -10,7 +10,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
@@ -183,10 +183,10 @@ class KotlinCompileApiTest {
             .getByName(COMPILER_CLASSPATH_CONFIGURATION_NAME)
             .incoming
             .dependencies
-            .single { it.name == KOTLIN_BUILD_TOOLS_API_IMPL }
+            .single()
 
         assertEquals(
-            "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:${plugin.pluginVersion}",
+            "$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${plugin.pluginVersion}",
             "${compilerDependency.group}:${compilerDependency.name}:${compilerDependency.version}"
         )
     }
