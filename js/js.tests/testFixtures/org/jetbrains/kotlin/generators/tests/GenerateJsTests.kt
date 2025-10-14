@@ -77,9 +77,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/sourcemap", testRunnerMethodName = "runTest0") {
-            testClass<AbstractSourceMapGenerationSmokeTest>(annotations = listOf(*legacyFrontend())) {
-                model()
-            }
             testClass<AbstractFirSourceMapGenerationSmokeTest> {
                 model()
             }

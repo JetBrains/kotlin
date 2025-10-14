@@ -119,21 +119,6 @@ open class AbstractJsIrLineNumberTest : AbstractJsIrTest(
     }
 }
 
-open class AbstractSourceMapGenerationSmokeTest : AbstractJsIrTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/sourcemap/",
-    testGroupOutputDirPrefix = "irSourcemap/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +JsEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
-                -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-            }
-        }
-    }
-}
-
 open class AbstractMultiModuleOrderTest : AbstractJsIrTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
     testGroupOutputDirPrefix = "irMultiModuleOrder/"
