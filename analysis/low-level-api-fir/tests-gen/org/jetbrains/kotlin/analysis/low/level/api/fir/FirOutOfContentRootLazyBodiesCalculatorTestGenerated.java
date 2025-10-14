@@ -671,6 +671,24 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("annotatedClassAsFunctionBody.kt")
+      public void testAnnotatedClassAsFunctionBody() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotatedClassAsFunctionBody.kt");
+      }
+
+      @Test
+      @TestMetadata("annotatedObjectAsFunctionBody.kt")
+      public void testAnnotatedObjectAsFunctionBody() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotatedObjectAsFunctionBody.kt");
+      }
+
+      @Test
+      @TestMetadata("annotatedTypealiasAsFunctionBody.kt")
+      public void testAnnotatedTypealiasAsFunctionBody() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotatedTypealiasAsFunctionBody.kt");
+      }
+
+      @Test
       @TestMetadata("annotationArgumentLocalDeclarations.kt")
       public void testAnnotationArgumentLocalDeclarations() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotationArgumentLocalDeclarations.kt");
@@ -680,6 +698,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
       @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
       public void testContextParameterOnErrorPrimaryConstructor() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/contextParameterOnErrorPrimaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("danglingAnnotationAsFunctionBody.kt")
+      public void testDanglingAnnotationAsFunctionBody() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingAnnotationAsFunctionBody.kt");
       }
 
       @Test

@@ -1,0 +1,3 @@
+@Anno()
+owner -> FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol /foo
