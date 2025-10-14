@@ -114,10 +114,6 @@ private class JsLineNumberHandler(private val frontend: FrontendKind<*>, testSer
     }
 }
 
-fun createIrJsLineNumberHandler(testServices: TestServices): JsBinaryArtifactHandler {
-    return JsLineNumberHandler(FrontendKinds.ClassicFrontend, testServices)
-}
-
 fun createFirJsLineNumberHandler(testServices: TestServices): JsBinaryArtifactHandler {
     return JsLineNumberHandler(FrontendKinds.FIR, testServices)
 }

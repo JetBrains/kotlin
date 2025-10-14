@@ -109,16 +109,6 @@ open class AbstractIrJsES6TypeScriptExportTest : AbstractJsIrES6Test(
     }
 }
 
-open class AbstractJsIrLineNumberTest : AbstractJsIrTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
-    testGroupOutputDirPrefix = "irLineNumbers/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureLineNumberTests(::createIrJsLineNumberHandler)
-    }
-}
-
 open class AbstractMultiModuleOrderTest : AbstractJsIrTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
     testGroupOutputDirPrefix = "irMultiModuleOrder/"

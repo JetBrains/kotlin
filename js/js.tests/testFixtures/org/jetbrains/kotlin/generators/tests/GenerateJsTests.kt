@@ -142,10 +142,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/lineNumbers", testRunnerMethodName = "runTest0") {
-            testClass<AbstractJsIrLineNumberTest>(annotations = listOf(*legacyFrontend())) {
-                model()
-            }
-
             testClass<AbstractFirJsLineNumberTest> {
                 model()
             }
