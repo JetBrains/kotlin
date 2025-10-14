@@ -189,6 +189,7 @@ private fun defineFieldOnInstance(this_: dynamic, name: String, value: dynamic) 
 }
 
 @Suppress("UNUSED") // calls to this function are emitted by the compiler
+@UsedFromCompilerGeneratedCode
 internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
     defineFieldOnInstance(this_, "message", defineMessage(message, cause))
     defineFieldOnInstance(this_, "cause", cause)

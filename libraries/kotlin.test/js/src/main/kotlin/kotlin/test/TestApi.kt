@@ -3,8 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE")
 package kotlin.test
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.test.adapters.*
 
 /**
@@ -48,11 +50,13 @@ internal fun setAssertHook(hook: (AssertionResult) -> Unit) {
  */
 
 @JsName("suite")
+@UsedFromCompilerGeneratedCode
 internal fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
     adapter().suite(name, ignored, suiteFn)
 }
 
 @JsName("test")
+@UsedFromCompilerGeneratedCode
 internal fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
     adapter().test(name, ignored, testFn)
 }

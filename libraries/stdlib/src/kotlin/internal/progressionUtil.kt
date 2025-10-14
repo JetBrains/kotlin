@@ -42,6 +42,7 @@ private fun differenceModulo(a: Long, b: Long, c: Long): Long {
  * @suppress
  */
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int = when {
     step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step)
     step < 0 -> if (start <= end) end else end + differenceModulo(start, end, -step)
@@ -65,6 +66,7 @@ internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int = w
  * @suppress
  */
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun getProgressionLastElement(start: Long, end: Long, step: Long): Long = when {
     step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step)
     step < 0 -> if (start <= end) end else end + differenceModulo(start, end, -step)

@@ -20,6 +20,7 @@ import kotlin.js.Promise
  */
 @Suppress("UNUSED_PARAMETER", "unused")
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <T> (suspend () -> T).invokeSuspendSuperType(
     completion: Continuation<T>
 ): Any? {
@@ -33,6 +34,7 @@ internal fun <T> (suspend () -> T).invokeSuspendSuperType(
  */
 @Suppress("UNUSED_PARAMETER", "unused")
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
     receiver: R,
     completion: Continuation<T>
@@ -47,6 +49,7 @@ internal fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
  */
 @Suppress("UNUSED_PARAMETER", "unused")
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, P, T> (suspend R.(P) -> T).invokeSuspendSuperTypeWithReceiverAndParam(
     receiver: R,
     param: P,
@@ -74,6 +77,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 ): Any? = startCoroutineUninterceptedOrReturnNonGeneratorVersion(completion)
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
     completion: Continuation<T>
 ): Any? {
@@ -107,6 +111,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 ): Any? = startCoroutineUninterceptedOrReturnNonGeneratorVersion(receiver, completion)
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
     receiver: R,
     completion: Continuation<T>
@@ -129,6 +134,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
 ): Any? = startCoroutineUninterceptedOrReturnNonGeneratorVersion(receiver, param, completion)
 
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
     receiver: R,
     param: P,
