@@ -114,15 +114,15 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirJsTypeScriptExportTest> {
+            testClass<AbstractJsTypeScriptExportTest> {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractFirJsES6TypeScriptExportTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6TypeScriptExportTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractFirJsTypeScriptExportWithInlinedFunInKlibTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsTypeScriptExportWithInlinedFunInKlibTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
         }

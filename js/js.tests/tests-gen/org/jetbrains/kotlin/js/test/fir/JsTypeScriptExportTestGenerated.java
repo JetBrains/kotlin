@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/typescript-export/js")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsTypeScriptExportTestGenerated extends AbstractFirJsTypeScriptExportTest {
+public class JsTypeScriptExportTestGenerated extends AbstractJsTypeScriptExportTest {
   @Test
   public void testAllFilesPresentInJs() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);

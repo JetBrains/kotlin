@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/typescript-export/js")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("es6")
-public class FirJsES6TypeScriptExportTestGenerated extends AbstractFirJsES6TypeScriptExportTest {
+public class JsTypeScriptExportWithInlinedFunInKlibTestGenerated extends AbstractJsTypeScriptExportWithInlinedFunInKlibTest {
   @Test
   public void testAllFilesPresentInJs() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);

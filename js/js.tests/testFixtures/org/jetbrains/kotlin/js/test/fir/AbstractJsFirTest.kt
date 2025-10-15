@@ -198,8 +198,8 @@ open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : Abstrac
     }
 }
 
-open class AbstractFirJsTypeScriptExportTest(
-    testGroupOutputDirPrefix: String = "typescript-export/fir/"
+open class AbstractJsTypeScriptExportTest(
+    testGroupOutputDirPrefix: String = "typescript-export/es5"
 ) : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
@@ -210,8 +210,8 @@ open class AbstractFirJsTypeScriptExportTest(
     }
 }
 
-open class AbstractFirJsTypeScriptExportWithInlinedFunInKlibTest : AbstractFirJsTypeScriptExportTest(
-    testGroupOutputDirPrefix = "typescript-export/firWithInlinedFunInKlib"
+open class AbstractJsTypeScriptExportWithInlinedFunInKlibTest : AbstractJsTypeScriptExportTest(
+    testGroupOutputDirPrefix = "typescript-export/es5-withInlinedFunInKlib"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -226,8 +226,8 @@ open class AbstractFirJsTypeScriptExportWithInlinedFunInKlibTest : AbstractFirJs
     }
 }
 
-open class AbstractFirJsES6TypeScriptExportTest(
-    testGroupOutputDirPrefix: String = "typescript-export/fir-es6"
+open class AbstractJsES6TypeScriptExportTest(
+    testGroupOutputDirPrefix: String = "typescript-export/es6"
 ) : AbstractFirJsES6Test(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
