@@ -6,9 +6,9 @@ org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multi
 org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multiplatform.testOverrideInit_expectAnnotation,,STABLE
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11IrBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11FirLightTreeBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
-org.jetbrains.kotlin.test.runners.FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated.Resolve.Destructuring.testAnnotationInFullForm,KT-XXXX,STABLE
-org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticPsiTestGenerated$Resolve$Destructuring.testAnnotationInFullForm,,
-org.jetbrains.kotlin.test.runners.FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated$Resolve$Destructuring.testAnnotationInFullForm,,
-org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLReversedDiagnosticsFirTestGenerated$Resolve$Destructuring.testAnnotationInFullForm,,
-org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLPartialDiagnosticsFirTestGenerated$Resolve$Destructuring.testAnnotationInFullForm,,
-org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLDiagnosticsFirTestGenerated$Resolve$Destructuring.testAnnotationInFullForm,,
+org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLReversedDiagnosticsFirTestGenerated.Resolve.Destructuring.testAnnotationInFullForm,,STABLE
+org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLDiagnosticsFirTestGenerated.Resolve.Destructuring.testAnnotationInFullForm,,STABLE
+org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLPartialDiagnosticsFirTestGenerated.Resolve.Destructuring.testAnnotationInFullForm,,STABLE
+org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticPsiTestGenerated.Resolve.Destructuring.testAnnotationInFullForm,,STABLE
+org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated.Resolve.Destructuring.testAnnotationInFullForm,,STABLE
+org.jetbrains.kotlin.test.runners.FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated.Resolve.Destructuring.testAnnotationInFullForm,,STABLE
