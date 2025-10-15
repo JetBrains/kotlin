@@ -58,7 +58,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
         transformAnnotations(transformer, data)
-        contextArguments.transformInplace(transformer, data)
+        transformContextArguments(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -74,6 +74,11 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
+        contextArguments.transformInplace(transformer, data)
         return this
     }
 

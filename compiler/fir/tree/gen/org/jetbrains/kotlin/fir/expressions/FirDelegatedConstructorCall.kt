@@ -59,6 +59,8 @@ abstract class FirDelegatedConstructorCall : FirExpression(), FirResolvable, Fir
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 
+    abstract override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
+
     abstract fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall

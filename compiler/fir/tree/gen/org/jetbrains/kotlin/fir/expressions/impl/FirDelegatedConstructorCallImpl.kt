@@ -54,7 +54,7 @@ internal class FirDelegatedConstructorCallImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
         transformAnnotations(transformer, data)
         argumentList = argumentList.transform(transformer, data)
-        contextArguments.transformInplace(transformer, data)
+        transformContextArguments(transformer, data)
         constructedTypeRef = constructedTypeRef.transform(transformer, data)
         transformCalleeReference(transformer, data)
         return this
@@ -62,6 +62,11 @@ internal class FirDelegatedConstructorCallImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
+        contextArguments.transformInplace(transformer, data)
         return this
     }
 

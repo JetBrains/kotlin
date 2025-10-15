@@ -66,6 +66,8 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirResolvable, Fi
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 
+    abstract override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+
     abstract fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 
     abstract fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression

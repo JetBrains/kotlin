@@ -61,7 +61,7 @@ internal class FirComponentCallImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
         transformAnnotations(transformer, data)
-        contextArguments.transformInplace(transformer, data)
+        transformContextArguments(transformer, data)
         transformTypeArguments(transformer, data)
         argumentList = argumentList.transform(transformer, data)
         transformCalleeReference(transformer, data)
@@ -77,6 +77,11 @@ internal class FirComponentCallImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
+        contextArguments.transformInplace(transformer, data)
         return this
     }
 
