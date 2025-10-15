@@ -1944,6 +1944,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/compilationWarningPublicAccessorExplicitAPIMode.args");
     }
 
+    @TestMetadata("compilationWarningPublicAccessorExplicitAPIMode2ndStage.args")
+    public void testCompilationWarningPublicAccessorExplicitAPIMode2ndStage() {
+      runTest("compiler/testData/cli/js/compilationWarningPublicAccessorExplicitAPIMode2ndStage.args");
+    }
+
     @TestMetadata("createMetadata.args")
     public void testCreateMetadata() {
       runTest("compiler/testData/cli/js/createMetadata.args");
