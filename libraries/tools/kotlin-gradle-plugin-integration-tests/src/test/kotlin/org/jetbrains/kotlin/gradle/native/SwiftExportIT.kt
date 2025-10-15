@@ -200,6 +200,7 @@ class SwiftExportIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosSimulatorArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
 
                     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
@@ -298,6 +299,7 @@ class SwiftExportIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosSimulatorArm64()
+                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
                     iosArm64()
 
