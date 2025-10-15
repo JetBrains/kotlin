@@ -32,7 +32,7 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         composeExtension = target.extensions.create("composeCompiler", ComposeCompilerGradlePluginExtension::class.java)
-        target.configureComposeMappingFile()
+        target.configureComposeMappingFile(enabled = composeExtension.includeComposeMappingFile)
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
