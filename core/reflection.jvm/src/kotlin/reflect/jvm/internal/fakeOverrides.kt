@@ -145,7 +145,7 @@ private fun collectVisitedSignaturesForSuperclassRecursively(
         when (it.isSubtypeOf(collectionKType)) {
             true ->
                 it.upperBoundIfFlexible()
-            else ->
+            false ->
                 it//.lowerBoundIfFlexible() // todo formatting
         }
     } ?: rawCurrentType
