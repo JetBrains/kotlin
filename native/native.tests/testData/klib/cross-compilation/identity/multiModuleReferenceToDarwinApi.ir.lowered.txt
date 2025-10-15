@@ -34,7 +34,7 @@ MODULE_FRAGMENT name:<app>
                         TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
                           CALL 'kotlin/Long.toInt|toInt(){}[0]' type=kotlin.Int origin=null
                             ARG 1: CALL 'kotlin/ULong.data.<get-data>|<get-data>(){}[0]' type=kotlin.Long origin=GET_PROPERTY
-                              ARG 1: GET_VAR 'val this: kotlin.ULong [val] declared in app.main' type=kotlin.ULong origin=null
+                              ARG 1: GET_VAR 'val this: kotlin.ULong [val] declared in app.main' type=kotlin.ULong origin=IMPLICIT_ARGUMENT
                 ARG arg1: CONST Int type=kotlin.Int value=0
           RETURNABLE_BLOCK type=kotlin.Unit origin=null
             INLINED_BLOCK type=kotlin.Unit origin=null
