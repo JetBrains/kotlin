@@ -63,8 +63,8 @@ fun IrBranchImpl(
     result: IrExpression,
 ) = IrBranchImpl(
     constructorIndicator = null,
-    startOffset = validatedOffsetsOrUndefined(condition.startOffset, result.endOffset).first,
-    endOffset = validatedOffsetsOrUndefined(condition.startOffset, result.endOffset).second,
+    startOffset = condition.startOffset,
+    endOffset = result.endOffset,
     condition = condition,
     result = result,
 )
