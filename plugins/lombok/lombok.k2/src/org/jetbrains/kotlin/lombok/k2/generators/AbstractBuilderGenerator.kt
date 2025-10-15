@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -473,7 +474,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             moduleData = containingClass.moduleData
             symbol = builderSymbol
             this.name = name
-            isFromSource = true
+            origin = FirDeclarationOrigin.Java.Source
             this.visibility = visibility
             this.modality = builderModality
             this.isStatic = builderDeclaration.isStaticDeclaration
@@ -581,7 +582,7 @@ fun FirClassSymbol<*>.createJavaMethod(
         status = FirResolvedDeclarationStatusImpl(visibility, modality, visibility.toEffectiveVisibility(this@createJavaMethod)).apply {
             this.isStatic = isStatic
         }
-        isFromSource = true
+        origin = FirDeclarationOrigin.Java.Source
         for (valueParameter in valueParameters) {
             this.valueParameters += buildJavaValueParameter {
                 moduleData = this@createJavaMethod.moduleData
@@ -589,7 +590,7 @@ fun FirClassSymbol<*>.createJavaMethod(
                 containingDeclarationSymbol = this@buildJavaMethod.symbol
                 this.name = valueParameter.name
                 isVararg = false
-                isFromSource = true
+                javaOrigin = FirDeclarationOrigin.Java.Source
             }
         }
     }.apply {
@@ -606,7 +607,7 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
     return buildJavaConstructor {
         containingClassSymbol = outerClassSymbol
         moduleData = outerClassSymbol.moduleData
-        isFromSource = true
+        origin = FirDeclarationOrigin.Java.Source
         symbol = FirConstructorSymbol(classId)
         isInner = outerClassSymbol.rawStatus.isInner
         status = FirResolvedDeclarationStatusImpl(

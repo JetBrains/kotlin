@@ -210,7 +210,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var isStatic: Boolean by Delegates.notNull()
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-    var isFromSource: Boolean by Delegates.notNull()
+    var javaOrigin: FirDeclarationOrigin.Java by Delegates.notNull()
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     lateinit var containingClassSymbol: FirClassSymbol<*>
 
@@ -228,11 +228,10 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
             throw IllegalStateException()
         }
 
-    @Deprecated("Modification of 'origin' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
+        get() = javaOrigin
+        set(value) {
+            javaOrigin = value as FirDeclarationOrigin.Java
         }
 
     @Deprecated("Modification of 'contextParameters' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
@@ -244,7 +243,7 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
         return FirJavaMethod(
             source,
             moduleData,
-            origin = javaOrigin(isFromSource),
+            javaOrigin,
             attributes,
             returnTypeRef,
             typeParameters,
@@ -279,7 +278,7 @@ inline fun buildJavaMethodCopy(original: FirJavaMethod, init: FirJavaMethodBuild
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.name = original.name
     copyBuilder.symbol = original.symbol
-    copyBuilder.isFromSource = original.origin.fromSource
+    copyBuilder.javaOrigin = original.origin
     copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.annotationList = original.annotationList
     copyBuilder.containingClassSymbol = original.containingClassSymbol

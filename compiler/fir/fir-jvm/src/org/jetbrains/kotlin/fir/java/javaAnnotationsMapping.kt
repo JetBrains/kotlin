@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationArgumentMappingImp
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
+import org.jetbrains.kotlin.fir.java.declarations.javaOrigin
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -156,7 +157,7 @@ internal fun JavaValueParameter.toFirValueParameter(
     index: Int,
 ): FirValueParameter = buildJavaValueParameter {
     source = toSourceElement()
-    isFromSource = this@toFirValueParameter.isFromSource
+    javaOrigin = javaOrigin(this@toFirValueParameter.isFromSource)
     this.moduleData = moduleData
     containingDeclarationSymbol = functionSymbol
     name = this@toFirValueParameter.name ?: Name.identifier("p$index")

@@ -248,7 +248,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuilder {
     lateinit var visibility: Visibility
     var modality: Modality? = null
-    var isFromSource: Boolean by Delegates.notNull()
+    var javaOrigin: FirDeclarationOrigin.Java by Delegates.notNull()
     var isTopLevel: Boolean by Delegates.notNull()
     var isStatic: Boolean by Delegates.notNull()
     var javaPackage: JavaPackage? = null
@@ -278,7 +278,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             source,
             moduleData,
             name,
-            origin = javaOrigin(isFromSource),
+            javaOrigin,
             annotationList,
             status as FirResolvedDeclarationStatusImpl,
             classKind,
@@ -294,11 +294,10 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
         )
     }
 
-    @Deprecated("Modification of 'origin' has no impact for FirJavaClassBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
-        get() = throw IllegalStateException()
-        set(@Suppress("UNUSED_PARAMETER") value) {
-            throw IllegalStateException()
+        get() = javaOrigin
+        set(value) {
+            javaOrigin = value as FirDeclarationOrigin.Java
         }
 }
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
@@ -60,7 +61,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 }
                 isInner = classSymbol.isInner
                 isPrimary = false
-                isFromSource = true
+                origin = FirDeclarationOrigin.Java.Source
             }
         } else {
             FirJavaMethodBuilder().apply {
@@ -101,7 +102,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 }
 
                 isStatic = true
-                isFromSource = true
+                javaOrigin = FirDeclarationOrigin.Java.Source
             }
         }
 
@@ -132,7 +133,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     containingDeclarationSymbol = constructorSymbol
                     name = field.name
                     isVararg = false
-                    isFromSource = true
+                    javaOrigin = FirDeclarationOrigin.Java.Source
                 }
             }
         }

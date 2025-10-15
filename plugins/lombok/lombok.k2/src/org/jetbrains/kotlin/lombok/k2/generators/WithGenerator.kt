@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -77,11 +78,11 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
                     returnTypeRef = field.returnTypeRef
                     name = field.name
                     isVararg = false
-                    isFromSource = true
+                    javaOrigin = FirDeclarationOrigin.Java.Source
                 }
 
                 isStatic = false
-                isFromSource = true
+                javaOrigin = FirDeclarationOrigin.Java.Source
             }
             withName to function
         }.toMap()

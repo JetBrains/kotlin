@@ -227,14 +227,14 @@ class FirJavaValueParameterBuilder {
     var defaultValue: Lazy<FirExpression>? = null
     lateinit var containingDeclarationSymbol: FirFunctionSymbol<*>
     var isVararg: Boolean by Delegates.notNull()
-    var isFromSource: Boolean by Delegates.notNull()
+    var javaOrigin: FirDeclarationOrigin.Java by Delegates.notNull()
 
     @OptIn(FirImplementationDetail::class)
     fun build(): FirJavaValueParameter {
         return FirJavaValueParameter(
             source,
             moduleData,
-            origin = javaOrigin(isFromSource),
+            javaOrigin,
             attributes,
             returnTypeRef,
             name,
@@ -260,7 +260,7 @@ inline fun buildJavaValueParameterCopy(original: FirJavaValueParameter, init: Fi
     copyBuilder.source = original.source
     copyBuilder.moduleData = original.moduleData
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.isFromSource = original.origin.fromSource
+    copyBuilder.javaOrigin = original.origin
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.name = original.name
     copyBuilder.annotationList = original.annotationList
