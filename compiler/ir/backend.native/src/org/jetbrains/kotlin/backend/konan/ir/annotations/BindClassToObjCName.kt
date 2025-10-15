@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
 /**
  * A representation of `@BindClassToObjCName` annotation.
  */
-internal class BindClassToObjCName(
+class BindClassToObjCName(
         val annotationElement: IrConstructorCall,
         val kotlinClass: IrClass,
         val objCName: String,
@@ -38,5 +38,5 @@ private val IrConstructorCall.bindClassToObjCName: BindClassToObjCName?
 /**
  * Return a list of `@BindClassToObjCName` annotations attached to this [IrFile].
  */
-internal val IrFile.allBindClassToObjCName: List<BindClassToObjCName>
+val IrFile.allBindClassToObjCName: List<BindClassToObjCName>
     get() = annotations.mapNotNull { it.bindClassToObjCName }

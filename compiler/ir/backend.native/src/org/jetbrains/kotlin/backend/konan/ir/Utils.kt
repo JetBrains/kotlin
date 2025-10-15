@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -63,3 +64,18 @@ fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: I
         }
     }
 }
+
+val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
+    get() {
+        val result = mutableSetOf<IrSimpleFunction>()
+
+        fun traverse(function: IrSimpleFunction) {
+            if (function in result) return
+            result += function
+            function.overriddenSymbols.forEach { traverse(it.owner) }
+        }
+
+        traverse(this)
+
+        return result
+    }

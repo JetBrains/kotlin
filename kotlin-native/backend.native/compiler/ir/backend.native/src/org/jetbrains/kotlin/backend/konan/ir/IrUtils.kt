@@ -39,9 +39,6 @@ internal val IrClass.implementedInterfaces: List<IrClass>
                 superInterfaces).distinct()
     }
 
-internal val IrFunction.isTypedIntrinsic: Boolean
-    get() = annotations.hasAnnotation(KonanFqNames.typedIntrinsic)
-
 internal val IrConstructor.isConstantConstructorIntrinsic: Boolean
     get() = annotations.hasAnnotation(KonanFqNames.constantConstructorIntrinsic)
 
@@ -257,21 +254,6 @@ internal class BridgeDirections(private val array: Array<BridgeDirection>) {
         fun none(irFunction: IrSimpleFunction) = BridgeDirections(irFunction, irFunction, BridgesPolicy.BOX_UNBOX_ONLY)
     }
 }
-
-val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
-    get() {
-        val result = mutableSetOf<IrSimpleFunction>()
-
-        fun traverse(function: IrSimpleFunction) {
-            if (function in result) return
-            result += function
-            function.overriddenSymbols.forEach { traverse(it.owner) }
-        }
-
-        traverse(this)
-
-        return result
-    }
 
 internal fun IrSimpleFunction.bridgeDirectionsTo(overriddenFunction: IrSimpleFunction, policy: BridgesPolicy): BridgeDirections {
     val ourDirections = BridgeDirections(this, overriddenFunction, policy)

@@ -1,14 +1,14 @@
 package org.jetbrains.kotlin.backend.konan.cgen
 
-internal interface CType {
+interface CType {
     fun render(name: String): String
 }
 
-internal class CVariable(val type: CType, val name: String) {
+class CVariable(val type: CType, val name: String) {
     override fun toString() = type.render(name)
 }
 
-internal object CTypes {
+object CTypes {
     fun simple(type: String): CType = SimpleCType(type)
     fun pointer(pointee: CType): CType = PointerCType(pointee)
     fun function(returnType: CType, parameterTypes: List<CType>, variadic: Boolean): CType =
@@ -68,7 +68,7 @@ private class FunctionCType(
 /**
  * The implementation is conservative (escapes more than necessary) but acts within the C standard.
  */
-internal fun quoteAsCStringLiteral(str: String): String = buildString {
+fun quoteAsCStringLiteral(str: String): String = buildString {
     append('"')
     // Encoding the string to UTF-8 is arguable (e.g. what if the target platform uses another encoding?),
     // but we anyway encode the generated C stubs to UTF-8 when writing them to file in CStubsManager.

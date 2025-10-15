@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,11 +18,12 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal fun IrType.isCEnumType(): Boolean {
+fun IrType.isCEnumType(): Boolean {
     if (isNullable()) return false
     val enumClass = classOrNull?.owner ?: return false
     if (!enumClass.isEnumClass) return false
@@ -40,29 +41,29 @@ fun IrFunction.isCFunctionOrGlobalAccessor(): Boolean =
 fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
         this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
 
-internal fun IrValueParameter.isWCStringParameter() = hasCCallAnnotation("WCString")
+fun IrValueParameter.isWCStringParameter() = hasCCallAnnotation("WCString")
 
-internal fun IrValueParameter.isCStringParameter() = hasCCallAnnotation("CString")
+fun IrValueParameter.isCStringParameter() = hasCCallAnnotation("CString")
 
-internal fun IrValueParameter.isObjCConsumed() = hasCCallAnnotation("Consumed")
+fun IrValueParameter.isObjCConsumed() = hasCCallAnnotation("Consumed")
 
-internal fun IrSimpleFunction.objCConsumesReceiver() = hasCCallAnnotation("ConsumesReceiver")
+fun IrSimpleFunction.objCConsumesReceiver() = hasCCallAnnotation("ConsumesReceiver")
 
-internal fun IrSimpleFunction.objCReturnsRetained() = hasCCallAnnotation("ReturnsRetained")
+fun IrSimpleFunction.objCReturnsRetained() = hasCCallAnnotation("ReturnsRetained")
 
-internal fun IrClass.getCStructSpelling(): String? =
+fun IrClass.getCStructSpelling(): String? =
         getAnnotationArgumentValue(FqName("kotlinx.cinterop.internal.CStruct"), "spelling")
 
-internal fun IrType.isTypeOfNullLiteral(): Boolean = isNullableNothing()
+fun IrType.isTypeOfNullLiteral(): Boolean = isNullableNothing()
 
-internal fun IrType.isVector(): Boolean {
+fun IrType.isVector(): Boolean {
     if (this is IrSimpleType && !this.isNullable()) {
         return classifier.isClassWithFqName(KonanFqNames.Vector128.toUnsafe())
     }
     return false
 }
 
-internal fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuiltIns): Boolean {
+fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuiltIns): Boolean {
     if (!target.family.isAppleFamily) return false
 
     // Handle the same types as produced by [objCPointerMirror] in Interop/StubGenerator/.../Mappings.kt.
@@ -80,15 +81,15 @@ internal fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuilt
     }
 }
 
-internal fun IrType.isCPointer(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCPointer
-internal fun IrType.isCValue(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValue
-internal fun IrType.isCValuesRef(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValuesRef
+fun IrType.isCPointer(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCPointer
+fun IrType.isCValue(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValue
+fun IrType.isCValuesRef(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValuesRef
 
-internal fun IrType.isNativePointed(symbols: KonanSymbols): Boolean = isSubtypeOfClass(symbols.nativePointed)
+fun IrType.isNativePointed(symbols: KonanSymbols): Boolean = isSubtypeOfClass(symbols.nativePointed)
 
-internal fun IrType.isCStructFieldTypeStoredInMemoryDirectly(): Boolean = isPrimitiveType() || isUnsigned() || isVector()
+fun IrType.isCStructFieldTypeStoredInMemoryDirectly(): Boolean = isPrimitiveType() || isUnsigned() || isVector()
 
-internal fun IrType.isCStructFieldSupportedReferenceType(symbols: KonanSymbols): Boolean =
+fun IrType.isCStructFieldSupportedReferenceType(symbols: KonanSymbols): Boolean =
         isObjCObjectType()
                 || getClass()?.isAny() == true
                 || isStringClassType()
@@ -101,7 +102,7 @@ internal fun IrType.isCStructFieldSupportedReferenceType(symbols: KonanSymbols):
  * Check given function is a getter or setter
  * for `value` property of CEnumVar subclass.
  */
-internal fun IrFunction.isCEnumVarValueAccessor(symbols: KonanSymbols): Boolean {
+fun IrFunction.isCEnumVarValueAccessor(symbols: KonanSymbols): Boolean {
     val parent = parent as? IrClass ?: return false
     return if (symbols.interopCEnumVar in parent.superClasses && isPropertyAccessor) {
         (propertyIfAccessor as IrProperty).name.asString() == "value"
@@ -110,9 +111,15 @@ internal fun IrFunction.isCEnumVarValueAccessor(symbols: KonanSymbols): Boolean 
     }
 }
 
-internal fun IrFunction.isCStructMemberAtAccessor() = hasAnnotation(RuntimeNames.cStructMemberAt)
+fun IrFunction.isCStructMemberAtAccessor() = hasAnnotation(RuntimeNames.cStructMemberAt)
 
-internal fun IrFunction.isCStructArrayMemberAtAccessor() = hasAnnotation(RuntimeNames.cStructArrayMemberAt)
+fun IrFunction.isCStructArrayMemberAtAccessor() = hasAnnotation(RuntimeNames.cStructArrayMemberAt)
 
-internal fun IrFunction.isCStructBitFieldAccessor() = hasAnnotation(RuntimeNames.cStructBitField)
+fun IrFunction.isCStructBitFieldAccessor() = hasAnnotation(RuntimeNames.cStructBitField)
 
+// TODO: rework Boolean support.
+// TODO: What should be used on watchOS?
+fun cBoolType(target: KonanTarget): CType? = when (target.family) {
+    Family.IOS, Family.TVOS, Family.WATCHOS -> CTypes.C99Bool
+    else -> CTypes.signedChar
+}
