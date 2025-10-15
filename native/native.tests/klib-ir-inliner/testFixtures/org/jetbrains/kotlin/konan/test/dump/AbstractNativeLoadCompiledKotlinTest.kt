@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
 abstract class AbstractNativeLoadCompiledKotlinTest :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE)
@@ -46,11 +44,6 @@ abstract class AbstractNativeLoadCompiledKotlinTest :
         }
 
         configureFirParser(FirParser.LightTree)
-        useAdditionalSourceProviders(
-            ::AdditionalDiagnosticsSourceFilesProvider,
-            ::CoroutineHelpersSourceFilesProvider,
-        )
-
         facadeStep(::FirFrontendFacade)
         firHandlersStep {
             useHandlers(::FirDiagnosticsHandler)
