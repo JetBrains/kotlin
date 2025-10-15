@@ -114,14 +114,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
-            testClass<AbstractIrJsTypeScriptExportTest>(annotations = listOf(*legacyFrontend())) {
-                model(pattern = "^([^_](.+))\\.kt$")
-            }
-
-            testClass<AbstractIrJsES6TypeScriptExportTest>(annotations = listOf(*legacyFrontend(), *es6())) {
-                model(pattern = "^([^_](.+))\\.kt$")
-            }
-
             testClass<AbstractFirJsTypeScriptExportTest> {
                 model(pattern = "^([^_](.+))\\.kt$")
             }

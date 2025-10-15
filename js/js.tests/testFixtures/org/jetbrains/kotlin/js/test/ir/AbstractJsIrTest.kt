@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.converters.ClassicJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.handlers.*
-import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -84,26 +83,6 @@ open class AbstractIrJsCodegenInlineTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/irBoxInline/"
 )
-
-open class AbstractIrJsTypeScriptExportTest : AbstractJsIrTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/js/",
-    testGroupOutputDirPrefix = "typescript-export/ir/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureJsTypeScriptExportTest()
-    }
-}
-
-open class AbstractIrJsES6TypeScriptExportTest : AbstractJsIrES6Test(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/js/",
-    testGroupOutputDirPrefix = "typescript-export/ir-es6/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureJsTypeScriptExportTest()
-    }
-}
 
 open class AbstractMultiModuleOrderTest : AbstractJsIrTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
