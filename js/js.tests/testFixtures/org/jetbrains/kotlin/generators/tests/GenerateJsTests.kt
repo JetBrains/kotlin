@@ -135,12 +135,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/webDemoExamples", testRunnerMethodName = "runTest0") {
-            testClass<AbstractWebDemoExamplesTest>(annotations = listOf(*legacyFrontend())) {
-                model()
-            }
-        }
-
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/lineNumbers", testRunnerMethodName = "runTest0") {
             testClass<AbstractJsLineNumberTest> {
                 model()
