@@ -389,6 +389,7 @@ internal object FirReferenceResolveHelper {
 
     private fun FirCall.findCorrespondingParameter(name: Name): FirValueParameter? {
         return resolvedArgumentMapping?.values?.firstOrNull { it.name == name }
+            ?: (this as? FirResolvable)?.toResolvedCallableSymbol()?.contextParameterSymbols?.firstOrNull { it.name == name }?.fir
     }
 
     private fun handleErrorExpression(
