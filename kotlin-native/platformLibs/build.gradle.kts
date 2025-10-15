@@ -75,6 +75,7 @@ enabledTargets(platformManager).forEach { target ->
 
             // Requires Native distribution with compiler JARs and stdlib klib.
             this.compilerDistribution.set(nativeDistribution)
+            dependsOn(":kotlin-native:distCompiler")
             dependsOn(":kotlin-native:distStdlib")
 
             this.target.set(targetName)

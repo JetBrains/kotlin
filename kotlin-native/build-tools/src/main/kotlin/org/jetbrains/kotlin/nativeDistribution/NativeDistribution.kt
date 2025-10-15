@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nativeDistribution
 
+import bootstrapKotlinVersion
 import org.gradle.api.Project
 import org.gradle.api.Transformer
 import org.gradle.api.file.Directory
@@ -246,3 +247,18 @@ fun ObjectFactory.nativeDistributionProperty() = NativeDistributionProperty(dire
 //       and sometimes incompatible with Gradle isolation mechanisms.
 val Project.nativeDistribution: Provider<NativeDistribution>
     get() = layout.dir(provider { kotlinNativeDist }).map { NativeDistribution(it) }
+
+/**
+ * Get released Native distribution of [version].
+ */
+fun Project.nativeReleasedDistribution(version: String): Provider<NativeDistribution> {
+    val configuration = releasedNativeDistributionConfiguration(version)
+    val file = configuration.incoming.artifacts.resolvedArtifacts.map { it.single().file }
+    return layout.dir(file).map { NativeDistribution(it) }
+}
+
+/**
+ * Get Native bootstrap distribution.
+ */
+val Project.nativeBootstrapDistribution: Provider<NativeDistribution>
+    get() = nativeReleasedDistribution(bootstrapKotlinVersion)
