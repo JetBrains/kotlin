@@ -129,7 +129,7 @@ class LightTreeRawFirExpressionBuilder(
 
     /*****    EXPRESSIONS    *****/
     fun convertExpression(expression: LighterASTNode, errorReason: String): FirElement {
-        return when (expression.tokenType) {
+        return when (val tokenType = expression.tokenType) {
             LAMBDA_EXPRESSION -> convertLambdaExpression(expression)
             BINARY_EXPRESSION -> convertBinaryExpression(expression)
             BINARY_WITH_TYPE, IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression)
@@ -168,10 +168,21 @@ class LightTreeRawFirExpressionBuilder(
             FUN -> declarationBuilder.convertFunctionDeclaration(expression)
             DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression)
                 .toFirDestructingDeclaration(this, baseModuleData)
-            else -> buildErrorExpression(
-                expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef),
-                ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
-            )
+            else -> {
+                val nonExpressionElement = when (tokenType) {
+                    CLASS, OBJECT_DECLARATION -> declarationBuilder.convertClass(expression)
+                    TYPEALIAS -> declarationBuilder.convertTypeAlias(expression)
+                    else -> null
+                }
+                val source = nonExpressionElement?.run {
+                    source?.realElement() ?: expression.toFirSourceElement()
+                } ?: expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef)
+                buildErrorExpression(
+                    source,
+                    ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
+                    element = nonExpressionElement,
+                )
+            }
         }
     }
 

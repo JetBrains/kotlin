@@ -95,11 +95,10 @@ class LightTreeRawFirDeclarationBuilder(
                     packageDirective = convertPackageDirective(child).also { context.packageFqName = it.packageFqName }
                 }
                 IMPORT_LIST -> importList += convertImportDirectives(child)
-                CLASS -> firDeclarationList += convertClass(child)
+                CLASS, OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
                 FUN -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
                 KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(child)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
-                OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
                 DESTRUCTURING_DECLARATION -> {
                     val initializer = buildFirDestructuringDeclarationInitializer(child)
                     firDeclarationList += buildErrorNonLocalDestructuringDeclaration(child.toFirSourceElement(), initializer)
@@ -457,7 +456,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      */
-    private fun convertClass(classNode: LighterASTNode): FirDeclaration {
+    fun convertClass(classNode: LighterASTNode): FirDeclaration {
         var modifiers: ModifierList? = null
         var classKind: ClassKind = ClassKind.CLASS
         var identifier: String? = null
@@ -937,11 +936,10 @@ class LightTreeRawFirDeclarationBuilder(
     ) {
         when (node.tokenType) {
             ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper!!)
-            CLASS -> container += convertClass(node)
+            CLASS, OBJECT_DECLARATION -> container += convertClass(node)
             FUN -> container += convertFunctionDeclaration(node) as FirDeclaration
             KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
             TYPEALIAS -> container += convertTypeAlias(node)
-            OBJECT_DECLARATION -> container += convertClass(node)
             CLASS_INITIALIZER -> container += convertAnonymousInitializer(node, classWrapper!!.classBuilder.ownerRegularOrAnonymousObjectSymbol) //anonymousInitializer
             SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper!!)
             MODIFIER_LIST -> modifierLists += node
@@ -1314,7 +1312,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeAlias
      */
-    private fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration {
+    fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration {
         var modifiers: ModifierList? = null
         var identifier: String? = null
         lateinit var typeRefNode: LighterASTNode
