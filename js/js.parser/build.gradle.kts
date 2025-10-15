@@ -4,13 +4,11 @@ plugins {
     id("jps-compatible")
 }
 
-configurations {
-    create("antlrTool")
-}
+val antlrTool by configurations.creating
 
 dependencies {
-    "antlrTool"("org.antlr:antlr4:${libs.versions.antlr.get()}")
-    implementation(libs.antlr.runtime)
+    antlrTool(libs.antlr)
+    runtimeOnly(libs.antlr.runtime)
 
     api(kotlinStdlib())
     api(project(":js:js.ast"))
@@ -31,14 +29,19 @@ val generateJsParser by tasks.registering(JavaExec::class) {
     group = "build"
 
     mainClass.set("org.antlr.v4.Tool")
-    classpath = configurations["antlrTool"]
+    classpath = antlrTool
+
+    val grammarFiles = grammarDir
+        .walkTopDown()
+        .filter { file -> file.extension == "g4" }
+        .map { it.name }
 
     args = listOf(
         "-visitor",
         "-long-messages",
         "-package", outputPackage,
         "-o", outputDir.absolutePath
-    ) + grammarDir.listFiles { file -> file.extension == "g4" }!!.map { it.name }
+    ) + grammarFiles
     workingDir = grammarDir
 
     inputs.dir(grammarDir)
@@ -48,9 +51,9 @@ val generateJsParser by tasks.registering(JavaExec::class) {
     outputs.cacheIf { false }
 
     doLast {
-        // Force LF line endings for generated files, since ANTLR doesn't have a way to force LF line endings before executing
+        // Force LF line endings for generated files on Windows, since ANTLR doesn't have a way to force LF line endings before executing
         outputDir.walkTopDown()
-            .filter { it.isFile && (it.extension == "java" || it.extension == "tokens" || it.extension == "interp") }
+            .filter { it.isFile }
             .forEach { file ->
                 val content = file.readText()
                 val normalizedContent = content.replace("\r\n", "\n").replace("\r", "\n")
