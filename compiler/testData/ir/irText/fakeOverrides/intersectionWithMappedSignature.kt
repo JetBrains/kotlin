@@ -3,11 +3,11 @@
 // FULL_JDK
 // FILE: Java1.java
 public interface Java1 {
-    Boolean remove(Integer element);
+    Boolean foo(Integer element);
 }
 
 // FILE: 1.kt
 import java.util.*;
 
-abstract class B : ArrayList<Int>(), Java1 {
+abstract class B : ArrayList<Int>() {
 }

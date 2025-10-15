@@ -157,7 +157,7 @@ private fun collectVisitedSignaturesForSuperclassRecursively(
     val classGenericsSubstitutor = accumulateClassGenericsSubstitutor.createCombinedSubstitutorOrNull(currentType)
         ?: starProjectionSupertypesAreNotPossible()
     for (notSubstitutedMember in currentClass.declaredDescriptorKCallableMembers) {
-        // if (notSubstitutedMember.name != "containsAll" && notSubstitutedMember.name != "addAll") continue // todo debug
+        if (notSubstitutedMember.name != "containsAll" && notSubstitutedMember.name != "addAll") continue // todo debug
         if (notSubstitutedMember.visibility == KVisibility.PRIVATE) continue
         if (notSubstitutedMember.isPackagePrivate &&
             currentClass.java.`package` != context.receiver.java.`package`
