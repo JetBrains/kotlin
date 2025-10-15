@@ -265,6 +265,7 @@ open class NativeInteropPlugin : Plugin<Project> {
 
                     val cflags = cCompilerArgs +
                             commonCompilerArgs +
+                            reproducibilityCompilerFlags +
                             ignoreWarningFlags +
                             "-Werror" +
                             includeDirsAbsolutePaths.map { "-I${it.absolutePath}" } +
@@ -277,6 +278,7 @@ open class NativeInteropPlugin : Plugin<Project> {
                     tool(*hostPlatform.clang.clangCXX("").toTypedArray())
                     val cxxflags = cppCompilerArgs +
                             commonCompilerArgs +
+                            reproducibilityCompilerFlags +
                             "-Werror" +
                             includeDirsAbsolutePaths.map { "-I${it.absolutePath}" } +
                             includeDirsRelativePaths.map { "-I${it.toRelativeString(workingDir)}" }

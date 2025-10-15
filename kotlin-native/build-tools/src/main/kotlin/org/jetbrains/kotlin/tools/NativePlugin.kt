@@ -252,6 +252,25 @@ open class NativeToolsExtension(val project: Project) {
 
     val workingDir: DirectoryProperty = project.objects.directoryProperty().convention(project.layout.projectDirectory)
 
+    // This is copied from `ClangArgs`
+    val jdkDir: File
+        get() = File(System.getProperty("java.home")).canonicalFile.let { home ->
+            if (home.resolve("include").exists()) {
+                home
+            } else {
+                home.parentFile.also {
+                    check(it.resolve("include").exists())
+                }
+            }
+        }
+
+    val reproducibilityCompilerFlags: Array<String>
+        get() = arrayOf(
+                "-ffile-prefix-map=${workingDir.asFile.get()}=.",
+                "-ffile-prefix-map=${nativeDependenciesExtension.nativeDependenciesRoot}=NATIVE_DEPS",
+                "-ffile-prefix-map=${jdkDir}=JDK", // Not all users depend on it, but keep it just in case.
+        )
+
     val sourceSets = SourceSets(project, this, mutableMapOf<String, SourceSet>())
     val toolPatterns = ToolConfigurationPatterns(this, mutableMapOf<Pair<String, String>, ToolPatternConfiguration>())
     val cleanupFiles = mutableListOf<String>()

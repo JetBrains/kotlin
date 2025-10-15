@@ -36,6 +36,7 @@ native {
             "--std=c++${cxxStandard}",
             "-I${llvmIncludeDir}",
             "-Isrc/main/include",
+            *reproducibilityCompilerFlags,
     )
     suffixes {
         (".cpp" to ".$obj") {
