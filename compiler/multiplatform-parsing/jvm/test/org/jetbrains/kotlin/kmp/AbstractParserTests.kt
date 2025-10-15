@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.kmp
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.kmp.LexerTests.Companion.initializeLexers
 import org.jetbrains.kotlin.kmp.infra.NewParserTestNode
 import org.jetbrains.kotlin.kmp.infra.NewTestParser
 import org.jetbrains.kotlin.kmp.infra.ParseMode
-import org.jetbrains.kotlin.kmp.infra.PsiTestParser
 import org.jetbrains.kotlin.kmp.infra.TestParseNode
 import org.junit.jupiter.api.Test
 
@@ -269,28 +266,4 @@ finally
         // Incorrect code, but error recovery should work in a way as it works in the old parser.
         checkOnKotlinCode("""val x = if (z == y > a is A / 1)""")
     }
-}
-
-abstract class AbstractParserTestsWithPsi : AbstractParserTests<PsiElement>() {
-    companion object {
-        init {
-            // Make sure the static declarations are initialized before time measurements to get more refined results
-            initializeLexers()
-            initializeParsers()
-        }
-
-        fun initializeParsers() {
-            org.jetbrains.kotlin.kdoc.parser.KDocElementTypes.KDOC_SECTION
-            org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS
-            org.jetbrains.kotlin.KtNodeTypes.KT_FILE
-
-            org.jetbrains.kotlin.kmp.parser.KDocParseNodes.KDOC_SECTION
-            org.jetbrains.kotlin.kmp.parser.KtNodeTypes.KT_FILE
-        }
-    }
-
-    override fun recognizeOldSyntaxElement(fileName: String, text: String): TestParseNode<out PsiElement> =
-        PsiTestParser(parseMode).parse(fileName, text)
-
-    override val oldRecognizerSuffix: String = " (PSI)"
 }
