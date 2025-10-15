@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
@@ -50,22 +52,34 @@ internal class NativeInlineFunctionResolver(
     }
 
     private fun lower(function: IrFunction) {
-        val body = function.body ?: return
+        if (function.body == null) return
 
         UpgradeCallableReferences(context).lower(function)
 
         NativeAssertionWrapperLowering(context).lower(function)
 
-        LateinitLowering(context).lower(body)
+        LateinitLowering(context).run { function.runOnAllBodies { lower(it) }}
 
-        SharedVariablesLowering(context).lower(body, function)
+        SharedVariablesLowering(context).lower(function)
 
-        LocalClassesInInlineLambdasLowering(context).lower(body, function)
+        LocalClassesInInlineLambdasLowering(context).lower(function)
 
-        ArrayConstructorLowering(context).lower(body, function)
+        ArrayConstructorLowering(context).lower(function)
 
-        NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
+        NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(function)
+
         OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
     }
+}
+
+private inline fun IrFunction.runOnAllBodies(fn: (IrBody) -> Unit) {
+    body?.let { fn(it) }
+    for (p in parameters) {
+        p.defaultValue?.let { fn(it) }
+    }
+}
+
+private fun BodyLoweringPass.lower(function: IrFunction) {
+    function.runOnAllBodies { lower(it, function)}
 }
