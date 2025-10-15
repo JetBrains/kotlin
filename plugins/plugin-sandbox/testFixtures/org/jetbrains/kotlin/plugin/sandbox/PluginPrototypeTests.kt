@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.plugin.sandbox
 
 import org.jetbrains.kotlin.js.test.fir.AbstractJsTest
-import org.jetbrains.kotlin.js.test.fir.AbstractLoadK2CompiledJsKotlinTest
+import org.jetbrains.kotlin.js.test.fir.AbstractLoadCompiledJsKotlinTest
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase
 import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
@@ -106,7 +106,7 @@ open class AbstractFirLoadK2CompiledWithPluginJvmKotlinTest : AbstractFirLoadK2C
     }
 }
 
-open class AbstractLoadK2CompiledWithPluginJsKotlinTest : AbstractLoadK2CompiledJsKotlinTest() {
+open class AbstractLoadCompiledWithPluginJsKotlinTest : AbstractLoadCompiledJsKotlinTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

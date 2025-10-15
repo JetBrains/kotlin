@@ -278,7 +278,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
-            testClass<AbstractLoadK2CompiledJsKotlinTest> {
+            testClass<AbstractLoadCompiledJsKotlinTest> {
                 model("compiledKotlin", extension = "kt")
                 model("compiledKotlinWithStdlib", extension = "kt")
             }

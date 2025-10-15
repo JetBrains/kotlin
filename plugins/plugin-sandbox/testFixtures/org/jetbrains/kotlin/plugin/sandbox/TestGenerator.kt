@@ -35,7 +35,7 @@ fun main() {
                 model("firLoadK2Compiled")
             }
 
-            testClass<AbstractLoadK2CompiledWithPluginJsKotlinTest> {
+            testClass<AbstractLoadCompiledWithPluginJsKotlinTest> {
                 model("firLoadK2Compiled")
             }
 
