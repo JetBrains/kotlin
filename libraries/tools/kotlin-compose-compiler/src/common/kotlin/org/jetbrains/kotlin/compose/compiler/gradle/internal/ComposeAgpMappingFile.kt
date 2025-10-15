@@ -19,6 +19,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.register
@@ -33,7 +34,9 @@ import java.util.zip.ZipFile
 import javax.inject.Inject
 
 
-internal fun Project.configureComposeMappingFile() {
+internal fun Project.configureComposeMappingFile(
+    enabled: Property<Boolean>
+) {
     plugins.withId("com.android.application") {
         val configuration = configurations.maybeCreate("composeMappingProducerClasspath")
             .also {
@@ -46,6 +49,7 @@ internal fun Project.configureComposeMappingFile() {
             }
 
         extensions.findByType<ApplicationAndroidComponentsExtension>()?.onVariants { variant ->
+            if (!enabled.get()) return@onVariants
             if (!variant.isMinifyEnabled) return@onVariants
 
             val name = variant.name.capitalize()
