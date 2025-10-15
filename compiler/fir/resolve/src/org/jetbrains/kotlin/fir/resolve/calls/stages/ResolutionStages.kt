@@ -276,6 +276,14 @@ object CheckContextArguments : ResolutionStage() {
         var errorReported = false
 
         for (symbol in contextSymbols) {
+            // handle context argument given using named arguments
+            argumentMapping.firstNotNullOfOrNull { (atom, parameter) ->
+                atom.takeIf { parameter.symbol == symbol && atom.expression is FirNamedArgumentExpression }
+            }?.let {
+                resultingContextArguments.add(it)
+                continue
+            }
+
             val expectedType = substitutor.substituteOrSelf(symbol.resolvedReturnType)
             val potentialContextArguments = findClosestMatchingContextArguments(expectedType, implicitsGroupedByScope)
             when (potentialContextArguments.size) {
@@ -696,7 +704,8 @@ internal object MapArguments : ResolutionStage() {
             arguments,
             function,
             candidate.originScope,
-            callSiteIsOperatorCall = (candidate.callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator
+            callSiteIsOperatorCall = (candidate.callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator,
+            lookInContextParameters = LanguageFeature.ExplicitPassingOfContextParameters.isEnabled(),
         )
         candidate.initializeArgumentMapping(
             arguments.unwrapNamedArgumentsForDynamicCall(function),

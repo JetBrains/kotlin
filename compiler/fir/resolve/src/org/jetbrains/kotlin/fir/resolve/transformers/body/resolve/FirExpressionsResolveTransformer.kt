@@ -656,6 +656,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 constructorSymbol.fir,
                 originScope = null,
                 callSiteIsOperatorCall = false,
+                lookInContextParameters = false,
             )
             val argumentsToParameters = mapping.toArgumentToParameterMapping().unwrapAtoms()
 

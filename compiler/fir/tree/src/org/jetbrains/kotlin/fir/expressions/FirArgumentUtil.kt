@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentListForErrorCall
@@ -23,9 +24,15 @@ fun buildBinaryArgumentList(left: FirExpression, right: FirExpression): FirArgum
 
 fun buildResolvedArgumentList(
     original: FirArgumentList?,
-    mapping: LinkedHashMap<FirExpression, FirValueParameter>
+    mapping: LinkedHashMap<FirExpression, FirValueParameter>,
 ): FirResolvedArgumentList {
-    return FirResolvedArgumentListImpl(original, mapping)
+    // The argument mapping contains both value arguments and explicitly passed context arguments.
+    // Filter out context arguments so we only end up with value arguments in the final argument mapping.
+    // Context arguments are stored separately in FirQualifierAccessExpression.contextArguments.
+    val filtered = mapping.filterTo(LinkedHashMap()) {
+        it.value.valueParameterKind == FirValueParameterKind.Regular
+    }
+    return FirResolvedArgumentListImpl(original, filtered)
 }
 
 fun buildArgumentListForErrorCall(

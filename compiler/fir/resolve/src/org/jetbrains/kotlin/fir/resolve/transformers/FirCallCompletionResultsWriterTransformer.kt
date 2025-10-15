@@ -440,6 +440,7 @@ class FirCallCompletionResultsWriterTransformer(
         val expectedArgumentsTypeMapping = subCandidate.createArgumentsMapping(forErrorReference = calleeReference.isError)
 
         result.transformArgumentList(expectedArgumentsTypeMapping)
+        result.transformContextArguments(this, expectedArgumentsTypeMapping)
 
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
