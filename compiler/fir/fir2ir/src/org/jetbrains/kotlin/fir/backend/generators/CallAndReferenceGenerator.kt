@@ -13,13 +13,19 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.*
+import org.jetbrains.kotlin.fir.backend.utils.buildSubstitutorByCalledCallable
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
@@ -32,6 +38,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -222,7 +229,7 @@ class CallAndReferenceGenerator(
         val calleeReference = calleeReference as? FirResolvedNamedReference ?: return null
         val fir = calleeReference.resolvedSymbol.fir
         if (this is FirFunctionCall && fir is FirNamedFunction && fir.origin == FirDeclarationOrigin.SamConstructor) {
-            val (_, _, substitutor) = extractArgumentsMapping(this)
+            val substitutor = buildSubstitutorByCalledCallable()
             val irArgument = convertArgument(argument, fir.valueParameters.first(), substitutor)
             return convertWithOffsets { startOffset, endOffset ->
                 IrTypeOperatorCallImpl(
@@ -425,13 +432,13 @@ class CallAndReferenceGenerator(
 
                         if (noArguments || qualifiedAccess !is FirCall) return@apply
 
-                        val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(qualifiedAccess)
-                        if (valueParameters == null || argumentMapping == null || !visitor.annotationMode && argumentMapping.isEmpty()) return@apply
+                        val argumentMapping = qualifiedAccess.resolvedArgumentMapping
+                        if (argumentMapping == null || !visitor.annotationMode && argumentMapping.isEmpty()) return@apply
 
                         val dynamicCallVarargArgument = argumentMapping.keys.firstOrNull() as? FirVarargArgumentsExpression
                             ?: error("Dynamic call must have a single vararg argument: ${qualifiedAccess.render()}")
                         for (argument in dynamicCallVarargArgument.arguments) {
-                            val irArgument = convertArgument(argument, null, substitutor)
+                            val irArgument = convertArgument(argument, null, ConeSubstitutor.Empty)
                             arguments.add(irArgument)
                         }
                     }
@@ -1019,22 +1026,6 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun extractArgumentsMapping(
-        call: FirCall,
-    ): Triple<List<FirValueParameter>?, Map<FirExpression, FirValueParameter>?, ConeSubstitutor> {
-        val calleeReference = when (call) {
-            is FirFunctionCall -> call.calleeReference
-            is FirDelegatedConstructorCall -> call.calleeReference
-            is FirAnnotationCall -> call.calleeReference
-            else -> null
-        }
-        val function = ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
-        val valueParameters = function?.valueParameters
-        val argumentMapping = call.resolvedArgumentMapping
-        val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledCallable() ?: ConeSubstitutor.Empty
-        return Triple(valueParameters, argumentMapping, substitutor)
-    }
-
     private fun convertArgument(
         argument: FirExpression,
         parameter: FirValueParameter?,
@@ -1444,19 +1435,19 @@ class CallAndReferenceGenerator(
         val call = statement as? FirCall
         return when (this) {
             is IrMemberAccessExpression<*> -> {
-                val contextArgumentCount = putContextArguments(statement, receiverInfo)
-                if (call == null) return this
+                if (call == null) {
+                    // Property access has implicit context arguments but no explicit arguments.
+                    putContextArguments(statement, receiverInfo)
+                    return this
+                }
                 val argumentsCount = call.arguments.size
                 if (declarationSiteSymbol != null && argumentsCount <= declarationSiteSymbol.valueParametersSize()) {
-                    apply {
-                        val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
-                        if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty()) && valueParameters != null) {
-                            return applyArgumentsWithReorderingIfNeeded(
-                                argumentMapping, valueParameters, substitutor, receiverInfo, contextArgumentCount, call,
-                            )
-                        }
-                        check(argumentsCount == 0) { "Non-empty unresolved argument list." }
+                    applyArgumentsWithReorderingIfNeeded(receiverInfo, call)?.let {
+                        return it
                     }
+
+                    check(argumentsCount == 0) { "Non-empty unresolved argument list." }
+                    this
                 } else {
                     val calleeSymbol = (this as? IrCallImpl)?.symbol
 
@@ -1486,18 +1477,56 @@ class CallAndReferenceGenerator(
     }
 
     private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
-        argumentMapping: Map<FirExpression, FirValueParameter>,
-        valueParameters: List<FirValueParameter>,
-        substitutor: ConeSubstitutor,
         receiverInfo: ReceiverInfo,
-        contextArgumentCount: Int,
         call: FirCall,
-    ): IrExpression {
-        val converted = convertArguments(argumentMapping, substitutor)
+    ): IrExpression? {
+        val function = (call as? FirResolvable)?.calleeReference?.toResolvedFunctionSymbol()?.fir
+        val argumentList = call.argumentList as? FirResolvedArgumentList
+        if (function == null || argumentList == null || !visitor.annotationMode && argumentList.mappingIncludingContextArguments.isEmpty()) {
+            putContextArguments(call, receiverInfo)
+            return null
+        }
+
+        val contextParameters = function.contextParameters
+        val valueParameters = function.valueParameters
+        val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledCallable() ?: ConeSubstitutor.Empty
+        val contextArgumentCount = contextParameters.size
+
+        data class ArgumentInfo(val parameter: FirValueParameter, val expression: IrExpression, val parameterIndex: Int)
+
+        // Convert all context and value arguments.
+        // It's important to preserve the order of the explicit arguments including explicit context arguments
+        // because they can have side effects.
+        // Implicit context arguments are also in the list for convenience but their order doesn't matter because they can't have
+        // side effects.
+        val converted = buildList {
+            (call as? FirContextArgumentListOwner)?.contextArguments?.forEachIndexed { index, contextArgument ->
+                // Only convert implicit context arguments here, explicit ones will be converted below to preserve the order.
+                if (contextArgument in argumentList.mappingIncludingContextArguments) return@forEachIndexed
+                val parameter = contextParameters[index]
+                val parameterIndex = receiverInfo.contextArgumentOffset() + index
+
+                val irExpression = convertArgument(contextArgument, parameter, substitutor)
+                add(ArgumentInfo(parameter, irExpression, parameterIndex))
+            }
+
+            argumentList.mappingIncludingContextArguments.entries.forEach { (argument, parameter) ->
+                if (!visitor.isGetClassOfUnresolvedTypeInAnnotation(argument)) {
+                    val parameterIndex = if (parameter.valueParameterKind == FirValueParameterKind.Regular) {
+                        receiverInfo.valueArgumentOffset(contextArgumentCount) + valueParameters.indexOf(parameter)
+                    } else {
+                        receiverInfo.contextArgumentOffset() + contextParameters.indexOf(parameter)
+                    }
+                    val irExpression = convertArgument(argument, parameter, substitutor)
+                    add(ArgumentInfo(parameter, irExpression, parameterIndex))
+                }
+            }
+        }
+
         // If none of the parameters have side effects, the evaluation order doesn't matter anyway.
         // For annotations, this is always true, since arguments have to be compile-time constants.
         if (!visitor.annotationMode && !converted.all { (_, irArgument) -> irArgument.hasNoSideEffects() } &&
-            needArgumentReordering(argumentMapping.values, valueParameters)
+            needArgumentReordering(argumentList.mappingIncludingContextArguments.values, contextParameters + valueParameters)
         ) {
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 fun IrExpression.freeze(nameHint: String): IrExpression {
@@ -1507,6 +1536,7 @@ class CallAndReferenceGenerator(
                     return IrGetValueImpl(startOffset, endOffset, symbol, null)
                 }
 
+                // Freeze receivers first
                 if (receiverInfo.hasDispatchReceiver) {
                     arguments[0] = arguments[0]?.freeze($$"$this")
                 }
@@ -1516,21 +1546,20 @@ class CallAndReferenceGenerator(
                     arguments[extensionReceiverIndex] = arguments[extensionReceiverIndex]?.freeze($$"$receiver")
                 }
 
-                val valueArgumentOffset = receiverInfo.valueArgumentOffset(contextArgumentCount)
-                for ((parameter, irArgument) in converted) {
-                    arguments[valueArgumentOffset + valueParameters.indexOf(parameter)] = irArgument.freeze(parameter.name.asString())
+                // Add and freeze context and value arguments in source order
+                for ((parameter, irArgument, parameterIndex) in converted) {
+                    arguments[parameterIndex] = irArgument.freeze(parameter.name.asString())
                 }
                 statements.add(this@applyArgumentsWithReorderingIfNeeded)
             }
         } else {
-            val valueArgumentOffset = receiverInfo.valueArgumentOffset(contextArgumentCount)
-            for ((parameter, irArgument) in converted) {
-                arguments[valueArgumentOffset + valueParameters.indexOf(parameter)] = irArgument
+            for ((_, irArgument, parameterIndex) in converted) {
+                arguments[parameterIndex] = irArgument
             }
             if (visitor.annotationMode) {
                 val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction
                 for ((index, parameter) in valueParameters.withIndex()) {
-                    if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
+                    if (parameter.isVararg && !argumentList.mapping.containsValue(parameter)) {
                         val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
                             null
                         } else {
@@ -1542,7 +1571,7 @@ class CallAndReferenceGenerator(
                                 varargType.getArrayElementType(builtins)
                             )
                         }
-                        arguments[valueArgumentOffset + index] = value
+                        arguments[receiverInfo.valueArgumentOffset(contextArgumentCount) + index] = value
                     }
                 }
             }
@@ -1550,22 +1579,13 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun convertArguments(
-        argumentMapping: Map<FirExpression, FirValueParameter>,
-        substitutor: ConeSubstitutor,
-    ): List<Pair<FirValueParameter, IrExpression>> =
-        argumentMapping.entries.mapNotNull { (argument, parameter) ->
-            if (visitor.isGetClassOfUnresolvedTypeInAnnotation(argument)) null
-            else (parameter to convertArgument(argument, parameter, substitutor))
-        }
-
     private fun needArgumentReordering(
-        parametersInActualOrder: Collection<FirValueParameter>,
-        valueParameters: List<FirValueParameter>,
+        parametersInArgumentOrder: Collection<FirValueParameter>,
+        contextAndValueParameters: List<FirValueParameter>,
     ): Boolean {
         var lastValueParameterIndex = UNDEFINED_PARAMETER_INDEX
-        for (parameter in parametersInActualOrder) {
-            val index = valueParameters.indexOf(parameter)
+        for (parameter in parametersInArgumentOrder) {
+            val index = contextAndValueParameters.indexOf(parameter)
             if (index < lastValueParameterIndex) {
                 return true
             }

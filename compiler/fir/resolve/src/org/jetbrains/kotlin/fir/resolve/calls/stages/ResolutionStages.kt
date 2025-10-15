@@ -266,7 +266,22 @@ object CheckContextArguments : ResolutionStage() {
         val resultingContextArguments = mutableListOf<ConeResolutionAtom>()
         var errorReported = false
 
+        val contextArgumentsByParameterSymbol = buildMap {
+            for ((key, value) in argumentMapping) {
+                if (value.valueParameterKind != FirValueParameterKind.Regular) {
+                    put(value.symbol, key)
+                }
+            }
+        }
+
         for (symbol in contextSymbols) {
+            // handle context argument given using named arguments
+            val argument = contextArgumentsByParameterSymbol[symbol]
+            if (argument != null) {
+                resultingContextArguments.add(argument)
+                continue
+            }
+
             val expectedType = substitutor.substituteOrSelf(symbol.resolvedReturnType)
             val potentialContextArguments = findClosestMatchingContextArguments(expectedType, implicitsGroupedByScope)
             when (potentialContextArguments.size) {
@@ -687,7 +702,8 @@ internal object MapArguments : ResolutionStage() {
             arguments,
             function,
             candidate.originScope,
-            callSiteIsOperatorCall = (candidate.callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator
+            callSiteIsOperatorCall = (candidate.callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator,
+            lookInContextParameters = LanguageFeature.ExplicitContextArguments.isEnabled(),
         )
         candidate.initializeArgumentMapping(
             arguments.unwrapNamedArgumentsForDynamicCall(function),

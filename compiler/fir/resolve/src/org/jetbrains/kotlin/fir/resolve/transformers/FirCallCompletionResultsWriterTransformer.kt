@@ -440,6 +440,7 @@ class FirCallCompletionResultsWriterTransformer(
         val expectedArgumentsTypeMapping = subCandidate.createArgumentsMapping(forErrorReference = calleeReference.isError)
 
         result.transformArgumentList(expectedArgumentsTypeMapping)
+        result.transformContextArguments(this, expectedArgumentsTypeMapping)
 
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
@@ -551,11 +552,17 @@ class FirCallCompletionResultsWriterTransformer(
                     // Finally, the result can be wrapped in a SAM conversion if necessary.
                     val key = (element as? FirAnonymousFunctionExpression)?.anonymousFunction ?: element
                     expectedArgumentsTypeMapping?.samConversions?.get(key)?.let { samInfo ->
-                        @Suppress("UNCHECKED_CAST")
-                        return transformed.wrapInSamExpression(
+                        val samConversionExpression = transformed.wrapInSamExpression(
                             expectedArgumentType = samInfo.samType,
                             usesFunctionKindConversion = key in expectedArgumentsTypeMapping.argumentsWithFunctionKindConversion
-                        ) as E
+                        )
+
+                        if (this@transformArgumentList is FirContextArgumentListOwner && transformed in contextArguments) {
+                            replaceContextArguments(contextArguments.map { if (it == transformed) samConversionExpression else it })
+                        }
+
+                        @Suppress("UNCHECKED_CAST")
+                        return samConversionExpression as E
                     }
                 }
 
@@ -588,7 +595,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun FirExpression.wrapInSamExpression(
         expectedArgumentType: ConeKotlinType,
         usesFunctionKindConversion: Boolean,
-    ): FirExpression {
+    ): FirSamConversionExpression {
         return buildSamConversionExpression {
             expression = this@wrapInSamExpression
             coneTypeOrNull = expectedArgumentType.withNullabilityOf(resolvedType, session.typeContext)

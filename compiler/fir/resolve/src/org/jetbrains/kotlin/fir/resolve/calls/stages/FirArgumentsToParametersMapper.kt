@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
@@ -70,6 +71,7 @@ fun BodyResolveComponents.mapArguments(
     function: FirFunction,
     originScope: FirScope?,
     callSiteIsOperatorCall: Boolean,
+    lookInContextParameters: Boolean,
 ): ArgumentMapping {
     if (arguments.isEmpty() && function.valueParameters.isEmpty()) {
         return EmptyArgumentMapping
@@ -99,7 +101,7 @@ fun BodyResolveComponents.mapArguments(
             && function.name == OperatorNameConventions.SET
             && function.origin !is FirDeclarationOrigin.DynamicScope
 
-    val processor = FirCallArgumentsProcessor(session, function, this, originScope, isIndexedSetOperator)
+    val processor = FirCallArgumentsProcessor(session, function, this, originScope, isIndexedSetOperator, lookInContextParameters)
     processor.processNonLambdaArguments(nonLambdaArguments)
     if (externalArgument != null) {
         processor.processExternalArgument(externalArgument)
@@ -116,6 +118,7 @@ private class FirCallArgumentsProcessor(
     private val bodyResolveComponents: BodyResolveComponents,
     private val originScope: FirScope?,
     private val isIndexedSetOperator: Boolean,
+    private val lookInContextParameters: Boolean,
 ) {
     private var state = State.POSITION_ARGUMENTS
     private var currentPositionedParameterIndex = 0
@@ -187,7 +190,7 @@ private class FirCallArgumentsProcessor(
         // The last parameter of an indexed set operator should be reserved for the last argument (the assigned value).
         // We don't want the assigned value mapped to an index parameter if some of the index arguments are absent.
         val assignedParameterIndex = if (isIndexedSetOperator) {
-            val lastParameterIndex = parameters.lastIndex
+            val lastParameterIndex = valueParameters.lastIndex
             when {
                 isLastArgument -> lastParameterIndex
                 currentPositionedParameterIndex >= lastParameterIndex -> {
@@ -202,7 +205,7 @@ private class FirCallArgumentsProcessor(
         } else {
             currentPositionedParameterIndex
         }
-        val parameter = parameters.getOrNull(assignedParameterIndex)
+        val parameter = valueParameters.getOrNull(assignedParameterIndex)
         if (parameter == null) {
             addDiagnostic(TooManyArguments(argument.expression, function))
             return
@@ -237,7 +240,7 @@ private class FirCallArgumentsProcessor(
 
         result[parameter] = ResolvedCallArgument.SimpleArgument(atom)
 
-        if (stateAllowsMixedNamedAndPositionArguments && parameters.getOrNull(currentPositionedParameterIndex) == parameter) {
+        if (stateAllowsMixedNamedAndPositionArguments && valueParameters.getOrNull(currentPositionedParameterIndex) == parameter) {
             state = State.POSITION_ARGUMENTS
             currentPositionedParameterIndex++
         }
@@ -245,7 +248,7 @@ private class FirCallArgumentsProcessor(
 
     fun processExternalArgument(externalArgument: ConeResolutionAtom) {
         val argumentExpression = externalArgument.expression
-        val lastParameter = parameters.lastOrNull()
+        val lastParameter = valueParameters.lastOrNull()
         if (lastParameter == null) {
             addDiagnostic(TooManyArguments(argumentExpression, function))
             return
@@ -296,7 +299,7 @@ private class FirCallArgumentsProcessor(
             }
         }
 
-        for ((index, parameter) in parameters.withIndex()) {
+        for ((index, parameter) in valueParameters.withIndex()) {
             if (!result.containsKey(parameter)) {
                 when {
                     bodyResolveComponents.session.defaultParameterResolver.declaresDefaultValue(
@@ -315,7 +318,7 @@ private class FirCallArgumentsProcessor(
 
     private fun completeVarargPositionArguments() {
         assert(state == State.VARARG_POSITION) { "Incorrect state: $state" }
-        val parameter = parameters[currentPositionedParameterIndex]
+        val parameter = valueParameters[currentPositionedParameterIndex]
         result[parameter] = ResolvedCallArgument.VarargArgument(varargArguments!!)
     }
 
@@ -340,8 +343,15 @@ private class FirCallArgumentsProcessor(
                         // Get the parameter names from the first applicable override and associate original parameters with them.
                         // If there are multiple overrides with ambiguous parameter names,
                         // a diagnostic will be reported in findParameterByName.
-                        nameToParameter = parameters.withIndex().associateTo(LinkedHashMap()) { (i, p) ->
-                            overrideSymbol.fir.valueParameters[i].name to p
+                        nameToParameter = LinkedHashMap<Name, FirValueParameter>().apply {
+                            for ((i, p) in valueAndContextParametersIfRequired.withIndex()) {
+                                val name = overrideSymbol.valueAndContextParameterSymbolsIfRequired[i].name
+                                // Exclude special names like `_` from unnamed context parameters.
+                                // Technically, this check is unnecessary because the names on the call-site will never be parsed as special names.
+                                // But we do it anyway to be safe.
+                                if (name.isSpecial) continue
+                                this[name] = p
+                            }
                         }
                         ProcessorAction.STOP
                     }
@@ -350,8 +360,15 @@ private class FirCallArgumentsProcessor(
                     nameToParameter = emptyMap()
                 }
             } else {
-                nameToParameter = parameters.associateByTo(LinkedHashMap()) { parameter ->
-                    parameter.returnTypeRef.coneTypeOrNull?.valueParameterName(useSiteSession) ?: parameter.name
+                nameToParameter = LinkedHashMap<Name, FirValueParameter>().apply {
+                    for (parameter in valueAndContextParametersIfRequired) {
+                        val name = parameter.returnTypeRef.coneTypeOrNull?.valueParameterName(useSiteSession) ?: parameter.name
+                        // Exclude special names like `_` from unnamed context parameters.
+                        // Technically, this check is unnecessary because the names on the call-site will never be parsed as special names.
+                        // But we do it anyway to be safe.
+                        if (name.isSpecial) continue
+                        this[name] = parameter
+                    }
                 }
             }
         }
@@ -366,9 +383,8 @@ private class FirCallArgumentsProcessor(
 
         // Note: should be called when parameter != null && matchedIndex != -1
         fun List<FirValueParameterSymbol>.findAndReportValueParameterWithDifferentName(): ProcessorAction {
-            val someParameter = getOrNull(matchedIndex)?.fir
-            val someName = someParameter?.name
-            if (someName != null && someName != argument.name) {
+            val someName = getOrNull(matchedIndex)?.fir?.name
+            if (someName != null && !someName.isSpecial && someName != argument.name) {
                 addDiagnostic(
                     NameForAmbiguousParameter(argument)
                 )
@@ -384,15 +400,15 @@ private class FirCallArgumentsProcessor(
                     if (it.fir.areNamedArgumentsForbiddenIgnoringOverridden()) {
                         return@processOverriddenFunctions ProcessorAction.NEXT
                     }
-                    val someParameterSymbols = it.valueParameterSymbols
+                    val someParameterSymbols = it.valueAndContextParameterSymbolsIfRequired
                     if (matchedIndex != -1) {
                         someParameterSymbols.findAndReportValueParameterWithDifferentName()
                     } else {
                         matchedIndex = someParameterSymbols.indexOfFirst { originalParameter ->
-                            originalParameter.name == argument.name
+                            !originalParameter.name.isSpecial && originalParameter.name == argument.name
                         }
                         if (matchedIndex != -1) {
-                            parameter = parameters[matchedIndex]
+                            parameter = valueAndContextParametersIfRequired[matchedIndex]
                             val someParameter = allowedParameters?.getOrNull(matchedIndex)?.fir
                             if (someParameter != null) {
                                 addDiagnostic(
@@ -421,7 +437,7 @@ private class FirCallArgumentsProcessor(
                         if (it.fir.areNamedArgumentsForbiddenIgnoringOverridden()) {
                             return@processOverriddenFunctions ProcessorAction.NEXT
                         }
-                        it.valueParameterSymbols.findAndReportValueParameterWithDifferentName()
+                        it.valueAndContextParameterSymbolsIfRequired.findAndReportValueParameterWithDifferentName()
                     }
                 }
             }
@@ -443,6 +459,12 @@ private class FirCallArgumentsProcessor(
             else -> false
         }
 
-    private val parameters: List<FirValueParameter>
+    private val valueParameters: List<FirValueParameter>
         get() = function.valueParameters
+
+    private val valueAndContextParametersIfRequired: List<FirValueParameter> =
+        if (lookInContextParameters) valueParameters + function.contextParameters else valueParameters
+
+    private val FirFunctionSymbol<*>.valueAndContextParameterSymbolsIfRequired: List<FirValueParameterSymbol>
+        get() = if (lookInContextParameters) valueParameterSymbols + contextParameterSymbols else valueParameterSymbols
 }

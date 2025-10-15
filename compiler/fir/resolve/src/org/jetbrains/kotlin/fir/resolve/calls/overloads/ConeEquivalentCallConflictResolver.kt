@@ -80,7 +80,9 @@ class ConeEquivalentCallConflictResolver(private val session: FirSession) : Cone
     private val Candidate.mappedArgumentsOrderRepresentation: IntArray?
         get() {
             val function = symbol.fir as? FirFunction ?: return null
-            val parametersToIndices = function.valueParameters.mapIndexed { index, it -> it to index }.toMap()
+            val parametersToIndices = (function.valueParameters + function.contextParameters)
+                .mapIndexed { index, it -> it to index }
+                .toMap()
             if (!argumentMappingInitialized) return null
             val mapping = argumentMapping
             val result = IntArray(mapping.size + 1) { function.valueParameters.size }

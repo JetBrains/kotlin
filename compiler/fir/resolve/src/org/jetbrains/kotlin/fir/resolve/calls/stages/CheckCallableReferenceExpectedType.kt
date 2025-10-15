@@ -209,7 +209,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         requiredMembersPhase = FirResolvePhase.STATUS,
     )
 
-    val argumentMapping = mapArguments(fakeArguments, function, originScope = originScope, callSiteIsOperatorCall = false)
+    val argumentMapping = mapArguments(fakeArguments, function, originScope = originScope, callSiteIsOperatorCall = false, lookInContextParameters = false)
     if (argumentMapping.diagnostics.anyUnsuccessful) return null
 
     /**
