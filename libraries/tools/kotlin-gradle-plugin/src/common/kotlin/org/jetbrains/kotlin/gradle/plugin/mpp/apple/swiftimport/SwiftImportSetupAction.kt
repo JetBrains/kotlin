@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.getExtension
@@ -61,6 +62,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     }
 }
 
+@DisableCachingByDefault(because = "...")
 internal abstract class SwiftPMImportTask : DefaultTask() {
 
     @get:Input
