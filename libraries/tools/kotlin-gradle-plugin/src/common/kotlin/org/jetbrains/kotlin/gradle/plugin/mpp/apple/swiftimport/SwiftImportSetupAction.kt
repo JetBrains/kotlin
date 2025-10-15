@@ -2,20 +2,16 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
-import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
@@ -37,7 +33,9 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 //        SwiftImportExtension::class,
 //    )
     val swiftPMImportExtension = kotlinExtension.getExtension<SwiftImportExtension>(extensionName)!!
-    val swiftPMImportTask = tasks.register("swiftPMImport", SwiftPMImportTask::class.java)
+    val swiftPMImportTask = tasks.register("swiftPMImport", SwiftPMImportTask::class.java) {
+        it.iosDeploymentVersion.set(swiftPMImportExtension.iosDeploymentVersion)
+    }
     swiftPMImportExtension.spmDependencies.all { dep ->
         swiftPMImportTask.configure {
             it.importedSpmModules.add(dep)
@@ -81,6 +79,9 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
     @get:Input
     abstract val konanTargets: SetProperty<KonanTarget>
 
+    @get:Input
+    abstract val iosDeploymentVersion: Property<String>
+
     @get:Inject
     abstract val execOps: ExecOperations
 
@@ -107,6 +108,15 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
 
         val dd = temporaries.resolve("dd")
 
+        val clangArgsDumpScript = temporaries.resolve("clangDump.sh")
+        clangArgsDumpScript.writeText(searchPathsDumpScript())
+        clangArgsDumpScript.setExecutable(true)
+        val clangArgsDump = temporaries.resolve("clang_args_dump")
+        if (clangArgsDump.exists()) {
+            clangArgsDump.deleteRecursively()
+        }
+        clangArgsDump.mkdirs()
+
         val target = konanTargets.get().first()
         // FIXME: Do we need to actually build for all targets at this point? Check what happens with macros
 //        konanTargets.get().stream().limit(1).forEach { target ->
@@ -123,26 +133,114 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
                 "MACOSX_DEPLOYMENT_TARGET=${'$'}RECOMMENDED_MACOSX_DEPLOYMENT_TARGET",
                 "TVOS_DEPLOYMENT_TARGET=${'$'}RECOMMENDED_TVOS_DEPLOYMENT_TARGET",
                 "WATCHOS_DEPLOYMENT_TARGET=${'$'}RECOMMENDED_WATCHOS_DEPLOYMENT_TARGET",
+                "CC=${clangArgsDumpScript.path}",
+                // FIXME: ???
+                "ARCHS=arm64",
             )
+            it.environment(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV, clangArgsDump)
         }
 
-        val sdkName = target.appleTarget.sdk
-        val moduleMapsAndSwiftHeaders = dd.resolve("Build/Intermediates.noindex/GeneratedModuleMaps-${sdkName}")
+        val searchPathStrings = mutableSetOf<String>()
+        val frameworkSearchPaths = mutableSetOf<File>()
+        val moduleSearchPaths = mutableSetOf<File>()
+        val targetClangCall = clangArgsDump.listFiles().filter {
+            it.isFile
+        }.single {
+            val clangArgs = it.readLines().single()
+            "-fmodule-name=_internal_SwiftPMImport" in clangArgs
+        }
+        targetClangCall.readLines().single().split(";").forEach { arg ->
+            if (arg.startsWith("-F")) {
+                frameworkSearchPaths.add(
+                    File(arg.substring(2))
+                )
+                searchPathStrings.add(arg)
+            }
+            if (arg.startsWith("-I")) {
+                moduleSearchPaths.add(
+                    File(arg.substring(2))
+                )
+                searchPathStrings.add(arg)
+            }
+            if (arg.startsWith("-fmodule-map-file=")) {
+                searchPathStrings.add(arg)
+            }
+        }
+//        val searchPaths = clangArgsDump.useLines {
+//            // FIXME: Use an Xcode proj instead and override CC for this project only
+//            val finalClangCall = it.filter { it.isNotEmpty() && "-fmodule-name=_internal_SwiftPMImport" in it }.single()
+//            finalClangCall.split(";").forEach {
+//                if (it.startsWith("-F")) {}
+//                frameworkSearchPaths.add(
+//
+//                )
+//            }.filter { it.startsWith("-I") || it.startsWith("-F") }
+//            searchPaths
+//        }
+        fun extractModuleNames(moduleMap: File): List<String> {
+            val moduleNames = mutableListOf<String>()
+            moduleMap.readLines().forEach { line ->
+                if ("module " in line) {
+                    val moduleName = line.split(" ").dropWhile {
+                        it != "module"
+                    }.drop(1).take(1).single()
+                    moduleNames.add(moduleName)
+                }
+            }
+            return moduleNames
+        }
 
-        val moduleMaps = moduleMapsAndSwiftHeaders.listFiles().filter { it.extension == "modulemap" && "_internal_SwiftPMImport" !in it.name }
-        // FIXME: This is incorrect, look at modules inside the modulemap instead?
-        val modules = moduleMaps.map {
-            it.useLines { lines ->
-                lines.first().split(" ")[1]
+        val availableModuleNames = mutableListOf<String>()
+        moduleSearchPaths.forEach { searchPath ->
+            if (searchPath.exists()) {
+                searchPath.listFiles().filter {
+                    it.name == "module.modulemap"
+                }.forEach {
+                    availableModuleNames.addAll(extractModuleNames(it))
+                }
+            }
+        }
+        frameworkSearchPaths.forEach { searchPath ->
+            if (searchPath.exists()) {
+                searchPath.listFiles().filter {
+                    it.extension == "framework"
+                }.forEach {
+                    it.walk().forEach { file ->
+                        if (file.extension == "modulemap") {
+                            availableModuleNames.addAll(extractModuleNames(file))
+                        }
+                    }
+                }
             }
         }
 
-        val sps = hackImplicitSearchPath(
-            temporaries = temporaries,
-            modulemaps = moduleMapsAndSwiftHeaders,
-        ).joinToString(" ") {
-            "\"-I${it.path}\""
+        // FIXME: Validate that in "modules" we have something that is actually an available module
+        // println(availableModuleNames)
+//        val sdkName = target.appleTarget.sdk
+//        val moduleMapsAndSwiftHeaders = dd.resolve("Build/Intermediates.noindex/GeneratedModuleMaps-${sdkName}")
+
+        // val moduleMaps = moduleMapsAndSwiftHeaders.listFiles().filter { it.extension == "modulemap" && "_internal_SwiftPMImport" !in it.name }
+        // FIXME: This is incorrect, look at modules inside the modulemap instead?
+//        val modules = moduleMaps.map {
+//            it.useLines { lines ->
+//                lines.first().split(" ")[1]
+//            }
+//        }
+
+//        val sps = hackImplicitSearchPath(
+//            temporaries = temporaries,
+//            modulemaps = moduleMapsAndSwiftHeaders,
+//        ).joinToString(" ") {
+//            "\"-I${it.path}\""
+//        }
+
+        val defFileSeachPaths = searchPathStrings.joinToString(" ") { "\"${it}\"" }
+        val modules = importedSpmModules.get().flatMap {
+            it.cinteropTargets
         }
+
+        // Stop -Swift.h headers from pushing duplicate typedefs and exploding the cinterop
+        val workaroundKT81695 = "-DSWIFT_TYPEDEFS"
 
         konanTargets.get().forEach {
             val defFilesRoot = defFiles.get().asFile
@@ -150,7 +248,7 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
                 """
                     language = Objective-C
                     modules = ${modules.joinToString(" ")}
-                    compilerOpts = -fmodules ${sps}
+                    compilerOpts = ${workaroundKT81695} -fmodules ${defFileSeachPaths}
                     package = swiftPMImport
                 """.trimIndent()
             )
@@ -167,6 +265,7 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
         val targetDependencies = dependencies.flatMap { dep -> dep.products.map { it to dep.packageName } }.joinToString("\n") {
             ".product(name: \"${it.first}\", package: \"${it.second}\"),"
         }
+        // FIXME: Make the platform version configurable
         temporaries.resolve("Package.swift").writeText(
             """
                 // swift-tools-version: 5.9
@@ -174,6 +273,9 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
         import PackageDescription
         let package = Package(
             name: "_internal_SwiftPMImport",
+            platforms: [
+                .iOS("${iosDeploymentVersion.get()}"),
+            ],
             products: [
                 .library(
                     name: "_internal_SwiftPMImport",
@@ -195,12 +297,16 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
             """.trimIndent()
         )
 
-        val emptySource = temporaries.resolve("Sources/_internal_SwiftPMImport/_internal_SwiftPMImport.swift")
+        val emptySource = temporaries.resolve("Sources/_internal_SwiftPMImport/_internal_SwiftPMImport.m")
         emptySource.parentFile.mkdirs()
         emptySource.writeText("")
+
+        val emptyHeader = temporaries.resolve("Sources/_internal_SwiftPMImport/include/_internal_SwiftPMImport.h")
+        emptyHeader.parentFile.mkdirs()
+        emptyHeader.writeText("")
     }
 
-    // Why does cinterop not accept explicit -fmodule-map-file<File>=?
+    // Why does cinterop not accept explicit -fmodule-map-file=<File>?
     private fun hackImplicitSearchPath(
         temporaries: File,
         modulemaps: File,
@@ -220,5 +326,22 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
             outgoingImplicitPaths.add(spd)
         }
         return outgoingImplicitPaths
+    }
+
+    private fun searchPathsDumpScript() = """
+        #!/bin/bash
+
+        DUMP_FILE="${'$'}{${KOTLIN_CLANG_ARGS_DUMP_FILE_ENV}}/${'$'}(/usr/bin/uuidgen)"
+        for arg in "$@"
+        do
+           echo -n "${'$'}arg" >> "${'$'}{DUMP_FILE}"
+           echo -n ";" >> "${'$'}{DUMP_FILE}"
+        done
+
+        clang "$@"
+    """.trimIndent()
+
+    companion object {
+        const val KOTLIN_CLANG_ARGS_DUMP_FILE_ENV = "KOTLIN_CLANG_ARGS_DUMP_FILE"
     }
 }
