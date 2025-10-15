@@ -56693,6 +56693,18 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
       }
 
       @Test
+      @TestMetadata("dataClassInInlineFunctionWithTypeParameters.kt")
+      public void testDataClassInInlineFunctionWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/regressions/dataClassInInlineFunctionWithTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassInRegularFunctionWithTypeParameters.kt")
+      public void testDataClassInRegularFunctionWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/regressions/dataClassInRegularFunctionWithTypeParameters.kt");
+      }
+
+      @Test
       @TestMetadata("dontCaptureTypesWithTypeVariables.kt")
       public void testDontCaptureTypesWithTypeVariables() {
         runTest("compiler/testData/codegen/box/regressions/dontCaptureTypesWithTypeVariables.kt");
