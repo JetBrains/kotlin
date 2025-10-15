@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
@@ -150,8 +152,41 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
             addDelegatesToInterfaceMethods(result, classSymbol)
 
+            addMethodsFromCollectionsIfNeeded(result, classSymbol)
+
             result
         }
+    }
+
+    private fun KaSession.addMethodsFromCollectionsIfNeeded(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
+        if (classSymbol.classKind == KaClassKind.INTERFACE) {
+            // TODO?
+            return
+        }
+
+        val allSupertypes = classSymbol.defaultType.allSupertypes
+        for (supertype in allSupertypes) {
+            val classId = (supertype as? KaClassType)?.classId ?: continue
+            val javaClassId = JavaToKotlinClassMap.mutabilityMappings.find {
+                classId == it.kotlinReadOnly || classId == it.kotlinMutable
+            }?.javaClass ?: continue
+
+
+            val kotlinCollection = supertype.symbol as? KaClassSymbol ?: continue
+            val javaCollection = findClass(javaClassId) ?: continue
+
+            val javaCollectionFunctions = javaCollection.declaredMemberScope.callables.filter { it is KaNamedFunctionSymbol }//.toSet()
+            val kotlinCollectionFunctions = kotlinCollection.declaredMemberScope.callables.filter { it is KaNamedFunctionSymbol }.toSet()
+
+            // TODO
+            //   filter by Kotlin functions
+            //   open modality
+            //   Fix type parameters
+            //   size/getSize special cases
+
+            createMethods(this@SymbolLightClassForClassOrObject, javaCollectionFunctions, result)
+        }
+
     }
 
     private fun isEnumEntriesDisabled(): Boolean {
