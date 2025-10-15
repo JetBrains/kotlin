@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -28,7 +30,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.polymorphicSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.sealedSerializerId
-import kotlin.collections.orEmpty
 
 internal class Instantiator(
     val generator: BaseIrGenerator,
@@ -50,7 +51,6 @@ internal class Instantiator(
 
     data class Args(
         val args: List<IrExpression>, val typeArgs: List<IrType>,
-        val useCompanionShortcut: Boolean, val needToCopyAnnotations: Boolean,
     )
 
     context(irBuilder: IrBuilderWithScope)
@@ -70,58 +70,78 @@ internal class Instantiator(
         kType as? IrSimpleType ?: error("Don't know how to work with type ${kType::class}")
         val typeArgumentsAsTypes = kType.argumentTypesOrUpperBounds()
 
-        val args = when (serializerClass.owner.classId) {
-            polymorphicSerializerId -> Args(listOf(classReferenceOf(kType)), listOf(kType), false, true)
-            contextSerializerId -> {
-                doContextSerializer(kType, genericIndex, typeArgumentsAsTypes) ?: return null
-            }
+        val needToCopyAnnotations = serializerClass.owner.classId.let { it == polymorphicSerializerId || it == objectSerializerId }
+
+        // If KType is interface, .classSerializer always yields PolymorphicSerializer, which may be unavailable for interfaces from other modules
+        val canUseShortcut =
+            !kType.isInterface() && serializerClass == kType.classOrUpperBound()?.owner.classSerializer(compilerContext) && generator !is SerializableCompanionIrGenerator
+
+        var ctor: IrConstructor? = null
+
+        val (args, typeArgs) = when (serializerClass.owner.classId) {
+            polymorphicSerializerId -> Args(listOf(classReferenceOf(kType)), listOf(kType))
+            contextSerializerId -> argsForContextSerializer(kType, genericIndex, typeArgumentsAsTypes) ?: return null
             objectSerializerId -> Args(
                 args = listOf(irBuilder.irString(kType.serialName()), irBuilder.irGetObject(kType.classOrUpperBound()!!)),
                 typeArgs = listOf(kType),
-                useCompanionShortcut = false,
-                needToCopyAnnotations = true,
             )
-            sealedSerializerId -> doSealed(serializerClass, kType)
+            sealedSerializerId -> return instantiateSealedSerializer(serializerClass, kType)
             enumSerializerId -> return instantiateEnumSerializer(kType)
             referenceArraySerializerId -> {
                 val (origArgs, origTypeArgs) = regularArgs(typeArgumentsAsTypes) ?: return null
                 val args = listOf(generator.wrapperClassReference(typeArgumentsAsTypes.single())) + origArgs
                 val typeArgs = listOf(origTypeArgs[0].makeNotNull()) + origTypeArgs
-                Args(args, typeArgs, false, false)
+                Args(args, typeArgs)
             }
-            else -> regularArgs(typeArgumentsAsTypes) ?: return null
+            else -> {
+                if (canUseShortcut) {
+                    regularArgs(typeArgumentsAsTypes) ?: return null
+                } else {
+                    ctor = findConstructor(serializerClass, needToCopyAnnotations).owner
+                    val requiresArgs = ctor.parameters.isNotEmpty()
+                    if (!requiresArgs) Args(emptyList(), emptyList()) else regularArgs(typeArgumentsAsTypes) ?: return null
+                }
+            }
         }
 
-        val canUseShortcut =
-            !kType.isInterface() && serializerClass == kType.classOrUpperBound()?.owner.classSerializer(compilerContext) && generator !is SerializableCompanionIrGenerator
-        if (canUseShortcut || args.useCompanionShortcut) {
+        if (canUseShortcut) {
             // This is default type serializer, we can shortcut through Companion.serializer()
             // BUT not during generation of this method itself
-            // TODO: check if we still want to build args for sealed/polymorphic serializers here
-            generator.callSerializerFromCompanion(kType, args.typeArgs, args.args, serializerClass.owner.classId)?.let { return it }
+            // For future: check if we still want to build args for polymorphic/object serializers here, likely not.
+            generator.callSerializerFromCompanion(kType, typeArgs, args, serializerClass.owner.classId)?.let { return it }
         }
 
+        val newArgs = if (needToCopyAnnotations) addAnnotationsToArgs(kType, args) else args
 
-        val needToCopyAnnotations = args.needToCopyAnnotations
+        if (ctor == null) ctor = findConstructor(serializerClass, needToCopyAnnotations).owner
+        return callConstructor(ctor, typeArgs, newArgs)
+    }
 
-        val ctor = findConstructor(serializerClass, needToCopyAnnotations)
-        val ctorDecl = ctor.owner
-
-        val newArgs = if (needToCopyAnnotations) {
-            val classAnnotations =
-                generator.copyAnnotationsFrom(kType.getClass()?.let { generator.collectSerialInfoAnnotations(it) }.orEmpty())
-            args.args + generator.createArrayOfExpression(compilerContext.irBuiltIns.annotationType, classAnnotations)
-        } else args.args
-
-        val typeParameters = ctorDecl.parentAsClass.typeParameters
-        val substitutedReturnType = ctorDecl.returnType.substitute(typeParameters, args.typeArgs)
+    context(irBuilder: IrBuilderWithScope)
+    private fun callConstructor(
+        ctor: IrConstructor,
+        typeArgs: List<IrType>,
+        valueArgs: List<IrExpression>,
+    ): IrFunctionAccessExpression {
+        val typeParameters = ctor.parentAsClass.typeParameters
+        val substitutedReturnType = ctor.returnType.substitute(typeParameters, typeArgs)
         return generator.irInvoke(
-            ctor,
+            ctor.symbol,
             // User may declare serializer with fixed type arguments, e.g. class SomeSerializer : KSerializer<ClosedRange<Float>>
-            arguments = newArgs.takeIf { it.size == ctorDecl.parameters.size }.orEmpty(),
-            typeArguments = args.typeArgs.takeIf { it.size == ctorDecl.typeParameters.size }.orEmpty(),
+            arguments = valueArgs.takeIf { it.size == ctor.parameters.size }.orEmpty(),
+            typeArguments = typeArgs.takeIf { it.size == ctor.typeParameters.size }.orEmpty(),
             returnTypeHint = substitutedReturnType
         )
+    }
+
+    context(irBuilder: IrBuilderWithScope)
+    private fun addAnnotationsToArgs(
+        kType: IrSimpleType,
+        args: List<IrExpression>,
+    ): List<IrExpression> {
+        val classAnnotations =
+            generator.copyAnnotationsFrom(kType.getClass()?.let { generator.collectSerialInfoAnnotations(it) }.orEmpty())
+        return args + generator.createArrayOfExpression(compilerContext.irBuiltIns.annotationType, classAnnotations)
     }
 
     private fun findConstructor(serializerClass: IrClassSymbol, needToCopyAnnotations: Boolean): IrConstructorSymbol {
@@ -152,7 +172,7 @@ internal class Instantiator(
     context(irBuilder: IrBuilderWithScope)
     private fun classReferenceOf(kType: IrSimpleType): IrClassReference = generator.classReference(kType.classOrUpperBound()!!)
 
-    context(irBuilder: IrBuilderWithScope) private fun doContextSerializer(
+    context(irBuilder: IrBuilderWithScope) private fun argsForContextSerializer(
         kType: IrSimpleType,
         genericIndex: Int?,
         typeArgumentsAsTypes: List<IrType>,
@@ -187,7 +207,7 @@ internal class Instantiator(
                     })
             )
         }
-        return Args(args, typeArgs, false, false)
+        return Args(args, typeArgs)
     }
 
     context(irBuilder: IrBuilderWithScope) private fun instantiateEnumSerializer(kType: IrSimpleType): IrExpression {
@@ -248,13 +268,13 @@ internal class Instantiator(
             )
             instantiate(argSer, it) ?: return null
         }
-        return Args(args, typeArgumentsAsTypes, false, false)
+        return Args(args, typeArgumentsAsTypes)
     }
 
-    context(irBuilder: IrBuilderWithScope) private fun doSealed(
+    context(irBuilder: IrBuilderWithScope) private fun instantiateSealedSerializer(
         serializerClass: IrClassSymbol,
         kType: IrSimpleType,
-    ): Args {
+    ): IrExpression {
         val needToCopyAnnotations = true
         val typeArgs = listOf(kType)
 
@@ -290,8 +310,7 @@ internal class Instantiator(
                     }
                 }
             }
-            return Args(args, typeArgs, true, false)
-            //                    generator.callSerializerFromCompanion(kType, typeArgs, args, sealedSerializerId)?.let { return TODO(it.toString()) }
+            generator.callSerializerFromCompanion(kType, typeArgs, args, sealedSerializerId)?.let { return it }
         }
 
 
@@ -352,7 +371,10 @@ internal class Instantiator(
                 )
             )
         }
-        return Args(args, typeArgs, false, needToCopyAnnotations)
+        val newArgs = addAnnotationsToArgs(kType, args)
+
+        val ctor = findConstructorWithoutTypeParameters(serializerClass, needToCopyAnnotations).owner
+        return callConstructor(ctor, typeArgs, newArgs)
     }
 
     context(irBuilder: IrBuilderWithScope)
