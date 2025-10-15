@@ -3954,6 +3954,40 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/psi/recovery/binaryExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    public class BinaryExpression {
+      @Test
+      public void testAllFilesPresentInBinaryExpression() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/binaryExpression"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("IsAndSubsequentExpressions.kt")
+      public void testIsAndSubsequentExpressions() {
+        runTest("compiler/testData/psi/recovery/binaryExpression/IsAndSubsequentExpressions.kt");
+      }
+
+      @Test
+      @TestMetadata("IsExpressionComplex.kt")
+      public void testIsExpressionComplex() {
+        runTest("compiler/testData/psi/recovery/binaryExpression/IsExpressionComplex.kt");
+      }
+
+      @Test
+      @TestMetadata("NoHigherPrecedenceAfterIs.kt")
+      public void testNoHigherPrecedenceAfterIs() {
+        runTest("compiler/testData/psi/recovery/binaryExpression/NoHigherPrecedenceAfterIs.kt");
+      }
+
+      @Test
+      @TestMetadata("SoftModifierAsInfixFunction.kt")
+      public void testSoftModifierAsInfixFunction() {
+        runTest("compiler/testData/psi/recovery/binaryExpression/SoftModifierAsInfixFunction.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/psi/recovery/objects")
     @TestDataPath("$PROJECT_ROOT")
     public class Objects {

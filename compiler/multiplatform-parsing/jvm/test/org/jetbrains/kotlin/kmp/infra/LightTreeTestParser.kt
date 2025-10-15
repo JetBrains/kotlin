@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.util.getChildren
 
 // Normally LightTree eagerly parses blocks and lambdas but ignores KDoc
-class LightTreeTestParser() : AbstractTestParser<LighterASTNode>(ParseMode.NoKDoc) {
+class LightTreeTestParser : AbstractTestParser<LighterASTNode>(ParseMode.NoKDoc) {
     companion object {
         private val disposable = Disposer.newDisposable("Disposable for the ${FullParserTestsWithLightTree::class.simpleName}")
 

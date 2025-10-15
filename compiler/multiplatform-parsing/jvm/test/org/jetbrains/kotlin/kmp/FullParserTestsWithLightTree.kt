@@ -22,11 +22,4 @@ class FullParserTestsWithLightTree : AbstractParserTests<LighterASTNode>() {
         LightTreeTestParser().parse(fileName, text)
 
     override val oldRecognizerSuffix: String = " (LightTree)"
-
-    override val expectedDumpOnWindowsNewLine: String = """kotlin.FILE [1:1..2:1)
-  PACKAGE_DIRECTIVE `` [1:1..1)
-  IMPORT_LIST `` [1:1..1)
-  ERROR_ELEMENT [1:1..2)
-    BAD_CHARACTER [1:1..2)
-  WHITE_SPACE [1:2..2:1)"""
 }
