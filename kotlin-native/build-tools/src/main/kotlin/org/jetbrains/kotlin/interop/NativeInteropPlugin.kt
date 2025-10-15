@@ -16,6 +16,7 @@ import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.asLinkFlags
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
@@ -23,10 +24,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanJvmInteropTask
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.stableSortedForReproducibility
 import org.jetbrains.kotlin.tools.NativePlugin
 import org.jetbrains.kotlin.tools.NativeToolsExtension
 import org.jetbrains.kotlin.tools.ToolExecutionTask
-import org.jetbrains.kotlin.tools.libname
 import org.jetbrains.kotlin.tools.obj
 import org.jetbrains.kotlin.tools.solib
 import java.io.File
@@ -224,21 +225,17 @@ open class NativeInteropPlugin : Plugin<Project> {
         val cppImplementation = configurations.getByName(CPP_IMPLEMENTATION_CONFIGURATION)
         val cppLink = configurations.getByName(CPP_LINK_CONFIGURATION)
 
-        val includeDirsAbsolutePaths = project.files(*systemIncludeDirs.toTypedArray())
-        val includeDirsRelativePaths = project.files(*selfHeaders.toTypedArray(), cppImplementation)
+        val nativeToolsExtension = extensions.getByType<NativeToolsExtension>()
+        val includeDirs = project.files(*systemIncludeDirs.toTypedArray(), *selfHeaders.toTypedArray(), cppImplementation)
+                .stableSortedForReproducibility(nativeToolsExtension.reproducibilityPathsMap)
 
         val stubsName = "${defFileName.removeSuffix(".def").split(".").reversed().joinToString(separator = "")}stubs"
         val library = solib(stubsName)
 
-        val linkedStaticLibrariesRelativePaths = cppLink.incoming.artifactView {
-            attributes {
-                attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
-            }
-        }.files
-        val linkedStaticLibrariesAbsolutePaths = project.files(*additionalLinkedStaticLibraries.toTypedArray())
+        val linkedStaticLibraries = project.files(*additionalLinkedStaticLibraries.toTypedArray())
+                .stableSortedForReproducibility(nativeToolsExtension.reproducibilityPathsMap)
 
-        extensions.getByType<NativeToolsExtension>().apply {
-            val workingDir = this.workingDir.asFile.get()
+        nativeToolsExtension.apply {
             val obj = if (HostManager.hostIsMingw) "obj" else "o"
             suffixes {
                 (".c" to ".$obj") {
@@ -268,8 +265,7 @@ open class NativeInteropPlugin : Plugin<Project> {
                             reproducibilityCompilerFlags +
                             ignoreWarningFlags +
                             "-Werror" +
-                            includeDirsAbsolutePaths.map { "-I${it.absolutePath}" } +
-                            includeDirsRelativePaths.map { "-I${it.toRelativeString(workingDir)}" } +
+                            includeDirs.map { "-I${it.path}" } +
                             hostPlatform.clangForJni.hostCompilerArgsForJni
 
                     flags(*cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
@@ -280,8 +276,7 @@ open class NativeInteropPlugin : Plugin<Project> {
                             commonCompilerArgs +
                             reproducibilityCompilerFlags +
                             "-Werror" +
-                            includeDirsAbsolutePaths.map { "-I${it.absolutePath}" } +
-                            includeDirsRelativePaths.map { "-I${it.toRelativeString(workingDir)}" }
+                            includeDirs.map { "-I${it.path}" }
                     flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
                 }
             }
@@ -299,16 +294,8 @@ open class NativeInteropPlugin : Plugin<Project> {
             target(library, *objSet) {
                 tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
                 val ldflags = buildList {
-                    addAll(linkedStaticLibrariesRelativePaths.map {
-                        it.toRelativeString(workingDir)
-                    })
-                    addAll(linkedStaticLibrariesAbsolutePaths.map { it.absolutePath })
-                    cppLink.incoming.artifactView {
-                        attributes {
-                            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
-                        }
-                    }.files.flatMapTo(this) { listOf("-L${it.parentFile.toRelativeString(workingDir)}", "-l${libname(it)}") }
-                    addAll(linkerArgs)
+                    addAll(asLinkFlags(cppLink, reproducibilityPathsMap))
+                    addAll(linkedStaticLibraries.map { it.absolutePath }.sorted())
 
                     if (HostManager.hostIsMac) {
                         // Set install_name to a non-absolute path.
@@ -324,13 +311,16 @@ open class NativeInteropPlugin : Plugin<Project> {
         }
 
         tasks.named(library).configure {
-            inputs.files(linkedStaticLibrariesRelativePaths).withPathSensitivity(PathSensitivity.NONE)
-            inputs.files(linkedStaticLibrariesAbsolutePaths).withPathSensitivity(PathSensitivity.NONE)
+            inputs.files(cppLink.incoming.artifactView {
+                attributes {
+                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
+                }
+            }.files).withPathSensitivity(PathSensitivity.NONE)
+            inputs.files(linkedStaticLibraries).withPathSensitivity(PathSensitivity.NONE)
         }
         tasks.named(obj(stubsName)).configure {
             inputs.dir(bindingsRoot.map { it.dir("c") }).withPathSensitivity(PathSensitivity.RELATIVE) // if C file was generated, need to set up task dependency
-            includeDirsRelativePaths.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
-            includeDirsAbsolutePaths.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
+            includeDirs.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
         }
 
         artifacts {

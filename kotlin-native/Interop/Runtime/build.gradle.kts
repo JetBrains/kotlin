@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.tools.ToolExecutionTask
-import org.jetbrains.kotlin.tools.libname
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -56,17 +55,10 @@ native {
 
     target(library, objSet) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
-        val dynamicLibs = buildList {
-            cppLink.incoming.artifactView {
-                attributes {
-                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
-                }
-            }.files.flatMapTo(this) { listOf("-L${it.parentFile.toRelativeString(workingDir.asFile.get())}", "-l${libname(it)}") }
-        }
         flags("-shared",
-              "-o",ruleOut(), *ruleInAll(),
-              "${nativeDependencies.libffiPath}/lib/libffi.$lib",
-                *dynamicLibs.toTypedArray())
+                "-o",ruleOut(), *ruleInAll(),
+                "${nativeDependencies.libffiPath}/lib/libffi.$lib",
+                *asLinkFlags(cppLink, reproducibilityPathsMap).toTypedArray())
 
         if (HostManager.hostIsMac) {
             // Set install_name to a non-absolute path.

@@ -76,7 +76,7 @@ sealed interface ToolArg {
         val inputRelativePaths = files.elements.zip(workingDir) { files, base ->
             files.map {
                 it.asFile.toRelativeString(base.asFile)
-            }
+            }.sorted()
         }
 
         override fun render() = inputRelativePaths.get()
@@ -264,12 +264,15 @@ open class NativeToolsExtension(val project: Project) {
             }
         }
 
-    val reproducibilityCompilerFlags: Array<String>
-        get() = arrayOf(
-                "-ffile-prefix-map=${workingDir.asFile.get()}=.",
-                "-ffile-prefix-map=${nativeDependenciesExtension.nativeDependenciesRoot}=NATIVE_DEPS",
-                "-ffile-prefix-map=${jdkDir}=JDK", // Not all users depend on it, but keep it just in case.
+    val reproducibilityPathsMap: Map<File, String>
+        get() = mapOf(
+                workingDir.asFile.get() to ".",
+                nativeDependenciesExtension.nativeDependenciesRoot to "NATIVE_DEPS",
+                jdkDir to "JDK", // Not all users depend on it, but keep it just in case.
         )
+
+    val reproducibilityCompilerFlags: Array<String>
+        get() = reproducibilityPathsMap.map { "-ffile-prefix-map=${it.key}=${it.value}" }.toTypedArray()
 
     val sourceSets = SourceSets(project, this, mutableMapOf<String, SourceSet>())
     val toolPatterns = ToolConfigurationPatterns(this, mutableMapOf<Pair<String, String>, ToolPatternConfiguration>())
