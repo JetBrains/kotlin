@@ -1,0 +1,88 @@
+FILE: postponedAtoms.kt
+    context(func: R|() -> kotlin/Unit|)
+    public final fun simple(): R|kotlin/Unit| {
+    }
+    context(func: R|(kotlin/String) -> kotlin/Unit|)
+    public final fun oneParameter(): R|kotlin/Unit| {
+    }
+    public final fun doNothing(): R|kotlin/Unit| {
+    }
+    public final fun acceptString(s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun acceptInt(i: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    context(f: R|(T) -> T|)
+    public final fun <T> genericLambda(t: R|T|): R|T| {
+        ^genericLambda R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|T|>|(R|<local>/t|)
+    }
+    public final fun stringIdentity(s: R|kotlin/String|): R|kotlin/String| {
+        ^stringIdentity R|<local>/s|
+    }
+    public final fun test(): R|kotlin/Unit| {
+        context(simple@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simple Unit
+        }
+        ) R|/simple|()
+        context(::R|/doNothing|) R|/simple|()
+        context(simple@fun <anonymous>(it: <ERROR TYPE REF: Cannot infer type for parameter it>): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simple Unit
+        }
+        ) R|/simple<Inapplicable(INAPPLICABLE): /simple>#|(simple@fun <anonymous>(it: <ERROR TYPE REF: Cannot infer type for parameter it>): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simple Unit
+        }
+        )
+        context(simple@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simple Unit
+        }
+        ) R|/simple<Inapplicable(INAPPLICABLE): /simple>#|(simple@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simple Unit
+        }
+        )
+        context(simple@fun <anonymous>(s: R|kotlin/String|, i: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simple Unit
+        }
+        ) R|/simple<Inapplicable(INAPPLICABLE): /simple>#|(simple@fun <anonymous>(s: R|kotlin/String|, i: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@simple Unit
+        }
+        )
+        context(::<Inapplicable(INAPPLICABLE): /stringIdentity>#) R|/simple<Inapplicable(INAPPLICABLE): /simple>#|(::<Inapplicable(INAPPLICABLE): /stringIdentity>#)
+        context(oneParameter@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=Unknown>  {
+            R|<local>/it|.R|kotlin/String.length|
+        }
+        ) R|/oneParameter|()
+        context(oneParameter@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=Unknown>  {
+            R|<local>/it|.R|kotlin/String.length|
+        }
+        ) R|/oneParameter|()
+        context(oneParameter@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=Unknown>  {
+            R|<local>/it|.R|kotlin/String.length|
+        }
+        ) R|/oneParameter|()
+        context(::R|/acceptString|) R|/oneParameter|()
+        context(::R|/stringIdentity|) R|/oneParameter|()
+        context(oneParameter@fun <anonymous>(it: R|kotlin/String|, x: <ERROR TYPE REF: Cannot infer type for parameter x>): R|kotlin/Unit| <inline=Unknown>  {
+            R|<local>/it|.R|kotlin/String.length|
+        }
+        ) R|/oneParameter<Inapplicable(INAPPLICABLE): /oneParameter>#|(oneParameter@fun <anonymous>(it: R|kotlin/String|, x: <ERROR TYPE REF: Cannot infer type for parameter x>): R|kotlin/Unit| <inline=Unknown>  {
+            R|<local>/it|.R|kotlin/String.length|
+        }
+        )
+        context(oneParameter@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@oneParameter Unit
+        }
+        ) R|/oneParameter<Inapplicable(INAPPLICABLE): /oneParameter>#|(oneParameter@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@oneParameter Unit
+        }
+        )
+        context(::<Inapplicable(INAPPLICABLE): /acceptInt>#) R|/oneParameter<Inapplicable(INAPPLICABLE): /oneParameter>#|(::<Inapplicable(INAPPLICABLE): /acceptInt>#)
+        context(genericLambda@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+            ^ R|<local>/it|.R|kotlin/String.length|.R|kotlin/Int.toString|()
+        }
+        ) R|/genericLambda|<R|kotlin/String|>(String())
+        context(::R|/stringIdentity|) R|/genericLambda|<R|kotlin/String|>(String())
+        context(genericLambda@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+            ^ R|<local>/it|.R|kotlin/String.length|.R|kotlin/Int.toString|()
+        }
+        ) R|/genericLambda|<R|kotlin/String|>(String())
+        context(::R|/stringIdentity|) R|/genericLambda|<R|kotlin/String|>(String())
+    }
