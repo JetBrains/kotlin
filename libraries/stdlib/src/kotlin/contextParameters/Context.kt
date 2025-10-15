@@ -39,7 +39,7 @@ public inline fun <T, R> context(with: T, block: context(T) () -> R): R {
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
-public inline fun <A, B, Result> context(a: A, b: B, block: context(A, B) () -> Result): Result {
+public inline fun <A, B, R> context(a: A, b: B, block: context(A, B) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
@@ -57,7 +57,7 @@ public inline fun <A, B, Result> context(a: A, b: B, block: context(A, B) () -> 
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
-public inline fun <A, B, C, Result> context(a: A, b: B, c: C, block: context(A, B, C) () -> Result): Result {
+public inline fun <A, B, C, R> context(a: A, b: B, c: C, block: context(A, B, C) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
@@ -75,7 +75,7 @@ public inline fun <A, B, C, Result> context(a: A, b: B, c: C, block: context(A, 
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
-public inline fun <A, B, C, D, Result> context(a: A, b: B, c: C, d: D, block: context(A, B, C, D) () -> Result): Result {
+public inline fun <A, B, C, D, R> context(a: A, b: B, c: C, d: D, block: context(A, B, C, D) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
@@ -93,7 +93,7 @@ public inline fun <A, B, C, D, Result> context(a: A, b: B, c: C, d: D, block: co
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
-public inline fun <A, B, C, D, E, Result> context(a: A, b: B, c: C, d: D, e: E, block: context(A, B, C, D, E) () -> Result): Result {
+public inline fun <A, B, C, D, E, R> context(a: A, b: B, c: C, d: D, e: E, block: context(A, B, C, D, E) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
@@ -111,7 +111,7 @@ public inline fun <A, B, C, D, E, Result> context(a: A, b: B, c: C, d: D, e: E, 
  */
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
-public inline fun <A, B, C, D, E, F, Result> context(a: A, b: B, c: C, d: D, e: E, f: F, block: context(A, B, C, D, E, F) () -> Result): Result {
+public inline fun <A, B, C, D, E, F, R> context(a: A, b: B, c: C, d: D, e: E, f: F, block: context(A, B, C, D, E, F) () -> R): R {
     kotlin.contracts.contract {
         callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }

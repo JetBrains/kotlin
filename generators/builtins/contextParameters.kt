@@ -18,7 +18,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
             generateSingleFunction(
                 parameterNames.map { it.toString() },
                 parameterNames.map { it.uppercase() },
-                "Result"
+                "R"
             )
         }
     }
