@@ -224,18 +224,21 @@ open class NativeInteropPlugin : Plugin<Project> {
         val cppImplementation = configurations.getByName(CPP_IMPLEMENTATION_CONFIGURATION)
         val cppLink = configurations.getByName(CPP_LINK_CONFIGURATION)
 
-        val includeDirs = project.files(*systemIncludeDirs.toTypedArray(), *selfHeaders.toTypedArray(), cppImplementation)
+        val includeDirsAbsolutePaths = project.files(*systemIncludeDirs.toTypedArray())
+        val includeDirsRelativePaths = project.files(*selfHeaders.toTypedArray(), cppImplementation)
 
         val stubsName = "${defFileName.removeSuffix(".def").split(".").reversed().joinToString(separator = "")}stubs"
         val library = solib(stubsName)
 
-        val linkedStaticLibraries = project.files(cppLink.incoming.artifactView {
+        val linkedStaticLibrariesRelativePaths = cppLink.incoming.artifactView {
             attributes {
                 attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
             }
-        }.files, *additionalLinkedStaticLibraries.toTypedArray())
+        }.files
+        val linkedStaticLibrariesAbsolutePaths = project.files(*additionalLinkedStaticLibraries.toTypedArray())
 
         extensions.getByType<NativeToolsExtension>().apply {
+            val workingDir = this.workingDir.asFile.get()
             val obj = if (HostManager.hostIsMingw) "obj" else "o"
             suffixes {
                 (".c" to ".$obj") {
@@ -264,14 +267,19 @@ open class NativeInteropPlugin : Plugin<Project> {
                             commonCompilerArgs +
                             ignoreWarningFlags +
                             "-Werror" +
-                            includeDirs.map { "-I${it.absolutePath}" } +
+                            includeDirsAbsolutePaths.map { "-I${it.absolutePath}" } +
+                            includeDirsRelativePaths.map { "-I${it.toRelativeString(workingDir)}" } +
                             hostPlatform.clangForJni.hostCompilerArgsForJni
 
                     flags(*cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
                 }
                 (".cpp" to ".$obj") {
                     tool(*hostPlatform.clang.clangCXX("").toTypedArray())
-                    val cxxflags = cppCompilerArgs + commonCompilerArgs + "-Werror" + includeDirs.map { "-I${it.absolutePath}" }
+                    val cxxflags = cppCompilerArgs +
+                            commonCompilerArgs +
+                            "-Werror" +
+                            includeDirsAbsolutePaths.map { "-I${it.absolutePath}" } +
+                            includeDirsRelativePaths.map { "-I${it.toRelativeString(workingDir)}" }
                     flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
                 }
             }
@@ -289,12 +297,15 @@ open class NativeInteropPlugin : Plugin<Project> {
             target(library, *objSet) {
                 tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
                 val ldflags = buildList {
-                    addAll(linkedStaticLibraries.map { it.absolutePath })
+                    addAll(linkedStaticLibrariesRelativePaths.map {
+                        it.toRelativeString(workingDir)
+                    })
+                    addAll(linkedStaticLibrariesAbsolutePaths.map { it.absolutePath })
                     cppLink.incoming.artifactView {
                         attributes {
                             attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
                         }
-                    }.files.flatMapTo(this) { listOf("-L${it.parentFile.absolutePath}", "-l${libname(it)}") }
+                    }.files.flatMapTo(this) { listOf("-L${it.parentFile.toRelativeString(workingDir)}", "-l${libname(it)}") }
                     addAll(linkerArgs)
 
                     if (HostManager.hostIsMac) {
@@ -311,11 +322,13 @@ open class NativeInteropPlugin : Plugin<Project> {
         }
 
         tasks.named(library).configure {
-            inputs.files(linkedStaticLibraries).withPathSensitivity(PathSensitivity.NONE)
+            inputs.files(linkedStaticLibrariesRelativePaths).withPathSensitivity(PathSensitivity.NONE)
+            inputs.files(linkedStaticLibrariesAbsolutePaths).withPathSensitivity(PathSensitivity.NONE)
         }
         tasks.named(obj(stubsName)).configure {
             inputs.dir(bindingsRoot.map { it.dir("c") }).withPathSensitivity(PathSensitivity.RELATIVE) // if C file was generated, need to set up task dependency
-            includeDirs.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
+            includeDirsRelativePaths.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
+            includeDirsAbsolutePaths.forEach { inputs.dir(it).withPathSensitivity(PathSensitivity.RELATIVE) }
         }
 
         artifacts {

@@ -105,8 +105,8 @@ native {
         (".cc" to ".$obj") {
             tool(*hostPlatform.clang.clangCXX("").toTypedArray())
             flags(
-                    "-I$breakpadRootAsFile/src",
-                    "-I${projectDir.resolve("src/main/include")}",
+                    "-I${breakpadRootAsFile.toRelativeString(workingDir.asFile.get())}/src",
+                    "-Isrc/main/include",
                     "-DHAVE_MACH_O_NLIST_H",
                     "-DHAVE_CONFIG_H",
                     "-DBP_LOGGING_INCLUDE=\"loggingDisabled.h\"",

@@ -8,7 +8,17 @@ package org.jetbrains.kotlin.tools
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -19,7 +29,6 @@ import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMingw
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.addAll
 import kotlin.collections.drop
@@ -42,25 +51,75 @@ open class NativePlugin : Plugin<Project> {
     }
 }
 
-abstract class ToolExecutionTask @Inject constructor(private val execOperations: ExecOperations): DefaultTask() {
-    @get:OutputFile
-    abstract var output: File
+private const val RULE_OUT_PLACEHOLDER = "@@OUTPUT@@"
+private const val RULE_IN_PLACEHOLDER = "@@INPUT@@"
 
-    @get:InputFiles
-    abstract var input: List<File>
+sealed interface ToolArg {
+    fun render(): List<String>
+
+    class Plain(@get:Input val value: String) : ToolArg {
+        override fun render() = listOf(value)
+    }
+
+    class RuleOut(@get:OutputFile val file: Provider<RegularFile>) : ToolArg {
+        override fun render() = listOf(file.get().asFile.absolutePath)
+    }
+
+    class RuleIn(
+            @get:InputFiles
+            @get:PathSensitive(PathSensitivity.NONE) // computed manually relative to workingDir
+            val files: FileCollection,
+            @get:Internal("used to compute relative input file")
+            val workingDir: Provider<Directory>
+    ) : ToolArg {
+        @get:Input
+        val inputRelativePaths = files.elements.zip(workingDir) { files, base ->
+            files.map {
+                it.asFile.toRelativeString(base.asFile)
+            }
+        }
+
+        override fun render() = inputRelativePaths.get()
+    }
+}
+
+open class ToolExecutionTask @Inject constructor(
+        private val execOperations: ExecOperations,
+        objectFactory: ObjectFactory,
+) : DefaultTask() {
+    @get:Internal("handled by processedArgs")
+    val output: RegularFileProperty = objectFactory.fileProperty()
+
+    @get:Internal("handled by processedArgs")
+    val input: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @get:Input
-    abstract var cmd: String
+    val cmd: Property<String> = objectFactory.property(String::class)
 
-    @get:Input
-    abstract var args: List<String>
+    @get:Internal("handled by processedArgs")
+    val args: ListProperty<String> = objectFactory.listProperty(String::class)
+
+    @get:Nested
+    protected val processedArgs: Provider<List<ToolArg>> = args.map {
+        it.map { arg ->
+            when (arg) {
+                RULE_OUT_PLACEHOLDER -> ToolArg.RuleOut(output)
+                RULE_IN_PLACEHOLDER -> ToolArg.RuleIn(input, workingDir)
+                else -> ToolArg.Plain(arg)
+            }
+        }
+    }
+
+    @get:Internal("used to compute relative input files")
+    val workingDir: DirectoryProperty = objectFactory.directoryProperty()
 
     @TaskAction
     fun action() {
-        if (output.exists()) output.delete()
+        output.asFile.get().delete()
         execOperations.exec {
-            executable(cmd)
-            args(*this@ToolExecutionTask.args.toTypedArray())
+            executable(cmd.get())
+            args = processedArgs.get().flatMap { it.render() }
+            workingDir = this@ToolExecutionTask.workingDir.get().asFile
         }
     }
 }
@@ -68,9 +127,9 @@ abstract class ToolExecutionTask @Inject constructor(private val execOperations:
 class ToolPatternImpl(val extension: NativeToolsExtension, val output:String, vararg val input: String):ToolPattern {
     val tool = mutableListOf<String>()
     val args = mutableListOf<String>()
-    override fun ruleOut(): String = output
-    override fun ruleInFirst(): String = input.first()
-    override fun ruleInAll(): Array<String> = arrayOf(*input)
+    override fun ruleOut(): String = RULE_OUT_PLACEHOLDER
+    override fun ruleInFirst(): String = RULE_IN_PLACEHOLDER
+    override fun ruleInAll(): Array<String> = arrayOf(RULE_IN_PLACEHOLDER)
 
     override fun flags(vararg args: String) {
         this.args.addAll(args)
@@ -84,19 +143,16 @@ class ToolPatternImpl(val extension: NativeToolsExtension, val output:String, va
 
     fun configure(task: ToolExecutionTask, configureDepencies:Boolean) {
         extension.cleanupFiles += output
-        task.input = input.map {
-            extension.project.file(it)
-        }
+        task.input.from(*input)
         val nativeDependenciesExtension = extension.project.extensions.getByType<NativeDependenciesExtension>()
         task.dependsOn(nativeDependenciesExtension.hostPlatformDependency)
         task.dependsOn(nativeDependenciesExtension.llvmDependency)
         if (configureDepencies)
             task.input.forEach { task.dependsOn(it.name) }
-        val file = extension.project.file(output)
-        file.parentFile.mkdirs()
-        task.output = file
+        task.output = extension.project.file(output)
         task.cmd = tool.first()
         task.args = listOf(*tool.drop(1).toTypedArray(), *args.toTypedArray())
+        task.workingDir = extension.workingDir
     }
 }
 
@@ -193,6 +249,8 @@ open class NativeToolsExtension(val project: Project) {
 
     val llvmDir by nativeDependenciesExtension::llvmPath
     val hostPlatform by nativeDependenciesExtension::hostPlatform
+
+    val workingDir: DirectoryProperty = project.objects.directoryProperty().convention(project.layout.projectDirectory)
 
     val sourceSets = SourceSets(project, this, mutableMapOf<String, SourceSet>())
     val toolPatterns = ToolConfigurationPatterns(this, mutableMapOf<Pair<String, String>, ToolPatternConfiguration>())
