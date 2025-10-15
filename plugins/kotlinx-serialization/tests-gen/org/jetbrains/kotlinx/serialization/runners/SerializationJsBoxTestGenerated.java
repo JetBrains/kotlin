@@ -84,6 +84,12 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   }
 
   @Test
+  @TestMetadata("customFixedNonSerializableArguments.kt")
+  public void testCustomFixedNonSerializableArguments() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/customFixedNonSerializableArguments.kt");
+  }
+
+  @Test
   @TestMetadata("delegatedInterface.kt")
   public void testDelegatedInterface() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/delegatedInterface.kt");
