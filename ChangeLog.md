@@ -1,3 +1,11 @@
+## 2.2.21-RC2
+
+### Tools. Gradle. Native
+
+- [`KT-81134`](https://youtrack.jetbrains.com/issue/KT-81134) Native: Gradle configuration failure likely related to Klibs cross-compilation
+- [`KT-81510`](https://youtrack.jetbrains.com/issue/KT-81510) `commonizeCInterop` exception with 'kotlinNativeBundleConfiguration' not found
+
+
 ## 2.2.21-RC
 
 ### Backend. Wasm
