@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-73909
 // WITH_EXTRA_CHECKERS
 // LANGUAGE: +ContextParameters
@@ -5,31 +6,31 @@
 
 import kotlin.concurrent.*
 
-fun foo(): AtomicInt? = null
+fun foo(): <!NATIVE_SPECIFIC_ATOMIC!>AtomicInt?<!> = null
 
 private fun fooImpl(): AtomicInt? = null
 
-fun AtomicLong.bar() {}
+fun <!NATIVE_SPECIFIC_ATOMIC!>AtomicLong<!>.bar() {}
 
-class Owner(<!UNUSED_PARAMETER!>l<!>: AtomicLong) {
-    val AtomicReference<*>.r: Any? get() = null
+class Owner(l: <!NATIVE_SPECIFIC_ATOMIC!>AtomicLong<!>) {
+    val <!NATIVE_SPECIFIC_ATOMIC!>AtomicReference<*><!>.r: Any? get() = null
 
-    fun baz(arg: <!OPT_IN_USAGE_ERROR!>AtomicArray<!><*>) = <!OPT_IN_USAGE_ERROR!>arg<!>
+    fun baz(arg: <!NATIVE_SPECIFIC_ATOMIC, OPT_IN_USAGE_ERROR!>AtomicArray<*><!>) = <!OPT_IN_USAGE_ERROR!>arg<!>
 
     internal fun bazImpl(arg: AtomicLong) = arg
 
-    var ai: AtomicInt? = null
-        set(<!UNUSED_PARAMETER!>arg<!>: AtomicInt?) {}
+    var ai: <!NATIVE_SPECIFIC_ATOMIC!>AtomicInt?<!> = null
+        set(arg: <!REDUNDANT_SETTER_PARAMETER_TYPE!>AtomicInt?<!>) {}
 }
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(c: <!DEBUG_INFO_MISSING_UNRESOLVED!>AtomicIntArray<!>)<!>
+context(c: <!NATIVE_SPECIFIC_ATOMIC, OPT_IN_USAGE_ERROR!>AtomicIntArray<!>)
 fun withContext() {
     val <!UNUSED_VARIABLE!>i<!>: AtomicInt? = null
 
-    val <!UNUSED_VARIABLE!>f<!> = fun(<!UNUSED_ANONYMOUS_PARAMETER!>arg<!>: AtomicLong?): AtomicLong? = null
+    val <!UNUSED_VARIABLE!>f<!> = fun(arg: AtomicLong?): AtomicLong? = null
 
     val <!UNUSED_VARIABLE!>l<!> = { arg: <!OPT_IN_USAGE_ERROR!>AtomicIntArray<!> -> <!OPT_IN_USAGE_ERROR!>arg<!> }
 }
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(c: <!DEBUG_INFO_MISSING_UNRESOLVED!>AtomicLongArray<!>)<!>
+context(c: <!NATIVE_SPECIFIC_ATOMIC, OPT_IN_USAGE_ERROR!>AtomicLongArray<!>)
 val some: Int get() = 0

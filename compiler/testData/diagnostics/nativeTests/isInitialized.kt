@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
 // LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // FILE: stdlibInternal.kt
@@ -51,15 +52,15 @@ open class Foo : Base {
 
     fun onLiteral() {
         val p = this::x
-        p.<!LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL_WARNING!>isInitialized<!>
+        p.<!LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL!>isInitialized<!>
     }
 
     fun onNonLateinit() {
-        this::nonLateInit.<!LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT_WARNING!>isInitialized<!>
+        this::nonLateInit.<!LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT!>isInitialized<!>
     }
 
     inline fun inlineFun() {
-        this::x.<!LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION_WARNING!>isInitialized<!>
+        this::x.<!LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION!>isInitialized<!>
 
         object {
             val z = this@Foo::x.isInitialized
@@ -78,22 +79,22 @@ open class Foo : Base {
 }
 
 fun onNonAccessible() {
-    Foo()::x.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING!>isInitialized<!>
+    Foo()::x.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>isInitialized<!>
 }
 
 fun onNonLateinit() {
-    Foo()::nonLateInit.<!LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT_WARNING!>isInitialized<!>
+    Foo()::nonLateInit.<!LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT!>isInitialized<!>
 }
 
 object Unrelated {
     fun onNonAccessible() {
-        Foo()::x.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING!>isInitialized<!>
+        Foo()::x.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>isInitialized<!>
     }
 }
 
 class FooImpl : Foo() {
     fun onNonAccessible() {
-        this::x.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING!>isInitialized<!>
+        this::x.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>isInitialized<!>
     }
 }
 
@@ -101,6 +102,6 @@ class FooImpl : Foo() {
 
 class OtherFooImpl : Foo() {
     fun onNonAccessible() {
-        this::x.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING!>isInitialized<!>
+        this::x.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>isInitialized<!>
     }
 }

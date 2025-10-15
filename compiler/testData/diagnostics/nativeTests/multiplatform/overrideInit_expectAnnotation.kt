@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
@@ -12,18 +13,18 @@ import platform.Foundation.*
 
 @Target(AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
-expect annotation class <!NO_ACTUAL_FOR_EXPECT!>MyOverrideInit<!>
+expect annotation class MyOverrideInit
 
 class DoesNotOverride : NSAssertionHandler {
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
-    @<!NO_CONSTRUCTOR!>MyOverrideInit<!>
-    constructor(x: Int) { }
+    <!CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    <!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>@MyOverrideInit<!>
+    constructor(x: Int) { }<!>
 }
 
 class OverridesOverriden : NSString {
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
-    @<!NO_CONSTRUCTOR!>MyOverrideInit<!>
-    constructor(coder: NSCoder) { }
+    <!CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    <!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>@MyOverrideInit<!>
+    constructor(coder: NSCoder) { }<!>
 
     @Suppress("OVERRIDE_DEPRECATION")
     override fun initWithCoder(coder: NSCoder): String? = "x"

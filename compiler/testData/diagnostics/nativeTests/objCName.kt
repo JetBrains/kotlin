@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: +ContextParameters
 // FILE: kotlin.kt
 package kotlin.native
@@ -18,7 +19,7 @@ open class KotlinClass {
     @ObjCName("objCProperty")
     open var kotlinProperty: Int = 0
     @ObjCName(swiftName = "swiftFunction")
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(@<!DEBUG_INFO_MISSING_UNRESOLVED!>ObjCName<!>("objCContext") c: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+    context(@ObjCName("objCContext") c: Int)
     open fun @receiver:ObjCName("objCReceiver") Int.kotlinFunction(
         @ObjCName("objCParam") kotlinParam: Int
     ): Int = this + kotlinParam
@@ -29,7 +30,7 @@ class KotlinSubClass: KotlinClass() {
     <!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCProperty")<!>
     override var kotlinProperty: Int = 1
     <!INAPPLICABLE_OBJC_NAME!>@ObjCName(swiftName = "swiftFunction")<!>
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(@<!DEBUG_INFO_MISSING_UNRESOLVED!>ObjCName<!>("objCContext") c: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+    context(<!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCContext")<!> c: Int)
     override fun <!INAPPLICABLE_OBJC_NAME!>@receiver:ObjCName("objCReceiver")<!> Int.kotlinFunction(
         <!INAPPLICABLE_OBJC_NAME!>@ObjCName("objCParam")<!> kotlinParam: Int
     ): Int = this + kotlinParam * 2
@@ -210,5 +211,5 @@ private const val objcName = "nonLiteralArgsObjC"
 )
 val nonLiteralArgs: Int = 0
 
-@ObjCName("invalidArgsObjC", <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>, <!TYPE_MISMATCH!>"not a boolean"<!>)
+@ObjCName("invalidArgsObjC", <!ARGUMENT_TYPE_MISMATCH!>false<!>, <!ARGUMENT_TYPE_MISMATCH!>"not a boolean"<!>)
 val invalidArgs: Int = 0

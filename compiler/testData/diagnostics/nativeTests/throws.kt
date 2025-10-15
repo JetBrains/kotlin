@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-65105
 
 // FILE: kotlin.kt
@@ -43,10 +44,10 @@ fun throwsEmptyParens() {}
 fun throwsUnresolved() {}
 
 class Orphan : <!UNRESOLVED_REFERENCE!>MyUnresolvedParent<!>
-@Throws(<!TYPE_MISMATCH!>Orphan::class<!>)
+@Throws(<!ARGUMENT_TYPE_MISMATCH!>Orphan::class<!>)
 fun throwsClassWithUnresolvedParent() {}
 
-@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
+@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
 fun throwsNamedUnresolved() {}
 
 <!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = [])<!>
@@ -288,7 +289,7 @@ suspend fun suspendDoesNotThrowCancellationException2() {}
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
 suspend fun suspendThrowsUnresolved() {}
 
-@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
+@Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)
 suspend fun suspendThrowsNamedUnresolved() {}
 
 <!THROWS_LIST_EMPTY!>@Throws(exceptionClasses = [])<!>
@@ -318,7 +319,7 @@ suspend fun suspendThrowsSpreadArrayOfUnresolved() {}
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>UEAlias::class<!>)
 suspend fun suspendThrowsTypealiasToUnresolved() {}
 
-<!MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND!>@Throws(<!TYPE_MISMATCH!>Orphan::class<!>)<!>
+@Throws(<!ARGUMENT_TYPE_MISMATCH!>Orphan::class<!>)
 suspend fun suspendThrowsClassWithUnresolvedParent() {}
 
 @Throws(Exception1::class, CancellationException::class)

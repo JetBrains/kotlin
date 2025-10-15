@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LATEST_LV_DIFFERENCE
 // WITH_STDLIB
 
@@ -49,7 +50,7 @@ interface FwdProtocol
 // FILE: main.kt
 
 // this inspections differs in K1/K2, but unrelated to what is tested in this test
-@file:Suppress("UNUSED_PARAMETER", "UNUSED_EXPRESSION", "UNUSED_VARIABLE", "INCOMPATIBLE_TYPES")
+@file:Suppress("UNUSED_PARAMETER", "UNUSED_EXPRESSION", "UNUSED_VARIABLE", <!ERROR_SUPPRESSION!>"INCOMPATIBLE_TYPES"<!>)
 
 fun testUnckeckedAsFromAny(x: Any) {
     <!UNCHECKED_CAST_TO_FORWARD_DECLARATION!>x as? cnames.structs.FwdStruct<!>
@@ -69,8 +70,8 @@ fun testIs(x: Any) : Int {
     }
 }
 
-fun testIs2(x: lib.FwdStruct) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is cnames.structs.FwdStruct<!>
-fun testIs3(x: lib.FwdObjcClass) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is objcnames.classes.FwdObjcClass<!>
+fun testIs2(x: lib.FwdStruct) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, IMPOSSIBLE_IS_CHECK_WARNING!>x is cnames.structs.FwdStruct<!>
+fun testIs3(x: lib.FwdObjcClass) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION, IMPOSSIBLE_IS_CHECK_WARNING!>x is objcnames.classes.FwdObjcClass<!>
 fun testIs4(x: lib.FwdProtocol) = <!CANNOT_CHECK_FOR_FORWARD_DECLARATION!>x is objcnames.protocols.FwdProtocol<!>
 
 

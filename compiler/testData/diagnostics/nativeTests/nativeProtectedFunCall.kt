@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-58623
 
 package pack
@@ -11,7 +12,7 @@ open class ProtectedInsideInlineError : ProtectedInsideInlineParent() {
     protected var protectedVar = 0
     protected fun protectedFun() = 0
 
-    inline fun publicInlineUserFun(): Int {
+    <!NOTHING_TO_INLINE!>inline<!> fun publicInlineUserFun(): Int {
         println(<!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentVar<!>)
         <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedFun<!>()
         <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentFun<!>()
@@ -20,5 +21,5 @@ open class ProtectedInsideInlineError : ProtectedInsideInlineParent() {
 
     inline var publicInlineUserVal: Int
         get() = <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedFun<!>() + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentFun<!>()
-        set(<!UNUSED_PARAMETER!>value<!>) { <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedFun<!>() + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentFun<!>() }
+        set(value) { <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedFun<!>() + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentVar<!> + <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>protectedParentFun<!>() }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-77986, KT-25341
 
@@ -17,7 +18,7 @@ fun main() {
 inline fun test2(crossinline onInit: () -> Unit) {
     object {
         fun foo() {
-            <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local(val x: Int) {
+            class Local(val x: Int) {
                 init { onInit() }
             }
             Local(1)

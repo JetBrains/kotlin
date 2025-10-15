@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: -ObjCSignatureOverrideAnnotation
 // WITH_PLATFORM_LIBS
 
@@ -17,8 +18,8 @@ class Delelegate1 : CBCentralManagerDelegateProtocol, NSObject() {
     ): Unit = TODO()
 
     override fun centralManager(central: CBCentralManager, didConnectPeripheral: CBPeripheral): Unit = TODO()
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
 
     override fun centralManager(
         central: CBCentralManager,
@@ -51,8 +52,8 @@ class Delegate2 : CBCentralManagerDelegateProtocol, NSObject() {
 
     override fun centralManagerDidUpdateState(central: CBCentralManager): Unit = TODO()
 
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
 }
 
 class Delegate3 : CBCentralManagerDelegateProtocol, NSObject() {
@@ -75,8 +76,8 @@ class Delegate3 : CBCentralManagerDelegateProtocol, NSObject() {
 
     override fun centralManagerDidUpdateState(central: CBCentralManager): Unit = TODO()
 
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
 }
 
 class Delegate4 : CBCentralManagerDelegateProtocol, NSObject() {
@@ -99,8 +100,8 @@ class Delegate4 : CBCentralManagerDelegateProtocol, NSObject() {
 
     override fun centralManagerDidUpdateState(central: CBCentralManager): Unit = TODO()
 
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
 }
 
 class Delegate5 : CBCentralManagerDelegateProtocol, NSObject() {
@@ -123,8 +124,8 @@ class Delegate5 : CBCentralManagerDelegateProtocol, NSObject() {
 
     override fun centralManagerDidUpdateState(central: CBCentralManager): Unit = TODO()
 
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
-    <!CONFLICTING_OVERLOADS!>override fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
 }
 

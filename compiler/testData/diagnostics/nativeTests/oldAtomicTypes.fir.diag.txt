@@ -1,35 +1,35 @@
-/oldAtomicTypes.fir.kt:(146,156): warning: Native-specific atomic type 'kotlin.concurrent.AtomicInt' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicInt' instead.
+/oldAtomicTypes.kt:(163,173): warning: Native-specific atomic type 'kotlin.concurrent.AtomicInt' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicInt' instead.
 
-/oldAtomicTypes.fir.kt:(211,221): warning: Native-specific atomic type 'kotlin.concurrent.AtomicLong' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicLong' instead.
+/oldAtomicTypes.kt:(228,238): warning: Native-specific atomic type 'kotlin.concurrent.AtomicLong' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicLong' instead.
 
-/oldAtomicTypes.fir.kt:(247,257): warning: Native-specific atomic type 'kotlin.concurrent.AtomicLong' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicLong' instead.
+/oldAtomicTypes.kt:(264,274): warning: Native-specific atomic type 'kotlin.concurrent.AtomicLong' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicLong' instead.
 
-/oldAtomicTypes.fir.kt:(269,287): warning: Native-specific atomic type 'kotlin.concurrent.AtomicReference' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicReference' instead.
+/oldAtomicTypes.kt:(286,304): warning: Native-specific atomic type 'kotlin.concurrent.AtomicReference' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicReference' instead.
 
-/oldAtomicTypes.fir.kt:(327,341): warning: Native-specific atomic type 'kotlin.concurrent.AtomicArray' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicArray' instead.
+/oldAtomicTypes.kt:(344,358): warning: Native-specific atomic type 'kotlin.concurrent.AtomicArray' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicArray' instead.
 
-/oldAtomicTypes.fir.kt:(327,341): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+/oldAtomicTypes.kt:(344,358): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
 
-/oldAtomicTypes.fir.kt:(345,348): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+/oldAtomicTypes.kt:(362,365): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
 
-/oldAtomicTypes.fir.kt:(411,421): warning: Native-specific atomic type 'kotlin.concurrent.AtomicInt' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicInt' instead.
+/oldAtomicTypes.kt:(428,438): warning: Native-specific atomic type 'kotlin.concurrent.AtomicInt' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicInt' instead.
 
-/oldAtomicTypes.fir.kt:(446,456): warning: Redundant setter parameter type.
+/oldAtomicTypes.kt:(463,473): warning: Redundant setter parameter type.
 
-/oldAtomicTypes.fir.kt:(475,489): warning: Native-specific atomic type 'kotlin.concurrent.AtomicIntArray' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicIntArray' instead.
+/oldAtomicTypes.kt:(492,506): warning: Native-specific atomic type 'kotlin.concurrent.AtomicIntArray' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicIntArray' instead.
 
-/oldAtomicTypes.fir.kt:(475,489): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+/oldAtomicTypes.kt:(492,506): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
 
-/oldAtomicTypes.fir.kt:(519,520): warning: Variable is unused.
+/oldAtomicTypes.kt:(536,537): warning: Variable is unused.
 
-/oldAtomicTypes.fir.kt:(549,550): warning: Variable is unused.
+/oldAtomicTypes.kt:(566,567): warning: Variable is unused.
 
-/oldAtomicTypes.fir.kt:(604,605): warning: Variable is unused.
+/oldAtomicTypes.kt:(621,622): warning: Variable is unused.
 
-/oldAtomicTypes.fir.kt:(615,629): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+/oldAtomicTypes.kt:(632,646): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
 
-/oldAtomicTypes.fir.kt:(633,636): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+/oldAtomicTypes.kt:(650,653): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
 
-/oldAtomicTypes.fir.kt:(653,668): warning: Native-specific atomic type 'kotlin.concurrent.AtomicLongArray' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicLongArray' instead.
+/oldAtomicTypes.kt:(670,685): warning: Native-specific atomic type 'kotlin.concurrent.AtomicLongArray' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicLongArray' instead.
 
-/oldAtomicTypes.fir.kt:(653,668): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+/oldAtomicTypes.kt:(670,685): error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'

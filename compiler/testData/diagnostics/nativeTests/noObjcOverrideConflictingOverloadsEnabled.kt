@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: +ObjCSignatureOverrideAnnotation
 // API_VERSION: 2.0
 // WITH_PLATFORM_LIBS
@@ -129,10 +130,10 @@ class Delegate5 : CBCentralManagerDelegateProtocol, NSObject() {
 
     override fun centralManagerDidUpdateState(central: CBCentralManager): Unit = TODO()
 
-    <!CONFLICTING_OVERLOADS!>@ObjCSignatureOverride
-    override fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
-    <!CONFLICTING_OVERLOADS!>@ObjCSignatureOverride
-    override fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    @ObjCSignatureOverride
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
+    @ObjCSignatureOverride
+    override <!CONFLICTING_OVERLOADS!>fun centralManager(central: CBCentralManager, didFailToConnectPeripheral: CBPeripheral, error: NSError?): Unit<!> = TODO()
     @ObjCSignatureOverride
     override fun centralManager(central: CBCentralManager, didDisconnectPeripheral: CBPeripheral, error: NSError?): Unit = TODO()
 }

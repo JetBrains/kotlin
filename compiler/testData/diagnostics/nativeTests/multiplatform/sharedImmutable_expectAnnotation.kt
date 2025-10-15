@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects
 // DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION_ERROR
 // WITH_STDLIB
@@ -19,25 +20,25 @@ fun println(value: String) {}
 fun println(value: Point) {}
 
 data class Point(val x: Double, val y: Double)
-@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!>
+@MySharedImmutable
 val point1 = Point(1.0, 1.0)
 
-<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!>
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var point2 = Point(2.0, 2.0)
 
-class Date(<!INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!> val month: Int, <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}, INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!> var day:Int)
+class Date(<!INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL!>@MySharedImmutable<!> val month: Int, <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY, INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL!>@MySharedImmutable<!> var day:Int)
 class Person(val name: String) {
-    <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}, INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!>
+    <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY, INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL!>@MySharedImmutable<!>
     var surname: String? = null
 }
 
 class Figure {
-    <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}, INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!>
+    <!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY, INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL!>@MySharedImmutable<!>
     val cornerPoint: Point
         get() = point1
 }
 
-<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!>
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var age = 20
     get() {
         println("Age is: $field")
@@ -48,7 +49,7 @@ var age = 20
     }
 
 var globalAge = 30
-<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!>
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var age1 = 20
     get() {
         println("Age is: $field")
@@ -58,21 +59,21 @@ var age1 = 20
         globalAge = value
     }
 
-@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!>
+@MySharedImmutable
 val age2 = 20
     get() {
         println("Age is: $field")
         return field
     }
 
-<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!>
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var point3: Point
     get() = point2
     set(value) {
         point2 = value
     }
 
-<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!>
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var point4: Point
     get() = point2
     set(value) {
@@ -82,7 +83,7 @@ var point4: Point
 @MyThreadLocal
 var point0 = Point(2.0, 2.0)
 
-<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!>
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 var point5: Point
     get() = point0
     set(value) {
@@ -102,7 +103,7 @@ class Delegate {
     }
 }
 
-@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!>
+@MySharedImmutable
 var property: Int by Delegate()
 
 class Delegate1 {
@@ -116,7 +117,7 @@ class Delegate1 {
     }
 }
 
-@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!>
+@MySharedImmutable
 var property1: Int by Delegate1()
 
 var globalValue: Int = 20
@@ -132,14 +133,14 @@ class Delegate2 {
     }
 }
 
-@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!>
+@MySharedImmutable
 var property2: Int by Delegate2()
 
-<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY{NATIVE}!>@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!><!>
+<!INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY!>@MySharedImmutable<!>
 val someValue: Int
     get() = 20
 
-@<!TYPEALIAS_EXPANSION_DEPRECATION_ERROR{NATIVE}!>MySharedImmutable<!>
+@MySharedImmutable
 val someValueWithDelegate by Delegate()
 
 // MODULE: platform()()(common)

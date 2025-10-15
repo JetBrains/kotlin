@@ -1,10 +1,11 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-77986
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 
 inline fun inlineFun() {
-    <!NOT_YET_SUPPORTED_IN_INLINE("Local functions")!>fun<!> localFun() {}
-    <!NOT_YET_SUPPORTED_IN_INLINE("Local classes")!>class<!> LocalClass {}
+    <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localFun() {}
+    <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> LocalClass {}
 
     run {
         <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localFun2() {}
@@ -20,7 +21,7 @@ abstract class Base {
 }
 
 class Derived : Base() {
-    <!OVERRIDE_BY_INLINE!>override final inline fun withDefault(
-            <!NOT_YET_SUPPORTED_IN_INLINE("Functional parameters with inherited default values")!>f: () -> Unit<!>
+    override final inline <!OVERRIDE_BY_INLINE!>fun withDefault(
+            f: () -> Unit
     )<!> {}
 }
