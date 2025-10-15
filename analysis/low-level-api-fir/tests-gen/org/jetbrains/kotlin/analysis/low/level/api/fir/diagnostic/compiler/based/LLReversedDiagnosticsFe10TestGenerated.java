@@ -1485,6 +1485,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("nestedInnerObjectCapturesOuterTypeParameters.kt")
+    public void testNestedInnerObjectCapturesOuterTypeParameters() {
+      runTest("compiler/testData/diagnostics/tests/nestedInnerObjectCapturesOuterTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("noLibraryProvidersDuplication.kt")
     public void testNoLibraryProvidersDuplication() {
       runTest("compiler/testData/diagnostics/tests/noLibraryProvidersDuplication.kt");
