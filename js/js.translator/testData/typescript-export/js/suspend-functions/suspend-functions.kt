@@ -2,7 +2,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
-// LANGUAGE: +JsAllowExportingSuspendFunctions
+// LANGUAGE: +JsAllowExportingSuspendFunctions +ContextParameters
 // MODULE: JS_TESTS
 // FILE: suspend-functions.kt
 
@@ -59,9 +59,35 @@ suspend fun <T> genericWithMultipleConstraints(x: T): T
 suspend fun <A, B, C, D, E> forth(a: A, b: B, c: C, d: D): E? = null
 
 @JsExport
-suspend inline fun inlineFun(x: Int, callback: (Int) -> Unit) {
-    callback(x)
+suspend inline fun inlineFun(x: Int, callback: (Int) -> Int): Int = callback(x)
+
+@JsExport
+suspend fun simpleSuspendFun(x: Int) = x
+
+@JsExport
+suspend inline fun inlineChain(x: Int) = inlineFun(x) { x -> simpleSuspendFun(x) }
+
+@JsExport
+suspend fun Int.suspendExtensionFun() = this
+
+@JsExport
+context(ctx: Int)
+suspend fun suspendFunWithContext() = ctx
+
+@JsExport
+class WithSuspendExtensionFunAndContext {
+    context(ctx: Int)
+    suspend fun Int.suspendFun() = this + ctx
 }
+
+@JsExport
+class WithSuspendFunInsideInnerClass {
+    inner class Inner {
+        suspend fun suspendFun() = 42
+    }
+}
+
+fun suspendParameter(call: suspend () -> Int) = <!ILLEGAL_SUSPEND_FUNCTION_CALL!>call<!>()
 
 @JsExport
 external interface SomeExternalInterface
