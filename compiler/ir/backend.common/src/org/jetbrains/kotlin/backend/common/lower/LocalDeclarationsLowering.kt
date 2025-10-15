@@ -790,7 +790,11 @@ open class LocalDeclarationsLowering(
 
             localFunctionContext.transformedDeclaration = newDeclaration
 
-            val newTypeParameters = newDeclaration.copyTypeParameters(capturedTypeParameters)
+            // Inline lambdas wouldn't be popped up (see visitRichFunctionReference in LocalDeclarationPopupLowering),
+            // so we don't need to capture types in them, as they would be anyway available in scope.
+            val newTypeParameters =
+                if (oldDeclaration.origin == IrDeclarationOrigin.INLINE_LAMBDA) emptyList()
+                else newDeclaration.copyTypeParameters(capturedTypeParameters)
             localFunctionContext.capturedTypeParameterToTypeParameter.putAll(
                 capturedTypeParameters.zip(newTypeParameters)
             )
