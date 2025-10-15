@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.firFrontendWithLightTree
 import org.jetbrains.kotlin.backend.konan.firFrontendWithPsi
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -25,7 +25,7 @@ sealed class FirOutput {
 internal val FIRPhase = createSimpleNamedCompilerPhase(
         "FirFrontend",
         outputIfNotEnabled = { _, _, _, _ -> FirOutput.ShouldNotGenerateCode }
-) { context: NativeBackendPhaseContext, input: KotlinCoreEnvironment ->
+) { context: PhaseContext, input: KotlinCoreEnvironment ->
     if (input.configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)) {
         context.firFrontendWithLightTree(input)
     } else {
@@ -33,7 +33,7 @@ internal val FIRPhase = createSimpleNamedCompilerPhase(
     }
 }
 
-internal fun <T : NativeBackendPhaseContext> PhaseEngine<T>.runFirFrontend(environment: KotlinCoreEnvironment): FirOutput {
+internal fun <T : PhaseContext> PhaseEngine<T>.runFirFrontend(environment: KotlinCoreEnvironment): FirOutput {
     val languageVersion = environment.configuration.languageVersionSettings.languageVersion
     val kotlinSourceRoots = environment.configuration.kotlinSourceRoots
     if (!languageVersion.usesK2 && kotlinSourceRoots.isNotEmpty()) {
