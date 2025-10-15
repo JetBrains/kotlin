@@ -9,11 +9,17 @@ import sumNullable = JS_TESTS.foo.sumNullable
 import defaultParameters = JS_TESTS.foo.defaultParameters
 import generic1 = JS_TESTS.foo.generic1
 import generic2 = JS_TESTS.foo.generic2
+import generic3 = JS_TESTS.foo.generic3
 import genericWithConstraint = JS_TESTS.foo.genericWithConstraint
 import acceptTest = JS_TESTS.foo.acceptTest
 import generateOneMoreChildOfTest = JS_TESTS.foo.generateOneMoreChildOfTest;
 import ExportedChild = JS_TESTS.foo.ExportedChild;
 import acceptExportedChild = JS_TESTS.foo.acceptExportedChild;
+import inlineFun = JS_TESTS.foo.inlineFun;
+import inlineChain = JS_TESTS.foo.inlineChain;
+import suspendExtensionFun = JS_TESTS.foo.suspendExtensionFun;
+import suspendFunWithContext = JS_TESTS.foo.suspendFunWithContext;
+import WithSuspendExtensionFunAndContext = JS_TESTS.foo.WithSuspendExtensionFunAndContext;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -33,6 +39,7 @@ async function box(): Promise<string> {
     assert(await defaultParameters("test", 20, "custom") === "test20custom");
     assert(await generic1("string") === "string");
     assert(await generic2<string>(null));
+    assert(await generic3<number, string, boolean, (p0: number) => number, any>(42, "42", true, x => x) == null);
     assert(await genericWithConstraint("constrained") === "constrained");
 
     const test = new Test();
@@ -47,6 +54,16 @@ async function box(): Promise<string> {
     assert(await test.generic1("string") === "string");
     assert(await test.generic2<string>(null));
     assert(await test.genericWithConstraint("constrained") === "constrained");
+    assert(await test.generic3<number, string, boolean, (p0: number) => number, any>(42, "42", true, x => x) == null);
+    assert(await test.genericWithConstraint("constrained") === "constrained");
+
+
+    assert(await inlineFun(42, x => x) == 42);
+    assert(await inlineChain(42) == 42);
+    assert(await suspendExtensionFun(42) == 42);
+    assert(await suspendFunWithContext(42) == 42);
+    const withSuspendExtensionFunAndContext = new WithSuspendExtensionFunAndContext();
+    assert(await withSuspendExtensionFunAndContext.suspendFun(4, 2) == 6);
 
     const testChild = new TestChild();
     await acceptTest(testChild);
