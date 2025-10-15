@@ -132,17 +132,3 @@ open class AbstractFirJsLibraryAbiReaderWithInlinedFunInKlibTest : AbstractFirJs
         super.configure(builder)
     }
 }
-
-open class AbstractClassicJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<ClassicFrontendOutputArtifact>() {
-    final override val frontend: FrontendKind<*>
-        get() = FrontendKinds.ClassicFrontend
-
-    final override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
-
-    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
-        get() = ::ClassicFrontend2IrConverter
-
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::ClassicJsKlibSerializerFacade
-}

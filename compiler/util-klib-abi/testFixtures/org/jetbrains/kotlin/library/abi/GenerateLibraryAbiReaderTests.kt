@@ -18,9 +18,6 @@ fun main(args: Array<String>) {
             testClass<AbstractFirJsLibraryAbiReaderWithInlinedFunInKlibTest> {
                 model("content")
             }
-            testClass<AbstractClassicJsLibraryAbiReaderTest> {
-                model("content")
-            }
         }
     }
 }
