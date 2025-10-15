@@ -55,6 +55,10 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirLazyDelegatedConstructorCall {
+        return this
+    }
+
     override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirLazyDelegatedConstructorCall {
         return this
     }

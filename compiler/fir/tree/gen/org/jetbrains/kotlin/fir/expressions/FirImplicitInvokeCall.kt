@@ -72,6 +72,8 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
 
+    abstract override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
+
     abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
 
     abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall

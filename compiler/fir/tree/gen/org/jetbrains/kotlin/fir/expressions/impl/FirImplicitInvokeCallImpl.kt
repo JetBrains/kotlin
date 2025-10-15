@@ -59,7 +59,7 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
         transformAnnotations(transformer, data)
-        contextArguments.transformInplace(transformer, data)
+        transformContextArguments(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -75,6 +75,11 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
+        contextArguments.transformInplace(transformer, data)
         return this
     }
 

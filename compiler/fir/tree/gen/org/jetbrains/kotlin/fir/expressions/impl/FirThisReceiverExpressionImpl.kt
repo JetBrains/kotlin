@@ -65,6 +65,10 @@ internal class FirThisReceiverExpressionImpl(
         return this
     }
 
+    override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirThisReceiverExpressionImpl {
+        return this
+    }
+
     override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirThisReceiverExpressionImpl {
         typeArguments.transformInplace(transformer, data)
         return this

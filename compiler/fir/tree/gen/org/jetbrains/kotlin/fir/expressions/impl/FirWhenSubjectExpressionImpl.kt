@@ -63,6 +63,10 @@ internal class FirWhenSubjectExpressionImpl(
         return this
     }
 
+    override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionImpl {
+        return this
+    }
+
     override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionImpl {
         return this
     }

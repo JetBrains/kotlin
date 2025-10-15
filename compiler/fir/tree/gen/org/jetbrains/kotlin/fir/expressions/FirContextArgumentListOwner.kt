@@ -28,4 +28,6 @@ interface FirContextArgumentListOwner : FirElement {
         transformer.transformContextArgumentListOwner(this, data) as E
 
     fun replaceContextArguments(newContextArguments: List<FirExpression>)
+
+    fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirContextArgumentListOwner
 }

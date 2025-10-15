@@ -58,6 +58,10 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformContextArguments(transformer: FirTransformer<D>, data: D): FirMultiDelegatedConstructorCallImpl {
+        return this
+    }
+
     override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirMultiDelegatedConstructorCallImpl {
         return this
     }
