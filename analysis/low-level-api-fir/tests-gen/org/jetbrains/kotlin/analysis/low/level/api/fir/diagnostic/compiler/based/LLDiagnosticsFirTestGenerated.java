@@ -2856,6 +2856,82 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Explicit {
+        @Test
+        public void testAllFilesPresentInExplicit() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("disabled.kt")
+        public void testDisabled() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/disabled.kt");
+        }
+
+        @Test
+        @TestMetadata("javaOverride.kt")
+        public void testJavaOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/javaOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("mixingNamedAndPositional.kt")
+        public void testMixingNamedAndPositional() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/mixingNamedAndPositional.kt");
+        }
+
+        @Test
+        @TestMetadata("optional.kt")
+        public void testOptional() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/optional.kt");
+        }
+
+        @Test
+        @TestMetadata("overloads.kt")
+        public void testOverloads() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/overloads.kt");
+        }
+
+        @Test
+        @TestMetadata("postponedAtoms.kt")
+        public void testPostponedAtoms() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/postponedAtoms.kt");
+        }
+
+        @Test
+        @TestMetadata("samConversion.kt")
+        public void testSamConversion() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/samConversion.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("trailingLambda.kt")
+        public void testTrailingLambda() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/trailingLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("unnamed.kt")
+        public void testUnnamed() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/unnamed.kt");
+        }
+
+        @Test
+        @TestMetadata("vararg.kt")
+        public void testVararg() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/vararg.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/inference")
       @TestDataPath("$PROJECT_ROOT")
       public class Inference {

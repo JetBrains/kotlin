@@ -10261,6 +10261,12 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
       }
 
       @Test
+      @TestMetadata("explicitPassing.kt")
+      public void testExplicitPassing() {
+        runTest("compiler/testData/codegen/box/contextParameters/explicitPassing.kt");
+      }
+
+      @Test
       @TestMetadata("falsePositiveAccidentalOverrides.kt")
       public void testFalsePositiveAccidentalOverrides() {
         runTest("compiler/testData/codegen/box/contextParameters/falsePositiveAccidentalOverrides.kt");
