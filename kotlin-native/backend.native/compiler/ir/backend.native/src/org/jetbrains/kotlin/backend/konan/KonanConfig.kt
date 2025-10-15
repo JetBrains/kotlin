@@ -370,7 +370,7 @@ class KonanConfig(
 
     internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
 
-    internal val resolve = KonanLibrariesResolveSupport(
+    private val resolve = KonanLibrariesResolveSupport(
             configuration, target, distribution, resolveManifestDependenciesLenient = true
     )
 
