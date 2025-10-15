@@ -8,7 +8,7 @@ package boundsWithSubstitutors
     class C : A<C>()
 
     val a = B<C>()
-    val a1 = B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Int<!>>()
+    val a1 = B<<!UPPER_BOUND_VIOLATED!>Int<!>>()
 
     class X<A, B : A>()
 
@@ -36,7 +36,7 @@ fun test() {
     bar<Int>()
     bar<<!UPPER_BOUND_VIOLATED!>Double?<!>>()
     bar<<!UPPER_BOUND_VIOLATED!>Double<!>>()
-    1.buzz<<!UPPER_BOUND_VIOLATED!>Double<!>>()
+    1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>buzz<!><Double>()
 }
 
 fun <T : Any> foo() {}

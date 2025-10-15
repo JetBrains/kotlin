@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -817,7 +816,6 @@ private fun ConstraintSystemError.toDiagnostic(
                     // The argument's bound mismatch may cause a cascade of other constraint system errors which are basically noise.
                     // Filter them out by only picking the most relevant error resulting.
                     if (
-                        !session.languageVersionSettings.supportsFeature(LanguageFeature.ReportUpperBoundViolatedDuringResolution) ||
                         argumentVariablePrototype?.typeParameterSymbol != parameter ||
                         // These are still reported through the checkers (`FirUpperBoundViolatedHelpers.kt`).
                         candidate.callInfo.callSite is FirDelegatedConstructorCall ||
@@ -846,7 +844,11 @@ private fun ConstraintSystemError.toDiagnostic(
                         }
                         ?: error("Couldn't find the upper bound for $argumentVariable")
 
-                    FirErrors.UPPER_BOUND_VIOLATED.createOn(
+                    val factory = FirErrors.UPPER_BOUND_VIOLATED
+                        .takeIf { session.languageVersionSettings.supportsFeature(LanguageFeature.ReportUpperBoundViolatedDuringResolution) }
+                        ?: FirErrors.UPPER_BOUND_VIOLATED_DEPRECATION_WARNING
+
+                    factory.createOn(
                         position.typeArgument.source ?: qualifiedAccessSource ?: source,
                         combinedUpperBound,
                         argumentType,

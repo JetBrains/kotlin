@@ -13,15 +13,15 @@ fun <T : A> fest() {
 }
 
 fun test() {
-    val b1 = B<<!UPPER_BOUND_VIOLATED!>Int<!>>()
+    val b1 = B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Int<!>>()
     val b2 = B<C>()
-    val b3 = B<<!UPPER_BOUND_VIOLATED!>Any?<!>>()
+    val b3 = B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Any?<!>>()
     val b4 = B<<!UNRESOLVED_REFERENCE!>UnexistingType<!>>()<!UNRESOLVED_REFERENCE!>NL<!><!SYNTAX!><<!>Int<!SYNTAX!><!SYNTAX!>><!>()<!>NumberPhile<!SYNTAX!><!>
-    val b5 = B<<!UPPER_BOUND_VIOLATED("A; B<??? (Unresolved qualified name: UnexistingType)>")!>B<<!UNRESOLVED_REFERENCE("UnexistingType")!>UnexistingType<!>><!>>()
-    fest<<!UPPER_BOUND_VIOLATED!>Boolean<!>>()
+    val b5 = B<<!UPPER_BOUND_VIOLATED("A; B<??? (Unresolved qualified name: UnexistingType)>"), UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>B<<!UNRESOLVED_REFERENCE("UnexistingType")!>UnexistingType<!>><!>>()
+    fest<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Boolean<!>>()
     fest<C>()
     fest<HHH>()
-    fest<<!UPPER_BOUND_VIOLATED!>JJJ<!>>()
+    fest<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>JJJ<!>>()
 }
 
 open class S<F, G : F>
@@ -36,18 +36,18 @@ fun <K, L : K> rest() {
     val o3 = S<L, L>()
 
     val o4 = S<S<K, L>, T<K, L>>()
-    val o5 = S<S<K, L>, <!UPPER_BOUND_VIOLATED!>T<K, K><!>>()
-    val o6 = S<S<L, L>, <!UPPER_BOUND_VIOLATED!>T<K, L><!>>()
+    val o5 = S<S<K, L>, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>T<K, K><!>>()
+    val o6 = S<S<L, L>, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>T<K, L><!>>()
 
     val o7 = S<Any, T<S<K, L>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
     val o8 = S<Any, T<S<K, L>, Nothing>>()
-    val o9 = P<<!UPPER_BOUND_VIOLATED!>String<!>, P1<<!UPPER_BOUND_VIOLATED!>String<!>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
+    val o9 = P<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>String<!>, P1<<!UPPER_BOUND_VIOLATED!>String<!>, <!UPPER_BOUND_VIOLATED!>String<!>>>()
 }
 
 class NumColl<T : Collection<Number>>
 typealias NL<K> = NumColl<List<K>>
 val test7 = NL<Int>()<!UNRESOLVED_REFERENCE!>NumberPhile<!><!SYNTAX!><!>
-val test8 = <!UPPER_BOUND_VIOLATED!>NL<String>()<!>
+val test8 = <!UPPER_BOUND_VIOLATED!>NL<<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>String<!>>()<!>
 
 class NumberPhile<T: Number>(x: T)
 val np1 = NumberPhile(10)

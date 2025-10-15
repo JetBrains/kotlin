@@ -2,7 +2,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 class A<T: B<out Number>>(val x: T) {
     fun test() {
-        val y: Int = x.m<<!UPPER_BOUND_VIOLATED!>C<out Number><!>>()
+        val y: Int = x.m<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>C<out Number><!>>()
     }
 
 }

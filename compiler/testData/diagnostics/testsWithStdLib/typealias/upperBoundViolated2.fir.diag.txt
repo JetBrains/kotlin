@@ -1,1 +1,3 @@
 /upperBoundViolated2.fir.kt:(165,177): error: Type argument is not within its bounds: must be subtype of 'List<CharSequence>'.
+
+/upperBoundViolated2.fir.kt:(171,174): warning: Type argument is not within its bounds: must be subtype of 'CharSequence'. This will become an error in future releases.

@@ -1,9 +1,19 @@
-/test.kt:(117,137): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+/test.kt:(118,138): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
 
-/test.kt:(153,167): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+/test.kt:(118,138): warning: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. This will become an error in future releases.
 
-/test.kt:(183,199): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+/test.kt:(154,168): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
 
-/test.kt:(228,238): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*) & Any'. Consider removing the explicit type arguments.
+/test.kt:(154,168): warning: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. This will become an error in future releases.
 
-/test.kt:(267,281): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)!'. Consider removing the explicit type arguments.
+/test.kt:(184,200): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+
+/test.kt:(184,200): warning: Type argument is not within its bounds: must be subtype of 'CapturedType(*)'. This will become an error in future releases.
+
+/test.kt:(229,239): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*) & Any'. Consider removing the explicit type arguments.
+
+/test.kt:(229,239): warning: Type argument is not within its bounds: must be subtype of 'CapturedType(*) & Any'. This will become an error in future releases.
+
+/test.kt:(268,282): error: Type argument is not within its bounds: must be subtype of 'CapturedType(*)!'. Consider removing the explicit type arguments.
+
+/test.kt:(268,282): warning: Type argument is not within its bounds: must be subtype of 'CapturedType(*)!'. This will become an error in future releases.

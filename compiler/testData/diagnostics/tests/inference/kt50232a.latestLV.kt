@@ -1,7 +1,7 @@
 // LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 fun test() {
-    acceptMyRecursive(inferType<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>MyRecursive?<!>>())
+    acceptMyRecursive(inferType<<!UPPER_BOUND_VIOLATED!>MyRecursive?<!>>())
 }
 
 fun acceptMyRecursive(value: MyRecursive?) {}
