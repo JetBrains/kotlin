@@ -40,6 +40,7 @@ open class CommonCompilerArgumentsConfigurator {
                 put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
                 put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
                 put(AnalysisFlags.lenientMode, lenientMode)
+                put(AnalysisFlags.headerMode, headerMode)
                 put(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
                 fillWarningLevelMap(arguments, collector)
                 ReturnValueCheckerMode.fromString(returnValueChecker)?.also { put(AnalysisFlags.returnValueCheckerMode, it) }

@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -26,6 +28,7 @@ class JvmIrSerializerSession(
     IrSerializationSettings(
         configuration = configuration,
         bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
+        publicAbiOnly = configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
     ),
     declarationTable,
 ) {
