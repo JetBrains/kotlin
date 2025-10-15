@@ -383,7 +383,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 generatedVariables.addIfNonClashing(item.name, existingVariableNames) {
                     if (builderSymbol.hasJavaOrigin) {
                         buildJavaField {
-                            isFromSource = true
+                            origin = FirDeclarationOrigin.Java.Source
                             lazyHasConstantInitializer = lazy { false }
                             lazyHasInitializer = lazy { false }
                             this@buildJavaField.containingClassSymbol = builderSymbol
@@ -1029,7 +1029,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             FirJavaClassBuilder().apply {
                 containingClassSymbol = containingClass
-                isFromSource = true
+                javaOrigin = FirDeclarationOrigin.Java.Source
                 key = BuilderGeneratorKey(BuilderDeclarationType.Class.Builder)
 
                 // Remap Java type parameters from the containing declaration to the newly created type parameters to make the Java resolve work.
