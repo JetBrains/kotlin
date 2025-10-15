@@ -249,20 +249,17 @@ projectTests {
         configureTestDistribution()
     }
 
-    testTask("jsIrTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
-        setUpJsBoxTests("legacy-frontend & !es6")
+    testTask("jsTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+        setUpJsBoxTests("!es6")
     }
 
-    testTask("jsIrES6Test", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
-        setUpJsBoxTests("legacy-frontend & es6")
-    }
-
-    testTask("jsFirTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
-        setUpJsBoxTests("!legacy-frontend & !es6")
+    testTask("jsES6Test", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
+        setUpJsBoxTests("es6")
     }
 
     testTask("jsFirES6Test", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
-        setUpJsBoxTests("!legacy-frontend & es6")
+        // TODO(KTI-2710): Drop this task when we reconfigure TeamCity to run `jsES6Test`
+        setUpJsBoxTests("es6")
     }
 
     testTask("invalidationTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {

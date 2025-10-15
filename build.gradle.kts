@@ -837,11 +837,16 @@ tasks {
     }
 
     register("jsFirCompilerTest") {
-        dependsOn(":js:js.tests:jsFirTest")
+        // TODO(KTI-2710): Drop this task when we reconfigure TeamCity to run `jsCompilerTest`
+        dependsOn(":js:js.tests:jsTest")
+    }
+
+    register("jsCompilerTest") {
+        dependsOn(":js:js.tests:jsTest")
     }
 
     register("jsIrCompilerTest") {
-        dependsOn(":js:js.tests:jsIrTest")
+        // TODO(KTI-2710): Drop this task when we stop invoking it on TeamCity
     }
 
     register("wasmCompilerTest") {

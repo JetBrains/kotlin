@@ -3,10 +3,8 @@
 This module contains test runner classes and helpers for testing the Kotlin/JS compiler.
 
 The following Gradle tasks make running tests in batch more convenient:
-- `:js:js.tests:jsIrTest` — run JS tests with the K1 frontend and with ES5 as the target.
-- `:js:js.tests:jsIrES6Test` — run JS tests with the K1 frontend and ES6 as the target.
-- `:js:js.tests:jsFirTest` — run JS tests with the K2 frontend and ES5 as the target.
-- `:js:js.tests:jsFirES6Test` — run JS tests with the K2 frontend and ES6 as the target.
+- `:js:js.tests:jsTest` — run JS tests with ES5 as the target.
+- `:js:js.tests:jsES6Test` — run JS tests with ES6 as the target.
 - `:js:js.tests:test` — run all JS tests
 
 The JavaScript files generated from the test files are located in the following directories, divided by the translation mode:
@@ -23,7 +21,7 @@ There are multiple kinds of tests. Here are some of them:
   the test is considered passing, and if it returns anything else, the test is considered failing.
 - Line number tests, located in `js/js.translator/testData/lineNumbers`.
   These are to ensure that the debug info in the generated JavaScript matches some expectation.
-  The expectation is written in a comment staring with `// LINES(JS_IR):` or `// LINES(ClassicFrontend JS):` or `// LINES(FIR JS_IR):`.
+  The expectation is written in a comment staring with `// LINES:`.
   These comments contain a list of line numbers in the test file that the compiler output is generated from.
   The actual line numbers can be viewed in the generated JS file whose name ends with `-lines.js`.
 - TypeScript export tests, located in `js/js.translator/testData/typescript-export`.

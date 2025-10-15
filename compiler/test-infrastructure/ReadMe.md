@@ -349,7 +349,7 @@ Note that to pass a system property from gradle task invocation, its name should
 For example, to debug Kotlin/JS tests, run:
 
 ```
-./gradlew :js:js.tests:jsIrTest -Pfd.kotlin.js.debugMode=2
+./gradlew :js:js.tests:test -Pfd.kotlin.js.debugMode=2
 ```
 
 To debug WASM tests, run:

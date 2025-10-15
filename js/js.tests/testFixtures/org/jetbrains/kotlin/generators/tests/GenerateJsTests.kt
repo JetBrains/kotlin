@@ -83,9 +83,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/multiModuleOrder/", testRunnerMethodName = "runTest0") {
-            testClass<AbstractMultiModuleOrderTest>(annotations = listOf(*legacyFrontend())) {
-                model()
-            }
             testClass<AbstractFirMultiModuleOrderTest> {
                 model()
             }
@@ -288,10 +285,6 @@ fun main(args: Array<String>) {
         }
     }
 }
-
-private fun legacyFrontend() = arrayOf(
-    annotation(Tag::class.java, "legacy-frontend")
-)
 
 private fun es6() = arrayOf(
     annotation(Tag::class.java, "es6")
