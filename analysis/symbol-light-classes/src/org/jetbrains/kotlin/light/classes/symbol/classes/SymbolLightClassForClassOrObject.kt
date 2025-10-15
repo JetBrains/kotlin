@@ -6,19 +6,29 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.PsiSuperMethodImplUtil
+import com.intellij.psi.impl.light.LightIdentifier
+import com.intellij.psi.impl.light.LightParameter
+import com.intellij.psi.impl.light.LightParameterListBuilder
+import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
+import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
@@ -32,8 +42,10 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -43,6 +55,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
     private val isValueClass: Boolean
@@ -151,9 +165,101 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
             addDelegatesToInterfaceMethods(result, classSymbol)
 
+            addMethodsFromCollectionsIfNeeded(result, classSymbol)
+
             result
         }
     }
+
+    private fun KaSession.addMethodsFromCollectionsIfNeeded(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
+        if (classSymbol.classKind == KaClassKind.INTERFACE) {
+            // TODO?
+            return
+        }
+
+        val allSupertypes = classSymbol.defaultType.allSupertypes.filterIsInstance<KaClassType>()
+        for (supertype in allSupertypes) {
+            val classId = supertype.classId
+            val javaClassId = JavaToKotlinClassMap.mutabilityMappings.find {
+                classId == it.kotlinReadOnly || classId == it.kotlinMutable
+            }?.javaClass ?: continue
+
+            val kotlinCollectionSymbol = supertype.symbol as? KaClassSymbol ?: continue
+            val javaCollectionSymbol = findClass(javaClassId) ?: continue
+
+            val javaBaseClass = javaCollectionSymbol.psi as? PsiClass ?: continue
+
+            // TODO
+            //   Fix type parameters
+            result += calcMethods(javaBaseClass, javaCollectionSymbol, kotlinCollectionSymbol)
+        }
+    }
+
+    private fun KaSession.calcMethods(
+        javaBaseClass: PsiClass,
+        javaCollectionSymbol: KaClassSymbol,
+        kotlinCollectionSymbol: KaClassSymbol,
+    ): List<PsiMethod> {
+
+        val kotlinNames = kotlinCollectionSymbol.declaredMemberScope.callables
+            .filter { it is KaNamedFunctionSymbol }
+            .mapNotNull { it.name }
+            .toSet()
+
+        return javaBaseClass.methods.flatMap { method -> methodWrappers(method, javaBaseClass, kotlinNames) }
+    }
+
+    private val javaGetterNameToKotlinGetterName: Map<String, String> =
+        BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.map { (propertyFqName, javaGetterShortName) ->
+            Pair(javaGetterShortName.asString(), JvmAbi.getterName(propertyFqName.shortName().asString()))
+        }.toMap()
+
+    private fun methodWrappers(method: PsiMethod, javaBaseClass: PsiClass, kotlinNames: Set<Name>): List<PsiMethod> {
+        val methodName = method.name
+
+        // TODO map method qualified name to Kotlin's FQN to avoid short name clashes (ex. `size`)
+        //  or just remove `StandardNames.FqNames.atomic` names from the original map
+        javaGetterNameToKotlinGetterName[methodName]?.let { kotlinName ->
+            val finalBridgeForJava = method.finalBridge()
+            val abstractKotlinGetter = method.wrap(name = kotlinName)
+            return listOf(finalBridgeForJava, abstractKotlinGetter)
+        }
+
+        if (!method.isInKotlinInterface(javaBaseClass, kotlinNames)) {
+            // compiler generates stub override
+            return listOf(method.openBridge())
+        }
+
+        return emptyList()
+    }
+
+    private fun PsiMethod.isInKotlinInterface(javaBaseClass: PsiClass, kotlinNames: Set<Name>): Boolean {
+        if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP_ENTRY) {
+            when (name) {
+                "getValue", "getKey" -> return true
+            }
+        }
+        return Name.identifier(name) in kotlinNames
+    }
+
+    private fun PsiMethod.finalBridge(): KtLightMethodWrapper = wrap(makeFinal = true, hasImplementation = true)
+    private fun PsiMethod.openBridge(): KtLightMethodWrapper = wrap(makeFinal = false, hasImplementation = true)
+
+    private fun PsiMethod.wrap(
+        makeFinal: Boolean = false,
+        hasImplementation: Boolean = false,
+        name: String = this.name,
+        substituteObjectWith: PsiType? = null,
+        signature: MethodSignature? = null,
+    ) = KtLightMethodWrapper(
+        containingClass = this@SymbolLightClassForClassOrObject,
+        baseMethod = this@wrap,
+        isFinal = makeFinal,
+        name = name,
+        substituteObjectWith = substituteObjectWith,
+        providedSignature = signature,
+        hasImplementation = hasImplementation
+    )
 
     private fun isEnumEntriesDisabled(): Boolean {
         return (ktModule as? KaSourceModule)
@@ -305,4 +411,102 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         manager = manager,
         isValueClass = isValueClass,
     )
+}
+
+private data class MethodSignature(val parameterTypes: List<PsiType>, val returnType: PsiType)
+
+private class KtLightMethodWrapper(
+    private val containingClass: SymbolLightClassForClassOrObject,
+//    private val containingClass: KtAbstractContainerWrapper,
+    private val baseMethod: PsiMethod,
+    private val name: String,
+    private val isFinal: Boolean,
+    private val hasImplementation: Boolean,
+    private val substituteObjectWith: PsiType?,
+    private val providedSignature: MethodSignature?
+) : PsiMethod, KtLightElementBase(containingClass) {
+
+    init {
+        if (!hasImplementation && isFinal) {
+            error("Can't be final without an implementation")
+        }
+    }
+
+    private fun substituteType(psiType: PsiType): PsiType {
+        return psiType
+        // TODO
+//        val substituted = containingClass.substitutor.substitute(psiType)
+//        return if (isJavaLangObject(substituted) && substituteObjectWith != null) {
+//            substituteObjectWith
+//        } else {
+//            substituted
+//        }
+    }
+
+    private fun isJavaLangObject(type: PsiType?): Boolean {
+        // TODO or equalsToText?
+        return type is PsiClassType && type.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
+    }
+
+    override fun getPresentation() = baseMethod.presentation
+
+    override val kotlinOrigin get() = null
+
+    override fun hasModifierProperty(name: String) =
+        when (name) {
+            PsiModifier.DEFAULT -> hasImplementation
+            PsiModifier.ABSTRACT -> !hasImplementation
+            PsiModifier.FINAL -> isFinal
+            else -> baseMethod.hasModifierProperty(name)
+        }
+
+    override fun getParameterList(): PsiParameterList {
+        return LightParameterListBuilder(manager, KotlinLanguage.INSTANCE).apply {
+            baseMethod.parameterList.parameters.forEachIndexed { index, paramFromJava ->
+                val type = providedSignature?.parameterTypes?.get(index) ?: substituteType(paramFromJava.type)
+                addParameter(
+                    LightParameter(
+                        paramFromJava.name, type,
+                        this@KtLightMethodWrapper, KotlinLanguage.INSTANCE, paramFromJava.isVarArgs
+                    )
+                )
+            }
+        }
+    }
+
+    override fun getName() = name
+    override fun getReturnType() = providedSignature?.returnType ?: baseMethod.returnType?.let { substituteType(it) }
+
+    override fun getTypeParameters() = baseMethod.typeParameters
+    override fun getTypeParameterList() = baseMethod.typeParameterList
+
+    override fun findSuperMethods(checkAccess: Boolean) = PsiSuperMethodImplUtil.findSuperMethods(this, checkAccess)
+    override fun findSuperMethods(parentClass: PsiClass) = PsiSuperMethodImplUtil.findSuperMethods(this, parentClass)
+    override fun findSuperMethods() = PsiSuperMethodImplUtil.findSuperMethods(this)
+    override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean) =
+        PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
+
+    @Deprecated("Deprecated in Java")
+    override fun findDeepestSuperMethod() = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
+
+    override fun findDeepestSuperMethods() = PsiSuperMethodImplUtil.findDeepestSuperMethods(this)
+    override fun getHierarchicalMethodSignature() = PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this)
+    override fun getSignature(substitutor: PsiSubstitutor) = MethodSignatureBackedByPsiMethod.create(this, substitutor)
+    override fun getReturnTypeElement(): PsiTypeElement? = null
+    override fun getContainingClass() = containingClass
+    override fun getThrowsList() = baseMethod.throwsList
+    override fun hasTypeParameters() = baseMethod.hasTypeParameters()
+    override fun isVarArgs() = baseMethod.isVarArgs
+    override fun isConstructor() = false
+    private val identifier by lazyPub { LightIdentifier(manager, name) }
+    override fun getNameIdentifier() = identifier
+    override fun getDocComment() = baseMethod.docComment
+    override fun getModifierList() = baseMethod.modifierList
+    override fun getBody() = null
+    override fun isDeprecated() = baseMethod.isDeprecated
+    override fun setName(name: String) = cannotModify()
+
+    override fun toString(): String {
+        return "$javaClass:$name${parameterList.parameters.map { it.type }.joinToString(prefix = "(", postfix = ")", separator = ", ")}"
+    }
 }
