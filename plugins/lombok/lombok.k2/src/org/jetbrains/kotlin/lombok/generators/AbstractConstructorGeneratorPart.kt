@@ -214,7 +214,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 FirJavaConstructorBuilder().apply {
                     containingClassSymbol = targetClassSymbol
                     isPrimary = false
-                    isFromSource = true
+                    origin = FirDeclarationOrigin.Java.Source
                 }
             } else {
                 FirConstructorBuilder().apply {
@@ -282,7 +282,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     containingClassSymbol = targetClassSymbol
                     name = staticName
                     symbol = methodSymbol
-                    isFromSource = true
+                    origin = FirDeclarationOrigin.Java.Source
 
                     classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol)
 
@@ -374,7 +374,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     containingDeclarationSymbol = constructorSymbol
                     name = field.name
                     isVararg = false
-                    isFromSource = true
+                    javaOrigin = FirDeclarationOrigin.Java.Source
                 }
             }
         }
