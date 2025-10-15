@@ -5,7 +5,6 @@ KaFunctionType:
     org/jetbrains/kotlin/plugin/sandbox/MyInlineable()
       psi: null
   ]
-  arity: 0
   classId: some/MyInlineableFunction0
   contextReceivers: []
   hasContextReceivers: false

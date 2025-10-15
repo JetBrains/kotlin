@@ -2,7 +2,6 @@ KaType
 KaFunctionType:
   abbreviation: null
   annotations: []
-  arity: 0
   classId: kotlin/reflect/KSuspendFunction0
   contextReceivers: Could not render due to java.lang.AssertionError: Not a function type: KSuspendFunction0<Unit>
 

@@ -61,6 +61,7 @@ internal class KaFe10FunctionType(
     override val isReflectType: Boolean
         get() = withValidityAssertion { descriptor.functionTypeKind.isReflectType }
 
+    @Deprecated("Use `parameters.size` instead. See KT-80545", ReplaceWith("parameters.size"))
     override val arity: Int
         get() = withValidityAssertion { descriptor.arity }
 
