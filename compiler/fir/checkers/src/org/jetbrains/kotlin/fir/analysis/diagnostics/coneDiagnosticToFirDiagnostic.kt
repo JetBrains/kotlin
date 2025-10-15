@@ -590,7 +590,7 @@ private fun mapInapplicableCandidateError(
             else -> genericDiagnostic
         }
     }.distinct()
-    return if (diagnostics.size > 1) {
+    return if (diagnostics.count { it.severity == Severity.ERROR } > 1) {
         // If there are more specific diagnostics, filter out the generic diagnostic.
         diagnostics.filter { it != genericDiagnostic }
     } else {
