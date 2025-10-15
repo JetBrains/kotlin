@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.konan.checkers
 import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
-import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.annotations.escapes
 import org.jetbrains.kotlin.backend.konan.ir.annotations.pointsTo
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.IrElement
@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
-internal class EscapeAnalysisChecker(
-    private val context: NativeBackendPhaseContext,
-    private val symbols: KonanSymbols,
-    private val irFile: IrFile,
+class EscapeAnalysisChecker(
+        private val context: PhaseContext,
+        symbols: KonanSymbols,
+        private val irFile: IrFile,
 ) : IrVisitorVoid() {
     private fun reportWarning(location: IrElement, message: String) {
         context.report(CompilerMessageSeverity.STRONG_WARNING, location, irFile, message)

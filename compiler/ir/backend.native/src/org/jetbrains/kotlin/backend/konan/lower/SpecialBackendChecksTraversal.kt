@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.checkers.EscapeAnalysisChecker
-import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -45,8 +45,8 @@ import java.io.File
  * Kotlin/Native-specific language checks. Most importantly, it checks C/Objective-C interop restrictions.
  * TODO: Should be moved to compiler frontend after K2.
  */
-internal class SpecialBackendChecksTraversal(
-    private val context: NativeBackendPhaseContext,
+class SpecialBackendChecksTraversal(
+    private val context: PhaseContext,
     private val symbols: KonanSymbols,
     private val irBuiltIns: IrBuiltIns,
 ) : FileLoweringPass {
@@ -58,10 +58,10 @@ internal class SpecialBackendChecksTraversal(
 }
 
 private class BackendChecker(
-    private val context: NativeBackendPhaseContext,
-    val symbols: KonanSymbols,
-    val irBuiltIns: IrBuiltIns,
-    private val irFile: IrFile,
+        private val context: PhaseContext,
+        val symbols: KonanSymbols,
+        val irBuiltIns: IrBuiltIns,
+        private val irFile: IrFile,
 ) : IrVisitorVoid() {
     val target = context.config.target
 
