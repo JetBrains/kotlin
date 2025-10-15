@@ -245,10 +245,10 @@ object JsIrBuilder {
         cond: IrExpression,
         thenBranch: IrExpression,
         elseBranch: IrExpression? = null,
-        thenBranchStartOffset: Int = cond.startOffset,
+        thenBranchStartOffset: Int = thenBranch.startOffset,
         thenBranchEndOffset: Int = thenBranch.endOffset,
-        elseBranchStartOffset: Int = UNDEFINED_OFFSET,
-        elseBranchEndOffset: Int = UNDEFINED_OFFSET,
+        elseBranchStartOffset: Int = elseBranch?.startOffset ?: UNDEFINED_OFFSET,
+        elseBranchEndOffset: Int = elseBranch?.endOffset ?: UNDEFINED_OFFSET,
     ): IrWhen =
         buildIfElse(
             startOffset = UNDEFINED_OFFSET,
