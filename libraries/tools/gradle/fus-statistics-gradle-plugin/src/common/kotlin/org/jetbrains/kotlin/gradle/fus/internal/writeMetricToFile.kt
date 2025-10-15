@@ -18,7 +18,6 @@ private const val FILE_NAME_BUILD_ID_PREFIX_SEPARATOR = "."
 private const val PROFILE_FILE_NAME_SUFFIX = ".plugin-profile"
 
 internal fun <T : InternalGradleBuildFusStatisticsService.Parameter> InternalGradleBuildFusStatisticsService<T>.writeDownFusMetrics(
-    buildId: String,
     log: Logger,
     configurationTimeMetrics: List<Metric>? = null,
 ) {

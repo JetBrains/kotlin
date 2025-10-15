@@ -249,7 +249,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for project with buildSrc")
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_14
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2]
     )
     fun testProjectWithBuildSrcForGradleVersion7(gradleVersion: GradleVersion) {
         //KT-64022 there are different build instances in buildSrc and rest project:

@@ -45,9 +45,4 @@ abstract class BuildFlowFusStatisticsBuildService @Inject constructor(
     fun collectMetric(metric: Provider<Metric>) {
         configurationMetrics.add(metric)
     }
-
-    override fun close() {
-        // since Gradle 8.1 flow action [BuildFinishFlowAction] is used to collect all metrics and write them down in a single file
-        logger.debug("${this.javaClass.simpleName} ${this.hashCode()} is closed")
-    }
 }

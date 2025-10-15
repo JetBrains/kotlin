@@ -14,13 +14,19 @@ import org.jetbrains.kotlin.gradle.fus.UniqueId
 import java.util.concurrent.ConcurrentLinkedQueue
 
 abstract class InternalGradleBuildFusStatisticsService<T : InternalGradleBuildFusStatisticsService.Parameter> :
-    GradleBuildFusStatisticsService<T> {
+    GradleBuildFusStatisticsService<T>, AutoCloseable {
 
     interface Parameter : BuildServiceParameters {
         val fusStatisticsRootDirPath: Property<String>
+        val buildId: Property<String>
     }
 
     internal val executionTimeMetrics = ConcurrentLinkedQueue<Metric>()
+    internal val buildId: String = parameters.buildId.get()
+
+    init {
+        log.debug("Initialize build service $serviceName: class \"${this.javaClass.simpleName}\", build \"$buildId\"")
+    }
 
     override fun reportMetric(name: String, value: Boolean, uniqueId: UniqueId) {
         internalReportMetric(name, value, uniqueId)
@@ -47,5 +53,9 @@ abstract class InternalGradleBuildFusStatisticsService<T : InternalGradleBuildFu
      * Non-thread safe
      */
     abstract fun getExecutionTimeMetrics(): Provider<List<Metric>>
+
+    override fun close() {
+        log.debug("Close build service $serviceName: class \"${this.javaClass.simpleName}\", build \"$buildId\"")
+    }
 
 }
