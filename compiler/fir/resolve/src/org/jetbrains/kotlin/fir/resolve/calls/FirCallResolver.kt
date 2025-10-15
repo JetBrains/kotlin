@@ -155,6 +155,7 @@ class FirCallResolver(
     private fun convertForwardedDiagnostics(result: ResolutionResult): List<ConeDiagnostic> =
         result.forwardedDiagnostics.map {
             when (it) {
+                is ImplicitPropertyTypeMakesBehaviorOrderDependant -> ConeImplicitPropertyTypeMakesBehaviorOrderDependant(it.candidateSymbol)
                 else -> shouldNotBeCalled("Implement conversion of the $it forwarded diagnostic")
             }
         }

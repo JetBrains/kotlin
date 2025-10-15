@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -452,4 +453,9 @@ class ConeTypeMismatch(val lowerType: ConeKotlinType, val upperType: ConeKotlinT
 object ConePostponedInferenceDiagnostic : ConeDiagnostic {
     override val reason: String
         get() = "Cone type inference has been postponed due to lambda resolution"
+}
+
+class ConeImplicitPropertyTypeMakesBehaviorOrderDependant(val property: FirPropertySymbol) : ConeDiagnostic {
+    override val reason: String
+        get() = "The resolution result with the property ${property.callableId} depends on the declaration order."
 }
