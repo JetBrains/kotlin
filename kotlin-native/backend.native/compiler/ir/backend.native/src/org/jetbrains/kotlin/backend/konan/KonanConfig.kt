@@ -20,35 +20,21 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
-import org.jetbrains.kotlin.config.nativeBinaryOptions.AppStateTracking
-import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
-import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
-import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
-import org.jetbrains.kotlin.config.nativeBinaryOptions.CoreSymbolicationImageListType
-import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
-import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
-import org.jetbrains.kotlin.config.nativeBinaryOptions.MacAbi
-import org.jetbrains.kotlin.config.nativeBinaryOptions.ObjCExportSuspendFunctionLaunchThreadRestriction
-import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
-import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeLinkageStrategy
+import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
-import org.jetbrains.kotlin.config.nativeBinaryOptions.SourceInfoType
-import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
-import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.visibleName
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
+class KonanConfig(
+        override val project: Project,
+        override val configuration: CompilerConfiguration
+) : NativeKlibCompilationConfig {
     /**
      * Determine if we compile for iOS target with Mac ABI (Catalyst).
      * Avoid using this property if possible. Instead, use [TargetTriple.isMacabi] as it is more direct.
@@ -93,7 +79,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
-    internal val target = targetManager.target
+    override val target = targetManager.target
     internal val phaseConfig = configuration.phaseConfig!!
 
     // See https://youtrack.jetbrains.com/issue/KT-67692.
@@ -125,7 +111,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             it != SanitizerKind.THREAD -> "${it.name} sanitizer is not supported yet"
             produce == CompilerOutputKind.STATIC -> "${it.name} sanitizer is unsupported for static library"
             produce == CompilerOutputKind.FRAMEWORK && produceStaticFramework -> "${it.name} sanitizer is unsupported for static framework"
-            it.toObsoleteKind() !in target.supportedSanitizers()-> "${it.name} sanitizer is unsupported on ${target.name}"
+            it.toObsoleteKind() !in target.supportedSanitizers() -> "${it.name} sanitizer is unsupported on ${target.name}"
             else -> null
         }?.let { message ->
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
@@ -137,8 +123,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val defaultGC get() = GC.PARALLEL_MARK_CONCURRENT_SWEEP
     val gc: GC
         get() = configuration.get(BinaryOptions.gc) ?: run {
-        if (swiftExport) GC.CONCURRENT_MARK_AND_SWEEP else defaultGC
-    }
+            if (swiftExport) GC.CONCURRENT_MARK_AND_SWEEP else defaultGC
+        }
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val checkStateAtExternalCalls: Boolean get() = configuration.get(BinaryOptions.checkStateAtExternalCalls) ?: false
     private val defaultDisableMmap get() = target.family == Family.MINGW || !pagedAllocator
@@ -382,25 +368,19 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val clang by lazy { platform.clang }
 
-    internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
-
-    internal val metadataKlib get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
-
-    internal val headerKlibPath get() = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffixIfPresent(".klib")
-
     internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
-
-    internal val purgeUserLibs: Boolean
-        get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
-
-    internal val writeDependenciesOfProducedKlibTo
-        get() = configuration.get(KonanConfigKeys.WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)
 
     internal val resolve = KonanLibrariesResolveSupport(
             configuration, target, distribution, resolveManifestDependenciesLenient = true
     )
 
-    val resolvedLibraries get() = resolve.resolvedLibraries
+    override val resolvedLibraries get() = resolve.resolvedLibraries
+
+    override val includedLibraries: List<KonanLibrary>
+        get() = resolve.includedLibraries
+
+    override val exportedLibraries: List<KonanLibrary>
+        get() = resolve.exportedLibraries
 
     internal val externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File)
 
@@ -413,18 +393,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             konanKlibDir = File(distribution.klib)
     )
 
-    val fullExportedNamePrefix: String
+    override val fullExportedNamePrefix: String
         get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
 
-    val moduleId: String
+    override val moduleId: String
         get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: implicitModuleName
-
-    val shortModuleName: String?
-        get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
-
-    fun librariesWithDependencies(): List<KonanLibrary> {
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
-    }
 
     private val defaultAllocationMode
         get() = AllocationMode.CUSTOM
@@ -456,28 +429,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
     }
 
-    internal val nativeLibraries: List<String> =
-            configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
-
-    internal val includeBinaries: List<String> =
-            configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
-
-    internal val languageVersionSettings =
-            configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
-
-    internal val friendModuleFiles: Set<File> =
-            configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
-
-    internal val refinesModuleFiles: Set<File> =
-            configuration.get(KonanConfigKeys.REFINES_MODULES)?.map { File(it) }?.toSet().orEmpty()
-
-    internal val manifestProperties = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
+    override val manifestProperties = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
         File(it).loadProperties()
     }
-
-    internal val nativeTargetsForManifest = configuration.get(KonanConfigKeys.MANIFEST_NATIVE_TARGETS)
-
-    internal val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
 
     private val defaultPropertyLazyInitialization = true
     internal val propertyLazyInitialization: Boolean
@@ -498,9 +452,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
         "Konan_main"
     }
-
-    internal val unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport
-        get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.DEFAULT
 
     internal val testDumpFile: File? = configuration[KonanConfigKeys.TEST_DUMP_OUTPUT_PATH]?.let(::File)
 
@@ -614,8 +565,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val producePerFileCache
         get() = configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true
-
-    val outputPath get() = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
 
     private val implicitModuleName: String
         get() = cacheSupport.libraryToCache?.let {
