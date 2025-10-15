@@ -78,6 +78,13 @@ fun BaseIrGenerator.findAddOnSerializer(propertyType: IrType, ctx: Serialization
     return null
 }
 
+fun BaseIrGenerator.findTypeSerializerOrContext(
+    kType: IrType
+): IrClassSymbol? {
+    if (kType.isTypeParameter()) return null
+    return findTypeSerializerOrContextUnchecked(compilerContext, kType) ?: error("Serializer for element of type ${kType.render()} has not been found")
+}
+
 fun BaseIrGenerator?.findTypeSerializerOrContext(
     context: SerializationBaseContext, kType: IrType
 ): IrClassSymbol? {
@@ -254,7 +261,7 @@ fun BaseIrGenerator?.allSealedSerializableSubclassesFor(
     }.unzip()
 }
 
-internal fun SerializationBaseContext.getSerializableClassDescriptorBySerializer(serializer: IrClass): IrClass? {
+internal fun getSerializableClassDescriptorBySerializer(serializer: IrClass): IrClass? {
     val serializerForClass = serializer.serializerForClass
     if (serializerForClass != null) return serializerForClass.owner
     if (serializer.name !in setOf(
@@ -285,4 +292,3 @@ fun SerializationBaseContext.getClassFromRuntime(className: String, vararg packa
 fun SerializationBaseContext.getClassFromInternalSerializationPackage(className: String): IrClassSymbol =
     getClassFromRuntimeOrNull(className, SerializationPackages.internalPackageFqName)
         ?: error("Class $className wasn't found in ${SerializationPackages.internalPackageFqName}. Check that you have correct version of serialization runtime in classpath.")
-
