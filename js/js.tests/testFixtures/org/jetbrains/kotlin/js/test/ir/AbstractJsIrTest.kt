@@ -69,21 +69,6 @@ abstract class AbstractJsIrTest(
     }
 }
 
-open class AbstractIrBoxJsTest : AbstractJsIrTest(
-    pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
-    testGroupOutputDirPrefix = "irBox/"
-)
-
-open class AbstractIrJsCodegenBoxTest : AbstractJsIrTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "codegen/irBox/"
-)
-
-open class AbstractIrJsCodegenInlineTest : AbstractJsIrTest(
-    pathToTestDir = "compiler/testData/codegen/boxInline/",
-    testGroupOutputDirPrefix = "codegen/irBoxInline/"
-)
-
 open class AbstractMultiModuleOrderTest : AbstractJsIrTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
     testGroupOutputDirPrefix = "irMultiModuleOrder/"
@@ -99,8 +84,3 @@ open class AbstractMultiModuleOrderTest : AbstractJsIrTest(
         }
     }
 }
-
-open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
-    pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
-    testGroupOutputDirPrefix = "codegen/irWasmJsInteropJs/"
-)

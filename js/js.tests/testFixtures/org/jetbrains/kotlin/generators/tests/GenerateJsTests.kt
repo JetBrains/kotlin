@@ -92,14 +92,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
-            testClass<AbstractIrBoxJsTest>(annotations = listOf(*legacyFrontend())) {
-                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
-            }
-
-            testClass<AbstractIrBoxJsES6Test>(annotations = listOf(*legacyFrontend(), *es6())) {
-                model(pattern = "^([^_](.+))\\.kt$")
-            }
-
             testClass<AbstractFirPsiJsBoxTest> {
                 model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
@@ -137,16 +129,8 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest0") {
-            testClass<AbstractIrJsCodegenBoxTest>(annotations = listOf(*legacyFrontend())) {
-                model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
-            }
-
             testClass<AbstractJsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest> {
                 model("box/$k2BoxTestDir")
-            }
-
-            testClass<AbstractIrJsES6CodegenBoxTest>(annotations = listOf(*legacyFrontend(), *es6())) {
-                model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
             testClass<AbstractFirJsCodegenBoxTest> {
@@ -160,14 +144,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-            }
-
-            testClass<AbstractIrJsCodegenInlineTest>(annotations = listOf(*legacyFrontend())) {
-                model("boxInline")
-            }
-
-            testClass<AbstractIrJsES6CodegenInlineTest>(annotations = listOf(*legacyFrontend(), *es6())) {
-                model("boxInline")
             }
 
             testClass<AbstractFirJsCodegenInlineTest> {
@@ -185,10 +161,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
                 model("boxInline")
-            }
-
-            testClass<AbstractIrCodegenWasmJsInteropJsTest>(annotations = listOf(*legacyFrontend())) {
-                model("boxWasmJsInterop")
             }
 
             testClass<AbstractFirJsCodegenWasmJsInteropTest> {
