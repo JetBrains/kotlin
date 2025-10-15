@@ -60,7 +60,7 @@ internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<NativeBa
     SpecialBackendChecksTraversal(context, input.symbols, input.irBuiltIns).lower(input.irModule)
 }
 
-internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, Fir2IrOutput>(
+internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput>(
         "SpecialBackendChecks",
 ) { context, input ->
     val moduleFragment = input.fir2irActualizedResult.irModuleFragment
@@ -83,7 +83,7 @@ internal fun <T : NativeBackendPhaseContext> PhaseEngine<T>.runSpecialBackendChe
     runPhase(SpecialBackendChecksPhase, SpecialBackendChecksInput(irModule, irBuiltIns, symbols))
 }
 
-internal fun <T : NativeBackendPhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrOutput: Fir2IrOutput) {
+internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrOutput: Fir2IrOutput) {
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }
 
