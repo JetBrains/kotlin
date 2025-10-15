@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("es6")
-public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxTest {
+public class JsES6CodegenBoxTestGenerated extends AbstractJsES6CodegenBoxTest {
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "compileKotlinAgainstKotlin", "multiplatform/k1");

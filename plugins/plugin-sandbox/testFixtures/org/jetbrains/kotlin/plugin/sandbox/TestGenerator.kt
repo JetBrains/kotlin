@@ -23,11 +23,11 @@ fun main() {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
-            testClass<AbstractFirJsLightTreePluginBlackBoxCodegenTest> {
+            testClass<AbstractJsLightTreePluginBlackBoxCodegenTest> {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
-            testClass<AbstractFirJsLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest> {
+            testClass<AbstractJsLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest> {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
@@ -35,7 +35,7 @@ fun main() {
                 model("firLoadK2Compiled")
             }
 
-            testClass<AbstractFirLoadK2CompiledWithPluginJsKotlinTest> {
+            testClass<AbstractLoadK2CompiledWithPluginJsKotlinTest> {
                 model("firLoadK2Compiled")
             }
 

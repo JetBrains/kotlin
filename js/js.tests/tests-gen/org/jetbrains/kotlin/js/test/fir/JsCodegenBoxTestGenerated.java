@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
+public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "compileKotlinAgainstKotlin", "multiplatform/k1");

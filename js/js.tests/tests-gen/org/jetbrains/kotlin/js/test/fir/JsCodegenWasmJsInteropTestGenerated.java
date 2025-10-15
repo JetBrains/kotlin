@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.test.fir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -20,8 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxWasmJsInterop")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("es6")
-public class FirJsES6CodegenWasmJsInteropTestGenerated extends AbstractFirJsES6CodegenWasmJsInteropTest {
+public class JsCodegenWasmJsInteropTestGenerated extends AbstractJsCodegenWasmJsInteropTest {
   @Test
   public void testAllFilesPresentInBoxWasmJsInterop() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -558,7 +556,6 @@ public class FirJsES6CodegenWasmJsInteropTestGenerated extends AbstractFirJsES6C
   @Nested
   @TestMetadata("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers")
   @TestDataPath("$PROJECT_ROOT")
-  @Tag("es6")
   public class EscapedIdentifiers {
     @Test
     public void testAllFilesPresentInEscapedIdentifiers() {

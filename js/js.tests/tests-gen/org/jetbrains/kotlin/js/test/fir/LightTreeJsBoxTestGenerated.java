@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/box")
 @TestDataPath("$PROJECT_ROOT")
-public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
+public class LightTreeJsBoxTestGenerated extends AbstractLightTreeJsBoxTest {
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, true, "es6classes");

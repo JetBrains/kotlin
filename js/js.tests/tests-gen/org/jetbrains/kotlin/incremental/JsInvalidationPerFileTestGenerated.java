@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/incremental/invalidation")
 @TestDataPath("$PROJECT_ROOT")
-public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvalidationPerModuleTest {
+public class JsInvalidationPerFileTestGenerated extends AbstractJsInvalidationPerFileTest {
   @Test
   @TestMetadata("abstractClassWithJsExport")
   public void testAbstractClassWithJsExport() {

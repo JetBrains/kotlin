@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxWasmJsInterop")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsCodegenWasmJsInteropWithInlinedFunInKlibTestGenerated extends AbstractFirJsCodegenWasmJsInteropWithInlinedFunInKlibTest {
+public class JsCodegenWasmJsInteropWithInlinedFunInKlibTestGenerated extends AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest {
   @Test
   public void testAllFilesPresentInBoxWasmJsInterop() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, true);

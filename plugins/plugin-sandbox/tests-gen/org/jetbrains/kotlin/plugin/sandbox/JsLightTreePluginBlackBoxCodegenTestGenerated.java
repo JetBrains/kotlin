@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/plugin-sandbox/testData/box")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirJsLightTreePluginBlackBoxCodegenTest {
+public class JsLightTreePluginBlackBoxCodegenTestGenerated extends AbstractJsLightTreePluginBlackBoxCodegenTest {
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/box"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);

@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/syntheticAccessors")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSyntheticAccessorTest {
+public class JsKlibSyntheticAccessorTestGenerated extends AbstractJsKlibSyntheticAccessorTest {
   @Test
   public void testAllFilesPresentInSyntheticAccessors() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, true);

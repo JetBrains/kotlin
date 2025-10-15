@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/sourcemap")
 @TestDataPath("$PROJECT_ROOT")
-public class FirSourceMapGenerationSmokeTestGenerated extends AbstractFirSourceMapGenerationSmokeTest {
+public class SourceMapGenerationSmokeTestGenerated extends AbstractSourceMapGenerationSmokeTest {
   @Test
   public void testAllFilesPresentInSourcemap() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/sourcemap"), Pattern.compile("^(.+)\\.kt$"), null, true);

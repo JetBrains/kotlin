@@ -102,15 +102,15 @@ open class AbstractFirJsTest(
     }
 }
 
-open class AbstractFirPsiJsBoxTest : AbstractFirJsTest(
+open class AbstractPsiJsBoxTest : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
-    testGroupOutputDirPrefix = "firPsiBox/",
+    testGroupOutputDirPrefix = "psiBox/",
     parser = FirParser.Psi,
 )
 
-open class AbstractFirLightTreeJsBoxTest : AbstractFirJsTest(
+open class AbstractLightTreeJsBoxTest : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
-    testGroupOutputDirPrefix = "firLightTreeBox/",
+    testGroupOutputDirPrefix = "lightTreeBox/",
     parser = FirParser.LightTree,
 )
 
@@ -130,12 +130,12 @@ open class AbstractFirJsCodegenBoxTestBase(testGroupOutputDirPrefix: String) : A
     }
 }
 
-open class AbstractFirJsCodegenBoxTest : AbstractFirJsCodegenBoxTestBase(
-    testGroupOutputDirPrefix = "codegen/firBox/"
+open class AbstractJsCodegenBoxTest : AbstractFirJsCodegenBoxTestBase(
+    testGroupOutputDirPrefix = "codegen/box/"
 )
 
-open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodegenBoxTestBase(
-    testGroupOutputDirPrefix = "codegen/firBoxWithInlinedFunInKlib"
+open class AbstractJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodegenBoxTestBase(
+    testGroupOutputDirPrefix = "codegen/boxWithInlinedFunInKlib"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -157,16 +157,16 @@ open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodege
     }
 }
 
-open class AbstractFirJsCodegenInlineTest(
-    testGroupOutputDirPrefix: String = "codegen/firBoxInline/"
+open class AbstractJsCodegenInlineTest(
+    testGroupOutputDirPrefix: String = "codegen/boxInline/"
 ) : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
-open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
-    testGroupOutputDirPrefix: String = "codegen/firBoxInlineInlined/"
-) : AbstractFirJsCodegenInlineTest(
+open class AbstractJsCodegenInlineWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix: String = "codegen/boxInlineInlined/"
+) : AbstractJsCodegenInlineTest(
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -182,8 +182,8 @@ open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
     }
 }
 
-open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
-    testGroupOutputDirPrefix = "codegen/firBoxInlineSplitted/"
+open class AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractJsCodegenInlineWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix = "codegen/boxInlineSplitted/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
         get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
@@ -228,7 +228,7 @@ open class AbstractJsTypeScriptExportWithInlinedFunInKlibTest : AbstractJsTypeSc
 
 open class AbstractJsES6TypeScriptExportTest(
     testGroupOutputDirPrefix: String = "typescript-export/es6"
-) : AbstractFirJsES6Test(
+) : AbstractJsES6Test(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
@@ -267,9 +267,9 @@ open class AbstractJsLineNumberWithInlinedFunInKlibTest : AbstractJsLineNumberTe
     }
 }
 
-open class AbstractFirSourceMapGenerationSmokeTest : AbstractFirJsTest(
+open class AbstractSourceMapGenerationSmokeTest : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/sourcemap/",
-    testGroupOutputDirPrefix = "firSourcemap/"
+    testGroupOutputDirPrefix = "sourcemap/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -367,15 +367,15 @@ open class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsSteppingW
     }
 }
 
-open class AbstractFirJsCodegenWasmJsInteropTest(
-    testGroupOutputDirPrefix: String = "codegen/firWasmJsInteropJs/"
+open class AbstractJsCodegenWasmJsInteropTest(
+    testGroupOutputDirPrefix: String = "codegen/wasmJsInteropJs/"
 ) : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
-open class AbstractFirJsCodegenWasmJsInteropWithInlinedFunInKlibTest : AbstractFirJsCodegenWasmJsInteropTest(
-    testGroupOutputDirPrefix = "codegen/firWasmJsInteropJsWithInlinedFunInKlib/"
+open class AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest : AbstractJsCodegenWasmJsInteropTest(
+    testGroupOutputDirPrefix = "codegen/wasmJsInteropJsWithInlinedFunInKlib/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

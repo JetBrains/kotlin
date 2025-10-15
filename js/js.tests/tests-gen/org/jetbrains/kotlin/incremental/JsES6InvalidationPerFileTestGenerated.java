@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/incremental/invalidation")
 @TestDataPath("$PROJECT_ROOT")
-public class JsFirInvalidationPerFileTestGenerated extends AbstractJsFirInvalidationPerFileTest {
+@Tag("es6")
+public class JsES6InvalidationPerFileTestGenerated extends AbstractJsES6InvalidationPerFileTest {
   @Test
   @TestMetadata("abstractClassWithJsExport")
   public void testAbstractClassWithJsExport() {

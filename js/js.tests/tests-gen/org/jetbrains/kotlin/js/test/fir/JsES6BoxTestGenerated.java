@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("es6")
-public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
+public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);

@@ -40,44 +40,44 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/syntheticAccessors") {
-            testClass<AbstractFirJsKlibSyntheticAccessorTest> {
+            testClass<AbstractJsKlibSyntheticAccessorTest> {
                 model()
             }
-            testClass<AbstractFirJsCodegenBoxWithInlinedFunInKlibTest>(
-                suiteTestClassName = "FirJsKlibSyntheticAccessorsBoxTestGenerated"
+            testClass<AbstractJsCodegenBoxWithInlinedFunInKlibTest>(
+                suiteTestClassName = "JsKlibSyntheticAccessorsBoxTestGenerated"
             ) {
                 model()
             }
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
-            testClass<AbstractJsFirInvalidationPerFileTest> {
+            testClass<AbstractJsInvalidationPerFileTest> {
                 model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
-            testClass<AbstractJsFirInvalidationPerModuleTest> {
+            testClass<AbstractJsInvalidationPerModuleTest> {
                 model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
-            testClass<AbstractJsFirES6InvalidationPerFileTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6InvalidationPerFileTest>(annotations = listOf(*es6())) {
                 model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
-            testClass<AbstractJsFirES6InvalidationPerModuleTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6InvalidationPerModuleTest>(annotations = listOf(*es6())) {
                 model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
-            testClass<AbstractJsFirInvalidationPerFileWithPLTest> {
+            testClass<AbstractJsInvalidationPerFileWithPLTest> {
                 model("invalidationWithPL/", pattern = "^([^_](.+))$", recursive = false)
             }
 
-            testClass<AbstractJsFirInvalidationPerModuleWithPLTest> {
+            testClass<AbstractJsInvalidationPerModuleWithPLTest> {
                 model("invalidationWithPL/", pattern = "^([^_](.+))$", recursive = false)
             }
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/sourcemap", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirSourceMapGenerationSmokeTest> {
+            testClass<AbstractSourceMapGenerationSmokeTest> {
                 model()
             }
         }
@@ -92,15 +92,15 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirPsiJsBoxTest> {
+            testClass<AbstractPsiJsBoxTest> {
                 model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
-            testClass<AbstractFirLightTreeJsBoxTest> {
+            testClass<AbstractLightTreeJsBoxTest> {
                 model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
-            testClass<AbstractFirJsES6BoxTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6BoxTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
         }
@@ -133,45 +133,45 @@ fun main(args: Array<String>) {
                 model("box/$k2BoxTestDir")
             }
 
-            testClass<AbstractFirJsCodegenBoxTest> {
+            testClass<AbstractJsCodegenBoxTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
-            testClass<AbstractFirJsCodegenBoxWithInlinedFunInKlibTest> {
+            testClass<AbstractJsCodegenBoxWithInlinedFunInKlibTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("boxInline")
             }
 
-            testClass<AbstractFirJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6CodegenBoxTest>(annotations = listOf(*es6())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
 
-            testClass<AbstractFirJsCodegenInlineTest> {
+            testClass<AbstractJsCodegenInlineTest> {
                 model("boxInline")
             }
 
-            testClass<AbstractFirJsCodegenInlineWithInlinedFunInKlibTest> {
+            testClass<AbstractJsCodegenInlineWithInlinedFunInKlibTest> {
                 model("boxInline")
             }
 
-            testClass<AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest> {
+            testClass<AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest> {
                 model("box")
                 model("boxInline")
             }
 
-            testClass<AbstractFirJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
                 model("boxInline")
             }
 
-            testClass<AbstractFirJsCodegenWasmJsInteropTest> {
+            testClass<AbstractJsCodegenWasmJsInteropTest> {
                 model("boxWasmJsInterop")
             }
 
-            testClass<AbstractFirJsCodegenWasmJsInteropWithInlinedFunInKlibTest> {
+            testClass<AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest> {
                 model("boxWasmJsInterop")
             }
 
-            testClass<AbstractFirJsES6CodegenWasmJsInteropTest>(annotations = listOf(*es6())) {
+            testClass<AbstractJsES6CodegenWasmJsInteropTest>(annotations = listOf(*es6())) {
                 model("boxWasmJsInterop")
             }
 
@@ -281,7 +281,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirLoadK2CompiledJsKotlinTest> {
+            testClass<AbstractLoadK2CompiledJsKotlinTest> {
                 model("compiledKotlin", extension = "kt")
                 model("compiledKotlinWithStdlib", extension = "kt")
             }

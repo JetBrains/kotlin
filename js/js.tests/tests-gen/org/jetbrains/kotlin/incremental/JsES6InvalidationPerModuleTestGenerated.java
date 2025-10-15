@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/incremental/invalidation")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("es6")
-public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6InvalidationPerFileTest {
+public class JsES6InvalidationPerModuleTestGenerated extends AbstractJsES6InvalidationPerModuleTest {
   @Test
   @TestMetadata("abstractClassWithJsExport")
   public void testAbstractClassWithJsExport() {

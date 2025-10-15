@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/plugin-sandbox/testData/firLoadK2Compiled")
 @TestDataPath("$PROJECT_ROOT")
-public class FirLoadK2CompiledWithPluginJsKotlinTestGenerated extends AbstractFirLoadK2CompiledWithPluginJsKotlinTest {
+public class LoadK2CompiledWithPluginJsKotlinTestGenerated extends AbstractLoadK2CompiledWithPluginJsKotlinTest {
   @Test
   public void testAllFilesPresentInFirLoadK2Compiled() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/firLoadK2Compiled"), Pattern.compile("^(.+)\\.kt$"), null, true);

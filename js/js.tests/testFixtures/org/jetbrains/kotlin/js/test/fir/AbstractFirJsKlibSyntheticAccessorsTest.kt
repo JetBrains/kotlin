@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsSecondStageEnvironmentConfigurator
 
-open class AbstractFirJsKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
+open class AbstractJsKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     val targetFrontend = FrontendKinds.FIR
     val parser = FirParser.LightTree
     val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
