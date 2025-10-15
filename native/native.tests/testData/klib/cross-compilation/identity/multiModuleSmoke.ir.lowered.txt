@@ -198,7 +198,7 @@ MODULE_FRAGMENT name:<lib2>
                       RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
                         TYPE_OP type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=IMPLICIT_CAST typeOperand=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
                           CALL 'kotlin/Lazy.value.<get-value>|<get-value>(){}[0]' type=kotlin.Any? origin=GET_PROPERTY
-                            ARG 1: GET_VAR 'val this: kotlin.Lazy<kotlin.Any?> [val] declared in lib2.SealedInterface.Object.<get-v>' type=kotlin.Lazy<kotlin.Any?> origin=null
+                            ARG 1: GET_VAR 'val this: kotlin.Lazy<kotlin.Any?> [val] declared in lib2.SealedInterface.Object.<get-v>' type=kotlin.Lazy<kotlin.Any?> origin=IMPLICIT_ARGUMENT
         FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:lib2/SealedInterface.Object.toString|toString(){}[0] visibility:public modality:OPEN returnType:kotlin.String
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Object
           overridden:
