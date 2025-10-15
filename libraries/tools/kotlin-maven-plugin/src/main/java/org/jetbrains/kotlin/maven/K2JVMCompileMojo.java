@@ -115,6 +115,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Parameter(property = "kotlin.compiler.daemon.shutdownDelayMs")
     protected Long daemonShutdownDelayMs;
 
+    @Parameter(property = "kotlin.compiler.generateCompilerRefIndex", defaultValue = "false")
+    protected boolean generateCompilerRefIndex;
+
     /**
      * The time the Kotlin daemon continues to live after the Maven build process finishes (without the Maven daemon)
      */
@@ -367,6 +370,8 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             if (isIncremental()) {
                 resultHandlers.add(configureIncrementalCompilation(compilationOperation, arguments));
             }
+
+            compilationOperation.set(JvmCompilationOperation.GENERATE_COMPILER_REF_INDEX, generateCompilerRefIndex);
 
             LegacyKotlinMavenLogger kotlinMavenLogger = new LegacyKotlinMavenLogger(messageCollector, getLog());
             try (KotlinToolchains.BuildSession buildSession = kotlinToolchains.createBuildSession()) {
