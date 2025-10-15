@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Linker
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import java.io.File
@@ -23,7 +23,7 @@ internal data class LinkerPhaseInput(
         val resolvedCacheBinaries: ResolvedCacheBinaries,
 )
 
-internal val LinkerPhase = createSimpleNamedCompilerPhase<PhaseContext, LinkerPhaseInput>(
+internal val LinkerPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, LinkerPhaseInput>(
         name = "Linker",
 ) { context, input ->
     val linker = Linker(
@@ -47,7 +47,7 @@ internal data class PreLinkCachesInput(
         val outputObjectFile: File,
 )
 
-internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<PhaseContext, PreLinkCachesInput>(
+internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, PreLinkCachesInput>(
         name = "PreLinkCaches",
 ) { context, input ->
     val inputFiles = input.objectFiles.map { it.absoluteFile.normalize().path } + input.caches.static

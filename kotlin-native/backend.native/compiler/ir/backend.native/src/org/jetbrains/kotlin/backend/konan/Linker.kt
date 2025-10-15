@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 
-internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
+internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOutputKind =
         when (context.config.produce) {
             CompilerOutputKind.FRAMEWORK -> {
                 val staticFramework = context.config.produceStaticFramework
@@ -156,7 +156,7 @@ internal class Linker(
     }
 }
 
-internal fun runLinkerCommands(context: PhaseContext, commands: List<Command>, cachingInvolved: Boolean) = try {
+internal fun runLinkerCommands(context: NativeBackendPhaseContext, commands: List<Command>, cachingInvolved: Boolean) = try {
     commands.forEach {
         it.logWith(context::log)
         it.execute()

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.BitcodeCompiler
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import java.io.File
 
 internal data class ObjectFilesPhaseInput(
@@ -15,7 +15,7 @@ internal data class ObjectFilesPhaseInput(
         val objectFile: File,
 )
 
-internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<PhaseContext, ObjectFilesPhaseInput>(
+internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, ObjectFilesPhaseInput>(
         name = "ObjectFiles",
 ) { context, input ->
     BitcodeCompiler(context).makeObjectFile(input.bitcodeFile, input.objectFile)

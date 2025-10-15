@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
@@ -41,7 +41,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
+internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val languageVersion = config.languageVersionSettings.languageVersion
     val kotlinSourceRoots = environment.configuration.kotlinSourceRoots
     if (languageVersion.usesK2 && kotlinSourceRoots.isNotEmpty()) {
@@ -52,7 +52,7 @@ internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environm
     return frontendOutput as? FrontendPhaseOutput.Full
 }
 
-internal fun PhaseEngine<PhaseContext>.runPsiToIr(
+internal fun PhaseEngine<NativeBackendPhaseContext>.runPsiToIr(
         frontendOutput: FrontendPhaseOutput.Full
 ): PsiToIrOutput {
     val config = this.context.config
@@ -67,11 +67,11 @@ internal fun PhaseEngine<PhaseContext>.runPsiToIr(
     return psiToIrOutput
 }
 
-internal fun PhaseEngine<PhaseContext>.linkKlibs(
+internal fun PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
         frontendOutput: FrontendPhaseOutput.Full,
 ): LinkKlibsOutput = linkKlibs(frontendOutput, {}).first
 
-internal fun <T> PhaseEngine<PhaseContext>.linkKlibs(
+internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
         frontendOutput: FrontendPhaseOutput.Full,
         produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
 ): Pair<LinkKlibsOutput, T> {
@@ -88,7 +88,7 @@ internal fun <T> PhaseEngine<PhaseContext>.linkKlibs(
     return linkKlibsOutput to additionalOutput
 }
 
-internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
+internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
         backendEngine.runAndMeasurePhase(functionsWithoutBoundCheck)
@@ -284,7 +284,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
     }
 }
 
-internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(
+internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
         context: BitcodePostProcessingContext, dependencies: DependenciesTrackingResult,
 ) {
     useContext(context) { bitcodeEngine ->
@@ -406,7 +406,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
 }
 
 
-internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
+internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
         moduleCompilationOutput: ModuleCompilationOutput,
         linkerOutputFile: String,
         outputFiles: OutputFiles,

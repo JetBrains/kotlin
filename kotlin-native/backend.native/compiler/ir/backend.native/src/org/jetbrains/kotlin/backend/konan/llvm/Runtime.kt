@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
@@ -16,7 +16,7 @@ internal interface RuntimeAware {
 }
 
 internal class Runtime(
-        phaseContext: PhaseContext,
+        phaseContext: NativeBackendPhaseContext,
         private val llvmContext: LLVMContextRef,
         bitcodeFile: String
 ) {

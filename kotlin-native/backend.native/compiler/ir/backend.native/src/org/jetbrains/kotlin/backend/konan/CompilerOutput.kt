@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
@@ -222,7 +222,7 @@ private fun linkAllDependencies(generationState: NativeGenerationState, generate
     }
 }
 
-internal fun insertAliasToEntryPoint(context: PhaseContext, module: LLVMModuleRef) {
+internal fun insertAliasToEntryPoint(context: NativeBackendPhaseContext, module: LLVMModuleRef) {
     val config = context.config
     val nomain = config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (config.produce != CompilerOutputKind.PROGRAM || nomain)

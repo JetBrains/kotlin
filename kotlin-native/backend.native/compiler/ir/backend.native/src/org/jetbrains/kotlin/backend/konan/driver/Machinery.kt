@@ -41,11 +41,11 @@ internal interface PerformanceManagerContext {
  * * On the other hand, middle- and bitcode phases are hard to decouple due to the way the code was written many years ago.
  * It will take some time to rewrite it properly.
  */
-internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext, DisposableContext, PerformanceManagerContext
+internal interface NativeBackendPhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext, DisposableContext, PerformanceManagerContext
 
-internal open class BasicPhaseContext(
+internal open class BasicNativeBackendPhaseContext(
         override val config: KonanConfig,
-) : PhaseContext {
+) : NativeBackendPhaseContext {
     override var inVerbosePhase = false
 
     override val messageCollector: MessageCollector
@@ -59,17 +59,17 @@ internal open class BasicPhaseContext(
         get() = config.configuration.perfManager
 }
 
-internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
+internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<NativeBackendPhaseContext>) -> Unit) {
     val phaserState = PhaserState()
     val phaseConfig = config.phaseConfig
-    val context = BasicPhaseContext(config)
-    val topLevelPhase = object : NamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
-        override fun phaseBody(context: PhaseContext, input: Any) {
+    val context = BasicNativeBackendPhaseContext(config)
+    val topLevelPhase = object : NamedCompilerPhase<NativeBackendPhaseContext, Any, Unit>("Compiler") {
+        override fun phaseBody(context: NativeBackendPhaseContext, input: Any) {
             val engine = PhaseEngine(phaseConfig, phaserState, context)
             body(engine)
         }
 
-        override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: PhaseContext, input: Any) {
+        override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: NativeBackendPhaseContext, input: Any) {
             error("Compiler was disabled")
         }
     }

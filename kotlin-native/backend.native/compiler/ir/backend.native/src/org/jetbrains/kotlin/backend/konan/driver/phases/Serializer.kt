@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.PsiToIrOutput
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -28,10 +28,10 @@ internal data class SerializerInput(
 
 typealias SerializerOutput = org.jetbrains.kotlin.backend.common.serialization.SerializerOutput<KonanLibrary>
 
-internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, SerializerInput, SerializerOutput>(
+internal val SerializerPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, SerializerInput, SerializerOutput>(
         "Serializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, emptyList()) }
-) { context: PhaseContext, input: SerializerInput ->
+) { context: NativeBackendPhaseContext, input: SerializerInput ->
     val config = context.config
     val messageCollector = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -64,7 +64,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
     SerializerOutput(serializedMetadata, serializedIr, neededLibraries)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runSerializer(
+internal fun <T : NativeBackendPhaseContext> PhaseEngine<T>.runSerializer(
     moduleDescriptor: ModuleDescriptor,
     psiToIrResult: PsiToIrOutput?,
     produceHeaderKlib: Boolean = false,

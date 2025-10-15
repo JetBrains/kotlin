@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
@@ -51,7 +51,7 @@ internal data class SpecialBackendChecksInput(
         get() = irModule
 }
 
-internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, SpecialBackendChecksInput>(
+internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, SpecialBackendChecksInput>(
         "SpecialBackendChecks",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
@@ -59,7 +59,7 @@ internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseCon
     SpecialBackendChecksTraversal(context, input.symbols, input.irBuiltIns).lower(input.irModule)
 }
 
-internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput>(
+internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, Fir2IrOutput>(
         "SpecialBackendChecks",
 ) { context, input ->
     val moduleFragment = input.fir2irActualizedResult.irModuleFragment
@@ -70,7 +70,7 @@ internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseC
     ).lower(moduleFragment)
 }
 
-internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, Pair<IrModuleFragment, IrBuiltIns>>(
+internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, Pair<IrModuleFragment, IrBuiltIns>>(
         name = "CopyDefaultValuesToActual",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
@@ -78,15 +78,15 @@ internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<Pha
     ExpectToActualDefaultValueCopier(irModule, irBuiltins).process()
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, irBuiltIns: IrBuiltIns, symbols: KonanSymbols) {
+internal fun <T : NativeBackendPhaseContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, irBuiltIns: IrBuiltIns, symbols: KonanSymbols) {
     runPhase(SpecialBackendChecksPhase, SpecialBackendChecksInput(irModule, irBuiltIns, symbols))
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrOutput: Fir2IrOutput) {
+internal fun <T : NativeBackendPhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrOutput: Fir2IrOutput) {
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
+internal fun <T : NativeBackendPhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
     val diagnosticReporter = DiagnosticReporterFactory.createReporter(environment.configuration.messageCollector)
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter,
@@ -136,7 +136,7 @@ internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationSt
     file.addChild(makeEntryPoint(context))
 }
 
-internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<PhaseContext, FrontendPhaseOutput.Full>(
+internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, FrontendPhaseOutput.Full>(
         "CreateTestBundlePhase",
 ) { context, input ->
     val config = context.config

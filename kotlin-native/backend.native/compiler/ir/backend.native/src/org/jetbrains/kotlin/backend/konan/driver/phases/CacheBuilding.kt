@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.CacheStorage
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
@@ -48,7 +48,7 @@ internal val SaveAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nativ
 /**
  * Finalizes cache (renames temp to the final dist).
  */
-internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<PhaseContext, OutputFiles>(
+internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, OutputFiles>(
         name = "FinalizeCache",
 ) { context, outputFiles ->
     //  TODO: Explicit parameter
