@@ -171,7 +171,7 @@ fun FirClassSymbol<*>.createJavaMethod(
             this.isStatic = isStatic
             this.isOverride = isOverride
         }
-        isFromSource = true
+        origin = FirDeclarationOrigin.Java.Source
         typeParameters += methodTypeParameters
         this.source = source
 
@@ -182,7 +182,7 @@ fun FirClassSymbol<*>.createJavaMethod(
                 containingDeclarationSymbol = this@buildJavaMethod.symbol
                 this.name = valueParameter.name
                 isVararg = false
-                isFromSource = true
+                javaOrigin = FirDeclarationOrigin.Java.Source
             }
         }
     }.apply {

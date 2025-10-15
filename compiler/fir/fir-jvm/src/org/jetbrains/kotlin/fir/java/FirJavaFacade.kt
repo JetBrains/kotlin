@@ -151,7 +151,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             this.moduleData = moduleData
             symbol = classSymbol
             name = javaClass.name
-            isFromSource = javaClass.isFromSource
+            javaOrigin = javaOrigin(javaClass.isFromSource)
             classKind = javaClass.classKind
             javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
             this.javaTypeParameterStack = classJavaTypeParameterStack
@@ -438,7 +438,7 @@ private fun createDeclarationsForJavaRecord(
             source = recordComponent.toSourceElement(KtFakeSourceElementKind.JavaRecordComponentFunction)
             symbol = FirNamedFunctionSymbol(componentId)
             this.name = name
-            isFromSource = recordComponent.isFromSource
+            javaOrigin = javaOrigin(recordComponent.isFromSource)
             returnTypeRef = recordComponent.type.toFirJavaTypeRef(session, source)
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
@@ -462,8 +462,7 @@ private fun createDeclarationsForJavaRecord(
             this.containingClassSymbol = containingClassSymbol
             source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitJavaRecordConstructor)
             this.moduleData = moduleData
-            isFromSource = javaClass.isFromSource
-
+            origin = javaOrigin(javaClass.isFromSource)
             val constructorId = CallableId(classId, classId.shortClassName)
             symbol = FirConstructorSymbol(constructorId)
             status = FirResolvedDeclarationStatusImpl(
@@ -481,7 +480,7 @@ private fun createDeclarationsForJavaRecord(
                     containingDeclarationSymbol = this@buildJavaConstructor.symbol
                     source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
                     this.moduleData = moduleData
-                    isFromSource = component.isFromSource
+                    javaOrigin = javaOrigin(component.isFromSource)
                     returnTypeRef = component.type.toFirJavaTypeRef(session, source)
                     name = component.name
                     isVararg = component.isVararg
@@ -540,7 +539,7 @@ private fun convertJavaFieldToFir(
             this.moduleData = moduleData
             symbol = FirFieldSymbol(fieldId)
             name = fieldName
-            isFromSource = javaField.isFromSource
+            javaOrigin = javaOrigin(javaField.isFromSource)
             status = FirResolvedDeclarationStatusImpl(
                 javaField.visibility,
                 javaField.modality,
@@ -604,7 +603,7 @@ private fun convertJavaMethodToFir(
         source = javaMethod.toSourceElement()
         symbol = methodSymbol
         name = methodName
-        isFromSource = javaMethod.isFromSource
+        javaOrigin = javaOrigin(javaMethod.isFromSource)
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         returnTypeRef = returnType.toFirJavaTypeRef(session, fakeSource)
         javaMethod.typeParameters.mapTo(typeParameters) { it.toFirTypeParameter(methodSymbol, moduleData) }
@@ -641,7 +640,7 @@ private fun convertJavaAnnotationMethodToValueParameter(
     buildJavaValueParameter {
         source = javaMethod.toSourceElement(KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
         this.moduleData = moduleData
-        isFromSource = javaMethod.isFromSource
+        javaOrigin = javaOrigin(javaMethod.isFromSource)
         returnTypeRef = firJavaMethod.returnTypeRef
         containingDeclarationSymbol = firJavaMethod.symbol
         name = javaMethod.name
@@ -675,7 +674,7 @@ private fun convertJavaConstructorToFir(
         containingClassSymbol = classSymbol
         source = javaConstructor?.toSourceElement() ?: javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
         this.moduleData = moduleData
-        isFromSource = javaClass.isFromSource
+        origin = javaOrigin(javaClass.isFromSource)
         symbol = constructorSymbol
         status = methodStatus
         // TODO get rid of dependency on PSI KT-63046
@@ -724,7 +723,7 @@ private fun buildConstructorForAnnotationClass(
         containingClassSymbol = classSymbol
         source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
         this.moduleData = moduleData
-        isFromSource = javaClass.isFromSource
+        origin = javaOrigin(javaClass.isFromSource)
         symbol = FirConstructorSymbol(constructorId)
         status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
         returnTypeRef = buildResolvedTypeRef {

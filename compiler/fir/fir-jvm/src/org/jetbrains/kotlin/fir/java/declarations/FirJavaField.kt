@@ -217,7 +217,7 @@ class FirJavaField @FirImplementationDetail constructor(
 
 @FirBuilderDsl
 class FirJavaFieldBuilder : FirFieldBuilder() {
-    var isFromSource: Boolean by Delegates.notNull()
+    var javaOrigin: FirDeclarationOrigin.Java by Delegates.notNull()
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     var lazyInitializer: Lazy<FirExpression?>? = null
     lateinit var lazyHasConstantInitializer: Lazy<Boolean>
@@ -229,7 +229,7 @@ class FirJavaFieldBuilder : FirFieldBuilder() {
         return FirJavaField(
             source,
             moduleData,
-            origin = javaOrigin(isFromSource),
+            javaOrigin,
             symbol,
             name,
             returnTypeRef,
@@ -245,11 +245,10 @@ class FirJavaFieldBuilder : FirFieldBuilder() {
         )
     }
 
-    @Deprecated("Modification of 'origin' has no impact for FirJavaFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
-        get() = throw IllegalStateException()
-        set(@Suppress("UNUSED_PARAMETER") value) {
-            throw IllegalStateException()
+        get() = javaOrigin
+        set(value) {
+            javaOrigin = value as FirDeclarationOrigin.Java
         }
 }
 
