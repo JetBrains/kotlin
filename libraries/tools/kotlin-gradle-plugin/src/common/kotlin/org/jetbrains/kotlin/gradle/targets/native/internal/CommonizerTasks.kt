@@ -119,17 +119,16 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
 
 private suspend fun Project.isCommonizeCInteropTaskRegistrationEnabled(): Boolean {
     if (!cInteropCommonizationEnabled()) {
-        logger.info("[${project.path}] $commonizeCInteropTaskName task registration disabled. cInteropCommonizationEnabled == false")
+        logger.debug("[${project.path}] $commonizeCInteropTaskName task registration disabled. cInteropCommonizationEnabled == false")
         return false
     }
 
     val projectHasNativeTargets = multiplatformExtensionOrNull?.targets.orEmpty().any { it.platformType == KotlinPlatformType.native }
     if (!projectHasNativeTargets) {
-        logger.info("[${project.path}] $commonizeCInteropTaskName task registration disabled. Project has no native Kotlin targets.")
+        logger.debug("[${project.path}] $commonizeCInteropTaskName task registration disabled. Project has no native Kotlin targets.")
         return false
     }
 
-    logger.info("[${project.path}] $commonizeCInteropTaskName task registration enabled.")
     return true
 }
 
