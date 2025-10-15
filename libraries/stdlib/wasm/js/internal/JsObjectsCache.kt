@@ -6,7 +6,29 @@
 package kotlin.wasm.internal
 
 @OptIn(ExperimentalWasmJsInterop::class)
-internal external fun getCachedJsObject(
+@JsFun(
+    """
+    function getCachedJsObject(ref, ifNotCached) {
+        if (getCachedJsObject.cachedJsObjects == undefined) {
+            getCachedJsObject.cachedJsObjects = new WeakMap();
+        }
+        if (typeof ref !== 'object' && typeof ref !== 'function') return ifNotCached;
+        const cached = getCachedJsObject.cachedJsObjects.get(ref);
+        if (cached !== void 0) return cached;
+        getCachedJsObject.cachedJsObjects.set(ref, ifNotCached);
+        return ifNotCached;
+    }
+"""
+)
+internal external fun getCachedJsObjectWasm(
     ref: JsAny,
     ifNotCached: JsAny
 ): JsAny?
+
+@OptIn(ExperimentalWasmJsInterop::class, ExperimentalJsExport::class)
+@JsExport
+public fun getCachedJsObject(
+    ref: JsAny,
+    ifNotCached: JsAny
+): JsAny? =
+    getCachedJsObjectWasm(ref, ifNotCached)

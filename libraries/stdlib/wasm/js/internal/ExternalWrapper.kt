@@ -171,7 +171,7 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,
     // otherwise -- remember new box and return it.
-    return getCachedJsObject(ref, JsExternalBox(ref).toJsReference())
+    return getCachedJsObjectWasm(ref, JsExternalBox(ref).toJsReference())
 }
 
 

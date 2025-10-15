@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
@@ -537,9 +538,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val builder = context.createIrBuilder(result.symbol)
         // TODO: Cache created JS closures
         val arity = info.parametersAdapters.size
+        val importVariableString = JsModuleAndQualifierReference.encode("<kotlin>")
+
         val jsCode = buildString {
             append("(f) => ")
-            append("getCachedJsObject(f, ")
+            append("$importVariableString.getCachedJsObject(f, ")
             append("(")
             appendParameterList(arity)
             append(") => wasmExports[")

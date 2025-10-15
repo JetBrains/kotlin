@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.wasm.config;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.platform.wasm.WasmTarget;
 
+import java.io.File;
+
 public class WasmConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> WASM_ENABLE_ARRAY_RANGE_CHECKS =
             CompilerConfigurationKey.create("enable array range checks");
@@ -44,4 +46,7 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_INCLUDED_MODULE_ONLY =
             CompilerConfigurationKey.create("compile single module.");
+
+    public static final CompilerConfigurationKey<File> WASM_MODULE_RESOLUTION_MAP =
+            CompilerConfigurationKey.create("provide alternative paths to imported modules.");
 }

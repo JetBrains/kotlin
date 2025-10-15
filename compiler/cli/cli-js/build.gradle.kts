@@ -22,6 +22,7 @@ dependencies {
     wasmCustomFormatters(project(":wasm:wasm.debug.browsers"))
 
     compileOnly(intellijCore())
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
 
 val updateWasmResources by tasks.registering(Sync::class) {

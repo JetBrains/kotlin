@@ -34,6 +34,7 @@ abstract class WasmBoxRunnerBase(
         fun File.ignoreInSizeChecks() = also { filesToIgnoreInSizeChecks.add(it) }
 
         val testJs = """
+                    import { exports } from './index.mjs'
                     if (globalThis.console == null) {
                         globalThis.console = {};
                     }
@@ -42,10 +43,8 @@ abstract class WasmBoxRunnerBase(
                     }
                     let actualResult;
                     try {
-                        // Use "dynamic import" to catch exception happened during JS & Wasm modules initialization
-                        let jsModule = await import('./index.mjs');
                         ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
-                        actualResult = jsModule.box();
+                        actualResult = exports.box();
                     } catch(e) {
                         console.log('Failed with exception!')
 

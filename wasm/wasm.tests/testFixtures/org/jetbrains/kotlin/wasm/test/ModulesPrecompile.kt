@@ -66,6 +66,7 @@ fun precompileWasmModules() {
         it.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
         it.put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
         it.put(WasmConfigurationKeys.WASM_GENERATE_WAT, debugMode >= DebugMode.DEBUG)
+        it.put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, debugMode >= DebugMode.DEBUG)
         it.languageVersionSettings = languageSettings
     }
 
@@ -123,6 +124,30 @@ fun precompileWasmModules() {
         outputName = precompiledStdlibOutputName,
         outputDir = precompiledStdlibOutputDir,
     )
+
+    val relativeStdlibPath = precompiledStdlibOutputDir.relativeTo(precompiledKotlinTestOutputDir).path.replace('\\', '/')
+//    val moduleResolutionMap = mapOf(
+//        "<kotlin-test>" to mapOf(
+//            "<kotlin>" to relativeStdlibPath
+//        )
+//    )
+//    val json = Json { prettyPrint = true }.encodeToString(moduleResolutionMap)
+
+    val stringResolutionMap = """
+        {
+            "<kotlin-test>": {
+                "<kotlin>": "$relativeStdlibPath/_kotlin_"
+            }
+        }
+    """.trimIndent()
+
+    val tempFile = kotlin.io.path.createTempFile("resolutionMap", ".json").toFile()
+    tempFile.writeText(stringResolutionMap)
+
+    with(configuration) {
+        put<File>(WasmConfigurationKeys.WASM_MODULE_RESOLUTION_MAP, tempFile)
+    }
+
     compileWasmModule(
         includes = kotlinTestPath,
         libraries = listOf(stdlibPath, kotlinTestPath),

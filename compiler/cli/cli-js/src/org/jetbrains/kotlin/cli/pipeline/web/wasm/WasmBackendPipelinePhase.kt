@@ -40,6 +40,10 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 import java.net.URLEncoder
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+
 fun getAllReferencedDeclarations(
     wasmCompiledFileFragment: WasmCompiledFileFragment,
     additionalSignatureToImport: Set<IdSignature>
@@ -260,12 +264,31 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         }
     }
 
+    fun parseModuleResolutionMap(configuration: CompilerConfiguration)
+            : Map<String, Map<String, String>> {
+
+        val moduleResolutionMapFile = configuration[WasmConfigurationKeys.WASM_MODULE_RESOLUTION_MAP] ?: return emptyMap()
+
+        val stringResolutionMap = moduleResolutionMapFile.readText()
+        val resolutionMapSerializer = MapSerializer(
+            String.serializer(),
+            MapSerializer(String.serializer(), String.serializer())
+        )
+
+        val moduleResolutionMap = Json.decodeFromString(resolutionMapSerializer, stringResolutionMap)
+
+        return moduleResolutionMap
+    }
+
     private fun compileSingleModule(
         configuration: CompilerConfiguration,
         module: ModulesStructure,
         outputDir: File,
         wasmDebug: Boolean,
     ): WasmCompilerResult {
+
+        val moduleResolutionMap = parseModuleResolutionMap(configuration)
+
         val performanceManager = configuration.perfManager
 
         val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
@@ -296,6 +319,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 stdlibIsMainModule = module.klibs.included?.isWasmStdlib == true,
                 generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
                 wasmDebug = wasmDebug,
+                moduleResolutionMap = moduleResolutionMap,
             )
 
             writeCompilationResult(
@@ -318,7 +342,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
     generateWat: Boolean,
     wasmDebug: Boolean,
     outputFileNameBase: String? = null,
-    singleModulePreloadJs: String? = null,
+    moduleResolutionMap: Map<String, Map<String, String>>,
 ): WasmCompilerResult {
     val mainModuleFragment = backendContext.irModuleFragment
     val moduleName = mainModuleFragment.name.asString()
@@ -352,10 +376,21 @@ fun compileWasmLoweredFragmentsForSingleModule(
     val dependencyModules = loweredIrFragments.filterNot { it == mainModuleFragment }
     dependencyModules.mapTo(wasmCompiledFileFragments) {
         val dependencyName = it.name.asString()
-        dependencyImports.add(WasmModuleDependencyImport(dependencyName, it.outputFileName))
+        val initialOutputFileName = it.outputFileName
+
+        dependencyImports.add(
+            WasmModuleDependencyImport(
+                dependencyName,
+                moduleResolutionMap[moduleName]?.get(dependencyName)
+                    ?: initialOutputFileName
+            )
+        )
         codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(it, dependencyName, importedDeclarations)
     }
     wasmCompiledFileFragments.add(mainModuleFileFragment)
+
+    val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS) &&
+            moduleName == "<kotlin>"
 
     return compileWasm(
         wasmCompiledFileFragments = wasmCompiledFileFragments,
@@ -367,10 +402,9 @@ fun compileWasmLoweredFragmentsForSingleModule(
         generateWat = generateWat,
         generateSourceMaps = false,
         generateDwarf = false,
-        useDebuggerCustomFormatters = false,
+        useDebuggerCustomFormatters = useDebuggerCustomFormatters,
         stdlibModuleNameForImport = loweredIrFragments.first().name.asString().takeIf { !stdlibIsMainModule },
         dependencyModules = dependencyImports,
         initializeUnit = stdlibIsMainModule,
-        singleModulePreloadJs = singleModulePreloadJs,
     )
 }

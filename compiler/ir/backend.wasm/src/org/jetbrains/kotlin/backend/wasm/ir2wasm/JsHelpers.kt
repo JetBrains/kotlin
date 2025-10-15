@@ -23,10 +23,10 @@ data class JsModuleAndQualifierReference(
 
     companion object {
         // Encode variable name as base64 to have a valid unique JS identifier
-        private val encoder = Base64.getEncoder().withoutPadding()
+        private val encoder = Base64.getUrlEncoder().withoutPadding()
 
         fun encode(value: String): String {
-            return encoder.encodeToString(value.encodeToByteArray())
+            return encoder.encodeToString(value.encodeToByteArray()).replace('-', '_')
         }
     }
 }
