@@ -230,4 +230,14 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
                 if (nonSkippingGroupsOptimization) features + ComposeFeatureFlag.OptimizeNonSkippingGroups else features
             }
         )
+
+    /**
+     * Enable addition of Compose-specific entries to the proguard mapping file
+     * produced by optimizers (such as R8) when compiling Android applications.
+     * These entries are used to deobfuscate group key based Compose stack traces
+     * in minified applications.
+     *
+     * Enabled by default.
+     */
+    val includeComposeMappingFile: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 }
