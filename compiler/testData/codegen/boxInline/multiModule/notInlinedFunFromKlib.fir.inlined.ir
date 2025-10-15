@@ -334,23 +334,21 @@ FILE fqName:<root> fileName:/main.kt
                   CALL 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     TYPE_ARG T: kotlin.Any?
                     ARG arg: GET_VAR 'val arg: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
-                    ARG block: TYPE_OP type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Any?, kotlin.Unit>
-                      TYPE_OP type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Any?, kotlin.Unit>
-                        RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
-                          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
-                          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-                            VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
-                            BLOCK_BODY
-                              CALL 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                                TYPE_ARG T: kotlin.String
-                                ARG arg: GET_VAR 'it: kotlin.String declared in <root>.box.<anonymous>' type=kotlin.String origin=null
-                                ARG block: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
-                                  overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
-                                  invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-                                    VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
-                                    BLOCK_BODY
-                                      SET_VAR 'var x: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
-                                        GET_VAR 'it: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=null
+                    ARG block: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
+                      overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+                      invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
+                        BLOCK_BODY
+                          CALL 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                            TYPE_ARG T: kotlin.String
+                            ARG arg: GET_VAR 'it: kotlin.String declared in <root>.box.<anonymous>' type=kotlin.String origin=null
+                            ARG block: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
+                              overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+                              invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                                VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
+                                BLOCK_BODY
+                                  SET_VAR 'var x: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
+                                    GET_VAR 'it: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=null
                   RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
             RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
@@ -384,7 +382,6 @@ FILE fqName:<root> fileName:/main.kt
             CALL 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
               TYPE_ARG T: kotlin.Any?
               ARG arg: GET_VAR 'val arg: kotlin.Any? declared in <root>.wrap' type=kotlin.Any? origin=null
-              ARG block: TYPE_OP type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Any?, kotlin.Unit>
-                GET_VAR 'block: kotlin.Function1<T of <root>.wrap, kotlin.Unit> declared in <root>.wrap' type=kotlin.Function1<T of <root>.wrap, kotlin.Unit> origin=null
+              ARG block: GET_VAR 'block: kotlin.Function1<T of <root>.wrap, kotlin.Unit> declared in <root>.wrap' type=kotlin.Function1<T of <root>.wrap, kotlin.Unit> origin=null
             RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
               GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

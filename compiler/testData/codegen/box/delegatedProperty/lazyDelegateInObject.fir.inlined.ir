@@ -354,7 +354,7 @@ FILE fqName:<root> fileName:/lazyDelegateInObject.kt
                           RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
                             TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
                               CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any? origin=GET_PROPERTY
-                                ARG 1: GET_VAR 'val this: kotlin.Lazy<kotlin.Any?> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.Lazy<kotlin.Any?> origin=null
+                                ARG 1: GET_VAR 'val this: kotlin.Lazy<kotlin.Any?> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.Lazy<kotlin.Any?> origin=IMPLICIT_ARGUMENT
             CONSTRUCTOR visibility:public returnType:<root>.lazyDelegateInObject.<no name provided> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
