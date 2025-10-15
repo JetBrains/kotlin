@@ -50408,6 +50408,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
           }
 
           @Test
+          @TestMetadata("missingImport.kt")
+          public void testMissingImport() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/missingImport.kt");
+          }
+
+          @Test
           @TestMetadata("nestedConditionalEffects.kt")
           public void testNestedConditionalEffects() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/nestedConditionalEffects.kt");
