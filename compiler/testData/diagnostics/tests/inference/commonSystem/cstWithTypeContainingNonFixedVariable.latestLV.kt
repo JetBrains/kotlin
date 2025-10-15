@@ -60,11 +60,11 @@ fun testVariableWithBound() {
 
     c1
 
-    val c2 = <!TYPE_MISMATCH!>select(SubInv<String>(), createWithNumberBound())<!>
+    val c2 = <!TYPE_MISMATCH("Number; String")!>select(SubInv<String>(), createWithNumberBound())<!>
 
     c2
 
-    val c3 = <!TYPE_MISMATCH!>select(SubInv<Double>(), createWithIntBound())<!>
+    val c3 = <!TYPE_MISMATCH("Int; Double")!>select(SubInv<Double>(), createWithIntBound())<!>
 
     c3
 }
@@ -83,7 +83,7 @@ fun testCapturedVariable() {
 
     c2
 
-    val c3 = <!TYPE_MISMATCH!>select(SubInv<Number>(), createInvIn())<!>
+    val c3 = <!TYPE_MISMATCH("Inv<out Number>; Inv<CapturedType(in Number)>")!>select(SubInv<Number>(), createInvIn())<!>
 
     c3
 }

@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-47484, KT-47495
 
@@ -23,7 +24,7 @@ import kotlin.<!UNRESOLVED_IMPORT!>properties<!>.*
 import kotlin.reflect.*
 import kotlin.<!UNRESOLVED_IMPORT!>math<!>.*
 interface I {
-    fun <T : <!FINAL_UPPER_BOUND!>String<!>> f(x: T?) = x ?: "OK".<!UNRESOLVED_REFERENCE!>strip<!>()?.substringBeforeLast('', <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>C().f<<!UPPER_BOUND_VIOLATED!>Long<!>>(-62)<!>)!!
+    fun <T : <!FINAL_UPPER_BOUND!>String<!>> f(x: T?) = x ?: "OK".<!UNRESOLVED_REFERENCE!>strip<!>()?.substringBeforeLast('', <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>C().<!INAPPLICABLE_CANDIDATE!>f<!><<!UPPER_BOUND_VIOLATED!>Long<!>>(-62)<!>)!!
 }
 
 class C : I

@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // LANGUAGE: +ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes
@@ -23,7 +24,7 @@ fun foo1(x: One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>) {}
 fun foo2(x: Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>) {}
 
 fun main() {
-    One<<!UPPER_BOUND_VIOLATED!>Any<!>>()
+    One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>()
     Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>()
 }
 

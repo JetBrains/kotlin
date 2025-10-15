@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
@@ -19,7 +20,7 @@ val test5 = NA<Int>()
 val test6 = NA<<!UPPER_BOUND_VIOLATED!>Any<!>>()
 val test7 = NL<Int>()
 val test8 = MMMM<Int>()
-val test9dwd = NL<<!UPPER_BOUND_VIOLATED!>Any<!>>()
+val test9dwd = <!UPPER_BOUND_VIOLATED!>NL<Any>()<!>
 
 fun test9(x: TC<Number, Collection<Number>>) {}
 fun test10(x: TC<Number, Collection<Int>>) {}

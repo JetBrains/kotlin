@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible +PreciseSimplificationToFlexibleLowerConstraint
 
@@ -121,10 +122,10 @@ fun genericFunWithAnnotations(x: GenericFunWithAnnotation) {
 
     x.foo10(JavaBox(null))
     x.foo10<String>(JavaBox(null))
-    x.foo10<<!UPPER_BOUND_VIOLATED!>String?<!>>(JavaBox(null))
+    x.<!INAPPLICABLE_CANDIDATE!>foo10<!><<!UPPER_BOUND_VIOLATED!>String?<!>>(JavaBox(null))
     x.<!CANNOT_INFER_PARAMETER_TYPE!>foo10<!>(null)
     x.foo10<String>(null)
-    x.foo10<<!UPPER_BOUND_VIOLATED!>String?<!>>(null)
+    x.<!INAPPLICABLE_CANDIDATE!>foo10<!><<!UPPER_BOUND_VIOLATED!>String?<!>>(null)
     x.foo10(JavaBox(""))
     takeString(x.<!CANNOT_INFER_PARAMETER_TYPE!>bar10<!>().a)
 }

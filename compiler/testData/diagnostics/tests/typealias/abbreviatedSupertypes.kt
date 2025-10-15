@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // LANGUAGE: -ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes

@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-62956
 
@@ -12,7 +13,7 @@ class BS : Builder<String, BS>("")
 class BI : Builder<Int, BI>(1)
 
 fun bar(b: Builder<String, *>, bb: Builder<*, *>) {
-    b.test<<!UPPER_BOUND_VIOLATED!>Builder<*, *><!>>(bb)
+    b.<!INAPPLICABLE_CANDIDATE!>test<!><<!UPPER_BOUND_VIOLATED!>Builder<*, *><!>>(bb)
 }
 
 fun main() {

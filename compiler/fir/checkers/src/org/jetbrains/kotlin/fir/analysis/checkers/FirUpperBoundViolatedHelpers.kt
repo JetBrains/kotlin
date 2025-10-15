@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.explicitTypeArgumentIfMadeFlexibleSynthetically
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -150,11 +151,12 @@ fun checkUpperBoundViolated(
                     } else {
                         val extraMessage =
                             if (upperBound.unwrapToSimpleTypeUsingLowerBound() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
+                        val supportsReportingInResolution = LanguageFeature.ReportUpperBoundViolatedDuringResolution.isEnabled()
                         when {
                             !isInsideTypeOperatorOrParameterBounds -> when {
                                 // Errors in type arguments in qualified accesses are reported directly through
                                 // InferenceErrors arising from call resolution.
-                                !isCheckingExpressionArguments -> reporter.reportOn(
+                                !isCheckingExpressionArguments || !supportsReportingInResolution -> reporter.reportOn(
                                     argumentSource ?: fallbackSource, regularDiagnostic,
                                     upperBound, argumentType, extraMessage
                                 )
