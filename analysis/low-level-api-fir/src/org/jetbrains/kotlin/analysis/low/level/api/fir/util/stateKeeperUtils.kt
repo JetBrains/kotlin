@@ -49,13 +49,12 @@ private fun isLazyStatement(fir: FirStatement): Boolean {
     return fir is FirLazyExpression || fir is FirLazyBlock
 }
 
-private val SPECIAL_BODY_CALLABLE_SOURCE_KINDS = setOf(
+private val SPECIAL_BODY_CALLABLE_SOURCE_KINDS: Set<KtFakeSourceElementKind> = setOf(
     KtFakeSourceElementKind.DefaultAccessor,
     KtFakeSourceElementKind.ImplicitConstructor,
     KtFakeSourceElementKind.PropertyFromParameter,
-    KtFakeSourceElementKind.DataClassGeneratedMembers,
-    KtFakeSourceElementKind.EnumGeneratedDeclaration,
-)
+) + KtFakeSourceElementKind.ALL_ENUM_GENERATED_DECLARATIONS +
+        KtFakeSourceElementKind.ALL_DATA_CLASS_GENERATED_MEMBERS
 
 @OptIn(SuspiciousFakeSourceCheck::class)
 internal fun isCallableWithSpecialBody(fir: FirCallableDeclaration): Boolean {

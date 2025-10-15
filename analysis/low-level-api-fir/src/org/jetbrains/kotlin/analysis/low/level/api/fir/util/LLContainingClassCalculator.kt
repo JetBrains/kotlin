@@ -93,11 +93,11 @@ internal object LLContainingClassCalculator {
                     return computeContainingClass(symbol, containingParameter?.containingClassOrObject)
                 }
 
-                if (kind == EnumGeneratedDeclaration) {
+                if (kind is EnumGeneratedDeclaration) {
                     return computeContainingClass(symbol, source.psi)
                 }
 
-                if (kind == DataClassGeneratedMembers) {
+                if (kind is DataClassGeneratedMembers) {
                     val containingClass = when (val psi = source.psi) {
                         is KtClassOrObject -> psi
                         is KtParameter -> psi.containingClassOrObject // component() functions point to 'KtParameter's

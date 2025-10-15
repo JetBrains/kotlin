@@ -48,17 +48,17 @@ import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-private val allowedFakeElementKinds = setOf(
-    KtFakeSourceElementKind.FromUseSiteTarget,
-    KtFakeSourceElementKind.PropertyFromParameter,
-    KtFakeSourceElementKind.ItLambdaParameter,
-    KtFakeSourceElementKind.EnumGeneratedDeclaration,
-    KtFakeSourceElementKind.DataClassGeneratedMembers,
-    KtFakeSourceElementKind.ImplicitConstructor,
-    KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
-    KtFakeSourceElementKind.SamConstructor,
-    KtFakeSourceElementKind.JavaRecordComponentFunction,
-)
+private val allowedFakeElementKinds: Set<KtFakeSourceElementKind> =
+    setOf(
+        KtFakeSourceElementKind.FromUseSiteTarget,
+        KtFakeSourceElementKind.PropertyFromParameter,
+        KtFakeSourceElementKind.ItLambdaParameter,
+        KtFakeSourceElementKind.ImplicitConstructor,
+        KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
+        KtFakeSourceElementKind.SamConstructor,
+        KtFakeSourceElementKind.JavaRecordComponentFunction,
+    ) + KtFakeSourceElementKind.ALL_ENUM_GENERATED_DECLARATIONS +
+            KtFakeSourceElementKind.ALL_DATA_CLASS_GENERATED_MEMBERS
 
 @OptIn(SuspiciousFakeSourceCheck::class)
 internal fun FirElement.getAllowedPsi() = when (val source = source) {

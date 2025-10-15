@@ -31,12 +31,26 @@ object KtRealSourceElementKind : KtSourceElementKind() {
 }
 
 /**
- * When an element has a kind of KtFakeSourceElementKind it means that relevant FIR element was created synthetically.
- * And while this definition might look a bit vaguely because, e.g. RawFirBuilder might create a lot of "synthetic" things
- * and not all of them we want to treat as "fake" (like when's created from if's), there is a criteria that ultimately means
- * that one need to use KtFakeSourceElementKind, and it's the situation when several FIR elements might share the same source element.
+ * When an element has a kind of [KtFakeSourceElementKind] it means that the relevant FIR element was created synthetically. And while this
+ * definition might look a bit vague because, for example, the raw FIR builder might create a lot of "synthetic" things and we don't want to
+ * treat all of them as "fake" (like `when`s created from `if`s), there is a criteria that ultimately means that one needs to use
+ * [KtFakeSourceElementKind], and it's the situation when several FIR elements might share the same real source element.
  *
- * And vice versa, KtRealSourceElementKind means that there's a single FIR node in the resulting tree that has the same source element.
+ * And vice versa, [KtRealSourceElementKind] means that there's a single FIR node in the resulting tree that has the same source element.
+ *
+ * ### Distinct Source Elements
+ *
+ * **Contract:** To support unambiguous source-based FIR symbol IDs, each pair of `(realSource, fakeElementKind)` must be unique. This
+ * allows source elements for different declarations to be distinct, which supports the equality that's required by symbol IDs. In contrast,
+ * if two source elements for different declarations were equal, their source-based symbol IDs would also be unexpectedly equal.
+ *
+ * Such pair-wise uniqueness is easier to support than it sounds if we consider the following: Since fake source elements are still bound to
+ * a real element, there is a boundary where two fake source elements cannot be equal because they have different real elements. The problem
+ * of fake source element equality can then be solved locally, as the creation of fake source elements from a specific real element is
+ * localized to a single place (in the data). Each synthetic declaration generated from the real element simply needs to have its own fake
+ * source element kind.
+ *
+ * TODO (marco): Also link this contract in [KtSourceElement].
  */
 sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeReporting: Boolean = false) : KtSourceElementKind() {
     /**
@@ -188,10 +202,63 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ReferenceInAtomicQualifiedAccess : KtFakeSourceElementKind()
 
     /**
-     * for enum classes we have valueOf & values functions generated
-     * with a fake sources which refers to this the enum class
+     * For enum classes, FIR generates the `valueOf()` and `values()` functions, which are covered by the various fake source element kinds
+     * defined in this class.
+     *
+     * The fake element kinds must be kept in sync with [ALL_ENUM_GENERATED_DECLARATIONS].
      */
-    object EnumGeneratedDeclaration : KtFakeSourceElementKind()
+    sealed class EnumGeneratedDeclaration : KtFakeSourceElementKind() {
+        /**
+         * The source kind of an enum class's `values()` function. Its source is the corresponding enum class.
+         */
+        object EnumValuesFunction : EnumGeneratedDeclaration()
+
+        /**
+         * The source kind of a return type reference of the generated [EnumValuesFunction]. Its source is the corresponding enum class.
+         */
+        object EnumValuesFunctionReturnType : EnumGeneratedDeclaration()
+
+        /**
+         * The source kind of an enum class's `valueOf()` function. Its source is the corresponding enum class.
+         */
+        object EnumValueOfFunction : EnumGeneratedDeclaration()
+
+        /**
+         * The source kind of the parameter of the generated [EnumValueOfFunction]. Its source is the corresponding enum class.
+         */
+        object EnumValueOfFunctionParameter : EnumGeneratedDeclaration()
+
+        /**
+         * The source kind of the return type reference of the generated [EnumValueOfFunction]. Its source is the corresponding enum class.
+         */
+        object EnumValueOfFunctionReturnType : EnumGeneratedDeclaration()
+
+        /**
+         * The source kind of an enum class's `entries` property. Its source is the corresponding enum class.
+         */
+        object EnumEntriesProperty : EnumGeneratedDeclaration()
+
+        /**
+         * The source kind of the return type of the [EnumEntriesProperty]. Its source is the corresponding enum class.
+         */
+        object EnumEntriesPropertyReturnType : EnumGeneratedDeclaration()
+
+        /**
+         * The source kind of the getter of the [EnumEntriesProperty]. Its source is the corresponding enum class.
+         */
+        object EnumEntriesPropertyGetter : EnumGeneratedDeclaration()
+
+        /**
+         * The source kind of the return type of the [EnumEntriesPropertyGetter]. Its source is the corresponding enum class.
+         */
+        object EnumEntriesPropertyGetterReturnType : EnumGeneratedDeclaration()
+
+        /**
+         * The source kind of the enum class's `clone()` function, which may be injected on non-JVM platforms. Its source is the
+         * corresponding enum class.
+         */
+        object EnumCloneFunction : EnumGeneratedDeclaration()
+    }
 
     /**
      * for enum classes we can have an implicit supertype ref to `Enum` with a fake source.
@@ -267,11 +334,50 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object DesugaredInvertedContains : KtFakeSourceElementKind()
 
     /**
-     * For data classes, fir generates componentN() & copy() functions.
-     * For componentN() functions, the source will refer to the corresponding param and will be marked as a fake one.
-     * For copy() functions, the source will refer class to the param and will be marked as a fake one.
+     * For data classes, FIR generates `componentN()` and `copy()` functions, which are covered by the various fake source element kinds
+     * defined in this class.
+     *
+     * The fake element kinds must be kept in sync with [ALL_DATA_CLASS_GENERATED_MEMBERS].
+     *
+     * TODO (marco): Rename to `DataClassGeneratedMember`.
      */
-    object DataClassGeneratedMembers : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+    sealed class DataClassGeneratedMembers : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true) {
+        /**
+         * The source kind of a data class `componentN()` function. Its source is the corresponding constructor parameter for which the
+         * component function has been generated.
+         */
+        object DataClassComponentFunction : DataClassGeneratedMembers()
+
+        /**
+         * The source kind of a data class `copy()` function. Its source is the corresponding data class.
+         */
+        object DataClassCopyFunction : DataClassGeneratedMembers()
+
+        /**
+         * The source kind of a parameter of the [DataClassCopyFunction]. Its source is the corresponding data class constructor parameter.
+         */
+        object DataClassCopyFunctionParameter : DataClassGeneratedMembers()
+
+        /**
+         * The source kind of a data class `equals(other: Any?)` function. Its source is the corresponding data class.
+         */
+        object DataClassEqualsFunction : DataClassGeneratedMembers()
+
+        /**
+         * The source kind of the parameter of the [DataClassEqualsFunction]. Its source is the corresponding data class.
+         */
+        object DataClassEqualsFunctionParameter : DataClassGeneratedMembers()
+
+        /**
+         * The source kind of a data class `hashCode()` function. Its source is the corresponding data class.
+         */
+        object DataClassHashCodeFunction : DataClassGeneratedMembers()
+
+        /**
+         * The source kind of a data class `toString()` function. Its source is the corresponding data class.
+         */
+        object DataClassToStringFunction : DataClassGeneratedMembers()
+    }
 
     /**
      * For synthetic overrides implemented by delegation
@@ -602,6 +708,33 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * When resolving a collection literal, this is used as a source for the generated callee reference.
      */
     object CalleeReferenceForOperatorOfCall : KtFakeSourceElementKind()
+
+    // Moving these properties to the companion objects of their respective classes such as `DataClassGeneratedMembers` is not an option
+    // because then the sealed class can be used as an object (e.g. as a `when` subject), which can lead to programming errors.
+    companion object {
+        val ALL_ENUM_GENERATED_DECLARATIONS: Set<EnumGeneratedDeclaration> = setOf(
+            EnumGeneratedDeclaration.EnumValuesFunction,
+            EnumGeneratedDeclaration.EnumValuesFunctionReturnType,
+            EnumGeneratedDeclaration.EnumValueOfFunction,
+            EnumGeneratedDeclaration.EnumValueOfFunctionParameter,
+            EnumGeneratedDeclaration.EnumValueOfFunctionReturnType,
+            EnumGeneratedDeclaration.EnumEntriesProperty,
+            EnumGeneratedDeclaration.EnumEntriesPropertyReturnType,
+            EnumGeneratedDeclaration.EnumEntriesPropertyGetter,
+            EnumGeneratedDeclaration.EnumEntriesPropertyGetterReturnType,
+            EnumGeneratedDeclaration.EnumCloneFunction,
+        )
+
+        val ALL_DATA_CLASS_GENERATED_MEMBERS: Set<DataClassGeneratedMembers> = setOf(
+            DataClassGeneratedMembers.DataClassComponentFunction,
+            DataClassGeneratedMembers.DataClassCopyFunction,
+            DataClassGeneratedMembers.DataClassCopyFunctionParameter,
+            DataClassGeneratedMembers.DataClassEqualsFunction,
+            DataClassGeneratedMembers.DataClassEqualsFunctionParameter,
+            DataClassGeneratedMembers.DataClassHashCodeFunction,
+            DataClassGeneratedMembers.DataClassToStringFunction,
+        )
+    }
 }
 
 sealed class AbstractKtSourceElement {

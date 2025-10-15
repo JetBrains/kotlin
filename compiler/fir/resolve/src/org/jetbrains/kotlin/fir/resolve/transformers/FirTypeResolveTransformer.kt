@@ -308,9 +308,9 @@ open class FirTypeResolveTransformer(
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                 }
 
-                if (result.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers &&
+                if (result.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers.DataClassCopyFunction &&
                     result is FirNamedFunction &&
-                    result.name == StandardNames.DATA_CLASS_COPY
+                    result.name == StandardNames.DATA_CLASS_COPY // TODO (marco): Can we safely remove the name check here?
                 ) {
                     for (valueParameter in result.valueParameters) {
                         valueParameter.moveOrDeleteIrrelevantAnnotations()

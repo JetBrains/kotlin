@@ -41,8 +41,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
 
     private val filteredSourceKinds: Set<KtFakeSourceElementKind> = setOf(
         KtFakeSourceElementKind.PropertyFromParameter,
-        KtFakeSourceElementKind.DataClassGeneratedMembers
-    )
+    ) + KtFakeSourceElementKind.ALL_DATA_CLASS_GENERATED_MEMBERS
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirStatement) {

@@ -314,9 +314,9 @@ internal class KaFirSymbolRelationProvider(
             KtFakeSourceElementKind.ImplicitConstructor -> source.psi as KtDeclaration
             KtFakeSourceElementKind.PropertyFromParameter -> source.psi?.parentOfType<KtPrimaryConstructor>()!!
             KtFakeSourceElementKind.EnumInitializer -> source.psi as KtEnumEntry
-            KtFakeSourceElementKind.EnumGeneratedDeclaration -> source.psi as KtDeclaration
+            is KtFakeSourceElementKind.EnumGeneratedDeclaration -> source.psi as KtDeclaration
             KtFakeSourceElementKind.ScriptParameter -> source.psi as KtScript
-            KtFakeSourceElementKind.DataClassGeneratedMembers -> when (val source = source.psi) {
+            is KtFakeSourceElementKind.DataClassGeneratedMembers -> when (val source = source.psi) {
                 is KtClassOrObject -> {
                     // for generated `equals`, `hashCode`, `toString` methods the source is the containing `KtClass`
                     source

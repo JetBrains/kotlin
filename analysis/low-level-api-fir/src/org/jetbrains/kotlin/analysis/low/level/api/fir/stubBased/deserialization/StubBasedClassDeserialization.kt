@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
@@ -156,7 +159,9 @@ internal fun deserializeClassToSymbol(
             initialOrigin
         )
     buildRegularClass {
-        source = KtRealPsiSourceElement(classOrObject)
+        val sourceElement = KtRealPsiSourceElement(classOrObject)
+
+        source = sourceElement
         this.moduleData = moduleData
         this.origin = initialOrigin
         name = classId.shortClassName
@@ -237,7 +242,7 @@ internal fun deserializeClassToSymbol(
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)
 
         if (classId == StandardClassIds.Enum) {
-            addCloneForEnumIfNeeded(classOrObject, context.dispatchReceiver)
+            addCloneForEnumIfNeeded(classOrObject, sourceElement, context.dispatchReceiver)
         }
 
         session.deserializationExtension?.run {
@@ -318,7 +323,11 @@ private fun FirValueParameter.coneRigidType(): ConeRigidType {
     return type
 }
 
-private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(classOrObject: KtClassOrObject, dispatchReceiver: ConeClassLikeType?) {
+private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(
+    classOrObject: KtClassOrObject,
+    classSourceElement: KtSourceElement,
+    dispatchReceiver: ConeClassLikeType?,
+) {
     val hasCloneFunction = classOrObject.declarations
         .any { it is KtNamedFunction && it.name == "clone" && it.valueParameters.isEmpty() }
 
@@ -329,10 +338,12 @@ private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(classOrObject: KtClas
     val anyLookupId = StandardClassIds.Any.toLookupTag()
     val cloneCallableId = StandardClassIds.Callables.clone
 
+    val sourceElement = classSourceElement.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.EnumCloneFunction)
+
     declarations += buildNamedFunction {
         moduleData = this@addCloneForEnumIfNeeded.moduleData
         origin = this@addCloneForEnumIfNeeded.origin
-        source = this@addCloneForEnumIfNeeded.source
+        source = sourceElement
 
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 

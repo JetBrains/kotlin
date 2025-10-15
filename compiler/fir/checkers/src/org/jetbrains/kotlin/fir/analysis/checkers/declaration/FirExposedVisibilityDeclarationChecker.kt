@@ -170,7 +170,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
     private fun checkProperty(declaration: FirProperty) {
         if (declaration.fromPrimaryConstructor == true) return
         if (declaration.symbol is FirLocalPropertySymbol) return
-        if (declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration) return
+        if (declaration.source?.kind is KtFakeSourceElementKind.EnumGeneratedDeclaration) return
         val propertyVisibility = declaration.effectiveVisibility
 
         if (propertyVisibility == EffectiveVisibility.Local

@@ -400,8 +400,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     private fun FirElement.hasActualModifier(): Boolean {
         return when (source?.kind) {
             null -> false
-            KtFakeSourceElementKind.DataClassGeneratedMembers -> false
-            KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
+            is KtFakeSourceElementKind.DataClassGeneratedMembers -> false
+            is KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
             KtFakeSourceElementKind.ImplicitConstructor -> false
             else -> hasModifier(KtTokens.ACTUAL_KEYWORD)
         }

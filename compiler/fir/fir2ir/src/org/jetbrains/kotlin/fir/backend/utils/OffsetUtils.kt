@@ -87,7 +87,7 @@ internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(
 
     if (
         isCompiledElement(psi) ||
-        this?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers ||
+        this?.kind is KtFakeSourceElementKind.DataClassGeneratedMembers ||
         this?.kind == KtFakeSourceElementKind.ImplicitThisReceiverExpression ||
         this?.kind == KtFakeSourceElementKind.ImplicitContextParameterArgument
     ) {
