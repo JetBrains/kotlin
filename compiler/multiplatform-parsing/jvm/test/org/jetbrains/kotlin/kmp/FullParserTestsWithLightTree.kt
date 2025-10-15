@@ -9,17 +9,22 @@ import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.kmp.infra.LightTreeTestParser
 import org.jetbrains.kotlin.kmp.infra.ParseMode
 import org.jetbrains.kotlin.kmp.infra.TestParseNode
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.TestInstance
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FullParserTestsWithLightTree : AbstractParserTests<LighterASTNode>() {
-    init {
-        // Make sure the static declarations are initialized before time measurements to get more refined results
-        LightTreeTestParser.environment
-    }
+    private val lightTreeTestParser = LightTreeTestParser()
 
     override val parseMode: ParseMode = ParseMode.NoKDoc
 
     override fun recognizeOldSyntaxElement(fileName: String, text: String): TestParseNode<LighterASTNode> =
-        LightTreeTestParser().parse(fileName, text)
+        lightTreeTestParser.parse(fileName, text)
 
     override val oldRecognizerSuffix: String = " (LightTree)"
+
+    @AfterAll
+    fun cleanup() {
+        lightTreeTestParser.dispose()
+    }
 }
