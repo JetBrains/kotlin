@@ -544,8 +544,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
             if (calleeReference !is FirSimpleNamedReference) {
                 // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
-                // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.
-                if (calleeReference !is FirResolvedNamedReference) {
+                // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there,
+                // but only if they haven't been resolved yet.
+                if (calleeReference !is FirResolvedNamedReference && functionCall.argumentList !is FirResolvedArgumentList) {
                     functionCall.transformChildren(transformer, ResolutionMode.ContextIndependent)
                 }
                 return functionCall
