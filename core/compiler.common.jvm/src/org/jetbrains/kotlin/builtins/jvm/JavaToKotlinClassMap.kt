@@ -100,9 +100,7 @@ object JavaToKotlinClassMap {
             addKotlinToJava(FqName(NUMBERED_K_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
         for (i in 0 until BuiltInFunctionArity.BIG_ARITY - 1) {
-            val kSuspendFunction = FunctionTypeKind.KSuspendFunction
-            val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
-            addKotlinToJava(FqName(kSuspendFun + i), K_FUNCTION_CLASS_ID)
+            addKotlinToJava(FqName(NUMBERED_K_SUSPEND_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
 
         addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicInt"), classId(AtomicInteger::class.java))
