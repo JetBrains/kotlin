@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.generators.tests.standalone
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.serialization.matrix.cases.enumsTestMatrix
 import org.jetbrains.kotlinx.serialization.matrix.testMatrix
 import org.jetbrains.kotlinx.serialization.runners.*
@@ -77,11 +76,11 @@ fun main(args: Array<String>) {
                 model("boxWithoutRuntime")
             }
 
-            testClass<AbstractSerializationFirJsBoxTest> {
+            testClass<AbstractSerializationJsBoxTest> {
                 model("boxIr")
             }
 
-            testClass<AbstractSerializationFirJsBoxWithInlinedFunInKlibTest> {
+            testClass<AbstractSerializationJsBoxWithInlinedFunInKlibTest> {
                 model("boxIr")
             }
 

@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/compose/compiler-hosted/testData/js")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends AbstractFirJsLightTreePluginBlackBoxCodegenForComposeTest {
+public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends AbstractJsLightTreePluginBlackBoxCodegenForComposeTest {
   @Test
   public void testAllFilesPresentInJs() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/compose/compiler-hosted/testData/js"), Pattern.compile("^(.+)\\.kt$"), null, true);

@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
+import org.jetbrains.kotlin.js.test.fir.AbstractJsTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.model.TestModule
@@ -24,7 +24,7 @@ private val atomicfuJsIrRuntime = System.getProperty("atomicfuJsIrRuntimeForTest
 
 open class AbstractAtomicfuJsTest(
     testGroupOutputDirPrefix: String = "box/atomicfu"
-) : AbstractFirJsTest(
+) : AbstractJsTest(
     pathToTestDir = "plugins/atomicfu/atomicfu-compiler/testData/box/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {

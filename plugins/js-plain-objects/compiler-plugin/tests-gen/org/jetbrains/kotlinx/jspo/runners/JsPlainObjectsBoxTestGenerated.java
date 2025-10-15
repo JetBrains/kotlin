@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/js-plain-objects/compiler-plugin/testData/box")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObjectsIrJsBoxTest {
+public class JsPlainObjectsBoxTestGenerated extends AbstractJsPlainObjectsBoxTest {
   @Test
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/js-plain-objects/compiler-plugin/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, true);

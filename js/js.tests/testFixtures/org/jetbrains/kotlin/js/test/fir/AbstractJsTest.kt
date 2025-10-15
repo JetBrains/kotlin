@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import java.lang.Boolean.getBoolean
 
 
-open class AbstractFirJsTest(
+open class AbstractJsTest(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix: String,
     targetBackend: TargetBackend = TargetBackend.JS_IR,
@@ -102,19 +102,19 @@ open class AbstractFirJsTest(
     }
 }
 
-open class AbstractPsiJsBoxTest : AbstractFirJsTest(
+open class AbstractPsiJsBoxTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix = "psiBox/",
     parser = FirParser.Psi,
 )
 
-open class AbstractLightTreeJsBoxTest : AbstractFirJsTest(
+open class AbstractLightTreeJsBoxTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix = "lightTreeBox/",
     parser = FirParser.LightTree,
 )
 
-open class AbstractFirJsCodegenBoxTestBase(testGroupOutputDirPrefix: String) : AbstractFirJsTest(
+open class AbstractJsCodegenBoxTestBase(testGroupOutputDirPrefix: String) : AbstractJsTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
@@ -130,11 +130,11 @@ open class AbstractFirJsCodegenBoxTestBase(testGroupOutputDirPrefix: String) : A
     }
 }
 
-open class AbstractJsCodegenBoxTest : AbstractFirJsCodegenBoxTestBase(
+open class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
     testGroupOutputDirPrefix = "codegen/box/"
 )
 
-open class AbstractJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodegenBoxTestBase(
+open class AbstractJsCodegenBoxWithInlinedFunInKlibTest : AbstractJsCodegenBoxTestBase(
     testGroupOutputDirPrefix = "codegen/boxWithInlinedFunInKlib"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -159,7 +159,7 @@ open class AbstractJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodegenBo
 
 open class AbstractJsCodegenInlineTest(
     testGroupOutputDirPrefix: String = "codegen/boxInline/"
-) : AbstractFirJsTest(
+) : AbstractJsTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
@@ -200,7 +200,7 @@ open class AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractJs
 
 open class AbstractJsTypeScriptExportTest(
     testGroupOutputDirPrefix: String = "typescript-export/es5"
-) : AbstractFirJsTest(
+) : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
@@ -240,7 +240,7 @@ open class AbstractJsES6TypeScriptExportTest(
 
 open class AbstractJsLineNumberTest(
     testGroupOutputDirPrefix: String = "lineNumbers/"
-) : AbstractFirJsTest(
+) : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
@@ -267,7 +267,7 @@ open class AbstractJsLineNumberWithInlinedFunInKlibTest : AbstractJsLineNumberTe
     }
 }
 
-open class AbstractSourceMapGenerationSmokeTest : AbstractFirJsTest(
+open class AbstractSourceMapGenerationSmokeTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/sourcemap/",
     testGroupOutputDirPrefix = "sourcemap/"
 ) {
@@ -282,7 +282,7 @@ open class AbstractSourceMapGenerationSmokeTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirMultiModuleOrderTest : AbstractFirJsTest(
+open class AbstractFirMultiModuleOrderTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
     testGroupOutputDirPrefix = "firMultiModuleOrder/"
 ) {
@@ -300,7 +300,7 @@ open class AbstractFirMultiModuleOrderTest : AbstractFirJsTest(
 
 open class AbstractJsSteppingTest(
     testGroupOutputDirPrefix: String = "debug/stepping/"
-) : AbstractFirJsTest(
+) : AbstractJsTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
@@ -369,7 +369,7 @@ open class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsSteppingW
 
 open class AbstractJsCodegenWasmJsInteropTest(
     testGroupOutputDirPrefix: String = "codegen/wasmJsInteropJs/"
-) : AbstractFirJsTest(
+) : AbstractJsTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )

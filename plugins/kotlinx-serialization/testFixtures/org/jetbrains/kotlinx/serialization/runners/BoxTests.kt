@@ -6,7 +6,7 @@
 package org.jetbrains.kotlinx.serialization.runners
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
+import org.jetbrains.kotlin.js.test.fir.AbstractJsTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
@@ -67,9 +67,9 @@ open class AbstractSerializationWithoutRuntimeFirLightTreeBoxTest : AbstractFirL
     }
 }
 
-open class AbstractSerializationFirJsBoxTest(
+open class AbstractSerializationJsBoxTest(
     testGroupOutputDirPrefix: String = "codegen/serializationBoxFir/"
-) : AbstractFirJsTest(
+) : AbstractJsTest(
     pathToTestDir = "plugins/kotlinx-serialization/testData/boxIr/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix,
 ) {
@@ -79,7 +79,7 @@ open class AbstractSerializationFirJsBoxTest(
     }
 }
 
-open class AbstractSerializationFirJsBoxWithInlinedFunInKlibTest : AbstractSerializationFirJsBoxTest(
+open class AbstractSerializationJsBoxWithInlinedFunInKlibTest : AbstractSerializationJsBoxTest(
     testGroupOutputDirPrefix = "codegen/serializationBoxFirWithInlinedFunInKlib/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {

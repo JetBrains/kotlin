@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.plugin.sandbox
 
-import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
+import org.jetbrains.kotlin.js.test.fir.AbstractJsTest
 import org.jetbrains.kotlin.js.test.fir.AbstractLoadK2CompiledJsKotlinTest
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase
 import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
@@ -51,7 +51,7 @@ open class AbstractFirJvmLightTreePluginBlackBoxCodegenWithSeparateKmpCompilatio
     }
 }
 
-open class AbstractJsLightTreePluginBlackBoxCodegenTest : AbstractFirJsTest(
+open class AbstractJsLightTreePluginBlackBoxCodegenTest : AbstractJsTest(
     pathToTestDir = "plugins/plugin-sandbox/testData/box",
     testGroupOutputDirPrefix = "pluginSandboxBox/",
     parser = FirParser.LightTree

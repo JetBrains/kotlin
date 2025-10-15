@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/kotlinx-serialization/testData/boxIr")
 @TestDataPath("$PROJECT_ROOT")
-public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFirJsBoxTest {
+public class SerializationJsBoxWithInlinedFunInKlibTestGenerated extends AbstractSerializationJsBoxWithInlinedFunInKlibTest {
   @Test
   @TestMetadata("allConstructorsAccessible.kt")
   public void testAllConstructorsAccessible() {

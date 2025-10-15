@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTe
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler.Directives.COMPILER_ARGUMENTS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
-import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
+import org.jetbrains.kotlin.js.test.fir.AbstractJsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
@@ -57,7 +57,7 @@ open class AbstractPhasedJvmDiagnosticLightTreeForComposeTest : AbstractPhasedJv
     }
 }
 
-open class AbstractFirJsLightTreePluginBlackBoxCodegenForComposeTest : AbstractFirJsTest(
+open class AbstractJsLightTreePluginBlackBoxCodegenForComposeTest : AbstractJsTest(
     pathToTestDir = "plugins/compose/compiler-hosted/testData/js",
     testGroupOutputDirPrefix = "compose/js/",
 ) {
