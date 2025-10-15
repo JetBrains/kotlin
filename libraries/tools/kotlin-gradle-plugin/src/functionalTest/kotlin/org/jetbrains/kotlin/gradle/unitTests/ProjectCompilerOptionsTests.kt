@@ -34,6 +34,7 @@ class ProjectCompilerOptionsTests {
                     }
                 }
 
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64 {
                     compilerOptions {
                         suppressWarnings.set(true)
@@ -245,6 +246,7 @@ class ProjectCompilerOptionsTests {
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
                 linuxX64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 iosArm64()
 
@@ -274,6 +276,7 @@ class ProjectCompilerOptionsTests {
 
             with(multiplatformExtension) {
                 linuxX64()
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 iosArm64()
 

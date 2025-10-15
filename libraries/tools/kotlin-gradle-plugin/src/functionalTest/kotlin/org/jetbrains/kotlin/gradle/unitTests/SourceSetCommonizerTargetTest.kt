@@ -38,6 +38,7 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `linux macos`() {
         kotlin.linuxX64("linux")
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.macosX64("macos")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -60,6 +61,7 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `nativeMain linux macos`() {
         kotlin.linuxX64("linux")
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.macosX64("macos")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -119,7 +121,9 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `nativeMain iosMain linux macos iosX64 iosArm64`() {
         kotlin.linuxX64("linux")
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.macosX64("macos")
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.iosX64("iosX64")
         kotlin.iosArm64("iosArm64")
 
@@ -174,6 +178,7 @@ class SourceSetCommonizerTargetTest {
     @Test
     fun `nativeMain linux macos jvm`() {
         kotlin.linuxX64("linux")
+        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         kotlin.macosX64("macos")
         kotlin.jvm("jvm")
 

@@ -50,6 +50,7 @@ class DeprecatedKotlinTargetHierarchyDslTest {
         listOf(legacyProject, project).forEach { project ->
             project.multiplatformExtension.jvm()
             project.multiplatformExtension.linuxX64()
+            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             project.multiplatformExtension.macosX64()
             project.evaluate()
 

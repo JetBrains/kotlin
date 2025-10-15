@@ -26,6 +26,7 @@ class CrossCompilationWithCinteropTests {
     fun `cross compilation with cinterops`() {
         val project = buildProjectWithMPP {
             kotlin {
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 macosX64()
                 linuxX64()
                 mingwX64()
@@ -81,6 +82,7 @@ class CrossCompilationWithCinteropTests {
             propertiesExtension.set(KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION, "false")
             applyMultiplatformPlugin()
             kotlin {
+                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 macosX64()
                 linuxX64()
                 mingwX64()
