@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
-import org.jetbrains.kotlin.js.test.fir.setupDefaultDirectivesForFirJsBoxTest
+import org.jetbrains.kotlin.js.test.fir.setUpDefaultDirectivesForJsBoxTest
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliMetadataSerializerFacade
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.TestServices
@@ -39,7 +38,7 @@ abstract class AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        setupDefaultDirectivesForFirJsBoxTest(parser)
+        setUpDefaultDirectivesForJsBoxTest(parser)
         defaultDirectives {
             +SEPARATE_KMP_COMPILATION
             +DISABLE_DOUBLE_CHECKING_COMMON_DIAGNOSTICS
@@ -48,7 +47,6 @@ abstract class AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
         }
 
         commonServicesConfigurationForJsCodegenTest(
-            targetFrontend = FrontendKinds.FIR,
             customConfigurators = listOf(
                 ::CommonEnvironmentConfigurator,
                 ::MetadataEnvironmentConfiguratorForSeparateKmpCompilation,

@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.js.test.fir
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
 import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -28,7 +25,6 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
@@ -45,12 +41,7 @@ abstract class AbstractJsDiagnosticTestBase(val parser: FirParser) : AbstractKot
             +FirDiagnosticsDirectives.FIR_IDENTICAL
         }
 
-        commonConfigurationForJsTest(
-            targetFrontend = FrontendKinds.FIR,
-            frontendFacade = ::FirCliWebFacade,
-            frontendToIrConverter = ::Fir2IrCliWebFacade,
-            serializerFacade = ::FirKlibSerializerCliWebFacade,
-        )
+        commonConfigurationForJsTest()
         configureFirParser(parser)
 
         configureFirHandlersStep {

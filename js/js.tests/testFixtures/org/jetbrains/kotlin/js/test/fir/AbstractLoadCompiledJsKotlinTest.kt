@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.fir
 
-import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
 import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsTest
 import org.jetbrains.kotlin.test.FirMetadataLoadingTestSuppressor
 import org.jetbrains.kotlin.test.FirParser
@@ -17,18 +14,12 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractLoadCompiledJsKotlinTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        commonConfigurationForJsTest(
-            targetFrontend = FrontendKinds.FIR,
-            frontendFacade = ::FirCliWebFacade,
-            frontendToIrConverter = ::Fir2IrCliWebFacade,
-            serializerFacade = ::FirKlibSerializerCliWebFacade,
-        )
+        commonConfigurationForJsTest()
 
         configureKlibArtifactsHandlersStep {
             useHandlers(::KlibJsLoadedMetadataDumpHandler)

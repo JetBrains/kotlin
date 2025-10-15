@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
-import org.jetbrains.kotlin.js.test.fir.setupDefaultDirectivesForFirJsBoxTest
+import org.jetbrains.kotlin.js.test.fir.setUpDefaultDirectivesForJsBoxTest
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
 import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsBackendSecondStageTest
 import org.jetbrains.kotlin.js.test.ir.configureJsBoxHandlers
@@ -67,7 +67,7 @@ open class AbstractCustomJsCompilerFirstPhaseTest : AbstractKotlinCompilerWithTa
             backendFacades = JsBackendFacades.WithRecompilation
         )
 
-        setupDefaultDirectivesForFirJsBoxTest(parser = /* Does not matter */ FirParser.LightTree)
+        setUpDefaultDirectivesForJsBoxTest(parser = /* Does not matter */ FirParser.LightTree)
 
         configureJsBoxHandlers()
     }

@@ -32,16 +32,7 @@ abstract class AbstractJsIrDeserializationTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
     private val useIrInlinerAtFirstCompilationPhase: Boolean
-) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact>(FrontendKinds.FIR, TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix) {
-    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirCliWebFacade
-
-    override val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliWebFacade
-
-    override val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirKlibSerializerCliWebFacade
-
+) : AbstractJsBlackBoxCodegenTestBase(TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix) {
     override val backendFacades: JsBackendFacades
         get() = JsBackendFacades.WithSeparatedDeserialization
 

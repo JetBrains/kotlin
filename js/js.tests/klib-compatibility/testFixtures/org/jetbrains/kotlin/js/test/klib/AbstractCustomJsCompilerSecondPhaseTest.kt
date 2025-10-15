@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.js.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
-import org.jetbrains.kotlin.js.test.fir.setupDefaultDirectivesForFirJsBoxTest
+import org.jetbrains.kotlin.js.test.fir.setUpDefaultDirectivesForJsBoxTest
 import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsTest
 import org.jetbrains.kotlin.js.test.ir.configureJsBoxHandlers
 import org.jetbrains.kotlin.test.FirParser
@@ -19,7 +16,6 @@ import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
@@ -31,14 +27,9 @@ open class AbstractCustomJsCompilerSecondPhaseTest : AbstractKotlinCompilerWithT
         // used on the second phase.
         Assumptions.assumeTrue(customJsCompilerSettings.defaultLanguageVersion >= LanguageVersion.LATEST_STABLE)
 
-        setupDefaultDirectivesForFirJsBoxTest(FirParser.LightTree)
+        setUpDefaultDirectivesForJsBoxTest(FirParser.LightTree)
 
-        commonConfigurationForJsTest(
-            targetFrontend = FrontendKinds.FIR,
-            frontendFacade = ::FirCliWebFacade,
-            frontendToIrConverter = ::Fir2IrCliWebFacade,
-            serializerFacade = ::FirKlibSerializerCliWebFacade,
-        )
+        commonConfigurationForJsTest()
 
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()
