@@ -23,8 +23,11 @@ native {
     val isWindows = PlatformInfo.isWindows()
     val obj = if (isWindows) "obj" else "o"
     val lib = if (isWindows) "lib" else "a"
-    val cflags = mutableListOf("-I${nativeDependencies.libffiPath}/include",
-                               *hostPlatform.clangForJni.hostCompilerArgsForJni)
+    val cflags = listOf(
+            "-I${nativeDependencies.libffiPath}/include",
+            *hostPlatform.clangForJni.hostCompilerArgsForJni,
+            *reproducibilityCompilerFlags,
+    )
     suffixes {
         (".c" to ".$obj") {
             tool(*hostPlatform.clangForJni.clangC("").toTypedArray())

@@ -34,18 +34,19 @@ val library = lib("llvmext")
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
     val cxxflags = mutableListOf(
-        // Using the same flags as the release llvm build.
-        // But only keep -Wall diagnostics.
-        "-Wall",
-        "-O3",
-        "-DNDEBUG",
-        "-std=c++17",
-        "-fno-exceptions",
-        "-funwind-tables",
-        "-fno-rtti",
-        "-Werror", // fail on any warning, or we won't ever catch them
-        "-I${llvmDir}/include",
-        "-Isrc/main/include"
+            // Using the same flags as the release llvm build.
+            // But only keep -Wall diagnostics.
+            "-Wall",
+            "-O3",
+            "-DNDEBUG",
+            "-std=c++17",
+            "-fno-exceptions",
+            "-funwind-tables",
+            "-fno-rtti",
+            "-Werror", // fail on any warning, or we won't ever catch them
+            "-I${llvmDir}/include",
+            "-Isrc/main/include",
+            *reproducibilityCompilerFlags,
     )
     when (org.jetbrains.kotlin.konan.target.HostManager.host.family) {
         LINUX -> {

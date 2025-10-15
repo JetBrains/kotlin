@@ -194,6 +194,35 @@ open class NativeToolsExtension(val project: Project) {
     val llvmDir by nativeDependenciesExtension::llvmPath
     val hostPlatform by nativeDependenciesExtension::hostPlatform
 
+    // This is copied from `ClangArgs`
+    private val jdkDir: File
+        get() = File(System.getProperty("java.home")).canonicalFile.let { home ->
+            if (home.resolve("include").exists()) {
+                home
+            } else {
+                home.parentFile.also {
+                    check(it.resolve("include").exists())
+                }
+            }
+        }
+
+    /**
+     * Use these flags for `clang` invocations, so that the generated binaries do not contain
+     * absolute paths.
+     */
+    val reproducibilityCompilerFlags: Array<String>
+        get() = arrayOf(
+                // This applies for both sources of the current project, and dependencies on other
+                // projects inside the repo.
+                project.isolated.rootProject.let {
+                    "-ffile-prefix-map=${it.projectDirectory.asFile}=${it.name}"
+                },
+                // This is the common root for native dependencies: sysroots, llvm, ...
+                "-ffile-prefix-map=${nativeDependenciesExtension.nativeDependenciesRoot}=NATIVE_DEPS",
+                // Not every user of `NativePlugin` uses JNI, but there's no harm to keep it for all.
+                "-ffile-prefix-map=${jdkDir}=JDK",
+        )
+
     val sourceSets = SourceSets(project, this, mutableMapOf<String, SourceSet>())
     val toolPatterns = ToolConfigurationPatterns(this, mutableMapOf<Pair<String, String>, ToolPatternConfiguration>())
     val cleanupFiles = mutableListOf<String>()

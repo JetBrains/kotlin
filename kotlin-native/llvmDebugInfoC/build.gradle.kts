@@ -32,10 +32,11 @@ native {
     val cxxStandard = 17
     val llvmIncludeDir = "${llvmDir}/include"
 
-    val cxxflags = mutableListOf(
-        "--std=c++${cxxStandard}",
-        "-I${llvmIncludeDir}",
-        "-I${projectDir}/src/main/include"
+    val cxxflags = listOf(
+            "--std=c++${cxxStandard}",
+            "-I${llvmIncludeDir}",
+            "-I${projectDir}/src/main/include",
+            *reproducibilityCompilerFlags,
     )
     suffixes {
         (".cpp" to ".$obj") {

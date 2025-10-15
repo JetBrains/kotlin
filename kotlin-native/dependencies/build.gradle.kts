@@ -13,6 +13,7 @@ plugins {
 
 nativeDependenciesDownloader {
     repositoryURL.set("https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native")
+    // Keep this directory in sync with `NativeDependenciesPlugin.nativeDependenciesRoot`.
     dependenciesDirectory.set(DependencyDirectories.getDependenciesRoot(kotlinBuildProperties.konanDataDir))
 
     allTargets {}
