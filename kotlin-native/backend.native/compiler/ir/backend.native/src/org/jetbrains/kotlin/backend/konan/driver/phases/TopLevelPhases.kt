@@ -52,21 +52,6 @@ internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: KonanCon
     return frontendOutput as? FrontendPhaseOutput.Full
 }
 
-internal fun PhaseEngine<NativeBackendPhaseContext>.runPsiToIr(
-        frontendOutput: FrontendPhaseOutput.Full
-): PsiToIrOutput {
-    val config = this.context.config
-    val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
-    val psiToIrOutput = useContext(psiToIrContext) { psiToIrEngine ->
-        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment)
-        val output = psiToIrEngine.runPhase(PsiToIrPhase, psiToIrInput)
-        psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
-        output
-    }
-    runPhase(CopyDefaultValuesToActualPhase, Pair(psiToIrOutput.irModule, psiToIrOutput.irBuiltIns))
-    return psiToIrOutput
-}
-
 internal fun PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
         frontendOutput: FrontendPhaseOutput.Full,
 ): LinkKlibsOutput = linkKlibs(frontendOutput, {}).first
