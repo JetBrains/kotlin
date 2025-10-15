@@ -506,8 +506,10 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         }
 
         return type.arguments.map { argumentType ->
-            argumentType as? IrSimpleType ?: return null
-            val serializer = findTypeSerializerOrContext(compilerContext, argumentType)
+            if (argumentType !is IrSimpleType) return null
+            // If serializer is null, it is either a type parameter or non-serializable class.
+            // In both cases, we cannot cache it.
+            val serializer = findTypeSerializerOrContextUnchecked(compilerContext, argumentType) ?: return null
             serializerInstance(
                 serializer,
                 compilerContext,
