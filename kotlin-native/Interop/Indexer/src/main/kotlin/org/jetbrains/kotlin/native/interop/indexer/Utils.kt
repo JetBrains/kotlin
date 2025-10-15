@@ -414,7 +414,7 @@ fun Compilation.copy(
 // Clang-8 crashes when consuming a precompiled header built with -fmodule-map-file argument (see KT-34467).
 // We ignore this argument when building a pch to workaround this crash.
 fun Compilation.copyWithArgsForPCH(): Compilation =
-        copy(compilerArgs = compilerArgs.filterNot { it.startsWith("-fmodule-map-file") })
+        copy(compilerArgs = compilerArgs)
 
 data class CompilationImpl(
         override val includes: List<IncludeInfo>,
