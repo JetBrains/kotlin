@@ -23,6 +23,7 @@ class JvmWithJavaIsIncompatibleWithAndroidDiagnosticTest {
         project.androidLibrary { compileSdk = 33 }
         @Suppress("DEPRECATION")
         project.multiplatformExtension.jvm().withJava()
+        @Suppress("DEPRECATION")
         project.multiplatformExtension.androidTarget()
 
         assertFails { project.evaluate() }
@@ -35,6 +36,7 @@ class JvmWithJavaIsIncompatibleWithAndroidDiagnosticTest {
         project.androidApplication { compileSdk = 33 }
         @Suppress("DEPRECATION")
         project.multiplatformExtension.jvm().withJava()
+        @Suppress("DEPRECATION")
         project.multiplatformExtension.androidTarget()
         assertFails { project.evaluate() }
 
@@ -46,6 +48,7 @@ class JvmWithJavaIsIncompatibleWithAndroidDiagnosticTest {
         val project = buildProjectWithMPP()
         project.androidLibrary { compileSdk = 33 }
         project.multiplatformExtension.jvm()
+        @Suppress("DEPRECATION")
         project.multiplatformExtension.androidTarget()
         project.evaluate()
 

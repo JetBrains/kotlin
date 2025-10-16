@@ -36,6 +36,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Minimal MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
+        @Suppress("DEPRECATION")
         kotlin.androidTarget("android")
 
         /* Force evaluation */
@@ -76,6 +77,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Custom MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
+        @Suppress("DEPRECATION")
         kotlin.androidTarget("android")
         kotlin.sourceSets.apply {
             val jvmMain = create("jvmMain") {
@@ -120,10 +122,12 @@ class KotlinAndroidDependsOnEdgesTest {
                 compileSdk = 31
             }
             kotlin {
+                @Suppress("DEPRECATION")
                 androidTarget()
             }
         }.evaluate()
 
+        @Suppress("DEPRECATION")
         val androidCompilations = project.multiplatformExtension.androidTarget().compilations
 
         assertEquals(

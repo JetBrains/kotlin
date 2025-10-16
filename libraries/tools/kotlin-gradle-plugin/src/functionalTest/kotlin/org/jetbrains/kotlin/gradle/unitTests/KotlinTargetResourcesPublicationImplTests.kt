@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.overriddenGradleVersionForTests
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
@@ -50,6 +49,7 @@ class KotlinTargetResourcesPublicationImplTests {
     @Test
     fun `test assets callback - after resources publication`() {
         val project = mppProjectWithAndroidTarget()
+        @Suppress("DEPRECATION")
         val target = project.multiplatformExtension.androidTarget()
 
         testCallbacksAfterApiCall(
@@ -84,6 +84,7 @@ class KotlinTargetResourcesPublicationImplTests {
     @Test
     fun `test assets callback - before and after resources publication`() {
         val project = mppProjectWithAndroidTarget()
+        @Suppress("DEPRECATION")
         val target = project.multiplatformExtension.androidTarget()
 
         testCallbacksBeforeAndAfterApiCall(
@@ -114,6 +115,7 @@ class KotlinTargetResourcesPublicationImplTests {
     @Test
     fun `test assets - reports a diagnostic when publishing multiple times per target`() {
         val project = mppProjectWithAndroidTarget()
+        @Suppress("DEPRECATION")
         val target = project.multiplatformExtension.androidTarget()
 
         project.testMultipleApiCallsEmitDiagnostic(
@@ -129,6 +131,7 @@ class KotlinTargetResourcesPublicationImplTests {
             enableMppResourcesPublication(true)
             kotlin {
                 listOf(
+                    @Suppress("DEPRECATION")
                     androidTarget(),
                     jvm(),
                     wasmJs(),
@@ -230,6 +233,7 @@ class KotlinTargetResourcesPublicationImplTests {
         val project = buildProjectWithMPP {
             plugins.apply("com.android.library")
             kotlin {
+                @Suppress("DEPRECATION")
                 androidTarget()
             }
         }

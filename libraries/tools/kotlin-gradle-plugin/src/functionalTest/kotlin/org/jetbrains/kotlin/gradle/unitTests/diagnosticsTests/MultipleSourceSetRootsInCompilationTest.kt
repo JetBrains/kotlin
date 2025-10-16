@@ -98,9 +98,8 @@ class MultipleSourceSetRootsInCompilationTest {
 
             kotlin {
                 linuxX64()
-                androidTarget {
-
-                }
+                @Suppress("DEPRECATION")
+                androidTarget()
             }
         }
 
