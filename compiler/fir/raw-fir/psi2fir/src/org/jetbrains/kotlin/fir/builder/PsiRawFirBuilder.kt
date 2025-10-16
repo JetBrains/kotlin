@@ -1638,7 +1638,7 @@ open class PsiRawFirBuilder(
                         buildProperty {
 //                            source = propertySource
                             moduleData = baseModuleData
-                            origin = FirDeclarationOrigin.Synthetic.ReplContainer
+                            origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty
                             returnTypeRef = propertyReturnType
                             name = propertyName
                             isVar = false
