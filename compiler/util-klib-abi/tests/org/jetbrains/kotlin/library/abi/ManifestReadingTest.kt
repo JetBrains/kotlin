@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.library.abi
 import com.intellij.openapi.util.io.FileUtil.createTempDirectory
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
-import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
+import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.util.*
-import org.jetbrains.kotlin.konan.file.File as KFile
 
 @OptIn(ExperimentalLibraryAbiReader::class)
 class ManifestReadingTest {
@@ -70,30 +68,26 @@ class ManifestReadingTest {
     }
 
     private fun createEmptyLibraryWithSpecificManifest(libraryName: String, libraryManifest: LibraryManifest): File {
-        val libraryVersioning = KotlinLibraryVersioning(
-            compilerVersion = libraryManifest.compilerVersion,
-            abiVersion = libraryManifest.abiVersion?.parseKotlinAbiVersion(),
-            metadataVersion = null
-        )
-        val builtInsPlatform = libraryManifest.platform?.let(BuiltInsPlatform::parseFromString)
-            ?: error("Unknown platform: ${libraryManifest.platform}")
-
         val libraryFile = buildDir.resolve("$libraryName.klib")
-        val libraryKFile = KFile(libraryFile.absolutePath)
 
-        val libraryLayout = KotlinLibraryLayoutForWriter(libraryKFile, libraryKFile)
-        val library = KotlinLibraryWriterImpl(
+        buildKotlinLibrary(
+            linkDependencies = emptyList(),
+            metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList()), // empty
+            ir = SerializedIrModule(files = emptyList(), fileWithPreparedInlinableFunctions = null), // empty
+            versions = KotlinLibraryVersioning(
+                compilerVersion = libraryManifest.compilerVersion,
+                abiVersion = libraryManifest.abiVersion?.parseKotlinAbiVersion(),
+                metadataVersion = null
+            ),
+            output = libraryFile.absolutePath,
             moduleName = libraryName,
-            versions = libraryVersioning,
-            builtInsPlatform = builtInsPlatform,
-            nativeTargets = libraryManifest.platformTargets.filterIsInstance<LibraryTarget.Native>().map { it.name },
             nopack = true,
-            shortName = libraryName,
-            layout = libraryLayout
-        )
+            manifestProperties = Properties().apply {
+                val nativeTargets = libraryManifest.platformTargets.filterIsInstance<LibraryTarget.Native>()
+                if (nativeTargets.isNotEmpty()) {
+                    this[KLIB_PROPERTY_NATIVE_TARGETS] = nativeTargets.joinToString(" ") { it.name }
+                }
 
-        library.addManifestAddend(
-            Properties().apply {
                 val wasmTargets = libraryManifest.platformTargets.filterIsInstance<LibraryTarget.WASM>()
                 if (wasmTargets.isNotEmpty()) {
                     this[KLIB_PROPERTY_WASM_TARGETS] = wasmTargets.joinToString(" ") { it.name }
@@ -102,11 +96,10 @@ class ManifestReadingTest {
                 libraryManifest.irProviderName?.let { irProviderName ->
                     this[KLIB_PROPERTY_IR_PROVIDER] = irProviderName
                 }
-            }
+            },
+            builtInsPlatform = libraryManifest.platform?.let(BuiltInsPlatform::parseFromString)
+                ?: error("Unknown platform: ${libraryManifest.platform}"),
         )
-
-        library.addIr(SerializedIrModule(files = emptyList(), fileWithPreparedInlinableFunctions = null)) // Empty library.
-        library.commit()
 
         return libraryFile
     }
