@@ -34,6 +34,13 @@ class WasmModule(
 sealed class WasmNamedModuleField {
     var id: Int? = null
     open val name: String = ""
+    val objectId: Int = objectCounter.also {
+        ++objectCounter
+    }
+
+    companion object {
+        var objectCounter = 0
+    }
 }
 
 sealed class WasmFunction(
