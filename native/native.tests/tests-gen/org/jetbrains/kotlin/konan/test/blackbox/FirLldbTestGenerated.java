@@ -183,6 +183,12 @@ public class FirLldbTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("stepIntoSyntheticFunction.kt")
+  public void testStepIntoSyntheticFunction() {
+    runTest("native/native.tests/testData/lldb/stepIntoSyntheticFunction.kt");
+  }
+
+  @Test
   @TestMetadata("stepThroughInlineArguments.kt")
   public void testStepThroughInlineArguments() {
     runTest("native/native.tests/testData/lldb/stepThroughInlineArguments.kt");
