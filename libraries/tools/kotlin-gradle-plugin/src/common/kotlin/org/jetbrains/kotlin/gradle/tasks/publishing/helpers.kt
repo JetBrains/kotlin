@@ -26,14 +26,12 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 
 internal fun Project.addPgpSignatureHelpers() {
-    val bcConfiguration = maybeCreateBcConfiguration()
-
     val pgpDirectory = project.layout.buildDirectory.dir("pgp")
     project.tasks.register("generatePgpKeys", GeneratePgpKeys::class.java) {
         it.notCompatibleWithConfigurationCache("Do not cache password.")
         it.outputDirectory.set(pgpDirectory)
         it.password.set(project.providers.gradleProperty("signing.password"))
-        it.bouncyCastleClasspath.from(bcConfiguration)
+        it.bouncyCastleClasspath.from(maybeCreateBcConfiguration())
         it.gradleHomePath.set(project.gradle.gradleUserHomeDir.absolutePath)
         it.group = "signing"
         it.description = """
@@ -54,11 +52,10 @@ internal fun Project.addPgpSignatureHelpers() {
 }
 
 internal fun Project.addSigningValidationHelpers() {
-    val bcConfiguration = maybeCreateBcConfiguration()
     val signingTask = project.tasks.register<CheckSigningTask>("checkSigningConfiguration") {
         group = "validation"
         description = "Checks that a signing configuration is set up correctly."
-        bouncyCastleClasspath.from(bcConfiguration)
+        bouncyCastleClasspath.from(maybeCreateBcConfiguration())
         offlineMode.set(gradle.startParameter.isOffline)
         keyservers.convention(
             listOf(
