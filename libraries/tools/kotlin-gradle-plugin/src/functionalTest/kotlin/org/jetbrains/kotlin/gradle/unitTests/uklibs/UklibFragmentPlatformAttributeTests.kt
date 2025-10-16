@@ -30,6 +30,7 @@ class UklibFragmentPlatformAttributeTests {
                 wasmWasi("customWasmWasi")
                 createExternalKotlinTarget<FakeTarget> { defaults() }.createCompilation<FakeCompilation> { defaults(this@kotlin) }
                 jvm("customJvm")
+                @Suppress("DEPRECATION")
                 androidTarget("customAndroid")
             }
         }.evaluate()

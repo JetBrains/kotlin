@@ -24,6 +24,7 @@ internal class KotlinPresetEntry(
 ) {
     class Deprecation(
         val message: String,
+        val messageIsTheCode: Boolean,
         val level: DeprecationLevel,
         val replaceWithOtherPreset: String? = null // when set, it will generate ReplaceWith with related argument names
     )
@@ -58,6 +59,12 @@ internal val androidTargetPresetEntry = KotlinPresetEntry(
     typeName("$MPP_PACKAGE.KotlinAndroidTargetPreset"),
     typeName("$MPP_PACKAGE.KotlinAndroidTarget"),
     entityName = "android",
+    deprecation = KotlinPresetEntry.Deprecation(
+        message = "The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except " +
+                "'com.android.kotlin.multiplatform.library' plugin. Please migrate to the new plugin: https://kotl.in/gradle/agp-new-kmp",
+        messageIsTheCode = false,
+        level = DeprecationLevel.WARNING,
+    )
 )
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
@@ -89,6 +96,7 @@ internal val nativePresetEntries = HostManager().targets
 
         val deprecation = KotlinPresetEntry.Deprecation(
             message = "DEPRECATED_TARGET_MESSAGE",
+            messageIsTheCode = true,
             level = if (target in KonanTarget.toleratedDeprecatedTargets) DeprecationLevel.WARNING else DeprecationLevel.ERROR
         ).takeIf { target in KonanTarget.deprecatedTargets }
         KotlinPresetEntry(target.presetName, typeName(presetType), typeName(targetType), deprecation)

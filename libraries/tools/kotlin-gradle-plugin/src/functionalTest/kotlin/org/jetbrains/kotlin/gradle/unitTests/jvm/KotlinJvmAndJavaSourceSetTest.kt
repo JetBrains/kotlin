@@ -230,6 +230,7 @@ class KotlinJvmAndJavaSourceSetTest {
             plugins.apply("android-library")
             kotlin {
                 jvm()
+                @Suppress("DEPRECATION")
                 androidTarget()
             }
 

@@ -234,6 +234,7 @@ class LanguageSettingsTests {
         val project = kmpProject {
             androidLibrary { compileSdk = 31 }
             with(multiplatformExtension) {
+                @Suppress("DEPRECATION")
                 androidTarget()
                 jvm().compilations.create("custom")
             }
