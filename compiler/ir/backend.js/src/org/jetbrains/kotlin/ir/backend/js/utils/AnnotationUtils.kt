@@ -19,6 +19,7 @@ object JsAnnotations {
     val jsModuleFqn = FqName("kotlin.js.JsModule")
     val jsNonModuleFqn = FqName("kotlin.js.JsNonModule")
     val jsNameFqn = FqName("kotlin.js.JsName")
+    val jsSymbolFqn = FqName("kotlin.js.JsSymbol")
     val jsFileNameFqn = FqName("kotlin.js.JsFileName")
     val jsQualifierFqn = FqName("kotlin.js.JsQualifier")
     val jsExportFqn = FqName("kotlin.js.JsExport")
@@ -52,6 +53,9 @@ fun IrFile.getJsFileName(): String? =
 
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
+
+fun IrAnnotationContainer.getJsSymbol(): String? =
+    getAnnotation(JsAnnotations.jsSymbolFqn)?.getSingleConstStringArgument()
 
 fun IrAnnotationContainer.getDeprecated(): String? =
     getAnnotation(StandardNames.FqNames.deprecated)?.getSingleConstStringArgument()
@@ -91,14 +95,20 @@ fun IrAnnotationContainer.isJsNativeSetter(): Boolean = hasAnnotation(JsAnnotati
 
 fun IrAnnotationContainer.isJsNativeInvoke(): Boolean = hasAnnotation(JsAnnotations.jsNativeInvoke)
 
-private fun IrOverridableDeclaration<*>.dfsOverridableJsNameOrNull(): String? {
+private fun IrOverridableDeclaration<*>.dfsOverridableJsSymbolOrNull(): String? =
+    dfsOverridableAnnotationOrNull { getJsSymbol() }
+
+private fun IrOverridableDeclaration<*>.dfsOverridableJsNameOrNull(): String? =
+    dfsOverridableAnnotationOrNull { getJsName() }
+
+private fun <T> IrOverridableDeclaration<*>.dfsOverridableAnnotationOrNull(getAnnotation: IrAnnotationContainer.() -> T): T? {
     for (overriddenSymbol in overriddenSymbols) {
         val symbolOwner = overriddenSymbol.owner
         if (symbolOwner is IrAnnotationContainer) {
-            symbolOwner.getJsName()?.let { return it }
+            symbolOwner.getAnnotation()?.let { return it }
         }
         if (symbolOwner is IrOverridableDeclaration<*>) {
-            symbolOwner.dfsOverridableJsNameOrNull()?.let { return it }
+            symbolOwner.dfsOverridableAnnotationOrNull(getAnnotation)?.let { return it }
         }
     }
     return null
@@ -119,6 +129,16 @@ fun IrDeclarationWithName.getJsNameOrKotlinName(): Name =
         null -> name
         else -> Name.identifier(jsName)
     }
+
+fun IrDeclarationWithName.getJsSymbolForOverriddenDeclaration(): String? {
+    val jsSymbol = getJsSymbol()
+
+    return when {
+        jsSymbol != null -> jsSymbol
+        this is IrOverridableDeclaration<*> -> dfsOverridableJsSymbolOrNull()
+        else -> null
+    }
+}
 
 private val associatedObjectKeyAnnotationFqName = FqName("kotlin.reflect.AssociatedObjectKey")
 

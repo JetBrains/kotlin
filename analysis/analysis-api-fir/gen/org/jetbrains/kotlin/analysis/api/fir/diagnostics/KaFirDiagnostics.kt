@@ -1176,6 +1176,22 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val existing: List<KaSymbol>
     }
 
+    interface JsSymbolOnTopLevelDeclaration : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsSymbolOnTopLevelDeclaration::class
+    }
+
+    interface JsSymbolProhibitedForOverride : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsSymbolProhibitedForOverride::class
+    }
+
+    interface JsSymbolOnPrimaryConstructorProhibited : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsSymbolOnPrimaryConstructorProhibited::class
+    }
+
+    interface JsSymbolOnAccessorAndProperty : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsSymbolOnAccessorAndProperty::class
+    }
+
     interface WrongJsQualifier : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = WrongJsQualifier::class
     }

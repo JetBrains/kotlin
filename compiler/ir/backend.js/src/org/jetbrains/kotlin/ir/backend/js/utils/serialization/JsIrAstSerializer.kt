@@ -577,6 +577,9 @@ private class JsIrAstSerializer {
         ifNotNull(function.name) {
             writeInt(internalizeName(it))
         }
+        ifNotNull(function.computedName) {
+            writeExpression(function.computedName)
+        }
         writeBoolean(function.isLocal)
         writeBoolean(function.isEs6Arrow)
     }
