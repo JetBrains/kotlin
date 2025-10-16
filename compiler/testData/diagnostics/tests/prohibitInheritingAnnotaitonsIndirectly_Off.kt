@@ -1,9 +1,7 @@
-// LL_FIR_DIVERGENCE
-// LL runners don't run the backend, so they can't show `CONFLICTING_INHERITED_JVM_DECLARATIONS`.
-// LL_FIR_DIVERGENCE
 // LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-54866
+// LANGUAGE: -ProhibitExtendingAnnotationClasses
 
 // FILE: JavaEmptyAnno.java
 public @interface JavaEmptyAnno {}

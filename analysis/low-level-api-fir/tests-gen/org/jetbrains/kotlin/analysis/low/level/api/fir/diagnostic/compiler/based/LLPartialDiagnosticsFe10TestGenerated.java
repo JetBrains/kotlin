@@ -1749,6 +1749,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("prohibitInheritingAnnotaitonsIndirectly_Off.kt")
+    public void testProhibitInheritingAnnotaitonsIndirectly_Off() {
+      runTest("compiler/testData/diagnostics/tests/prohibitInheritingAnnotaitonsIndirectly_Off.kt");
+    }
+
+    @Test
     @TestMetadata("ProjectionOnFunctionArgumentErrror.kt")
     public void testProjectionOnFunctionArgumentErrror() {
       runTest("compiler/testData/diagnostics/tests/ProjectionOnFunctionArgumentErrror.kt");

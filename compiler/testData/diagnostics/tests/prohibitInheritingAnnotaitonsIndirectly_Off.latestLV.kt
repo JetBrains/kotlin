@@ -1,6 +1,7 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-54866
-// LANGUAGE: +ProhibitExtendingAnnotationClasses
+// LANGUAGE: -ProhibitExtendingAnnotationClasses
 
 // FILE: JavaEmptyAnno.java
 public @interface JavaEmptyAnno {}
@@ -30,9 +31,9 @@ public class JavaNonEmptyAnnoClass implements JavaNonEmptyAnno {
 }
 
 // FILE: KotlinAnnoClasses.kt
-class <!EXTENDING_AN_ANNOTATION_CLASS_ERROR!>KotlinEmptyAnnoClass<!> : JavaEmptyAnnoClass()
+class <!EXTENDING_AN_ANNOTATION_CLASS_WARNING!>KotlinEmptyAnnoClass<!> : JavaEmptyAnnoClass()
 
-class <!EXTENDING_AN_ANNOTATION_CLASS_ERROR!>KotlinNonEmptyAnnoClass<!> : JavaNonEmptyAnnoClass()
+class <!EXTENDING_AN_ANNOTATION_CLASS_WARNING!>KotlinNonEmptyAnnoClass<!> : JavaNonEmptyAnnoClass()
 
 fun main() {
     KotlinEmptyAnnoClass()

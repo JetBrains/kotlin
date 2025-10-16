@@ -1,6 +1,6 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-54866
+// LANGUAGE: +ProhibitExtendingAnnotationClasses
 
 // FILE: JavaEmptyAnno.java
 public @interface JavaEmptyAnno {}

@@ -122,6 +122,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirMixedFunctionalTypesInSupertypesChecker.Regular,
         FirMixedFunctionalTypesInSupertypesChecker.ForExpectClass,
         FirDelegateFieldTypeMismatchChecker,
+        FirAnnotationClassInheritanceChecker,
         FirMultipleDefaultsInheritedFromSupertypesChecker.Regular,
         FirMultipleDefaultsInheritedFromSupertypesChecker.ForExpectClass,
         FirPropertyInitializationChecker,

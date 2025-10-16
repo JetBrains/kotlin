@@ -388,6 +388,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirDeprecationInfo>("deprecationInfo")
         }
 
+        val EXTENDING_AN_ANNOTATION_CLASS by deprecationError<PsiElement>(
+            LanguageFeature.ProhibitExtendingAnnotationClasses,
+            PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT,
+        ) {
+            parameter<FirRegularClassSymbol>("annotationSymbol")
+        }
+
         val TYPEALIAS_EXPANSION_DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.DEPRECATION) {
             parameter<Symbol>("alias")
             parameter<Symbol>("reference")

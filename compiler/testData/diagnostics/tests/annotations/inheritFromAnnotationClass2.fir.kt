@@ -4,9 +4,9 @@
 // LANGUAGE: +ProhibitExtendingAnnotationClasses
 // FILE: test.kt
 
-annotation class Ann : Target()
+annotation class <!EXTENDING_AN_ANNOTATION_CLASS_ERROR!>Ann<!> : Target()
 
-annotation class Ann2(vararg val allowedTargets: AnnotationTarget) : Target()
+annotation class <!EXTENDING_AN_ANNOTATION_CLASS_ERROR!>Ann2(vararg val allowedTargets: AnnotationTarget)<!> : Target()
 
 interface I : J {
     override fun foo(): List<String> = throw Exception()

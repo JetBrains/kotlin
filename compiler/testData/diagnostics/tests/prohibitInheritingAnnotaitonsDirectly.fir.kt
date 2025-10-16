@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-54866
+// LANGUAGE: +ProhibitExtendingAnnotationClasses
 
 // FILE: JavaEmptyAnno.java
 public @interface JavaEmptyAnno {}
@@ -10,9 +11,9 @@ public @interface JavaNonEmptyAnno {
 }
 
 // FILE: KotlinAnnoClasses.kt
-class KotlinEmptyAnnoRaw : <!FINAL_SUPERTYPE!>JavaEmptyAnno<!>
+class <!EXTENDING_AN_ANNOTATION_CLASS_ERROR!>KotlinEmptyAnnoRaw<!> : <!FINAL_SUPERTYPE!>JavaEmptyAnno<!>
 
-class KotlinNonEmptyAnnoRaw : <!FINAL_SUPERTYPE!>JavaNonEmptyAnno<!>
+class <!EXTENDING_AN_ANNOTATION_CLASS_ERROR!>KotlinNonEmptyAnnoRaw<!> : <!FINAL_SUPERTYPE!>JavaNonEmptyAnno<!>
 
 fun main() {
     KotlinEmptyAnnoRaw()
