@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.konan.FirOutput
+import org.jetbrains.kotlin.backend.konan.FirSerializerInput
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.fir2IrSerializer
 import org.jetbrains.kotlin.backend.konan.firSerializer
-
-internal data class FirSerializerInput(
-    val firToIrOutput: Fir2IrOutput,
-    val produceHeaderKlib: Boolean = false,
-)
 
 internal val FirSerializerPhase = createSimpleNamedCompilerPhase(
         "FirSerializer",

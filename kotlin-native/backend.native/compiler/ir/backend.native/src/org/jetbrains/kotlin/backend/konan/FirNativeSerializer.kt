@@ -3,9 +3,6 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
-import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
-import org.jetbrains.kotlin.backend.konan.driver.phases.FirSerializerInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.SerializerOutput
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -18,16 +15,16 @@ import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 
-internal fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (input) {
+fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (input) {
     !is FirOutput.Full -> null
     else -> firSerializerBase(input.firResult, null)
 }
 
-internal fun PhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
+fun PhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
     return firSerializerBase(input.firToIrOutput.firResult, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
 }
 
-internal fun PhaseContext.firSerializerBase(
+private fun PhaseContext.firSerializerBase(
         firResult: FirResult,
         fir2IrOutput: Fir2IrOutput?,
         produceHeaderKlib: Boolean = false,
