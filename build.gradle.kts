@@ -962,7 +962,7 @@ tasks {
         dependsOn("compilerPluginTest")
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn(":compiler:arguments:test")
-        dependsOn(":compiler:fir:modularized-tests:modelDumpTest")
+        dependsOn(":compiler:fir:modularized-tests:test")
     }
 
     register("miscTest") {
@@ -1168,11 +1168,11 @@ tasks {
     }
 
     register("generateMtIsolatedTests") {
-        dependsOn(":compiler:fir:modularized-tests:generateModularizedTests")
+        dependsOn(":compiler:fir:modularized-tests:generateMtIsolatedTests")
     }
 
     register("runMtIsolatedTests") {
-        dependsOn(":compiler:fir:modularized-tests:runModularizedTests")
+        dependsOn(":compiler:fir:modularized-tests:parallelMtIsolatedTests")
     }
 }
 

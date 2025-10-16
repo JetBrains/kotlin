@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.generators.tests
 import org.jetbrains.kotlin.fir.AbstractIsolatedFulPipelineTestRunner
 import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import java.io.File
 
 private val BASE_GEN_PATH = "compiler/fir/modularized-tests/tests-gen"
 
@@ -28,9 +29,12 @@ object GenerateModularizedIsolatedTests {
     fun main(args: Array<String>) {
         val testDataProjectName = System.getProperty("fir.modularized.test.project.name")
         val testDataModelPath = System.getProperty("fir.modularized.test.model.path")
-        if (testDataProjectName == null || testDataModelPath == null) {
+        if (testDataProjectName == null) {
             println("fir.modularized.test.project.name system property should be set")
-            println("fir.modularized.test.model.path system property should be set")
+            return
+        }
+        if (testDataModelPath?.let { File(it).exists() } == false) {
+            println("Skipping ${testDataProjectName} project: fir.modularized.test.project.name system property is not set or path is incorrect ($testDataModelPath)")
             return
         }
 

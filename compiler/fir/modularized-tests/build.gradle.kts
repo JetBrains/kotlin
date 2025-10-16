@@ -55,8 +55,8 @@ sourceSets {
 optInToK1Deprecation()
 
 projectTests {
-    val modelDumpAndReadTest = "org.jetbrains.kotlin.fir.ModelDumpAndReadTest"
-    val generatedMtTestSourceFiles = "org.jetbrains.kotlin.fir.*FullPipelineTestsGenerated"
+    val modularizedTests = "org.jetbrains.kotlin.fir.*ModularizedTest"
+    val generatedMtIsolatedTests = "org.jetbrains.kotlin.fir.*FullPipelineTestsGenerated"
 
     fun Test.setUpModularizedTests() {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
@@ -73,34 +73,35 @@ projectTests {
     testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
         setUpModularizedTests()
         filter {
-            excludeTestsMatching(modelDumpAndReadTest)
-            excludeTestsMatching(generatedMtTestSourceFiles)
+            excludeTestsMatching(modularizedTests)
+            excludeTestsMatching(generatedMtIsolatedTests)
         }
     }
 
-    testTask(taskName = "parallelMtTests", minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+    testTask(taskName = "parallelMtIsolatedTests", minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
         setUpModularizedTests()
 
         filter {
-            includeTestsMatching(generatedMtTestSourceFiles)
+            includeTestsMatching(generatedMtIsolatedTests)
         }
         systemProperties["junit.jupiter.execution.parallel.enabled"] = true
         systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
         maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
     }
 
-    testTask("modelDumpTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+    testTask("modularizedTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
         dependsOn(":dist")
         workingDir = rootDir
         filter {
-            includeTestsMatching(modelDumpAndReadTest)
+            includeTestsMatching(modularizedTests)
         }
     }
 }
 
 testsJar()
 
-fun mtIsolatedTestsGenerator(testProjectName: String, testDataPath: String?) = generator("org.jetbrains.kotlin.fir.generators.tests.GenerateModularizedIsolatedTests") {
+fun mtIsolatedTestsGenerator(testProjectName: String, testDataPath: String?) =
+    generator("org.jetbrains.kotlin.fir.generators.tests.GenerateModularizedIsolatedTests") {
         systemProperty("fir.modularized.test.model.path", testDataPath?.let { "$it/test-project-model-dump" } ?: "")
         systemProperty("fir.modularized.test.project.name", testProjectName)
     }
@@ -113,8 +114,4 @@ val generateSpaceMtIsolatedTests by mtIsolatedTestsGenerator("Space", kotlinBuil
 
 tasks.register("generateMtIsolatedTests") {
     dependsOn(generateKotlinMtIsolatedTests, generateIntellijMtIsolatedTests, generateYouTrackMtIsolatedTests, generateSpaceMtIsolatedTests)
-}
-
-tasks.register("runMtIsolatedTests") {
-
 }
