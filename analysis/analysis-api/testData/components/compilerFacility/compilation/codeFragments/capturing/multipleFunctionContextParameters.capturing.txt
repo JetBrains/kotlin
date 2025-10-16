@@ -1,0 +1,8 @@
+Captured values:
+Local[name: $context-Ctx1; isMutated: false; displayText: $context-Ctx1]
+    <unused var>: R|Ctx1|
+    R|Ctx1|
+Local[name: $context-Ctx2; isMutated: false; displayText: $context-Ctx2]
+    <unused var>: R|Ctx2|
+    R|Ctx2|
+No captured files
