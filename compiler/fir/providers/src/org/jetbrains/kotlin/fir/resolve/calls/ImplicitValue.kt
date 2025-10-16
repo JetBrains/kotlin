@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -32,11 +31,11 @@ import org.jetbrains.kotlin.types.SmartcastStability
  *
  * See the KDoc of [ReceiverValue] for further details.
  */
-sealed class ImplicitValue<S>(
+sealed class ImplicitValue<S : FirBasedSymbol<*>>(
     type: ConeKotlinType,
     val originalType: ConeKotlinType,
     protected val mutable: Boolean,
-) where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
+) {
     abstract val boundSymbol: S
 
     var type: ConeKotlinType = type

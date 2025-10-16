@@ -11,46 +11,32 @@ import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.findChildByType
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.backend.utils.*
-import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.SCRIPT_RECEIVER_NAME_PREFIX
-import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.isSealed
-import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.isError
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -777,14 +763,7 @@ class Fir2IrVisitor(
     ): IrElement = whileAnalysing(session, thisReceiverExpression) {
         val calleeReference = thisReceiverExpression.calleeReference
 
-        val boundSymbol = calleeReference.boundSymbol
-
-        // If not a context receiver of a class
-        // TODO: after KT-72994 injectGetValueCall can be used unconditionally
-        // TODO: add tests, currently can be replaced with if (false) without breaking anything
-        if (boundSymbol !is FirValueParameterSymbol || boundSymbol.containingDeclarationSymbol.fir !is FirClass) {
-            callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
-        }
+        callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
 
         when (val declarationSymbol = calleeReference.referencedMemberSymbol) {
             is FirClassSymbol -> generateThisReceiverAccessForClass(thisReceiverExpression, declarationSymbol)
@@ -839,39 +818,9 @@ class Fir2IrVisitor(
         val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass) ?: return null
         val origin = if (thisReceiverExpression.isImplicit) IrStatementOrigin.IMPLICIT_ARGUMENT else null
         return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-            val thisRef = callGenerator.findInjectedValue(calleeReference)?.let {
+            callGenerator.findInjectedValue(calleeReference)?.let {
                 callGenerator.useInjectedValue(it, calleeReference, startOffset, endOffset)
             } ?: IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol, origin)
-
-            val referencedFir = calleeReference.boundSymbol?.fir
-            if (referencedFir !is FirValueParameter) {
-                return thisRef
-            }
-            // TODO(KT-72994) remove everything below when context receivers are removed
-            val contextParameterNumber = (firClass as FirRegularClass).contextParameters.indexOf(referencedFir)
-
-            val constructorForCurrentlyGeneratedDelegatedConstructor =
-                conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass.symbol)
-
-            if (constructorForCurrentlyGeneratedDelegatedConstructor != null) {
-                val constructorParameter =
-                    constructorForCurrentlyGeneratedDelegatedConstructor.parameters.filter { it.kind == IrParameterKind.Context }[contextParameterNumber]
-                IrGetValueImpl(startOffset, endOffset, constructorParameter.type, constructorParameter.symbol, origin)
-            } else {
-                val contextReceivers =
-                    c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, firClass)
-                require(contextReceivers.size > contextParameterNumber) {
-                    "Not defined context receiver #$contextParameterNumber for $irClass. " +
-                            "Context receivers found: $contextReceivers"
-                }
-
-                IrGetFieldImpl(
-                    startOffset, endOffset, contextReceivers[contextParameterNumber].symbol,
-                    thisReceiverExpression.resolvedType.toIrType(),
-                    thisRef,
-                    origin,
-                )
-            }
         }
     }
 
@@ -942,13 +891,7 @@ class Fir2IrVisitor(
             else -> null
         } ?: return null
 
-        val contextParameterNumber = firCallableSymbol.fir.contextParameters.indexOf(calleeReference.boundSymbol?.fir)
-        val receiver = if (contextParameterNumber != -1) {
-            // TODO(KT-72994) Remove when context receivers are removed
-            irFunction.parameters.filter { it.kind == IrParameterKind.Context }[contextParameterNumber]
-        } else {
-            irFunction.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
-        } ?: return null
+        val receiver = irFunction.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver } ?: return null
 
         return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
             IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol, origin)

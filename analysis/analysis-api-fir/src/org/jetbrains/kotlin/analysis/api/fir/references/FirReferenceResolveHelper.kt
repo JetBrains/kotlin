@@ -123,7 +123,6 @@ internal object FirReferenceResolveHelper {
                     listOfNotNull(
                         when (boundSymbol) {
                             is FirReceiverParameterSymbol -> boundSymbol.containingDeclarationSymbol
-                            is FirValueParameterSymbol -> boundSymbol.containingDeclarationSymbol
                             else -> boundSymbol as FirBasedSymbol<*>?
                         }?.buildSymbol(symbolBuilder)
                     )

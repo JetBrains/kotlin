@@ -237,10 +237,6 @@ class Fir2IrConverter(
             }
         }
 
-        // `irClass` is a source class and definitely is not a lazy class
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        irClass.declarations.addAll(classifierStorage.getFieldsWithContextReceiversForClass(irClass, klass))
-
         val irConstructor = klass.primaryConstructorIfAny(session)?.let {
             declarationStorage.createAndCacheIrConstructor(it.fir, { irClass }, isLocal = klass.isLocal)
         }

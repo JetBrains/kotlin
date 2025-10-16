@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -134,34 +133,6 @@ internal class ClassMemberGenerator(
                             }
                         }
                         body.statements += irDelegatingConstructorCall
-                    }
-
-                    // TODO(KT-72994) remove when context receivers are removed
-                    if (containingClass is FirRegularClass && containingClass.contextParameters.isNotEmpty()) {
-                        val contextReceiverFields =
-                            c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, containingClass)
-
-                        val thisParameter =
-                            conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
-
-                        val irContextParameters = parameters.filter { it.kind == IrParameterKind.Context }
-
-                        for (index in containingClass.contextParameters.indices) {
-                            require(contextReceiverFields.size > index) {
-                                "Not defined context receiver #${index} for $irClass. " +
-                                        "Context receivers found: $contextReceiverFields"
-                            }
-                            val irValueParameter = irContextParameters[index]
-                            body.statements.add(
-                                IrSetFieldImpl(
-                                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                    contextReceiverFields[index].symbol,
-                                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisParameter.type, thisParameter.symbol),
-                                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
-                                    c.builtins.unitType,
-                                )
-                            )
-                        }
                     }
 
                     if (delegatedConstructor?.isThis == false) {

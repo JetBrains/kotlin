@@ -1291,14 +1291,7 @@ internal class KaFirCompilerFacility(
             val id = when (calleeReference) {
                 is FirThisReference -> when (val boundSymbol = calleeReference.boundSymbol) {
                     is FirClassSymbol -> CodeFragmentCapturedId(boundSymbol)
-                    is FirReceiverParameterSymbol, is FirValueParameterSymbol -> {
-                        when (val referencedSymbol = calleeReference.referencedMemberSymbol) {
-                            // Specific (deprecated) case for a class context receiver
-                            // TODO: remove with KT-72994
-                            is FirClassSymbol -> CodeFragmentCapturedId(referencedSymbol)
-                            else -> CodeFragmentCapturedId(boundSymbol)
-                        }
-                    }
+                    is FirReceiverParameterSymbol -> CodeFragmentCapturedId(boundSymbol)
                     is FirTypeParameterSymbol, is FirTypeAliasSymbol -> errorWithFirSpecificEntries(
                         message = "Unexpected FirThisOwnerSymbol ${calleeReference::class.simpleName}", fir = boundSymbol.fir
                     )

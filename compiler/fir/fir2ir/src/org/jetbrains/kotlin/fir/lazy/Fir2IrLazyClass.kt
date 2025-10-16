@@ -220,10 +220,6 @@ class Fir2IrLazyClass(
         addDeclarationsFromScope(scope)
         addDeclarationsFromScope(fir.staticScopeForBackend(session, scopeSession))
 
-        with(classifierStorage) {
-            result.addAll(getFieldsWithContextReceiversForClass(this@Fir2IrLazyClass, fir))
-        }
-
         result
     }
 

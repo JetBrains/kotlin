@@ -1307,11 +1307,7 @@ open class FirDeclarationsResolveTransformer(
                         symbol = FirValueParameterSymbol()
                         returnTypeRef = receiverType
                             .toFirResolvedTypeRef(lambda.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
-                        valueParameterKind = if (LanguageFeature.ContextParameters.isEnabled()) {
-                            FirValueParameterKind.ContextParameter
-                        } else {
-                            FirValueParameterKind.LegacyContextReceiver
-                        }
+                        valueParameterKind = FirValueParameterKind.ContextParameter
                     }
                 }.orEmpty()
         )

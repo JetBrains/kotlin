@@ -160,10 +160,7 @@ class FirEnumEntrySymbol(override val callableId: CallableId) : FirVariableSymbo
         get() = (fir.initializer as? FirAnonymousObjectExpression)?.anonymousObject?.symbol
 }
 
-class FirValueParameterSymbol() : FirVariableSymbol<FirValueParameter>(),
-    ValueParameterSymbolMarker,
-    // TODO(KT-72994) stop extending FirThisOwnerSymbol when context receivers are removed
-    FirThisOwnerSymbol<FirValueParameter> {
+class FirValueParameterSymbol() : FirVariableSymbol<FirValueParameter>(), ValueParameterSymbolMarker {
     override val callableId: CallableId
         get() = CallableId(name)
 
@@ -186,13 +183,9 @@ class FirValueParameterSymbol() : FirVariableSymbol<FirValueParameter>(),
         get() = fir.containingDeclarationSymbol
 }
 
-// TODO(KT-72994) convert to class extending FirBasedSymbol when context receivers are removed
-sealed interface FirThisOwnerSymbol<out E : FirDeclaration> {
-    val fir: E
-    val source: KtSourceElement?
-}
+sealed class FirThisOwnerSymbol<out E : FirDeclaration> : FirBasedSymbol<E>()
 
-class FirReceiverParameterSymbol : FirBasedSymbol<FirReceiverParameter>(), FirThisOwnerSymbol<FirReceiverParameter> {
+class FirReceiverParameterSymbol : FirThisOwnerSymbol<FirReceiverParameter>() {
     val containingDeclarationSymbol: FirBasedSymbol<*>
         get() = fir.containingDeclarationSymbol
 

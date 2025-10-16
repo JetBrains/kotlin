@@ -550,12 +550,7 @@ class FirCallCompleter(
                             returnTypeRef = contextParameterType
                                 .approximateLambdaInputType(symbol, withPCLASession, candidate)
                                 .toFirResolvedTypeRef(originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
-                            valueParameterKind =
-                                if (LanguageFeature.ContextParameters.isEnabled()) {
-                                    FirValueParameterKind.ContextParameter
-                                } else {
-                                    FirValueParameterKind.LegacyContextReceiver
-                                }
+                            valueParameterKind = FirValueParameterKind.ContextParameter
                         }
                     }
                 )

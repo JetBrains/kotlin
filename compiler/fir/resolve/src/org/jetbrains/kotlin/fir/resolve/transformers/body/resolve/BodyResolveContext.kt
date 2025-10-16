@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class BodyResolveContext(
     @set:PrivateForInline
@@ -298,20 +299,13 @@ class BodyResolveContext(
         additionalLabelName: Name? = null,
         f: () -> T
     ): T = withTowerDataCleanup {
-        val contextReceivers = mutableListOf<ContextReceiverValue>()
-        val contextParameters = mutableListOf<ImplicitContextParameterValue>()
-
-        owner.contextParameters.forEach { receiver ->
-            if (receiver.isLegacyContextReceiver()) {
-                contextReceivers += ContextReceiverValue(
-                    receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, holder.session, holder.scopeSession,
-                )
-            } else {
-                contextParameters += ImplicitContextParameterValue(receiver.symbol, receiver.returnTypeRef.coneType)
+        val contextParameters = owner.contextParameters.mapNotNull { receiver ->
+            runIf(!receiver.isLegacyContextReceiver()) {
+                ImplicitContextParameterValue(receiver.symbol, receiver.returnTypeRef.coneType)
             }
         }
 
-        replaceTowerDataContext(towerDataContext.addContextGroups(contextReceivers, contextParameters))
+        replaceTowerDataContext(towerDataContext.addContextGroups(contextParameters))
 
         if (type != null) {
             val receiver = ImplicitExtensionReceiverValue(
@@ -603,7 +597,6 @@ class BodyResolveContext(
 
         val forMembersResolution = forConstructorHeader
             .addReceiver(labelName, towerElementsForClass.thisReceiver)
-            .addContextGroups(towerElementsForClass.contextReceivers, emptyList())
 
         /*
          * Scope for enum entries is equal to initial scope for constructor header
@@ -749,7 +742,6 @@ class BodyResolveContext(
             .map { it.asTowerDataElement(isLocal = false) }
 
         val base = towerDataContext
-            // KT-69102: this line can lead to duplicate context receivers in the implicit receiver stack
             .addNonLocalTowerDataElements(towerDataContext.nonLocalTowerDataElements)
             .addNonLocalTowerDataElements(fragmentImportTowerDataElements)
 
