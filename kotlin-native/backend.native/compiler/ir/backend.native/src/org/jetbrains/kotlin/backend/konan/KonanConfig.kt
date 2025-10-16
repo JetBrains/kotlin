@@ -20,13 +20,18 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -376,11 +381,17 @@ class KonanConfig(
 
     override val resolvedLibraries get() = resolve.resolvedLibraries
 
-    override val includedLibraries: List<KonanLibrary>
+    val includedLibraries: List<KonanLibrary>
         get() = resolve.includedLibraries
 
-    override val exportedLibraries: List<KonanLibrary>
+    val exportedLibraries: List<KonanLibrary>
         get() = resolve.exportedLibraries
+
+    fun librariesWithDependencies(): List<KonanLibrary> {
+        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(
+                TopologicalLibraryOrder
+        ).map { it as KonanLibrary }
+    }
 
     internal val externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File)
 
@@ -393,7 +404,7 @@ class KonanConfig(
             konanKlibDir = File(distribution.klib)
     )
 
-    override val fullExportedNamePrefix: String
+    val fullExportedNamePrefix: String
         get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
 
     override val moduleId: String
@@ -636,6 +647,51 @@ class KonanConfig(
     }
 
     val cCallMode get() = configuration.get(BinaryOptions.cCallMode) ?: CCallMode.IndirectOrDirect
+
+    val unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport
+        get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.DEFAULT
+
+    val languageVersionSettings: LanguageVersionSettings
+        get() = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
+
+    val purgeUserLibs: Boolean
+        get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
+
+    val isInteropStubs: Boolean
+        get() = manifestProperties?.getProperty("interop") == "true"
+
+    override val produce: CompilerOutputKind
+        get() = configuration.get(KonanConfigKeys.PRODUCE)!!
+
+    override val metadataKlib: Boolean
+        get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
+
+    override val headerKlibPath: String?
+        get() = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffixIfPresent(".klib")
+
+    override val friendModuleFiles: Set<File>
+        get() = configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
+
+    override val refinesModuleFiles: Set<File>
+        get() = configuration.get(KonanConfigKeys.REFINES_MODULES)?.map { File(it) }?.toSet().orEmpty()
+
+    override val nativeLibraries: List<String>
+        get() = configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
+
+    override val includeBinaries: List<String>
+        get() = configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
+
+    override val writeDependenciesOfProducedKlibTo: String?
+        get() = configuration.get(KonanConfigKeys.WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)
+
+    override val nativeTargetsForManifest: Collection<KonanTarget>?
+        get() = configuration.get(KonanConfigKeys.MANIFEST_NATIVE_TARGETS)
+
+    override val shortModuleName: String?
+        get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
+
+    override val outputPath: String
+        get() = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
 }
 
 private fun String.isRelease(): Boolean {
