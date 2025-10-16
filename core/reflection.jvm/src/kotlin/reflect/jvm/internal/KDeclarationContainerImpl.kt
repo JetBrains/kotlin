@@ -45,6 +45,8 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     protected open val methodOwner: Class<*>
         get() = jClass.wrapperByPrimitive ?: jClass
 
+    abstract val propertiesMetadata: Collection<KmProperty>
+
     abstract val constructorDescriptors: Collection<ConstructorDescriptor>
 
     abstract fun getProperties(name: Name): Collection<PropertyDescriptor>
@@ -67,6 +69,23 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
         else
             KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
+    }
+
+    fun findPropertyMetadata(name: String, signature: String): KmProperty {
+        // For class properties, we'll also need to support the case when there are several properties with the same name,
+        // see `findPropertyDescriptor`.
+        require(this is KPackageImpl) { "Only top-level properties are supported for now: $this/$name ($signature)" }
+
+        val properties = propertiesMetadata.filter { it.name == name && it.computeJvmSignature(this) == signature }
+        if (properties.isEmpty()) {
+            throw KotlinReflectionInternalError("Property '$name' (JVM signature: $signature) not resolved in $this")
+        }
+
+        if (properties.size > 1) {
+            throw KotlinReflectionInternalError("Property '$name' (JVM signature: $signature) resolved in several methods in $this")
+        }
+
+        return properties.single()
     }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {

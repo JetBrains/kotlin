@@ -365,8 +365,7 @@ internal fun defaultPrimitiveValue(type: Type): Any? =
         }
     } else null
 
-internal open class CreateKCallableVisitor(private val container: KDeclarationContainerImpl) :
-    DeclarationDescriptorVisitorEmptyBodies<DescriptorKCallable<*>, Unit>() {
+internal open class CreateKCallableVisitor(private val container: KDeclarationContainerImpl) : CreateKFunctionVisitor(container) {
     override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): DescriptorKCallable<*> {
         val receiverCount =
             if (descriptor.contextReceiverParameters.isNotEmpty())
@@ -391,7 +390,10 @@ internal open class CreateKCallableVisitor(private val container: KDeclarationCo
 
         throw KotlinReflectionInternalError("Unsupported property: $descriptor")
     }
+}
 
+internal open class CreateKFunctionVisitor(private val container: KDeclarationContainerImpl) :
+    DeclarationDescriptorVisitorEmptyBodies<DescriptorKCallable<*>, Unit>() {
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): DescriptorKCallable<*> =
         DescriptorKFunction(container, descriptor)
 }

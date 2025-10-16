@@ -13,7 +13,8 @@ fun box(): String {
     val p = ::topLevel
 
     assertNotNull(p.javaField, "Fail p field")
-    assertEquals(p.javaField!!.getDeclaringClass(), fileFacadeClass)
+    assertEquals(fileFacadeClass, p.javaField!!.getDeclaringClass())
+    assertEquals(p, p.javaField!!.kotlinProperty)
 
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!
