@@ -241,6 +241,7 @@ class PgpHelpersTest : KGPBaseTest() {
         project("empty", gradleVersion) {
             plugins {
                 kotlin("jvm")
+                signing
             }
             test()
         }

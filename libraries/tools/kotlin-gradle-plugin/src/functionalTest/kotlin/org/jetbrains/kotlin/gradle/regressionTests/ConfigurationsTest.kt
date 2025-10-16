@@ -681,4 +681,11 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         }
         assertEquals("Compile classpath for 'main'.", project.configurations.getByName("compileClasspath").description)
     }
+
+    @Test
+    fun `kotlinBouncyCastleConfiguration not created when not needed`() {
+        kotlin.jvm()
+        project.evaluate()
+        assertTrue { project.configurations.none { it.name == "kotlinBouncyCastleConfiguration" } }
+    }
 }
