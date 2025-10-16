@@ -46,13 +46,9 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         receiverParameters.forEach { it.accept(visitor, data) }
-        variablesFromOtherSnippets.forEach { it.accept(visitor, data) }
-        declarationsFromOtherSnippets.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         receiverParameters = receiverParameters.transformIfNeeded(transformer, data)
-        variablesFromOtherSnippets.transformInPlace(transformer, data)
-        declarationsFromOtherSnippets.transformInPlace(transformer, data)
     }
 }
