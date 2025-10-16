@@ -474,7 +474,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             moduleData = containingClass.moduleData
             symbol = builderSymbol
             this.name = name
-            origin = FirDeclarationOrigin.Java.Source
+            origin = FirDeclarationOrigin.Java.Generated
             this.visibility = visibility
             this.modality = builderModality
             this.isStatic = builderDeclaration.isStaticDeclaration
@@ -582,7 +582,7 @@ fun FirClassSymbol<*>.createJavaMethod(
         status = FirResolvedDeclarationStatusImpl(visibility, modality, visibility.toEffectiveVisibility(this@createJavaMethod)).apply {
             this.isStatic = isStatic
         }
-        origin = FirDeclarationOrigin.Java.Source
+        origin = FirDeclarationOrigin.Java.Generated
         for (valueParameter in valueParameters) {
             this.valueParameters += buildJavaValueParameter {
                 moduleData = this@createJavaMethod.moduleData
@@ -590,7 +590,7 @@ fun FirClassSymbol<*>.createJavaMethod(
                 containingDeclarationSymbol = this@buildJavaMethod.symbol
                 this.name = valueParameter.name
                 isVararg = false
-                javaOrigin = FirDeclarationOrigin.Java.Source
+                javaOrigin = FirDeclarationOrigin.Java.Generated
             }
         }
     }.apply {
@@ -607,7 +607,7 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
     return buildJavaConstructor {
         containingClassSymbol = outerClassSymbol
         moduleData = outerClassSymbol.moduleData
-        origin = FirDeclarationOrigin.Java.Source
+        origin = FirDeclarationOrigin.Java.Generated
         symbol = FirConstructorSymbol(classId)
         isInner = outerClassSymbol.rawStatus.isInner
         status = FirResolvedDeclarationStatusImpl(

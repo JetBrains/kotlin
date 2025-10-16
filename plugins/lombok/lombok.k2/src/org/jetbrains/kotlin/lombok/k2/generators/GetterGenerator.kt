@@ -76,7 +76,7 @@ class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 val visibility = getterInfo.visibility.toVisibility()
                 status = FirResolvedDeclarationStatusImpl(visibility, Modality.OPEN, visibility.toEffectiveVisibility(classSymbol))
                 isStatic = false
-                javaOrigin = FirDeclarationOrigin.Java.Source
+                javaOrigin = FirDeclarationOrigin.Java.Generated
             }
             getterName to function
         }.toMap()

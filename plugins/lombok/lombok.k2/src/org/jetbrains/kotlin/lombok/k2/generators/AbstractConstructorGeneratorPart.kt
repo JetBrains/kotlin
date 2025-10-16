@@ -61,7 +61,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 }
                 isInner = classSymbol.isInner
                 isPrimary = false
-                origin = FirDeclarationOrigin.Java.Source
             }
         } else {
             FirJavaMethodBuilder().apply {
@@ -102,7 +101,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 }
 
                 isStatic = true
-                javaOrigin = FirDeclarationOrigin.Java.Source
             }
         }
 
@@ -117,6 +115,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     isStatic = true
                 }
             }
+            origin = FirDeclarationOrigin.Java.Generated
 
             val fields = getFieldsForParameters(classSymbol)
             fields.mapTo(valueParameters) { field ->
@@ -133,7 +132,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     containingDeclarationSymbol = constructorSymbol
                     name = field.name
                     isVararg = false
-                    javaOrigin = FirDeclarationOrigin.Java.Source
+                    javaOrigin = FirDeclarationOrigin.Java.Generated
                 }
             }
         }

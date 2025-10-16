@@ -97,7 +97,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
 
         typeParameters += buildTypeParameter {
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Java.Source
+            origin = FirDeclarationOrigin.Java.Generated
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.name = Name.identifier("C")
             symbol = classTypeParameterSymbol
@@ -110,7 +110,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         }
         typeParameters += buildTypeParameter {
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Java.Source
+            origin = FirDeclarationOrigin.Java.Generated
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.name = Name.identifier("B")
             symbol = builderTypeParameterSymbol

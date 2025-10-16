@@ -49,7 +49,7 @@ fun FirClassSymbol<*>.isSuitableJavaClass(): Boolean {
     contract {
         returns(true) implies (this@isSuitableJavaClass is FirRegularClassSymbol)
     }
-    return (this is FirRegularClassSymbol) && origin == FirDeclarationOrigin.Java.Source
+    return this is FirRegularClassSymbol && origin == FirDeclarationOrigin.Java.Source
 }
 
 @OptIn(SymbolInternals::class)

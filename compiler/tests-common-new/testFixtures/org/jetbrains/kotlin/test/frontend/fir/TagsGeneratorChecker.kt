@@ -617,8 +617,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
 
     fun isDeclarationOriginJava(origin: FirDeclarationOrigin?, source: KtSourceElement?): Boolean {
         return when (origin) {
-            is FirDeclarationOrigin.Java.Source -> true
-            is FirDeclarationOrigin.Java.Library -> true
+            is FirDeclarationOrigin.Java -> true
             is FirDeclarationOrigin.Synthetic.JavaProperty -> true
             FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
                 KtFakeSourceElementKind.EnumGeneratedDeclaration -> false

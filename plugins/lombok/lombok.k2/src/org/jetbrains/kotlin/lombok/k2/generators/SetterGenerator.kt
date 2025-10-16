@@ -98,11 +98,11 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     returnTypeRef = field.returnTypeRef
                     name = field.name
                     isVararg = false
-                    javaOrigin = FirDeclarationOrigin.Java.Source
+                    javaOrigin = FirDeclarationOrigin.Java.Generated
                 }
 
                 isStatic = false
-                javaOrigin = FirDeclarationOrigin.Java.Source
+                javaOrigin = FirDeclarationOrigin.Java.Generated
             }
             setterName to function
         }.toMap()

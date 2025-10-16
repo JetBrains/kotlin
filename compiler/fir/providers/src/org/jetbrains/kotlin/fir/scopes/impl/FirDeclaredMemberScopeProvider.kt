@@ -84,31 +84,20 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
         existingNamesForLazyNestedClassifierScope: List<Name>?,
     ): FirContainingNamesAwareScope {
         val origin = klass.origin
-        return when {
-            origin.generated -> {
-                FirGeneratedClassDeclaredMemberScope.create(
-                    useSiteSession,
-                    klass.symbol,
-                    regularDeclaredScope = null,
-                    scopeForGeneratedClass = true
-                ) ?: FirTypeScope.Empty
-            }
-            else -> {
-                val baseScope = FirClassDeclaredMemberScopeImpl(useSiteSession, klass, existingNamesForLazyNestedClassifierScope)
-                val generatedScope = runIf(origin.fromSource) {
-                    FirGeneratedClassDeclaredMemberScope.create(
-                        useSiteSession,
-                        klass.symbol,
-                        regularDeclaredScope = baseScope,
-                        scopeForGeneratedClass = false
-                    )
-                }
-                if (generatedScope != null) {
-                    FirNameAwareCompositeScope(listOf(baseScope, generatedScope))
-                } else {
-                    baseScope
-                }
-            }
+
+        val baseScope = FirClassDeclaredMemberScopeImpl(useSiteSession, klass, existingNamesForLazyNestedClassifierScope)
+        val generatedScope = runIf(origin.fromSource || origin.generated) {
+            FirGeneratedClassDeclaredMemberScope.create(
+                useSiteSession,
+                klass.symbol,
+                regularDeclaredScope = baseScope,
+                scopeForGeneratedClass = origin.generated
+            )
+        }
+        return if (generatedScope != null) {
+            FirNameAwareCompositeScope(listOf(baseScope, generatedScope))
+        } else {
+            baseScope
         }
     }
 

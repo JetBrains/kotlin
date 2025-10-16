@@ -78,11 +78,11 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
                     returnTypeRef = field.returnTypeRef
                     name = field.name
                     isVararg = false
-                    javaOrigin = FirDeclarationOrigin.Java.Source
+                    javaOrigin = FirDeclarationOrigin.Java.Generated
                 }
 
                 isStatic = false
-                javaOrigin = FirDeclarationOrigin.Java.Source
+                javaOrigin = FirDeclarationOrigin.Java.Generated
             }
             withName to function
         }.toMap()
