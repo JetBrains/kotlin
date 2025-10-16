@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.visitors
 
+import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -118,6 +119,9 @@ abstract class IrTransformer<in D> : IrVisitor<IrElement, D>(), @Suppress("DEPRE
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: D): IrElement =
         visitFunctionAccess(expression, data)
+
+    override fun visitAnnotation(element: IrAnnotation, data: D): IrElement =
+        visitConstructorCall(element, data)
 
     override fun visitSingletonReference(expression: IrGetSingletonValue, data: D): IrExpression =
         visitDeclarationReference(expression, data)
