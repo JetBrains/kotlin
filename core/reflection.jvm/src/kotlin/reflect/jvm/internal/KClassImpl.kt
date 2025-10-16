@@ -55,6 +55,7 @@ import kotlin.metadata.Modality
 import kotlin.metadata.internal.toKmClass
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.localDelegatedProperties
+import kotlin.metadata.jvm.moduleName
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.INHERITED
@@ -240,7 +241,7 @@ internal class KClassImpl<T : Any>(
             }
         }
 
-        private val typeParameterTable: TypeParameterTable by ReflectProperties.lazySoft {
+        internal val typeParameterTable: TypeParameterTable by ReflectProperties.lazySoft {
             if (kmClass == null)
                 TypeParameterTable.EMPTY
             else
@@ -439,6 +440,9 @@ internal class KClassImpl<T : Any>(
             member.kind.isReal == (this == DECLARED)
     }
 
+    override val propertiesMetadata: Collection<KmProperty>
+        get() = kmClass?.properties.orEmpty()
+
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
             val descriptor = descriptor
@@ -489,6 +493,8 @@ internal class KClassImpl<T : Any>(
     }
 
     override val typeParameters: List<KTypeParameter> get() = data.value.typeParameters
+
+    internal val typeParameterTable: TypeParameterTable get() = data.value.typeParameterTable
 
     override val supertypes: List<KType> get() = data.value.supertypes
 
@@ -546,6 +552,9 @@ internal class KClassImpl<T : Any>(
         get() = data.value.inlineClassUnderlyingType
 
     override fun findJavaDeclaration(): GenericDeclaration = jClass
+
+    internal val moduleName: String?
+        get() = kmClass?.moduleName
 
     override fun equals(other: Any?): Boolean =
         other is KClassImpl<*> && javaObjectType == other.javaObjectType

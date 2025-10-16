@@ -26,6 +26,14 @@ inline var inlineProperty: Unit
     get() = Unit
     set(value) {}
 
+var inlineGetter: Unit
+    inline get() = Unit
+    set(value) {}
+
+var inlineSetter: Unit
+    get() = Unit
+    inline set(value) {}
+
 fun box(): String {
     assertTrue(::inline.isInline)
     assertFalse(::inline.isExternal)
@@ -66,6 +74,20 @@ fun box(): String {
     assertTrue(::inlineProperty.getter.isInline)
     assertTrue(::inlineProperty.setter.isInline)
     assertFalse(::inlineProperty.isSuspend)
+
+    assertTrue(::inlineGetter.getter.isInline)
+    assertFalse(::inlineGetter.setter.isInline)
+    assertFalse(::inlineSetter.getter.isInline)
+    assertTrue(::inlineSetter.setter.isInline)
+
+    for (p in listOf(::externalGetter, ::inlineProperty, ::inlineGetter, ::inlineSetter)) {
+        assertFalse(p.getter.isOperator)
+        assertFalse(p.setter.isOperator)
+        assertFalse(p.getter.isInfix)
+        assertFalse(p.setter.isInfix)
+        assertFalse(p.getter.isSuspend)
+        assertFalse(p.setter.isSuspend)
+    }
 
     assertFalse(::J.isInline)
     assertFalse(::J.isExternal)
