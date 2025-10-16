@@ -14,7 +14,7 @@ public class ClassTypeParameterBound <T extends @NotNull String> {
 
 // FILE: main.kt
 fun main(x: ClassTypeParameterBound<<!UPPER_BOUND_VIOLATED!>String?<!>>, y: ClassTypeParameterBound<String>, a: String?, b: String) {
-    val x2 = ClassTypeParameterBound<<!UPPER_BOUND_VIOLATED!>String?<!>>()
+    val x2 = ClassTypeParameterBound<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>String?<!>>()
     val y2 = ClassTypeParameterBound<String>()
 
     val x3 = <!CANNOT_INFER_PARAMETER_TYPE!>ClassTypeParameterBound<!>(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
