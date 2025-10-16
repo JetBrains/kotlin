@@ -1728,9 +1728,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             """
             Contextual classes and constructors are deprecated and will not be supported when context parameters are enabled. Consider migrating to regular parameters.
             
-            See the context parameters proposal for more details: https://kotl.in/context-parameters
-            
-            """.trimIndent().toDeprecationWarningMessage(LanguageFeature.ContextParameters),
+            See the context parameters proposal for more details: https://kotl.in/context-parameters""".trimIndent()
         )
 
         // Mismatching types
