@@ -1,1 +1,4 @@
+DEFAULT TYPE:
+pack.TopLevelObject
+DEFAULT TYPE WITH STAR PROJECTIONS:
 pack.TopLevelObject

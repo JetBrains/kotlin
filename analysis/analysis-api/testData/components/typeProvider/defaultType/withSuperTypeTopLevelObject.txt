@@ -1,3 +1,9 @@
+DEFAULT TYPE:
+KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: pack/TopLevelObject
+DEFAULT TYPE WITH STAR PROJECTIONS:
 KaUsualClassType:
   annotations: []
   typeArguments: []

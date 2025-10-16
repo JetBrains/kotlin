@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
+import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
@@ -176,6 +177,16 @@ public interface KaTypeProvider : KaSessionComponent {
      * @see KaTypeCreator
      */
     public val KaClassifierSymbol.defaultType: KaType
+
+    /**
+     * Returns the representation of [this] in terms of [KaType].
+     *
+     * Type parameters are substituted with [KaStarTypeProjection], e.g. `List<*>` for the `List` class.
+     *
+     * @see KaTypeCreator
+     */
+    @KaExperimentalApi
+    public val KaClassifierSymbol.defaultTypeWithStarProjections: KaType
 
     /**
      * If [this] is a [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs) parameter,
@@ -624,6 +635,20 @@ public val KaType.enhancedTypeOrSelf: KaType?
 context(s: KaSession)
 public val KaClassifierSymbol.defaultType: KaType
     get() = with(s) { defaultType }
+
+/**
+ * Returns the representation of [this] in terms of [KaType].
+ *
+ * Type parameters are substituted with [KaStarTypeProjection], e.g. `List<*>` for the `List` class.
+ *
+ * @see KaTypeCreator
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public val KaClassifierSymbol.defaultTypeWithStarProjections: KaType
+    get() = with(s) { defaultTypeWithStarProjections }
 
 /**
  * If [this] is a [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs) parameter,

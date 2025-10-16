@@ -1,1 +1,4 @@
+DEFAULT TYPE:
 pack.Foo<A, B>
+DEFAULT TYPE WITH STAR PROJECTIONS:
+pack.Foo<*, *>

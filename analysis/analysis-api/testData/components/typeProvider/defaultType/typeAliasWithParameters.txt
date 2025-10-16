@@ -1,3 +1,4 @@
+DEFAULT TYPE:
 KaUsualClassType:
   annotations: []
   typeArguments: [
@@ -6,3 +7,10 @@ KaUsualClassType:
       type: K
   ]
   type: pack/one/Foo<K>
+DEFAULT TYPE WITH STAR PROJECTIONS:
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    *
+  ]
+  type: pack/one/Foo<*>

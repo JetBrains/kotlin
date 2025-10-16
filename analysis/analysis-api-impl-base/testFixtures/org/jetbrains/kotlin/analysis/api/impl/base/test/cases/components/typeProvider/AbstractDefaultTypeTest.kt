@@ -22,14 +22,28 @@ abstract class AbstractDefaultTypeTest : AbstractAnalysisApiBasedTest() {
         copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val declarationAtCaret =
                 testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(contextFile)
-            val symbol = declarationAtCaret?.symbol ?: getTestTargetSymbols(testDataPath, contextFile).single()
+            val symbol = (declarationAtCaret?.symbol ?: getTestTargetSymbols(testDataPath, contextFile).single()) as KaClassifierSymbol
 
-            val defaultType = (symbol as KaClassifierSymbol).defaultType
-            val actual = DebugSymbolRenderer().renderType(this@copyAwareAnalyzeForTest, defaultType)
+            val defaultType = symbol.defaultType
+            val defaultTypeWithStarProjections = symbol.defaultTypeWithStarProjections
+            val actual = buildString {
+                appendLine("DEFAULT TYPE:")
+                appendLine(DebugSymbolRenderer().renderType(this@copyAwareAnalyzeForTest, defaultType))
+                appendLine("DEFAULT TYPE WITH STAR PROJECTIONS:")
+                appendLine(DebugSymbolRenderer().renderType(this@copyAwareAnalyzeForTest, defaultTypeWithStarProjections))
+            }
             testServices.assertions.assertEqualsToTestOutputFile(actual)
 
             val prettyType = defaultType.render(position = Variance.INVARIANT)
-            testServices.assertions.assertEqualsToTestOutputFile(prettyType, extension = "pretty.txt")
+            val prettyTypeWithStarProjections = defaultTypeWithStarProjections.render(position = Variance.INVARIANT)
+
+            val actualPretty = buildString {
+                appendLine("DEFAULT TYPE:")
+                appendLine(prettyType)
+                appendLine("DEFAULT TYPE WITH STAR PROJECTIONS:")
+                appendLine(prettyTypeWithStarProjections)
+            }
+            testServices.assertions.assertEqualsToTestOutputFile(actualPretty, extension = "pretty.txt")
         }
     }
 }

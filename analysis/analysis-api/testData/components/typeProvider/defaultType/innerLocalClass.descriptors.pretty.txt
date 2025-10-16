@@ -1,1 +1,4 @@
+DEFAULT TYPE:
 foo.LocalClass<A>.LocalInner1<B, C>.LocalInner2<D, E, F>
+DEFAULT TYPE WITH STAR PROJECTIONS:
+foo.LocalClass<*>.LocalInner1<*, *>.LocalInner2<*, *, *>

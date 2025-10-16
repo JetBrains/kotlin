@@ -1,1 +1,4 @@
+DEFAULT TYPE:
+pack.TopLevelClass.NestedClass
+DEFAULT TYPE WITH STAR PROJECTIONS:
 pack.TopLevelClass.NestedClass
