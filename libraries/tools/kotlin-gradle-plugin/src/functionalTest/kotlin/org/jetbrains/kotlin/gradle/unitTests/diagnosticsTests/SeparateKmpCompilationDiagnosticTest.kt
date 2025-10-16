@@ -26,7 +26,7 @@ import org.junit.Test
 class SeparateKmpCompilationDiagnosticTest {
     @Test
     fun testSingleTargetKmpProject() {
-        checkDiagnosticsWithMppProject("SeparateKmpCompilation") {
+        checkDiagnosticsWithMppProject("SeparateKmpCompilation-singleTarget") {
             project.extra[PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION] = "true"
             kotlin {
                 jvm()

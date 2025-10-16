@@ -6,10 +6,3 @@ Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read m
 The change may require changing the structure of the your project. Read more: https://kotl.in/kmp-project-structure-migration
 Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
 See https://kotl.in/gradle/agp-new-kmp for more details.
-----
-[SourceSetLayoutV1StyleDirUsageWarning | WARNING] Deprecated Source Set Layout V1
-Found used source directory src/androidAndroidTest/kotlin
-This source directory was supported by: Multiplatform/Android-V1-SourceSetLayout
-Current KotlinAndroidSourceSetLayout: Multiplatform/Android-V2-SourceSetLayout
-New source directory is: src/androidInstrumentedTest/kotlin
-Please migrate to the new source directory: src/androidInstrumentedTest/kotlin
