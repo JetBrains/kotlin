@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.commonizer.konan
 
 import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.toSpaceSeparatedString
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
@@ -46,14 +46,12 @@ data class NativeSensitiveManifestData(
     }
 }
 
-private inline fun BaseWriterImpl.addOptionalProperty(name: String, condition: Boolean, value: () -> String) {
-    if (condition) manifestProperties[name] = value()
-    else manifestProperties.remove(name)
+private inline fun Properties.addOptionalProperty(name: String, condition: Boolean, value: () -> String) {
+    if (condition) this[name] = value()
+    else this.remove(name)
 }
 
-fun BaseWriterImpl.addManifest(manifest: NativeSensitiveManifestData) {
-    manifestProperties[KLIB_PROPERTY_UNIQUE_NAME] = manifest.uniqueName
-
+internal fun Properties.addNativeSensitiveManifestProperties(manifest: NativeSensitiveManifestData) {
     // note: versions can't be added here
     // Make sure all the lists are sorted for reproducible output
 
@@ -74,10 +72,6 @@ fun BaseWriterImpl.addManifest(manifest: NativeSensitiveManifestData) {
 
     addOptionalProperty(KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS, manifest.includedForwardDeclarations.isNotEmpty() || manifest.isCInterop) {
         manifest.includedForwardDeclarations.sorted().joinToString(" ")
-    }
-
-    addOptionalProperty(KLIB_PROPERTY_NATIVE_TARGETS, manifest.nativeTargets.isNotEmpty()) {
-        manifest.nativeTargets.sorted().joinToString(" ")
     }
 
     addOptionalProperty(KLIB_PROPERTY_SHORT_NAME, manifest.shortName != null) { manifest.shortName!! }
