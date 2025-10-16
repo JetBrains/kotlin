@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.visitors
 
+import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -312,6 +313,14 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>() {
 
     open fun visitConstructorCall(expression: IrConstructorCall) {
         visitFunctionAccess(expression)
+    }
+
+    final override fun visitAnnotation(element: IrAnnotation, data: Nothing?) {
+        visitAnnotation(element)
+    }
+
+    open fun visitAnnotation(element: IrAnnotation) {
+        visitConstructorCall(element)
     }
 
     final override fun visitSingletonReference(expression: IrGetSingletonValue, data: Nothing?) {

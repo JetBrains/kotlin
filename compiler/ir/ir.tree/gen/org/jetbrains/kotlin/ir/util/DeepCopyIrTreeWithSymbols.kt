@@ -8,12 +8,14 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -417,6 +419,23 @@ open class DeepCopyIrTreeWithSymbols(
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
             processAttributes(expression)
+        }
+
+    override fun visitAnnotation(element: IrAnnotation): IrAnnotation =
+        IrAnnotationImpl(
+            startOffset = element.startOffset,
+            endOffset = element.endOffset,
+            type = element.type.remapType(),
+            origin = element.origin,
+            symbol = symbolRemapper.getReferencedConstructor(element.symbol),
+            source = element.source,
+            constructorTypeArgumentsCount = element.constructorTypeArgumentsCount,
+            classId = element.classId,
+            argumentMapping = element.argumentMapping,
+        ).apply {
+            copyRemappedTypeArgumentsFrom(element)
+            transformValueArguments(element)
+            processAttributes(element)
         }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrGetObjectValue =

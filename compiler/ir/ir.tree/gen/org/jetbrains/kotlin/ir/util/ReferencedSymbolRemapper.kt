@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -58,6 +59,7 @@ interface ReferencedSymbolRemapper {
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
      * - [IrConstructorCall.symbol]
+     * - [IrAnnotation.symbol]
      * - [IrConstantObject.constructor]
      * - [IrDelegatingConstructorCall.symbol]
      * - [IrEnumConstructorCall.symbol]

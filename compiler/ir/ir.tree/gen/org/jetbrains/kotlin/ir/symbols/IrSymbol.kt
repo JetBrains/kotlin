@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -199,6 +200,7 @@ sealed interface IrFunctionSymbol : IrReturnTargetSymbol, FunctionSymbolMarker {
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.constructorSymbol]
  *
  * @see IrConstructorCall.symbol
+ * @see IrAnnotation.symbol
  * @see IrConstantObject.constructor
  * @see IrDelegatingConstructorCall.symbol
  * @see IrEnumConstructorCall.symbol
