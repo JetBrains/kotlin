@@ -220,6 +220,18 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
     }
 
     @Test
+    @TestMetadata("genericTypeAliasWithIntArgument.kt")
+    public void testGenericTypeAliasWithIntArgument() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/genericTypeAliasWithIntArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("genericTypeAliasWithNoArguments.kt")
+    public void testGenericTypeAliasWithNoArguments() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/genericTypeAliasWithNoArguments.kt");
+    }
+
+    @Test
     @TestMetadata("intTypeMarkNullable.kt")
     public void testIntTypeMarkNullable() {
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/intTypeMarkNullable.kt");
@@ -229,6 +241,12 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
     @TestMetadata("lessTypeArgumentsThanExpected.kt")
     public void testLessTypeArgumentsThanExpected() {
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/lessTypeArgumentsThanExpected.kt");
+    }
+
+    @Test
+    @TestMetadata("listWithTypeAliasArgument.kt")
+    public void testListWithTypeAliasArgument() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/listWithTypeAliasArgument.kt");
     }
 
     @Test
@@ -253,6 +271,18 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
     @TestMetadata("nonExistingClassIdWithAnnotations.kt")
     public void testNonExistingClassIdWithAnnotations() {
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/nonExistingClassIdWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAlias.kt")
+    public void testTypeAlias() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/typeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasWithNestedTypeAliases.kt")
+    public void testTypeAliasWithNestedTypeAliases() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/typeAliasWithNestedTypeAliases.kt");
     }
 
     @Test
