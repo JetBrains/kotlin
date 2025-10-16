@@ -116,6 +116,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
             origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
             if (original is IrConstructor) isPrimary = false
         }.apply {
+            with(irFactory) { declarationCreated() }
             parent = original.parent
             copyAnnotationsFrom(original)
             annotations = annotations memoryOptimizedPlus buildDeprecationCall(version)
