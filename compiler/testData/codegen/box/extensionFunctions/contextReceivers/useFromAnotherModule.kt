@@ -1,5 +1,6 @@
 // LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K2: ANY
 
 // MODULE: lib
 // FILE: A.kt

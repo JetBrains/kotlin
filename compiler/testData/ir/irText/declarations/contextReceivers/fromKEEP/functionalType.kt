@@ -1,4 +1,5 @@
 // LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 
 class Param
 class O {

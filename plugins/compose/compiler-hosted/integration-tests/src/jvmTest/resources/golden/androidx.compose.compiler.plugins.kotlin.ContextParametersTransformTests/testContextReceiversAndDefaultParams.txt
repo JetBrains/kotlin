@@ -22,7 +22,7 @@ fun C(a: Int, bar: Bar = Bar()) { }
 // ------------------------------------------
 
 @Composable
-context(%context_receiver_0: Foo, %context_receiver_1: Bar)
+context(<unused var>: Foo, <unused var>: Bar)
 fun A(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A)N(a):Test.kt")
@@ -40,11 +40,11 @@ fun A(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    A(%context_receiver_0, %context_receiver_1, a, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    A(<unused var>, <unused var>, a, %composer, updateChangedFlags(%changed or 0b0001), %default)
   }
 }
 @Composable
-context(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar)
+context(<unused var>: Foo, <unused var>: Bar, <unused var>: FooBar)
 fun B(a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B)N(a,b,c):Test.kt")
@@ -65,11 +65,11 @@ fun B(a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default:
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    B(%context_receiver_0, %context_receiver_1, %context_receiver_2, a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    B(<unused var>, <unused var>, <unused var>, a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
   }
 }
 @Composable
-context(%context_receiver_0: Foo)
+context(<unused var>: Foo)
 fun C(a: Int, bar: Bar?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(C)N(a,bar):Test.kt")
@@ -98,6 +98,6 @@ fun C(a: Int, bar: Bar?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    C(%context_receiver_0, a, bar, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    C(<unused var>, a, bar, %composer, updateChangedFlags(%changed or 0b0001), %default)
   }
 }

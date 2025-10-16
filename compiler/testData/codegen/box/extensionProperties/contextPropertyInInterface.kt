@@ -1,4 +1,6 @@
 // LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: ANY
 // ISSUE: KT-75016
 
 interface I {

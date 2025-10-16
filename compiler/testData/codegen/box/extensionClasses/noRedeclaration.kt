@@ -5,6 +5,7 @@
 // - Old BE: Couldn't inline method call: with(A()) { ... }
 // - See also: KT-57584, KT-58110
 // LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-53718
 
 class A

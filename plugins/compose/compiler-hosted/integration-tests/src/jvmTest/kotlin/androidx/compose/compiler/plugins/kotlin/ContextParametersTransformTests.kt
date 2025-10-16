@@ -114,15 +114,15 @@ class ContextParametersTransformTests : AbstractIrTransformTest(true) {
             class FooBar { }
         """,
         """
-            context(Foo, Bar)
+            context(_: Foo, _: Bar)
             @Composable
             fun A(a: Int = 1) { }
 
-            context(Foo, Bar, FooBar)
+            context(_: Foo, _: Bar, _: FooBar)
             @Composable
             fun B(a: Int, b: String = "", c: Int = 1) { }
 
-            context(Foo)
+            context(_: Foo)
             @Composable
             fun C(a: Int, bar: Bar = Bar()) { }
         """
@@ -239,7 +239,7 @@ class ContextParametersTransformTests : AbstractIrTransformTest(true) {
                 class Foo { }
             """,
             """
-                context(Foo)
+                context(_: Foo)
                 @Composable
                 fun Test(a: String, b: @Composable (String) -> Unit) {
                     b("yay")
@@ -266,11 +266,11 @@ class ContextParametersTransformTests : AbstractIrTransformTest(true) {
                 }
             }
 
-            context(Foo)
+            context(foo: Foo)
             @Composable
             fun Test(a: String = "A", b: Int = 2) {
                 val combineParams = a + b
-                if (someString == combineParams) {
+                if (foo.someString == combineParams) {
                     println("Same same")
                 }
             }

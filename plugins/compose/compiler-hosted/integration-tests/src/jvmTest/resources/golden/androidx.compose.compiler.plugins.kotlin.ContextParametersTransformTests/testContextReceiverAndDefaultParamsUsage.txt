@@ -53,13 +53,13 @@ fun Parent(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-context(%context_receiver_0: Foo)
+context(foo: Foo)
 fun Test(a: String?, b: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)N(a,b):Test.kt")
+  sourceInformation(%composer, "C(Test)N(foo,a,b):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(%context_receiver_0)) 0b0100 else 0b0010
+    %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010
   }
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b00110000
@@ -82,7 +82,7 @@ fun Test(a: String?, b: Int, %composer: Composer?, %changed: Int, %default: Int)
       traceEventStart(<>, %dirty, -1, <>)
     }
     val combineParams = a as String + b
-    if (%context_receiver_0.someString == combineParams) {
+    if (foo.someString == combineParams) {
       println("Same same")
     }
     if (isTraceInProgress()) {
@@ -92,6 +92,6 @@ fun Test(a: String?, b: Int, %composer: Composer?, %changed: Int, %default: Int)
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Test(%context_receiver_0, a, b, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    Test(foo, a, b, %composer, updateChangedFlags(%changed or 0b0001), %default)
   }
 }

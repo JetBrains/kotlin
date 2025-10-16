@@ -18,14 +18,6 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
     Element 8
-        Context receivers:
-            FirValueParameterSymbol R|one/A|
-                Type: one.A
-                Label: A
-            FirValueParameterSymbol R|kotlin/Int|
-                Type: kotlin.Int
-                Label: Int
-    Element 9
         Implicit receiver:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
                 Type: kotlin.String

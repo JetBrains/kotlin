@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface NumberOperations {

@@ -1,4 +1,6 @@
 // LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: ANY
 // MODULE: m1
 // FILE: Base.kt
 abstract class Base<T> {

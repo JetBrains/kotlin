@@ -1,6 +1,6 @@
 // LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
-// FIR status: context receivers aren't yet supported
+// IGNORE_BACKEND_K2: ANY
 
 context(T) class B<T : CharSequence> {
     val result = if (length == 2) "OK" else "fail"

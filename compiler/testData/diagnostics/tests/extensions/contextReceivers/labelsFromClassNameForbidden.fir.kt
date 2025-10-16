@@ -7,12 +7,12 @@ fun List<Int>.f() {
 
 <!UNSUPPORTED_FEATURE!>context(String)<!>
 fun Int.f() {
-    this@String.length
+    this<!UNRESOLVED_LABEL!>@String<!>.length
     this<!UNRESOLVED_LABEL!>@Int<!>.toDouble()
 }
 
 <!UNSUPPORTED_FEATURE!>context(String)<!>
-val p: String get() = this@String
+val p: String get() = this<!UNRESOLVED_LABEL!>@String<!>
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, getter,
 propertyDeclaration, propertyDeclarationWithContext, thisExpression */

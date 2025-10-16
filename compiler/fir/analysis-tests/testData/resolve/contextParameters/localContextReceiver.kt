@@ -8,7 +8,7 @@ class A(val a: String)
 private fun f1() {
     <!NONE_APPLICABLE!>context<!>(<!NO_COMPANION_OBJECT!>A<!>)
     fun f2() {
-        foo(a)
+        foo(<!UNRESOLVED_REFERENCE!>a<!>)
     }
 
     f2()

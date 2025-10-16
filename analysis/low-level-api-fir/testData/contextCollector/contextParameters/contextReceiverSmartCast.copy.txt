@@ -16,19 +16,9 @@ Tower Data Context:
             Properties:
                 FirValueParameterSymbol p: R|kotlin/Boolean|
     Element 7
-        Context receivers:
-            FirValueParameterSymbol R|kotlin/Any|
-                Type: kotlin.Int
-                Label: Any
+        Scope: FirLocalScope
     Element 8
         Scope: FirLocalScope
-    Element 9
-        Scope: FirLocalScope
-Smart Casts:
-    FirValueParameterSymbol R|kotlin/Any|
-    Types:
-        kotlin.Int
-        kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiverSmartCast.kt
     context([ResolvedTo(RAW_FIR)] Int)
@@ -37,8 +27,8 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverSmartCast.kt
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/Any|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
-            (this@R|context of /foo| is R|kotlin/Int|) ->  {
-                context(this@R|context of /foo|) R|/bar|()
+            (this@Any# is R|kotlin/Int|) ->  {
+                R|/bar|()
             }
         }
 

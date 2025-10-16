@@ -87,7 +87,7 @@ class ExplicitApiIT : KGPBaseTest() {
                 |kotlin.explicitApiWarning()
                 |
                 |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile.class).configureEach {
-                |    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
+                |    compilerOptions.freeCompilerArgs.add("-Xcontext-parameters")
                 |}
                 |
                 """.trimMargin()
@@ -96,7 +96,7 @@ class ExplicitApiIT : KGPBaseTest() {
             build("compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
 
-                assertCompilerArgument(":compileKotlin", "-Xcontext-receivers")
+                assertCompilerArgument(":compileKotlin", "-Xcontext-parameters")
                 assertCompilerArgument(":compileKotlin", "-Xexplicit-api=warning")
             }
         }

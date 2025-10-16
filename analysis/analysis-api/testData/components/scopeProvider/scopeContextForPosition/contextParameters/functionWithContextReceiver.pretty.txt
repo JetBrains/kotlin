@@ -10,19 +10,7 @@ implicit values:
       /TopLevel.foo(<extension receiver>: C, <dispatch receiver>: TopLevel<T1>, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
 
   KaImplicitReceiver:
-    scopeIndexInTower = 1
-    type = B
-    ownerSymbol = KaContextParameterSymbol:
-      B: B
-
-  KaImplicitReceiver:
-    scopeIndexInTower = 4
-    type = A
-    ownerSymbol = KaContextParameterSymbol:
-      A: A
-
-  KaImplicitReceiver:
-    scopeIndexInTower = 5
+    scopeIndexInTower = 3
     type = TopLevel<T1>
     ownerSymbol = KaNamedClassSymbol:
       /TopLevel
@@ -38,17 +26,7 @@ scopes:
     constructors: 1
       constructor()
 
-  TypeScope, index = 1
-    packages: 0
-    classifiers: 0
-    callables: 3
-      fun equals(other: kotlin.Any?): kotlin.Boolean
-      fun hashCode(): kotlin.Int
-      fun toString(): kotlin.String
-    constructors: 1
-      constructor()
-
-  LocalScope, index = 2
+  LocalScope, index = 1
     packages: 0
     classifiers: 0
     callables: 2
@@ -56,24 +34,14 @@ scopes:
       param2: kotlin.String
     constructors: 0
 
-  TypeParameterScope, index = 3
+  TypeParameterScope, index = 2
     packages: 0
     classifiers: 1
       T2
     callables: 0
     constructors: 0
 
-  TypeScope, index = 4
-    packages: 0
-    classifiers: 0
-    callables: 3
-      fun equals(other: kotlin.Any?): kotlin.Boolean
-      fun hashCode(): kotlin.Int
-      fun toString(): kotlin.String
-    constructors: 1
-      constructor()
-
-  TypeScope, index = 5
+  TypeScope, index = 3
     packages: 0
     classifiers: 0
     callables: 4
@@ -85,20 +53,20 @@ scopes:
     constructors: 1
       constructor()
 
-  TypeParameterScope, index = 6
+  TypeParameterScope, index = 4
     packages: 0
     classifiers: 1
       T1
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 7
+  ExplicitSimpleImportingScope, index = 5
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 8
+  PackageMemberScope, index = 6
     packages: 6
       META-INF
       java
@@ -115,14 +83,15 @@ scopes:
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 9
+  DefaultSimpleImportingScope, index = 7
 
-  DefaultSimpleImportingScope, index = 10
+  DefaultSimpleImportingScope, index = 8
 
-  ExplicitStarImportingScope, index = 11
+  ExplicitStarImportingScope, index = 9
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 12
+  DefaultStarImportingScope, index = 10
+

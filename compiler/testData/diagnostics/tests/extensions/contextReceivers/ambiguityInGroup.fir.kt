@@ -21,11 +21,11 @@ fun supertypeContextual() {}
 
 context(C1, C2)
 fun test() {
-    supertypeMember()
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>member<!>()
-    <!AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER!>supertypeExtension<!>()
-    <!AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER, CANNOT_INFER_PARAMETER_TYPE!>supertypeExtensionGeneric<!>()
-    <!AMBIGUOUS_CONTEXT_ARGUMENT!>supertypeContextual<!>()
+    <!UNRESOLVED_REFERENCE!>supertypeMember<!>()
+    <!UNRESOLVED_REFERENCE!>member<!>()
+    <!UNRESOLVED_REFERENCE!>supertypeExtension<!>()
+    <!UNRESOLVED_REFERENCE!>supertypeExtensionGeneric<!>()
+    <!NO_CONTEXT_ARGUMENT!>supertypeContextual<!>()
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,

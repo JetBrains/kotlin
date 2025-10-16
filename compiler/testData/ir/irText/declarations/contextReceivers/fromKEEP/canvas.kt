@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// IGNORE_BACKEND_K2: ANY
 // LANGUAGE: +ContextReceivers
 
 interface Canvas {

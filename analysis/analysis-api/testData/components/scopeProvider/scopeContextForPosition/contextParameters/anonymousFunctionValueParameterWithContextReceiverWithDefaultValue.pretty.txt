@@ -12,12 +12,6 @@ implicit values:
     ownerSymbol = KaNamedFunctionSymbol:
       /foo(<extension receiver>: C, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
 
-  KaImplicitReceiver:
-    scopeIndexInTower = 5
-    type = A
-    ownerSymbol = KaContextParameterSymbol:
-      A: A
-
 scopes:
   TypeScope, index = 0
     packages: 0
@@ -60,17 +54,7 @@ scopes:
     constructors: 1
       constructor()
 
-  TypeScope, index = 5
-    packages: 0
-    classifiers: 0
-    callables: 3
-      fun equals(other: kotlin.Any?): kotlin.Boolean
-      fun hashCode(): kotlin.Int
-      fun toString(): kotlin.String
-    constructors: 1
-      constructor()
-
-  LocalScope, index = 6
+  LocalScope, index = 5
     packages: 0
     classifiers: 0
     callables: 2
@@ -78,20 +62,20 @@ scopes:
       param2: kotlin.String
     constructors: 0
 
-  TypeParameterScope, index = 7
+  TypeParameterScope, index = 6
     packages: 0
     classifiers: 1
       T1
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 8
+  ExplicitSimpleImportingScope, index = 7
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 9
+  PackageMemberScope, index = 8
     packages: 6
       META-INF
       java
@@ -111,15 +95,15 @@ scopes:
       fun <T1> C.foo(param: kotlin.Int, param2: kotlin.String)
     constructors: 0
 
+  DefaultSimpleImportingScope, index = 9
+
   DefaultSimpleImportingScope, index = 10
 
-  DefaultSimpleImportingScope, index = 11
-
-  ExplicitStarImportingScope, index = 12
+  ExplicitStarImportingScope, index = 11
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 13
+  DefaultStarImportingScope, index = 12
 

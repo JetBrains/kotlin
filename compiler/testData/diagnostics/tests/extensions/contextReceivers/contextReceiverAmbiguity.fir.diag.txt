@@ -1,14 +1,12 @@
-/contextReceiverAmbiguity.fir.kt:(141,148): warning: Experimental context receivers are superseded by context parameters.
+/contextReceiverAmbiguity.fir.kt:(141,148): error: Experimental context receivers are superseded by context parameters.
 Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
-This warning will become an error in future releases.
 
-/contextReceiverAmbiguity.fir.kt:(187,194): warning: Experimental context receivers are superseded by context parameters.
+/contextReceiverAmbiguity.fir.kt:(187,194): error: Experimental context receivers are superseded by context parameters.
 Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
-This warning will become an error in future releases.
 
 /contextReceiverAmbiguity.fir.kt:(243,247): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
 

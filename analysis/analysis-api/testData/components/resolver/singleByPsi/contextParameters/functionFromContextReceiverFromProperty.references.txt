@@ -3,4 +3,4 @@ KtNameReferenceExpression(108,109): 'c'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in Container) fun c()
+      Nothing (Unresolved reference)

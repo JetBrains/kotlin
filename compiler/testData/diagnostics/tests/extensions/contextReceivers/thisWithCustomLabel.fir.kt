@@ -7,18 +7,18 @@ class B(val b: Any)
 class C(val c: Any)
 
 context(labelAInt@A<Int>, A<String>, labelB@B) fun f() {
-    this@labelAInt.a.toFloat()
-    this@A.a.length
-    this@labelB.b
+    this<!UNRESOLVED_LABEL!>@labelAInt<!>.a.toFloat()
+    this<!UNRESOLVED_LABEL!>@A<!>.a.length
+    this<!UNRESOLVED_LABEL!>@labelB<!>.b
     this<!UNRESOLVED_LABEL!>@B<!>
 }
 
 context(labelAInt@A<Int>, A<String>, labelB@B) val C.p: Int
     get() {
-        this@labelAInt.a.toFloat()
-        this@A.a.length
+        this<!UNRESOLVED_LABEL!>@labelAInt<!>.a.toFloat()
+        this<!UNRESOLVED_LABEL!>@A<!>.a.length
         this<!UNRESOLVED_LABEL!>@B<!>
-        this@labelB.b
+        this<!UNRESOLVED_LABEL!>@labelB<!>.b
         this@C.c
         this@p.c
         this.c

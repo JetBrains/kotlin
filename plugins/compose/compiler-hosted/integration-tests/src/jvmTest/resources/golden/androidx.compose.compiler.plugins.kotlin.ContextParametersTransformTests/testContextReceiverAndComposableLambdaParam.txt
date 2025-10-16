@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-context(%context_receiver_0: Foo)
+context(<unused var>: Foo)
 fun Test(a: String, b: Function3<String, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(a,b)<b("yay...>:Test.kt")
@@ -37,6 +37,6 @@ fun Test(a: String, b: Function3<String, Composer, Int, Unit>, %composer: Compos
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Test(%context_receiver_0, a, b, %composer, updateChangedFlags(%changed or 0b0001))
+    Test(<unused var>, a, b, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }

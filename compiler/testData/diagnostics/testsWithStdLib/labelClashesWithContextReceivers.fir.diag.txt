@@ -1,17 +1,13 @@
-/labelClashesWithContextReceivers.fir.kt:(199,206): warning: Experimental context receivers are superseded by context parameters.
+/labelClashesWithContextReceivers.fir.kt:(199,206): error: Experimental context receivers are superseded by context parameters.
 Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
-This warning will become an error in future releases.
 
-/labelClashesWithContextReceivers.fir.kt:(268,273): error: Ambiguous label.
+/labelClashesWithContextReceivers.fir.kt:(286,293): error: Unresolved label.
 
-/labelClashesWithContextReceivers.fir.kt:(305,312): warning: Experimental context receivers are superseded by context parameters.
+/labelClashesWithContextReceivers.fir.kt:(305,312): error: Experimental context receivers are superseded by context parameters.
 Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
-This warning will become an error in future releases.
-
-/labelClashesWithContextReceivers.fir.kt:(358,363): error: Ambiguous label.
 
 /labelClashesWithContextReceivers.fir.kt:(464,474): error: Ambiguous label.

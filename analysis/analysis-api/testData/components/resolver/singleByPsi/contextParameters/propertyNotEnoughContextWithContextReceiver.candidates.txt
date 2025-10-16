@@ -30,5 +30,5 @@ KtNameReferenceExpression(97,100): 'foo'
           callableId = /foo
       simpleAccess = Read
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'string: String' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'int: Int' found.>
     isInBestCandidates = true

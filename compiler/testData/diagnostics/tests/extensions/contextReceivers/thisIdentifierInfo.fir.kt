@@ -1,12 +1,12 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // LANGUAGE: +ContextReceivers
 
 class A(val a: String?)
 
 context(A) fun f() {
-    if (this@A.a == null) return
-    this@A.a.length
+    if (this<!UNRESOLVED_LABEL!>@A<!>.a == null) return
+    this<!UNRESOLVED_LABEL!>@A<!>.a.length
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionDeclarationWithContext,

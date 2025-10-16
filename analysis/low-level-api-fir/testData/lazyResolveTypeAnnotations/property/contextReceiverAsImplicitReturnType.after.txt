@@ -1,17 +1,5 @@
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirRegularPropertySymbol /foo
-  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
-
-@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
   context -> FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo
-  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
-
-@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /foo
-  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
-
-@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /foo
   anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
@@ -27,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val foo: R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>| {
-            ^ this@R|context of /foo|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val foo: <ERROR TYPE REF: Unresolved this@List>
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved this@List> {
+            ^ this@List#
         }

@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
-// FIR_IDENTICAL
 // LANGUAGE: +ContextReceivers
 
 data class Pair<A, B>(val first: A, val second: B)
