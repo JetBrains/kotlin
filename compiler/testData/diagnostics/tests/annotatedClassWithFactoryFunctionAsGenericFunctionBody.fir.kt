@@ -5,11 +5,11 @@ annotation class Anno
 
 fun <T> genericFun(): T =
 
-@Anno
+<!EXPRESSION_EXPECTED!>@Anno
 class Annotated {
-    companion object {
+    <!TYPE_PARAMETERS_IN_OBJECT!><!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {
         fun getAnnotated(): Annotated = Annotated()
-    }
-}
+    }<!>
+}<!>
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, nullableType, typeParameter */

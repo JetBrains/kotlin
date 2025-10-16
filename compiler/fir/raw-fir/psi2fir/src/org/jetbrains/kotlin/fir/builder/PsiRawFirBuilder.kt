@@ -1759,12 +1759,7 @@ open class PsiRawFirBuilder(
                     val firTypeParameters = classOrObject.convertTypeParameters(classSymbol)
 
                     withCapturedTypeParameters(
-                        // Transferring phantom type parameters to objects is cursed as they are
-                        // accessible by qualifier `MyObject`, which is an expression and must have
-                        // some single type.
-                        // Letting their types contain no type arguments while the class itself
-                        // expects some sounds fragile.
-                        status = status.isInner || isLocal && !classKind.isObject,
+                        status = status.isInner || isLocal,
                         declarationSource = sourceElement,
                         currentFirTypeParameters = firTypeParameters,
                     ) {

@@ -3,7 +3,7 @@
 
 fun <T> foo() {
     class C {
-        class D {
+        <!NESTED_CLASS_NOT_ALLOWED!>class D<!> {
             fun c(): C = C()
         }
     }
@@ -11,9 +11,9 @@ fun <T> foo() {
 
 fun <U> bar() {
     class A {
-        companion object {
+        <!TYPE_PARAMETERS_IN_OBJECT!><!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {
             fun a(): A = A()
-        }
+        }<!>
     }
 }
 

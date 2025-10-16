@@ -14,7 +14,7 @@ fun full() {
         abstract fun analyzeQualifiedElement(): AnalyzeQualifiedElementResult
 
         <!WRONG_MODIFIER_TARGET!>sealed<!> <!NESTED_CLASS_NOT_ALLOWED!>class AnalyzeQualifiedElementResult<!> {
-            data <!LOCAL_OBJECT_NOT_ALLOWED!>object Skip<!> : AnalyzeQualifiedElementResult()
+            <!TYPE_PARAMETERS_IN_OBJECT!>data <!LOCAL_OBJECT_NOT_ALLOWED!>object Skip<!> : AnalyzeQualifiedElementResult()<!>
         }
     }
 }
@@ -23,7 +23,7 @@ fun short() {
     abstract class ShorteningProcessor<TElement> {
         fun analyzeCollectedElements() = Skip == Skip
 
-        <!LOCAL_OBJECT_NOT_ALLOWED!>object Skip<!>
+        <!LOCAL_OBJECT_NOT_ALLOWED, TYPE_PARAMETERS_IN_OBJECT!>object Skip<!>
     }
 }
 
