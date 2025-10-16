@@ -10,6 +10,7 @@ package kotlin.wasm.internal
 import kotlin.coroutines.*
 import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.coroutines.intrinsics.*
 
 @PublishedApi
 @ExcludedFromCodegen
@@ -35,8 +36,28 @@ internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinu
 @UsedFromCompilerGeneratedCode
 @PublishedApi
 @DoNotInlineOnFirstStage
-internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T =
-    returnIfSuspended<T>(block(getContinuation<T>()))
+internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T {
+    return error("this stdlib is used")
+}
+
+//@UsedFromCompilerGeneratedCode
+//@PublishedApi
+//@Suppress("UNCHECKED_CAST")
+//internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
+//    val cont = getContinuation<T>()
+//    val result = block(cont)
+//    return if (result == COROUTINE_SUSPENDED) {
+//        suspendIntrinsic(cont)
+//    } else result as T
+//}
+
+//@UsedFromCompilerGeneratedCode
+//@PublishedApi
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal suspend fun <T> suspendIntrinsic(cont: Continuation<T>): T {
+    implementedAsIntrinsic
+}
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
