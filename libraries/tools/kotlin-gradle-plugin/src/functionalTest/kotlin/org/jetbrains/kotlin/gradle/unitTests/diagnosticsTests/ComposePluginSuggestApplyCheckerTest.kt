@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradleSubplugin
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 
@@ -61,7 +62,7 @@ class ComposePluginSuggestApplyCheckerTest {
 
         project.evaluate()
 
-        project.assertNoDiagnostics()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.NonKmpAgpIsDeprecated)
     }
 
     private fun buildProjectWithKotlinAndroidPlugin(
