@@ -749,9 +749,9 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
       }
 
       @Test
-      @TestMetadata("multipleFunctionContextReceivers.kt")
-      public void testMultipleFunctionContextReceivers() {
-        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleFunctionContextReceivers.kt");
+      @TestMetadata("multipleFunctionContextParameters.kt")
+      public void testMultipleFunctionContextParameters() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/multipleFunctionContextParameters.kt");
       }
 
       @Test
