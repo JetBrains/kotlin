@@ -28,22 +28,28 @@ class C {
     }
 }
 
+private var topLevelNotNull: String = ""
+private var topLevelNullable: String? = ""
+
+private fun checkThrows(block: () -> Unit) {
+    try {
+        block()
+        throw AssertionError("Fail: exception should have been thrown")
+    } catch (e: IllegalArgumentException) {}
+}
+
 fun box(): String {
     val p = A::class.memberProperties.single() as KMutableProperty1<A, String?>
     p.isAccessible = true
-    try {
+    checkThrows {
         p.setter.call(A(), null)
-        return "Fail: exception should have been thrown"
-    } catch (e: IllegalArgumentException) {}
-
+    }
 
     val o = O::class.memberProperties.single() as KMutableProperty1<O, String?>
     o.isAccessible = true
-    try {
+    checkThrows {
         o.setter.call(O, null)
-        return "Fail: exception should have been thrown"
-    } catch (e: IllegalArgumentException) {}
-
+    }
 
     val c = CounterTest::class.memberProperties.single { it.name == "baz" } as KMutableProperty1<CounterTest<*>, String?>
     c.isAccessible = true
@@ -54,17 +60,20 @@ fun box(): String {
 
     val z = C.Companion::class.memberProperties.single { it.name == "z" } as KMutableProperty1<C.Companion, String?>
     z.isAccessible = true
-    try {
+    checkThrows {
         z.setter.call(C, null)
-        return "Fail: exception should have been thrown"
-    } catch (e: IllegalArgumentException) {}
+    }
 
     val zz = C.getBoundZ() as KMutableProperty0<String?>
     zz.isAccessible = true
-    try {
+    checkThrows {
         zz.setter.call(null)
-        return "Fail: exception should have been thrown"
-    } catch (e: IllegalArgumentException) {}
+    }
+
+    checkThrows {
+        ::topLevelNotNull.apply { isAccessible = true }.setter.call(null)
+    }
+    ::topLevelNullable.apply { isAccessible = true }.setter.call(null)
 
     return "OK"
 }

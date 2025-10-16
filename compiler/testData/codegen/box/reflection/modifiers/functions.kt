@@ -11,12 +11,20 @@ operator fun Unit.invoke() {}
 infix fun Unit.infix(unit: Unit) {}
 class Suspend { suspend fun suspend() {} }
 
-val externalGetter = Unit
+var externalGetter = Unit
     external get
 
 inline var inlineProperty: Unit
     get() = Unit
     set(value) {}
+
+var inlineGetter: Unit
+    inline get() = Unit
+    set(value) {}
+
+var inlineSetter: Unit
+    get() = Unit
+    inline set(value) {}
 
 fun box(): String {
     assertTrue(::inline.isInline)
@@ -51,11 +59,27 @@ fun box(): String {
 
     assertTrue(::externalGetter.getter.isExternal)
     assertFalse(::externalGetter.getter.isInline)
+    assertFalse(::externalGetter.setter.isExternal)
 
     assertFalse(::inlineProperty.getter.isExternal)
+    assertFalse(::inlineProperty.setter.isExternal)
     assertTrue(::inlineProperty.getter.isInline)
     assertTrue(::inlineProperty.setter.isInline)
     assertFalse(::inlineProperty.isSuspend)
+
+    assertTrue(::inlineGetter.getter.isInline)
+    assertFalse(::inlineGetter.setter.isInline)
+    assertFalse(::inlineSetter.getter.isInline)
+    assertTrue(::inlineSetter.setter.isInline)
+
+    for (p in listOf(::externalGetter, ::inlineProperty, ::inlineGetter, ::inlineSetter)) {
+        assertFalse(p.getter.isOperator)
+        assertFalse(p.setter.isOperator)
+        assertFalse(p.getter.isInfix)
+        assertFalse(p.setter.isInfix)
+        assertFalse(p.getter.isSuspend)
+        assertFalse(p.setter.isSuspend)
+    }
 
     return "OK"
 }

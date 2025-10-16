@@ -190,7 +190,15 @@ val stripMetadata by tasks.registering {
             classNamePattern = "kotlin/reflect/jvm/internal/impl/.*",
             inFile = inputJar.get(),
             outFile = outputJar,
-            preserveFileTimestamps = false
+            preserveFileTimestamps = false,
+            // This is a workaround for an issue that will resolve itself once KT-81974 is fixed and the compiler is bootstrapped.
+            // The issue is that full reflection KProperty objects for delegated properties are created way too early, which leads to
+            // `KotlinReflectionInternalError` on delegated properties declared in kotlin-metadata-jvm's attributes API if we strip
+            // metadata from it. If we don't strip metadata for these classes, properties are resolved and it works fine.
+            ignoredClasses = setOf(
+                "kotlin/reflect/jvm/internal/impl/types/AnnotationsTypeAttributeKt.class",
+                "kotlin/reflect/jvm/internal/impl/km/Attributes.class",
+            )
         )
     }
 }

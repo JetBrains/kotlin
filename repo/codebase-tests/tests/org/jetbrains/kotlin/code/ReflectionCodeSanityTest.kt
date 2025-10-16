@@ -51,7 +51,11 @@ class ReflectionCodeSanityTest : TestCase() {
             "DescriptorKMutableProperty0",
             "DescriptorKMutableProperty1",
             "DescriptorKMutableProperty2",
+            "DescriptorKMutablePropertyN",
             "KotlinKMutableProperty0",
+            "KotlinKMutableProperty1",
+            "KotlinKMutableProperty2",
+            "KotlinKMutablePropertyN",
         )) {
             badMembers.addAll(klass.declaredFields.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })
             badMembers.addAll(klass.declaredMethods.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })

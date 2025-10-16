@@ -15,7 +15,10 @@ private val CONSTANT_TIME_FOR_ZIP_ENTRIES = GregorianCalendar(1980, 1, 1, 0, 0, 
 /**
  * Removes @kotlin.Metadata annotations from compiled Kotlin classes
  */
-fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFile: File, preserveFileTimestamps: Boolean = true) {
+fun stripMetadata(
+    logger: Logger, classNamePattern: String, inFile: File, outFile: File, preserveFileTimestamps: Boolean,
+    ignoredClasses: Set<String>,
+) {
     val classRegex = classNamePattern.toRegex()
 
     assert(inFile.exists()) { "Input file not found at $inFile" }
@@ -23,6 +26,7 @@ fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFil
     fun transform(entryName: String, bytes: ByteArray): ByteArray {
         if (!entryName.endsWith(".class")) return bytes
         if (!classRegex.matches(entryName.removeSuffix(".class"))) return bytes
+        if (entryName in ignoredClasses) return bytes
 
         var changed = false
         val classWriter = ClassWriter(0)
