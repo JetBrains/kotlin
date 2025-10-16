@@ -26,54 +26,57 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 
 internal fun Project.addPgpSignatureHelpers() {
-    val bcConfiguration = maybeCreateBcConfiguration()
+    project.pluginManager.withPlugin("signing") {
+        val bcConfiguration = maybeCreateBcConfiguration()
 
-    val pgpDirectory = project.layout.buildDirectory.dir("pgp")
-    project.tasks.register("generatePgpKeys", GeneratePgpKeys::class.java) {
-        it.notCompatibleWithConfigurationCache("Do not cache password.")
-        it.outputDirectory.set(pgpDirectory)
-        it.password.set(project.providers.gradleProperty("signing.password"))
-        it.bouncyCastleClasspath.from(bcConfiguration)
-        it.gradleHomePath.set(project.gradle.gradleUserHomeDir.absolutePath)
-        it.group = "signing"
-        it.description = """
+        val pgpDirectory = project.layout.buildDirectory.dir("pgp")
+        project.tasks.register("generatePgpKeys", GeneratePgpKeys::class.java) {
+            it.notCompatibleWithConfigurationCache("Do not cache password.")
+            it.outputDirectory.set(pgpDirectory)
+            it.password.set(project.providers.gradleProperty("signing.password"))
+            it.bouncyCastleClasspath.from(bcConfiguration)
+            it.gradleHomePath.set(project.gradle.gradleUserHomeDir.absolutePath)
+            it.group = "signing"
+            it.description = """
             Generates a new PGP keypair.
             
             Usage: 
             gradlew generatePgpKeys --name "Jane Doe <janedoe@example.com>" --password YOUR_PASSWORD
         """.trimIndent()
-    }
+        }
 
-    if (!gradle.startParameter.isOffline) {
-        project.tasks.register("uploadPublicPgpKey", UploadPgpKeyTask::class.java) {
-            it.keyserver.set("https://keyserver.ubuntu.com")
-            it.group = "signing"
-            it.description = "Uploads the public PGP key to a keyserver"
+        if (!gradle.startParameter.isOffline) {
+            project.tasks.register("uploadPublicPgpKey", UploadPgpKeyTask::class.java) {
+                it.keyserver.set("https://keyserver.ubuntu.com")
+                it.group = "signing"
+                it.description = "Uploads the public PGP key to a keyserver"
+            }
         }
     }
 }
 
 internal fun Project.addSigningValidationHelpers() {
-    val bcConfiguration = maybeCreateBcConfiguration()
-    val signingTask = project.tasks.register<CheckSigningTask>("checkSigningConfiguration") {
-        group = "validation"
-        description = "Checks that a signing configuration is set up correctly."
-        bouncyCastleClasspath.from(bcConfiguration)
-        offlineMode.set(gradle.startParameter.isOffline)
-        keyservers.convention(
-            listOf(
-                "https://keys.openpgp.org",
-                "https://keyserver.ubuntu.com",
+    project.pluginManager.withPlugin("signing") {
+        val bcConfiguration = maybeCreateBcConfiguration()
+        val signingTask = project.tasks.register<CheckSigningTask>("checkSigningConfiguration") {
+            group = "validation"
+            description = "Checks that a signing configuration is set up correctly."
+            gradleHomePath.set(project.gradle.gradleUserHomeDir.absolutePath)
+            bouncyCastleClasspath.from(bcConfiguration)
+            offlineMode.set(gradle.startParameter.isOffline)
+            keyservers.convention(
+                listOf(
+                    "https://keys.openpgp.org",
+                    "https://keyserver.ubuntu.com",
 //              A third server is listed in the Sonatype docs,
 //              but it often returns 502 errors when getting keys so we're not going to use it.
 //                "https://pgp.mit.edu",
+                )
             )
-        )
-    }
-    project.pluginManager.withPlugin("signing") {
+        }
+
         project.getExtension<SigningExtension>("signing")?.let { signing ->
             signingTask.configure { task ->
-                task.gradleHomePath.set(project.gradle.gradleUserHomeDir.absolutePath)
                 val signatory = try {
                     signing.signatory
                 } catch (e: Exception) {
