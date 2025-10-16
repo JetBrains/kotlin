@@ -1,0 +1,16 @@
+interface Context2<A> {
+  fun getContextElement(): A
+}
+
+class Context2Impl<A>(value: A) : Context2<A> {
+  override fun getContextElement(): A
+
+  val value: A
+}
+
+context(b@B, `fun`@A)
+fun foo()
+
+context(`<unused var>`@Context2<C<String>>)
+fun bar()
+
