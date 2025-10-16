@@ -229,15 +229,16 @@ open class NativeInteropPlugin : Plugin<Project> {
         val stubsName = "${defFileName.removeSuffix(".def").split(".").reversed().joinToString(separator = "")}stubs"
         val library = solib(stubsName)
 
-        val linkedStaticLibraries = project.files(cppLink.incoming.artifactView {
+        val linkedStaticLibraries = cppLink.incoming.artifactView {
             attributes {
                 attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.LINK_ARCHIVE))
             }
-        }.files, *additionalLinkedStaticLibraries.toTypedArray())
+        }.files
 
         extensions.getByType<NativeToolsExtension>().apply {
             val obj = if (HostManager.hostIsMingw) "obj" else "o"
             suffixes {
+                val sortedIncludeFlags = reproduciblySortedFilePaths(includeDirs).map { "-I${it.absolutePath}" }
                 (".c" to ".$obj") {
                     tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
 
@@ -265,7 +266,7 @@ open class NativeInteropPlugin : Plugin<Project> {
                             reproducibilityCompilerFlags +
                             ignoreWarningFlags +
                             "-Werror" +
-                            includeDirs.map { "-I${it.absolutePath}" } +
+                            sortedIncludeFlags +
                             hostPlatform.clangForJni.hostCompilerArgsForJni
 
                     flags(*cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
@@ -276,7 +277,7 @@ open class NativeInteropPlugin : Plugin<Project> {
                             commonCompilerArgs +
                             reproducibilityCompilerFlags +
                             "-Werror" +
-                            includeDirs.map { "-I${it.absolutePath}" }
+                            sortedIncludeFlags
                     flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
                 }
             }
@@ -294,12 +295,13 @@ open class NativeInteropPlugin : Plugin<Project> {
             target(library, *objSet) {
                 tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
                 val ldflags = buildList {
-                    addAll(linkedStaticLibraries.map { it.absolutePath })
-                    cppLink.incoming.artifactView {
+                    addAll(reproduciblySortedFilePaths(linkedStaticLibraries).map { it.absolutePath })
+                    addAll(additionalLinkedStaticLibraries) // Do not additionally sort them, because they may have to be linked in a specific order.
+                    reproduciblySortedFilePaths(cppLink.incoming.artifactView {
                         attributes {
                             attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.DYNAMIC_LIB))
                         }
-                    }.files.flatMapTo(this) { listOf("-L${it.parentFile.absolutePath}", "-l${libname(it)}") }
+                    }.files).flatMapTo(this) { listOf("-L${it.parentFile.absolutePath}", "-l${libname(it)}") }
                     addAll(linkerArgs)
 
                     if (HostManager.hostIsMac) {
@@ -317,6 +319,7 @@ open class NativeInteropPlugin : Plugin<Project> {
 
         tasks.named(library).configure {
             inputs.files(linkedStaticLibraries).withPathSensitivity(PathSensitivity.NONE)
+            inputs.files(additionalLinkedStaticLibraries).withPathSensitivity(PathSensitivity.NONE)
         }
         tasks.named(obj(stubsName)).configure {
             inputs.dir(bindingsRoot.map { it.dir("c") }).withPathSensitivity(PathSensitivity.RELATIVE) // if C file was generated, need to set up task dependency
