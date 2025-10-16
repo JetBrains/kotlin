@@ -672,20 +672,24 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                     processDiagnosticsFromCliPhase(diagnosticsCollector, mode)
                 }
                 else -> {
-                    result += platformPart.session.runCheckers(
-                        platformPart.scopeSession,
-                        allFiles,
-                        DiagnosticReporterFactory.createPendingReporter(messageCollector),
-                        mppCheckerKind = MppCheckerKind.Platform
-                    ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                    if (!platformPart.session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
+                        result += platformPart.session.runCheckers(
+                            platformPart.scopeSession,
+                            allFiles,
+                            DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                            mppCheckerKind = MppCheckerKind.Platform
+                        ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                    }
 
                     for (part in info.partsForDependsOnModules) {
-                        result += part.session.runCheckers(
-                            part.scopeSession,
-                            part.firFiles.values,
-                            DiagnosticReporterFactory.createPendingReporter(messageCollector),
-                            mppCheckerKind = MppCheckerKind.Common
-                        ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                        if (!part.session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
+                            result += part.session.runCheckers(
+                                part.scopeSession,
+                                part.firFiles.values,
+                                DiagnosticReporterFactory.createPendingReporter(messageCollector),
+                                mppCheckerKind = MppCheckerKind.Common
+                            ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
+                        }
                     }
 
 
