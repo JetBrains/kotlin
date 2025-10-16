@@ -77,6 +77,12 @@ public class FirIdeNormalAnalysisSourceModuleRendererTestGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("contextParameter.kt")
+  public void testContextParameter() {
+    runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/contextParameter.kt");
+  }
+
+  @Test
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/contextReceiver.kt");
