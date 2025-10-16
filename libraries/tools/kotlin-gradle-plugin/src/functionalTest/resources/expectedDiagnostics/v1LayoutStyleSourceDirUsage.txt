@@ -1,3 +1,8 @@
+[NonKmpAgpIsDeprecated | WARNING] The 'org.jetbrains.kotlin.multiplatform' plugin deprecated compatibility with Android Gradle plugins
+The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugin 'com.android.library' except 'com.android.kotlin.multiplatform.library' plugin.
+Please migrate to new plugin: https://kotl.in/gradle/agp-new-kmp
+See https://kotl.in/gradle/agp-new-kmp for more details.
+----
 [SourceSetLayoutV1StyleDirUsageWarning | WARNING] Deprecated Source Set Layout V1
 Found used source directory src/androidAndroidTest/kotlin
 This source directory was supported by: Multiplatform/Android-V1-SourceSetLayout

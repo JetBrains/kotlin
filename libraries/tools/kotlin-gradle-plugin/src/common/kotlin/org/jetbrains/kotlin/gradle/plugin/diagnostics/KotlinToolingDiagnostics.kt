@@ -1939,6 +1939,18 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object NonKmpAgpIsDeprecated : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(androidPluginId: String) = build {
+            title("The 'org.jetbrains.kotlin.multiplatform' plugin deprecated compatibility with Android Gradle plugins")
+                .description(
+                    "The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugin '$androidPluginId' " +
+                            "except 'com.android.kotlin.multiplatform.library' plugin."
+                )
+                .solution("Please migrate to new plugin: https://kotl.in/gradle/agp-new-kmp")
+                .documentationLink(URI("https://kotl.in/gradle/agp-new-kmp"))
+        }
+    }
+
     object DeprecatedKotlinVersionKotlinDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         internal class VersionMetadata(
             val version: KotlinVersion,

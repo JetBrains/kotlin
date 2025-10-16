@@ -1,3 +1,8 @@
+[NonKmpAgpIsDeprecated | WARNING] The 'org.jetbrains.kotlin.multiplatform' plugin deprecated compatibility with Android Gradle plugins
+The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugin 'com.android.library' except 'com.android.kotlin.multiplatform.library' plugin.
+Please migrate to new plugin: https://kotl.in/gradle/agp-new-kmp
+See https://kotl.in/gradle/agp-new-kmp for more details.
+----
 [AndroidStyleSourceDirUsageWarning | WARNING] Deprecated 'Android Style' Source Directory
 Usage of 'Android Style' source directory src/main/kotlin is deprecated.
 Use src/androidMain/kotlin instead.
