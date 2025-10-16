@@ -21,13 +21,13 @@ import kotlin.wasm.internal.getSimpleName
 public actual open class Throwable internal constructor(
     public actual open val message: String?,
     public actual open val cause: Throwable?,
-    @ManagedExternref internal val jsError: JsError,
-    overwriteJsErrorName: Boolean = true
+    @ManagedExternref internal val jsError: JsError?
 ) {
     init {
-        if (overwriteJsErrorName)
+        if (jsError != null) {
             jsError.name = getSimpleName(wasmGetObjectRtti(this))
-        jsError.kotlinException = toJsReference()
+            jsError.kotlinException = toJsReference()
+        }
     }
 
     public actual constructor(message: String?, cause: Throwable?) : this(message, cause, createJsError(message, cause?.jsError))
@@ -38,7 +38,7 @@ public actual open class Throwable internal constructor(
 
     public actual constructor() : this(null, null)
 
-    internal val jsStack get() = jsError.stack
+    internal open val jsStack get() = jsError!!.stack
 
     private var _stack: String? = null
     internal val stack: String
@@ -71,5 +71,5 @@ internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
 internal actual val Throwable.stack: String get() = this.stack
 
 @OptIn(ExperimentalWasmJsInterop::class)
-internal fun createJsError(message: String?, cause: JsAny?): JsError =
+internal fun createJsError(message: String?, cause: JsError?): JsError =
     js("new Error(message, { cause })")
