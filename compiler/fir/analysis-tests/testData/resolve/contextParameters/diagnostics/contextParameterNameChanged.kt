@@ -11,10 +11,10 @@ interface I2 {
     context(y: Int) fun foo()
 }
 
-interface I3 : I1, I2
+<!DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES!>interface I3<!> : I1, I2
 
 class C1 : I1 {
-    context(xx: Int) override fun foo() {}
+    context(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>xx<!>: Int) override fun foo() {}
 }
 
 // FILE: test2.kt
@@ -28,10 +28,10 @@ interface I2 {
     context(_: Int) fun foo()
 }
 
-interface I3 : I1, I2
+<!DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES!>interface I3<!> : I1, I2
 
 class C1 : I1 {
-    context(xx: Int) override fun foo() {}
+    context(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>xx<!>: Int) override fun foo() {}
 }
 
 // FILE: test3.kt
@@ -45,10 +45,10 @@ interface I2 {
     context(_: Int) fun foo()
 }
 
-interface I3 : I1, I2
+<!DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES!>interface I3<!> : I1, I2
 
 class C1 : I1 {
-    context(_: Int) override fun foo() {}
+    context(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>_<!>: Int) override fun foo() {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,
