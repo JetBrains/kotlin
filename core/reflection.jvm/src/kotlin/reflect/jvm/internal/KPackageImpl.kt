@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -75,7 +76,7 @@ internal class KPackageImpl(
             }
         }
 
-        private val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {
+        val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {
             ReflectKotlinClass.create(jClass)
         }
 
@@ -96,14 +97,33 @@ internal class KPackageImpl(
             else null
         }
 
-        val members: Collection<DescriptorKCallable<*>> by ReflectProperties.lazySoft {
-            val visitor = object : CreateKCallableVisitor(this@KPackageImpl) {
-                override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
-                    throw IllegalStateException("No constructors should appear here: $descriptor")
+        val members: Collection<KCallable<*>> by ReflectProperties.lazySoft {
+            if (useK1Implementation) {
+                val visitor = object : CreateKCallableVisitor(this@KPackageImpl) {
+                    override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
+                        throw IllegalStateException("No constructors should appear here: $descriptor")
+                }
+                scope.getContributedDescriptors().mapNotNull { descriptor ->
+                    if (descriptor is CallableMemberDescriptor) descriptor.accept(visitor, Unit) else null
+                }.toList()
+            } else {
+                val result = mutableListOf<KCallable<*>>()
+                for (pkg in kmPackages) {
+                    for (property in pkg.properties) {
+                        result.add(createUnboundProperty(property, this@KPackageImpl))
+                    }
+                }
+                result.toList()
+
+                // For now, functions are still descriptor-based.
+                val visitor = object : CreateKFunctionVisitor(this@KPackageImpl) {
+                    override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
+                        throw IllegalStateException("No constructors should appear here: $descriptor")
+                }
+                scope.getContributedDescriptors().mapNotNullTo(result) { descriptor ->
+                    if (descriptor is CallableMemberDescriptor) descriptor.accept(visitor, Unit) else null
+                }
             }
-            scope.getContributedDescriptors().mapNotNull { descriptor ->
-                if (descriptor is CallableMemberDescriptor) descriptor.accept(visitor, Unit) else null
-            }.toList()
         }
     }
 
@@ -114,6 +134,12 @@ internal class KPackageImpl(
     private val scope: MemberScope get() = data.value.scope
 
     override val members: Collection<KCallable<*>> get() = data.value.members
+
+    internal val isMultifilePart: Boolean
+        get() = data.value.kotlinClass?.classHeader?.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
+
+    override val propertiesMetadata: Collection<KmProperty>
+        get() = data.value.kmPackages.flatMap(KmPackage::properties)
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = emptyList()

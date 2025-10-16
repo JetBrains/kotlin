@@ -54686,6 +54686,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("extensionsAndParameters.kt")
+        public void testExtensionsAndParameters() {
+          runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/extensionsAndParameters.kt");
+        }
+
+        @Test
         @TestMetadata("inheritedJavaRepeatableAnnotation.kt")
         public void testInheritedJavaRepeatableAnnotation() {
           runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/inheritedJavaRepeatableAnnotation.kt");

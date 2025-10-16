@@ -34,6 +34,9 @@ open class Foo<in T> {
     fun getPublicVarPrivateSetter() = this::publicVarPrivateSetter
 }
 
+public var publicVarPrivateSetter = Unit
+    private set
+
 fun box(): String {
     val f = Foo<String>()
 
@@ -52,6 +55,10 @@ fun box(): String {
     assertEquals(KVisibility.PUBLIC, f.getPublicVarPrivateSetter().visibility)
     assertEquals(KVisibility.PUBLIC, f.getPublicVarPrivateSetter().getter.visibility)
     assertEquals(KVisibility.PRIVATE, f.getPublicVarPrivateSetter().setter.visibility)
+
+    assertEquals(KVisibility.PUBLIC, ::publicVarPrivateSetter.visibility)
+    assertEquals(KVisibility.PUBLIC, ::publicVarPrivateSetter.getter.visibility)
+    assertEquals(KVisibility.PRIVATE, ::publicVarPrivateSetter.setter.visibility)
 
     return "OK"
 }

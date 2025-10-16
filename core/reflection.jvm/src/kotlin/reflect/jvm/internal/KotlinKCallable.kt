@@ -5,10 +5,12 @@
 
 package kotlin.reflect.jvm.internal
 
+import kotlin.metadata.KmType
+import kotlin.metadata.KmValueParameter
 import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
-import kotlin.reflect.jvm.internal.calls.Caller
-import kotlin.reflect.jvm.internal.calls.ThrowingCaller
+import kotlin.reflect.KType
+import kotlin.reflect.full.createDefaultType
 
 internal abstract class KotlinKCallable<out R> : ReflectKCallableImpl<R>() {
     abstract val modality: Modality
@@ -23,44 +25,48 @@ internal abstract class KotlinKCallable<out R> : ReflectKCallableImpl<R>() {
     final override val isAbstract: Boolean
         get() = modality == Modality.ABSTRACT
 
-    override val parameters: List<KParameter>
-        get() {
-            checkLocalDelegatedPropertyOrAccessor()
-            require(allParameters.all { it.kind == KParameter.Kind.VALUE }) {
-                "Local delegated properties and their accessors can only have value parameters"
-            }
-            return allParameters
-        }
-
     abstract override val annotations: List<Annotation>
+}
 
-    override val caller: Caller<*>
-        get() {
-            checkLocalDelegatedPropertyOrAccessor()
-            return ThrowingCaller
+private val KotlinKCallable<*>.isLocalDelegatedProperty: Boolean
+    get() = this is KotlinKProperty<*> && isLocalDelegated
+
+internal fun KotlinKCallable<*>.computeParameters(
+    contextParameters: List<KmValueParameter>,
+    receiverParameterType: KmType?,
+    valueParameters: List<KmValueParameter>,
+    typeParameterTable: TypeParameterTable,
+    includeReceivers: Boolean,
+): List<KParameter> = buildList {
+    val callable = this@computeParameters
+    if (includeReceivers) {
+        if (!isLocalDelegatedProperty) {
+            (container as? KClassImpl<*>)?.let { klass ->
+                add(InstanceParameter(callable, klass))
+            }
         }
-
-    override val defaultCaller: Caller<*>?
-        get() {
-            checkLocalDelegatedPropertyOrAccessor()
-            return ThrowingCaller
+        for (contextParameter in contextParameters) {
+            add(KotlinKParameter(callable, contextParameter, size, KParameter.Kind.CONTEXT, typeParameterTable))
         }
-
-    override fun callBy(args: Map<KParameter, Any?>): R {
-        checkLocalDelegatedPropertyOrAccessor()
-        return callDefaultMethod(args, null)
+        if (receiverParameterType != null) {
+            // The name below is only used to create an instance of `KmValueParameter`. It should not leak to the user, because
+            // `KotlinKParameter.name` has a check for parameter kind, and returns null for extension receiver parameters.
+            val kmParameter = KmValueParameter("<this>").apply { type = receiverParameterType }
+            add(KotlinKParameter(callable, kmParameter, size, KParameter.Kind.EXTENSION_RECEIVER, typeParameterTable))
+        }
+    }
+    for (valueParameter in valueParameters) {
+        add(KotlinKParameter(callable, valueParameter, size, KParameter.Kind.VALUE, typeParameterTable))
     }
 }
 
-internal fun KotlinKCallable<*>.checkLocalDelegatedPropertyOrAccessor() {
-    require(isLocalDelegatedPropertyOrAccessor) {
-        "Only local delegated properties can be descriptor-less for now"
-    }
+private class InstanceParameter(override val callable: KotlinKCallable<*>, klass: KClassImpl<*>) : ReflectKParameter() {
+    override val index: Int get() = 0
+    override val type: KType = klass.createDefaultType()
+    override val name: String? get() = null
+    override val kind: KParameter.Kind get() = KParameter.Kind.INSTANCE
+    override val isOptional: Boolean get() = false
+    override val isVararg: Boolean get() = false
+    override val annotations: List<Annotation> get() = emptyList()
+    override val declaresDefaultValue: Boolean get() = false
 }
-
-private val KotlinKCallable<*>.isLocalDelegatedPropertyOrAccessor: Boolean
-    get() = when (this) {
-        is KotlinKProperty<*> -> isLocalDelegated
-        is KotlinKProperty.Accessor<*, *> -> property.isLocalDelegated
-        else -> false
-    }

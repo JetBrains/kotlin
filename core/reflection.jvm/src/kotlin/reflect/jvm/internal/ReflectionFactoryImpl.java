@@ -7,6 +7,7 @@
 package kotlin.reflect.jvm.internal;
 
 import kotlin.jvm.internal.*;
+import kotlin.metadata.KmProperty;
 import kotlin.reflect.*;
 import kotlin.reflect.full.KClassifiers;
 import kotlin.reflect.jvm.ReflectLambdaKt;
@@ -81,6 +82,10 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 List<String> values = result.getGroupValues();
                 return container.createLocalProperty(Integer.parseInt(values.get(1)), signature);
             }
+            if (container instanceof KPackageImpl) {
+                KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                return new KotlinKProperty0(container, signature, p.getBoundReceiver(), kmProperty);
+            }
         }
         return new DescriptorKProperty0(container, p.getName(), signature, p.getBoundReceiver());
     }
@@ -95,18 +100,38 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 List<String> values = result.getGroupValues();
                 return (KMutableProperty0) container.createLocalProperty(Integer.parseInt(values.get(1)), signature);
             }
+            if (container instanceof KPackageImpl) {
+                KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                return new KotlinKMutableProperty0(container, signature, p.getBoundReceiver(), kmProperty);
+            }
         }
-        return new DescriptorKMutableProperty0(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
+        return new DescriptorKMutableProperty0(container, p.getName(), signature, p.getBoundReceiver());
     }
 
     @Override
     public KProperty1 property1(PropertyReference1 p) {
-        return new DescriptorKProperty1(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
+        KDeclarationContainerImpl container = getOwner(p);
+        String signature = p.getSignature();
+        if (!SystemPropertiesKt.getUseK1Implementation()) {
+            if (container instanceof KPackageImpl) {
+                KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                return new KotlinKProperty1(container, signature, p.getBoundReceiver(), kmProperty);
+            }
+        }
+        return new DescriptorKProperty1(container, p.getName(), signature, p.getBoundReceiver());
     }
 
     @Override
     public KMutableProperty1 mutableProperty1(MutablePropertyReference1 p) {
-        return new DescriptorKMutableProperty1(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
+        KDeclarationContainerImpl container = getOwner(p);
+        String signature = p.getSignature();
+        if (!SystemPropertiesKt.getUseK1Implementation()) {
+            if (container instanceof KPackageImpl) {
+                KmProperty kmProperty = container.findPropertyMetadata(p.getName(), signature);
+                return new KotlinKMutableProperty1(container, signature, p.getBoundReceiver(), kmProperty);
+            }
+        }
+        return new DescriptorKMutableProperty1(container, p.getName(), signature, p.getBoundReceiver());
     }
 
     @Override

@@ -1,9 +1,7 @@
-// LANGUAGE: +RepeatableAnnotations
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // FULL_JDK
 // WITH_REFLECT
-// JVM_ABI_K1_K2_DIFF
 
 import kotlin.annotation.AnnotationTarget.*
 import kotlin.reflect.KAnnotatedElement
@@ -28,29 +26,34 @@ fun check(element: KAnnotatedElement, expected: String) {
 }
 
 @Repeatable
-@Target(CLASS, FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER)
+@Target(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER)
 annotation class A(val value: String)
 
-@A("f") @A("un") @A("")
-fun f(@A("par") @A("am") x: Any) {}
+@A("ext") @A("Fun")
+fun @receiver:[A("extFun") A("Receiver")] String.extensionFunction(@A("par") @A("am") x: Any) {}
 
-@A("p") @A("rop") @A("erty")
-@get:[A("g") A("e") A("t")]
-@set:[A("se") A("") A("t")]
-@setparam:[A("set") A("param")]
-var p = 1
-
-@A("c") @A("lass")
-class Z
+@A("ext") @A("Prop")
+@get:[A("ext") A("PropGet")]
+@set:[A("ext") A("PropSet")]
+@setparam:[A("ext") A("PropSetparam")]
+var @receiver:[A("extProp") A("Receiver")] String.extensionProperty: String
+    get() = this
+    set(value) {}
 
 fun box(): String {
-    check(::f, "fun")
-    check(::f.parameters.single(), "param")
-    check(::p, "property")
-    check(::p.getter, "get")
-    check(::p.setter, "set")
-    check(::p.setter.parameters.single(), "setparam")
-    check(Z::class, "class")
+    val extFun = String::extensionFunction
+    check(extFun, "extFun")
+    check(extFun.parameters[0], "extFunReceiver")
+    check(extFun.parameters[1], "param")
+
+    val extProp = String::extensionProperty
+    check(extProp, "extProp")
+    check(extProp.parameters.single(), "extPropReceiver")
+    check(extProp.getter, "extPropGet")
+    check(extProp.getter.parameters.single(), "extPropReceiver")
+    check(extProp.setter, "extPropSet")
+    check(extProp.setter.parameters[0], "extPropReceiver")
+    check(extProp.setter.parameters[1], "extPropSetparam")
 
     return "OK"
 }

@@ -17,10 +17,9 @@ internal open class KotlinKProperty0<out V>(
 
     override fun get(): V = getter.call()
 
-    override fun getDelegate(): Any? {
-        checkLocalDelegatedPropertyOrAccessor()
-        return null
-    }
+    private val delegateValue = lazy(PUBLICATION) { getDelegateImpl(computeDelegateSource(), null, null) }
+
+    override fun getDelegate(): Any? = delegateValue.value
 
     override fun invoke(): V = get()
 

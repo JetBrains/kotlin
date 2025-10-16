@@ -30,6 +30,9 @@ internal object EmptyContainerForLocal : KDeclarationContainerImpl() {
     override val members: Collection<KCallable<*>>
         get() = fail()
 
+    override val propertiesMetadata: Collection<KmProperty>
+        get() = fail()
+
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = fail()
 
