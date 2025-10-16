@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
 import org.jetbrains.kotlin.sir.providers.impl.StandaloneSirTypeNamer
@@ -381,7 +382,11 @@ public interface SirCustomTypeTranslator {
     public fun isClassIdSupported(classId: ClassId): Boolean = isFqNameSupported(classId.asSingleFqName())
 
     context(kaSession: KaSession)
-    public fun KaUsualClassType.toSirType(ctx: TypeTranslationCtx): SirType?
+    public fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): BridgeWrapper?
+
+    public fun SirNominalType.toBridge(): BridgeWrapper?
+
+    public class BridgeWrapper internal constructor(internal val bridge: Bridge)
 }
 
 /**
