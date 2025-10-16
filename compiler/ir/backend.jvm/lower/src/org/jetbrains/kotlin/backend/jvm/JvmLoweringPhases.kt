@@ -67,6 +67,7 @@ private val jvmFilePhases = createFilePhases(
     ::JvmSingleAbstractMethodLowering,
     ::JvmMultiFieldValueClassLowering,
     ::JvmInlineClassLowering,
+    ::JvmUpgradeCallableReferences,
     ::JvmTailrecLowering,
 
     ::MappedEnumWhenLowering,
@@ -74,7 +75,6 @@ private val jvmFilePhases = createFilePhases(
     ::AssertionLowering,
     ::JvmReturnableBlockLowering,
     ::SingletonReferencesLowering,
-    ::JvmUpgradeCallableReferences,
     ::JvmSharedVariablesLowering,
 
     ::JvmInventNamesForLocalFunctions,
