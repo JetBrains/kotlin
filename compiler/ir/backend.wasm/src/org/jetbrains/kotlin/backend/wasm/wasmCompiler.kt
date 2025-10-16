@@ -287,6 +287,7 @@ fun compileWasm(
             baseFileName,
             jsCode.isNotEmpty(),
             stdlibModule,
+            wholeProgramMode,
         )
 
     } else {
@@ -506,6 +507,7 @@ fun generateWebAssemblyJsInstanceInitializer(
     baseFileName: String,
     useJsCode: Boolean,
     stdlibModule: Boolean,
+    wholeProgramMode: Boolean,
 ): String {
     val baseImports = generateJsImports(
         jsModuleImports,
@@ -606,7 +608,7 @@ let innerWasmExports = wasmInstance.exports
 setWasmExports(innerWasmExports);
 innerWasmExports._initialize();
 
-export const exports = innerWasmExports;
+${if (!wholeProgramMode) "export const exports = innerWasmExports;" else ""}
 
 ${generateExports(exports)}
 """

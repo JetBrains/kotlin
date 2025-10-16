@@ -38,7 +38,7 @@ abstract class WasmBoxRunnerBase(
 
         val testJs = """
                     ${if (isNoJsTag) "import './tag.mjs'" else ""}
-                    import { exports } from './index.mjs'
+                    import * as jsModule from './index.mjs'
                     if (globalThis.console == null) {
                         globalThis.console = {};
                     }
@@ -47,8 +47,8 @@ abstract class WasmBoxRunnerBase(
                     }
                     let actualResult;
                     try {
-                        ${if (startUnitTests) "exports.startUnitTests();" else ""}
-                        actualResult = exports.box();
+                        ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
+                        actualResult = jsModule.box();
                     } catch(e) {
                         console.log('Failed with exception!')
 
