@@ -87,6 +87,7 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
                     )
                 }
             }
+            Self -> error("Not yet implemented")
         }
     }
 

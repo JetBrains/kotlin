@@ -170,7 +170,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
             visibility = Visibilities.Public,
             modality = Modality.OPEN,
             isOverride = true,
-            createKey = { key },
+            key = key,
         )
         val hashCodeSymbol = createJavaOrKotlinMemberFunction(
             owner = classSymbol,
@@ -180,7 +180,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
             visibility = Visibilities.Public,
             modality = Modality.OPEN,
             isOverride = true,
-            createKey = { key },
+            key = key,
         )
         val canEqualSymbol = runIf(generatesCanEqual) {
             createJavaOrKotlinMemberFunction(
@@ -191,7 +191,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
                 visibility = Visibilities.Protected,
                 modality = Modality.OPEN,
                 isOverride = superclassCanEqual != null,
-                createKey = { key },
+                key = key,
             )
         }
 

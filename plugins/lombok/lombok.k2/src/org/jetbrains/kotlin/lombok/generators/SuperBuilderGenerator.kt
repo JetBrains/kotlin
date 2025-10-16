@@ -85,7 +85,8 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 valueParameters = emptyList(),
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Protected,
-                modality = Modality.ABSTRACT
+                modality = Modality.ABSTRACT,
+                key = BuilderGeneratorKey(BuilderDeclarationType.Function.Self)
             ).symbol
         }
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) {
@@ -94,7 +95,8 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 valueParameters = emptyList(),
                 returnTypeRef = classType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Public,
-                modality = Modality.ABSTRACT
+                modality = Modality.ABSTRACT,
+                key = BuilderGeneratorKey(BuilderDeclarationType.Function.Build(builderDeclaration.symbol))
             ).symbol
         }
     }
@@ -107,10 +109,11 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         val classTypeParameterSymbol = FirTypeParameterSymbol()
         val builderTypeParameterSymbol = FirTypeParameterSymbol()
         val builderTypeArguments = typeParameters.map { it.toConeType() as ConeTypeProjection }.toTypedArray()
+        val key = BuilderGeneratorKey(BuilderDeclarationType.Class.Builder)
 
         typeParameters += buildTypeParameter {
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Java.Source
+            origin = FirDeclarationOrigin.Java.Plugin(key)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.name = Name.identifier("C")
             symbol = classTypeParameterSymbol
@@ -123,7 +126,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         }
         typeParameters += buildTypeParameter {
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Java.Source
+            origin = FirDeclarationOrigin.Java.Plugin(key)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.name = Name.identifier("B")
             symbol = builderTypeParameterSymbol

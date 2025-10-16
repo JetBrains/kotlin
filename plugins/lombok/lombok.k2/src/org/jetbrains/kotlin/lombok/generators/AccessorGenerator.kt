@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.collections.orEmpty
 
+object LombokAccessorGeneratorKey : LombokDeclarationKey()
+
 @OptIn(DirectDeclarationsAccess::class)
 class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private val lombokService: LombokService
@@ -84,6 +86,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                         returnTypeRef = field.returnTypeRef,
                         visibility = getterVisibility,
                         modality = Modality.OPEN,
+                        key = LombokAccessorGeneratorKey,
                         dispatchReceiverType = dispatchReceiverType,
                         isStatic = field.isStatic,
                     )
@@ -113,6 +116,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                         returnTypeRef = returnTypeRef,
                         visibility = setterVisibility,
                         modality = Modality.OPEN,
+                        key = LombokAccessorGeneratorKey,
                         dispatchReceiverType = dispatchReceiverType,
                         isStatic = field.isStatic,
                     )
@@ -129,6 +133,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                         returnTypeRef = session.builtinTypes.booleanType,
                         visibility = JavaVisibilities.ProtectedAndPackage,
                         modality = Modality.OPEN,
+                        key = LombokAccessorGeneratorKey,
                     )
                 )
             }

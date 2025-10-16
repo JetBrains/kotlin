@@ -113,17 +113,15 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
             visibility = Visibilities.Public,
             modality = Modality.OPEN,
             isOverride = true,
-            createKey = {
-                ToStringGeneratorKey(
-                    className = classSymbol.classId.shortClassName.asString(),
-                    propertyInfos = this.computePropertiesToInclude(toStringConfig, declaredScope),
-                    callSuper = toStringConfig.shouldCallSuper(
-                        session.lombokService.config.toStringCallSuper,
-                        classSymbol,
-                        session,
-                    ),
-                )
-            }
+            key = ToStringGeneratorKey(
+                className = classSymbol.classId.shortClassName.asString(),
+                propertyInfos = this.computePropertiesToInclude(toStringConfig, declaredScope),
+                callSuper = toStringConfig.shouldCallSuper(
+                    session.lombokService.config.toStringCallSuper,
+                    classSymbol,
+                    session,
+                ),
+            )
         )
     }
 

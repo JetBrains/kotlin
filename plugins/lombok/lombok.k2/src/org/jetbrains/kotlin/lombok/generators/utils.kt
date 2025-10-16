@@ -100,7 +100,7 @@ fun createJavaOrKotlinMemberFunction(
     returnTypeRef: FirTypeRef,
     visibility: Visibility,
     modality: Modality,
-    createKey: () -> GeneratedDeclarationKey,
+    key: GeneratedDeclarationKey,
     isStatic: Boolean = false,
     symbol: FirNamedFunctionSymbol? = null,
     typeParameters: Collection<FirTypeParameter> = emptyList(),
@@ -114,6 +114,7 @@ fun createJavaOrKotlinMemberFunction(
             returnTypeRef = returnTypeRef,
             visibility = visibility,
             modality = modality,
+            key = key,
             isStatic = isStatic,
             methodSymbol = symbol,
             methodTypeParameters = typeParameters,
@@ -123,7 +124,7 @@ fun createJavaOrKotlinMemberFunction(
     } else {
         extension.createMemberFunction(
             owner = owner,
-            key = createKey(),
+            key = key,
             name = name,
             returnType = returnTypeRef.coneType
         ) {
@@ -153,6 +154,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     returnTypeRef: FirTypeRef,
     visibility: Visibility,
     modality: Modality,
+    key: GeneratedDeclarationKey,
     dispatchReceiverType: ConeSimpleKotlinType? = this.defaultType(),
     isStatic: Boolean = false,
     methodSymbol: FirNamedFunctionSymbol? = null,
@@ -160,6 +162,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     isOverride: Boolean = false,
     source: KtSourceElement? = null,
 ): FirJavaMethod {
+    val newOrigin = FirDeclarationOrigin.Java.Plugin(key)
     return buildJavaMethod {
         containingClassSymbol = this@createJavaMethod
         moduleData = this@createJavaMethod.moduleData
@@ -171,7 +174,7 @@ fun FirClassSymbol<*>.createJavaMethod(
             this.isStatic = isStatic
             this.isOverride = isOverride
         }
-        origin = FirDeclarationOrigin.Java.Source
+        origin = newOrigin
         typeParameters += methodTypeParameters
         this.source = source
 
@@ -182,7 +185,7 @@ fun FirClassSymbol<*>.createJavaMethod(
                 containingDeclarationSymbol = this@buildJavaMethod.symbol
                 this.name = valueParameter.name
                 isVararg = false
-                javaOrigin = FirDeclarationOrigin.Java.Source
+                javaOrigin = newOrigin
             }
         }
     }.apply {

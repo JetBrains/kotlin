@@ -105,9 +105,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 returnTypeRef = returnTypeRef,
                 visibility = visibility,
                 modality = Modality.OPEN,
-                createKey = {
-                    BuilderGeneratorKey(BuilderDeclarationType.Function.Build(builderDeclaration.symbol))
-                }
+                key = BuilderGeneratorKey(BuilderDeclarationType.Function.Build(builderDeclaration.symbol)),
             )
         }
     }

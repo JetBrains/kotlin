@@ -202,10 +202,11 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         val config = session.lombokService.config
         val fieldOrPropertyName = Name.identifier(config.logFieldName)
         val fieldIsStatic = config.logFieldIsStatic
+        val key = LoggerGeneratorKey(log.annotation)
 
         return if (logContainingClass.hasJavaOrigin) {
             buildJavaField {
-                origin = FirDeclarationOrigin.Java.Source
+                origin = FirDeclarationOrigin.Java.Plugin(key)
                 lazyHasConstantInitializer = lazy { false }
                 lazyHasInitializer = lazy { false }
                 containingClassSymbol = logContainingClass
@@ -232,7 +233,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         } else {
             createMemberProperty(
                 owner = logContainingClass,
-                key = LoggerGeneratorKey(log.annotation),
+                key = key,
                 name = fieldOrPropertyName,
                 returnType = loggerClassType,
             ) {

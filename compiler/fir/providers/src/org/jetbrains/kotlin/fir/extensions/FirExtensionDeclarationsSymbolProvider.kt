@@ -116,9 +116,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
                         result = it
                     }
                 }
-                // Lombok plugin sets the origin of generated declarations to FirDeclarationOrigin.Java.Source.
-                // TODO(KT-79778) Remove check for FirDeclarationOrigin.Java.Source when we have a proper generated Java origin.
-                result?.takeIf { it.origin.generated || it.origin == FirDeclarationOrigin.Java.Source }
+                result?.takeIf { it.origin.generated }
             }
             else -> {
                 val matchedExtensions = extensionsByTopLevelClassId.getValue()[classId] ?: return null
