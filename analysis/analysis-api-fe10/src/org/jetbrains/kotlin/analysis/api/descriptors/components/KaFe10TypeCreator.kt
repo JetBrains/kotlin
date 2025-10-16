@@ -24,15 +24,12 @@ import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.descriptors.findClassifierAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.StarProjectionImpl
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
@@ -48,14 +45,14 @@ internal class KaFe10TypeCreator(
     }
 
     private fun buildClassType(builder: KaBaseClassTypeBuilder): KaType {
-        val descriptor: ClassDescriptor? = when (builder) {
+        val descriptor = when (builder) {
             is KaBaseClassTypeBuilder.ByClassId -> {
-                analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(builder.classId)
+                analysisContext.resolveSession.moduleDescriptor.findClassifierAcrossModuleDependencies(builder.classId)
             }
             is KaBaseClassTypeBuilder.BySymbol -> {
-                getSymbolDescriptor(builder.symbol) as? ClassDescriptor
+                getSymbolDescriptor(builder.symbol)
             }
-        }
+        } as? ClassifierDescriptorWithTypeParameters
 
         if (descriptor == null) {
             val name = when (builder) {
@@ -70,17 +67,21 @@ internal class KaFe10TypeCreator(
         }
 
         val typeParameters = descriptor.typeConstructor.parameters
+        val defaultType = descriptor.defaultType
         val type = if (typeParameters.size == builder.arguments.size) {
             val projections = builder.arguments.mapIndexed { index, arg ->
-                when (arg) {
-                    is KaStarTypeProjection -> StarProjectionImpl(typeParameters[index])
+                val typeParameter = typeParameters[index]
+                val typeProjection = when (arg) {
+                    is KaStarTypeProjection -> StarProjectionImpl(typeParameter)
                     is KaTypeArgumentWithVariance -> TypeProjectionImpl(arg.variance, (arg.type as KaFe10Type).fe10Type)
                 }
-            }
 
-            TypeUtils.substituteProjectionsForParameters(descriptor, projections)
+                typeParameter.typeConstructor to typeProjection
+            }.toMap()
+
+            TypeSubstitutor.create(projections).substitute(defaultType, Variance.INVARIANT) ?: defaultType
         } else {
-            descriptor.defaultType
+            defaultType
         }
 
         val typeWithNullability = TypeUtils.makeNullableAsSpecified(type, builder.isMarkedNullable)

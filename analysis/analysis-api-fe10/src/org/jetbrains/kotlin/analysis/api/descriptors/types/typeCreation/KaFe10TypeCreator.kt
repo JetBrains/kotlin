@@ -44,7 +44,8 @@ internal class KaFe10TypeCreator(
     analysisSession: KaFe10Session
 ) : KaBaseTypeCreator<KaFe10Session>(analysisSession) {
     override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        val descriptor = analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(classId)
+        val descriptor =
+            analysisContext.resolveSession.moduleDescriptor.findClassifierAcrossModuleDependencies(classId) as? ClassifierDescriptorWithTypeParameters
         val builder = KaBaseClassTypeBuilder(this).apply(init)
 
         if (descriptor == null) {
@@ -56,7 +57,7 @@ internal class KaFe10TypeCreator(
     }
 
     override fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        val descriptor = getSymbolDescriptor(symbol) as? ClassDescriptor
+        val descriptor = getSymbolDescriptor(symbol) as? ClassifierDescriptorWithTypeParameters
         val builder = KaBaseClassTypeBuilder(this).apply(init)
 
         if (descriptor == null) {
@@ -75,20 +76,23 @@ internal class KaFe10TypeCreator(
         return KaFe10ClassErrorType(kotlinType, analysisContext)
     }
 
-    private fun buildClassType(descriptor: ClassDescriptor, builder: KaBaseClassTypeBuilder): KaClassType {
+    private fun buildClassType(descriptor: ClassifierDescriptorWithTypeParameters, builder: KaBaseClassTypeBuilder): KaClassType {
         val typeParameters = descriptor.typeConstructor.parameters
         val providedTypeArguments = builder.typeArguments
         val projections = typeParameters.mapIndexed { index, typeParameter ->
-            when (val argument = providedTypeArguments.getOrNull(index)) {
+            val typeProjection = when (val argument = providedTypeArguments.getOrNull(index)) {
                 is KaStarTypeProjection, null -> StarProjectionImpl(typeParameter)
                 is KaTypeArgumentWithVariance -> TypeProjectionImpl(argument.variance, (argument.type as KaFe10Type).fe10Type)
             }
-        }
 
-        val type = TypeUtils.substituteProjectionsForParameters(descriptor, projections).withAnnotations(builder.annotations)
+            typeParameter.typeConstructor to typeProjection
+        }.toMap()
 
-
-        val typeWithNullability = TypeUtils.makeNullableAsSpecified(type, builder.isMarkedNullable)
+        val defaultType = descriptor.defaultType
+        val substitutedType =
+            TypeSubstitutor.create(projections).substitute(defaultType, Variance.INVARIANT) ?: defaultType
+        val typeWithAnnotations = substitutedType.withAnnotations(builder.annotations)
+        val typeWithNullability = TypeUtils.makeNullableAsSpecified(typeWithAnnotations, builder.isMarkedNullable)
         return KaFe10UsualClassType(typeWithNullability as SimpleType, descriptor, analysisContext)
     }
 

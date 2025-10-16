@@ -1,37 +1,39 @@
 CLASS_TYPE_BY_CLASS_ID
 TYPE:
-KaClassErrorType:
+KaUsualClassType:
   abbreviation: null
   annotations: []
-  candidateSymbols: []
-  errorMessage: Unresolved class Alias
-  presentableText: Alias
+  classId: Alias
   qualifiers: [
-    KaUnresolvedClassTypeQualifier:
+    KaResolvedClassTypeQualifier:
       name: Alias
+      symbol: KaTypeAliasSymbol(Alias)
       typeArguments: []
   ]
+  symbol: KaTypeAliasSymbol(Alias)
+  typeArguments: []
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
 RENDERED TYPE:
-ERROR_TYPE(Unresolved class Alias)
+Alias /* = Alias */
 
 CLASS_TYPE_BY_SYMBOL
 TYPE:
-KaClassErrorType:
+KaUsualClassType:
   abbreviation: null
   annotations: []
-  candidateSymbols: []
-  errorMessage: Unresolved class Alias
-  presentableText: Alias
+  classId: Alias
   qualifiers: [
-    KaUnresolvedClassTypeQualifier:
+    KaResolvedClassTypeQualifier:
       name: Alias
+      symbol: KaTypeAliasSymbol(Alias)
       typeArguments: []
   ]
+  symbol: KaTypeAliasSymbol(Alias)
+  typeArguments: []
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
 RENDERED TYPE:
-ERROR_TYPE(Unresolved class Alias)
+Alias /* = Alias */
