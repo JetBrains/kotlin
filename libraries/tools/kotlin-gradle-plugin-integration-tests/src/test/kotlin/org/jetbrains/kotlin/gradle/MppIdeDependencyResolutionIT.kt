@@ -817,6 +817,107 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `KT-81724 transitive dependency with different scopes lead to false positive green code in common source set`(
+        gradleVersion: GradleVersion
+    ) {
+        fun TestProject.defaultKmpSetup() = buildScriptInjection {
+            project.applyMultiplatform {
+                jvm()
+                js().browser()
+                @OptIn(ExperimentalWasmDsl::class) wasmJs()
+                linuxX64()
+                linuxArm64()
+            }
+        }
+
+        val lib = project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            defaultKmpSetup()
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    sourceSets.commonMain.dependencies {
+                        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                        // ^ -- implementation scope!
+                    }
+                }
+            }
+        }
+
+        project("empty", gradleVersion) {
+            include(lib, "lib")
+            addKgpToBuildScriptCompilationClasspath()
+            defaultKmpSetup()
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    sourceSets.commonMain.dependencies {
+                        implementation(project(":lib"))
+                    }
+                }
+            }
+        }.resolveIdeDependencies { dependencies ->
+            dependencies["commonMain"].assertMatches(
+                kotlinStdlibDependencies,
+                regularSourceDependency(":lib/commonMain"),
+                // Unexpected dependencies due to dependencies scopes mismatch bug
+                // i.e. commonMain sees them, but JVM/JS/Wasm compilations would fail
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:commonMain:1.10.2"),
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:concurrentMain:1.10.2"),
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:nativeMain:1.10.2"),
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:nativeOtherMain:1.10.2"),
+                binaryCoordinates("org.jetbrains.kotlinx:atomicfu:commonMain:0.23.1"),
+                binaryCoordinates("org.jetbrains.kotlinx:atomicfu:nativeMain:0.23.1"),
+            )
+            dependencies["linuxMain"].assertMatches(
+                kotlinNativeDistributionDependencies,
+                anyDependsOnDependency(),
+                regularSourceDependency(":lib/commonMain"),
+                regularSourceDependency(":lib/nativeMain"),
+                regularSourceDependency(":lib/linuxMain"),
+
+                // In linuxMain all these dependencies are expected
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:commonMain:1.10.2"),
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:concurrentMain:1.10.2"),
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:nativeMain:1.10.2"),
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:nativeOtherMain:1.10.2"),
+                binaryCoordinates("org.jetbrains.kotlinx:atomicfu:commonMain:0.23.1"),
+                binaryCoordinates("org.jetbrains.kotlinx:atomicfu:nativeMain:0.23.1"),
+            )
+            dependencies["jvmMain"].assertMatches(
+                // no coroutines!
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+                anyDependsOnDependency(),
+                projectArtifactDependency(
+                    Regular,
+                    ":lib",
+                    FilePathRegex(".*/lib-jvm.jar")
+                )
+            )
+            dependencies["jsMain"].assertMatches(
+                // no coroutines!
+                kotlinStdlibDependencies,
+                binaryCoordinates(".*kotlin-dom-api-compat.*".toRegex()),
+                anyDependsOnDependency(),
+                projectArtifactDependency(
+                    Regular,
+                    ":lib",
+                    FilePathRegex(".*/js/main")
+                )
+            )
+            dependencies["wasmJsMain"].assertMatches(
+                // no coroutines!
+                kotlinStdlibDependencies,
+                anyDependsOnDependency(),
+                projectArtifactDependency(
+                    Regular,
+                    ":lib",
+                    FilePathRegex(".*/wasmJs/main")
+                )
+            )
+        }
+    }
+
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
         this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
             it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
