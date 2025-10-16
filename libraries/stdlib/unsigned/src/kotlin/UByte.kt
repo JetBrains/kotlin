@@ -410,6 +410,7 @@ public value class UByte @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Byte.toUByte(): UByte = UByte(this)
 /**
  * Converts this [Short] value to [UByte].
@@ -421,6 +422,7 @@ public inline fun Byte.toUByte(): UByte = UByte(this)
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Short.toUByte(): UByte = UByte(this.toByte())
 /**
  * Converts this [Int] value to [UByte].
@@ -432,6 +434,7 @@ public inline fun Short.toUByte(): UByte = UByte(this.toByte())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Int.toUByte(): UByte = UByte(this.toByte())
 /**
  * Converts this [Long] value to [UByte].
@@ -443,4 +446,5 @@ public inline fun Int.toUByte(): UByte = UByte(this.toByte())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Long.toUByte(): UByte = UByte(this.toByte())

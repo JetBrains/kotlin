@@ -435,6 +435,7 @@ public value class UInt @kotlin.internal.IntrinsicConstEvaluation @PublishedApi 
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Byte.toUInt(): UInt = UInt(this.toInt())
 /**
  * Converts this [Short] value to [UInt].
@@ -446,6 +447,7 @@ public inline fun Byte.toUInt(): UInt = UInt(this.toInt())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Short.toUInt(): UInt = UInt(this.toInt())
 /**
  * Converts this [Int] value to [UInt].
@@ -456,6 +458,7 @@ public inline fun Short.toUInt(): UInt = UInt(this.toInt())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Int.toUInt(): UInt = UInt(this)
 /**
  * Converts this [Long] value to [UInt].
@@ -467,6 +470,7 @@ public inline fun Int.toUInt(): UInt = UInt(this)
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Long.toUInt(): UInt = UInt(this.toInt())
 
 /**
@@ -477,6 +481,7 @@ public inline fun Long.toUInt(): UInt = UInt(this.toInt())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Float.toUInt(): UInt = floatToUInt(this)
 /**
  * Converts this [Double] value to [UInt].
@@ -486,4 +491,5 @@ public inline fun Float.toUInt(): UInt = floatToUInt(this)
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Double.toUInt(): UInt = doubleToUInt(this)

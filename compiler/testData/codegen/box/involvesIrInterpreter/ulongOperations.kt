@@ -119,14 +119,12 @@ const val convert7 = oneVal.<!EVALUATED("1")!>toByte()<!>
 const val convert8 = oneVal.<!EVALUATED("1")!>toShort()<!>
 const val convert9 = oneVal.<!EVALUATED("1")!>toInt()<!>
 const val convert10 = oneVal.<!EVALUATED("1")!>toLong()<!>
-
-// TODO, KT-80646: Enable once conversion extension functions are supported (requires bootstrapped compiler)
-// const val convert11 = 1.toByte().toULong()
-// const val convert12 = 1.toShort().toULong()
-// const val convert13 = 1.toULong()
-// const val convert14 = 1L.toULong()
-// const val convert15 = 1.0f.toULong()
-// const val convert16 = 10.toULong()
+const val convert11 = 1.toByte().<!EVALUATED("1")!>toULong()<!>
+const val convert12 = 1.toShort().<!EVALUATED("1")!>toULong()<!>
+const val convert13 = 1.<!EVALUATED("1")!>toULong()<!>
+const val convert14 = 1L.<!EVALUATED("1")!>toULong()<!>
+const val convert15 = 1.0f.<!EVALUATED("1")!>toULong()<!>
+const val convert16 = 1.0.<!EVALUATED("1")!>toULong()<!>
 
 const val equals1 = <!EVALUATED("false")!>oneVal == twoVal<!>
 const val equals2 = <!EVALUATED("true")!>twoVal == twoVal<!>
@@ -240,12 +238,12 @@ fun box(): String {
     if (convert8.id() != 1.toShort())    return "Fail convert8"
     if (convert9.id() != 1)              return "Fail convert9"
     if (convert10.id() != 1L)            return "Fail convert10"
-    // if (convert11.id() != 1UL)            return "Fail convert11"
-    // if (convert12.id() != 1UL)            return "Fail convert12"
-    // if (convert13.id() != 1UL)            return "Fail convert13"
-    // if (convert14.id() != 1UL)            return "Fail convert14"
-    // if (convert15.id() != 1UL)            return "Fail convert15"
-    // if (convert16.id() != 1UL)            return "Fail convert16"
+    if (convert11.id() != 1UL)           return "Fail convert11"
+    if (convert12.id() != 1UL)           return "Fail convert12"
+    if (convert13.id() != 1UL)           return "Fail convert13"
+    if (convert14.id() != 1UL)           return "Fail convert14"
+    if (convert15.id() != 1UL)           return "Fail convert15"
+    if (convert16.id() != 1UL)           return "Fail convert16"
 
     if (equals1.id() != false)   return "Fail equals1"
     if (equals2.id() != true)    return "Fail equals2"
