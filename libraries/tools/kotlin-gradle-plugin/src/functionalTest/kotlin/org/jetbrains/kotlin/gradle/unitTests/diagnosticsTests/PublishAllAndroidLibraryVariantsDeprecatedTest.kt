@@ -22,6 +22,7 @@ class PublishAllAndroidLibraryVariantsDeprecatedTest {
         }
 
         kotlin {
+            @Suppress("DEPRECATION")
             androidTarget()
             jvm()
             linuxX64("linux")
@@ -37,6 +38,7 @@ class PublishAllAndroidLibraryVariantsDeprecatedTest {
     @Test
     fun `call to publishAllLibraryVariants should report deprecation warning`() {
         project.kotlin {
+            @Suppress("DEPRECATION")
             androidTarget {
                 @Suppress("DEPRECATION")
                 publishAllLibraryVariants()
@@ -49,6 +51,7 @@ class PublishAllAndroidLibraryVariantsDeprecatedTest {
     @Test
     fun `call to publishLibraryVariants should not report deprecation warning`() {
         project.kotlin {
+            @Suppress("DEPRECATION")
             androidTarget {
                 publishLibraryVariants("release", "debug")
             }

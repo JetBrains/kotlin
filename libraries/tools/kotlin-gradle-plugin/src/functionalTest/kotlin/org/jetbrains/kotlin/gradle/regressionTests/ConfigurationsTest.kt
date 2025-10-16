@@ -229,6 +229,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 jvm()
                 js()
                 linuxX64("linux")
+                @Suppress("DEPRECATION")
                 androidTarget()
             }
         }
@@ -283,7 +284,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     }
 
     class TestDisambiguationAttributePropagation {
-        private val disambiguationAttribute = org.gradle.api.attributes.Attribute.of("disambiguationAttribute", String::class.java)
+        private val disambiguationAttribute = Attribute.of("disambiguationAttribute", String::class.java)
 
         private val mppProject
             get() = buildProjectWithMPP {

@@ -228,6 +228,7 @@ class IdeStdlibResolutionTest {
         val project = createProjectWithAndroidAndDefaultStdlibEnabled()
 
         val kotlin = project.multiplatformExtension
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         kotlin.jvm()
 

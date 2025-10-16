@@ -74,6 +74,7 @@ class SeparateKmpCompilationDiagnosticTest {
                     nodejs()
                 }
                 linuxX64()
+                @Suppress("DEPRECATION")
                 androidTarget()
 
                 @OptIn(ExperimentalWasmDsl::class)

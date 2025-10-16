@@ -92,6 +92,7 @@ class ComposePluginSuggestApplyCheckerTest {
 
         applyMultiplatformPlugin()
 
+        @Suppress("DEPRECATION")
         multiplatformExtension.androidTarget()
     }
 }

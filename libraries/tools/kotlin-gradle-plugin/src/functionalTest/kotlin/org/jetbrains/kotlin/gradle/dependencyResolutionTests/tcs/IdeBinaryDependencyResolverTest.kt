@@ -99,6 +99,7 @@ class IdeBinaryDependencyResolverTest {
         /* Setup android target and add MVIKotlin dependency */
         val kotlin = project.multiplatformExtension
         kotlin.applyDefaultHierarchyTemplate()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         commonMain.dependencies {

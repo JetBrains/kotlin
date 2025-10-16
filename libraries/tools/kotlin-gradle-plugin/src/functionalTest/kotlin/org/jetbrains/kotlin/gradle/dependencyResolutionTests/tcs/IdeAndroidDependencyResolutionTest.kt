@@ -36,6 +36,7 @@ class IdeAndroidDependencyResolutionTest {
         repositories.mavenCentralCacheRedirector()
 
         multiplatformExtension.apply {
+            @Suppress("DEPRECATION")
             androidTarget()
             sourceSets.getByName("commonMain").dependencies {
                 implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
@@ -43,6 +44,7 @@ class IdeAndroidDependencyResolutionTest {
         }
     }.evaluate()
 
+    @Suppress("DEPRECATION")
     private val androidSourceSets = project.multiplatformExtension.androidTarget().compilations.flatMap { it.kotlinSourceSets }
         .ifEmpty { fail("Expected at least one Android SourceSet") }
 

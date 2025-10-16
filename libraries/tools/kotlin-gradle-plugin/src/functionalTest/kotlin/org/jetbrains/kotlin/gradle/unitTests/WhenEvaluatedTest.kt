@@ -24,6 +24,7 @@ class WhenEvaluatedTest {
         val project = buildProject()
         project.androidLibrary { compileSdk = 33 }
         project.applyMultiplatformPlugin()
+        @Suppress("DEPRECATION")
         project.multiplatformExtension.androidTarget()
 
         val onVariantsCalled = AtomicBoolean(false)
