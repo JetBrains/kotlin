@@ -55,7 +55,7 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
                     FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS
                 )
             }
-            val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)
+            val message = FirContextParametersLanguageVersionSettingsChecker.DIAGNOSTIC_MESSAGE
             reporter.reportOn(typeRef.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message)
         } else {
             source.requireFeatureSupport(LanguageFeature.ContextParameters)

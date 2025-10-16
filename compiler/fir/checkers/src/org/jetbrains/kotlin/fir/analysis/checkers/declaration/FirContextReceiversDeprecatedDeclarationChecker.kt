@@ -36,7 +36,7 @@ object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChec
             if (declaration is FirConstructor && declaration !is FirPrimaryConstructor) {
                 reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR)
             } else {
-                val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)
+                val message = FirContextParametersLanguageVersionSettingsChecker.DIAGNOSTIC_MESSAGE
                 reporter.reportOn(declaration.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message)
             }
         }
