@@ -10,11 +10,8 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 import org.jetbrains.kotlin.gradle.util.mockGenerateProjectStructureMetadataTaskOutputs
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
-import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 
@@ -149,6 +146,7 @@ class IdeSourceDependencyResolutionTest {
                 linuxX64()
                 linuxArm64()
                 jvm()
+                @Suppress("DEPRECATION")
                 androidTarget()
 
                 sourceSets.getByName("commonMain").let { commonMain ->

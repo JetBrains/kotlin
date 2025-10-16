@@ -1432,6 +1432,7 @@ class UklibResolutionTestsWithMockComponents {
                 namespace = "foo"
             }
             kotlin {
+                @Suppress("DEPRECATION")
                 androidTarget()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
             }
@@ -1487,6 +1488,7 @@ class UklibResolutionTestsWithMockComponents {
                 namespace = "foo"
             }
             kotlin {
+                @Suppress("DEPRECATION")
                 androidTarget()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
             }
@@ -1562,6 +1564,7 @@ class UklibResolutionTestsWithMockComponents {
                 namespace = "foo"
             }
             kotlin {
+                @Suppress("DEPRECATION")
                 androidTarget()
                 sourceSets.commonMain.dependencies { implementation("foo:direct:1.0") }
             }

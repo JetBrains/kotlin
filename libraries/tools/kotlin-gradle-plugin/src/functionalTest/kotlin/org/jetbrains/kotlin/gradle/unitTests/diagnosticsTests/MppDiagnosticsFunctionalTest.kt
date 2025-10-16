@@ -98,6 +98,7 @@ class MppDiagnosticsFunctionalTest {
             }
 
             kotlin {
+                @Suppress("DEPRECATION")
                 androidTarget()
                 linuxX64()
                 applyDefaultHierarchyTemplate()

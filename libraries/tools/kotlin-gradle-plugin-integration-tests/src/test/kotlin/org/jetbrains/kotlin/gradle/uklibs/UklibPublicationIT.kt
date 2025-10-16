@@ -322,6 +322,7 @@ class UklibPublicationIT : KGPBaseTest() {
         ) {
             project.plugins.apply("com.android.library")
             iosArm64()
+            @Suppress("DEPRECATION")
             androidTarget()
 
             sourceSets.all {

@@ -209,6 +209,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     linuxArm64()
+                    @Suppress("DEPRECATION")
                     androidTarget()
                     jvm()
 

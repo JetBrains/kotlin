@@ -782,6 +782,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 applyDefaultAndroidLibraryConfiguration()
 
                 kotlinMultiplatform.jvm()
+                @Suppress("DEPRECATION")
                 kotlinMultiplatform.androidTarget()
             }
         }.resolveIdeDependencies() { dependencies ->

@@ -16,6 +16,7 @@ class AndroidGradlePluginIsMissingTest {
     @Test
     fun `test - android plugin is not applied`() {
         val project = buildProjectWithMPP()
+        @Suppress("DEPRECATION")
         assertFails { project.multiplatformExtension.androidTarget() }
         project.checkDiagnostics("AndroidGradlePluginIsMissing")
     }
@@ -24,6 +25,7 @@ class AndroidGradlePluginIsMissingTest {
     fun `test - android application plugin is applied`() {
         val project = buildProjectWithMPP()
         project.androidApplication { compileSdk = 33 }
+        @Suppress("DEPRECATION")
         project.multiplatformExtension.androidTarget()
         project.assertNoDiagnostics()
     }
