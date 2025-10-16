@@ -64,7 +64,7 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitModuleExportName(ctx: JavaScriptParser.ModuleExportNameContext): JsNode? {
-        raiseParserException("Import statements not supported yet", ctx)
+        raiseParserException("Export and import statements not supported yet", ctx)
     }
 
     override fun visitImportedBinding(ctx: JavaScriptParser.ImportedBindingContext): JsNode? {

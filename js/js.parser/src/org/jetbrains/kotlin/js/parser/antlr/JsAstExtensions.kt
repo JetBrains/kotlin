@@ -37,14 +37,10 @@ internal val Token.startPosition: CodePosition
 internal val Token.stopPosition: CodePosition
     get() {
         val text = text ?: ""
-        if (text.contains('\n')) {
-            val lines = text.split('\n')
-            val endLine = startPosition.line + lines.size - 1
-            val endColumn = lines.last().length
-            return CodePosition(endLine, endColumn)
-        } else {
-            return CodePosition(startPosition.line, startPosition.offset + text.length)
-        }
+        val lines = text.split('\n')
+        val endLine = startPosition.line + lines.size - 1
+        val endColumn = lines.last().length.let { if (lines.size > 1) it else startPosition.offset + it }
+        return CodePosition(endLine, endColumn)
     }
 
 internal fun unwrapStringLiteral(literalValue: String): String {
