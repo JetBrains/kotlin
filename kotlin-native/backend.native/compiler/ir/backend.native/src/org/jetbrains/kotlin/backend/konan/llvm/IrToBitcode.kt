@@ -726,9 +726,11 @@ internal class CodeGeneratorVisitor(
 
 
         private val scope by lazy {
-            if (!context.shouldContainLocationDebugInfo() || declaration == null)
-                return@lazy null
-            declaration.scope() ?: llvmFunction.scope(0, debugInfo.subroutineType(codegen.llvmTargetData, listOf(context.irBuiltIns.intType)), false)
+            if (context.shouldContainLocationDebugInfo()) {
+                declaration?.scope()
+            } else {
+                null
+            }
         }
 
         private val fileEntry = fileEntry()
@@ -2269,16 +2271,6 @@ internal class CodeGeneratorVisitor(
         }
 
     }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun LlvmCallable.scope(startLine: Int, subroutineType: DISubroutineTypeRef, nodebug: Boolean) =
-            with(debugInfo) {
-                subprograms.getOrPut(this@scope) {
-                    diFunctionScope(fileEntry(), name!!, name!!, startLine, subroutineType, nodebug).also {
-                        this@scope.addDebugInfoSubprogram(it)
-                    }
-                } as DIScopeOpaqueRef
-            }
 
     private fun IrSimpleFunction.returnsUnit() = returnType.isUnit().also {
         require(!isSuspend) { "Suspend functions should be lowered out at this point"}
