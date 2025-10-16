@@ -100,6 +100,30 @@ public class Fe10IdeNormalAnalysisSourceModuleBuildClassTypeTestGenerated extend
   }
 
   @Test
+  @TestMetadata("typeAlias.kt")
+  public void testTypeAlias() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/typeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasAsArgument.kt")
+  public void testTypeAliasAsArgument() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/typeAliasAsArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasWithNestedTypeAliases.kt")
+  public void testTypeAliasWithNestedTypeAliases() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/typeAliasWithNestedTypeAliases.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasWithStarArguments.kt")
+  public void testTypeAliasWithStarArguments() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/typeAliasWithStarArguments.kt");
+  }
+
+  @Test
   @TestMetadata("userType.kt")
   public void testUserType() {
     runTest("analysis/analysis-api/testData/components/typeCreator/classType/userType.kt");

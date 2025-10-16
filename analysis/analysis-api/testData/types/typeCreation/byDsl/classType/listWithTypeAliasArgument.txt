@@ -1,0 +1,79 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/collections/List
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: List
+      symbol: KaNamedClassSymbol(kotlin/collections/List)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: KaUsualClassType:
+            abbreviation: null
+            annotations: []
+            classId: MyAlias
+            qualifiers: [
+              KaResolvedClassTypeQualifier:
+                name: MyAlias
+                symbol: KaTypeAliasSymbol(MyAlias)
+                typeArguments: []
+            ]
+            symbol: KaTypeAliasSymbol(MyAlias)
+            typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
+          annotations: []
+          classId: B
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: B
+              symbol: KaNamedClassSymbol(B)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(B)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(kotlin/collections/List)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: KaUsualClassType:
+        abbreviation: null
+        annotations: []
+        classId: MyAlias
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: MyAlias
+            symbol: KaTypeAliasSymbol(MyAlias)
+            typeArguments: []
+        ]
+        symbol: KaTypeAliasSymbol(MyAlias)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+      annotations: []
+      classId: B
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: B
+          symbol: KaNamedClassSymbol(B)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(B)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.collections.List<MyAlias>

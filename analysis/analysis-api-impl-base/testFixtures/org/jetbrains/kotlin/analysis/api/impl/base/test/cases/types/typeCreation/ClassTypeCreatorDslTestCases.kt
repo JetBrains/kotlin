@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
 @Suppress("UNUSED")
@@ -112,6 +113,40 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
         return session.typeCreator.classType(userTypeSymbol) {
             annotation(annotationClassId)
+        }
+    }
+
+    fun testGenericTypeAliasWithIntArgument(): KaType {
+        val alias = getClassLikeSymbolByCaret("alias")
+        val argument = getTypeByCaret("argument")
+
+        return session.typeCreator.classType(alias) {
+            invariantTypeArgument(argument)
+        }
+    }
+
+    fun testGenericTypeAliasWithNoArguments(): KaType {
+        val alias = getClassLikeSymbolByCaret("alias")
+
+        return session.typeCreator.classType(alias)
+    }
+
+    fun testTypeAlias(): KaType {
+        val alias = getClassLikeSymbolByCaret("alias")
+
+        return session.typeCreator.classType(alias)
+    }
+
+    fun testTypeAliasWithNestedTypeAliases(): KaType {
+        val alias = getClassLikeSymbolByCaret("alias")
+
+        return session.typeCreator.classType(alias)
+    }
+
+    fun testListWithTypeAliasArgument(): KaType {
+        val alias = getTypeByCaret("alias")
+        return session.typeCreator.classType(StandardClassIds.List) {
+            invariantTypeArgument(alias)
         }
     }
 }
