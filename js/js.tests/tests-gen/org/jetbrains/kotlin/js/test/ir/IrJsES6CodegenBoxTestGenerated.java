@@ -27388,6 +27388,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("inlineFunctionWithRecursiveCallAppliedToTODO.kt")
+    public void testInlineFunctionWithRecursiveCallAppliedToTODO() {
+      runTest("compiler/testData/codegen/box/inline/inlineFunctionWithRecursiveCallAppliedToTODO.kt");
+    }
+
+    @Test
     @TestMetadata("inlinedLambdaWithErasedParamType.kt")
     public void testInlinedLambdaWithErasedParamType() {
       runTest("compiler/testData/codegen/box/inline/inlinedLambdaWithErasedParamType.kt");
