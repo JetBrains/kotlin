@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
 
 fun makeJsIncrementally(
@@ -156,9 +157,10 @@ class IncrementalJsCompilerRunner(
         fileMappingTracker: ICFileMappingTracker,
         caches: IncrementalJsCachesManager,
         dirtySources: Set<File>,
-        isIncremental: Boolean
+        isIncremental: Boolean,
+        compilationCanceledStatus: CompilationCanceledStatus,
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, expectActualTracker, fileMappingTracker, caches, dirtySources, isIncremental).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, fileMappingTracker, caches, dirtySources, isIncremental, compilationCanceledStatus).apply {
             if (isIncremental) {
                 if (scopeExpansion == CompileScopeExpansionMode.ALWAYS) {
                     val nextRoundChecker = IncrementalNextRoundCheckerImpl(caches, dirtySources)

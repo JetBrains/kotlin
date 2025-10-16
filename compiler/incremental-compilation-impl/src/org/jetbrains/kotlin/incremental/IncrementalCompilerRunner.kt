@@ -73,6 +73,8 @@ abstract class IncrementalCompilerRunner<
      * Non-trivial configuration should NOT be added there.
      */
     protected val icFeatures: IncrementalCompilationFeatures,
+
+    private val compilationCanceledStatus: CompilationCanceledStatus? = null,
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -385,11 +387,12 @@ abstract class IncrementalCompilerRunner<
         caches: CacheManager,
         dirtySources: Set<File>,
         isIncremental: Boolean,
+        compilationCanceledStatus: CompilationCanceledStatus,
     ): Services.Builder =
         Services.Builder().apply {
             register(LookupTracker::class.java, lookupTracker)
             register(ExpectActualTracker::class.java, expectActualTracker)
-            register(CompilationCanceledStatus::class.java, EmptyCompilationCanceledStatus)
+            register(CompilationCanceledStatus::class.java, compilationCanceledStatus)
             register(ICFileMappingTracker::class.java, fileMappingTracker)
         }
 
@@ -494,7 +497,7 @@ abstract class IncrementalCompilerRunner<
 
             val services = makeServices(
                 args, lookupTracker, expectActualTracker, fileMappingTracker, caches,
-                dirtySources.toSet(), compilationMode is CompilationMode.Incremental
+                dirtySources.toSet(), compilationMode is CompilationMode.Incremental, compilationCanceledStatus ?: EmptyCompilationCanceledStatus
             ).build()
 
             args.reportOutputFiles = true

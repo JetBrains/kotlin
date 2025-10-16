@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
@@ -44,6 +45,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
     outputDirs: Collection<File>?,
     kotlinSourceFilesExtensions: Set<String>,
     icFeatures: IncrementalCompilationFeatures,
+    compilationCanceledStatus: CompilationCanceledStatus? = null,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
@@ -52,6 +54,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
     outputDirs = outputDirs,
     kotlinSourceFilesExtensions = kotlinSourceFilesExtensions,
     icFeatures = icFeatures,
+    compilationCanceledStatus = compilationCanceledStatus,
 ) {
     override val shouldStoreFullFqNamesInLookupCache = true
 
@@ -141,9 +144,10 @@ abstract class IncrementalJvmCompilerRunnerBase(
         fileMappingTracker: ICFileMappingTracker,
         caches: IncrementalJvmCachesManager,
         dirtySources: Set<File>,
-        isIncremental: Boolean
+        isIncremental: Boolean,
+        compilationCanceledStatus: CompilationCanceledStatus,
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, expectActualTracker, fileMappingTracker, caches, dirtySources, isIncremental).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, fileMappingTracker, caches, dirtySources, isIncremental, compilationCanceledStatus).apply {
             val moduleName = requireNotNull(args.moduleName) { "'moduleName' is null!" }
             val targetId = TargetId(moduleName, "java-production")
             val targetToCache = mapOf(targetId to caches.platformCache)

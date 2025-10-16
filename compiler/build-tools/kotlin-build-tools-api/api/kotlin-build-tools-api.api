@@ -12,6 +12,10 @@ public final class org/jetbrains/kotlin/buildtools/api/BuildOperation$Companion 
 public final class org/jetbrains/kotlin/buildtools/api/BuildOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+	public fun cancel ()V
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/CompilationResult : java/lang/Enum {
 	public static final field COMPILATION_ERROR Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
 	public static final field COMPILATION_OOM_ERROR Lorg/jetbrains/kotlin/buildtools/api/CompilationResult;
@@ -570,7 +574,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspa
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation : org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
 	public static final field COMPILER_ARGUMENTS_LOG_LEVEL Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Companion;
 	public static final field INCREMENTAL_COMPILATION Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;

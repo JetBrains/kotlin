@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.PerformanceManager.DumpFormat
 import org.jetbrains.kotlin.util.PhaseType
@@ -341,10 +342,17 @@ abstract class CompileServiceImplBase(
         createReporter: (ServicesFacadeT, CompilationOptions) -> DaemonMessageReporter,
         createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
         getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+        compilationAliveFlagPath: String? = null,
     ) = kotlin.run {
         val messageCollector = createMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = createReporter(servicesFacade, compilationOptions)
         val targetPlatform = compilationOptions.targetPlatform
+        val compilationAlive = ClientOrSessionProxy<Any>(compilationAliveFlagPath)
+        val compilationCanceledStatus = object : CompilationCanceledStatus {
+            override fun checkCanceled() {
+                if (!compilationAlive.isAlive) throw CompilationCanceledException()
+            }
+        }
         log.info("Starting compilation with args: " + compilerArguments.joinToString(" "))
 
         @Suppress("UNCHECKED_CAST")
@@ -383,7 +391,11 @@ abstract class CompileServiceImplBase(
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
                 doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                    val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
+                    val exitCode = compiler.exec(
+                        messageCollector,
+                        Services.Builder().register(CompilationCanceledStatus::class.java, compilationCanceledStatus).build(),
+                        k2PlatformArgs
+                    )
 
                     val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = DumpFormat.PlainText)
                     compilationResults?.also {
@@ -411,7 +423,8 @@ abstract class CompileServiceImplBase(
                                     gradleIncrementalServicesFacade,
                                     compilationResults!!,
                                     gradleIncrementalArgs
-                                )
+                                ),
+                                compilationCanceledStatus
                             )
                         }
                     }
@@ -640,6 +653,7 @@ abstract class CompileServiceImplBase(
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+        compilationCanceledStatus: CompilationCanceledStatus? = null,
     ): ExitCode {
         reporter.startMeasureGc()
         val allKotlinJvmExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
@@ -667,6 +681,7 @@ abstract class CompileServiceImplBase(
                 icFeatures = incrementalCompilationOptions.icFeatures.copy(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 ),
+                compilationCanceledStatus = compilationCanceledStatus
             )
         } else {
             IncrementalJvmCompilerRunner(
@@ -678,6 +693,7 @@ abstract class CompileServiceImplBase(
                 icFeatures = incrementalCompilationOptions.icFeatures.copy(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 ),
+                compilationCanceledStatus = compilationCanceledStatus
             )
         }
         return try {
@@ -814,6 +830,15 @@ class CompileServiceImpl(
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
         compilationResults: CompilationResults?,
+    ) = compile(sessionId, compilerArguments, compilationOptions, servicesFacade, compilationResults, null)
+
+    override fun compile(
+        sessionId: Int,
+        compilerArguments: Array<out String>,
+        compilationOptions: CompilationOptions,
+        servicesFacade: CompilerServicesFacadeBase,
+        compilationResults: CompilationResults?,
+        compilationAliveFlagPath: String?
     ) = ifAlive {
         compileImpl(
             sessionId,
@@ -825,7 +850,8 @@ class CompileServiceImpl(
             createMessageCollector = ::CompileServicesFacadeMessageCollector,
             createReporter = ::DaemonMessageReporter,
             createServices = this::createCompileServices,
-            getICReporter = { a, b, c -> getBuildReporter(a, b!!, c) }
+            getICReporter = { a, b, c -> getBuildReporter(a, b!!, c) },
+            compilationAliveFlagPath,
         )
     }
 

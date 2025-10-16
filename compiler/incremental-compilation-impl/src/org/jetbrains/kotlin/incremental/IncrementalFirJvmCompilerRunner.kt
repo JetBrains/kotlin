@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledException
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.util.PhaseType
 import java.io.File
 
@@ -62,6 +63,7 @@ open class IncrementalFirJvmCompilerRunner(
     classpathChanges: ClasspathChanges,
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
+    compilationCanceledStatus: CompilationCanceledStatus? = null,
 ) : IncrementalJvmCompilerRunner(
     workingDir,
     reporter,
@@ -69,6 +71,7 @@ open class IncrementalFirJvmCompilerRunner(
     classpathChanges,
     kotlinSourceFilesExtensions,
     icFeatures,
+    compilationCanceledStatus = compilationCanceledStatus
 ) {
 
     override fun runCompiler(

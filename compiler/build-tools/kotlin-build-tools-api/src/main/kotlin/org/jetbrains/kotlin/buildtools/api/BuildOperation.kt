@@ -55,3 +55,10 @@ public interface BuildOperation<R> {
         public fun <V> createCustomOption(id: String): Option<V> = Option(id)
     }
 }
+
+@ExperimentalBuildToolsApi
+public interface CancellableBuildOperation<R> : BuildOperation<R> {
+    public fun cancel() {
+        error("Cancellation is supported from compiler version 2.3.20.")
+    }
+}
