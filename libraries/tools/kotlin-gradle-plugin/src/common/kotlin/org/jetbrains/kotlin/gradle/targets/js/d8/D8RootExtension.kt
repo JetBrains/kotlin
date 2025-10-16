@@ -42,7 +42,7 @@ open class D8RootExtension(
      * The same as in [D8EnvSpec.version]
      */
     override val versionProperty: org.gradle.api.provider.Property<String> = project.objects.property<String>()
-        .convention("13.4.61")
+        .convention("14.2.82")
 
     /**
      * Specify the edition of the D8.
