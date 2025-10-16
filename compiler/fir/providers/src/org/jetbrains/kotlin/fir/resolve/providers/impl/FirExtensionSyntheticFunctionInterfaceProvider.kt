@@ -178,7 +178,10 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
             val className = relativeClassName.asString()
             if (!kind.isAcceptable()) return null
             val prefix = kind.classNamePrefix
-            val arity = className.substring(prefix.length).toIntOrNull() ?: return null
+            val arity = className.substring(prefix.length).toIntOrNull()
+                // Too big variants will freeze the IDE. KT-80061.
+                ?.takeIf { it <= Byte.MAX_VALUE * 2 }
+                ?: return null
             FirRegularClassSymbol(classId).apply symbol@{
                 buildRegularClass klass@{
                     moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
