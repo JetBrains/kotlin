@@ -39,7 +39,11 @@ data class TailCalls(val ir: Set<IrCall>, val fromManyFunctions: Boolean)
  * It is also not guaranteed that each returned call is detected as tail recursion by the frontend.
  * However any returned call can be correctly optimized as tail recursion.
  */
-fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (IrFunctionReference) -> Boolean): TailCalls {
+fun collectTailRecursionCalls(
+    irFunction: IrFunction,
+    followFunctionReference: (IrFunctionReference) -> Boolean,
+    followRichFunctionReference: (IrRichFunctionReference) -> Boolean
+): TailCalls {
     if ((irFunction as? IrSimpleFunction)?.isTailrec != true) {
         return TailCalls(emptySet(), false)
     }
@@ -153,6 +157,15 @@ fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (
                 // If control reaches end of lambda, it will *not* end the current function by default,
                 // so the lambda's body itself is not a tail statement.
                 expression.symbol.owner.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
+            }
+        }
+
+        override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: VisitorState) {
+            expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
+            if (followRichFunctionReference(expression)) {
+                // If control reaches end of lambda, it will *not* end the current function by default,
+                // so the lambda's body itself is not a tail statement.
+                expression.invokeFunction.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
             }
         }
     }

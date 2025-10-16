@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -69,12 +70,14 @@ open class TailrecLowering(val context: LoweringContext) : BodyLoweringPass {
 
     open fun followFunctionReference(reference: IrFunctionReference): Boolean = false
 
+    open fun followRichFunctionReference(reference: IrRichFunctionReference): Boolean = false
+
     open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
         IrConstImpl.defaultValueForType(startOffset, endOffset, type)
 }
 
 private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
-    val (tailRecursionCalls, someCallsAreFromOtherFunctions) = collectTailRecursionCalls(irFunction, ::followFunctionReference)
+    val (tailRecursionCalls, someCallsAreFromOtherFunctions) = collectTailRecursionCalls(irFunction, ::followFunctionReference, ::followRichFunctionReference)
     if (tailRecursionCalls.isEmpty()) {
         return
     }
@@ -150,6 +153,15 @@ private class BodyTransformer(
             expression.symbol.owner.body?.transformChildrenVoid(this)
         }
         return super.visitFunctionReference(expression)
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        return if (lowering.followRichFunctionReference(expression)) {
+            super.visitRichFunctionReference(expression)
+        } else {
+            expression.boundValues.transformInPlace(this, null)
+            expression
+        }
     }
 
     private fun IrBuilderWithScope.genTailCall(expression: IrCall) = this.irBlock(expression) {
