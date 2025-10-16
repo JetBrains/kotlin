@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.DefaultProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
@@ -253,7 +252,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
             addGradlePluginMetadataAttributes(project)
         }
         project.maybeCreateCommonizerClasspathConfiguration()
-        project.initSwiftExportClasspathConfigurations()
         project.addPgpSignatureHelpers()
         project.addPomValidationHelpers()
         project.addSigningValidationHelpers()
