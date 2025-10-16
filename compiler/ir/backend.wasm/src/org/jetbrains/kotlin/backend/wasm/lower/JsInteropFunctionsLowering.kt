@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 val JS_EXPORT_ADAPTER by IrDeclarationOriginImpl
 val KOTLIN_TO_JS_CLOSURE_ORIGIN by IrDeclarationOriginImpl
@@ -538,7 +539,16 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val builder = context.createIrBuilder(result.symbol)
         // TODO: Cache created JS closures
         val arity = info.parametersAdapters.size
-        val importVariableString = JsModuleAndQualifierReference.encode("<kotlin>")
+
+        val moduleName = context.module.name.asString()
+        val isSingleModule = context.configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)
+
+        val importVariableString =
+            if (isSingleModule && moduleName != "<kotlin>") {
+                JsModuleAndQualifierReference.encode("<kotlin>")
+            } else {
+                "wasmExports"
+            }
 
         val jsCode = buildString {
             append("(f) => ")

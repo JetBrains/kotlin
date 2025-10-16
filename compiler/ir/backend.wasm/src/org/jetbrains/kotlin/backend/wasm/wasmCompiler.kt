@@ -252,6 +252,9 @@ fun compileWasm(
             )
         }
 
+        val generateWasmTagInitializer =
+            moduleName == "<kotlin>" || !configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)
+
         val jsCode = generateJsCode(
             jsModuleImports,
             jsModuleAndQualifierReferences,
@@ -260,6 +263,7 @@ fun compileWasm(
             baseFileName,
             jsFuns,
             useJsTag,
+            generateWasmTagInitializer,
         )
 
         if (jsCode.isNotEmpty()) {
@@ -281,6 +285,7 @@ fun compileWasm(
             baseFileName,
             useJsTag,
             jsCode.isNotEmpty(),
+            generateWasmTagInitializer,
         )
 
     } else {
@@ -323,7 +328,7 @@ const wasmInstance = new WebAssembly.Instance(wasmModule, wasi.getImportObject()
 
 wasi.initialize(wasmInstance);
 
-const wasmExports = wasmInstance.exports
+const innerWasmExports = wasmInstance.exports
 ${generateExports(exports)}
 """
 
@@ -335,12 +340,12 @@ fun generateJsCode(
     baseFileName: String,
     jsFuns: Set<JsCodeSnippet>,
     useJsTag: Boolean,
+    generateWasmTagInitializer: Boolean,
 ): String {
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
         "${it.importName.owner.toJsStringLiteral()} : ${it.jsCode}"
     }
-    if (jsCodeBody.isEmpty()) return ""
     val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
 
     val imports = generateJsImports(
@@ -373,12 +378,27 @@ fun generateJsCode(
         }.sorted()
         .joinToString("\n")
 
+    val wasmTagInitialization =
+        if (generateWasmTagInitializer)
+            """
+            const wasmJsTag = ${if (useJsTag) "WebAssembly.JSTag" else "void 0"};
+            export const wasmTag = wasmJsTag ?? new WebAssembly.Tag({ parameters: ['externref'] });
+        """.trimIndent()
+        else
+            """
+            export const wasmTag = ${JsModuleAndQualifierReference.encode("<kotlin>")}.wasmTag;
+        """.trimIndent()
+
     return """
-import { exports as wasmExports } from "./${baseFileName}.mjs"
 $imports
 
-const wasmJsTag = ${if (useJsTag) "WebAssembly.JSTag" else "void 0"};
-const wasmTag = wasmJsTag ?? new WebAssembly.Tag({ parameters: ['externref'] });
+// Placed here to give access to it from externals (js_code)
+let wasmExports;
+export function setWasmExports(exports) {
+    wasmExports = exports;
+}
+
+$wasmTagInitialization
 
 $referencesToQualifiedAndImportedDeclarations
 
@@ -497,6 +517,7 @@ fun generateWebAssemblyJsInstanceInitializer(
     baseFileName: String,
     useJsTag: Boolean,
     useJsCode: Boolean,
+    generateWasmTagInitializer: Boolean,
 ): String {
     val imports = generateJsImports(
         jsModuleImports,
@@ -508,6 +529,9 @@ fun generateWebAssemblyJsInstanceInitializer(
 
     val importsWithJsCode = """
 $imports
+import { setWasmExports } from './${baseFileName}.js-code.mjs';
+import { wasmTag } from "./${baseFileName}.js-code.mjs"
+export { wasmTag } from "./${baseFileName}.js-code.mjs"
 ${if (useJsCode) "import { js_code } from \"./${baseFileName}.js-code.mjs\"" else ""}
     """.trimIndent()
 
@@ -521,13 +545,8 @@ ${if (useJsCode) "import { js_code } from \"./${baseFileName}.js-code.mjs\"" els
     return """
 $importsWithJsCode
 
-const wasmJsTag = ${if (useJsTag) "WebAssembly.JSTag" else "void 0"};
-const wasmTag = wasmJsTag ?? new WebAssembly.Tag({ parameters: ['externref'] });
-
-// Placed here to give access to it from externals (js_code)
 let wasmInstance;
 let require;
-let wasmExports;
 
 const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
 const isDeno = !isNodeJs && (typeof Deno !== 'undefined')
@@ -594,10 +613,12 @@ For more information, see https://kotl.in/wasm-help
   throw e;
 }
 
-wasmExports = wasmInstance.exports;
-wasmExports._initialize();
+let innerWasmExports = wasmInstance.exports
+setWasmExports(innerWasmExports);
+innerWasmExports._initialize();
 
-export const exports = wasmExports;
+export const exports = innerWasmExports;
+
 ${generateExports(exports)}
 
 """
@@ -664,7 +685,7 @@ fun generateExports(exports: List<WasmExport<*>>): String {
             """
             |export const {
                 |${joinToString(",\n") { it.name }}
-            |} = wasmExports
+            |} = innerWasmExports
             """.trimMargin()
         }
         .orEmpty()
@@ -678,7 +699,7 @@ fun generateExports(exports: List<WasmExport<*>>): String {
             """
             |const {
                 |${joinToString(",\n") { "'${it.second}': ${it.first}" }}
-            |} = wasmExports
+            |} = innerWasmExports
             |
             |export {
                 |${joinToString(",\n") { "${it.first} as '${it.second}'" }}

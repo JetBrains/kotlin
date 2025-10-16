@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.WasmJsSingleModuleOnlyConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendSingleModuleFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerWithPrecompiled
@@ -77,6 +78,7 @@ abstract class AbstractWasmJsCodegenSingleModuleTest(
         builder.useAfterAnalysisCheckers(
             ::IgnoredTestSuppressor,
         )
+        builder.useConfigurators(::WasmJsSingleModuleOnlyConfigurator)
     }
 }
 

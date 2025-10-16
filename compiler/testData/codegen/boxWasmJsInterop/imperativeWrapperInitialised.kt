@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 
 // FILE: wasmImport.kt
 import kotlin.wasm.WasmImport

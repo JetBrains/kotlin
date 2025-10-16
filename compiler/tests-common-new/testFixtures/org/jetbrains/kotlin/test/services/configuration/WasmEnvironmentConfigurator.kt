@@ -97,7 +97,7 @@ class WasmFirstStageEnvironmentConfigurator(
     }
 }
 
-class WasmSecondStageEnvironmentConfigurator(
+open class WasmSecondStageEnvironmentConfigurator(
     testServices: TestServices,
     wasmTarget: WasmTarget
 ) : WasmEnvironmentConfigurator(testServices, wasmTarget) {
@@ -151,3 +151,11 @@ class WasmSecondStageEnvironmentConfigurator(
     }
 }
 
+class WasmJsSingleModuleOnlyConfigurator(
+    testServices: TestServices,
+) : WasmSecondStageEnvironmentConfigurator(testServices, WasmTarget.JS) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        super.configureCompilerConfiguration(configuration, module)
+        configuration.put(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY, true)
+    }
+}

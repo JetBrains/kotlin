@@ -126,12 +126,6 @@ fun precompileWasmModules() {
     )
 
     val relativeStdlibPath = precompiledStdlibOutputDir.relativeTo(precompiledKotlinTestOutputDir).path.replace('\\', '/')
-//    val moduleResolutionMap = mapOf(
-//        "<kotlin-test>" to mapOf(
-//            "<kotlin>" to relativeStdlibPath
-//        )
-//    )
-//    val json = Json { prettyPrint = true }.encodeToString(moduleResolutionMap)
 
     val stringResolutionMap = """
         {
