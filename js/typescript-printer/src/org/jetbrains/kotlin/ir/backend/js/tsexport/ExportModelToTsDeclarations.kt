@@ -200,11 +200,17 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         }
 
         val renderedReturnType = returnType.toTypeScript(indent)
-        val containsUnresolvedChar = !name.isValidES5Identifier()
+        val containsUnresolvedChar = when (val exportedName = name) {
+            is ExportedFunctionName.Identifier -> !exportedName.value.isValidES5Identifier()
+            is ExportedFunctionName.WellKnownSymbol -> true
+        }
 
-        val escapedName = when {
-            isMember && containsUnresolvedChar -> "\"$name\""
-            else -> name
+        val escapedName = when (val exportedName = name) {
+            is ExportedFunctionName.WellKnownSymbol -> "[Symbol.${exportedName.value}]"
+            is ExportedFunctionName.Identifier -> when {
+                isMember && !exportedName.value.isValidES5Identifier() -> "\"${exportedName.value}\""
+                else -> exportedName.value
+            }
         }
 
         return if (!isMember && containsUnresolvedChar) {
@@ -212,7 +218,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         } else {
             "$prefix$visibility$keyword$escapedName$renderedTypeParameters($renderedParameters): $renderedReturnType;${
                 generateDefaultExportIfNeed(
-                    name,
+                    escapedName,
                     indent
                 )
             }"

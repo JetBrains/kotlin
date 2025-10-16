@@ -129,7 +129,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
         runIf(function.correspondingPropertySymbol == null && function.realOverrideTarget.parentClassOrNull?.symbol != context.irBuiltIns.anyClass) {
             val parentClass = function.parentClassOrNull
             ExportedFunction(
-                function.getExportedIdentifier(),
+                ExportedFunctionName.Identifier(function.getExportedIdentifier()),
                 returnType = exportType(function.returnType),
                 typeParameters = function.typeParameters.memoryOptimizedMap(::exportTypeParameter),
                 isMember = parentClass != null,

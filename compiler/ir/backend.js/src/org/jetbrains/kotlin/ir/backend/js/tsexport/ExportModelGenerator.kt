@@ -81,7 +81,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 val parent = function.parent
                 val realOverrideTarget = function.realOverrideTargetOrNull
                 ExportedFunction(
-                    function.getExportedIdentifier(),
+                    realOverrideTarget
+                        ?.getJsSymbolForOverriddenDeclaration()
+                        ?.let(ExportedFunctionName::WellKnownSymbol)
+                        ?: ExportedFunctionName.Identifier(function.getExportedIdentifier()),
                     returnType = exportType(function.returnType, function),
                     typeParameters = function.typeParameters.memoryOptimizedMap { exportTypeParameter(it, function) },
                     isMember = parent is IrClass,

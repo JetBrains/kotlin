@@ -51,6 +51,10 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
+
+fun String.toWellKnownSymbolAccess(): JsNameRef =
+    JsNameRef(this, JsNameRef("Symbol"))
+
 fun jsUndefined(context: JsStaticContext): JsExpression {
     return when (val void = context.backendContext.getVoid()) {
         is IrGetField -> context.getNameForField(void.symbol.owner).makeRef()
@@ -79,6 +83,13 @@ fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
 fun JsExpression.putIntoVariableWitName(name: JsName): JsVars {
     return JsVars(JsVars.JsVar(name, this))
 }
+
+fun jsElementAccess(name: JsName, computedName: JsNameRef?, receiver: JsExpression?): JsExpression =
+    computedName?.let { jsElementAccess(it, receiver) }
+        ?: jsElementAccess(name, receiver)
+
+fun jsElementAccess(name: JsNameRef, receiver: JsExpression?): JsExpression =
+    JsArrayAccess(receiver, name)
 
 fun jsElementAccess(name: JsName, receiver: JsExpression?): JsExpression =
     if (receiver == null || name.ident.isValidES5Identifier()) {
@@ -192,10 +203,16 @@ private fun parseSourceMap(sourceMap: String, file: IrFile?, annotation: IrConst
     }
 }
 
-fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
+fun translateFunction(
+    declaration: IrFunction,
+    name: JsName?,
+    computedName: JsNameRef?,
+    context: JsGenerationContext
+): JsFunction {
     with(context.staticContext.backendContext) {
         declaration.getJsCode()?.let { function ->
             function.name = name
+            function.computedName = computedName
             return function
         }
     }
@@ -219,12 +236,14 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
             if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC)
             if (declaration.shouldBeCompiledAsGenerator()) {
                 name?.isGeneratorFunction = true
+                computedName?.isGeneratorFunction = true
                 modifiers.add(JsFunction.Modifier.GENERATOR)
             }
         }
         .withSource(declaration, context, useNameOf = declaration)
 
     function.name = name
+    function.computedName = computedName
 
     declaration.nonDispatchParameters.forEach { param ->
         val name = functionContext.getNameForValueDeclaration(param)
@@ -274,8 +293,8 @@ fun translateCall(
     val nonDispatchArguments = translateNonDispatchCallArguments(expression, context, transformer)
 
     // Transform external and interface's property accessor call
-    // @JsName-annotated external and interface's property accessors are translated as function calls
-    if (function.getJsName() == null) {
+    // @JsName-annotated and @JsSymbol-annotated external and interface's property accessors are translated as function calls
+    if (function.getJsName() == null && function.getJsSymbol() == null) {
         val property = function.correspondingPropertySymbol?.owner
         if (property != null && (property.isEffectivelyExternal() || function.isExportedMember(staticContext.backendContext) && expression.superQualifierSymbol == null)) {
             if (function.overriddenSymbols.isEmpty() || function.overriddenStableProperty(staticContext.backendContext)) {
@@ -310,8 +329,13 @@ fun translateCall(
             Pair(function, superQualifier.owner)
         }
 
+        val symbolKey = target.getJsSymbolForOverriddenDeclaration()?.toWellKnownSymbolAccess()
+        val targetName = context.getNameForMemberFunction(target)
+
         if (currentDispatchReceiver.canUseSuperRef(context, klass)) {
-            return JsInvocation(JsNameRef(context.getNameForMemberFunction(target), JsSuperRef()), nonDispatchArguments.map { it.jsArgument })
+            return JsInvocation(
+                jsElementAccess(targetName, symbolKey, JsSuperRef()),
+                nonDispatchArguments.map { it.jsArgument })
         }
 
         val callRef = if (klass.isInterface) {
@@ -320,7 +344,7 @@ fun translateCall(
         } else {
             val qualifierName = klass.getClassRef(staticContext)
             val targetName = context.getNameForMemberFunction(target)
-            val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName, staticContext))
+            val qPrototype = jsElementAccess(targetName, symbolKey, prototypeOf(qualifierName, staticContext))
             JsNameRef(Namer.CALL_FUNCTION, qPrototype)
         }
 
@@ -329,17 +353,18 @@ fun translateCall(
 
     val isExternalVararg = function.isEffectivelyExternal() && function.parameters.any { it.isVararg }
 
-    val symbolName = when (jsDispatchReceiver) {
+    val symbolKey = function.getJsSymbolForOverriddenDeclaration()?.toWellKnownSymbolAccess()
+    val functionName = when (jsDispatchReceiver) {
         null -> context.getNameForStaticFunction(function)
         else -> context.getNameForMemberFunction(function)
     }
 
     val ref = when (jsDispatchReceiver) {
-        null -> JsNameRef(symbolName)
-        else -> jsElementAccess(symbolName.ident, jsDispatchReceiver)
+        null -> JsNameRef(functionName)
+        else -> symbolKey?.let { jsElementAccess(symbolKey, jsDispatchReceiver) } ?: jsElementAccess(functionName.ident, jsDispatchReceiver)
     }
 
-    if (symbolName.isGeneratorFunction) {
+    if (functionName.isGeneratorFunction || symbolKey?.isGeneratorFunction == true) {
         (ref.commentsBeforeNode ?: mutableListOf<JsComment>().also { ref.commentsBeforeNode = it })
             .add(JsMultiLineComment("#__NOINLINE__"))
     }
@@ -349,7 +374,7 @@ fun translateCall(
         if (jsDispatchReceiver != null) {
             if (argumentsAsSingleArray is JsArrayLiteral) {
                 JsInvocation(
-                    jsElementAccess(symbolName.ident, jsDispatchReceiver),
+                    jsElementAccess(functionName, symbolKey, jsDispatchReceiver),
                     argumentsAsSingleArray.expressions
                 )
             } else {
@@ -363,7 +388,7 @@ fun translateCall(
                         JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
                         JsReturn(
                             JsInvocation(
-                                JsNameRef("apply", jsElementAccess(symbolName.ident, receiverRef)),
+                                JsNameRef("apply", jsElementAccess(functionName.ident, receiverRef)),
                                 listOf(
                                     receiverRef,
                                     argumentsAsSingleArray
@@ -387,12 +412,12 @@ fun translateCall(
         } else {
             if (argumentsAsSingleArray is JsArrayLiteral) {
                 JsInvocation(
-                    JsNameRef(symbolName),
+                    JsNameRef(functionName),
                     argumentsAsSingleArray.expressions
                 )
             } else {
                 JsInvocation(
-                    JsNameRef("apply", JsNameRef(symbolName)),
+                    JsNameRef("apply", JsNameRef(functionName)),
                     listOf(JsNullLiteral(), argumentsAsSingleArray)
                 )
             }
