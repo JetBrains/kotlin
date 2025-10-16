@@ -22,7 +22,7 @@ internal fun TestGroupSuite.generateModularizedTests(
     }
 }
 
-object GenerateModularizedTests {
+object GenerateModularizedIsolatedTests {
 
     @JvmStatic
     fun main(args: Array<String>) {

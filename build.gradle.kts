@@ -1166,6 +1166,14 @@ tasks {
             environment("JDK_1_8", jdk8Home.get())
         }
     }
+
+    register("generateMtIsolatedTests") {
+        dependsOn(":compiler:fir:modularized-tests:generateModularizedTests")
+    }
+
+    register("runMtIsolatedTests") {
+        dependsOn(":compiler:fir:modularized-tests:runModularizedTests")
+    }
 }
 
 val zipCompiler by tasks.registering(Zip::class) {
