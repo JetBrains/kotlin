@@ -3,12 +3,6 @@ element: context(B)
 implicit values:
   KaImplicitReceiver:
     scopeIndexInTower = 1
-    type = A
-    ownerSymbol = KaContextParameterSymbol:
-      A: A
-
-  KaImplicitReceiver:
-    scopeIndexInTower = 2
     type = TopLevel<T1>
     ownerSymbol = KaNamedClassSymbol:
       /TopLevel
@@ -25,16 +19,6 @@ scopes:
   TypeScope, index = 1
     packages: 0
     classifiers: 0
-    callables: 3
-      fun equals(other: kotlin.Any?): kotlin.Boolean
-      fun hashCode(): kotlin.Int
-      fun toString(): kotlin.String
-    constructors: 1
-      constructor()
-
-  TypeScope, index = 2
-    packages: 0
-    classifiers: 0
     callables: 4
       context(B@B)
       val <T2, T3> C.foo: kotlin.Boolean
@@ -45,20 +29,20 @@ scopes:
     constructors: 1
       constructor()
 
-  TypeParameterScope, index = 3
+  TypeParameterScope, index = 2
     packages: 0
     classifiers: 1
       T1
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 4
+  ExplicitSimpleImportingScope, index = 3
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 5
+  PackageMemberScope, index = 4
     packages: 6
       META-INF
       java
@@ -75,14 +59,15 @@ scopes:
     callables: 0
     constructors: 0
 
+  DefaultSimpleImportingScope, index = 5
+
   DefaultSimpleImportingScope, index = 6
 
-  DefaultSimpleImportingScope, index = 7
-
-  ExplicitStarImportingScope, index = 8
+  ExplicitStarImportingScope, index = 7
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 9
+  DefaultStarImportingScope, index = 8
+

@@ -16,7 +16,7 @@ context(A, B)
 var b = <!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>2<!>
 
 context(A, B)
-val c get() = a() + b()
+val c get() = <!NO_CONTEXT_ARGUMENT!>a<!>() + <!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>b<!>()
 
 /* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
 propertyDeclaration, propertyDeclarationWithContext */

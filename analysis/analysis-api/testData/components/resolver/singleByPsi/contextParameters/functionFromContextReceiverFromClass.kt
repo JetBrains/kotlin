@@ -12,3 +12,4 @@ class Foo {
 }
 
 // LANGUAGE: +ContextReceivers
+// IGNORE_FIR

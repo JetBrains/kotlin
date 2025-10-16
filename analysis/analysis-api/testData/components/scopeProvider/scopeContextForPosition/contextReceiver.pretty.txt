@@ -1,11 +1,5 @@
 element: e
 implicit values:
-  KaImplicitReceiver:
-    scopeIndexInTower = 1
-    type = Context
-    ownerSymbol = KaContextParameterSymbol:
-      Context: Context
-
 scopes:
   LocalScope, index = 0
     packages: 0
@@ -13,30 +7,19 @@ scopes:
     callables: 0
     constructors: 0
 
-  TypeScope, index = 1
-    packages: 0
-    classifiers: 0
-    callables: 4
-      fun memberInContext()
-      fun equals(other: kotlin.Any?): kotlin.Boolean
-      fun hashCode(): kotlin.Int
-      fun toString(): kotlin.String
-    constructors: 1
-      constructor()
-
-  LocalScope, index = 2
+  LocalScope, index = 1
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 3
+  ExplicitSimpleImportingScope, index = 2
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 4
+  PackageMemberScope, index = 3
     packages: 6
       META-INF
       java
@@ -51,15 +34,15 @@ scopes:
       fun test()
     constructors: 0
 
+  DefaultSimpleImportingScope, index = 4
+
   DefaultSimpleImportingScope, index = 5
 
-  DefaultSimpleImportingScope, index = 6
-
-  ExplicitStarImportingScope, index = 7
+  ExplicitStarImportingScope, index = 6
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 8
+  DefaultStarImportingScope, index = 7
 

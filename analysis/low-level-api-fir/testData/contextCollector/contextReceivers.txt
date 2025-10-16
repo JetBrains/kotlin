@@ -14,26 +14,18 @@ Tower Data Context:
     Element 6
         Scope: FirLocalScope
     Element 7
-        Context receivers:
-            FirValueParameterSymbol R|Foo|
-                Type: Foo
-                Label: Foo
-            FirValueParameterSymbol R|Bar|
-                Type: Bar
-                Label: Bar
-    Element 8
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] contextReceivers.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
-        public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Int|
+    public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Bar : R|kotlin/Any| {
-        public abstract [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Int|
+    public final? [ResolvedTo(RAW_FIR)] interface Bar : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): Int
 
     }
     context([ResolvedTo(BODY_RESOLVE)] R|Foo|, [ResolvedTo(BODY_RESOLVE)] R|Bar|)
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        this@R|context of /test|.R|/Foo.foo|().R|kotlin/Int.plus|(this@R|context of /test|.R|/Bar.bar|())
+        <Unresolved name: foo>#().R|kotlin/plus|(<Unresolved name: bar>#())
     }

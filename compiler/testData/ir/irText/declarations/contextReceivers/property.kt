@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: ANY
 // FIR_IDENTICAL
 // LANGUAGE: +ContextReceivers
 

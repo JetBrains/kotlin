@@ -18,15 +18,6 @@ implicit values:
     ownerSymbol = KaNamedFunctionSymbol:
       /foo(<extension receiver>: C, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
 
-  KaImplicitReceiver:
-    scopeIndexInTower = 5
-    type = KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: A
-    ownerSymbol = KaContextParameterSymbol:
-      A: A
-
 scopes:
   TypeScope, index = 0
     packages: 0
@@ -413,158 +404,7 @@ scopes:
         valueParameters: []
         visibility: PUBLIC
 
-  TypeScope, index = 5
-    packages: 0
-    classifiers: 0
-    callables: 3
-      KaNamedFunctionSymbol:
-        annotations: []
-        callableId: kotlin/Any.equals
-        compilerVisibility: Public
-        contextParameters: []
-        contextReceivers: []
-        contractEffects: []
-        hasStableParameterNames: true
-        isActual: false
-        isBuiltinFunctionInvoke: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isInfix: false
-        isInline: false
-        isOperator: true
-        isOverride: false
-        isStatic: false
-        isSuspend: false
-        isTailRec: false
-        location: CLASS
-        modality: OPEN
-        name: equals
-        origin: LIBRARY
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/Boolean
-        typeParameters: []
-        valueParameters: [
-          KaValueParameterSymbol:
-            annotations: []
-            callableId: null
-            compilerVisibility: Public
-            contextReceivers: []
-            generatedPrimaryConstructorProperty: null
-            hasDeclaredDefaultValue: false
-            hasDefaultValue: false
-            isActual: false
-            isCrossinline: false
-            isExpect: false
-            isExtension: false
-            isImplicitLambdaParameter: false
-            isNoinline: false
-            isVal: true
-            isVararg: false
-            location: LOCAL
-            modality: FINAL
-            name: other
-            origin: LIBRARY
-            receiverParameter: null
-            returnType: KaUsualClassType:
-              annotations: []
-              typeArguments: []
-              type: kotlin/Any?
-            visibility: PUBLIC
-        ]
-        visibility: PUBLIC
-      KaNamedFunctionSymbol:
-        annotations: []
-        callableId: kotlin/Any.hashCode
-        compilerVisibility: Public
-        contextParameters: []
-        contextReceivers: []
-        contractEffects: []
-        hasStableParameterNames: true
-        isActual: false
-        isBuiltinFunctionInvoke: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isInfix: false
-        isInline: false
-        isOperator: false
-        isOverride: false
-        isStatic: false
-        isSuspend: false
-        isTailRec: false
-        location: CLASS
-        modality: OPEN
-        name: hashCode
-        origin: LIBRARY
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/Int
-        typeParameters: []
-        valueParameters: []
-        visibility: PUBLIC
-      KaNamedFunctionSymbol:
-        annotations: []
-        callableId: kotlin/Any.toString
-        compilerVisibility: Public
-        contextParameters: []
-        contextReceivers: []
-        contractEffects: []
-        hasStableParameterNames: true
-        isActual: false
-        isBuiltinFunctionInvoke: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isInfix: false
-        isInline: false
-        isOperator: false
-        isOverride: false
-        isStatic: false
-        isSuspend: false
-        isTailRec: false
-        location: CLASS
-        modality: OPEN
-        name: toString
-        origin: LIBRARY
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/String
-        typeParameters: []
-        valueParameters: []
-        visibility: PUBLIC
-    constructors: 1
-      KaConstructorSymbol:
-        annotations: []
-        callableId: null
-        compilerVisibility: Public
-        containingClassId: A
-        contextReceivers: []
-        hasStableParameterNames: true
-        isActual: false
-        isExpect: false
-        isExtension: false
-        isPrimary: true
-        location: CLASS
-        modality: FINAL
-        origin: SOURCE_MEMBER_GENERATED
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: A
-        typeParameters: []
-        valueParameters: []
-        visibility: PUBLIC
-
-  LocalScope, index = 6
+  LocalScope, index = 5
     packages: 0
     classifiers: 0
     callables: 2
@@ -622,7 +462,7 @@ scopes:
         visibility: PUBLIC
     constructors: 0
 
-  TypeParameterScope, index = 7
+  TypeParameterScope, index = 6
     packages: 0
     classifiers: 1
       KaTypeParameterSymbol:
@@ -641,13 +481,13 @@ scopes:
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 8
+  ExplicitSimpleImportingScope, index = 7
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  PackageMemberScope, index = 9
+  PackageMemberScope, index = 8
     packages: 6
       KaPackageSymbol:
         fqName: META-INF
@@ -926,15 +766,15 @@ scopes:
         visibility: PUBLIC
     constructors: 0
 
+  DefaultSimpleImportingScope, index = 9
+
   DefaultSimpleImportingScope, index = 10
 
-  DefaultSimpleImportingScope, index = 11
-
-  ExplicitStarImportingScope, index = 12
+  ExplicitStarImportingScope, index = 11
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 13
+  DefaultStarImportingScope, index = 12
 

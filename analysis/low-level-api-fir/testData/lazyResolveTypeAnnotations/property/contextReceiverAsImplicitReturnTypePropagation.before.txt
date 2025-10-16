@@ -1,15 +1,3 @@
-@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirRegularPropertySymbol /bar
-  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
-
-@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /bar
-  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
-
-@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /bar
-  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
-
 FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
@@ -22,12 +10,12 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /foo]] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/Int>|.bar: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/Int>|.bar: <ERROR TYPE REF: Unresolved this@List>
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
             ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
         }
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
-            ^ this@R|context of /foo|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
+            ^ this@List#
         }

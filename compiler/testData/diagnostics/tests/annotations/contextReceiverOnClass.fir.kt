@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextReceivers
 // ISSUE: KT-72863
 
@@ -10,7 +10,7 @@ class ClassWithImplicitConstructor
 
 <!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(List<@Anno("context receiver type $prop") Int>)
 class ClassWithExplicitConstructor<!CONTEXT_RECEIVERS_DEPRECATED!>()<!> {
-    <!CONTEXT_CLASS_OR_CONSTRUCTOR!>constructor(i: Int) : this()<!>
+    <!CONTEXT_CLASS_OR_CONSTRUCTOR!>constructor(i: Int) : <!NO_CONTEXT_ARGUMENT!>this<!>()<!>
 }
 
 const val prop = "str"

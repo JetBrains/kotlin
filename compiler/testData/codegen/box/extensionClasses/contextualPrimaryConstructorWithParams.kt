@@ -1,6 +1,6 @@
 // LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
-// FIR status: context receivers aren't yet supported
+// IGNORE_BACKEND_K2: ANY
 
 class O(val o: String)
 

@@ -15,14 +15,6 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol p: R|kotlin/Boolean|
-    Element 7
-        Context receivers:
-            FirValueParameterSymbol R|one/A|
-                Type: one.A
-                Label: A
-            FirValueParameterSymbol R|kotlin/Int|
-                Type: kotlin.Int
-                Label: Int
 
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionContextReceiver.kt
     public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {

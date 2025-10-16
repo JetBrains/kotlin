@@ -21,33 +21,28 @@ Tower Data Context:
                 FirValueParameterSymbol param: R|kotlin/Int|
                 FirValueParameterSymbol param2: R|kotlin/String|
     Element 8
-        Context receivers:
-            FirValueParameterSymbol R|A|
-                Type: A
-                Label: A
-    Element 9
         Implicit receiver:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|C|
                 Type: C
-    Element 10
+    Element 9
         Scope: FirLocalScope
-    Element 11
+    Element 10
         Scope: FirMemberTypeParameterScope
             Classifiers:
                 FirTypeParameterSymbol T2
-    Element 12
+    Element 11
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol anonParam: R|kotlin/Boolean|
                 FirValueParameterSymbol anonParam2: R|kotlin/Long|
-    Element 13
+    Element 12
         Implicit receiver:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|D|
                 Type: D
 
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionValueParameterWithContextReceiver.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|A| {
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 

@@ -9,7 +9,7 @@ class Outer {
 
 context(Outer)
 class Inner(arg: Any) {
-    fun bar() = x
+    fun bar() = <!UNRESOLVED_REFERENCE!>x<!>
 }
 
 fun f(outer: Outer) {

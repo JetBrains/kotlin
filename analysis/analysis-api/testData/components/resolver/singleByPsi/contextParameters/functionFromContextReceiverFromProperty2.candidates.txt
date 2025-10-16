@@ -1,14 +1,10 @@
 KtCallExpression(120,123): 'c()'
-  KaApplicableCallCandidateInfo:
+  KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = [
-          KaImplicitReceiverValue:
-            symbol = Container: Container
-            type = Container
-        ]
+        contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -27,4 +23,5 @@ KtCallExpression(120,123): 'c()'
           ]
           callableId = /c
       typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'Container' found.>
     isInBestCandidates = true

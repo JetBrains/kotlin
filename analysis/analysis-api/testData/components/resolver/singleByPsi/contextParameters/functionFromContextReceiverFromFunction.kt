@@ -10,3 +10,4 @@ fun Receiver.f() {
 }
 
 // LANGUAGE: +ContextReceivers
+// IGNORE_FIR

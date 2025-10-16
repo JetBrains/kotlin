@@ -5,7 +5,7 @@
 typealias IterableClass<C, T> = (C) -> Iterator<T>
 
 context(IterableClass<C, T>)
-fun <C, T> C.iterator(any: Any?): Iterator<T> = this@IterableClass.invoke(this)
+fun <C, T> C.iterator(any: Any?): Iterator<T> = this<!UNRESOLVED_LABEL!>@IterableClass<!>.invoke(this)
 
 fun <T> listOf(vararg items: T): List<T> = null!!
 

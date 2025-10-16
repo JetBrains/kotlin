@@ -1,6 +1,6 @@
 // LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
-// FIR status: context receivers aren't yet supported
+// IGNORE_BACKEND_K2: ANY
 // WITH_STDLIB
 
 context(Collection<P>) class A<P> {

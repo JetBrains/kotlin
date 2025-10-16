@@ -1,4 +1,5 @@
 // LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 // WITH_STDLIB
 interface Semigroup<T> {
     infix fun T.combine(other: T): T

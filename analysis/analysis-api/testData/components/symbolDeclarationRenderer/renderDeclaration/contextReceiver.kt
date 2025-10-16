@@ -35,4 +35,4 @@ context(b@B, `fun`@A)
 fun foo() = Unit
 
 context(Context2<C<String>>)
-fun bar() = with (Context2Impl(getContextElement().a)) { C() }
+fun bar(): C<String>

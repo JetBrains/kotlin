@@ -17,18 +17,13 @@ Tower Data Context:
             public final class Test : R|kotlin/Any|
                 Type: Test
     Element 7
-        Context receivers:
-            FirValueParameterSymbol R|Foo|
-                Type: Foo
-                Label: Foo
-    Element 8
         Scope: FirLocalScope
-    Element 9
+    Element 8
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiversClass.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
-        public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Int|
+    public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int
 
     }
     context([ResolvedTo(STATUS)] R|Foo|)
@@ -39,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiversClass.kt
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-            this@R|context of /Test|.R|/Foo.foo|()
+            <Unresolved name: foo>#()
         }
 
     }

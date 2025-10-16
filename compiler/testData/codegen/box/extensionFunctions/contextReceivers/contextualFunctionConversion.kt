@@ -1,4 +1,5 @@
 // LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 // TARGET_BACKEND: JVM_IR
 
 fun withContext(f: context(String) () -> String) = f("OK")

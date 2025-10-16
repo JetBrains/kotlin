@@ -1,5 +1,6 @@
 // LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K2: ANY
 
 data class Pair<A, B>(val first: A, val second: B)
 

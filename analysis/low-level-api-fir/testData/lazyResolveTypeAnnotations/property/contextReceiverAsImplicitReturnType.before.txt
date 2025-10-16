@@ -1,17 +1,5 @@
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirRegularPropertySymbol /foo
-  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
-
-@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
   context -> FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo
-  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
-
-@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /foo
-  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
-
-@R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /foo
   anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
@@ -27,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnType.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
-            ^ this@R|context of /foo|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
+            ^ this@List#
         }

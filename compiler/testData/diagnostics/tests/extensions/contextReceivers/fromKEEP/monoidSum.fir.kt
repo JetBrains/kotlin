@@ -21,7 +21,7 @@ object StringMonoid : Monoid<String> {
 public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> R): R = TODO()
 
 context(Monoid<T>)
-fun <T> List<T>.sum(): T = fold(unit) { acc, e -> acc.combine(e) }
+fun <T> List<T>.sum(): T = fold(<!UNRESOLVED_REFERENCE!>unit<!>) { acc, e -> acc.<!UNRESOLVED_REFERENCE!>combine<!>(e) }
 
 fun <T> listOf(vararg items: T): List<T> = null!!
 

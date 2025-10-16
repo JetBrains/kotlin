@@ -1,5 +1,6 @@
 // LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K2: ANY
 
 fun box(): String {
     with(Ctx()) {

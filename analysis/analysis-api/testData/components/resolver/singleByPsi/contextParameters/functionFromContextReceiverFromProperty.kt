@@ -11,3 +11,4 @@ val Receiver.f: Unit
 }
 
 // LANGUAGE: +ContextReceivers
+// IGNORE_FIR

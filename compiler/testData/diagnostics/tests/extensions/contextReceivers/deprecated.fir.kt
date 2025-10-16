@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextReceivers
 
 class A

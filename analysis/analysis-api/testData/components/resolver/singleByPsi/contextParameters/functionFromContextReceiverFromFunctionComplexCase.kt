@@ -11,3 +11,4 @@ fun bar() {
 }
 
 // LANGUAGE: +ContextReceivers
+// IGNORE_FIR

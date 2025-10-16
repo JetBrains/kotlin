@@ -1,6 +1,7 @@
 // FIR_IDENTICAL
 // ISSUE: KT-67699
 // LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K2: ANY
 // TARGET_BACKEND: JVM_IR
 
 class Controller<E>(val e: E)
