@@ -24,8 +24,16 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.SirCustomTypeTranslator
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSArray
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSDictionary
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSSet
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsObjCBridged
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.CType
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.bridgeAsNSCollectionElement
 import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 public class SirCustomTypeTranslatorImpl(
     private val session: SirSession
@@ -125,5 +133,24 @@ public class SirCustomTypeTranslatorImpl(
                 ctx.requiresHashableAsAny,
             )
         }
+    }
+
+    override fun SirNominalType.toBridge(): SirCustomTypeTranslator.BridgeWrapper? {
+        val bridge = when (typeDeclaration) {
+            SirSwiftModule.string -> AsObjCBridged(this, CType.NSString)
+            SirSwiftModule.array -> AsNSArray(this, bridgeAsNSCollectionElement(typeArguments.single(), session))
+            SirSwiftModule.set -> AsNSSet(this, bridgeAsNSCollectionElement(typeArguments.single(), session))
+            SirSwiftModule.dictionary -> {
+                val (key, value) = typeArguments
+                AsNSDictionary(
+                    this,
+                    bridgeAsNSCollectionElement(key, session),
+                    bridgeAsNSCollectionElement(value, session),
+                )
+            }
+
+            else -> return null
+        }
+        return SirCustomTypeTranslator.BridgeWrapper(bridge)
     }
 }
