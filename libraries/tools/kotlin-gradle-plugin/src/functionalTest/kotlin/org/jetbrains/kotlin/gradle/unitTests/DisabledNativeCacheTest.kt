@@ -100,14 +100,15 @@ class DisabledNativeCacheTest {
                 )
             }
 
-            if (HostManager.hostIsMingw) {
-                val konanWinCacheKind = konanCacheKind(WIN_X64_LINK_TASK_NAME)
-                assertEquals(
-                    NativeCacheKind.STATIC,
-                    konanWinCacheKind.get(),
-                    "Native cache should be enabled on Windows target"
-                )
-            }
+            // On Windows hosts caches are disabled by default
+//            if (HostManager.hostIsMingw) {
+//                val konanWinCacheKind = konanCacheKind(WIN_X64_LINK_TASK_NAME)
+//                assertEquals(
+//                    NativeCacheKind.STATIC,
+//                    konanWinCacheKind.get(),
+//                    "Native cache should be enabled on Windows target"
+//                )
+//            }
         }
     }
 
