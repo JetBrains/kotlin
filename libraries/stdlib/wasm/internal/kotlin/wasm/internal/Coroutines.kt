@@ -37,25 +37,25 @@ internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinu
 @PublishedApi
 @DoNotInlineOnFirstStage
 internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T {
-    return error("this stdlib is used")
+    return suspendCoroutineUninterceptedOrReturnImpl<T>(block)
+}
+
+@PublishedApi
+@Suppress("UNCHECKED_CAST")
+internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
+    val cont = getContinuation<T>()
+    val result = block(cont)
+    return if (result == COROUTINE_SUSPENDED) {
+        suspendIntrinsic(cont) as T
+    } else result as T
 }
 
 //@UsedFromCompilerGeneratedCode
 //@PublishedApi
-//@Suppress("UNCHECKED_CAST")
-//internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
-//    val cont = getContinuation<T>()
-//    val result = block(cont)
-//    return if (result == COROUTINE_SUSPENDED) {
-//        suspendIntrinsic(cont)
-//    } else result as T
-//}
-
-//@UsedFromCompilerGeneratedCode
-//@PublishedApi
 @Suppress("UNUSED_PARAMETER")
-@ExcludedFromCodegen
-internal suspend fun <T> suspendIntrinsic(cont: Continuation<T>): T {
+// Can't link symbol ic#57:ic#53:kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnImpl when added
+//@ExcludedFromCodegen
+internal suspend fun suspendIntrinsic(cont: Continuation<*>): Any? {
     implementedAsIntrinsic
 }
 
