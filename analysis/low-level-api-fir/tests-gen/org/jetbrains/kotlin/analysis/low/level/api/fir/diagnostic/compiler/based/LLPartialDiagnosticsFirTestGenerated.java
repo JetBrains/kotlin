@@ -2865,6 +2865,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("differentNamesInOverride.kt")
+        public void testDifferentNamesInOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/differentNamesInOverride.kt");
+        }
+
+        @Test
         @TestMetadata("disabled.kt")
         public void testDisabled() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/disabled.kt");
@@ -2880,6 +2886,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         @TestMetadata("mixingNamedAndPositional.kt")
         public void testMixingNamedAndPositional() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/mixingNamedAndPositional.kt");
+        }
+
+        @Test
+        @TestMetadata("operators.kt")
+        public void testOperators() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/explicit/operators.kt");
         }
 
         @Test

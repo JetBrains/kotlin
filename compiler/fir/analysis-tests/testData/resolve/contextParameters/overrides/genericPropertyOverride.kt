@@ -17,10 +17,10 @@ abstract class Base<T> {
 }
 
 class Child : Base<String>() {
-    context(child: RChild)
+    context(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>child<!>: RChild)
     override fun <RChild> String.foo(): Int? = 1
 
-    context(child: RChild)
+    context(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>child<!>: RChild)
     override fun <RChild> String.foo(t: String): Int? = 1
 
     context(child: RChild)

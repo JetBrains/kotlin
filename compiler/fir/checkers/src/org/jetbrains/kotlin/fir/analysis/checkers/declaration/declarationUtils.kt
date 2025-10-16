@@ -148,12 +148,22 @@ val FirCallableSymbol<*>.hasExplicitReturnType: Boolean
 
 fun FirNamedFunctionSymbol.checkValueParameterNamesWith(
     otherFunctionSymbol: FirNamedFunctionSymbol,
-    reportAction: (currentParameter: FirValueParameterSymbol, conflictingParameter: FirValueParameterSymbol, parameterIndex: Int) -> Unit
+    reportAction: (currentParameter: FirValueParameterSymbol, conflictingParameter: FirValueParameterSymbol, parameterIndex: Int) -> Unit,
 ) {
-    // We don't handle context parameters here because we specifically allow renaming them in overrides (KT-75815).
-    val valueParameterPairs = valueParameterSymbols.zip(otherFunctionSymbol.valueParameterSymbols)
+    checkValueParameterNamesWith(valueParameterSymbols, otherFunctionSymbol.valueParameterSymbols, reportAction)
+    checkValueParameterNamesWith(contextParameterSymbols, otherFunctionSymbol.contextParameterSymbols, reportAction)
+}
+
+@OptIn(SymbolInternals::class)
+private fun checkValueParameterNamesWith(
+    symbols: List<FirValueParameterSymbol>,
+    otherSymbols: List<FirValueParameterSymbol>,
+    reportAction: (FirValueParameterSymbol, FirValueParameterSymbol, Int) -> Unit,
+) {
+    val valueParameterPairs = symbols.zip(otherSymbols)
     for ((index, valueParameterPair) in valueParameterPairs.withIndex()) {
         val (currentValueParameter, otherValueParameter) = valueParameterPair
+        if (currentValueParameter.fir.isLegacyContextReceiver() || otherValueParameter.fir.isLegacyContextReceiver()) continue
         if (currentValueParameter.name != otherValueParameter.name) {
             reportAction(currentValueParameter, otherValueParameter, index)
         }
