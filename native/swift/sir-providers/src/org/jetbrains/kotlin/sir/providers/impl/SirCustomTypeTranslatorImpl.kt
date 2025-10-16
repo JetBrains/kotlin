@@ -32,6 +32,8 @@ public class SirCustomTypeTranslatorImpl(
 ) : SirCustomTypeTranslator {
     private val openEndRangeFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier("OpenEndRange"))
 
+    private val closedRangeFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier("ClosedRange"))
+
     // These classes already have ObjC counterparts assigned statically in ObjC Export.
     private val supportedFqNames: List<FqName> =
         listOf(
@@ -43,12 +45,12 @@ public class SirCustomTypeTranslatorImpl(
 //            FqNames.mutableMap,
             FqNames.string.toSafe(),
             openEndRangeFqName,
-//            FqNames.intRange.toSafe(),
-//            FqNames.longRange.toSafe(),
+            closedRangeFqName,
+            FqNames.intRange.toSafe(),
+            FqNames.longRange.toSafe(),
 //            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("UIntRange")),
 //            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("ULongRange")),
 //            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("CharRange")),
-//            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("ClosedRange")),
         )
 
     public override fun isFqNameSupported(fqName: FqName): Boolean {
@@ -86,6 +88,26 @@ public class SirCustomTypeTranslatorImpl(
                 )
             }
 
+            isClassType(ClassId.topLevel(closedRangeFqName)) -> {
+                SirNominalType(
+                    SirSwiftModule.closedRange,
+                    listOf(typeArguments.single().sirType(ctx))
+                )
+            }
+
+            isClassType(StandardClassIds.IntRange) -> {
+                SirNominalType(
+                    SirSwiftModule.closedRange,
+                    listOf(SirNominalType(SirSwiftModule.int32))
+                )
+            }
+
+            isClassType(StandardClassIds.LongRange) -> {
+                SirNominalType(
+                    SirSwiftModule.closedRange,
+                    listOf(SirNominalType(SirSwiftModule.int64))
+                )
+            }
             else -> null
         }
     }
