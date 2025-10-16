@@ -1737,6 +1737,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("prohibitHugeFunctionN.kt")
+    public void testProhibitHugeFunctionN() {
+      runTest("compiler/testData/diagnostics/tests/prohibitHugeFunctionN.kt");
+    }
+
+    @Test
     @TestMetadata("ProjectionOnFunctionArgumentErrror.kt")
     public void testProjectionOnFunctionArgumentErrror() {
       runTest("compiler/testData/diagnostics/tests/ProjectionOnFunctionArgumentErrror.kt");

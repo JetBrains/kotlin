@@ -97,6 +97,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = "Enable extra checkers"
     )
 
+    val IGNORE_K1_BECAUSE_IT_FREEZES by directive(
+        description = "Skips the test as it runs too long and basically freezes IDE."
+    )
+
     val WITH_EXPERIMENTAL_CHECKERS by directive(
         description = "Enable experimental checkers"
     )

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicUnstableAndK2LanguageFeaturesSkipConfigurator
+import org.jetbrains.kotlin.test.frontend.classic.handlers.K1FreezeSkipConfigurator
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.preprocessors.JvmInlineSourceTransformer
 import org.jetbrains.kotlin.test.preprocessors.MetaInfosCleanupPreprocessor
@@ -52,6 +53,7 @@ abstract class AbstractKotlinCompilerTest {
             useMetaTestConfigurators(
                 ::SystemPropertyTestDataRootConfigurator,
                 ::ClassicUnstableAndK2LanguageFeaturesSkipConfigurator,
+                ::K1FreezeSkipConfigurator,
                 ::TargetBackendTestSkipper,
             )
             configureDebugFlags()
