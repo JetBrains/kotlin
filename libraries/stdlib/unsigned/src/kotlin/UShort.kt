@@ -412,6 +412,7 @@ public value class UShort @kotlin.internal.IntrinsicConstEvaluation @PublishedAp
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Byte.toUShort(): UShort = UShort(this.toShort())
 /**
  * Converts this [Short] value to [UShort].
@@ -422,6 +423,7 @@ public inline fun Byte.toUShort(): UShort = UShort(this.toShort())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Short.toUShort(): UShort = UShort(this)
 /**
  * Converts this [Int] value to [UShort].
@@ -433,6 +435,7 @@ public inline fun Short.toUShort(): UShort = UShort(this)
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Int.toUShort(): UShort = UShort(this.toShort())
 /**
  * Converts this [Long] value to [UShort].
@@ -444,4 +447,5 @@ public inline fun Int.toUShort(): UShort = UShort(this.toShort())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Long.toUShort(): UShort = UShort(this.toShort())

@@ -438,6 +438,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Byte.toULong(): ULong = ULong(this.toLong())
 /**
  * Converts this [Short] value to [ULong].
@@ -449,6 +450,7 @@ public inline fun Byte.toULong(): ULong = ULong(this.toLong())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Short.toULong(): ULong = ULong(this.toLong())
 /**
  * Converts this [Int] value to [ULong].
@@ -460,6 +462,7 @@ public inline fun Short.toULong(): ULong = ULong(this.toLong())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Int.toULong(): ULong = ULong(this.toLong())
 /**
  * Converts this [Long] value to [ULong].
@@ -470,6 +473,7 @@ public inline fun Int.toULong(): ULong = ULong(this.toLong())
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Long.toULong(): ULong = ULong(this)
 
 /**
@@ -480,6 +484,7 @@ public inline fun Long.toULong(): ULong = ULong(this)
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Float.toULong(): ULong = floatToULong(this)
 /**
  * Converts this [Double] value to [ULong].
@@ -489,4 +494,5 @@ public inline fun Float.toULong(): ULong = floatToULong(this)
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun Double.toULong(): ULong = doubleToULong(this)
