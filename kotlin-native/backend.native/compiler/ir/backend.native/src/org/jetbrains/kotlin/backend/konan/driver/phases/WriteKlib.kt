@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToMa
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.serialization.SerializerOutput
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.file.File

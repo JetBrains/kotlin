@@ -1,9 +1,16 @@
-package org.jetbrains.kotlin.backend.konan
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
+import org.jetbrains.kotlin.backend.konan.KonanCompilationException
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.phases.SerializerOutput
+import org.jetbrains.kotlin.backend.konan.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
@@ -32,7 +39,7 @@ private fun PhaseContext.firSerializerBase(
     val configuration = config.configuration
     val usedResolvedLibraries = fir2IrOutput?.let {
         config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder).filter {
-            (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)) || it in fir2IrOutput.usedLibraries
+            (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.Companion.PURGE_USER_LIBS)) || it in fir2IrOutput.usedLibraries
         }
     }
 
@@ -45,11 +52,11 @@ private fun PhaseContext.firSerializerBase(
             configuration = configuration,
             diagnosticReporter = diagnosticReporter,
             metadataSerializer = Fir2KlibMetadataSerializer(
-                    configuration,
-                    firResult.outputs,
-                    fir2IrOutput?.fir2irActualizedResult,
-                    exportKDoc = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC),
-                    produceHeaderKlib = produceHeaderKlib,
+                configuration,
+                firResult.outputs,
+                fir2IrOutput?.fir2irActualizedResult,
+                exportKDoc = config.configuration.getBoolean(KonanConfigKeys.Companion.EXPORT_KDOC),
+                produceHeaderKlib = produceHeaderKlib,
             ),
             cleanFiles = emptyList(),
             dependencies = usedResolvedLibraries?.map { it.library as KonanLibrary }.orEmpty(),
