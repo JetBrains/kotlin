@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":native:objcexport-header-generator"))
     implementation(project(":native:objcexport-header-generator-k1"))
     implementation(project(":native:binary-options"))
+    implementation(project(":compiler:cli:cli-native-klib"))
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
