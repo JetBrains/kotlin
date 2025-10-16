@@ -31,11 +31,8 @@ public class SirCustomTypeTranslatorImpl(
     private val supportedFqNames: List<FqName> =
         listOf(
             FqNames.set,
-            FqNames.mutableSet,
             FqNames.map,
-            FqNames.mutableList,
             FqNames.list,
-            FqNames.mutableMap,
             FqNames.string.toSafe()
         )
 
