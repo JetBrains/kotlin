@@ -1,3 +1,4 @@
+DEFAULT TYPE:
 KaUsualClassType:
   annotations: []
   typeArguments: [
@@ -9,3 +10,11 @@ KaUsualClassType:
       type: A
   ]
   type: pack/TopLevelClass<A>.pack/TopLevelClass.NestedClass<T>
+DEFAULT TYPE WITH STAR PROJECTIONS:
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    *
+    *
+  ]
+  type: pack/TopLevelClass<*>.pack/TopLevelClass.NestedClass<*>

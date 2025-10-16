@@ -1,3 +1,4 @@
+DEFAULT TYPE:
 KaUsualClassType:
   annotations: []
   typeArguments: [
@@ -21,3 +22,15 @@ KaUsualClassType:
       type: A
   ]
   type: foo/LocalClass<A>.foo/LocalInner1<B, C>.foo/LocalInner2<D, E, F>
+DEFAULT TYPE WITH STAR PROJECTIONS:
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    *
+    *
+    *
+    *
+    *
+    *
+  ]
+  type: foo/LocalClass<*>.foo/LocalInner1<*, *>.foo/LocalInner2<*, *, *>

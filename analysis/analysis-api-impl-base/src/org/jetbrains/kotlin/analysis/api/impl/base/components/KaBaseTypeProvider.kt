@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
@@ -21,5 +23,14 @@ abstract class KaBaseTypeProvider<T : KaSession> : KaBaseSessionComponent<T>(), 
             }
 
             return analysisSession.buildVarargArrayType(returnType)
+        }
+
+    override val KaClassifierSymbol.defaultTypeWithStarProjections: KaType
+        get() = withValidityAssertion {
+            return if (this is KaClassLikeSymbol) {
+                analysisSession.typeCreator.classType(this@defaultTypeWithStarProjections)
+            } else {
+                this.defaultType
+            }
         }
 }

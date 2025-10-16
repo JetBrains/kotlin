@@ -1,3 +1,8 @@
+DEFAULT TYPE:
+KaTypeParameterType:
+  annotations: []
+  type: Ee
+DEFAULT TYPE WITH STAR PROJECTIONS:
 KaTypeParameterType:
   annotations: []
   type: Ee
