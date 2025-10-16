@@ -51,6 +51,25 @@ class DisabledNativeCacheTest {
     }
 
     @Test
+    fun `test deprecated native cache property for linuxX64 target`() {
+        with(
+            buildProjectWithMPP(
+                preApplyCode = {
+                    project.extra.set("kotlin.native.cacheKind.linuxX64", NativeCacheKind.NONE.name)
+                }
+            )
+        ) {
+            kotlin {
+                linuxX64().binaries.staticLib()
+            }
+
+            evaluate()
+
+            assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
+        }
+    }
+
+    @Test
     fun `test native cache is enabled by default`() {
         with(buildProjectWithMPP()) {
             kotlin {
