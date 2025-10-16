@@ -127,19 +127,9 @@ fun precompileWasmModules() {
 
     val relativeStdlibPath = precompiledStdlibOutputDir.relativeTo(precompiledKotlinTestOutputDir).path.replace('\\', '/')
 
-    val stringResolutionMap = """
-        {
-            "<kotlin-test>": {
-                "<kotlin>": "$relativeStdlibPath/_kotlin_"
-            }
-        }
-    """.trimIndent()
-
-    val tempFile = kotlin.io.path.createTempFile("resolutionMap", ".json").toFile()
-    tempFile.writeText(stringResolutionMap)
-
+    val stringResolutionMap = "<kotlin>:$relativeStdlibPath/_kotlin_"
     with(configuration) {
-        put<File>(WasmConfigurationKeys.WASM_MODULE_RESOLUTION_MAP, tempFile)
+        put<String>(WasmConfigurationKeys.WASM_MODULE_RESOLUTION_MAP, stringResolutionMap)
     }
 
     compileWasmModule(

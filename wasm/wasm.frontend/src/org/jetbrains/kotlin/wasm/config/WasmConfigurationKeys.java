@@ -47,6 +47,6 @@ public class WasmConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> WASM_INCLUDED_MODULE_ONLY =
             CompilerConfigurationKey.create("compile single module.");
 
-    public static final CompilerConfigurationKey<File> WASM_MODULE_RESOLUTION_MAP =
+    public static final CompilerConfigurationKey<String> WASM_MODULE_RESOLUTION_MAP =
             CompilerConfigurationKey.create("provide alternative paths to imported modules.");
 }

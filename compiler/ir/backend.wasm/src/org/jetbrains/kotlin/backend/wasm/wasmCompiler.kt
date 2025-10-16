@@ -252,8 +252,10 @@ fun compileWasm(
             )
         }
 
-        val generateWasmTagInitializer =
-            moduleName == "<kotlin>" || !configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)
+        val stdlibModule = moduleName == "<kotlin>"
+        val wholeProgramMode = !configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)
+        val stdlibModuleOrWholeProgramMode =
+            stdlibModule or wholeProgramMode
 
         val jsCode = generateJsCode(
             jsModuleImports,
@@ -263,7 +265,7 @@ fun compileWasm(
             baseFileName,
             jsFuns,
             useJsTag,
-            generateWasmTagInitializer,
+            stdlibModuleOrWholeProgramMode,
         )
 
         if (jsCode.isNotEmpty()) {
@@ -283,9 +285,8 @@ fun compileWasm(
             linkedModule.exports,
             useDebuggerCustomFormatters,
             baseFileName,
-            useJsTag,
             jsCode.isNotEmpty(),
-            generateWasmTagInitializer,
+            stdlibModule,
         )
 
     } else {
@@ -340,7 +341,7 @@ fun generateJsCode(
     baseFileName: String,
     jsFuns: Set<JsCodeSnippet>,
     useJsTag: Boolean,
-    generateWasmTagInitializer: Boolean,
+    stdlibModuleOrWholeProgramMode: Boolean,
 ): String {
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
@@ -379,7 +380,7 @@ fun generateJsCode(
         .joinToString("\n")
 
     val wasmTagInitialization =
-        if (generateWasmTagInitializer)
+        if (stdlibModuleOrWholeProgramMode)
             """
             const wasmJsTag = ${if (useJsTag) "WebAssembly.JSTag" else "void 0"};
             export const wasmTag = wasmJsTag ?? new WebAssembly.Tag({ parameters: ['externref'] });
@@ -417,18 +418,10 @@ fun generateJsImports(
 ): String {
     val dependenciesImports = dependencyModules
         .map {
-//            val moduleSpecifier = it.name.toJsStringLiteral()
             val importVariableString = JsModuleAndQualifierReference.encode(it.name)
-//            "        $moduleSpecifier: imports[$moduleSpecifier],\n"
-            "\'./${it.fileName}.mjs\'" to importVariableString //moduleSpecifier to ...
+            "\'./${it.fileName}.mjs\'" to importVariableString
         }
 
-//    val dependenciesLoaders = dependencyModules
-//        .joinToString("") { import ->
-//            val moduleSpecifier = import.name.toJsStringLiteral()
-//            "    imports[$moduleSpecifier] = imports[$moduleSpecifier] ?? (await (await import('./${import.fileName}.uninstantiated.mjs')).instantiate(imports, true)).exports;\n"
-//        }
-//
     val importedModules = jsModuleImports
         .map {
             val moduleSpecifier = it.toJsStringLiteral().toString()
@@ -459,10 +452,6 @@ fun generateJsImports(
         }
     }
 
-//    val imports = allModules.joinToString(",\n") {
-//        "    ${it.first}: ${it.second}"
-//    }
-
     /*language=js */
     return """
 $importsImportedSection
@@ -476,10 +465,10 @@ fun generateImportObject(
     useJsCode: Boolean,
 ): String {
 
-    val dependencyImports = dependencyModules.map { it.name }
+    val dependencyImports = dependencyModules
         .map {
-            val moduleSpecifier = it.toJsStringLiteral().toString()
-            val importVariableString = JsModuleAndQualifierReference.encode(it)
+            val moduleSpecifier = it.name.toJsStringLiteral().toString()
+            val importVariableString = JsModuleAndQualifierReference.encode(it.name)
             moduleSpecifier to importVariableString
         }.joinToString("") {
             "   ${it.first}: ${it.second}.exports,\n"
@@ -515,11 +504,10 @@ fun generateWebAssemblyJsInstanceInitializer(
     exports: List<WasmExport<*>>,
     useDebuggerCustomFormatters: Boolean,
     baseFileName: String,
-    useJsTag: Boolean,
     useJsCode: Boolean,
-    generateWasmTagInitializer: Boolean,
+    stdlibModule: Boolean,
 ): String {
-    val imports = generateJsImports(
+    val baseImports = generateJsImports(
         jsModuleImports,
         jsModuleAndQualifierReferences,
         dependencyModules,
@@ -527,12 +515,13 @@ fun generateWebAssemblyJsInstanceInitializer(
         baseFileName
     )
 
+    val jsCodeFileImport = "\'./${baseFileName}.js-code.mjs\'"
+
     val importsWithJsCode = """
-$imports
-import { setWasmExports } from './${baseFileName}.js-code.mjs';
-import { wasmTag } from "./${baseFileName}.js-code.mjs"
-export { wasmTag } from "./${baseFileName}.js-code.mjs"
-${if (useJsCode) "import { js_code } from \"./${baseFileName}.js-code.mjs\"" else ""}
+$baseImports
+import { setWasmExports, wasmTag } from $jsCodeFileImport;
+${if (stdlibModule) "export { wasmTag } from $jsCodeFileImport" else ""}
+${if (useJsCode) "import { js_code } from $jsCodeFileImport" else ""}
     """.trimIndent()
 
     val importObject = generateImportObject(jsModuleImports, dependencyModules, useJsCode)
@@ -620,10 +609,7 @@ innerWasmExports._initialize();
 export const exports = innerWasmExports;
 
 ${generateExports(exports)}
-
 """
-
-//    export const exports = wasmExports;
 }
 
 fun writeCompilationResult(

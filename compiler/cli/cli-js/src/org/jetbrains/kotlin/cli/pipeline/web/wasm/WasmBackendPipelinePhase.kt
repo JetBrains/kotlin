@@ -40,10 +40,6 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 import java.net.URLEncoder
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.builtins.MapSerializer
-import kotlinx.serialization.builtins.serializer
-
 fun getAllReferencedDeclarations(
     wasmCompiledFileFragment: WasmCompiledFileFragment,
     additionalSignatureToImport: Set<IdSignature>
@@ -264,18 +260,14 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         }
     }
 
-    fun parseModuleResolutionMap(configuration: CompilerConfiguration)
-            : Map<String, Map<String, String>> {
+    private fun parseModuleResolutionMap(configuration: CompilerConfiguration)
+            : Map<String, String> {
 
-        val moduleResolutionMapFile = configuration[WasmConfigurationKeys.WASM_MODULE_RESOLUTION_MAP] ?: return emptyMap()
+        val stringResolutionMap = configuration[WasmConfigurationKeys.WASM_MODULE_RESOLUTION_MAP] ?: return emptyMap()
 
-        val stringResolutionMap = moduleResolutionMapFile.readText()
-        val resolutionMapSerializer = MapSerializer(
-            String.serializer(),
-            MapSerializer(String.serializer(), String.serializer())
-        )
-
-        val moduleResolutionMap = Json.decodeFromString(resolutionMapSerializer, stringResolutionMap)
+        val moduleResolutionMap = stringResolutionMap.split(",")
+            .map { it.split(":") }
+            .associate { it[0] to it[1] }
 
         return moduleResolutionMap
     }
@@ -342,7 +334,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
     generateWat: Boolean,
     wasmDebug: Boolean,
     outputFileNameBase: String? = null,
-    moduleResolutionMap: Map<String, Map<String, String>>,
+    moduleResolutionMap: Map<String, String>,
 ): WasmCompilerResult {
     val mainModuleFragment = backendContext.irModuleFragment
     val moduleName = mainModuleFragment.name.asString()
@@ -381,7 +373,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
         dependencyImports.add(
             WasmModuleDependencyImport(
                 dependencyName,
-                moduleResolutionMap[moduleName]?.get(dependencyName)
+                moduleResolutionMap[dependencyName]
                     ?: initialOutputFileName
             )
         )
