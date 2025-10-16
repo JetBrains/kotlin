@@ -8,8 +8,8 @@ extension ExportedKotlinPackages.generation.ranges.ranges {
     public static func bar() -> any ExportedKotlinPackages.kotlin.ranges.ClosedRange {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: generation_ranges_ranges_bar()) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
     }
-    public static func baz() -> any ExportedKotlinPackages.kotlin.ranges.OpenEndRange {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: generation_ranges_ranges_baz()) as! any ExportedKotlinPackages.kotlin.ranges.OpenEndRange
+    public static func baz() -> Swift.Range<Swift.String> {
+        return Swift.Range<Swift.String>(__externalRCRefUnsafe: generation_ranges_ranges_baz(), options: .asBestFittingWrapper)
     }
     public static func foo() -> ExportedKotlinPackages.kotlin.ranges.IntRange {
         return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: generation_ranges_ranges_foo())

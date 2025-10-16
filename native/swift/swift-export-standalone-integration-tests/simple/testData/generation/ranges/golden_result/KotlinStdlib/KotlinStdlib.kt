@@ -6,7 +6,6 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.ranges.IntRange::class, "22ExportedKotlinPackages6kotlinO6rangesO12KotlinStdlibE8IntRangeC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.ranges.IntRange.Companion::class, "22ExportedKotlinPackages6kotlinO6rangesO12KotlinStdlibE8IntRangeC9CompanionC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.ranges.ClosedRange::class, "_ClosedRange")
-@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.ranges.OpenEndRange::class, "_OpenEndRange")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
@@ -219,33 +218,4 @@ public fun kotlin_ranges_IntRange_toString(self: kotlin.native.internal.NativePt
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.IntRange
     val _result = __self.toString()
     return _result.objcPtr()
-}
-
-@ExportedBridge("kotlin_ranges_OpenEndRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable__")
-public fun kotlin_ranges_OpenEndRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable__(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.OpenEndRange<kotlin.Comparable<kotlin.Any?>>
-    val __value = kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Comparable<kotlin.Any?>
-    val _result = __self.contains(__value)
-    return _result
-}
-
-@ExportedBridge("kotlin_ranges_OpenEndRange_endExclusive_get")
-public fun kotlin_ranges_OpenEndRange_endExclusive_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.OpenEndRange<kotlin.Comparable<kotlin.Any?>>
-    val _result = __self.endExclusive
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("kotlin_ranges_OpenEndRange_isEmpty")
-public fun kotlin_ranges_OpenEndRange_isEmpty(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.OpenEndRange<kotlin.Comparable<kotlin.Any?>>
-    val _result = __self.isEmpty()
-    return _result
-}
-
-@ExportedBridge("kotlin_ranges_OpenEndRange_start_get")
-public fun kotlin_ranges_OpenEndRange_start_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.OpenEndRange<kotlin.Comparable<kotlin.Any?>>
-    val _result = __self.start
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

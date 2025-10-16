@@ -61,12 +61,4 @@ int32_t kotlin_ranges_IntRange_start_get(void * self);
 
 NSString * kotlin_ranges_IntRange_toString(void * self);
 
-_Bool kotlin_ranges_OpenEndRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable__(void * self, void * value);
-
-void * kotlin_ranges_OpenEndRange_endExclusive_get(void * self);
-
-_Bool kotlin_ranges_OpenEndRange_isEmpty(void * self);
-
-void * kotlin_ranges_OpenEndRange_start_get(void * self);
-
 NS_ASSUME_NONNULL_END

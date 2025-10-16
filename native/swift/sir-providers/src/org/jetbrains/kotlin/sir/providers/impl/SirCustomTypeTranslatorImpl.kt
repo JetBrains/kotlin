@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.builtins.StandardNames.RANGES_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.SirArrayType
 import org.jetbrains.kotlin.sir.SirDictionaryType
@@ -27,6 +30,8 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
 public class SirCustomTypeTranslatorImpl(
     private val session: SirSession
 ) : SirCustomTypeTranslator {
+    private val openEndRangeFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier("OpenEndRange"))
+
     // These classes already have ObjC counterparts assigned statically in ObjC Export.
     private val supportedFqNames: List<FqName> =
         listOf(
@@ -36,7 +41,14 @@ public class SirCustomTypeTranslatorImpl(
             FqNames.mutableList,
             FqNames.list,
             FqNames.mutableMap,
-            FqNames.string.toSafe()
+            FqNames.string.toSafe(),
+            openEndRangeFqName,
+//            FqNames.intRange.toSafe(),
+//            FqNames.longRange.toSafe(),
+//            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("UIntRange")),
+//            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("ULongRange")),
+//            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("CharRange")),
+//            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("ClosedRange")),
         )
 
     public override fun isFqNameSupported(fqName: FqName): Boolean {
@@ -64,6 +76,13 @@ public class SirCustomTypeTranslatorImpl(
                 SirDictionaryType(
                     typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true)),
                     typeArguments.last().sirType(ctx),
+                )
+            }
+
+            isClassType(ClassId.topLevel(openEndRangeFqName)) -> {
+                SirNominalType(
+                    SirSwiftModule.range,
+                    listOf(typeArguments.single().sirType(ctx))
                 )
             }
 

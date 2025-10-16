@@ -64,37 +64,7 @@ extension ExportedKotlinPackages.kotlin.Comparable where Self : KotlinRuntimeSup
 }
 extension ExportedKotlinPackages.kotlin.Comparable {
 }
-extension ExportedKotlinPackages.kotlin.ranges.OpenEndRange where Self : KotlinRuntimeSupport._KotlinBridgeable {
-    public var endExclusive: any ExportedKotlinPackages.kotlin.Comparable {
-        get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_ranges_OpenEndRange_endExclusive_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.Comparable
-        }
-    }
-    public var start: any ExportedKotlinPackages.kotlin.Comparable {
-        get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_ranges_OpenEndRange_start_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.Comparable
-        }
-    }
-    public func contains(
-        value: any ExportedKotlinPackages.kotlin.Comparable
-    ) -> Swift.Bool {
-        return kotlin_ranges_OpenEndRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable__(self.__externalRCRef(), value.__externalRCRef())
-    }
-    public func isEmpty() -> Swift.Bool {
-        return kotlin_ranges_OpenEndRange_isEmpty(self.__externalRCRef())
-    }
-    public static func ~=(
-        this: Self,
-        value: any ExportedKotlinPackages.kotlin.Comparable
-    ) -> Swift.Bool {
-        this.contains(value: value)
-    }
-}
-extension ExportedKotlinPackages.kotlin.ranges.OpenEndRange {
-}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.ranges.ClosedRange where Wrapped : ExportedKotlinPackages.kotlin.ranges._ClosedRange {
-}
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.ranges.OpenEndRange where Wrapped : ExportedKotlinPackages.kotlin.ranges._OpenEndRange {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Comparable where Wrapped : ExportedKotlinPackages.kotlin._Comparable {
 }
@@ -140,23 +110,8 @@ extension ExportedKotlinPackages.kotlin.ranges {
         ) -> Swift.Bool
         func isEmpty() -> Swift.Bool
     }
-    public protocol OpenEndRange: KotlinRuntime.KotlinBase {
-        var endExclusive: any ExportedKotlinPackages.kotlin.Comparable {
-            get
-        }
-        var start: any ExportedKotlinPackages.kotlin.Comparable {
-            get
-        }
-        func contains(
-            value: any ExportedKotlinPackages.kotlin.Comparable
-        ) -> Swift.Bool
-        func isEmpty() -> Swift.Bool
-    }
     @objc(_ClosedRange)
     package protocol _ClosedRange {
-    }
-    @objc(_OpenEndRange)
-    package protocol _OpenEndRange {
     }
     open class IntProgression: KotlinRuntime.KotlinBase {
         public final class Companion: KotlinRuntime.KotlinBase {
