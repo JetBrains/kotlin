@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -89,6 +90,12 @@ class DeclarationGenerator(
                 resultTypes = listOfNotNull(resultType)
             )
         wasmFileCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)
+        // TODO: there might be duplicates... fix
+        val suspendFunctionNames = buildSet { repeat(3) { add(FqName("kotlin.coroutines.SuspendFunction$size.invoke")) } }
+        if (suspendFunctionNames.any { declaration.hasEqualFqName(it) }) {
+            println("Function type for cont: ${wasmFunctionType.objectId}")
+            wasmFileCodegenContext.defineContType(declaration.symbol, WasmContType(wasmFunctionType))
+        }
 
         if (declaration is IrSimpleFunction && declaration.modality == Modality.ABSTRACT) {
             return

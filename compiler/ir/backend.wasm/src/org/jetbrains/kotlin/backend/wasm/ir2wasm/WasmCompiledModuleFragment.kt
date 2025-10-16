@@ -93,8 +93,13 @@ class WasmCompiledModuleFragment(
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
-    private val contFunctionType = WasmFunctionType(emptyList(), emptyList())
-    private val contType = WasmContType(TODO())
+//    private val kotlinAnyType = WasmRefNullType(WasmHeapType.Type(WasmSymbol(tryFindBuiltInType { it.kotlinAny }!!)))
+//    private val contFunctionType0 = WasmFunctionType(listOf(kotlinAnyType), listOf(kotlinAnyType))
+//    private val contFunctionType1 = WasmFunctionType(listOf(kotlinAnyType, kotlinAnyType), listOf(kotlinAnyType))
+//    private val contFunctionType2 = WasmFunctionType(listOf(kotlinAnyType, kotlinAnyType, kotlinAnyType), listOf(kotlinAnyType))
+//    private val contType0 = WasmContType(contFunctionType0)
+//    private val contType1 = WasmContType(contFunctionType1)
+//    private val contType2 = WasmContType(contFunctionType2)
 
     private val stringDataSectionIndex = WasmImmediate.DataIdx(0)
     private val stringAddressesAndLengthsIndex = WasmImmediate.DataIdx(1)
@@ -155,6 +160,7 @@ class WasmCompiledModuleFragment(
         val importedFunctions = mutableListOf<WasmFunction.Imported>()
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.functions.elements.forEach { function ->
+//                println(function.name)
                 when (function) {
                     is WasmFunction.Defined -> definedFunctions.add(function)
                     is WasmFunction.Imported -> importedFunctions.add(function)
@@ -249,9 +255,9 @@ class WasmCompiledModuleFragment(
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
-        // TODO("Create types")
-        additionalTypes.addAll(TODO("Function type"))
-        additionalTypes.addAll(TODO("Cont type"))
+        val contTypes = wasmCompiledFileFragments.flatMap { it.contTypes.elements }
+        additionalTypes.addAll(contTypes)
+        additionalTypes.addAll(contTypes.map { it.funType })
 
         val elements = mutableListOf<WasmElement>()
         createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, elements, exports, globals)
@@ -267,6 +273,11 @@ class WasmCompiledModuleFragment(
         tags.forEach { additionalTypes.add(it.type) }
 
         val recursiveTypeGroups = getTypes(syntheticTypes, canonicalFunctionTypes, additionalTypes)
+        recursiveTypeGroups.forEach {
+            it.filter { contTypes.map { it.funType }.contains(it) }.forEach {
+                println("Target object id: ${it.objectId}")
+            }
+        }
 
         return WasmModule(
             recGroups = recursiveTypeGroups,
@@ -820,6 +831,7 @@ class WasmCompiledModuleFragment(
         bindFileFragments(wasmCompiledFileFragments, { it.vTableGcTypes.unbound }, { it.vTableGcTypes.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.globalClassITables.unbound }, { it.globalClassITables.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.functionTypes.unbound }, { it.functionTypes.defined })
+        bindFileFragments(wasmCompiledFileFragments, { it.contTypes.unbound }, { it.contTypes.defined })
         rebindEquivalentFunctions()
         bindUniqueJsFunNames()
     }
