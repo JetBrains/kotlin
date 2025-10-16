@@ -372,6 +372,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_EXPECTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_TYPE_OF_TOO_LARGE_ARITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES
@@ -3283,6 +3284,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Identity equality for arguments of types ''{0}'' and ''{1}'' can be unstable because of implicit boxing.",
             RENDER_TYPE,
             RENDER_TYPE
+        )
+        map.put(
+            FUNCTION_TYPE_OF_TOO_LARGE_ARITY,
+            "The arity of ''{0}'' is way too large. It can only be at most {1}.",
+            CLASS_ID,
+            TO_STRING,
         )
         map.put(
             INC_DEC_SHOULD_NOT_RETURN_UNIT,

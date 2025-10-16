@@ -6188,6 +6188,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.FUNCTION_TYPE_OF_TOO_LARGE_ARITY) { firDiagnostic ->
+        FunctionTypeOfTooLargeArityImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OPERATOR_RENAMED_ON_IMPORT) { firDiagnostic ->
         OperatorRenamedOnImportImpl(
             firDiagnostic as KtPsiDiagnostic,

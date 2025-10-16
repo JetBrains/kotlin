@@ -2183,6 +2183,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Name>("name")
         }
 
+        val FUNCTION_TYPE_OF_TOO_LARGE_ARITY by error<KtElement>(PositioningStrategy.IMPORT_LAST_NAME) {
+            parameter<ClassId>("classId")
+            parameter<Int>("maxArity")
+        }
+
         val OPERATOR_RENAMED_ON_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME)
 
         val TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT by deprecationError<KtImportDirective>(

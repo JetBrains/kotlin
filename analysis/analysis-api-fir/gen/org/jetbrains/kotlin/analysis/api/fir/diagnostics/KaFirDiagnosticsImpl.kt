@@ -5206,6 +5206,13 @@ internal class ConflictingImportImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtImportDirective>(firDiagnostic, token), KaFirDiagnostic.ConflictingImport
 
+internal class FunctionTypeOfTooLargeArityImpl(
+    override val classId: ClassId,
+    override val maxArity: Int,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.FunctionTypeOfTooLargeArity
+
 internal class OperatorRenamedOnImportImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

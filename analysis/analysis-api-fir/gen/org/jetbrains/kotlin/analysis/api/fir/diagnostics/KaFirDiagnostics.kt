@@ -4338,6 +4338,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val name: Name
     }
 
+    interface FunctionTypeOfTooLargeArity : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = FunctionTypeOfTooLargeArity::class
+        val classId: ClassId
+        val maxArity: Int
+    }
+
     interface OperatorRenamedOnImport : KaFirDiagnostic<KtImportDirective> {
         override val diagnosticClass get() = OperatorRenamedOnImport::class
     }

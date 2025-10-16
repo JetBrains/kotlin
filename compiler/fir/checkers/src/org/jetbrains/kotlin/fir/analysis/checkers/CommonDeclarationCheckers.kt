@@ -164,6 +164,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirImportsChecker,
         FirOptInImportsChecker,
         FirUnresolvedInMiddleOfImportChecker,
+        FirTooLargeFunctionImportChecker,
         FirTopLevelPropertiesChecker,
         FirPackageConflictsWithClassifierChecker,
         PlatformClassMappedToKotlinImportsChecker,

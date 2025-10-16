@@ -597,6 +597,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("prohibitHugeFunctionN.kt.can-freeze-ide")
+    public void testProhibitHugeFunctionN() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/prohibitHugeFunctionN.kt.can-freeze-ide");
+    }
+
+    @Test
     @TestMetadata("properLocalPackages.kt")
     public void testProperLocalPackages() {
       runTest("compiler/fir/analysis-tests/testData/resolve/properLocalPackages.kt");
