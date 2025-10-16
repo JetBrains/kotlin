@@ -117,12 +117,12 @@ const val convert7 = oneVal.toByte()
 const val convert8 = oneVal.toShort()
 const val convert9 = oneVal.toInt()
 const val convert10 = oneVal.toLong()
-const val convert11 = 1.toByte().toUInt()
-const val convert12 = 1.toShort().toUInt()
-const val convert13 = 1.toUInt()
-const val convert14 = 1L.toUInt()
-const val convert15 = 1.0f.toUInt()
-const val convert16 = 1.0.toUInt()
+const val convert11 = byteVal.toUInt()
+const val convert12 = shortVal.toUInt()
+const val convert13 = intVal.toUInt()
+const val convert14 = longVal.toUInt()
+const val convert15 = floatVal.toUInt()
+const val convert16 = doubleVal.toUInt()
 
 const val equals1 = oneVal == twoVal
 const val equals2 = twoVal == twoVal

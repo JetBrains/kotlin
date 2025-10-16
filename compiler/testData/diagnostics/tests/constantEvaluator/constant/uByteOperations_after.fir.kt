@@ -103,10 +103,10 @@ const val convert7 = oneVal.toByte()
 const val convert8 = oneVal.toShort()
 const val convert9 = oneVal.toInt()
 const val convert10 = oneVal.toLong()
-const val convert11 = 1.toByte().toUByte()
-const val convert12 = 1.toShort().toUByte()
-const val convert13 = 1.toUByte()
-const val convert14 = 1L.toUByte()
+const val convert11 = byteVal.toUByte()
+const val convert12 = shortVal.toUByte()
+const val convert13 = intVal.toUByte()
+const val convert14 = longVal.toUByte()
 
 const val equals1 = oneVal == twoVal
 const val equals2 = twoVal == twoVal

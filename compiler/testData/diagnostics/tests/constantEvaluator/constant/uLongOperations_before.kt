@@ -118,12 +118,12 @@ const val convert7 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal.toByte()<!>
 const val convert8 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal.toShort()<!>
 const val convert9 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal.toInt()<!>
 const val convert10 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal.toLong()<!>
-const val convert11 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.toByte().toULong()<!>
-const val convert12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.toShort().toULong()<!>
-const val convert13 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.toULong()<!>
-const val convert14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1L.toULong()<!>
-const val convert15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0f.toULong()<!>
-const val convert16 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>10.toULong()<!>
+const val convert11 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>byteVal.toULong()<!>
+const val convert12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>shortVal.toULong()<!>
+const val convert13 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>intVal.toULong()<!>
+const val convert14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>longVal.toULong()<!>
+const val convert15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>floatVal.toULong()<!>
+const val convert16 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>doubleVal.toULong()<!>
 
 const val equals1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>oneVal == twoVal<!>
 const val equals2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>twoVal == twoVal<!>
