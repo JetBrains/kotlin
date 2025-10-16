@@ -338,7 +338,7 @@ class WasmSymbols(
         private val jsExportDefaultClass by lazy {
             jsExportClass.owner
                 .findDeclaration<IrClass> { it.fqNameWhenAvailable == FqName("kotlin.js.JsExport.Default") }
-                ?.symbol ?: irError("can't find kotlin.js.JsExport.Ignore annotation") {
+                ?.symbol ?: irError("can't find kotlin.js.JsExport.Default annotation") {
                 withIrEntry("jsExportAnnotationSymbol.owner", jsExportClass.owner)
             }
         }
