@@ -1737,6 +1737,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("prohibitInheritingAnnotaitonsDirectly.kt")
+    public void testProhibitInheritingAnnotaitonsDirectly() {
+      runTest("compiler/testData/diagnostics/tests/prohibitInheritingAnnotaitonsDirectly.kt");
+    }
+
+    @Test
+    @TestMetadata("prohibitInheritingAnnotaitonsIndirectly.kt")
+    public void testProhibitInheritingAnnotaitonsIndirectly() {
+      runTest("compiler/testData/diagnostics/tests/prohibitInheritingAnnotaitonsIndirectly.kt");
+    }
+
+    @Test
     @TestMetadata("ProjectionOnFunctionArgumentErrror.kt")
     public void testProjectionOnFunctionArgumentErrror() {
       runTest("compiler/testData/diagnostics/tests/ProjectionOnFunctionArgumentErrror.kt");
