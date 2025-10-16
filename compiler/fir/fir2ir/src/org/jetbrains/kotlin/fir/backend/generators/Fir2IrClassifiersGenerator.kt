@@ -129,10 +129,6 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     private fun IrClass.declareTypeParameters(klass: FirClass) {
         classifierStorage.preCacheTypeParameters(klass)
         setTypeParameters(this, klass)
-        if (klass is FirRegularClass) {
-            val fieldsForContextReceiversOfCurrentClass = classifierStorage.getFieldsWithContextReceiversForClass(this, klass)
-            declarations.addAll(fieldsForContextReceiversOfCurrentClass)
-        }
     }
 
     private fun IrClass.declareSupertypes(klass: FirClass) {

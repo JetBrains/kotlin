@@ -9,8 +9,9 @@ enum class FirValueParameterKind {
     Regular,
     ContextParameter,
 
-    // TODO(KT-72994) remove with the rest of context receivers.
-    //  Afterwards, the enum can be replaced with a bool flag `isContextParameter`.
+    // In K2, we don't support context receivers in resolution anymore,
+    // but we keep them in the FIR as long as we support parsing them
+    // (which is at least as long as K1 is supported).
     LegacyContextReceiver,
 }
 

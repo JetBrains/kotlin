@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.*
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -20,12 +19,9 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
-import org.jetbrains.kotlin.fir.generatedContextParameterName
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.isFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
@@ -37,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -604,36 +599,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         result: MutableList<IrValueParameter>,
     ) {
         contextParameters.mapIndexedTo(result) { index, contextReceiver ->
-            if (contextReceiver.isLegacyContextReceiver()) {
-                createIrParameterFromContextReceiver(contextReceiver, index)
-            } else {
-                this.declarationStorage.createAndCacheParameter(contextReceiver)
-            }.apply {
+            this.declarationStorage.createAndCacheParameter(contextReceiver).apply {
                 this.parent = parent
             }
-        }
-    }
-
-    private fun createIrParameterFromContextReceiver(
-        contextReceiver: FirValueParameter,
-        index: Int,
-    ): IrValueParameter = convertCatching(contextReceiver) {
-        val type = contextReceiver.returnTypeRef.toIrType()
-        return contextReceiver.convertWithOffsets { startOffset, endOffset ->
-            IrFactoryImpl.createValueParameter(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = IrDeclarationOrigin.DEFINED,
-                name = NameUtils.contextReceiverName(index),
-                type = type,
-                isAssignable = false,
-                symbol = IrValueParameterSymbolImpl(),
-                varargElementType = null,
-                isCrossinline = false,
-                isNoinline = false,
-                isHidden = false,
-                kind = IrParameterKind.Context
-            )
         }
     }
 

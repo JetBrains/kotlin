@@ -116,21 +116,6 @@ internal object ElementContextRenderer {
                         }
                     }
 
-                    towerDataElement.contextReceiverGroup?.takeIf { it.isNotEmpty() }?.let { contextReceiverValues ->
-                        appendBlock("Context receivers:") {
-                            for (contextReceiverValue in contextReceiverValues) {
-                                appendSymbol(contextReceiverValue.boundSymbol).appendLine()
-
-                                appendBlock {
-                                    append("Type: ").appendType(contextReceiverValue.type).appendLine()
-                                    contextReceiverValue.labelName?.let { labelName ->
-                                        append("Label: ").appendLine(labelName)
-                                    }
-                                }
-                            }
-                        }
-                    }
-
                     towerDataElement.contextParameterGroup?.takeIf { it.isNotEmpty() }?.let { contextParameterValues ->
                         appendBlock("Context parameters:") {
                             for (contextParameterValue in contextParameterValues) {
