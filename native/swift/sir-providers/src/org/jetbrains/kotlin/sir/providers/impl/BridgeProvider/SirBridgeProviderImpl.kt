@@ -139,7 +139,9 @@ private class BridgeFunctionDescriptor(
         get() = listOfNotNull(selfParameter) + parameters + listOfNotNull(errorParameter) + listOfNotNull(asyncContinuationParameter)
 
     val asyncContinuationParameter: BridgeParameter? = isAsync.ifTrue {
-        BridgeParameter(name = "continuation", bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsVoid))
+        BridgeParameter(
+            name = "continuation", bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsVoid)
+        )
     }
 
     override val name

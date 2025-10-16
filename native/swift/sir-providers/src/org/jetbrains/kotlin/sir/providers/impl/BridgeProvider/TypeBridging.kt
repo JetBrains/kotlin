@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.*
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.isValueType
 import org.jetbrains.kotlin.sir.util.name
 
+context(session: SirSession)
 internal fun bridgeType(type: SirType): Bridge = when (type) {
     is SirNominalType -> bridgeNominalType(type)
     is SirExistentialType -> bridgeExistential(type)
@@ -23,6 +25,7 @@ internal fun bridgeType(type: SirType): Bridge = when (type) {
     else -> error("Attempt to bridge unbridgeable type: $type.")
 }
 
+context(session: SirSession)
 private fun bridgeTypeForVariadicParameter(type: SirType): Bridge =
     AsNSArrayForVariadic(SirArrayType(type), bridgeAsNSCollectionElement(type))
 
@@ -37,7 +40,8 @@ private fun bridgeExistential(type: SirExistentialType): Bridge {
     )
 }
 
-private fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val bridge = bridgeType(type)) {
+context(session: SirSession)
+internal fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val bridge = bridgeType(type)) {
     is AsIs -> AsNSNumber(bridge.swiftType)
     is AsOptionalWrapper -> AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
     is AsOptionalNothing -> AsObjCBridgedOptional(bridge.swiftType)
@@ -53,7 +57,10 @@ private fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val bridg
         -> bridge
 }
 
+context(session: SirSession)
 private fun bridgeNominalType(type: SirNominalType): Bridge {
+    val customTypeBridgeWrapper = with(session.customTypeTranslator) { type.toBridge() }
+    if (customTypeBridgeWrapper != null) return customTypeBridgeWrapper.bridge
     return when (val subtype = type.typeDeclaration) {
         SirSwiftModule.void -> AsVoid
 
@@ -74,8 +81,6 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
 
         SirSwiftModule.unsafeMutableRawPointer -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
         SirSwiftModule.never -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Void)
-
-        SirSwiftModule.string -> AsObjCBridged(type, CType.NSString)
 
         SirSwiftModule.utf16CodeUnit -> AsIs(type, KotlinType.Char, CType.UInt16)
 
@@ -106,17 +111,6 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
             else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
         }
 
-        SirSwiftModule.array -> AsNSArray(type, bridgeAsNSCollectionElement(type.typeArguments.single()))
-        SirSwiftModule.set -> AsNSSet(type, bridgeAsNSCollectionElement(type.typeArguments.single()))
-        SirSwiftModule.dictionary -> {
-            val (key, value) = type.typeArguments
-            AsNSDictionary(
-                type,
-                bridgeAsNSCollectionElement(key),
-                bridgeAsNSCollectionElement(value)
-            )
-        }
-
         is SirTypealias -> bridgeType(subtype.type)
 
         // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
@@ -128,9 +122,12 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
     }
 }
 
+context(session: SirSession)
 internal fun bridgeParameter(parameter: SirParameter, index: Int): BridgeParameter {
     val bridgeParameterName = parameter.name?.let(::createBridgeParameterName) ?: "_$index"
-    val bridge = if (parameter.isVariadic) bridgeTypeForVariadicParameter(parameter.type) else bridgeType(parameter.type)
+    val bridge =
+        if (parameter.isVariadic) bridgeTypeForVariadicParameter(parameter.type)
+        else bridgeType(parameter.type)
     return BridgeParameter(
         name = bridgeParameterName,
         bridge = bridge,
@@ -614,8 +611,8 @@ internal sealed class Bridge(
 
     class AsBlock private constructor(
         override val swiftType: SirFunctionalType,
-        private val parameters: List<Bridge> = swiftType.parameterTypes.map(::bridgeType),
-        private val returnType: Bridge = bridgeType(swiftType.returnType),
+        private val parameters: List<Bridge>,
+        private val returnType: Bridge,
     ) : Bridge(
         swiftType = swiftType,
         kotlinType = KotlinType.KotlinObject,
@@ -625,12 +622,13 @@ internal sealed class Bridge(
         )
     ) {
         companion object {
+            context(session: SirSession)
             operator fun invoke(
-                swiftType: SirFunctionalType
+                swiftType: SirFunctionalType,
             ): AsBlock = AsBlock(
                 swiftType,
-                swiftType.parameterTypes.map(::bridgeType),
-                bridgeType(swiftType.returnType)
+                parameters = swiftType.parameterTypes.map { type -> bridgeType(type) },
+                returnType = bridgeType(swiftType.returnType)
             )
 
             operator fun invoke(

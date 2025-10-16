@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.components.isAnyType
 import org.jetbrains.kotlin.analysis.api.components.isBooleanType
 import org.jetbrains.kotlin.analysis.api.components.isByteType
 import org.jetbrains.kotlin.analysis.api.components.isCharType
-import org.jetbrains.kotlin.analysis.api.components.isClassType
 import org.jetbrains.kotlin.analysis.api.components.isDoubleType
 import org.jetbrains.kotlin.analysis.api.components.isFloatType
 import org.jetbrains.kotlin.analysis.api.components.isFunctionType
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.components.isLongType
 import org.jetbrains.kotlin.analysis.api.components.isMarkedNullable
 import org.jetbrains.kotlin.analysis.api.components.isNothingType
 import org.jetbrains.kotlin.analysis.api.components.isShortType
-import org.jetbrains.kotlin.analysis.api.components.isStringType
 import org.jetbrains.kotlin.analysis.api.components.isSuspendFunctionType
 import org.jetbrains.kotlin.analysis.api.components.isUByteType
 import org.jetbrains.kotlin.analysis.api.components.isUIntType
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
@@ -130,7 +127,7 @@ public class SirTypeProviderImpl(
                         kaType.isAnyType -> ctx.anyRepresentativeType()
 
                         sirSession.customTypeTranslator.isClassIdSupported(kaType.classId) -> {
-                            with(sirSession.customTypeTranslator) { kaType.toSirType(ctx) }
+                            with(sirSession.customTypeTranslator) { kaType.toSirTypeBridge(ctx)?.bridge?.swiftType }
                         }
 
                         else -> {
