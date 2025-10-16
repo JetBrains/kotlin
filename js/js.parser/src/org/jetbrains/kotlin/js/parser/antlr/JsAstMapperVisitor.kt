@@ -343,9 +343,6 @@ internal class JsAstMapperVisitor(
 
         return scopeContext.enterCatch(jsCatchIdentifier).apply {
             body = visitNode<JsBlock>(ctx.block())
-            // TODO: Decide what to do with "catch conditions":
-            //   https://lia.disi.unibo.it/materiale/JS/developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...html#Conditional_catch_clauses
-            condition = null
             scopeContext.exitCatch()
         }.applyLocation(ctx)
     }
