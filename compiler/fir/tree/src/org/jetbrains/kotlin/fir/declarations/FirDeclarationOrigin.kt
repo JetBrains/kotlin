@@ -20,11 +20,8 @@ sealed class FirDeclarationOrigin(
     object Precompiled : FirDeclarationOrigin() // currently used for incremental compilation
     object BuiltIns : FirDeclarationOrigin()
     object BuiltInsFallback : FirDeclarationOrigin()
-    sealed class Java(
-        displayName: String,
-        fromSource: Boolean = false,
-        generated: Boolean = false,
-    ) : FirDeclarationOrigin(displayName, fromSource = fromSource, generated = generated) {
+    sealed class Java(displayName: String, fromSource: Boolean = false, generated: Boolean = false) :
+        FirDeclarationOrigin(displayName, fromSource = fromSource, generated = generated) {
         object Source : Java("Java(Source)", fromSource = true)
         object Library : Java("Java(Library)")
         class Plugin(val key: GeneratedDeclarationKey) : Java(displayName = "Java(Plugin[$key])", generated = true) {
