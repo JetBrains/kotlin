@@ -289,6 +289,7 @@ class KotlinHierarchyDslTest {
             }
         }
 
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         kotlin.jvm()
 
@@ -315,6 +316,7 @@ class KotlinHierarchyDslTest {
         )
 
         /* Check all source sets: All from jvm and android target + expected common source sets */
+        @Suppress("DEPRECATION")
         assertEquals(
             setOf("commonMain", "commonTest", "jvmAndAndroidMain", "jvmAndAndroidTest") +
                     kotlin.androidTarget().compilations.flatMap { it.kotlinSourceSets }.map { it.name } +

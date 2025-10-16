@@ -27,6 +27,7 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
             compileSdk = 31
         }
         kotlin {
+            @Suppress("DEPRECATION")
             androidTarget()
         }
     }

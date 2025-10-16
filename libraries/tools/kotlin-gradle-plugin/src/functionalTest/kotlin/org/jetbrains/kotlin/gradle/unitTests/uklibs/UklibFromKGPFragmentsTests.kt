@@ -156,6 +156,7 @@ class UklibFromKGPFragmentsTests {
                 js()
                 wasmJs()
                 wasmWasi()
+                @Suppress("DEPRECATION")
                 androidTarget()
             }
         }.runLifecycleAwareTest {

@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.unitTests.sources.android
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.Action
-import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension

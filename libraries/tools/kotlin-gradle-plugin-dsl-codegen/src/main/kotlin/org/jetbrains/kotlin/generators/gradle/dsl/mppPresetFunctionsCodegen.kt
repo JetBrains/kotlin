@@ -88,13 +88,19 @@ private fun KotlinPresetEntry.deprecated(replaceWithArguments: List<String>? = n
 
     val deprecationAnnotation = if (deprecation.replaceWithOtherPreset != null && replaceWithArguments != null) {
         val replaceWith = "ReplaceWith(\"${deprecation.replaceWithOtherPreset}(${replaceWithArguments.joinToString(",")})\")"
-        "@Deprecated(${deprecation.message}, level = DeprecationLevel.${deprecation.level.name}, replaceWith = $replaceWith)"
+        "@Deprecated(${deprecation.renderDeprecationMessage()}, level = DeprecationLevel.${deprecation.level.name}, replaceWith = $replaceWith)"
     } else {
-        "@Deprecated(${deprecation.message}, level = DeprecationLevel.${deprecation.level.name})"
+        "@Deprecated(${deprecation.renderDeprecationMessage()}, level = DeprecationLevel.${deprecation.level.name})"
     }
 
     // magic indent is needed to make the result look pretty
     return "$deprecationAnnotation\n    "
+}
+
+private fun KotlinPresetEntry.Deprecation.renderDeprecationMessage(): String = if (messageIsTheCode) {
+    message
+} else {
+    "\"$message\""
 }
 
 

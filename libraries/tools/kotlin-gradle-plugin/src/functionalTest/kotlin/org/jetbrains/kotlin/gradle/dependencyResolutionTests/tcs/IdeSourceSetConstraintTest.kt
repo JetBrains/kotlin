@@ -122,6 +122,7 @@ class IdeSourceSetConstraintTest {
         val project = buildMppProjectWithAndroidPlugin()
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")

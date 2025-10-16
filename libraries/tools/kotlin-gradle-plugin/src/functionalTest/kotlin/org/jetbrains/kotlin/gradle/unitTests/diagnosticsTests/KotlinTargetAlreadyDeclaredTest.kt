@@ -22,6 +22,7 @@ class KotlinTargetAlreadyDeclaredTest {
             kotlin {
                 jvm()
                 js()
+                @Suppress("DEPRECATION")
                 androidTarget()
                 linuxX64()
                 linuxArm64()
@@ -95,7 +96,9 @@ class KotlinTargetAlreadyDeclaredTest {
             plugins.apply(LibraryPlugin::class.java)
             androidLibrary { compileSdk = 33 }
             kotlin {
+                @Suppress("DEPRECATION")
                 androidTarget()
+                @Suppress("DEPRECATION")
                 androidTarget("android2")
             }
         }

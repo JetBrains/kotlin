@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.gradle.BaseExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
@@ -79,6 +78,7 @@ class BuildKotlinToolingMetadataTest {
         val kotlin = multiplatformExtension
 
         android.configureDefaults()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         kotlin.jvm()
         kotlin.js {
@@ -123,6 +123,7 @@ class BuildKotlinToolingMetadataTest {
         val android = project.extensions.getByType(ApplicationExtension::class.java)
         val kotlin = multiplatformExtension
         android.configureDefaults()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         android.compileOptions.sourceCompatibility(JavaVersion.VERSION_1_6)
         android.compileOptions.targetCompatibility(JavaVersion.VERSION_1_8)
