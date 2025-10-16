@@ -194,6 +194,12 @@ public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWith
   }
 
   @Test
+  @TestMetadata("ranges")
+  public void testRanges() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/ranges/");
+  }
+
+  @Test
   @TestMetadata("set")
   public void testSet() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/set/");
