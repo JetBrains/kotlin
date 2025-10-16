@@ -3,6 +3,6 @@
 // DIAGNOSTICS: -FINAL_SUPERTYPE
 // This error needs to be suppressed to cause light class generation
 
-class Foo : Target()
+class <!INHERITING_AN_ANNOTATION_CLASS_WARNING!>Foo<!> : Target()
 
 /* GENERATED_FIR_TAGS: classDeclaration */

@@ -1,5 +1,5 @@
 // LL_FIR_DIVERGENCE
-// LL runners don't run the backend, so they can't show `CONFLICTING_INHERITED_JVM_DECLARATIONS`.
+// LL runners don't support `CONFLICTING_INHERITED_JVM_DECLARATIONS` as they don't run the backend.
 // LL_FIR_DIVERGENCE
 // LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
@@ -33,9 +33,9 @@ public class JavaNonEmptyAnnoClass implements JavaNonEmptyAnno {
 }
 
 // FILE: KotlinAnnoClasses.kt
-class KotlinEmptyAnnoClass : JavaEmptyAnnoClass()
+class <!INHERITING_AN_ANNOTATION_CLASS_WARNING!>KotlinEmptyAnnoClass<!> : JavaEmptyAnnoClass()
 
-class KotlinNonEmptyAnnoClass : JavaNonEmptyAnnoClass()
+class <!INHERITING_AN_ANNOTATION_CLASS_WARNING!>KotlinNonEmptyAnnoClass<!> : JavaNonEmptyAnnoClass()
 
 fun main() {
     KotlinEmptyAnnoClass()

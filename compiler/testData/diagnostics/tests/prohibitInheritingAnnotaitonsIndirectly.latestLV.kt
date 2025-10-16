@@ -30,9 +30,9 @@ public class JavaNonEmptyAnnoClass implements JavaNonEmptyAnno {
 }
 
 // FILE: KotlinAnnoClasses.kt
-class KotlinEmptyAnnoClass : JavaEmptyAnnoClass()
+class <!INHERITING_AN_ANNOTATION_CLASS_ERROR!>KotlinEmptyAnnoClass<!> : JavaEmptyAnnoClass()
 
-class KotlinNonEmptyAnnoClass : JavaNonEmptyAnnoClass()
+class <!INHERITING_AN_ANNOTATION_CLASS_ERROR!>KotlinNonEmptyAnnoClass<!> : JavaNonEmptyAnnoClass()
 
 fun main() {
     KotlinEmptyAnnoClass()

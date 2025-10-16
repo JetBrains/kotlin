@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConstructorAndSuperty
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitCyclesInAnnotations
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitGenericQualifiersOnConstructorCalls
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitImplementingVarByInheritedVal
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInheritingAnnotationClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInlineModifierOnPrimaryConstructorParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitIntersectionReifiedTypeParameter
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitNullableTypeThroughTypealias
@@ -328,6 +329,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val DEPRECATION_ERROR: KtDiagnosticFactory2<FirBasedSymbol<*>, String> = KtDiagnosticFactory2("DEPRECATION_ERROR", ERROR, SourceElementPositioningStrategies.DEPRECATION, PsiElement::class, getRendererFactory())
     val DEPRECATION: KtDiagnosticFactory2<FirBasedSymbol<*>, String> = KtDiagnosticFactory2("DEPRECATION", WARNING, SourceElementPositioningStrategies.DEPRECATION, PsiElement::class, getRendererFactory())
     val OVERRIDE_DEPRECATION: KtDiagnosticFactory2<FirBasedSymbol<*>, FirDeprecationInfo> = KtDiagnosticFactory2("OVERRIDE_DEPRECATION", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class, getRendererFactory())
+    val INHERITING_AN_ANNOTATION_CLASS: KtDiagnosticFactoryForDeprecation1<FirRegularClassSymbol> = KtDiagnosticFactoryForDeprecation1("INHERITING_AN_ANNOTATION_CLASS", ProhibitInheritingAnnotationClasses, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, PsiElement::class, getRendererFactory())
     val TYPEALIAS_EXPANSION_DEPRECATION_ERROR: KtDiagnosticFactory3<FirBasedSymbol<*>, FirBasedSymbol<*>, String> = KtDiagnosticFactory3("TYPEALIAS_EXPANSION_DEPRECATION_ERROR", ERROR, SourceElementPositioningStrategies.DEPRECATION, PsiElement::class, getRendererFactory())
     val TYPEALIAS_EXPANSION_DEPRECATION: KtDiagnosticFactory3<FirBasedSymbol<*>, FirBasedSymbol<*>, String> = KtDiagnosticFactory3("TYPEALIAS_EXPANSION_DEPRECATION", WARNING, SourceElementPositioningStrategies.DEPRECATION, PsiElement::class, getRendererFactory())
     val VERSION_REQUIREMENT_DEPRECATION_ERROR: KtDiagnosticFactory4<FirBasedSymbol<*>, Version, String, String> = KtDiagnosticFactory4("VERSION_REQUIREMENT_DEPRECATION_ERROR", ERROR, SourceElementPositioningStrategies.DEPRECATION, PsiElement::class, getRendererFactory())

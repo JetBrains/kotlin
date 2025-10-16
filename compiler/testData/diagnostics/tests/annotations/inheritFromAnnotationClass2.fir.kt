@@ -4,9 +4,9 @@
 // These errors need to be suppressed to cause light class generation
 // FILE: test.kt
 
-annotation class Ann : Target()
+annotation class <!INHERITING_AN_ANNOTATION_CLASS_WARNING!>Ann<!> : Target()
 
-annotation class Ann2(vararg val allowedTargets: AnnotationTarget) : Target()
+annotation class <!INHERITING_AN_ANNOTATION_CLASS_WARNING!>Ann2(vararg val allowedTargets: AnnotationTarget)<!> : Target()
 
 interface I : J {
     override fun foo(): List<String> = throw Exception()

@@ -1040,6 +1040,18 @@ internal class OverrideDeprecationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.OverrideDeprecation
 
+internal class InheritingAnAnnotationClassErrorImpl(
+    override val annotationSymbol: KaClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InheritingAnAnnotationClassError
+
+internal class InheritingAnAnnotationClassWarningImpl(
+    override val annotationSymbol: KaClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InheritingAnAnnotationClassWarning
+
 internal class TypealiasExpansionDeprecationErrorImpl(
     override val alias: KaSymbol,
     override val reference: KaSymbol,
