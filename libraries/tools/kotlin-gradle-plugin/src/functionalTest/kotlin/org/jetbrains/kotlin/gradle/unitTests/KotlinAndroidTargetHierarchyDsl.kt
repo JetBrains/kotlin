@@ -50,6 +50,7 @@ class KotlinAndroidTargetHierarchyDsl {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
+            @Suppress("DEPRECATION")
             kotlin.androidTarget {
                 unitTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
                 instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
@@ -72,6 +73,7 @@ class KotlinAndroidTargetHierarchyDsl {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
+            @Suppress("DEPRECATION")
             kotlin.androidTarget {
                 unitTestVariant.sourceSetTree.set(KotlinSourceSetTree("xxx"))
                 instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree("yyy"))

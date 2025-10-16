@@ -50,6 +50,7 @@ class WhenEvaluatedAndroidOrderingTest {
         }
 
         project.applyAndroidLibraryPlugin()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
 
         project.evaluate()

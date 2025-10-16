@@ -54,6 +54,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         }
 
         project.multiplatformExtension.jvm()
+        @Suppress("DEPRECATION")
         project.multiplatformExtension.androidTarget()
 
     }

@@ -79,7 +79,8 @@ fun TestProject.configureStandardResourcesProducer(
 fun GradleProjectBuildScriptInjectionContext.configureStandardResourcesProducerTargets(withAndroid: Boolean) {
     with(kotlinMultiplatform) {
         if (withAndroid) {
-            androidTarget { -> Unit
+            @Suppress("DEPRECATION")
+            androidTarget {
                 @Suppress("DEPRECATION")
                 publishAllLibraryVariants()
                 compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)

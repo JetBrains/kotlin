@@ -40,6 +40,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
         /* Kotlin Setup */
         kotlin = project.multiplatformExtension
         kotlin.jvm()
+        @Suppress("DEPRECATION")
         kotlin.androidTarget()
         jvmAndAndroidMain = kotlin.sourceSets.create("jvmAndAndroidMain")
         kotlin.sourceSets.run {

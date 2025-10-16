@@ -122,6 +122,7 @@ class AssembleHierarchicalResourcesTaskTests {
         with(buildProjectWithMPP()) {
             androidLibrary { compileSdk = 31 }
             val kotlin = multiplatformExtension
+            @Suppress("DEPRECATION")
             val androidTarget = kotlin.androidTarget()
 
             evaluate()
@@ -159,6 +160,7 @@ class AssembleHierarchicalResourcesTaskTests {
                 }
             }
             val kotlin = multiplatformExtension
+            @Suppress("DEPRECATION")
             val androidTarget = kotlin.androidTarget()
 
             evaluate()

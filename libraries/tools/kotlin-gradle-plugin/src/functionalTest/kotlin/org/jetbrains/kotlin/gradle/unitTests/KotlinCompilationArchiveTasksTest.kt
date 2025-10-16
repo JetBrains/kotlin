@@ -110,10 +110,12 @@ class KotlinCompilationArchiveTasksTest {
             }
             kotlin {
                 linuxX64()
+                @Suppress("DEPRECATION")
                 androidTarget()
             }
         }
 
+        @Suppress("DEPRECATION")
         project.multiplatformExtension.androidTarget().compilations.forEach { compilation ->
             if (compilation.internal.archiveTaskName != null)
                 fail("Archive tasks should not be created for $compilation")

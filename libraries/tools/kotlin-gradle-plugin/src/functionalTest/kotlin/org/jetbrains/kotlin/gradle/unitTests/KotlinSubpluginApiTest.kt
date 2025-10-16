@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Argume
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.util.kotlin
 import java.io.File
 import kotlin.test.Test
@@ -29,6 +28,7 @@ class KotlinSubpluginApiTest {
             androidLibrary {}
             plugins.apply("kotlin-parcelize")
             kotlin {
+                @Suppress("DEPRECATION")
                 androidTarget()
                 jvm()
                 linuxX64()
