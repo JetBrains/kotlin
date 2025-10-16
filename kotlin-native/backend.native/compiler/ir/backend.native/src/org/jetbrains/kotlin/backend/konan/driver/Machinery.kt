@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.util.PerformanceManager
 /**
  * A version of [PhaseContext] that is specific to the Native backend.
  */
-internal interface NativeBackendPhaseContext : PhaseContext, ConfigChecks
+internal interface NativeBackendPhaseContext : PhaseContext, DisposableContext, ConfigChecks
 
 internal open class BasicNativeBackendPhaseContext(
         override val config: KonanConfig,
