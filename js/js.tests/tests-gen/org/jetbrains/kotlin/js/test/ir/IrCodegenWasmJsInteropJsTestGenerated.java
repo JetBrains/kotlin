@@ -466,6 +466,24 @@ public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasm
   }
 
   @Test
+  @TestMetadata("sharedManageExterns.kt")
+  public void testSharedManageExterns() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/sharedManageExterns.kt");
+  }
+
+  @Test
+  @TestMetadata("sharedThreads.kt")
+  public void testSharedThreads() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/sharedThreads.kt");
+  }
+
+  @Test
+  @TestMetadata("sharedTypes.kt")
+  public void testSharedTypes() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/sharedTypes.kt");
+  }
+
+  @Test
   @TestMetadata("types.kt")
   public void testTypes() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
