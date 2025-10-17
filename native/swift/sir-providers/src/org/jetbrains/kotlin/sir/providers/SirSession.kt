@@ -382,7 +382,7 @@ public interface SirCustomTypeTranslator {
     public fun isClassIdSupported(classId: ClassId): Boolean = isFqNameSupported(classId.asSingleFqName())
 
     context(kaSession: KaSession)
-    public fun KaUsualClassType.toSirType(ctx: TypeTranslationCtx): SirType?
+    public fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): BridgeWrapper?
 
     public fun SirNominalType.toBridge(): BridgeWrapper?
 

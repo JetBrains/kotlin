@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.SirCustomTypeTranslator
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSArray
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSDictionary
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSSet
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsObjCBridged
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.CType
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.KotlinType
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.bridgeAsNSCollectionElement
 import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 public class SirCustomTypeTranslatorImpl(
     private val session: SirSession
@@ -65,60 +65,82 @@ public class SirCustomTypeTranslatorImpl(
         return supportedFqNames.contains(fqName)
     }
 
+    private val typeToWrapperMap = mutableMapOf<SirNominalType, SirCustomTypeTranslator.BridgeWrapper>()
+
     context(kaSession: KaSession)
-    public override fun KaUsualClassType.toSirType(ctx: TypeTranslationCtx): SirType? {
+    public override fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): SirCustomTypeTranslator.BridgeWrapper? {
+        var swiftType: SirNominalType
         return when {
-            isStringType -> SirNominalType(SirSwiftModule.string)
+            isStringType -> {
+                swiftType = SirNominalType(SirSwiftModule.string)
+                AsObjCBridged(swiftType, CType.NSString).wrapper()
+            }
             isClassType(StandardClassIds.List) -> {
-                SirArrayType(
-                    typeArguments.single().sirType(ctx),
+                val swiftArgumentType = typeArguments.single().sirType(ctx)
+                swiftType = SirArrayType(
+                    swiftArgumentType,
                 )
+                AsNSArray(swiftType, bridgeAsNSCollectionElement(swiftArgumentType, session)).wrapper()
             }
 
             isClassType(StandardClassIds.Set) -> {
-                SirNominalType(
+                val swiftArgumentType = typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true))
+                swiftType = SirNominalType(
                     SirSwiftModule.set,
-                    listOf(typeArguments.single().sirType(ctx.copy(requiresHashableAsAny = true)))
+                    listOf(swiftArgumentType)
                 )
+                AsNSSet(swiftType, bridgeAsNSCollectionElement(swiftArgumentType, session)).wrapper()
             }
 
             isClassType(StandardClassIds.Map) -> {
-                SirDictionaryType(
-                    typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true)),
-                    typeArguments.last().sirType(ctx),
-                )
+                val swiftKeyType = typeArguments.first().sirType(ctx.copy(requiresHashableAsAny = true))
+                val swiftValueType = typeArguments.last().sirType(ctx)
+                swiftType = SirDictionaryType(swiftKeyType, swiftValueType)
+                AsNSDictionary(
+                    swiftType,
+                    bridgeAsNSCollectionElement(swiftKeyType, session),
+                    bridgeAsNSCollectionElement(swiftValueType, session),
+                ).wrapper()
             }
 
             isClassType(ClassId.topLevel(openEndRangeFqName)) -> {
-                SirNominalType(
+                swiftType = SirNominalType(
                     SirSwiftModule.range,
                     listOf(typeArguments.single().sirType(ctx))
                 )
+                Bridge.AsObject(swiftType, KotlinType.KotlinObject, CType.Object).wrapper()
             }
 
             isClassType(ClassId.topLevel(closedRangeFqName)) -> {
-                SirNominalType(
+                swiftType = SirNominalType(
                     SirSwiftModule.closedRange,
                     listOf(typeArguments.single().sirType(ctx))
                 )
+                Bridge.AsObject(swiftType, KotlinType.KotlinObject, CType.Object).wrapper()
             }
 
             isClassType(StandardClassIds.IntRange) -> {
-                SirNominalType(
+                swiftType = SirNominalType(
                     SirSwiftModule.closedRange,
                     listOf(SirNominalType(SirSwiftModule.int32))
                 )
+                Bridge.AsObject(swiftType, KotlinType.KotlinObject, CType.Object).wrapper()
             }
 
             isClassType(StandardClassIds.LongRange) -> {
-                SirNominalType(
+                swiftType = SirNominalType(
                     SirSwiftModule.closedRange,
                     listOf(SirNominalType(SirSwiftModule.int64))
                 )
+                Bridge.AsObject(swiftType, KotlinType.KotlinObject, CType.Object).wrapper()
             }
-            else -> null
+            else -> return null
+        }.also {
+            typeToWrapperMap[swiftType] = it
         }
     }
+
+    private fun Bridge.wrapper(): SirCustomTypeTranslator.BridgeWrapper = SirCustomTypeTranslator.BridgeWrapper(this)
 
     context(kaSession: KaSession)
     private fun KaTypeProjection.sirType(ctx: TypeTranslationCtx): SirType = when (this) {
@@ -136,21 +158,6 @@ public class SirCustomTypeTranslatorImpl(
     }
 
     override fun SirNominalType.toBridge(): SirCustomTypeTranslator.BridgeWrapper? {
-        val bridge = when (typeDeclaration) {
-            SirSwiftModule.string -> AsObjCBridged(this, CType.NSString)
-            SirSwiftModule.array -> AsNSArray(this, bridgeAsNSCollectionElement(typeArguments.single(), session))
-            SirSwiftModule.set -> AsNSSet(this, bridgeAsNSCollectionElement(typeArguments.single(), session))
-            SirSwiftModule.dictionary -> {
-                val (key, value) = typeArguments
-                AsNSDictionary(
-                    this,
-                    bridgeAsNSCollectionElement(key, session),
-                    bridgeAsNSCollectionElement(value, session),
-                )
-            }
-
-            else -> return null
-        }
-        return SirCustomTypeTranslator.BridgeWrapper(bridge)
+        return typeToWrapperMap[this]
     }
 }
