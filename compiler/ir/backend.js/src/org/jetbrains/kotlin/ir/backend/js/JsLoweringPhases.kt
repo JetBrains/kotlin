@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
@@ -151,6 +153,13 @@ private val jsCodeOutliningPhaseOnSecondStage = makeIrModulePhase(
     { context: JsIrBackendContext -> JsCodeOutliningLowering(context) },
     name = "JsCodeOutliningLoweringOnSecondStage",
 )
+
+private fun createJsCodeOutliningPhaseOnFirstStage(context: JsPreSerializationLoweringContext): JsCodeOutliningLowering {
+    return JsCodeOutliningLowering(context) { jsCall, valueDeclaration, container ->
+        context.diagnosticReporter.at(jsCall, container)
+            .report(JsKlibErrors.JS_CODE_CAPTURES_INLINABLE_FUNCTION, valueDeclaration)
+    }
+}
 
 private val jsCodeOutliningPhaseOnFirstStage = makeIrModulePhase(
     { context: JsPreSerializationLoweringContext ->
@@ -307,6 +316,16 @@ private val enumEntryRemovalLoweringPhase = makeIrModulePhase(
     name = "EnumEntryRemovalLowering",
     prerequisite = setOf(enumUsageLoweringPhase)
 )
+
+private fun createUpgradeCallableReferences(context: LoweringContext): UpgradeCallableReferences {
+    return UpgradeCallableReferences(
+        context,
+        upgradeFunctionReferencesAndLambdas = true,
+        upgradePropertyReferences = true,
+        upgradeLocalDelegatedPropertyReferences = true,
+        upgradeSamConversions = false,
+    )
+}
 
 private val upgradeCallableReferences = makeIrModulePhase(
     { ctx: LoweringContext ->
@@ -737,14 +756,17 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 
 fun jsLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
-): List<NamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
-    if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
-        this += upgradeCallableReferences
+): List<NamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
+    val phases = buildList<(JsPreSerializationLoweringContext) -> ModuleLoweringPass> {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
+            this += ::createUpgradeCallableReferences
+        }
+        if (languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
+            this += ::createJsCodeOutliningPhaseOnFirstStage
+        }
+        this += loweringsOfTheFirstPhase(languageVersionSettings)
     }
-    if (languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
-        this += jsCodeOutliningPhaseOnFirstStage
-    }
-    this += loweringsOfTheFirstPhase(languageVersionSettings)
+    return createModulePhases(*phases.toTypedArray())
 }
 
 fun getJsLowerings(
