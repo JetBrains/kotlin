@@ -15,10 +15,14 @@ import kotlin.reflect.jvm.internal.KTypeParameterOwnerImpl
  * Currently, this class is only used in the type checker implementation for kotlin-reflect,
  * but one day it should probably be used to implement KT-15518.
  */
-internal data object NothingKClass : KClass<Void> by Void::class, TypeConstructorMarker, KTypeParameterOwnerImpl {
+internal object NothingKClass : KClass<Void> by Void::class, TypeConstructorMarker, KTypeParameterOwnerImpl {
     override val simpleName: String
         get() = "Nothing"
 
     override val qualifiedName: String
         get() = "kotlin.Nothing"
+
+    override fun equals(other: Any?): Boolean = this === other
+    override fun hashCode(): Int = System.identityHashCode(this)
+    override fun toString(): String = "NothingKClass"
 }
