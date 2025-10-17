@@ -13931,6 +13931,14 @@ final val kotlin.js/definedExternally // kotlin.js/definedExternally|{}definedEx
     final fun <get-definedExternally>(): kotlin/Nothing // kotlin.js/definedExternally.<get-definedExternally>|<get-definedExternally>(){}[0]
 
 // Targets: [wasmJs, wasmWasi]
+open annotation class kotlin.js/JsSymbol : kotlin/Annotation { // kotlin.js/JsSymbol|null[1]
+    constructor <init>(kotlin/String) // kotlin.js/JsSymbol.<init>|<init>(kotlin.String){}[1]
+
+    final val name // kotlin.js/JsSymbol.name|{}name[1]
+        final fun <get-name>(): kotlin/String // kotlin.js/JsSymbol.name.<get-name>|<get-name>(){}[1]
+}
+
+// Targets: [wasmJs, wasmWasi]
 open annotation class kotlin.wasm.unsafe/UnsafeWasmMemoryApi : kotlin/Annotation { // kotlin.wasm.unsafe/UnsafeWasmMemoryApi|null[0]
     constructor <init>() // kotlin.wasm.unsafe/UnsafeWasmMemoryApi.<init>|<init>(){}[0]
 }
@@ -14167,6 +14175,14 @@ open annotation class kotlin.js/JsOutlinedFunction : kotlin/Annotation { // kotl
 // Targets: [js]
 open annotation class kotlin.js/JsStatic : kotlin/Annotation { // kotlin.js/JsStatic|null[0]
     constructor <init>() // kotlin.js/JsStatic.<init>|<init>(){}[0]
+}
+
+// Targets: [js]
+open annotation class kotlin.js/JsSymbol : kotlin/Annotation { // kotlin.js/JsSymbol|null[0]
+    constructor <init>(kotlin/String) // kotlin.js/JsSymbol.<init>|<init>(kotlin.String){}[0]
+
+    final val name // kotlin.js/JsSymbol.name|{}name[0]
+        final fun <get-name>(): kotlin/String // kotlin.js/JsSymbol.name.<get-name>|<get-name>(){}[0]
 }
 
 // Targets: [js]
