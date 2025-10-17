@@ -129,4 +129,10 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         val library = File(testDataDirectory, "VeryOldLibraryWithDataClass.jar")
         compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler())
     }
+
+    fun testAgainstHeaderMode() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xheader-mode"))
+
+        compileKotlin(fileName = "main.kt", output = tmpdir, classpath = listOf(library))
+    }
 }

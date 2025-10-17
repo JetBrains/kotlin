@@ -1561,6 +1561,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/globalWarningSuppression_incorrect.args");
     }
 
+    @TestMetadata("headerMode.args")
+    public void testHeaderMode() {
+      runTest("compiler/testData/cli/jvm/headerMode.args");
+    }
+
     @TestMetadata("help.args")
     public void testHelp() {
       runTest("compiler/testData/cli/jvm/help.args");
