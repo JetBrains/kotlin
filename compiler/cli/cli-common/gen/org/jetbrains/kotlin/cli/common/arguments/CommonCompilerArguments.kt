@@ -533,6 +533,17 @@ The argument should be used only if the new compilation scheme is enabled with -
         }
 
     @Argument(
+        value = "-Xlocal-type-aliases",
+        description = "Enable experimental language support for local type aliases.",
+    )
+    @Enables(LanguageFeature.LocalTypeAliases)
+    var localTypeAliases: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xmetadata-klib",
         deprecatedName = "-Xexpect-actual-linker",
         description = "Produce a klib that only contains the metadata of declarations.",

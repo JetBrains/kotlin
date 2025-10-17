@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INLINE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INTELLIJ_PLUGIN_ROOT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_LIST_PHASES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_LOCAL_TYPE_ALIASES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_METADATA_KLIB
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_METADATA_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_MULTI_DOLLAR_INTERPOLATION
@@ -197,6 +198,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if (X_INLINE_CLASSES in this) { arguments.inlineClasses = get(X_INLINE_CLASSES)}
     if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.intellijPluginRoot = get(X_INTELLIJ_PLUGIN_ROOT)}
     if (X_LIST_PHASES in this) { arguments.listPhases = get(X_LIST_PHASES)}
+    if (X_LOCAL_TYPE_ALIASES in this) { arguments.localTypeAliases = get(X_LOCAL_TYPE_ALIASES)}
     if (X_METADATA_KLIB in this) { arguments.metadataKlib = get(X_METADATA_KLIB)}
     if (X_METADATA_VERSION in this) { arguments.metadataVersion = get(X_METADATA_VERSION)}
     if (X_MULTI_DOLLAR_INTERPOLATION in this) { arguments.multiDollarInterpolation = get(X_MULTI_DOLLAR_INTERPOLATION)}
@@ -294,6 +296,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     try { this[X_INLINE_CLASSES] = arguments.inlineClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_INTELLIJ_PLUGIN_ROOT] = arguments.intellijPluginRoot } catch (_: NoSuchMethodError) {  }
     try { this[X_LIST_PHASES] = arguments.listPhases } catch (_: NoSuchMethodError) {  }
+    try { this[X_LOCAL_TYPE_ALIASES] = arguments.localTypeAliases } catch (_: NoSuchMethodError) {  }
     try { this[X_METADATA_KLIB] = arguments.metadataKlib } catch (_: NoSuchMethodError) {  }
     try { this[X_METADATA_VERSION] = arguments.metadataVersion } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTI_DOLLAR_INTERPOLATION] = arguments.multiDollarInterpolation } catch (_: NoSuchMethodError) {  }
@@ -483,6 +486,9 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
     public val X_LIST_PHASES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_LIST_PHASES")
+
+    public val X_LOCAL_TYPE_ALIASES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_LOCAL_TYPE_ALIASES")
 
     public val X_METADATA_KLIB: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_METADATA_KLIB")

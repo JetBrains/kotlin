@@ -989,6 +989,19 @@ The argument should be used only if the new compilation scheme is enabled with -
         )
     }
 
+    compilerArgument {
+        name = "Xlocal-type-aliases"
+        description = "Enable experimental language support for local type aliases.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.LocalTypeAliases)
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
 
     compilerArgument {
         name = "Xsuppress-warning"

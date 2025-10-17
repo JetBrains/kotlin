@@ -2396,6 +2396,37 @@
                         }
                     },
                     {
+                        "name": "Xlocal-type-aliases",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enable experimental language support for local type aliases.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.3.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "Xmetadata-klib",
                         "shortName": null,
                         "deprecatedName": "Xexpect-actual-linker",

@@ -77,6 +77,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.localTypeAliases) {
+        put(LanguageFeature.LocalTypeAliases, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.multiDollarInterpolation) {
         put(LanguageFeature.MultiDollarInterpolation, LanguageFeature.State.ENABLED)
     }
