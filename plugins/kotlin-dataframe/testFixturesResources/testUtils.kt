@@ -7,6 +7,20 @@ import org.jetbrains.kotlinx.dataframe.schema.*
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSubtypeOf
 
+inline fun <reified T> DataFrame<T>.checkCompileTimeSchemaEqualsRuntime() {
+    val schema = schema()
+    val compileTimeSchema = compileTimeSchema()
+    require(schema == compileTimeSchema) {
+        buildString {
+            appendLine("Runtime schema is not equal to compile time schema.")
+            appendLine("Runtime:")
+            appendLine(schema.toString())
+            appendLine("Compile:")
+            appendLine(compileTimeSchema.toString())
+        }
+    }
+}
+
 inline fun <reified T> DataFrame<T>.compareSchemas(strict: Boolean = false) {
     val schema = schema()
     val compileTimeSchema = compileTimeSchema()
