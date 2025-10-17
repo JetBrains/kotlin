@@ -32,7 +32,9 @@ open class InlineClassLowering(val context: CommonBackendContext) {
 
     protected open fun processDelegatedInlineClassMember(declaration: IrDeclaration) {}
 
-    val inlineClassDeclarationLowering = object : DeclarationTransformer {
+    val inlineClassDeclarationLowering = InlineClassDeclarationLowering()
+
+    inner class InlineClassDeclarationLowering : DeclarationTransformer {
 
         override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
             val irClass = declaration.parent as? IrClass ?: return null
@@ -306,7 +308,9 @@ open class InlineClassLowering(val context: CommonBackendContext) {
             function.staticMethod = it
         }
 
-    val inlineClassUsageLowering = object : BodyLoweringPass {
+    val inlineClassUsageLowering = InlineClassUsageLowering()
+
+    inner class InlineClassUsageLowering : BodyLoweringPass {
 
         override fun lower(irBody: IrBody, container: IrDeclaration) {
             irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
