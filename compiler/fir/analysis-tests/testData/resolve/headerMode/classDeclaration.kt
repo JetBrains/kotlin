@@ -29,13 +29,13 @@ class A {
 
 interface B {
     fun funA(): String {
-        "B.funA body"
+        return "B.funA body"
     }
 
     fun funB(): String
 }
 
-class C: B {
+class C : B {
     override fun funB(): String {
         return "C.funB body"
     }

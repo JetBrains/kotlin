@@ -7,7 +7,7 @@ fun funA(): String {
     return "funA body"
 }
 
-inline fun funB: String {
+inline fun funB(): String {
     return "funB body"
 }
 
