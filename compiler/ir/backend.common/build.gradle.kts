@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -14,6 +15,8 @@ dependencies {
 
     testImplementation(kotlinTest("junit"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
+
+    testFixturesImplementation(kotlinTest("junit"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
@@ -21,5 +24,6 @@ optInToUnsafeDuringIrConstructionAPI()
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
