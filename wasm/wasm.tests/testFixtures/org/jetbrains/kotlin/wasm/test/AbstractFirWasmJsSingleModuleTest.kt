@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_SINGLE_MODULE_MODE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_SINGLE_MODULE_MODE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
@@ -73,6 +74,11 @@ abstract class AbstractWasmJsCodegenSingleModuleTest(
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +WASM_SINGLE_MODULE_MODE
+            }
+        }
         builder.configureCodegenFirHandlerSteps()
         builder.useAfterAnalysisCheckers(
             ::IgnoredTestSuppressor,
