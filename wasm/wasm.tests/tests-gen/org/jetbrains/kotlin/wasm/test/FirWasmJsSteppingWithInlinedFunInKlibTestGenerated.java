@@ -691,6 +691,12 @@ public class FirWasmJsSteppingWithInlinedFunInKlibTestGenerated extends Abstract
   }
 
   @Test
+  @TestMetadata("suspendClosingBrace3.kt")
+  public void testSuspendClosingBrace3() {
+    runTest("compiler/testData/debug/stepping/suspendClosingBrace3.kt");
+  }
+
+  @Test
   @TestMetadata("suspendFunWithLambdaParameter.kt")
   public void testSuspendFunWithLambdaParameter() {
     runTest("compiler/testData/debug/stepping/suspendFunWithLambdaParameter.kt");
