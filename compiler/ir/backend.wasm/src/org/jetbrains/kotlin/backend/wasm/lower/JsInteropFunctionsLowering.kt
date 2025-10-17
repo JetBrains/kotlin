@@ -71,6 +71,15 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         currentParent = declaration.parent
         currentFile = declaration.file
 
+        val declarationName = declaration.name
+        val jsInteropAdapters = jsRelatedSymbols.jsInteropAdapters
+
+        if (declarationName == jsInteropAdapters.getCachedJsObject.owner.name ||
+            declarationName == jsInteropAdapters.getCachedJsObjectWasm.owner.name
+        ) {
+            return null
+        }
+
         val newDeclarations = context.irFactory.stageController.restrictTo(declaration) {
             if (isExternal)
                 transformExternalFunction(declaration)
@@ -543,16 +552,18 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val moduleName = context.module.name.asString()
         val isSingleModule = context.configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)
 
-        val importVariableString =
-            if (isSingleModule && moduleName != "<kotlin>") {
-                JsModuleAndQualifierReference.encode("<kotlin>")
+        val getCachedJsObjectCall =
+            if (!isSingleModule) {
+                "getCachedJsObject"
+            } else if (moduleName != "<kotlin>") {
+                JsModuleAndQualifierReference.encode("<kotlin>") + ".getCachedJsObject"
             } else {
-                "wasmExports"
+                "wasmExports.getCachedJsObject"
             }
 
         val jsCode = buildString {
             append("(f) => ")
-            append("$importVariableString.getCachedJsObject(f, ")
+            append("$getCachedJsObjectCall(f, ")
             append("(")
             appendParameterList(arity)
             append(") => wasmExports[")

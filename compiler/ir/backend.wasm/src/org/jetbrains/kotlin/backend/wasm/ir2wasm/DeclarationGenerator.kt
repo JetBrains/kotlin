@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
@@ -104,7 +105,20 @@ class DeclarationGenerator(
         val functionTypeSymbol = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
         val wasmImportModule = declaration.getWasmImportDescriptor()
         val jsBuiltin = declaration.getJsBuiltinDescriptor()
-        val jsCode = declaration.getJsFunAnnotation()
+
+        val jsInteropAdapters = backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters
+
+        val wholeProgramMode = !backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)
+        val isGetCachedObjectWasmAndWholeProgram =
+            declaration.name == jsInteropAdapters.getCachedJsObject.owner.name && wholeProgramMode
+        val isGetCachedObjectAndWholeProgram =
+            declaration.name == jsInteropAdapters.getCachedJsObjectWasm.owner.name && wholeProgramMode
+
+        val jsCode =
+            if (isGetCachedObjectWasmAndWholeProgram || isGetCachedObjectAndWholeProgram)
+                "(p0, p1) => getCachedJsObject(p0, p1)"
+            else
+                declaration.getJsFunAnnotation()
 
         val importedName = when {
             wasmImportModule != null -> {
@@ -205,7 +219,7 @@ class DeclarationGenerator(
             else -> declaration.getWasmExportNameIfWasmExport()
         }
 
-        if (nameIfExported != null) {
+        if (nameIfExported != null && !isGetCachedObjectAndWholeProgram) {
             wasmFileCodegenContext.addExport(
                 WasmExport.Function(
                     field = function,

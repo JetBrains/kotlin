@@ -309,6 +309,9 @@ class WasmSymbols(
         val kotlinUShortToJsNumber = getInternalWasmFunction("kotlinUShortToJsNumber")
         val kotlinUIntToJsNumber = getInternalWasmFunction("kotlinUIntToJsNumber")
         val kotlinULongToJsBigInt = getInternalWasmFunction("kotlinULongToJsBigInt")
+
+        val getCachedJsObject = getInternalWasmFunction("getCachedJsObject")
+        val getCachedJsObjectWasm = getInternalWasmFunction("getCachedJsObjectWasm")
     }
 
     inner class JsRelatedSymbols {

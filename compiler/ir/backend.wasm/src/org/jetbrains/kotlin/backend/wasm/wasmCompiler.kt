@@ -266,6 +266,7 @@ fun compileWasm(
             jsFuns,
             useJsTag,
             stdlibModuleOrWholeProgramMode,
+            wholeProgramMode,
         )
 
         if (jsCode.isNotEmpty()) {
@@ -343,6 +344,7 @@ fun generateJsCode(
     jsFuns: Set<JsCodeSnippet>,
     useJsTag: Boolean,
     stdlibModuleOrWholeProgramMode: Boolean,
+    wholeProgramMode: Boolean,
 ): String {
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
@@ -391,6 +393,23 @@ fun generateJsCode(
             export const wasmTag = ${JsModuleAndQualifierReference.encode("<kotlin>")}.wasmTag;
         """.trimIndent()
 
+    val getCachedJsObject =
+        if (wholeProgramMode)
+            """
+    function getCachedJsObject(ref, ifNotCached) {
+        if (getCachedJsObject.cachedJsObjects == undefined) {
+            getCachedJsObject.cachedJsObjects = new WeakMap();
+        }
+        if (typeof ref !== 'object' && typeof ref !== 'function') return ifNotCached;
+        const cached = getCachedJsObject.cachedJsObjects.get(ref);
+        if (cached !== void 0) return cached;
+        getCachedJsObject.cachedJsObjects.set(ref, ifNotCached);
+        return ifNotCached;
+    }
+            """.trimIndent()
+        else
+            ""
+
     return """
 $imports
 
@@ -403,6 +422,8 @@ export function setWasmExports(exports) {
 $wasmTagInitialization
 
 $referencesToQualifiedAndImportedDeclarations
+
+$getCachedJsObject
 
 export const js_code = {
 $jsCodeBodyIndented
@@ -604,7 +625,7 @@ For more information, see https://kotl.in/wasm-help
   throw e;
 }
 
-let innerWasmExports = wasmInstance.exports
+const innerWasmExports = wasmInstance.exports
 setWasmExports(innerWasmExports);
 innerWasmExports._initialize();
 
