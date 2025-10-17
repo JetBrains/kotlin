@@ -10,7 +10,7 @@ import com.intellij.util.xmlb.annotations.Transient
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/NativeCompilerArguments.kt
 // DO NOT MODIFY IT MANUALLY.
 
-class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
+class K2NativeCompilerArguments : K2NativeKlibCompilerArguments() {
     @Argument(
         value = "-Xadd-cache",
         valueDescription = "<path>",
@@ -943,29 +943,6 @@ Note: This option is deprecated and will be removed in one of the future release
         description = "Output name.",
     )
     var outputName: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-produce",
-        shortName = "-p",
-        valueDescription = "{program|static|dynamic|framework|library|bitcode}",
-        description = "Specify the output file kind.",
-    )
-    var produce: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-target",
-        valueDescription = "<target>",
-        description = "Set the hardware target.",
-    )
-    var target: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value

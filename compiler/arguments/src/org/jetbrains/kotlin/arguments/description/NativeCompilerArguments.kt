@@ -323,31 +323,6 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         )
     }
 
-    compilerArgument {
-        name = "produce"
-        shortName = "p"
-        description = "Specify the output file kind.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "{program|static|dynamic|framework|library|bitcode}".asReleaseDependent()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
-    compilerArgument {
-        name = "target"
-        description = "Set the hardware target.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "<target>".asReleaseDependent()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
     // Advanced options with -X prefix
 
     compilerArgument {

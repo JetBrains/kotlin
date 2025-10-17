@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.native.FirOutput
-import org.jetbrains.kotlin.native.FirSerializerInput
+import org.jetbrains.kotlin.cli.native.FirOutput
+import org.jetbrains.kotlin.cli.native.FirSerializerInput
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType

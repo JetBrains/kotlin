@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.arguments.description.removed.removedMetadataArgumen
 import org.jetbrains.kotlin.arguments.description.removed.removedNativeArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedWasmArguments
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArguments
+import removedNativeKlibArguments
 
 val kotlinCompilerArguments = compilerArguments {
     topLevel(
@@ -42,9 +43,14 @@ val kotlinCompilerArguments = compilerArguments {
                     ) {}
                 }
                 subLevel(
-                    name = CompilerArgumentsLevelNames.nativeArguments,
-                    mergeWith = setOf(actualNativeArguments, removedNativeArguments)
-                ) {}
+                    name = CompilerArgumentsLevelNames.nativeKlibArguments,
+                    mergeWith = setOf(actualNativeKlibArguments, removedNativeKlibArguments)
+                ) {
+                    subLevel(
+                        name = CompilerArgumentsLevelNames.nativeArguments,
+                        mergeWith = setOf(actualNativeArguments, removedNativeArguments)
+                    ) {}
+                }
             }
             subLevel(
                 name = CompilerArgumentsLevelNames.metadataArguments,

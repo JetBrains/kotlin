@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.SerializerOutput
-import org.jetbrains.kotlin.native.writeKlib
-import org.jetbrains.kotlin.native.KlibWriterInput
+import org.jetbrains.kotlin.cli.native.writeKlib
+import org.jetbrains.kotlin.cli.native.KlibWriterInput
 
 internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibWriterInput>(
         "WriteKlib",

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.native.FirOutput
+import org.jetbrains.kotlin.cli.native.FirOutput
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.native.firFrontendWithLightTree
-import org.jetbrains.kotlin.native.firFrontendWithPsi
+import org.jetbrains.kotlin.cli.native.firFrontendWithLightTree
+import org.jetbrains.kotlin.cli.native.firFrontendWithPsi
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys

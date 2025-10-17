@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.native.Fir2IrOutput
-import org.jetbrains.kotlin.native.FirOutput
+import org.jetbrains.kotlin.cli.native.Fir2IrOutput
+import org.jetbrains.kotlin.cli.native.FirOutput
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.native.fir2Ir
+import org.jetbrains.kotlin.cli.native.fir2Ir
 
 internal val Fir2IrPhase = createSimpleNamedCompilerPhase(
         "Fir2Ir",

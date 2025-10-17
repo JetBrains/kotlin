@@ -58,6 +58,7 @@ internal val KDOC_OPTIONS_CONTAINS = """
 internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments,
     CompilerArgumentsLevelNames.jsArguments,
+    CompilerArgumentsLevelNames.nativeKlibArguments,
     CompilerArgumentsLevelNames.nativeArguments,
     CompilerArgumentsLevelNames.wasmArguments,
 )

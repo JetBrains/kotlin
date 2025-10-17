@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
-import org.jetbrains.kotlin.native.FirOutput
-import org.jetbrains.kotlin.native.FirSerializerInput
+import org.jetbrains.kotlin.cli.native.FirOutput
+import org.jetbrains.kotlin.cli.native.FirSerializerInput
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.native.fir2IrSerializer
-import org.jetbrains.kotlin.native.firSerializer
+import org.jetbrains.kotlin.cli.native.fir2IrSerializer
+import org.jetbrains.kotlin.cli.native.firSerializer
 
 internal val FirSerializerPhase: NamedCompilerPhase<PhaseContext, FirOutput, SerializerOutput<KonanLibrary>?> = createSimpleNamedCompilerPhase(
         "FirSerializer",

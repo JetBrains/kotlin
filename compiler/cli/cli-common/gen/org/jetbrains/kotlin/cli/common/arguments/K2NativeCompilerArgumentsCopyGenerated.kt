@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 @OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeCompilerArguments): K2NativeCompilerArguments {
-    copyCommonKlibBasedCompilerArguments(from, to)
+    copyK2NativeKlibCompilerArguments(from, to)
 
     to.allocator = from.allocator
     to.autoCacheDir = from.autoCacheDir
@@ -79,7 +79,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.printBitCode = from.printBitCode
     to.printFiles = from.printFiles
     to.printIr = from.printIr
-    to.produce = from.produce
     to.propertyLazyInitialization = from.propertyLazyInitialization
     to.purgeUserLibs = from.purgeUserLibs
     to.refinesPaths = from.refinesPaths?.copyOf()
@@ -92,7 +91,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.shortModuleName = from.shortModuleName
     to.singleLinkerArguments = from.singleLinkerArguments?.copyOf()
     to.staticFramework = from.staticFramework
-    to.target = from.target
     to.temporaryFilesDir = from.temporaryFilesDir
     to.testDumpOutputPath = from.testDumpOutputPath
     to.verifyBitCode = from.verifyBitCode
