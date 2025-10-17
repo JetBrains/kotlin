@@ -7,6 +7,11 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_MODULE_METADATA_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import java.io.File
@@ -104,7 +109,10 @@ fun KlibMockDSL.metadata(metadata: SerializedMetadata) = metadata {
     file(KLIB_MODULE_METADATA_FILE_NAME, metadata.module)
 
     metadata.fragmentNames.forEachIndexed { index, packageName ->
-        val fragmentDirName = if (packageName == "") "root_package" else "package_$packageName"
+        val fragmentDirName = if (packageName == "")
+            KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME
+        else
+            "$KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX$packageName"
         val shortPackageName = packageName.substringAfterLast(".")
 
         dir(fragmentDirName) {
@@ -114,7 +122,7 @@ fun KlibMockDSL.metadata(metadata: SerializedMetadata) = metadata {
             fun withPadding(fragmentPartIndex: Int) = String.format("%0${padding}d", fragmentPartIndex)
 
             fragmentParts.forEachIndexed { fragmentPartIndex, fragmentPart ->
-                val fragmentPartFileName = "${withPadding(fragmentPartIndex)}_$shortPackageName$KLIB_METADATA_FILE_EXTENSION_WITH_DOT"
+                val fragmentPartFileName = "${withPadding(fragmentPartIndex)}_$shortPackageName.$KLIB_METADATA_FILE_EXTENSION"
                 file(fragmentPartFileName, fragmentPart)
             }
         }

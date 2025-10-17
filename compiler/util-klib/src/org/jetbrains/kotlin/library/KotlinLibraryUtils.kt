@@ -7,9 +7,6 @@ import org.jetbrains.kotlin.library.impl.zippedKotlinLibraryChecks
 const val KLIB_FILE_EXTENSION = "klib"
 const val KLIB_FILE_EXTENSION_WITH_DOT = ".$KLIB_FILE_EXTENSION"
 
-const val KLIB_METADATA_FILE_EXTENSION = "knm"
-const val KLIB_METADATA_FILE_EXTENSION_WITH_DOT = ".$KLIB_METADATA_FILE_EXTENSION"
-
 fun File.unpackZippedKonanLibraryTo(newDir: File) {
 
     // First, run validity checks for the given KLIB file.
