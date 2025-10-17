@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.util.filterBackwardCompatibilityKotlinFusFile
 import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
+import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -771,14 +772,15 @@ class FusStatisticsIT : KGPBaseTest() {
     @GradleTest
     @JvmGradlePluginTests
     fun testCompilerExecutionSettings(gradleVersion: GradleVersion) {
+        val kotlinVersion = StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize(KOTLIN_VERSION)
         project("empty", gradleVersion) {
             plugins { kotlin("jvm") }
             assertNoErrorFilesCreated {
                 build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", "-Pkotlin.compiler.runViaBuildToolsApi=true") {
                     assertOutputDoesNotContainFusErrors()
                     fusStatisticsDirectory.assertFusReportContains(
-                        "KOTLIN_GRADLE_PLUGIN_VERSION=${KOTLIN_VERSION.lowercase()}",
-                        "KOTLIN_COMPILER_VERSION=${KOTLIN_VERSION.lowercase()}",
+                        "KOTLIN_GRADLE_PLUGIN_VERSION=$kotlinVersion",
+                        "KOTLIN_COMPILER_VERSION=$kotlinVersion",
                         "KOTLIN_COMPILER_EXECUTION_STRATEGY=daemon",
                     )
                 }
@@ -789,7 +791,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", "-Pkotlin.compiler.runViaBuildToolsApi=true") {
                     assertOutputDoesNotContainFusErrors()
                     fusStatisticsDirectory.assertFusReportContains(
-                        "KOTLIN_GRADLE_PLUGIN_VERSION=${KOTLIN_VERSION.lowercase()}",
+                        "KOTLIN_GRADLE_PLUGIN_VERSION=$kotlinVersion",
                         "KOTLIN_COMPILER_VERSION=2.2.20",
                         "KOTLIN_COMPILER_EXECUTION_STRATEGY=daemon",
                     )
@@ -802,8 +804,8 @@ class FusStatisticsIT : KGPBaseTest() {
                 ) {
                     assertOutputDoesNotContainFusErrors()
                     fusStatisticsDirectory.assertFusReportContains(
-                        "KOTLIN_GRADLE_PLUGIN_VERSION=${KOTLIN_VERSION.lowercase()}",
-                        "KOTLIN_COMPILER_VERSION=${KOTLIN_VERSION.lowercase()}",
+                        "KOTLIN_GRADLE_PLUGIN_VERSION=$kotlinVersion",
+                        "KOTLIN_COMPILER_VERSION=$kotlinVersion",
                         "KOTLIN_COMPILER_EXECUTION_STRATEGY=in-process",
                     )
                 }
