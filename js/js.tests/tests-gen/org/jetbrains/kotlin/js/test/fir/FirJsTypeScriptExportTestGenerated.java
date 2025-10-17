@@ -362,6 +362,26 @@ public class FirJsTypeScriptExportTestGenerated extends AbstractFirJsTypeScriptE
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/inner-classes-generic")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Inner_classes_generic {
+    @Test
+    public void testAllFilesPresentInInner_classes_generic() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/inner-classes-generic"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/inner-classes-generic-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Inner_classes_generic_in_exported_file {
+    @Test
+    public void testAllFilesPresentInInner_classes_generic_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/inner-classes-generic-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/inner-classes-in-exported-file")
   @TestDataPath("$PROJECT_ROOT")
   public class Inner_classes_in_exported_file {
