@@ -393,6 +393,12 @@ public class SerializationNativeWithInlinedFunInKlibTestGenerated extends Abstra
   }
 
   @Test
+  @TestMetadata("starProjectionsSealed.kt")
+  public void testStarProjectionsSealed() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/starProjectionsSealed.kt");
+  }
+
+  @Test
   @TestMetadata("typealiasesInContextualTest.kt")
   public void testTypealiasesInContextualTest() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesInContextualTest.kt");
