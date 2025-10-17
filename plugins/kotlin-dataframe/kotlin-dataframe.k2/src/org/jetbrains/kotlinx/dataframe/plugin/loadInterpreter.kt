@@ -218,6 +218,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveAfter0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveBefore0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveInto0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveTo
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveTo1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToStart0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToStart1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToEnd0
@@ -584,6 +585,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "MoveBefore0" -> MoveBefore0()
         "MoveAfter0" -> MoveAfter0()
         "MoveTo" -> MoveTo()
+        "MoveTo1" -> MoveTo1()
         "GroupByAdd" -> GroupByAdd()
         "Merge0" -> Merge0()
         "MergeInto0" -> MergeInto0()
