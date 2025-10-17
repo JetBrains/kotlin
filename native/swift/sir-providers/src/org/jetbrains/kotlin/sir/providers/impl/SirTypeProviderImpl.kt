@@ -7,41 +7,19 @@ package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.containingModule
-import org.jetbrains.kotlin.analysis.api.components.isAnyType
-import org.jetbrains.kotlin.analysis.api.components.isBooleanType
-import org.jetbrains.kotlin.analysis.api.components.isByteType
-import org.jetbrains.kotlin.analysis.api.components.isCharType
-import org.jetbrains.kotlin.analysis.api.components.isDoubleType
-import org.jetbrains.kotlin.analysis.api.components.isFloatType
-import org.jetbrains.kotlin.analysis.api.components.isFunctionType
-import org.jetbrains.kotlin.analysis.api.components.isIntType
-import org.jetbrains.kotlin.analysis.api.components.isLongType
-import org.jetbrains.kotlin.analysis.api.components.isMarkedNullable
-import org.jetbrains.kotlin.analysis.api.components.isNothingType
-import org.jetbrains.kotlin.analysis.api.components.isShortType
-import org.jetbrains.kotlin.analysis.api.components.isSuspendFunctionType
-import org.jetbrains.kotlin.analysis.api.components.isUByteType
-import org.jetbrains.kotlin.analysis.api.components.isUIntType
-import org.jetbrains.kotlin.analysis.api.components.isULongType
-import org.jetbrains.kotlin.analysis.api.components.isUShortType
-import org.jetbrains.kotlin.analysis.api.components.isUnitType
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.SirTypeProvider
+import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider.ErrorTypeStrategy
-import org.jetbrains.kotlin.sir.providers.sirAvailability
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
-import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
-import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -90,32 +68,6 @@ public class SirTypeProviderImpl(
 
     @OptIn(KaNonPublicApi::class)
     private fun buildSirType(ktType: KaType, ctx: TypeTranslationCtx): SirType {
-        fun buildPrimitiveType(ktType: KaType): SirType? = sirSession.withSessions {
-            when {
-                ktType.isCharType -> SirSwiftModule.utf16CodeUnit
-                ktType.isUnitType -> SirSwiftModule.void
-
-                ktType.isByteType -> SirSwiftModule.int8
-                ktType.isShortType -> SirSwiftModule.int16
-                ktType.isIntType -> SirSwiftModule.int32
-                ktType.isLongType -> SirSwiftModule.int64
-
-                ktType.isUByteType -> SirSwiftModule.uint8
-                ktType.isUShortType -> SirSwiftModule.uint16
-                ktType.isUIntType -> SirSwiftModule.uint32
-                ktType.isULongType -> SirSwiftModule.uint64
-
-                ktType.isBooleanType -> SirSwiftModule.bool
-
-                ktType.isDoubleType -> SirSwiftModule.double
-                ktType.isFloatType -> SirSwiftModule.float
-
-                else -> null
-            }
-                ?.let { SirNominalType(it) }
-                ?.optionalIfNeeded(ktType)
-        }
-
         fun buildRegularType(kaType: KaType): SirType = sirSession.withSessions {
             when (kaType) {
                 is KaUsualClassType -> {
@@ -169,7 +121,6 @@ public class SirTypeProviderImpl(
         }
 
         return ktType.abbreviation?.let { buildRegularType(it) }
-            ?: buildPrimitiveType(ktType)
             ?: buildRegularType(ktType)
     }
 
