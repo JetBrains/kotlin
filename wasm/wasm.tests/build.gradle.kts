@@ -195,6 +195,11 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
+    implicitDependencies("org.nodejs:node:$nodejsVersion:win-x64@zip")
+    implicitDependencies("org.nodejs:node:$nodejsVersion:linux-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsVersion:darwin-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsVersion:darwin-arm64@tar.gz")
+
     jsShell("org.mozilla:jsshell:${jsShellVersion.get()}:$jsShellSuffix@zip")
 
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:win64@zip")
