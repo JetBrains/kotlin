@@ -30,7 +30,9 @@ private const val INLINE_CLASS_IMPL_SUFFIX = "-impl"
 class InlineClassLowering(val context: CommonBackendContext) {
     private fun isClassInlineLike(irClass: IrClass): Boolean = context.inlineClassesUtils.isClassInlineLike(irClass)
 
-    val inlineClassDeclarationLowering = object : DeclarationTransformer {
+    val inlineClassDeclarationLowering = InlineClassDeclarationLowering()
+
+    inner class InlineClassDeclarationLowering : DeclarationTransformer {
 
         override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
             val irClass = declaration.parent as? IrClass ?: return null
@@ -303,7 +305,9 @@ class InlineClassLowering(val context: CommonBackendContext) {
             function.staticMethod = it
         }
 
-    val inlineClassUsageLowering = object : BodyLoweringPass {
+    val inlineClassUsageLowering = InlineClassUsageLowering()
+
+    inner class InlineClassUsageLowering : BodyLoweringPass {
 
         override fun lower(irBody: IrBody, container: IrDeclaration) {
             irBody.transformChildrenVoid(object : IrElementTransformerVoid() {

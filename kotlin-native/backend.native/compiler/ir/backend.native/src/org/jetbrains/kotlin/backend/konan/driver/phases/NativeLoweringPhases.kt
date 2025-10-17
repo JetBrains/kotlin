@@ -121,7 +121,7 @@ private val removeExpectDeclarationsPhase = createFileLoweringPhase(
 )
 
 private val stripTypeAliasDeclarationsPhase = createFileLoweringPhase(
-        { _: Context -> StripTypeAliasDeclarationsLowering() },
+        ::StripTypeAliasDeclarationsLowering,
         name = "StripTypeAliasDeclarations",
 )
 

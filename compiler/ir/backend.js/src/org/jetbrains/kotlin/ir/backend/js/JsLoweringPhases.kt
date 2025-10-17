@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
-import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
+import org.jetbrains.kotlin.backend.common.lower.PropertiesLowering
+import org.jetbrains.kotlin.backend.common.lower.StripTypeAliasDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -43,6 +47,16 @@ private val validateIrBeforeLowering = makeIrModulePhase(
     name = "ValidateIrBeforeLowering",
 )
 
+private fun createValidateIrAfterInliningOnlyPrivateFunctions(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<LoweringContext> {
+    return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+        context,
+        checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+            // Call sites of only non-private functions are allowed at this stage.
+            !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
+        }
+    )
+}
+
 private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     { context: LoweringContext ->
         IrValidationAfterInliningOnlyPrivateFunctionsPhase(
@@ -55,6 +69,19 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     },
     name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
 )
+
+private fun createValidateIrAfterInliningAllFunctions(context: LoweringContext): IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<LoweringContext> {
+    return IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase(
+        context,
+        checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
+            // No inline function call sites should remain at this stage.
+            val inlineFunction = inlineFunctionUseSite.symbol.owner
+            // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
+            if (PreSerializationSymbols.isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
+            return@check inlineFunction.body == null
+        }
+    )
+}
 
 private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
     { context: LoweringContext ->
@@ -112,6 +139,10 @@ private val inventNamesForLocalClassesPhase = makeIrModulePhase(
     name = "InventNamesForLocalClasses",
 )
 
+private fun createInventNamesForLocalFunctionsPhase(context: JsIrBackendContext): KlibInventNamesForLocalFunctions {
+    return KlibInventNamesForLocalFunctions(suggestUniqueNames = false)
+}
+
 private val inventNamesForLocalFunctionsPhase = makeIrModulePhase(
     { _: JsIrBackendContext -> KlibInventNamesForLocalFunctions(suggestUniqueNames = false) },
     name = "InventNamesForLocalFunctions",
@@ -137,15 +168,23 @@ private val lateinitPhase = makeIrModulePhase(
     name = "LateinitLowering",
 )
 
+private fun createKotlinNothingValueExceptionPhase(context: CommonBackendContext): KotlinNothingValueExceptionLowering {
+    return KotlinNothingValueExceptionLowering(context)
+}
+
 private val kotlinNothingValueExceptionPhase = makeIrModulePhase(
     ::KotlinNothingValueExceptionLowering,
     name = "KotlinNothingValueException",
 )
 
 private val stripTypeAliasDeclarationsPhase = makeIrModulePhase<JsIrBackendContext>(
-    { StripTypeAliasDeclarationsLowering() },
+    ::StripTypeAliasDeclarationsLowering,
     name = "StripTypeAliasDeclarations",
 )
+
+private fun createJsCodeOutliningPhaseOnSecondStage(context: LoweringContext): JsCodeOutliningLowering {
+    return JsCodeOutliningLowering(context)
+}
 
 private val jsCodeOutliningPhaseOnSecondStage = makeIrModulePhase(
     { context: JsIrBackendContext -> JsCodeOutliningLowering(context) },
@@ -203,6 +242,13 @@ private val replaceSuspendIntrinsicLowering = makeIrModulePhase(
 /**
  * The first phase of inlining (inline only private functions).
  */
+private fun createInlineOnlyPrivateFunctionsPhase(context: JsIrBackendContext): FunctionInlining {
+    return FunctionInlining(
+        context,
+        JsInlineFunctionResolver(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS),
+    )
+}
+
 private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
     { context: JsIrBackendContext ->
         FunctionInlining(
@@ -220,6 +266,10 @@ private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase)
 )
 
+private fun createSyntheticAccessorGenerationPhase(context: LoweringContext): SyntheticAccessorLowering {
+    return SyntheticAccessorLowering(context)
+}
+
 private val syntheticAccessorGenerationPhase = makeIrModulePhase(
     lowering = ::SyntheticAccessorLowering,
     name = "SyntheticAccessorGeneration",
@@ -229,6 +279,13 @@ private val syntheticAccessorGenerationPhase = makeIrModulePhase(
 /**
  * The second phase of inlining (inline all functions).
  */
+private fun createInlineAllFunctionsPhase(context: LoweringContext): FunctionInlining {
+    return FunctionInlining(
+        context,
+        JsInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
+    )
+}
+
 private val inlineAllFunctionsPhase = makeIrModulePhase(
     { context: JsIrBackendContext ->
         FunctionInlining(
@@ -247,7 +304,7 @@ private val copyInlineFunctionBodyLoweringPhase = makeIrModulePhase(
 )
 
 private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeIrModulePhase(
-    { RemoveInlineDeclarationsWithReifiedTypeParametersLowering() },
+    ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
     name = "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
     prerequisite = setOf(inlineAllFunctionsPhase)
 )
@@ -415,6 +472,10 @@ private val localDelegatedPropertiesLoweringPhase = makeIrModulePhase<JsIrBacken
     name = "LocalDelegatedPropertiesLowering",
 )
 
+private fun createLocalDeclarationsLoweringPhase(context: LoweringContext): LocalDeclarationsLowering {
+    return LocalDeclarationsLowering(context)
+}
+
 private val localDeclarationsLoweringPhase = makeIrModulePhase(
     ::LocalDeclarationsLowering,
     name = "LocalDeclarationsLowering",
@@ -540,6 +601,10 @@ private val defaultParameterInjectorPhase = makeIrModulePhase(
     prerequisite = setOf(interopCallableReferenceLoweringPhase, innerClassesLoweringPhase)
 )
 
+private fun createDefaultParameterCleanerPhase(context: CommonBackendContext): DefaultParameterCleaner {
+    return DefaultParameterCleaner(context)
+}
+
 private val defaultParameterCleanerPhase = makeIrModulePhase(
     ::DefaultParameterCleaner,
     name = "DefaultParameterCleaner",
@@ -552,7 +617,7 @@ private val varargLoweringPhase = makeIrModulePhase(
 )
 
 private val propertiesLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
-    { PropertiesLowering() },
+    ::PropertiesLowering,
     name = "PropertiesLowering",
 )
 
@@ -580,6 +645,10 @@ private val initializersLoweringPhase = makeIrModulePhase(
         enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering, localDeclarationExtractionPhase
     )
 )
+
+private fun createInitializersCleanupLoweringPhase(context: CommonBackendContext): InitializersCleanupLowering {
+    return InitializersCleanupLowering(context)
+}
 
 private val initializersCleanupLoweringPhase = makeIrModulePhase(
     ::InitializersCleanupLowering,
@@ -636,10 +705,19 @@ private val constLoweringPhase = makeIrModulePhase(
     ::ConstLowering,
     name = "ConstLowering",
 )
+
+private fun createInlineClassDeclarationLoweringPhase(context: CommonBackendContext): InlineClassLowering.InlineClassDeclarationLowering {
+    return InlineClassLowering(context).inlineClassDeclarationLowering
+}
+
 private val inlineClassDeclarationLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
     { InlineClassLowering(it).inlineClassDeclarationLowering },
     name = "InlineClassDeclarationLowering",
 )
+
+private fun createInlineClassUsageLoweringPhase(context: CommonBackendContext): InlineClassLowering.InlineClassUsageLowering {
+    return InlineClassLowering(context).inlineClassUsageLowering
+}
 
 private val inlineClassUsageLoweringPhase = makeIrModulePhase(
     { InlineClassLowering(it).inlineClassUsageLowering },
@@ -655,6 +733,10 @@ private val expressionBodyTransformer = makeIrModulePhase(
     ::ExpressionBodyTransformer,
     name = "ExpressionBodyTransformer",
 )
+
+private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): AutoboxingTransformer {
+    return AutoboxingTransformer(context, replaceTypesInsideInlinedFunctionBlock = true)
+}
 
 private val autoboxingTransformerPhase = makeIrModulePhase<JsIrBackendContext>(
     { AutoboxingTransformer(it, replaceTypesInsideInlinedFunctionBlock = true) },
@@ -741,7 +823,7 @@ private val escapedIdentifiersLowering = makeIrModulePhase(
 )
 
 private val cleanupLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
-    { CleanupLowering() },
+    ::CleanupLowering,
     name = "CleanupLowering",
 )
 
@@ -749,6 +831,14 @@ private val jsSuspendArityStorePhase = makeIrModulePhase(
     ::JsSuspendArityStoreLowering,
     name = "JsSuspendArityStoreLowering",
 )
+
+private fun createConstEvaluationPhase(context: JsIrBackendContext): ConstEvaluationLowering {
+    val configuration = IrInterpreterConfiguration(
+        printOnlyExceptionMessage = true,
+        platform = JsPlatforms.defaultJsPlatform,
+    )
+    return ConstEvaluationLowering(context, configuration = configuration)
+}
 
 val constEvaluationPhase = makeIrModulePhase<JsIrBackendContext>(
     { context ->
@@ -783,125 +873,128 @@ fun jsLoweringsOfTheFirstPhase(
 
 fun getJsLowerings(
     configuration: CompilerConfiguration
-): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
-    // BEGIN: Common Native/JS/Wasm prefix.
-    validateIrBeforeLowering,
-    upgradeCallableReferences,
-    jsCodeOutliningPhaseOnSecondStage,
-    lateinitPhase,
-    sharedVariablesLoweringPhase,
-    localClassesInInlineLambdasPhase,
-    arrayConstructorPhase,
-    inlineOnlyPrivateFunctionsPhase,
-    outerThisSpecialAccessorInInlineFunctionsPhase,
-    syntheticAccessorGenerationPhase,
-    // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
-    // just because it goes so in Native.
-    validateIrAfterInliningOnlyPrivateFunctions,
-    inlineAllFunctionsPhase,
-    validateIrAfterInliningAllFunctions,
-    // END: Common Native/JS/Wasm prefix.
+): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> {
+    val phases = listOfNotNull<(JsIrBackendContext) -> ModuleLoweringPass>(
+        // BEGIN: Common Native/JS/Wasm prefix.
+        ::KlibIrValidationBeforeLoweringPhase,
+        ::createUpgradeCallableReferences,
+        ::createJsCodeOutliningPhaseOnSecondStage,
+        ::LateinitLowering,
+        ::SharedVariablesLowering,
+        ::LocalClassesInInlineLambdasLowering,
+        ::ArrayConstructorLowering,
+        ::createInlineOnlyPrivateFunctionsPhase,
+        ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+        ::createSyntheticAccessorGenerationPhase,
+        // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
+        // just because it goes so in Native.
+        ::createValidateIrAfterInliningOnlyPrivateFunctions,
+        ::createInlineAllFunctionsPhase,
+        ::createValidateIrAfterInliningAllFunctions,
+        // END: Common Native/JS/Wasm prefix.
 
-    constEvaluationPhase,
-    copyInlineFunctionBodyLoweringPhase,
-    removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
-    replaceSuspendIntrinsicLowering,
-    prepareSuspendFunctionsForExportLowering,
-    replaceExportedSuspendFunctionCallsWithItsBridge,
-    ignoreOriginalSuspendFunctionsThatWereExportedLowering,
-    prepareCollectionsToExportLowering,
-    implicitlyExportedDeclarationsMarkingLowering,
-    preventExportOfSyntheticDeclarationsLowering,
-    jsStaticLowering,
-    inventNamesForLocalClassesPhase,
-    collectClassIdentifiersLowering,
-    annotationInstantiationLowering,
-    expectDeclarationsRemovingPhase,
-    stripTypeAliasDeclarationsPhase,
-    createScriptFunctionsPhase,
-    stringConcatenationLoweringPhase,
-    propertyReferenceLoweringPhase,
-    callableReferenceLowering,
-    singleAbstractMethodPhase,
-    tailrecLoweringPhase,
-    enumClassConstructorLoweringPhase,
-    enumClassConstructorBodyLoweringPhase,
-    localDelegatedPropertiesLoweringPhase,
-    inventNamesForLocalFunctionsPhase,
-    localDeclarationsLoweringPhase,
-    localDeclarationExtractionPhase,
-    innerClassesLoweringPhase,
-    innerClassesMemberBodyLoweringPhase,
-    innerClassConstructorCallsLoweringPhase,
-    jsClassUsageInReflectionPhase,
-    propertiesLoweringPhase,
-    primaryConstructorLoweringPhase,
-    delegateToPrimaryConstructorLoweringPhase,
-    annotationConstructorLowering,
-    initializersLoweringPhase,
-    initializersCleanupLoweringPhase,
-    kotlinNothingValueExceptionPhase,
-    collectClassDefaultConstructorsPhase,
-    enumWhenPhase,
-    enumEntryInstancesLoweringPhase,
-    enumEntryInstancesBodyLoweringPhase,
-    enumClassCreateInitializerLoweringPhase,
-    enumEntryCreateGetInstancesFunsLoweringPhase,
-    enumSyntheticFunsLoweringPhase,
-    enumUsageLoweringPhase,
-    externalEnumUsageLoweringPhase,
-    enumEntryRemovalLoweringPhase,
-    suspendFunctionsLoweringPhase,
-    interopCallableReferenceLoweringPhase,
-    jsSuspendArityStorePhase,
-    addContinuationToNonLocalSuspendFunctionsLoweringPhase,
-    addContinuationToLocalSuspendFunctionsLoweringPhase,
-    addContinuationToFunctionCallsLoweringPhase,
-    returnableBlockLoweringPhase,
-    rangeContainsLoweringPhase,
-    forLoopsLoweringPhase,
-    primitiveCompanionLoweringPhase,
-    propertyLazyInitLoweringPhase,
-    removeInitializersForLazyProperties,
-    propertyAccessorInlinerLoweringPhase,
-    copyPropertyAccessorBodiesLoweringPass,
-    booleanPropertyInExternalLowering,
-    externalPropertyOverridingLowering,
-    privateMembersLoweringPhase,
-    privateMemberUsagesLoweringPhase,
-    defaultArgumentStubGeneratorPhase,
-    defaultArgumentPatchOverridesPhase,
-    defaultParameterInjectorPhase,
-    defaultParameterCleanerPhase,
-    captureStackTraceInThrowablesPhase,
-    throwableSuccessorsLoweringPhase,
-    varargLoweringPhase,
-    multipleCatchesLoweringPhase,
-    bridgesConstructionPhase,
-    typeOperatorLoweringPhase,
-    secondaryConstructorLoweringPhase,
-    secondaryFactoryInjectorLoweringPhase,
-    classReferenceLoweringPhase,
-    constLoweringPhase,
-    inlineClassDeclarationLoweringPhase,
-    inlineClassUsageLoweringPhase,
-    expressionBodyTransformer,
-    autoboxingTransformerPhase,
-    objectDeclarationLoweringPhase,
-    blockDecomposerLoweringPhase,
-    invokeStaticInitializersPhase,
-    objectUsageLoweringPhase,
-    es6AddBoxParameterToConstructorsLowering,
-    es6SyntheticPrimaryConstructorLowering,
-    es6ConstructorLowering,
-    es6ConstructorUsageLowering,
-    callsLoweringPhase,
-    escapedIdentifiersLowering,
-    removeImplicitExportsFromCollections,
-    mainFunctionCallWrapperLowering,
-    cleanupLoweringPhase,
-    validateIrAfterLowering,
-)
+        ::createConstEvaluationPhase,
+        ::CopyInlineFunctionBodyLowering,
+        ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
+        ::ReplaceSuspendIntrinsicLowering,
+        ::PrepareSuspendFunctionsForExportLowering,
+        ::ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall,
+        ::IgnoreOriginalSuspendFunctionsThatWereExportedLowering,
+        ::PrepareCollectionsToExportLowering,
+        ::ImplicitlyExportedDeclarationsMarkingLowering,
+        ::ExcludeSyntheticDeclarationsFromExportLowering,
+        ::JsStaticLowering,
+        ::JsInventNamesForLocalClasses,
+        ::JsCollectClassIdentifiersLowering,
+        ::JsCommonAnnotationImplementationTransformer,
+        ::ExpectDeclarationsRemoveLowering,
+        ::StripTypeAliasDeclarationsLowering,
+        ::CreateScriptFunctionsPhase,
+        ::JsStringConcatenationLowering,
+        ::PropertyReferenceLowering,
+        ::JsCallableReferenceLowering,
+        ::JsSingleAbstractMethodLowering,
+        ::TailrecLowering,
+        ::EnumClassConstructorLowering,
+        ::EnumClassConstructorBodyTransformer,
+        ::LocalDelegatedPropertiesLowering,
+        ::createInventNamesForLocalFunctionsPhase,
+        ::createLocalDeclarationsLoweringPhase,
+        ::LocalDeclarationPopupLowering,
+        ::InnerClassesLowering,
+        ::InnerClassesMemberBodyLowering,
+        ::InnerClassConstructorCallsLowering,
+        ::JsClassUsageInReflectionLowering,
+        ::PropertiesLowering,
+        ::PrimaryConstructorLowering,
+        ::DelegateToSyntheticPrimaryConstructor,
+        ::AnnotationConstructorLowering,
+        ::InitializersLowering,
+        ::createInitializersCleanupLoweringPhase,
+        ::createKotlinNothingValueExceptionPhase,
+        ::CollectClassDefaultConstructorsLowering,
+        ::EnumWhenLowering,
+        ::EnumEntryInstancesLowering,
+        ::EnumEntryInstancesBodyLowering,
+        ::EnumClassCreateInitializerLowering,
+        ::EnumEntryCreateGetInstancesFunsLowering,
+        ::EnumSyntheticFunctionsAndPropertiesLowering,
+        ::EnumUsageLowering,
+        ::ExternalEnumUsagesLowering,
+        ::EnumClassRemoveEntriesLowering,
+        ::JsSuspendFunctionsLoweringSelector,
+        ::InteropCallableReferenceLowering,
+        ::JsSuspendArityStoreLowering,
+        ::AddContinuationToNonLocalSuspendFunctionsLowering,
+        ::AddContinuationToLocalSuspendFunctionsLowering,
+        ::AddContinuationToFunctionCallsLowering,
+        ::JsReturnableBlockLowering,
+        ::RangeContainsLowering,
+        ::ForLoopsLowering,
+        ::PrimitiveCompanionLowering,
+        ::PropertyLazyInitLowering,
+        ::RemoveInitializersForLazyProperties,
+        ::JsPropertyAccessorInlineLowering,
+        ::CopyAccessorBodyLowerings,
+        ::BooleanPropertyInExternalLowering,
+        ::ExternalPropertyOverridingLowering,
+        ::PrivateMembersLowering,
+        ::PrivateMemberBodiesLowering,
+        ::JsDefaultArgumentStubGenerator,
+        ::DefaultParameterPatchOverridenSymbolsLowering,
+        ::JsDefaultParameterInjector,
+        ::createDefaultParameterCleanerPhase,
+        ::CaptureStackTraceInThrowables,
+        ::ThrowableLowering,
+        ::VarargLowering,
+        ::MultipleCatchesLowering,
+        ::JsBridgesConstruction,
+        ::TypeOperatorLowering,
+        ::SecondaryConstructorLowering,
+        ::SecondaryFactoryInjectorLowering,
+        ::JsClassReferenceLowering,
+        ::ConstLowering,
+        ::createInlineClassDeclarationLoweringPhase,
+        ::createInlineClassUsageLoweringPhase,
+        ::ExpressionBodyTransformer,
+        ::createAutoboxingTransformerPhase,
+        ::ObjectDeclarationLowering,
+        ::JsBlockDecomposerLowering,
+        ::InvokeStaticInitializersLowering,
+        ::ObjectUsageLowering,
+        ::ES6AddBoxParameterToConstructorsLowering,
+        ::ES6SyntheticPrimaryConstructorLowering,
+        ::ES6ConstructorLowering,
+        ::ES6ConstructorCallLowering,
+        ::CallsLowering,
+        ::EscapedIdentifiersLowering,
+        ::RemoveImplicitExportsFromCollections,
+        ::MainFunctionCallWrapperLowering,
+        ::CleanupLowering,
+        ::IrValidationAfterLoweringPhase,
+    )
+    return createModulePhases(*phases.toTypedArray())
+}
 
 private val es6CollectConstructorsWhichNeedBoxParameterLowering = makeIrModulePhase(
     ::ES6CollectConstructorsWhichNeedBoxParameters,
@@ -942,12 +1035,15 @@ private val inlineObjectsWithPureInitialization = makeIrModulePhase(
     prerequisite = setOf(purifyObjectInstanceGetters)
 )
 
-val optimizationLoweringList = listOf<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
-    es6CollectConstructorsWhichNeedBoxParameterLowering,
-    es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
-    es6BoxParameterOptimization,
-    es6PrimaryConstructorOptimizationLowering,
-    es6PrimaryConstructorUsageOptimizationLowering,
-    purifyObjectInstanceGetters,
-    inlineObjectsWithPureInitialization
-)
+val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> by lazy {
+    val phases = listOf<(JsIrBackendContext) -> ModuleLoweringPass>(
+        ::ES6CollectConstructorsWhichNeedBoxParameters,
+        ::ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
+        ::ES6ConstructorBoxParameterOptimizationLowering,
+        ::ES6PrimaryConstructorOptimizationLowering,
+        ::ES6PrimaryConstructorUsageOptimizationLowering,
+        ::PurifyObjectInstanceGettersLowering,
+        ::InlineObjectsWithPureInitializationLowering,
+    )
+    createModulePhases(*phases.toTypedArray())
+}

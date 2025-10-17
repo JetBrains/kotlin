@@ -9,6 +9,7 @@ import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -19,7 +20,8 @@ import org.jetbrains.kotlin.ir.visitors.*
 /**
  * Moves fields and accessors out from its property.
  */
-class PropertiesLowering : DeclarationTransformer {
+@Suppress("UNUSED_PARAMETER")
+class PropertiesLowering(context: LoweringContext) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
