@@ -55,7 +55,6 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
 
     override val hasMainIr get() = true
     override val mainIr: IrLibrary.IrDirectory = object : IrLibrary.IrDirectory {
-        override val hasFileEntriesTable get() = true
         override fun irDeclaration(index: Int, fileIndex: Int): ByteArray =
             indexedDeclarations.itemBytes(fileIndex, DeclarationId(index)) {
                 DeclarationIdTableReader(icData[fileIndex].declarations)
@@ -111,7 +110,6 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     // This class is not used by the K2 compiler, so the first stage inlining feature is not supported.
     override val hasInlinableFunsIr: Boolean get() = false
     override val inlinableFunsIr = object : IrLibrary.IrDirectory {
-        override val hasFileEntriesTable: Boolean get() = shouldNotBeCalled()
         override fun irDeclaration(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()
         override fun type(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()
         override fun signature(index: Int, fileIndex: Int): ByteArray = shouldNotBeCalled()

@@ -293,7 +293,7 @@ fun IrLibraryFile.fileEntry(protoFile: ProtoFile): FileEntry =
     }
 
 fun IrLibrary.IrDirectory.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
-    if (protoFile.hasFileEntryId() && hasFileEntriesTable) {
+    if (protoFile.hasFileEntryId()) {
         val fileEntry = fileEntry(protoFile.fileEntryId, fileIndex) ?: error("Invalid KLib: cannot read file entry by its index")
         ProtoFileEntry.parseFrom(fileEntry)
     } else {
