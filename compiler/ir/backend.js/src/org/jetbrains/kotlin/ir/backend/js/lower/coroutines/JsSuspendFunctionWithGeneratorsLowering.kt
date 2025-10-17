@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * Transforms suspend function into a GeneratorCoroutineImpl instance and ES2015 generator.
  */
 class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
+    private val jsYieldFunctionSymbol = context.symbols.jsYieldFunctionSymbol
     private val jsYieldStarFunctionSymbol = context.symbols.jsYieldStarFunctionSymbol
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -36,12 +37,22 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
 
     private fun transformSuspendFunction(function: IrSimpleFunction) {
         val body = function.body ?: return
-        return when (val functionKind = getSuspendFunctionKind(context, function, body, includeSuspendLambda = false)) {
+        return when (
+            val functionKind = getSuspendFunctionKind(
+                context,
+                function,
+                body,
+                includeSuspendLambda = false,
+                suspensionIntrinsic = jsYieldFunctionSymbol
+            )
+        ) {
+            is SuspendFunctionKind.NO_SUSPEND_CALLS -> {
+                function.addJsGeneratorAnnotation()
+            }
             is SuspendFunctionKind.DELEGATING -> {
                 removeReturnIfSuspendedCallAndSimplifyDelegatingCall(function, functionKind.delegatingCall)
             }
-            is SuspendFunctionKind.NO_SUSPEND_CALLS, is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
-                function.returnType = context.irBuiltIns.anyNType
+            is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
                 convertSuspendFunctionToGenerator(function, body)
             }
         }

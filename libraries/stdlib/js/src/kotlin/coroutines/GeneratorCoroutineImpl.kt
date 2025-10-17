@@ -5,6 +5,9 @@
 
 package kotlin.coroutines
 
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.js.unsafeCast
+
 internal external interface JsIterationStep<T> {
     val done: Boolean
     val value: T
@@ -23,19 +26,37 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
 
     public override val context: CoroutineContext get() = _context!!
 
+    fun runGenerator(result: Result<Any?>? = null): Any? {
+        val suspended = COROUTINE_SUSPENDED
+        var stepResult = when (val e = result?.exceptionOrNull()) {
+            null -> generator.next(result?.value)
+            else -> generator.throws(e)
+        }
+
+        while (true) {
+            var value = stepResult.value
+            if (stepResult.done || value === suspended) {
+                return value
+            }
+
+            val suspendOrReturn = value.unsafeCast<() -> Any?>()
+            value = suspendOrReturn.invoke()
+
+            if (value === suspended) return value
+            stepResult = generator.next(value)
+        }
+    }
+
     override fun resumeWith(result: Result<Any?>) {
         var exception: Throwable? = null
-        val nextResult: JsIterationStep<Any?>? = try {
-            when (val e = result.exceptionOrNull()) {
-                null -> generator.next(result.value)
-                else -> generator.throws(e)
-            }
+        val nextResult = try {
+            runGenerator(result)
         } catch (e: Throwable) {
             exception = e
             null
         }
 
-        if (nextResult?.done != true) return
+        if (nextResult === COROUTINE_SUSPENDED) return
 
         releaseIntercepted()
 
@@ -43,7 +64,7 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
             if (exception != null) {
                 resumeWithException(exception)
             } else {
-                resume(nextResult.value)
+                resume(nextResult)
             }
         }
     }
