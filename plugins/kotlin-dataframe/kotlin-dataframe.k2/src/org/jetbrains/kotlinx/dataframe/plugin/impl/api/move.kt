@@ -81,6 +81,16 @@ class MoveToEnd0 : AbstractSchemaModificationInterpreter() {
     }
 }
 
+class MoveToEnd1 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.columns: ColumnsResolver by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = columns.resolve(receiver).map { it.path }
+        return receiver.asDataFrame().moveToEnd { columns.toColumnSet() }.toPluginDataFrameSchema()
+    }
+}
+
 class MoveBefore0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: MoveClauseApproximation by arg()
     val Arguments.column: SingleColumnApproximation by arg()
