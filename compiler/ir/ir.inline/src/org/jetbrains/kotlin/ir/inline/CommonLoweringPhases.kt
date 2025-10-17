@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
@@ -55,6 +56,13 @@ private val checkInlineCallCyclesPhase = makeIrModulePhase(
     name = "InlineCallCycleChecker",
 )
 
+private fun createInlineOnlyPrivateFunctionsPhase(context: LoweringContext): FunctionInlining {
+    return FunctionInlining(
+        context,
+        PreSerializationPrivateInlineFunctionResolver(context),
+    )
+}
+
 /**
  * The first phase of inlining (inline only private functions).
  */
@@ -75,11 +83,25 @@ private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase)
 )
 
+private fun createSyntheticAccessorGeneration(context: LoweringContext): SyntheticAccessorLowering {
+    return SyntheticAccessorLowering(context, isExecutedOnFirstPhase = false)
+}
+
 private val syntheticAccessorGenerationPhase = makeIrModulePhase(
     lowering = { SyntheticAccessorLowering(it, isExecutedOnFirstPhase = true) },
     name = "SyntheticAccessorGeneration",
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase),
 )
+
+private fun createValidateIrAfterInliningOnlyPrivateFunctions(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<LoweringContext> {
+    return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+        context,
+        checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+            // Call sites of only non-private functions are allowed at this stage.
+            !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
+        }
+    )
+}
 
 private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     { context: LoweringContext ->
@@ -151,24 +173,64 @@ private fun validateIrAfterInliningAllFunctionsPhase(irMangler: IrMangler, inlin
 fun loweringsOfTheFirstPhase(
     irMangler: IrMangler,
     languageVersionSettings: LanguageVersionSettings
-): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
-    this += avoidLocalFOsInInlineFunctionsLowering
-    if (languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
-        val inlineCrossModuleFunctions =
-            languageVersionSettings.supportsFeature(LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization)
+): List<(PreSerializationLoweringContext) -> ModuleLoweringPass> {
+    val inlineIntraModule = languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)
+    val inlineCrossModuleFunctions =
+        languageVersionSettings.supportsFeature(LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization)
 
-        this += lateinitPhase
-        this += sharedVariablesLoweringPhase
-        this += localClassesInInlineLambdasPhase
-        this += arrayConstructorPhase
-        this += checkInlineCallCyclesPhase
-        this += inlineOnlyPrivateFunctionsPhase
-        this += checkInlineDeclarationsAfterInliningOnlyPrivateFunctions
-        this += outerThisSpecialAccessorInInlineFunctionsPhase
-        this += syntheticAccessorGenerationPhase
-        this += validateIrAfterInliningOnlyPrivateFunctions
-        this += inlineAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
-        this += inlineFunctionSerializationPreProcessing(irMangler, inlineCrossModuleFunctions)
-        this += validateIrAfterInliningAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
+    fun createInlineAllFunctionsPhase(context: LoweringContext): FunctionInlining {
+        return FunctionInlining(
+            context,
+            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions),
+        )
+    }
+
+    fun createInlineFunctionSerializationPreProcessing(context: LoweringContext): InlineFunctionSerializationPreProcessing {
+        // Run the cross-module inliner against pre-processed functions (and only pre-processed functions) if cross-module
+        // inlining is not enabled in the main IR tree.
+        val inliner: FunctionInlining? = runUnless(inlineCrossModuleFunctions) {
+            FunctionInlining(
+                context,
+                PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions = true),
+            )
+        }
+
+        return InlineFunctionSerializationPreProcessing(crossModuleFunctionInliner = inliner)
+    }
+
+    fun createValidateIrAfterInliningAllFunctionsPhase(context: LoweringContext): IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase<LoweringContext> {
+        val resolver = PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions)
+        return IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase(
+            context,
+            checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
+                // No inline function call sites should remain at this stage.
+                val actualCallee = resolver.getFunctionDeclarationToInline(inlineFunctionUseSite)
+                when {
+                    actualCallee?.body == null -> true // does not have a body <=> should not be inlined
+                    // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
+                    PreSerializationSymbols.isTypeOfIntrinsic(actualCallee.symbol) -> true
+                    else -> false // forbidden
+                }
+            }
+        )
+    }
+
+    return buildList {
+        this += ::AvoidLocalFOsInInlineFunctionsLowering
+        if (inlineIntraModule) {
+            this += ::LateinitLowering
+            this += ::SharedVariablesLowering
+            this += ::LocalClassesInInlineLambdasLowering
+            this += ::ArrayConstructorLowering
+            this += ::InlineCallCycleCheckerLowering
+            this += ::createInlineOnlyPrivateFunctionsPhase
+            this += ::InlineDeclarationCheckerLowering
+            this += ::OuterThisInInlineFunctionsSpecialAccessorLowering
+            this += ::createSyntheticAccessorGeneration
+            this += ::createValidateIrAfterInliningOnlyPrivateFunctions
+            this += ::createInlineAllFunctionsPhase
+            this += ::createInlineFunctionSerializationPreProcessing
+            this += ::createValidateIrAfterInliningAllFunctionsPhase
+        }
     }
 }
