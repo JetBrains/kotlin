@@ -45,6 +45,9 @@ class DeclarationGenerator(
     // Shortcuts
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
+    private val jsInteropAdapters get() =
+        backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters
+
     private val unitGetInstanceFunction: IrSimpleFunction by lazy { backendContext.findUnitGetInstanceFunction() }
     private val unitPrimaryConstructor: IrConstructor? by lazy { backendContext.irBuiltIns.unitClass.owner.primaryConstructor }
 
@@ -106,16 +109,17 @@ class DeclarationGenerator(
         val wasmImportModule = declaration.getWasmImportDescriptor()
         val jsBuiltin = declaration.getJsBuiltinDescriptor()
 
-        val jsInteropAdapters = backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters
+        val wholeProgramWasmJsMode =
+            !backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY) &&
+                    backendContext.isWasmJsTarget
 
-        val wholeProgramMode = !backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)
-        val isGetCachedObjectWasmAndWholeProgram =
-            declaration.name == jsInteropAdapters.getCachedJsObject.owner.name && wholeProgramMode
-        val isGetCachedObjectAndWholeProgram =
-            declaration.name == jsInteropAdapters.getCachedJsObjectWasm.owner.name && wholeProgramMode
+        val isGetCachedObjectWasmAndWholeProgramWasmJsMode =
+            wholeProgramWasmJsMode && declaration.name == jsInteropAdapters.getCachedJsObject.owner.name
+        val isGetCachedObjectAndWholeProgramWasmJsMode =
+            wholeProgramWasmJsMode && declaration.name == jsInteropAdapters.getCachedJsObjectWasm.owner.name
 
         val jsCode =
-            if (isGetCachedObjectWasmAndWholeProgram || isGetCachedObjectAndWholeProgram)
+            if (isGetCachedObjectWasmAndWholeProgramWasmJsMode || isGetCachedObjectAndWholeProgramWasmJsMode)
                 "(p0, p1) => getCachedJsObject(p0, p1)"
             else
                 declaration.getJsFunAnnotation()
@@ -219,7 +223,7 @@ class DeclarationGenerator(
             else -> declaration.getWasmExportNameIfWasmExport()
         }
 
-        if (nameIfExported != null && !isGetCachedObjectAndWholeProgram) {
+        if (nameIfExported != null && !isGetCachedObjectAndWholeProgramWasmJsMode) {
             wasmFileCodegenContext.addExport(
                 WasmExport.Function(
                     field = function,
