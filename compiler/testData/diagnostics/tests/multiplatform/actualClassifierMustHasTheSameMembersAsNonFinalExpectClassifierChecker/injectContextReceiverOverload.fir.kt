@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextParameters
 // ISSUE: KT-61447
 // MODULE: m1-common
 // FILE: common.kt
@@ -15,7 +14,7 @@ expect open class Foo {
 actual open class Foo {
     actual fun foo() {}
 
-    context(Int)
+    context(_: Int)
     fun foo() {}
 }
 
