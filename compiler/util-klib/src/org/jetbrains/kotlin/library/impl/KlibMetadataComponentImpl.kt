@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.library.KlibLayoutReaderFactory
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION_WITH_DOT
 
 /**
  * The default implementation of [KlibMetadataComponent].

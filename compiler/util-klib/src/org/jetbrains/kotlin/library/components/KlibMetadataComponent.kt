@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.library.components
 
 import org.jetbrains.kotlin.konan.file.File as KlibFile
-import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION_WITH_DOT
-import org.jetbrains.kotlin.library.KLIB_METADATA_FOLDER_NAME
-import org.jetbrains.kotlin.library.KLIB_MODULE_METADATA_FILE_NAME
 import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.KlibComponent
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_MODULE_METADATA_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -45,9 +47,19 @@ class KlibMetadataComponentLayout(root: KlibFile) : KlibComponent.Layout(root) {
 
     /** The directory where package fragments with the fully qualified package name [packageFqName] are located. */
     fun getPackageFragmentsDir(packageFqName: String): KlibFile =
-        metadataDir.child(if (packageFqName == "") "root_package" else "package_$packageFqName")
+        metadataDir.child(if (packageFqName == "") KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME else "$KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX$packageFqName")
 
     /** The concrete package fragment file with the name [partName] for the fully qualified package name [packageFqName]. */
     fun getPackageFragmentFile(packageFqName: String, partName: String): KlibFile =
-        getPackageFragmentsDir(packageFqName).child("$partName$KLIB_METADATA_FILE_EXTENSION_WITH_DOT")
+        getPackageFragmentsDir(packageFqName).child("$partName.$KLIB_METADATA_FILE_EXTENSION")
 }
+
+object KlibMetadataConstants {
+    const val KLIB_METADATA_FOLDER_NAME = "linkdata"
+    const val KLIB_MODULE_METADATA_FILE_NAME = "module"
+    const val KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME = "root_package"
+    const val KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX = "package_"
+    const val KLIB_METADATA_FILE_EXTENSION = "knm"
+    const val KLIB_METADATA_FILE_EXTENSION_WITH_DOT = ".$KLIB_METADATA_FILE_EXTENSION"
+}
+

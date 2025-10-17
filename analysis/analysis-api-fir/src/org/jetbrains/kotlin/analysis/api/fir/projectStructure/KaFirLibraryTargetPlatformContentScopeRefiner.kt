@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinInterse
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
