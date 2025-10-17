@@ -1,4 +1,123 @@
 CLASS_TYPE_BY_CLASS_ID
-   KaType: kotlin.Array<T>
+TYPE:
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Array
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Array
+      symbol: KaNamedClassSymbol(kotlin/Array)
+      typeArguments: [
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: T
+          symbol: KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: T
+            origin: SOURCE
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Array)
+  typeArguments: [
+    KaTypeParameterType:
+      abbreviation: null
+      annotations: []
+      name: T
+      symbol: KaTypeParameterSymbol:
+        annotations: []
+        compilerVisibility: Local
+        isActual: false
+        isExpect: false
+        isReified: false
+        location: CLASS
+        modality: FINAL
+        name: T
+        origin: SOURCE
+        upperBounds: []
+        variance: INVARIANT
+        visibility: LOCAL
+      isMarkedNullable: false
+      isNullable: true
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+RENDERED TYPE:
+kotlin.Array<T>
+
 CLASS_TYPE_BY_SYMBOL
-   KaType: kotlin.Array<T>
+TYPE:
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Array
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Array
+      symbol: KaNamedClassSymbol(kotlin/Array)
+      typeArguments: [
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: T
+          symbol: KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: T
+            origin: SOURCE
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Array)
+  typeArguments: [
+    KaTypeParameterType:
+      abbreviation: null
+      annotations: []
+      name: T
+      symbol: KaTypeParameterSymbol:
+        annotations: []
+        compilerVisibility: Local
+        isActual: false
+        isExpect: false
+        isReified: false
+        location: CLASS
+        modality: FINAL
+        name: T
+        origin: SOURCE
+        upperBounds: []
+        variance: INVARIANT
+        visibility: LOCAL
+      isMarkedNullable: false
+      isNullable: true
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+RENDERED TYPE:
+kotlin.Array<T>

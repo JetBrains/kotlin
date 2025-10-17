@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCr
 
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
-import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -92,27 +92,33 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
                     appendLine("   ClassId is null")
                 } else {
                     val classTypeByClassId = buildClassType(classId, builderConfiguration)
-
+                    appendLine("TYPE:")
                     appendLine(
-                        "   ${KaType::class.simpleName}: ${
-                            classTypeByClassId.render(
-                                renderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES,
-                                position = Variance.INVARIANT,
-                            )
-                        }"
+                        DebugSymbolRenderer(renderTypeByProperties = true).renderType(useSiteSession, classTypeByClassId)
+                    )
+                    appendLine("RENDERED TYPE:")
+                    appendLine(
+                        classTypeByClassId.render(
+                            renderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES,
+                            position = Variance.INVARIANT,
+                        )
                     )
                 }
 
                 val classTypeBySymbol = buildClassType(symbol, builderConfiguration)
 
+                appendLine()
                 appendLine("CLASS_TYPE_BY_SYMBOL")
+                appendLine("TYPE:")
                 appendLine(
-                    "   ${KaType::class.simpleName}: ${
-                        classTypeBySymbol.render(
-                            renderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES,
-                            position = Variance.INVARIANT,
-                        )
-                    }"
+                    DebugSymbolRenderer(renderTypeByProperties = true).renderType(useSiteSession, classTypeBySymbol)
+                )
+                appendLine("RENDERED TYPE:")
+                appendLine(
+                    classTypeBySymbol.render(
+                        renderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES,
+                        position = Variance.INVARIANT,
+                    )
                 )
             }
         }
@@ -126,7 +132,7 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
     }
 
     private object Directives : SimpleDirectivesContainer() {
-        val NULLABLE by directive("Make resulting type nullable")
+        val NULLABLE by directive("Make the resulting type nullable")
         val ARGUMENT by valueDirective("Type argument to use for class creation") { string ->
             val splits = string.split("_")
             val variance = splits.first()

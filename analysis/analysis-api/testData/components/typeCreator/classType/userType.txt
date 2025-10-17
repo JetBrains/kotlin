@@ -1,4 +1,39 @@
 CLASS_TYPE_BY_CLASS_ID
-   KaType: A?
+TYPE:
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: A
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: A
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(A)
+  typeArguments: []
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+RENDERED TYPE:
+A?
+
 CLASS_TYPE_BY_SYMBOL
-   KaType: A?
+TYPE:
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: A
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: A
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(A)
+  typeArguments: []
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+RENDERED TYPE:
+A?

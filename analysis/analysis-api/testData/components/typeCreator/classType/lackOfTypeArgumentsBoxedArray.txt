@@ -1,4 +1,39 @@
 CLASS_TYPE_BY_CLASS_ID
-   KaType: kotlin.Array
+TYPE:
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Array
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Array
+      symbol: KaNamedClassSymbol(kotlin/Array)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Array)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+RENDERED TYPE:
+kotlin.Array
+
 CLASS_TYPE_BY_SYMBOL
-   KaType: kotlin.Array
+TYPE:
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Array
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Array
+      symbol: KaNamedClassSymbol(kotlin/Array)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Array)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+RENDERED TYPE:
+kotlin.Array

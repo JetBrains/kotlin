@@ -6,7 +6,7 @@ TYPE:
 KaUsualClassType:
   abbreviation: null
   annotations: []
-  classId: <local>/A
+  classId: A
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: A
