@@ -258,8 +258,9 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
     }
 
     private fun emitWarningForPublicAccessorsInExplicitAPIMode(accessors: Collection<GeneratedAccessor>, irFile: IrFile) {
+        if (!emitExplicitApiModeWarnings) return
         val explicitApiMode = context.configuration.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
-        if (!emitExplicitApiModeWarnings || explicitApiMode == ExplicitApiMode.DISABLED) return
+        if (explicitApiMode == ExplicitApiMode.DISABLED) return
 
         for (accessor in accessors) {
             if (accessor.accessorFunction.visibility == DescriptorVisibilities.PUBLIC) {
