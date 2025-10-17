@@ -27,6 +27,7 @@ fun string(): String = null!!
 fun nullableString(): String? = null!!
 fun int(): Int = null!!
 fun nothing(): Nothing = null!!
+fun void(): Void = null!!
 fun nullableNothing(): Nothing? = null!!
 fun function2(): (Any, Any) -> Any = null!!
 fun function3(): (Any, Any, Any) -> Any = null!!
@@ -48,6 +49,12 @@ fun box(): String {
     check(::nothing, ::nullableString, true)
     check(::nullableNothing, ::nullableString, true)
     check(::nullableNothing, ::string, false)
+
+    // We should not confuse `Void` type with `Nothing` type, even though (until KT-15518 is fixed) the former is represented at runtime
+    // with a type with classifier equal to `Void::class`.
+    check(::void, ::string, false)
+    check(::void, ::nothing, false)
+    check(::void, ::any, true)
 
     check(::string, ::nullableString, true)
     check(::nullableString, ::string, false)
