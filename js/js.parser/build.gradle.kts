@@ -45,10 +45,17 @@ val generateJsParser by tasks.registering(JavaExec::class) {
     workingDir = grammarDir
 
     inputs.dir(grammarDir)
-    outputs.dir(outputDir)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("antlrGrammarDirectory")
 
-    // Disable caching since we're writing to the source directory for version control
-    outputs.cacheIf { false }
+    inputs.files(antlrTool)
+        .withPropertyName("antlrToolClasspath")
+        .withNormalizer(ClasspathNormalizer::class)
+
+    outputs.dir(outputDir)
+        .withPropertyName("generatedParserSources")
+
+    outputs.cacheIf { true }
 
     doLast {
         // Force LF line endings for generated files on Windows, since ANTLR doesn't have a way to force LF line endings before executing
