@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooClass : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
@@ -38,7 +38,7 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface FooClass (Extensions)
-- (void)bar __attribute__((swift_name("bar()")));
+- (void)bar;
 @end
 
 #pragma pop_macro("_Nullable_result")

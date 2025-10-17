@@ -22,16 +22,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol KotlinIterator
 @required
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (id _Nullable)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (id _Nullable)next;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo : Base <KotlinIterator>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (BOOL)hasNext __attribute__((swift_name("hasNext()")));
-- (Int *)next __attribute__((swift_name("next()")));
+- (BOOL)hasNext;
+- (Int *)next;
 @end
 
 #pragma pop_macro("_Nullable_result")

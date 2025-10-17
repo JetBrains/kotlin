@@ -129,7 +129,7 @@ class ObjCProperty(
 ) : ObjCExportStub
 
 private fun buildMethodName(selectors: List<String>, parameters: List<ObjCParameter>): String =
-    if (selectors.size == 1 && parameters.size == 0) {
+    if (selectors.size == 1 && parameters.isEmpty()) {
         selectors[0]
     } else {
         assert(selectors.size == parameters.size) { "selectors.size(${selectors.size}) != parameters.size(${parameters.size})" }
