@@ -33,7 +33,7 @@ object RedundantInterpolationPrefixCheckerLiteral : FirLiteralExpressionChecker(
         if (expression.kind == ConstantValueKind.String && !prefix.isNullOrEmpty()) {
             val value = expression.source.text?.drop(prefix.length) ?: return
             // approximation of interpolated values: $ followed either by start of an identifier, or braces
-            if (!Regex("""[^\\]\$(\w|\{|`[^`])""").containsMatchIn(value)) {
+            if (prefix.length == 1 || !Regex("""\$(\w|\{|`[^`])""").containsMatchIn(value)) {
                 reporter.reportOn(expression.source, FirErrors.REDUNDANT_INTERPOLATION_PREFIX)
             }
         }
