@@ -33484,6 +33484,12 @@ public class FirJsCodegenSplittingInlineWithInlinedFunInKlibTestGenerated extend
         }
 
         @Test
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/secondaryConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/simple.kt");
