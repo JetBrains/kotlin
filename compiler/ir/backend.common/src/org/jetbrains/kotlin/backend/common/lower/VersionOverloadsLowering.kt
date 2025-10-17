@@ -74,7 +74,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
     private fun IrFunction.generateVersions(
         container: IrDeclarationContainer,
         versionParamIndexes: SortedMap<MavenComparableVersion?, MutableList<Int>>
-    ) {
+    ) = irFactory.stageController.restrictTo(this) {
         val lastIncludedParameters = BooleanArray(parameters.size) { true }
 
         var first = true
