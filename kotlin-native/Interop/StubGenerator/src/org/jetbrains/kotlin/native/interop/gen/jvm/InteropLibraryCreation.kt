@@ -4,10 +4,7 @@
  */
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
-import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
-import kotlin.metadata.*
-import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryLayoutForWriter
@@ -19,7 +16,7 @@ import org.jetbrains.kotlin.util.toCInteropKlibMetadataVersion
 import java.util.*
 
 fun createInteropLibrary(
-    metadata: KlibModuleMetadata,
+    serializedMetadata: SerializedMetadata,
     outputPath: String,
     moduleName: String,
     nativeBitcodeFiles: List<String>,
@@ -48,8 +45,7 @@ fun createInteropLibrary(
             shortName = shortName,
             layout = layout
     ).apply {
-        val serializedMetadata = metadata.write(ChunkedKlibModuleFragmentWriteStrategy(topLevelClassifierDeclarationsPerFile = 128))
-        addMetadata(SerializedMetadata(serializedMetadata.header, serializedMetadata.fragments, serializedMetadata.fragmentNames))
+        addMetadata(serializedMetadata)
         nativeBitcodeFiles.forEach(this::addNativeBitcode)
         addManifestAddend(manifest)
         addLinkDependencies(dependencies)

@@ -21,6 +21,7 @@ import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
 import kotlinx.cli.required
+import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.TempFiles
@@ -458,8 +459,12 @@ private fun processCLib(
                 if (nopack) it.removeSuffixIfPresent(suffix) else it.suffixIfNot(suffix)
             }
 
+            val serializedMetadata = stubIrOutput.metadata.write(ChunkedKlibModuleFragmentWriteStrategy(topLevelClassifierDeclarationsPerFile = 128)).run {
+                SerializedMetadata(header, fragments, fragmentNames)
+            }
+
             createInteropLibrary(
-                    metadata = stubIrOutput.metadata,
+                    serializedMetadata = serializedMetadata,
                     nativeBitcodeFiles = compiledFiles + listOfNotNull(nativeOutputPath),
                     target = tool.target,
                     moduleName = moduleName,
