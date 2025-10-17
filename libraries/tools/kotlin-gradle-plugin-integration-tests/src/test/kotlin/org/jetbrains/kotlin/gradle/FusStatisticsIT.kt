@@ -11,6 +11,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.version
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
@@ -43,7 +44,10 @@ class FusStatisticsIT : KGPBaseTest() {
         "BUILD_FINISH_TIME",
         "GRADLE_VERSION",
         "KOTLIN_STDLIB_VERSION",
+        "KOTLIN_BTA_USED",
         "KOTLIN_COMPILER_VERSION",
+        "KOTLIN_GRADLE_PLUGIN_VERSION",
+        "KOTLIN_COMPILER_EXECUTION_STRATEGY",
     )
 
     private val GradleProject.fusStatisticsDirectory: Path
@@ -758,6 +762,50 @@ class FusStatisticsIT : KGPBaseTest() {
                 build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", "-Pkotlin.compiler.runViaBuildToolsApi=false") {
                     assertOutputDoesNotContainFusErrors()
                     fusStatisticsDirectory.assertFusReportContains("KOTLIN_BTA_USED=false")
+                }
+            }
+        }
+    }
+
+    @DisplayName("various compiler execution settings")
+    @GradleTest
+    @JvmGradlePluginTests
+    fun testCompilerExecutionSettings(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins { kotlin("jvm") }
+            assertNoErrorFilesCreated {
+                build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", "-Pkotlin.compiler.runViaBuildToolsApi=true") {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContains(
+                        "KOTLIN_GRADLE_PLUGIN_VERSION=${KOTLIN_VERSION.lowercase()}",
+                        "KOTLIN_COMPILER_VERSION=${KOTLIN_VERSION.lowercase()}",
+                        "KOTLIN_COMPILER_EXECUTION_STRATEGY=daemon",
+                    )
+                }
+                buildScriptInjection {
+                    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+                    kotlinJvm.compilerVersion.set("2.2.20")
+                }
+                build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", "-Pkotlin.compiler.runViaBuildToolsApi=true") {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContains(
+                        "KOTLIN_GRADLE_PLUGIN_VERSION=${KOTLIN_VERSION.lowercase()}",
+                        "KOTLIN_COMPILER_VERSION=2.2.20",
+                        "KOTLIN_COMPILER_EXECUTION_STRATEGY=daemon",
+                    )
+                }
+                build(
+                    "compileKotlin",
+                    "-Pkotlin.session.logger.root.path=$projectPath",
+                    "-Pkotlin.compiler.runViaBuildToolsApi=false",
+                    "-Pkotlin.compiler.execution.strategy=in-process"
+                ) {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContains(
+                        "KOTLIN_GRADLE_PLUGIN_VERSION=${KOTLIN_VERSION.lowercase()}",
+                        "KOTLIN_COMPILER_VERSION=${KOTLIN_VERSION.lowercase()}",
+                        "KOTLIN_COMPILER_EXECUTION_STRATEGY=in-process",
+                    )
                 }
             }
         }

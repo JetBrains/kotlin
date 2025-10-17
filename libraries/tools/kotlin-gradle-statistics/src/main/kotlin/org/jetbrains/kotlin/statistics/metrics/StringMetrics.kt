@@ -62,6 +62,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     LIBRARY_GWT_VERSION(OVERRIDE_VERSION_IF_NOT_SET, ComponentVersionAnonymizer()),
     LIBRARY_HIBERNATE_VERSION(OVERRIDE_VERSION_IF_NOT_SET, ComponentVersionAnonymizer()),
 
+    KOTLIN_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_COMPILER_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_STDLIB_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_REFLECT_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
@@ -84,6 +85,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     USE_OLD_BACKEND(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     USE_FIR(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
 
+    KOTLIN_COMPILER_EXECUTION_STRATEGY(OVERRIDE, RegexControlled("(in-process|daemon|out-of-process)", false)),
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
 
 
