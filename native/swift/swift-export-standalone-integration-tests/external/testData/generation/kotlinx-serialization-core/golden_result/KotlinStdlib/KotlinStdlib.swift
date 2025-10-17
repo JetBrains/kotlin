@@ -2195,6 +2195,114 @@ extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
+    public final class UByte: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+        }
+        public func toString() -> Swift.String {
+            return kotlin_UByte_toString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_UByte_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.UByte,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_UByte_hashCode(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+    }
+    public final class UInt: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+        }
+        public func toString() -> Swift.String {
+            return kotlin_UInt_toString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_UInt_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.UInt,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_UInt_hashCode(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+    }
+    public final class ULong: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+        }
+        public func toString() -> Swift.String {
+            return kotlin_ULong_toString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_ULong_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.ULong,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_ULong_hashCode(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+    }
+    public final class UShort: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
+        }
+        public func toString() -> Swift.String {
+            return kotlin_UShort_toString(self.__externalRCRef())
+        }
+        public func equals(
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            return kotlin_UShort_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.UShort,
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return kotlin_UShort_hashCode(self.__externalRCRef())
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+    }
     open class Number: KotlinRuntime.KotlinBase {
         open func toDouble() -> Swift.Double {
             return kotlin_Number_toDouble(self.__externalRCRef())
