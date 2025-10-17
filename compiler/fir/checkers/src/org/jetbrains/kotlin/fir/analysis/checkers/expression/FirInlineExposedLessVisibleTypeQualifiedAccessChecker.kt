@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirInlineExposedLessVisibleTypeQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Platform) {
-    context(c: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
-        val inlineFunctionBodyContext = c.inlineFunctionBodyContext ?: return
+        val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
 
         // We don't care about public functions because other diagnostics are already reported on them
         if (inlineFunctionBodyContext.inlineFunEffectiveVisibility == EffectiveVisibility.Public) return
 
-        if (c.callsOrAssignments.any { it is FirAnnotation }) return
+        if (context.callsOrAssignments.any { it is FirAnnotation }) return
 
         val symbol = expression.toResolvedCallableSymbol() ?: return
         if (symbol.effectiveVisibility is EffectiveVisibility.Local) return
