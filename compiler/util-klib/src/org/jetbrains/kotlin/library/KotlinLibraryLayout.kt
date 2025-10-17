@@ -23,6 +23,7 @@ const val KLIB_MODULE_METADATA_FILE_NAME = "module"
 const val KLIB_METADATA_FOLDER_NAME = "linkdata"
 const val KLIB_IR_FOLDER_NAME = "ir"
 const val KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME = "ir_inlinable_functions"
+const val KLIB_RESOURCES_FOLDER_NAME = "resources"
 
 /**
  * This scheme describes the Kotlin/Native Library (KLIB) layout.
@@ -37,7 +38,7 @@ interface KotlinLibraryLayout {
     val manifestFile
         get() = File(componentDir, KLIB_MANIFEST_FILE_NAME)
     val resourcesDir
-        get() = File(componentDir, "resources")
+        get() = File(componentDir, KLIB_RESOURCES_FOLDER_NAME)
     val pre_1_4_manifest: File
         get() = File(libFile, KLIB_MANIFEST_FILE_NAME)
 }
