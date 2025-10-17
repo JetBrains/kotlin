@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // DIAGNOSTICS: -OPT_IN_USAGE_ERROR
+// API_VERSION: 1.9
 // For FIR, see: KT-50704
 import kotlin.experimental.ExperimentalTypeInference
 

@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // SKIP_TXT
+// API_VERSION: 1.9
 fun test() {
     foo(
         flow { emit(0) }

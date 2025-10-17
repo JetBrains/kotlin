@@ -1,5 +1,5 @@
 FILE: builderInference.kt
-    public final fun <T> foo(@R|kotlin/BuilderInference|() block: R|kotlin/collections/MutableList<T>.() -> kotlin/Unit|): R|T| {
+    public final fun <T> foo(block: R|kotlin/collections/MutableList<T>.() -> kotlin/Unit|): R|T| {
         ^foo Null(null)!!
     }
     public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {

@@ -3,7 +3,7 @@ FILE: KtFirCompositeScope.kt
         public abstract fun getAllNames(): R|kotlin/collections/Set<kotlin/String>|
 
     }
-    public final inline fun <E> buildSet(@R|kotlin/BuilderInference|() builderAction: R|kotlin/collections/MutableSet<E>.() -> kotlin/Unit|): R|kotlin/collections/Set<E>| {
+    public final inline fun <E> buildSet(builderAction: R|kotlin/collections/MutableSet<E>.() -> kotlin/Unit|): R|kotlin/collections/Set<E>| {
         ^buildSet Null(null)!!
     }
     public final inline fun <R> withValidityAssertion(action: R|() -> R|): R|R| {
