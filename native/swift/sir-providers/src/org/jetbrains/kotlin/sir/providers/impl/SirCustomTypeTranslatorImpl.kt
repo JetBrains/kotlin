@@ -6,8 +6,21 @@
 package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.isBooleanType
+import org.jetbrains.kotlin.analysis.api.components.isByteType
+import org.jetbrains.kotlin.analysis.api.components.isCharType
 import org.jetbrains.kotlin.analysis.api.components.isClassType
+import org.jetbrains.kotlin.analysis.api.components.isDoubleType
+import org.jetbrains.kotlin.analysis.api.components.isFloatType
+import org.jetbrains.kotlin.analysis.api.components.isIntType
+import org.jetbrains.kotlin.analysis.api.components.isLongType
+import org.jetbrains.kotlin.analysis.api.components.isShortType
 import org.jetbrains.kotlin.analysis.api.components.isStringType
+import org.jetbrains.kotlin.analysis.api.components.isUByteType
+import org.jetbrains.kotlin.analysis.api.components.isUIntType
+import org.jetbrains.kotlin.analysis.api.components.isULongType
+import org.jetbrains.kotlin.analysis.api.components.isUShortType
+import org.jetbrains.kotlin.analysis.api.components.isUnitType
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
@@ -59,16 +72,53 @@ public class SirCustomTypeTranslatorImpl(
 //            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("UIntRange")),
 //            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("ULongRange")),
 //            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("CharRange")),
+            FqNames._char.toSafe(),
+            FqNames._byte.toSafe(),
+            FqNames._short.toSafe(),
+            FqNames._int.toSafe(),
+            FqNames._long.toSafe(),
+            FqNames.uByteFqName,
+            FqNames.uShortFqName,
+            FqNames.uIntFqName,
+            FqNames.uLongFqName,
+            FqNames._boolean.toSafe(),
+            FqNames._double.toSafe(),
+            FqNames._float.toSafe(),
+            FqNames.unit.toSafe(),
         )
 
     public override fun isFqNameSupported(fqName: FqName): Boolean {
         return supportedFqNames.contains(fqName)
     }
 
-    private val typeToWrapperMap = mutableMapOf<SirNominalType, SirCustomTypeTranslator.BridgeWrapper>()
+    private val typeToWrapperMap = mapOf(
+        SirSwiftModule.utf16CodeUnit to Pair(KotlinType.Char, CType.UInt16),
+
+        SirSwiftModule.int8 to Pair(KotlinType.Byte, CType.Int8),
+        SirSwiftModule.int16 to Pair(KotlinType.Short, CType.Int16),
+        SirSwiftModule.int32 to Pair(KotlinType.Int, CType.Int32),
+        SirSwiftModule.int64 to Pair(KotlinType.Long, CType.Int64),
+
+        SirSwiftModule.uint8 to Pair(KotlinType.UByte, CType.UInt8),
+        SirSwiftModule.uint16 to Pair(KotlinType.UShort, CType.UInt16),
+        SirSwiftModule.uint32 to Pair(KotlinType.UInt, CType.UInt32),
+        SirSwiftModule.uint64 to Pair(KotlinType.ULong, CType.UInt64),
+
+        SirSwiftModule.bool to Pair(KotlinType.Boolean, CType.Bool),
+
+        SirSwiftModule.double to Pair(KotlinType.Double, CType.Double),
+        SirSwiftModule.float to Pair(KotlinType.Float, CType.Float),
+    ).entries.associateTo(mutableMapOf()) { (declaration, kctype) ->
+        SirNominalType(declaration) to Bridge.AsIs(
+            declaration, kctype.first, kctype.second
+        ).wrapper()
+    }.also {
+        it[SirNominalType(SirSwiftModule.void)] = Bridge.AsVoid.wrapper()
+    }
 
     context(kaSession: KaSession)
     public override fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): SirCustomTypeTranslator.BridgeWrapper? {
+        toPrimitiveTypeBridge()?.let { return it }
         var swiftType: SirNominalType
         return when {
             isStringType -> {
@@ -141,6 +191,32 @@ public class SirCustomTypeTranslatorImpl(
     }
 
     private fun Bridge.wrapper(): SirCustomTypeTranslator.BridgeWrapper = SirCustomTypeTranslator.BridgeWrapper(this)
+
+    context(kaSession: KaSession)
+    private fun KaUsualClassType.toPrimitiveTypeBridge(): SirCustomTypeTranslator.BridgeWrapper? {
+        val declaration = when {
+            isCharType -> SirSwiftModule.utf16CodeUnit
+
+            isByteType -> SirSwiftModule.int8
+            isShortType -> SirSwiftModule.int16
+            isIntType -> SirSwiftModule.int32
+            isLongType -> SirSwiftModule.int64
+
+            isUByteType -> SirSwiftModule.uint8
+            isUShortType -> SirSwiftModule.uint16
+            isUIntType -> SirSwiftModule.uint32
+            isULongType -> SirSwiftModule.uint64
+
+            isBooleanType -> SirSwiftModule.bool
+
+            isDoubleType -> SirSwiftModule.double
+            isFloatType -> SirSwiftModule.float
+
+            isUnitType -> SirSwiftModule.void
+            else -> return null
+        }
+        return SirNominalType(declaration).toBridge()
+    }
 
     context(kaSession: KaSession)
     private fun KaTypeProjection.sirType(ctx: TypeTranslationCtx): SirType = when (this) {
