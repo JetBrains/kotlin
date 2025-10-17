@@ -64,6 +64,9 @@ internal class SourceSetVisibilityProvider {
         resolvedToOtherProject: Boolean,
         resolveWithLenientPSMResolutionScheme: Boolean,
     ): SourceSetVisibilityResult {
+        if (dependingPlatformCompilations.isEmpty())
+            return SourceSetVisibilityResult(emptySet(), emptyMap())
+
         val resolvedRootMppDependencyId = resolvedRootMppDependency.selected.id
         val resolvedRootMppDependencyKmpIdentifier = resolvedRootMppDependencyId.kmpMultiVariantModuleIdentifier()
 
@@ -93,18 +96,6 @@ internal class SourceSetVisibilityProvider {
 
                         return@filter !platformCompilationResolvedToMetadataJarVariant
                     }
-                    /*
-                    Returning null if we can't find the given dependency in a certain platform compilations dependencies.
-                    This is not expected, since this means the dependency does not support the given targets which will
-                    lead to a dependency resolution error.
-
-                    Esoteric cases can still get into this branch: e.g. broken publications (or broken .m2 and mavenLocal()).
-                    In this case we just return null, effectively ignoring this situation for this algorithm.
-
-                    Ignoring this will still lead to a more graceful behaviour in the IDE.
-                    A broken publication will potentially lead to 'too many' source sets being visible, which is
-                    more desirable than having none.
-                    */
                     .ifEmpty { return@mapNotNull null }
 
                 resolvedPlatformDependencies.map { resolvedPlatformDependency ->
@@ -125,12 +116,12 @@ internal class SourceSetVisibilityProvider {
         }
 
         /**
-         * If we are resolving with the new resolution scheme and we couldn't resolve all [visiblePlatformVariantNames] to valid platform
-         * KMP variants, assume the dependency is missing some targets that this source set compiles to and don't return any metadata klibs
-         *
-         * FIXME: Consider making this check simpler and return early above
+         * [resolvedRootMppDependency] must be found in classpath's of ALL [dependingPlatformCompilations]
+         * If it can't be found in at least one, it is pointless to continue sourceSet visibility inference,
+         * and no symbols from this dependency can be used in a common source set
+         * that participates in [dependingPlatformCompilations]
          */
-        if (resolveWithLenientPSMResolutionScheme && dependingPlatformCompilations.size > visiblePlatformVariantNames.size) {
+        if (dependingPlatformCompilations.size > visiblePlatformVariantNames.size) {
             return SourceSetVisibilityResult(emptySet(), emptyMap())
         }
 
