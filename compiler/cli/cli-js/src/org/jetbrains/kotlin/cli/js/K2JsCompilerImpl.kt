@@ -215,7 +215,7 @@ internal class K2JsCompilerImpl(
         JsConfigurationUpdater.checkWasmArgumentsUsage(arguments, messageCollector)
 
         configuration.phaseConfig = createPhaseConfig(arguments).also {
-            if (arguments.listPhases) it.list(getJsLowerings(configuration))
+            if (arguments.listPhases) it.list(getJsLowerings())
         }
         val ir2JsTransformer = Ir2JsTransformer(arguments, module, messageCollector, mainCallArguments)
         val outputs = JsBackendPipelinePhase.compileNonIncrementally(
