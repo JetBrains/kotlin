@@ -13,7 +13,6 @@ dependencies {
     api(project(":analysis:kt-references"))
     api(project(":compiler:resolution.common.jvm"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
-    implementation(project(":compiler:backend-common"))
     implementation(project(":compiler:backend"))
     implementation(kotlinxCollectionsImmutable())
     api(intellijCore())
@@ -55,6 +54,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
             "org.jetbrains.kotlin.analysis.api.KaIdeApi",
             "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
             "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+            "org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail",
         )
     )
 }

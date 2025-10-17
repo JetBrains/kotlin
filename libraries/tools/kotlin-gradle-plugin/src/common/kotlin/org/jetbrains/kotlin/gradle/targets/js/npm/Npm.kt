@@ -120,6 +120,7 @@ class Npm internal constructor(
     @Deprecated(
         "Updated to remove ServiceRegistry. Scheduled for removal in Kotlin 2.4.",
         ReplaceWith("packageManagerExec(logger, nodeJs, environment, dir, description, args)"),
+        level = DeprecationLevel.ERROR
     )
     @Suppress("unused")
     fun npmExec(
@@ -152,12 +153,12 @@ class Npm internal constructor(
     ) {
         val progressLogger = objects.newBuildOpLogger()
         execWithProgress(progressLogger, description, execOps = execOps) { execSpec ->
-            val arguments: List<String> = mutableListOf<String>().apply {
+            val arguments = buildList {
                 add("install")
-                addAll(args)
+                addAll(args.filter(String::isNotEmpty))
                 if (logger.isDebugEnabled) add("--verbose")
                 if (environment.ignoreScripts) add("--ignore-scripts")
-            }.filter { it.isNotEmpty() }
+            }
 
             if (!environment.standalone) {
                 val nodeExecutable = nodeJs.nodeExecutable

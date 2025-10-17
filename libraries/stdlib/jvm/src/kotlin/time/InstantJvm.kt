@@ -8,13 +8,10 @@ package kotlin.time
 import java.io.*
 import kotlin.internal.IMPLEMENTATIONS
 
-@ExperimentalTime
 private val systemClock: Clock = IMPLEMENTATIONS.getSystemClock()
 
-@ExperimentalTime
 internal actual fun systemClockNow(): Instant = systemClock.now()
 
-@ExperimentalTime
 private class InstantSerialized(
     var epochSeconds: Long,
     var nanosecondsOfSecond: Int
@@ -40,6 +37,5 @@ private class InstantSerialized(
     }
 }
 
-@ExperimentalTime
 internal actual fun serializedInstant(instant: Instant): Any =
     InstantSerialized(instant.epochSeconds, instant.nanosecondsOfSecond)

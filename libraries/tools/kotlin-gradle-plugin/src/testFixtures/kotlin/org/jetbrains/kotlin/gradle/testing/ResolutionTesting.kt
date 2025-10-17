@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle.testing
 
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.utils.projectPathOrNull
@@ -16,6 +19,11 @@ data class ResolvedComponentWithArtifacts(
     val artifacts: MutableList<Map<String, String>> = mutableListOf(),
 ) : java.io.Serializable
 
+fun ResolvedComponentWithArtifacts(
+    configuration: String,
+    artifacts: List<Map<String, String>>,
+) = ResolvedComponentWithArtifacts(configuration).apply { this.artifacts.addAll(artifacts) }
+
 typealias ComponentPath = String
 
 fun Configuration.resolveProjectDependencyComponentsWithArtifacts(
@@ -23,10 +31,52 @@ fun Configuration.resolveProjectDependencyComponentsWithArtifacts(
         // The status is inferred from the presence of "-SNAPSHOT" in this version. It should have no effect on resolution, but makes testing against snapshot versions painful
         "org.gradle.status",
     ),
+): Map<ComponentPath, ResolvedComponentWithArtifacts> = resolveProjectDependencyComponentsWithArtifacts(
+    resolvedArtifacts = incoming.artifacts.artifacts,
+    allComponentsProvider = incoming.resolutionResult.allComponents,
+    rootComponentProvider = incoming.resolutionResult.root,
+    removeAttributesNamed = removeAttributesNamed,
+)
+
+fun Configuration.resolveProjectDependencyComponentsWithArtifactsProvider(
+    removeAttributesNamed: Set<String> = setOf(
+        "org.gradle.status",
+    ),
+): Provider<Map<ComponentPath, ResolvedComponentWithArtifacts>> {
+    val componentsProvider = incoming.resolutionResult.rootComponent.map { incoming.resolutionResult.allComponents }
+    val artifactsProvider = incoming.artifacts.resolvedArtifacts
+    val rootComponentProvider = incoming.resolutionResult.rootComponent
+    return rootComponentProvider.flatMap { root ->
+        componentsProvider.flatMap { components ->
+            artifactsProvider.map { artifacts ->
+                resolveProjectDependencyComponentsWithArtifacts(
+                    resolvedArtifacts = artifacts,
+                    allComponentsProvider = components,
+                    rootComponentProvider = root,
+                    removeAttributesNamed = removeAttributesNamed,
+                )
+            }
+        }
+    }
+}
+
+fun resolveProjectDependencyComponentsWithArtifacts(
+    resolvedArtifacts: Set<ResolvedArtifactResult>,
+    allComponentsProvider: Set<ResolvedComponentResult>,
+    rootComponentProvider: ResolvedComponentResult,
+    removeAttributesNamed: Set<String> = setOf(
+        // The status is inferred from the presence of "-SNAPSHOT" in this version. It should have no effect on resolution, but makes testing against snapshot versions painful
+        "org.gradle.status",
+    ),
 ): Map<ComponentPath, ResolvedComponentWithArtifacts> {
-    val selfProjectPath = incoming.resolutionResult.root.variants.single().owner.projectPathOrNull
-    val artifacts = resolveProjectDependencyVariantsFromArtifacts(removeAttributesNamed).filterNot { it.path == selfProjectPath }
-    val components = resolveProjectDependencyComponents().filterNot { it.path == selfProjectPath }
+    val selfProjectPath = rootComponentProvider.variants.single().owner.projectPathOrNull
+    val artifacts = resolveProjectDependencyVariantsFromArtifacts(
+        removeAttributesNamed = removeAttributesNamed,
+        resolvedArtifacts = resolvedArtifacts,
+    ).filterNot { it.path == selfProjectPath }
+    val components = resolveProjectDependencyComponents(
+        allComponentsProvider = allComponentsProvider
+    ).filterNot { it.path == selfProjectPath }
     val componentToArtifacts = LinkedHashMap<String, ResolvedComponentWithArtifacts>()
     components.forEach { component ->
         if (componentToArtifacts[component.path] == null) {
@@ -44,11 +94,22 @@ fun Configuration.resolveProjectDependencyComponentsWithArtifacts(
 }
 
 fun KotlinTarget.compilationResolution(compilationName: String = "main"): Map<ComponentPath, ResolvedComponentWithArtifacts> {
+    return compilationConfiguration(compilationName).resolveProjectDependencyComponentsWithArtifacts()
+}
+fun KotlinTarget.runtimeResolution(compilationName: String = "main"): Map<ComponentPath, ResolvedComponentWithArtifacts> {
+    return runtimeConfiguration(compilationName).resolveProjectDependencyComponentsWithArtifacts()
+}
+
+fun KotlinTarget.compilationConfiguration(compilationName: String = "main"): Configuration {
     // workaround for KT-76284
     val compilation = compilations
         .getByName(compilationName)
     return compilation.internal.configurations.compileDependencyConfiguration
-        .resolveProjectDependencyComponentsWithArtifacts()
+}
+fun KotlinTarget.runtimeConfiguration(compilationName: String = "main"): Configuration {
+    val compilation = compilations
+        .getByName(compilationName)
+    return compilation.internal.configurations.runtimeDependencyConfiguration ?: error("Missing runtime configuration in $compilation")
 }
 
 private data class ResolvedVariant(
@@ -61,10 +122,11 @@ private data class ResolvedComponent(
     val configuration: String,
 )
 
-private fun Configuration.resolveProjectDependencyVariantsFromArtifacts(
-    removeAttributesNamed: Set<String>
+private fun resolveProjectDependencyVariantsFromArtifacts(
+    removeAttributesNamed: Set<String>,
+    resolvedArtifacts: Set<ResolvedArtifactResult>
 ): List<ResolvedVariant> {
-    return incoming.artifacts.artifacts
+    return resolvedArtifacts
         .map { artifact ->
             val attributes: List<Attribute<*>> = artifact.variant.attributes.keySet()
                 .filterNot { it.name in removeAttributesNamed }
@@ -78,8 +140,10 @@ private fun Configuration.resolveProjectDependencyVariantsFromArtifacts(
         }
 }
 
-private fun Configuration.resolveProjectDependencyComponents(): List<ResolvedComponent> {
-    return incoming.resolutionResult.allComponents
+private fun resolveProjectDependencyComponents(
+    allComponentsProvider: Set<ResolvedComponentResult>,
+): List<ResolvedComponent> {
+    return allComponentsProvider
         .map { component ->
             ResolvedComponent(
                 component.id.projectPathOrNull ?: component.id.displayName,

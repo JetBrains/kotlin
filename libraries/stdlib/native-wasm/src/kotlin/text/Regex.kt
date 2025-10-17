@@ -161,7 +161,6 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     public actual fun containsMatchIn(input: CharSequence): Boolean = find(input) != null
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchesAt(input: CharSequence, index: Int): Boolean =
         // TODO: expand and simplify
         matchAt(input, index) != null
@@ -214,7 +213,6 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
     public actual fun matchEntire(input: CharSequence): MatchResult?= doMatch(input, Mode.MATCH)
 
     @SinceKotlin("1.7")
-    @WasExperimental(ExperimentalStdlibApi::class)
     public actual fun matchAt(input: CharSequence, index: Int): MatchResult? {
         if (index < 0 || index > input.length) {
             throw IndexOutOfBoundsException("index is out of bounds: $index, input length: ${input.length}")

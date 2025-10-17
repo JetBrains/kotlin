@@ -31,6 +31,20 @@ class RenameInto : AbstractSchemaModificationInterpreter() {
     }
 }
 
+class RenameIntoLambda : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: RenameClauseApproximation by arg()
+    val Arguments.transform: String by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = receiver.columns.resolve(receiver.schema)
+        require(columns.size == 1)
+        return receiver.schema.map(
+            selected = columns.mapTo(mutableSetOf()) { it.path.path },
+            nextName = { transform },
+        )
+    }
+}
+
 class RenameMapping : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver by dataFrame()
     val Arguments.mappings: List<Interpreter.Success<Pair<*, *>>> by arg()

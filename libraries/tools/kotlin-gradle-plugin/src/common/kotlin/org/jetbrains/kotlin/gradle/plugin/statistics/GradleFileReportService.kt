@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.statistics
 
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportService
 import java.io.File
 
@@ -14,4 +14,4 @@ class GradleFileReportService(
     buildReportDir: File,
     projectName: String,
     printMetrics: Boolean,
-) : ReadableFileReportService<GradleBuildTime, GradleBuildPerformanceMetric>(buildReportDir, projectName, printMetrics)
+) : ReadableFileReportService<BuildTimeMetric, BuildPerformanceMetric>(buildReportDir, projectName, printMetrics)

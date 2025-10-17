@@ -57,8 +57,6 @@ data class BuildOptions(
     val languageApiVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
     val statisticsForceValidation: Boolean = true,
-    val usePreciseOutputsBackup: Boolean? = null,
-    val keepIncrementalCompilationCachesInMemory: Boolean? = null,
     val enableUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
     val useDaemonFallbackStrategy: Boolean = false,
@@ -281,18 +279,11 @@ data class BuildOptions(
             arguments.add("-Pkotlin_performance_profile_force_validation=true")
         }
 
-        if (usePreciseOutputsBackup != null) {
-            arguments.add("-Pkotlin.compiler.preciseCompilationResultsBackup=$usePreciseOutputsBackup")
-        }
         if (languageApiVersion != null) {
             arguments.add("-Pkotlin.test.apiVersion=$languageApiVersion")
         }
         if (languageVersion != null) {
             arguments.add("-Pkotlin.test.languageVersion=$languageVersion")
-        }
-
-        if (keepIncrementalCompilationCachesInMemory != null) {
-            arguments.add("-Pkotlin.compiler.keepIncrementalCompilationCachesInMemory=$keepIncrementalCompilationCachesInMemory")
         }
 
         if (enableUnsafeIncrementalCompilationForMultiplatform != null) {

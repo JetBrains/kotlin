@@ -182,7 +182,7 @@ internal fun CirFunction.serializeFunction(
 ): KmFunction = KmFunction(
     name = name.name
 ).also { function ->
-    function.modifiersFrom(this, isExpect = context.isCommon && kind != CallableMemberDescriptor.Kind.SYNTHESIZED)
+    function.modifiersFrom(this, isExpect = context.isCommon && kind != CirFunctionOrProperty.Kind.SYNTHESIZED)
     annotations.mapTo(function.annotations) { it.serializeAnnotation() }
     typeParameters.serializeTypeParameters(context, output = function.typeParameters)
     valueParameters.mapTo(function.valueParameters) { it.serializeValueParameter(context) }
@@ -306,8 +306,7 @@ private fun CirTypeAliasType.serializeTypeAliasType(
     expansion: TypeAliasExpansion
 ): KmType = when (expansion) {
     ONLY_ABBREVIATIONS -> serializeAbbreviationType(context, expansion)
-    EXPANDED_WITHOUT_ABBREVIATIONS -> serializeExpandedType(context, expansion)
-    FOR_TOP_LEVEL_TYPE -> serializeExpandedType(context, EXPANDED_WITHOUT_ABBREVIATIONS).apply {
+    FOR_TOP_LEVEL_TYPE -> serializeExpandedType(context, FOR_TOP_LEVEL_TYPE).apply {
         abbreviatedType = serializeAbbreviationType(context, expansion)
     }
     FOR_NESTED_TYPE -> serializeExpandedType(context, expansion).apply {
@@ -359,7 +358,6 @@ private inline fun Variance.serializeVariance(): KmVariance = when (this) {
 @Suppress("SpellCheckingInspection")
 private enum class TypeAliasExpansion {
     ONLY_ABBREVIATIONS,
-    EXPANDED_WITHOUT_ABBREVIATIONS,
     FOR_TOP_LEVEL_TYPE,
     FOR_NESTED_TYPE
 }

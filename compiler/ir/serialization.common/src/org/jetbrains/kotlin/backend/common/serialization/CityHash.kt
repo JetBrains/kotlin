@@ -75,7 +75,7 @@ private fun hashLen0to16(s: ByteArray, pos: Int, len: Int): ULong {
         val mul =  k2 + len.toULong() * 2u
         val a = fetch64(s, pos + 0) + k2
         val b = fetch64(s, pos + len - 8)
-        val c = rotate(b, 37).toULong() * mul.toULong() + a.toULong()
+        val c = rotate(b, 37) * mul + a
         val d = (rotate(a, 25) + b) * mul
         return hashLen16(c, d, mul)
     }

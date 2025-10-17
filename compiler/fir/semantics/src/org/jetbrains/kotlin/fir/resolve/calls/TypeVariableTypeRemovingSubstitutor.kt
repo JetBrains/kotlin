@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
 
 enum class TypeVariableReplacement {
     TypeParameter, ErrorType,
@@ -42,7 +43,9 @@ private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext, 
                 typeParameterType
             }
         }
-        return ConeErrorType(ConeUnknownLambdaParameterTypeDiagnostic())
+        return ConeErrorType(
+            ConeUnknownLambdaParameterTypeDiagnostic(isReturnType = type.typeConstructor.debugName == TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
+        )
     }
 
     override fun toString(): String {

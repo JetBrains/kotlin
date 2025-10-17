@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.filterOutAnnotations
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
-@PhaseDescription(name = "ObjectClass")
 internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
 

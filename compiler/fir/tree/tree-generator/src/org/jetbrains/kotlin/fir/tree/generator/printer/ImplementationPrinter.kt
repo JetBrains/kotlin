@@ -135,32 +135,17 @@ internal class ImplementationPrinter(
                                 }
 
                                 // For most of the cases dispatch/extension receivers are handled with the `explicitReceiver` case above
-                                // But FirSuperReceiverExpressionImpl doesn't have explicitReceiver
-                                "dispatchReceiver" if (this.typeName != "FirSuperReceiverExpressionImpl") -> {}
-                                "extensionReceiver", "companionObject" -> {
-                                }
+                                in setOf("dispatchReceiver", "extensionReceiver") if (walkableFields.any { it.name == "explicitReceiver" }) -> {}
+                                "companionObject" -> {}
 
                                 else -> {
-                                    if (this.typeName == "FirWhenExpressionImpl" && field.name == "subject") {
-                                        println(
-                                            """
-                                        |val subjectVariable_ = subjectVariable
-                                        |        if (subjectVariable_ != null) {
-                                        |            subjectVariable_.accept(visitor, data)
-                                        |        } else {
-                                        |            subject?.accept(visitor, data)
-                                        |        }
-                                            """.trimMargin(),
-                                        )
-                                    } else {
-                                        when (field) {
-                                            is SimpleField -> {
-                                                println(field.acceptString())
-                                            }
+                                    when (field) {
+                                        is SimpleField -> {
+                                            println(field.acceptString())
+                                        }
 
-                                            is ListField -> {
-                                                println(field.name, field.call(), "forEach { it.accept(visitor, data) }")
-                                            }
+                                        is ListField -> {
+                                            println(field.name, field.call(), "forEach { it.accept(visitor, data) }")
                                         }
                                     }
                                 }

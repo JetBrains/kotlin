@@ -7,7 +7,7 @@ class B
 
 @JsExport
 interface I {
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Foo = A<!>
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Bar = B<!>
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Baz = Int<!>
+    <!WRONG_EXPORTED_DECLARATION!>typealias Foo = A<!>
+    <!WRONG_EXPORTED_DECLARATION!>typealias Bar = B<!>
+    <!WRONG_EXPORTED_DECLARATION!>typealias Baz = Int<!>
 }

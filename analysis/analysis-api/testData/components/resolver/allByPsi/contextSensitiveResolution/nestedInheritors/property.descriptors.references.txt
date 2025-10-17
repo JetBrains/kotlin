@@ -1,174 +1,205 @@
 KtNameReferenceExpression(100,107): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) sealed class MyClass
 
 KtNameReferenceExpression(165,172): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyClass) constructor()
 
 KtNameReferenceExpression(224,231): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) sealed class MyClass
 
 KtNameReferenceExpression(234,249): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyClass) object NestedInheritor : MyClass()
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(274,280): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(318,325): 'MyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) sealed class MyClass
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(326,341): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyClass) object NestedInheritor : MyClass()
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(361,364): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtCallExpression(372,532): 'receiveMyClass('
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) fun receiveMyClass(m: MyClass)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(400,401): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       i: kotlin.Int
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(402,404): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
 KtNameReferenceExpression(408,423): 'NestedInheritor'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(441,442): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       i: kotlin.Int
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(443,445): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
 KtNameReferenceExpression(449,460): 'myClassProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(478,479): 'i'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       i: kotlin.Int
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(480,482): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
 KtNameReferenceExpression(486,496): 'stringProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(510,526): 'ClassMemberAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) val ClassMemberAlias: MyClass.NestedInheritor
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

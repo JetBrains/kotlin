@@ -7,7 +7,7 @@ interface I {
 }
 
 open class A {
-    inline fun h(<!UNUSED_PARAMETER!>x<!>: Int, block: () -> String) = block()
+    inline fun h(x: Int, block: () -> String) = block()
 }
 
 // KT-49722: [NOT_YET_SUPPORTED_IN_INLINE] should be raised for the next line, for intersection override of `h()`, similar to test `inheritedDefaultValue.kt`

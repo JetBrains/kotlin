@@ -12,15 +12,15 @@ import kotlin.concurrent.AtomicArray
 
 fun testKotlin() {
     val k = AtomicArray(1) { 127 }
-    k.compareAndSet(0, 127, 128) // true
-    k.compareAndSet(0, 128, 7777) // false
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>k.compareAndSet(0, 127, 128)<!> // true
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>k.compareAndSet(0, 128, 7777)<!> // false
 
     val kk: AtomicArray<Int>
     kk = k
 
     val l = AtomicReference(127)
-    l.compareAndSet(127, 128) // true
-    l.compareAndSet(128, 7777) // false
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>l.compareAndSet(127, 128)<!> // true
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>l.compareAndSet(128, 7777)<!> // false
 
     val ll: AtomicReference<Int>
     ll = l

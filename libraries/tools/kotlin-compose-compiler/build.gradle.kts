@@ -6,9 +6,18 @@ plugins {
     id("gradle-plugin-api-reference")
 }
 
+repositories {
+    google()
+}
+
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin"))
+    commonCompileOnly(libs.android.gradle.plugin.gradle.api) {
+        overrideTargetJvmVersion(11)
+        isTransitive = false
+    }
+    commonCompileOnly(project(":plugins:compose-compiler-plugin:group-mapping"))
 }
 
 gradlePlugin {
@@ -43,10 +52,12 @@ pluginApiReference {
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     testing {
         suites {
+            val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
             val test by getting(JvmTestSuite::class) {
                 useJUnitJupiter(libs.versions.junit5)
                 dependencies {
-                    implementation(project(":kotlin-test"))
+                    implementation("org.jetbrains.kotlin:kotlin-stdlib:${coreDepsVersion}")
+                    implementation("org.jetbrains.kotlin:kotlin-test:${coreDepsVersion}")
                 }
             }
 
@@ -54,10 +65,11 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 dependencies {
                     implementation(project())
                     implementation(gradleKotlinDsl())
-                    implementation(project(":compiler:cli-common"))
+                    implementation(project(":compiler:cli-common")) { isTransitive = false }
                     implementation(platform(libs.junit.bom))
                     implementation(libs.junit.jupiter.api)
-                    implementation(project(":kotlin-test"))
+                    implementation("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+                    implementation("org.jetbrains.kotlin:kotlin-test:$coreDepsVersion")
 
                     runtimeOnly(libs.junit.jupiter.engine)
                 }

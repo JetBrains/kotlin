@@ -1,5 +1,6 @@
 KtNameReferenceExpression(55,59): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) inline fun TODO(reason: kotlin.String): kotlin.Nothing

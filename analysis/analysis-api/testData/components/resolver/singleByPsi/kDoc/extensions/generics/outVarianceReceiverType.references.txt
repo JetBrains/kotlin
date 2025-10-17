@@ -2,6 +2,7 @@
   KDocName(226,258): 'OutContainer.someNumberExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun OutContainer<kotlin.Number>.someNumberExtension()
 
@@ -9,6 +10,7 @@
   KDocName(275,310): 'IntOutContainer.someNumberExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun OutContainer<kotlin.Number>.someNumberExtension()
 
@@ -16,6 +18,7 @@
   KDocName(327,365): 'NumberOutContainer.someNumberExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun OutContainer<kotlin.Number>.someNumberExtension()
 
@@ -23,6 +26,7 @@
   KDocName(382,411): 'OutContainer.someIntExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun OutContainer<kotlin.Int>.someIntExtension()
 
@@ -30,6 +34,7 @@
   KDocName(428,460): 'IntOutContainer.someIntExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun OutContainer<kotlin.Int>.someIntExtension()
 
@@ -37,5 +42,6 @@
   KDocName(477,512): 'NumberOutContainer.someIntExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)

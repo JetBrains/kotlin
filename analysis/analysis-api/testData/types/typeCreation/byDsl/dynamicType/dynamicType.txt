@@ -1,0 +1,10 @@
+KaType
+KaDynamicType:
+  abbreviation: null
+  annotations: []
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+
+Rendered type:
+dynamic

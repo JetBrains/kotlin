@@ -12,7 +12,7 @@ import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.getValue
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -102,6 +102,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         assertions: (Map<String, List<String>>) -> Unit,
     ) {
         defaultProject(gradleVersion, additionalProjectConfiguration) {
+            @Suppress("DEPRECATION")
             val compileArgs: List<Pair<String, CommonCompilerArguments>> = providerBuildScriptReturn {
                 val targets = targetsToRun.map { kotlinMultiplatform.targets.getByName(it) }
                 project.provider {
@@ -263,6 +264,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":library:transformCommonMainDependenciesMetadata",
                     ":library:transformLinuxMainDependenciesMetadata",
                     ":library:transformNativeMainDependenciesMetadata",
+                    ":library:downloadKotlinNativeDistribution",
                 )
                 val thisProjectTasks = setOf(
                     ":kmpPartiallyResolvedDependenciesChecker",
@@ -289,6 +291,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":transformLinuxTestDependenciesMetadata",
                     ":transformNativeMainDependenciesMetadata",
                     ":transformNativeTestDependenciesMetadata",
+                    ":downloadKotlinNativeDistribution"
                 )
                 assertExactTasksInGraph(
                     if (localRepository != null) {

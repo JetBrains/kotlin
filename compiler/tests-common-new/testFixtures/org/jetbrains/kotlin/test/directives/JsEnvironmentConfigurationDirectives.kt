@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
@@ -32,11 +32,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val RUN_PLAIN_BOX_FUNCTION by directive(
         description = "",
         applicability = DirectiveApplicability.Global
-    )
-
-    val NO_INLINE by directive(
-        description = "Disable inline in js module",
-        applicability = DirectiveApplicability.Module
     )
 
     val SKIP_NODE_JS by directive(

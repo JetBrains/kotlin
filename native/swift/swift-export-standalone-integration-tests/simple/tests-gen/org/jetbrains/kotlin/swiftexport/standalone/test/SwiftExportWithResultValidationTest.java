@@ -230,6 +230,12 @@ public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWith
   }
 
   @Test
+  @TestMetadata("vararg")
+  public void testVararg() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/vararg/");
+  }
+
+  @Test
   @TestMetadata("variables")
   public void testVariables() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/variables/");

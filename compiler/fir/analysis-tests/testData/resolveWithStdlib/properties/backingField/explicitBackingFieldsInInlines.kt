@@ -7,11 +7,12 @@ class Test {
 
     inline fun testPublic(): MutableList<*> = <!RETURN_TYPE_MISMATCH!>numbers<!>
 
-    internal inline fun testInternal(): MutableList<*> = <!RETURN_TYPE_MISMATCH!>numbers<!>
+    internal inline fun testInternal(): MutableList<*> = numbers
 
     protected inline fun testProtected(): MutableList<*> = <!RETURN_TYPE_MISMATCH!>numbers<!>
 
     private inline fun testPrivate(): MutableList<*> = numbers
 }
 
-/* GENERATED_FIR_TAGS: functionDeclaration, inline, objectDeclaration, propertyDeclaration, starProjection */
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, functionDeclaration, inline, propertyDeclaration,
+smartcast, starProjection */

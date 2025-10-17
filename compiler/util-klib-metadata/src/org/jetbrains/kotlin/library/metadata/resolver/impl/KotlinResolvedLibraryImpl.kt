@@ -20,12 +20,9 @@ class KotlinResolvedLibraryImpl(override val library: KotlinLibrary) : KotlinRes
     override val isDefault: Boolean
         get() = library.isDefault
 
-    override fun markNeededForLink(
-        library: KotlinLibrary,
-        fqName: String,
-    ) {
+    override fun markNeededForLink(packageFqName: String) {
         if (!isNeededForLink // fast path
-            && !_emptyPackages.contains(fqName)
+            && !_emptyPackages.contains(packageFqName)
         ) {
             isNeededForLink = true
         }

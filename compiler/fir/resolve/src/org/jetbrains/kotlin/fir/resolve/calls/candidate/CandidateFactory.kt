@@ -50,13 +50,32 @@ class CandidateFactory private constructor(
         }
 
         // For callable reference candidates, we use containing call as a source for the base system.
+        // The same is true for collection literal calls.
         // Thus, their Constraint Systems are effectively clones of the containing call ones with additional constraints.
-        fun createForCallableReferenceCandidate(context: ResolutionContext, containingCall: Candidate): CandidateFactory =
-            CandidateFactory(context, buildBaseSystemForCallableReference(context, containingCall))
+        fun createForCallableReferences(
+            context: ResolutionContext,
+            containingCall: Candidate,
+        ): CandidateFactory =
+            CandidateFactory(context, buildBaseSystemForContainingCallAwareCases(context, containingCall, null))
 
-        private fun buildBaseSystemForCallableReference(context: ResolutionContext, containingCall: Candidate): ConstraintStorage {
+        fun createForCollectionLiterals(
+            context: ResolutionContext,
+            containingCall: Candidate,
+            callInfo: CallInfo,
+        ): CandidateFactory =
+            CandidateFactory(context, buildBaseSystemForContainingCallAwareCases(context, containingCall, callInfo))
+
+        private fun buildBaseSystemForContainingCallAwareCases(
+            context: ResolutionContext,
+            containingCall: Candidate,
+            // For callable references, there is no call
+            callInfo: CallInfo?,
+        ): ConstraintStorage {
             val system = context.inferenceComponents.createConstraintSystem()
             system.setBaseSystem(containingCall.system.currentStorage())
+            callInfo?.argumentAtoms?.forEach {
+                system.addSubsystemFromAtom(it)
+            }
             return system.asReadOnlyStorage()
         }
     }
@@ -152,6 +171,18 @@ class CandidateFactory private constructor(
                 result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
         }
+
+        if (dispatchReceiver.isInaccessibleFromStaticNestedClass()) {
+            result.addDiagnostic(dispatchReceiver.toInaccessibleReceiverDiagnostic())
+        }
+
+        for (receiver in givenExtensionReceiverOptions) {
+            if (receiver.isInaccessibleFromStaticNestedClass()) {
+                result.addDiagnostic(receiver.toInaccessibleReceiverDiagnostic())
+                break
+            }
+        }
+
         return result
     }
 
@@ -300,7 +331,7 @@ fun PostponedArgumentsAnalyzerContext.addSubsystemFromAtom(atom: ConeResolutionA
 
 internal fun FirResolvable.candidate(): Candidate? {
     return when (val callee = this.calleeReference) {
-        is FirNamedReferenceWithCandidate -> return callee.candidate
+        is FirNamedReferenceWithCandidate -> callee.candidate
         else -> null
     }
 }

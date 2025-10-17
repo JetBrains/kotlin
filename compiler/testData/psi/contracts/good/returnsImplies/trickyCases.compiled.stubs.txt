@@ -1,7 +1,11 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrickyCasesKt]]
+  facadeFqName: TrickyCasesKt
+  partSimpleName: "TrickyCasesKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test1]
+    contract: [ effect:Returns(NOT_NULL) -> param(0) != null ]
+    origin: Facade(className=TrickyCasesKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -18,6 +22,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrickyCasesKt]]
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=test2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test2]
+    contract: [ effect:Returns(TRUE) -> param(0) != null ]
+    origin: Facade(className=TrickyCasesKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -34,6 +40,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrickyCasesKt]]
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=test3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test3]
+    contract: [ effect:Returns(NOT_NULL) -> param(0) != null ]
+    origin: Facade(className=TrickyCasesKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -50,6 +58,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrickyCasesKt]]
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=test4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test4]
+    contract: [ effect:Returns(NOT_NULL) -> param(0) != null ]
+    origin: Facade(className=TrickyCasesKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

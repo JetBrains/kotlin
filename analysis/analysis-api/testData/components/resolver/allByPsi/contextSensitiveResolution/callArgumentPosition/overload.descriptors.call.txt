@@ -118,6 +118,7 @@ KtNameReferenceExpression(211,217): 'MyEnum'
 KtNameReferenceExpression(223,226): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -153,6 +154,7 @@ KtNameReferenceExpression(245,252): 'MyClass'
 KtNameReferenceExpression(256,259): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

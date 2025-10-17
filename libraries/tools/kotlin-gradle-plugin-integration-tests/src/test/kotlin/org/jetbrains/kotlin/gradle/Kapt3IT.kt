@@ -1360,7 +1360,8 @@ open class Kapt3IT : Kapt3BaseIT() {
             javaSourcesDir().resolve("invalid.kt").writeText("TopLevelDeclarationExpected")
 
             buildAndFail(":kaptGenerateStubsKotlin") {
-                assertOutputContains("invalid.kt:1:1 Expecting a top level declaration")
+                assertOutputContains("invalid.kt:1:1")
+                assertOutputContains("Expecting a top level declaration")
             }
         }
     }
@@ -1387,6 +1388,26 @@ open class Kapt3IT : Kapt3BaseIT() {
                     "public static final class Companion",
                     "public static final class \$serializer implements kotlinx.serialization.internal.GeneratedSerializer<foo.Data>"
                 )
+            }
+        }
+    }
+
+    @DisplayName("KT-80843 Kapt does not fail on redeclaration in data class")
+    @GradleTest
+    fun testRedeclarationInDataClass(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            javaSourcesDir().resolve("invalid.kt").writeText("""
+                data class ClassWithDupProps(
+                    val rock: String,
+                    val paper: String,
+                    val scissors: String,
+                    val rock: String, // This would cause KAPT K2 to crash
+                )
+
+            """.trimIndent())
+
+            build(":kaptGenerateStubsKotlin") {
+                assertFileExists(projectPath.resolve("build/tmp/kapt3/stubs/main/ClassWithDupProps.java"))
             }
         }
     }

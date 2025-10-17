@@ -301,6 +301,7 @@ KtBlockExpression(100,125): '{'
 KtNameReferenceExpression(114,115): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -444,6 +445,7 @@ KtBlockExpression(301,575): '{'
 KtDotQualifiedExpression(307,319): 'with.ordinal'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -465,6 +467,7 @@ KtDotQualifiedExpression(307,319): 'with.ordinal'
 KtNameReferenceExpression(307,311): 'with'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -483,6 +486,7 @@ KtNameReferenceExpression(307,311): 'with'
 KtNameReferenceExpression(312,319): 'ordinal'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -504,6 +508,7 @@ KtNameReferenceExpression(312,319): 'ordinal'
 KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -553,6 +558,7 @@ KtNameReferenceExpression(325,344): 'EnumWithConstructor'
 KtNameReferenceExpression(345,350): 'Entry'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -574,6 +580,7 @@ KtNameReferenceExpression(345,350): 'Entry'
 KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -595,6 +602,7 @@ KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
 KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -644,6 +652,7 @@ KtNameReferenceExpression(355,374): 'EnumWithConstructor'
 KtNameReferenceExpression(375,380): 'Entry'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -665,6 +674,7 @@ KtNameReferenceExpression(375,380): 'Entry'
 KtNameReferenceExpression(381,385): 'name'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -686,6 +696,7 @@ KtNameReferenceExpression(381,385): 'name'
 KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -735,6 +746,7 @@ KtNameReferenceExpression(390,409): 'EnumWithConstructor'
 KtNameReferenceExpression(410,423): 'EntryWithBody'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -756,6 +768,7 @@ KtNameReferenceExpression(410,423): 'EntryWithBody'
 KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -777,6 +790,7 @@ KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
 KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -826,6 +840,7 @@ KtNameReferenceExpression(428,447): 'EnumWithConstructor'
 KtNameReferenceExpression(448,461): 'EntryWithBody'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -847,6 +862,7 @@ KtNameReferenceExpression(448,461): 'EntryWithBody'
 KtNameReferenceExpression(462,463): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -868,6 +884,7 @@ KtNameReferenceExpression(462,463): 'i'
 KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -909,6 +926,7 @@ KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
 KtNameReferenceExpression(492,499): 'entries'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -930,6 +948,7 @@ KtNameReferenceExpression(492,499): 'entries'
 KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -971,6 +990,7 @@ KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
 KtNameReferenceExpression(527,532): 'Entry'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -992,6 +1012,7 @@ KtNameReferenceExpression(527,532): 'Entry'
 KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1033,6 +1054,7 @@ KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
 KtNameReferenceExpression(560,573): 'EntryWithBody'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

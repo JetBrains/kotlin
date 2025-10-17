@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
-fun Name.render(): String {
-    return if (this.shouldBeEscaped()) '`' + asString() + '`' else asString()
+fun Name.render(stipSpecialMarkers: Boolean = false): String {
+    val string = if (stipSpecialMarkers) asStringStripSpecialMarkers() else asString()
+    return if ((!stipSpecialMarkers || !isSpecial) && shouldBeEscaped(string)) '`' + string + '`' else string
 }
 
-private fun Name.shouldBeEscaped(): Boolean {
-    val string = asString()
+private fun shouldBeEscaped(string: String): Boolean {
     return string in KeywordStringsGenerated.KEYWORDS ||
             string.any { !Character.isLetterOrDigit(it) && it != '_' } ||
             string.isEmpty() ||

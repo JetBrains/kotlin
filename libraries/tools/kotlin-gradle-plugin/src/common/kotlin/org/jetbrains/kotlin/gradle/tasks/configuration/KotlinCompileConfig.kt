@@ -12,11 +12,12 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.transform.TransformSpec
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
-import org.jetbrains.kotlin.gradle.internal.transforms.BuildToolsApiClasspathEntrySnapshotTransform
+import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.plugin.BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -146,12 +147,13 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         registerBuildToolsApiTransformations(project, jvmToolchain, runKotlinCompilerViaBuildToolsApi)
     }
 
-    private fun TransformSpec<BuildToolsApiClasspathEntrySnapshotTransform.Parameters>.configureCommonParameters(
+    private fun TransformSpec<ClasspathEntrySnapshotTransform.Parameters>.configureCommonParameters(
         kgpVersion: String,
         classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
         classpath: Provider<out Configuration>,
         jvmToolchain: Provider<DefaultKotlinJavaToolchain>,
         runKotlinCompilerViaBuildToolsApi: Provider<Boolean>,
+        buildSessionService: Provider<BuildSessionService>,
     ) {
         parameters.gradleUserHomeDir.set(project.gradle.gradleUserHomeDir)
         val roDepCachePath = System.getenv(READONLY_CACHE_ENV_VAR)
@@ -177,6 +179,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             parameters.buildToolsImplVersion.set(classpath.map { configuration -> configuration.findBuildToolsApiImplVersion() })
         }
         parameters.suppressVersionInconsistencyChecks.set(suppressVersionInconsistencyChecks)
+        parameters.buildSessionService.set(buildSessionService)
     }
 
     private fun Configuration.findBuildToolsApiImplVersion() = incoming.resolutionResult.allDependencies
@@ -194,8 +197,9 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
         val classpath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
         val kgpVersion = project.getKotlinPluginVersion()
+        val buildSessionService = BuildSessionService.registerIfAbsent(project)
         project.dependencies.registerTransformForArtifactType(
-            BuildToolsApiClasspathEntrySnapshotTransform::class.java,
+            ClasspathEntrySnapshotTransform::class.java,
             fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
             toArtifactType = CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE
         ) {
@@ -205,11 +209,12 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 classpath,
                 jvmToolchain,
                 runKotlinCompilerViaBuildToolsApi,
+                buildSessionService,
             )
             it.parameters.setupKotlinToolingDiagnosticsParameters(project)
         }
         project.dependencies.registerTransformForArtifactType(
-            BuildToolsApiClasspathEntrySnapshotTransform::class.java,
+            ClasspathEntrySnapshotTransform::class.java,
             fromArtifactType = ArtifactTypeDefinition.DIRECTORY_TYPE,
             toArtifactType = CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE
         ) {
@@ -219,6 +224,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 classpath,
                 jvmToolchain,
                 runKotlinCompilerViaBuildToolsApi,
+                buildSessionService,
             )
             it.parameters.setupKotlinToolingDiagnosticsParameters(project)
         }

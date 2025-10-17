@@ -94,11 +94,13 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
 
     private class Default : FirMustUseReturnValueStatusComponent() {
         private val mustUseReturnValueLikeAnnotations: Set<ClassId> = setOf(
-            StandardClassIds.Annotations.MustUseReturnValue,
+            StandardClassIds.Annotations.MustUseReturnValues,
+            ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("MustUseReturnValue")), // Pre-2.3.0 name, can be deleted later.
             ClassId(errorPronePackageFqName, Name.identifier("CheckReturnValue")),
             ClassId(FqName("org.jetbrains.annotations"), Name.identifier("CheckReturnValue")),
             ClassId(FqName("org.springframework.lang"), Name.identifier("CheckReturnValue")),
             ClassId(FqName("org.jooq"), Name.identifier("CheckReturnValue")),
+            ClassId(FqName("edu.umd.cs.findbugs.annotations"), Name.identifier("CheckReturnValue")),
         )
 
         private fun List<ClassId>?.hasMustUseReturnValueLikeAnnotation() = this.orEmpty().any { it in mustUseReturnValueLikeAnnotations }

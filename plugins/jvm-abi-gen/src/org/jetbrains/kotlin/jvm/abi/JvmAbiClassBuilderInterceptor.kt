@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.jvm.abi
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGenerator
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
@@ -243,7 +242,7 @@ class JvmAbiClassBuilderInterceptor(
         }
 
         private val isWhenMappingClass: Boolean
-            get() = internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX)
+            get() = internalName.endsWith("\$WhenMappings")
     }
 }
 

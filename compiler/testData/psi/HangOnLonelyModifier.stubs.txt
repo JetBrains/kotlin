@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=HangOnLonelyModifierKt]]
+  facadeFqName: HangOnLonelyModifierKt
+  partSimpleName: "HangOnLonelyModifierKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]

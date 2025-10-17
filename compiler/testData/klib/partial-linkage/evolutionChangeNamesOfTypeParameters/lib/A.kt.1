@@ -1,0 +1,16 @@
+interface B<T1> {
+    var few: T1
+}
+
+class A<X1, Y1, Z1, W1>(z: Z1, w: W1): B<W1> {
+    var bar: Z1 = z
+    override var few: W1 = w
+    fun foo(x: X1): Y1 {
+        return x as Y1
+    }
+}
+
+fun <U1, V1> qux(u: U1): V1 {
+    return u as V1
+}
+

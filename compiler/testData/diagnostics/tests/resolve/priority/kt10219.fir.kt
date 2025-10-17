@@ -16,7 +16,7 @@ fun a(c: Calendar) {
     A().apply {
         c.apply {
             timeInMillis = 5 // synthesized variable for get|setTimeInMillis
-            timeInMillis = <!ASSIGNMENT_TYPE_MISMATCH!>""<!>
+            timeInMillis <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ""
         }
         timeInMillis = ""
     }

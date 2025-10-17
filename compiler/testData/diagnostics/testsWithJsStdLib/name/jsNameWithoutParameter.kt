@@ -4,4 +4,4 @@ package foo
 
 @JsName fun foo(x: Int) = x
 
-@JsName(23) fun bar(x: Int) = x
+@JsName(<!ARGUMENT_TYPE_MISMATCH!>23<!>) fun bar(x: Int) = x

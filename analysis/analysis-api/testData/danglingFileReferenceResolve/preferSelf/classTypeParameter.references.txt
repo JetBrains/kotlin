@@ -1,5 +1,6 @@
 KtNameReferenceExpression(48,53): 'Value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: Foo) Value [fake.kt]

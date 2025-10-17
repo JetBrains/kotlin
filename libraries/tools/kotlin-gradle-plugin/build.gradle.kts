@@ -35,6 +35,21 @@ kotlin {
     }
 }
 
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_MIN,
+    GradlePluginVariant.GRADLE_82,
+)
+
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_MIN,
+    GradlePluginVariant.GRADLE_86,
+)
+
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_MIN,
+    GradlePluginVariant.GRADLE_811,
+)
+
 tasks.test {
     useJUnit {
         exclude("**/*LincheckTest.class")
@@ -108,6 +123,8 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     ":kotlin-build-common", // for incremental compilation setup
     ":wasm:wasm.config", // for k/js task
 )
+
+val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
 
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
@@ -202,12 +219,12 @@ dependencies {
     commonCompileOnly("org.bouncycastle:bcpg-jdk18on:1.80")
 
     testCompileOnly(project(":compiler"))
-    testCompileOnly(project(":kotlin-annotation-processing"))
 
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(testFixtures(project(":kotlin-build-common")))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(project(":kotlin-compiler-runner"))
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlin("test-junit", coreDepsVersion))
     testImplementation(libs.junit.jupiter.api)
 
     testImplementation(project(":kotlin-gradle-statistics"))
@@ -558,7 +575,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     functionalTestCompilation.configurations.pluginConfiguration.dependencies.add(
-        dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable")
+        dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
     )
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
@@ -641,6 +658,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         implementation("org.reflections:reflections:0.10.2")
         implementation(project(":compose-compiler-gradle-plugin"))
         implementation(libs.kotlinx.serialization.json)
+        implementation(intellijPlatformUtil())
     }
 
     tasks.named("check") {

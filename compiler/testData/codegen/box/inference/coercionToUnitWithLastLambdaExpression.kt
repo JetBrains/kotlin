@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 
 fun <T> myRun(action: () -> T): T = action()
 fun foo(): String = "foo"

@@ -49,6 +49,7 @@ Resolved constructor:
         getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     valueParameters: [
       KaValueParameterSymbol:
@@ -57,6 +58,7 @@ Resolved constructor:
         compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
+        hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCrossinline: false
@@ -89,12 +91,14 @@ Resolved constructor:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: test.MyTypeAliasSecond
 
 Original constructor if type aliased:
   KaConstructorSymbol:
@@ -137,6 +141,7 @@ Original constructor if type aliased:
         getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     valueParameters: [
       KaValueParameterSymbol:
@@ -145,6 +150,7 @@ Original constructor if type aliased:
         compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
+        hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCrossinline: false
@@ -167,9 +173,11 @@ Original constructor if type aliased:
         getContainingJvmClassName: test.MyClass
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: test.MyClass

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver.ArtifactResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
@@ -171,12 +172,13 @@ class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
                 )
             }.toSet()
 
+        val buildIdentifierAccessor = sourceSet.project.variantImplementationFactoryProvider<BuildIdentifierAccessor.Factory>()
         val resolvedDependencies = artifacts.artifacts.mapNotNull { artifact ->
             when (val componentId = artifact.id.componentIdentifier) {
                 is ProjectComponentIdentifier -> {
                     IdeaKotlinProjectArtifactDependency(
                         type = IdeaKotlinSourceDependency.Type.Regular,
-                        coordinates = IdeaKotlinProjectCoordinates(componentId)
+                        coordinates = IdeaKotlinProjectCoordinates(componentId, buildIdentifierAccessor)
                     ).apply {
                         artifactsClasspath.add(artifact.file)
                     }

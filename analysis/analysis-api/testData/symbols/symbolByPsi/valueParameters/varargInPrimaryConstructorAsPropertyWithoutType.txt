@@ -58,6 +58,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Foo
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         callableId: /Foo.ints
         compilerVisibility: Public
         contextParameters: []
@@ -96,6 +97,7 @@ KaConstructorSymbol:
           getContainingJvmClassName: Foo
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+          importableFqName: null
         hasBackingField: true
         hasGetter: true
         hasSetter: false
@@ -140,6 +142,8 @@ KaConstructorSymbol:
         javaSetterName: null
         setterDeprecationStatus: null
         isInline: false
+        importableFqName: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -162,12 +166,14 @@ KaConstructorSymbol:
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: Foo
 
 KaNamedClassSymbol:
   annotations: []
@@ -199,3 +205,4 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: Foo

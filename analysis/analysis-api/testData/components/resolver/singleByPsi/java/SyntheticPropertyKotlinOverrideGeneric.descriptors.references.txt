@@ -2,11 +2,13 @@
   KtNameReferenceExpression(309,312): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>
 
@@ -14,11 +16,13 @@
   KtNameReferenceExpression(330,333): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun setFoo(foo: Foo<kotlin.Any>)
 
@@ -26,10 +30,12 @@
   KtNameReferenceExpression(442,445): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>

@@ -1,11 +1,13 @@
 KtNameReferenceExpression(79,82): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class Foo
 
 KtCallExpression(71,88): 'consume(Foo::foo)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

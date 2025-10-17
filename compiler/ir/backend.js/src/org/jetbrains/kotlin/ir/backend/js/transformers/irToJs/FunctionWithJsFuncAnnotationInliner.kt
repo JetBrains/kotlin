@@ -19,9 +19,10 @@ class FunctionWithJsFuncAnnotationInliner(private val jsFuncCall: IrCall, privat
             JsNameRemappingTransformer(replacements).apply { acceptList(it) }
         }
 
-    private fun getJsFunctionImplementation(): JsFunction =
-        context.staticContext.backendContext.getJsCodeForFunction(jsFuncCall.symbol)?.deepCopy()
+    private fun getJsFunctionImplementation(): JsFunction = with(context.staticContext.backendContext) {
+        jsFuncCall.symbol.owner.getJsCode()?.deepCopy()
             ?: compilationException("JS function not found", jsFuncCall)
+    }
 
     private fun collectReplacementsForCall(): Map<JsName, JsExpression> {
         val translatedArguments = jsFuncCall.arguments.map { it!!.accept(IrElementToJsExpressionTransformer(), context) }

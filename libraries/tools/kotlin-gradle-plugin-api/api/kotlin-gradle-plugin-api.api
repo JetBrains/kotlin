@@ -105,6 +105,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field JVM_22 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_23 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_24 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
+	public static final field JVM_25 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun fromTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
@@ -577,27 +578,21 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeComp
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFatFramework : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifact {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFatFrameworkConfig : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactConfig {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
-	public abstract fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public abstract fun setTargets (Ljava/util/Set;)V
 	public abstract fun targets ([Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFramework : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifact {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFrameworkConfig : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactConfig {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
-	public abstract fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public abstract fun setTarget (Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 }
 
@@ -611,14 +606,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeLibr
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeXCFramework : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifact {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeXCFrameworkConfig : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactConfig {
-	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
-	public abstract fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public abstract fun setTargets (Ljava/util/Set;)V
 	public abstract fun targets ([Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 }
@@ -916,8 +908,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun attributes (Lorg/gradle/api/Action;)V
 	public abstract fun defaultSourceSet (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun defaultSourceSet (Lorg/gradle/api/Action;)V
+	public abstract fun dependencies (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun dependencies (Lorg/gradle/api/Action;)V
 	public abstract fun getAllAssociatedCompilations ()Ljava/util/Set;
 	public abstract fun getAllKotlinSourceSets ()Ljava/util/Set;
+	public abstract fun getApiConfigurationName ()Ljava/lang/String;
 	public abstract synthetic fun getAssociateWith ()Ljava/util/List;
 	public abstract fun getAssociatedCompilations ()Ljava/util/Set;
 	public abstract fun getCompilationName ()Ljava/lang/String;
@@ -927,11 +922,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
 	public abstract fun getCompileKotlinTaskName ()Ljava/lang/String;
 	public abstract fun getCompileKotlinTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getCompileOnlyConfigurationName ()Ljava/lang/String;
 	public abstract fun getCompileTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
 	public abstract fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
 	public abstract fun getDefaultSourceSetName ()Ljava/lang/String;
 	public abstract fun getDisambiguatedName ()Ljava/lang/String;
+	public abstract fun getImplementationConfigurationName ()Ljava/lang/String;
 	public abstract fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;
 	public abstract fun getKotlinSourceSets ()Ljava/util/Set;
 	public abstract fun getName ()Ljava/lang/String;
@@ -939,6 +936,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	public abstract fun getRuntimeDependencyConfigurationName ()Ljava/lang/String;
 	public abstract fun getRuntimeDependencyFiles ()Lorg/gradle/api/file/FileCollection;
+	public abstract fun getRuntimeOnlyConfigurationName ()Ljava/lang/String;
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public abstract fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun kotlinOptions (Lorg/gradle/api/Action;)V
@@ -1289,15 +1287,14 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceS
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet$Companion;
 	public abstract fun addCustomSourceFilesExtensions (Ljava/util/List;)V
 	public abstract fun dependsOn (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)V
-	public abstract fun getApiMetadataConfigurationName ()Ljava/lang/String;
-	public abstract fun getCompileOnlyMetadataConfigurationName ()Ljava/lang/String;
+	public abstract fun getAllKotlinSources ()Lorg/gradle/api/file/FileCollection;
 	public abstract fun getCustomSourceFilesExtensions ()Ljava/lang/Iterable;
 	public abstract fun getDependsOn ()Ljava/util/Set;
-	public abstract fun getImplementationMetadataConfigurationName ()Ljava/lang/String;
+	public abstract fun getGeneratedKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
+	public abstract synthetic fun getImplementationMetadataConfigurationName ()Ljava/lang/String;
 	public abstract fun getKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/plugin/LanguageSettingsBuilder;
 	public abstract fun getResources ()Lorg/gradle/api/file/SourceDirectorySet;
-	public abstract fun getRuntimeOnlyMetadataConfigurationName ()Ljava/lang/String;
 	public abstract fun kotlin (Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/file/SourceDirectorySet;
 	public abstract fun kotlin (Lorg/gradle/api/Action;)Lorg/gradle/api/file/SourceDirectorySet;
 	public abstract fun languageSettings (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/LanguageSettingsBuilder;
@@ -1471,19 +1468,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/attributes/Kl
 public final class org/jetbrains/kotlin/gradle/plugin/attributes/KlibPackaging$Companion {
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode : java/lang/Enum {
-	public static final field BITCODE Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public static final field DISABLE Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public static final field MARKER Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-}
-
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType : java/lang/Enum, org/gradle/api/Named {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType$Companion;
 	public static final field DEBUG Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;
 	public static final field RELEASE Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;
-	public final fun embedBitcode (Lorg/jetbrains/kotlin/konan/target/KonanTarget;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public final fun getDebuggable ()Z
 	public fun getName ()Ljava/lang/String;
 	public final fun getOptimized ()Z

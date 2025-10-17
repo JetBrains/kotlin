@@ -61,6 +61,7 @@ KtWhenExpression(192,332): 'when (problem) {'
 KtNameReferenceExpression(198,205): 'problem'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -85,6 +86,7 @@ KtWhenConditionWithExpression(213,223): 'CONNECTION'
 KtNameReferenceExpression(213,223): 'CONNECTION'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -118,6 +120,7 @@ KtWhenConditionWithExpression(244,258): 'AUTHENTICATION'
 KtNameReferenceExpression(244,258): 'AUTHENTICATION'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -151,6 +154,7 @@ KtWhenConditionWithExpression(283,291): 'DATABASE'
 KtNameReferenceExpression(283,291): 'DATABASE'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -184,6 +188,7 @@ KtWhenConditionWithExpression(310,317): 'UNKNOWN'
 KtNameReferenceExpression(310,317): 'UNKNOWN'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -241,6 +246,7 @@ KtWhenExpression(372,501): 'when (x) {'
 KtNameReferenceExpression(378,379): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -271,6 +277,7 @@ KtLiteralStringTemplateEntry(388,398): 'connection'
 KtNameReferenceExpression(403,413): 'CONNECTION'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -304,6 +311,7 @@ KtLiteralStringTemplateEntry(419,433): 'authentication'
 KtNameReferenceExpression(438,452): 'AUTHENTICATION'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -337,6 +345,7 @@ KtLiteralStringTemplateEntry(458,466): 'database'
 KtNameReferenceExpression(471,479): 'DATABASE'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -361,6 +370,7 @@ KtWhenEntry(484,499): 'else -> UNKNOWN'
 KtNameReferenceExpression(492,499): 'UNKNOWN'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

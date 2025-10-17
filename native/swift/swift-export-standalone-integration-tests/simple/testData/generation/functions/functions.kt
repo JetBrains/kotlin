@@ -112,10 +112,6 @@ val Int?.bar: String get() = TODO()
 val Foo.bar: String get() = TODO()
 val Foo?.bar: String get() = TODO()
 
-// FILE: suspend_function.kt
-// we do not support sus fun. This should not be exported
-suspend fun suspending_fun(): Int = TODO()
-
 // FILE: operator_fun.kt
 package operators
 

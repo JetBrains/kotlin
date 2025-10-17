@@ -21,8 +21,9 @@ import org.gradle.process.ExecOperations
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BUNDLE_SIZE
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -50,14 +51,17 @@ internal constructor(
     private val execOps: ExecOperations,
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
-    @Suppress("DEPRECATION")
+    @Deprecated(
+        "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
+    @Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
     constructor(
         compilation: KotlinJsIrCompilation,
     ) : this(
-        compilation = compilation,
-        objects = compilation.project.objects,
-        execOps = compilation.project.getExecOperations(),
+        compilation = throw UnsupportedOperationException(),
+        objects = throw UnsupportedOperationException(),
+        execOps = throw UnsupportedOperationException(),
     )
 
     @get:Internal
@@ -75,12 +79,13 @@ internal constructor(
     @Deprecated(
         "ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property. Scheduled for removal in Kotlin 2.4.",
         ReplaceWith("TODO(\"ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
+        level = DeprecationLevel.ERROR
     )
     @Suppress("unused")
     open val execHandleFactory: Nothing
         get() = injected
 
-    private val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+    private val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
         .property(BuildMetricsReporterImpl())
 
     @Suppress("unused")
@@ -286,6 +291,7 @@ internal constructor(
         outputFileName = mainOutputFileName.get(),
         configDirectory = configDirectory,
         rules = rules,
+        watchOptions = watchOptions,
         devServer = devServerProperty.orNull,
         devtool = devtool,
         sourceMaps = sourceMaps,
@@ -361,7 +367,7 @@ internal constructor(
                 .map { it.length() }
                 .sum()
                 .let {
-                    buildMetrics.addMetric(GradleBuildPerformanceMetric.BUNDLE_SIZE, it)
+                    buildMetrics.addMetric(BUNDLE_SIZE, it)
                 }
 
             buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }

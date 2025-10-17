@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
+import org.jetbrains.kotlin.backend.wasm.jsFunctionForExternalAdapterFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -404,8 +405,14 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private fun generateIsExternalClass(argument: IrExpression, klass: IrClass): IrExpression {
         val instanceCheckFunction = klass.instanceCheckForExternalClass!!
-        return builder.irCall(instanceCheckFunction).also {
-            it.arguments[0] = narrowType(argument.type, context.irBuiltIns.anyType, argument) //TODO("Why we need it?)
+        if (isExternalType(argument.type) && instanceCheckFunction.jsFunctionForExternalAdapterFunction != null) {
+            return builder.irCall(instanceCheckFunction.jsFunctionForExternalAdapterFunction!!).also {
+                it.arguments[0] = argument
+            }
+        } else {
+            return builder.irCall(instanceCheckFunction).also {
+                it.arguments[0] = narrowType(argument.type, context.irBuiltIns.anyType, argument) //TODO("Why we need it?)
+            }
         }
     }
 }

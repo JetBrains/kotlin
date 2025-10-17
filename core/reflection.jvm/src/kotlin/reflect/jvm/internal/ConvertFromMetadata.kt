@@ -14,6 +14,7 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.coroutines.Continuation
 import kotlin.metadata.*
 import kotlin.metadata.jvm.annotations
 import kotlin.reflect.*
@@ -42,15 +43,47 @@ internal fun ClassName.toNonLocalSimpleName(): String {
 internal fun ClassLoader.loadKClass(name: ClassName): KClass<*>? =
     loadClass(name.toClassId())?.kotlin
 
-internal class TypeParameterTable(
+/**
+ * Provides the access to the type parameters of a Kotlin declaration, and allows to obtain a type parameter given its id.
+ *
+ * @property ownTypeParameters the list of type parameters of this declaration. In case of a class member or an inner class, does not
+ *   include type parameters of the enclosing class.
+ * @property map the mapping from type parameter "id" to [KTypeParameter] objects. Note that the integer key is not the type parameter's
+ *   index, it's the **id** as returned by [KmTypeParameter.id].
+ * @property parent the type parameter table of the enclosing declaration, or `null` if there's none.
+ */
+internal class TypeParameterTable private constructor(
+    val ownTypeParameters: List<KTypeParameterImpl>,
     private val map: Map<Int, KTypeParameter>,
     private val parent: TypeParameterTable?,
 ) {
+    /**
+     * Provides the mapping from type parameter "id" ([KmTypeParameter.id]) to [KTypeParameter] objects, allowing to look for
+     * type parameters not only in the immediate container, but also its containers.
+     */
     operator fun get(id: Int): KTypeParameter? = map[id] ?: parent?.get(id)
 
     companion object {
         @JvmField
-        val EMPTY = TypeParameterTable(emptyMap(), null)
+        val EMPTY = TypeParameterTable(emptyList(), emptyMap(), null)
+
+        fun create(
+            kmTypeParameters: List<KmTypeParameter>,
+            parent: TypeParameterTable?,
+            container: KTypeParameterOwnerImpl,
+            classLoader: ClassLoader,
+        ): TypeParameterTable {
+            val kTypeParameters = kmTypeParameters.map { km ->
+                KTypeParameterImpl(container, km.name, km.variance.toKVariance(), km.isReified)
+            }
+            val map = kmTypeParameters.withIndex().associate { (index, km) -> km.id to kTypeParameters[index] }
+            return TypeParameterTable(kTypeParameters, map, parent).also { table ->
+                for ((i, typeParameter) in kTypeParameters.withIndex()) {
+                    typeParameter.upperBounds = kmTypeParameters[i].upperBounds.map { it.toKType(classLoader, table) }
+                        .ifEmpty { listOf(StandardKTypes.NULLABLE_ANY) }
+                }
+            }
+        }
     }
 }
 
@@ -70,7 +103,7 @@ internal fun KmType.toKType(
         }
         .toList()
     val kClassifier = classifier.toClassifier(classLoader, typeParameterTable, arguments)
-    return SimpleKType(
+    result = SimpleKType(
         kClassifier,
         arguments,
         isNullable,
@@ -81,10 +114,32 @@ internal fun KmType.toKType(
         isSuspend,
         classifier.toMutableCollectionKClass(kClassifier),
         computeJavaType,
-    ).also {
-        @Suppress("AssignedValueIsNeverRead") // KTIJ-34162
-        result = it
+    )
+    if (isSuspend) {
+        // Suspend function types are represented in metadata in a non-trivial way, see kdoc on [KmType.isSuspend].
+        result = unwrapSuspendFunctionType(result, computeJavaType)
+            ?: throw KotlinReflectionInternalError("Invalid suspend function type: $result")
     }
+    return result
+}
+
+private fun unwrapSuspendFunctionType(type: SimpleKType, computeJavaType: (() -> Type)?): SimpleKType? {
+    require(type.isSuspendFunctionType) { "Not a suspend function type: $type" }
+    val continuationArgument = type.arguments.getOrNull(type.arguments.size - 2)?.type ?: return null
+    if (continuationArgument.classifier != Continuation::class) return null
+    val returnType = continuationArgument.arguments.singleOrNull()?.type ?: return null
+    return SimpleKType(
+        type.classifier,
+        type.arguments.dropLast(2) + KTypeProjection.invariant(returnType),
+        type.isMarkedNullable,
+        type.annotations,
+        type.abbreviation,
+        type.isDefinitelyNotNullType,
+        type.isNothingType,
+        isSuspendFunctionType = true,
+        type.mutableCollectionClass,
+        computeJavaType,
+    )
 }
 
 internal fun convertTypeArgumentToJavaType(computeType: () -> AbstractKType, index: Int): () -> Type = {
@@ -134,7 +189,7 @@ private fun KmTypeProjection.toKTypeProjection(
     else
         KTypeProjection(variance?.toKVariance(), type?.toKType(classLoader, typeParameterTable, computeJavaType))
 
-private fun KmVariance.toKVariance(): KVariance = when (this) {
+internal fun KmVariance.toKVariance(): KVariance = when (this) {
     KmVariance.IN -> KVariance.IN
     KmVariance.OUT -> KVariance.OUT
     KmVariance.INVARIANT -> KVariance.INVARIANT
@@ -146,7 +201,7 @@ private fun KmClassifier.toMutableCollectionKClass(kClassifier: KClassifier): Mu
     return getMutableCollectionKClass(classId.asSingleFqName(), kClassifier as KClass<*>)
 }
 
-private fun KmAnnotation.toAnnotation(classLoader: ClassLoader): Annotation =
+internal fun KmAnnotation.toAnnotation(classLoader: ClassLoader): Annotation =
     createAnnotationInstance(
         classLoader.loadClass(className.toClassId())
             ?: throw KotlinReflectionInternalError("Annotation class not found: $className"),
@@ -191,4 +246,13 @@ private fun KmAnnotationArgument.toAnnotationArgument(
         classLoader.loadClass(className.toClassId())
             ?: throw KotlinReflectionInternalError("Unresolved class: $className")
     is KmAnnotationArgument.LiteralValue<*> -> value
+}
+
+internal fun Visibility.toKVisibility(): KVisibility? = when (this) {
+    Visibility.INTERNAL -> KVisibility.INTERNAL
+    Visibility.PRIVATE -> KVisibility.PRIVATE
+    Visibility.PROTECTED -> KVisibility.PROTECTED
+    Visibility.PUBLIC -> KVisibility.PUBLIC
+    Visibility.PRIVATE_TO_THIS -> KVisibility.PRIVATE
+    Visibility.LOCAL -> null
 }

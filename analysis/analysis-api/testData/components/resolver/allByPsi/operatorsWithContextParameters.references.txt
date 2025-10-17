@@ -1,276 +1,322 @@
 KtNameReferenceExpression(20,21): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(36,37): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(65,66): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(81,82): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(91,94): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(111,112): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(127,128): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(136,139): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(156,157): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(172,173): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(181,184): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(189,190): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(207,208): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(223,224): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(249,250): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(265,266): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(281,284): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(301,302): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(317,318): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(326,327): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(337,341): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       extension receiver with type A
 
 KtNameReferenceExpression(384,385): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(435,436): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(463,466): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(487,488): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(514,517): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(538,539): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(565,568): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(573,574): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(595,596): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(643,644): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(677,680): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(701,702): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class A
 
 KtNameReferenceExpression(728,743): 'SimpleOperators'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class SimpleOperators
 
 KtNameReferenceExpression(753,757): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class SimpleOperators
 
 KtLabelReferenceExpression(757,773): '@SimpleOperators'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) class SimpleOperators
 
 KtCallExpression(805,808): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(805,806): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) constructor()
 
 KtCallExpression(821,838): 'SimpleOperators()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(821,836): 'SimpleOperators'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) constructor()
 
 KtCallExpression(843,1229): 'with(A()){'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(843,847): 'with'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) inline fun <T, R> with(receiver: T, block: T.() -> R): R
 
 KtCallExpression(848,851): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(848,849): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) constructor()
 
 KtNameReferenceExpression(877,881): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       extension receiver with type A
 
 KtOperationReferenceExpression(890,891): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.unaryPlus()
@@ -278,12 +324,14 @@ KtOperationReferenceExpression(890,891): '+'
 KtNameReferenceExpression(891,899): 'thisProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage.<no name>) var thisProp: A
 
 KtOperationReferenceExpression(908,909): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.unaryPlus()
@@ -291,18 +339,21 @@ KtOperationReferenceExpression(908,909): '+'
 KtNameReferenceExpression(909,910): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var a: A
 
 KtNameReferenceExpression(919,927): 'thisProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage.<no name>) var thisProp: A
 
 KtOperationReferenceExpression(928,929): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.plus(b: kotlin.Int)
@@ -310,12 +361,14 @@ KtOperationReferenceExpression(928,929): '+'
 KtNameReferenceExpression(940,941): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var a: A
 
 KtOperationReferenceExpression(942,943): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.plus(b: kotlin.Int)
@@ -323,6 +376,7 @@ KtOperationReferenceExpression(942,943): '+'
 KtArrayAccessExpression(954,965): 'thisProp[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.get(b: kotlin.Int)
@@ -330,12 +384,14 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
 KtNameReferenceExpression(954,962): 'thisProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage.<no name>) var thisProp: A
 
 KtArrayAccessExpression(974,978): 'a[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.get(b: kotlin.Int)
@@ -343,12 +399,14 @@ KtArrayAccessExpression(974,978): 'a[1]'
 KtNameReferenceExpression(974,975): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var a: A
 
 KtArrayAccessExpression(987,998): 'thisProp[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -356,12 +414,14 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
 KtNameReferenceExpression(987,995): 'thisProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage.<no name>) var thisProp: A
 
 KtOperationReferenceExpression(999,1000): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -369,18 +429,21 @@ KtOperationReferenceExpression(999,1000): '='
 KtCallExpression(1001,1004): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1001,1002): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) constructor()
 
 KtArrayAccessExpression(1013,1017): 'a[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -388,12 +451,14 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
 KtNameReferenceExpression(1013,1014): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var a: A
 
 KtOperationReferenceExpression(1018,1019): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -401,18 +466,21 @@ KtOperationReferenceExpression(1018,1019): '='
 KtCallExpression(1020,1023): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1020,1021): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) constructor()
 
 KtCallExpression(1032,1042): 'thisProp()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.invoke()
@@ -420,12 +488,14 @@ KtCallExpression(1032,1042): 'thisProp()'
 KtNameReferenceExpression(1032,1040): 'thisProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage.<no name>) var thisProp: A
 
 KtCallExpression(1051,1054): 'a()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.invoke()
@@ -433,18 +503,21 @@ KtCallExpression(1051,1054): 'a()'
 KtNameReferenceExpression(1051,1052): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var a: A
 
 KtNameReferenceExpression(1063,1071): 'thisProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage.<no name>) var thisProp: A
 
 KtOperationReferenceExpression(1072,1074): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.plusAssign(b: kotlin.Int)
@@ -452,12 +525,14 @@ KtOperationReferenceExpression(1072,1074): '+='
 KtNameReferenceExpression(1085,1086): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var a: A
 
 KtOperationReferenceExpression(1087,1089): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.plusAssign(b: kotlin.Int)
@@ -465,23 +540,27 @@ KtOperationReferenceExpression(1087,1089): '+='
 KtNameReferenceExpression(1100,1108): 'thisProp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage.<no name>) var thisProp: A
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage.<no name>) var thisProp: A
 
 KtOperationReferenceExpression(1108,1110): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.inc(): A
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.inc(): A
@@ -489,35 +568,41 @@ KtOperationReferenceExpression(1108,1110): '++'
 KtNameReferenceExpression(1119,1120): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var a: A
 
 KtOperationReferenceExpression(1121,1122): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1123,1124): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var a: A
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var a: A
 
 KtOperationReferenceExpression(1124,1126): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.inc(): A
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.inc(): A
@@ -525,12 +610,14 @@ KtOperationReferenceExpression(1124,1126): '++'
 KtNameReferenceExpression(1136,1137): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var b: SimpleOperators
 
 KtOperationReferenceExpression(1138,1139): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun plus(b: kotlin.Int)
@@ -538,6 +625,7 @@ KtOperationReferenceExpression(1138,1139): '+'
 KtOperationReferenceExpression(1150,1151): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun unaryPlus()
@@ -545,12 +633,14 @@ KtOperationReferenceExpression(1150,1151): '+'
 KtNameReferenceExpression(1151,1152): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var b: SimpleOperators
 
 KtArrayAccessExpression(1161,1165): 'b[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun get(b: kotlin.Int)
@@ -558,12 +648,14 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
 KtNameReferenceExpression(1161,1162): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var b: SimpleOperators
 
 KtArrayAccessExpression(1174,1178): 'b[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun set(b: kotlin.Int, x: A)
@@ -571,12 +663,14 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
 KtNameReferenceExpression(1174,1175): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var b: SimpleOperators
 
 KtOperationReferenceExpression(1179,1180): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun set(b: kotlin.Int, x: A)
@@ -584,18 +678,21 @@ KtOperationReferenceExpression(1179,1180): '='
 KtCallExpression(1181,1184): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1181,1182): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) constructor()
 
 KtCallExpression(1193,1196): 'b()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun invoke()
@@ -603,18 +700,21 @@ KtCallExpression(1193,1196): 'b()'
 KtNameReferenceExpression(1193,1194): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var b: SimpleOperators
 
 KtNameReferenceExpression(1205,1206): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var b: SimpleOperators
 
 KtOperationReferenceExpression(1207,1209): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun plusAssign(b: kotlin.Int)
@@ -622,23 +722,27 @@ KtOperationReferenceExpression(1207,1209): '+='
 KtNameReferenceExpression(1220,1221): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var b: SimpleOperators
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) var b: SimpleOperators
 
 KtOperationReferenceExpression(1221,1223): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun inc(): SimpleOperators
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun inc(): SimpleOperators
@@ -646,30 +750,35 @@ KtOperationReferenceExpression(1221,1223): '++'
 KtCallExpression(1268,1271): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1268,1269): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) constructor()
 
 KtCallExpression(1284,1301): 'SimpleOperators()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1284,1299): 'SimpleOperators'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) constructor()
 
 KtOperationReferenceExpression(1307,1308): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.unaryPlus()
@@ -677,18 +786,21 @@ KtOperationReferenceExpression(1307,1308): '+'
 KtNameReferenceExpression(1308,1309): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var a: A
 
 KtNameReferenceExpression(1314,1315): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var a: A
 
 KtOperationReferenceExpression(1316,1317): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.plus(b: kotlin.Int)
@@ -696,6 +808,7 @@ KtOperationReferenceExpression(1316,1317): '+'
 KtArrayAccessExpression(1324,1328): 'a[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.get(b: kotlin.Int)
@@ -703,12 +816,14 @@ KtArrayAccessExpression(1324,1328): 'a[1]'
 KtNameReferenceExpression(1324,1325): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var a: A
 
 KtArrayAccessExpression(1333,1337): 'a[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -716,12 +831,14 @@ KtArrayAccessExpression(1333,1337): 'a[1]'
 KtNameReferenceExpression(1333,1334): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var a: A
 
 KtOperationReferenceExpression(1338,1339): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.set(b: kotlin.Int, x: A)
@@ -729,18 +846,21 @@ KtOperationReferenceExpression(1338,1339): '='
 KtCallExpression(1340,1343): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1340,1341): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) constructor()
 
 KtCallExpression(1348,1351): 'a()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.invoke()
@@ -748,18 +868,21 @@ KtCallExpression(1348,1351): 'a()'
 KtNameReferenceExpression(1348,1349): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var a: A
 
 KtNameReferenceExpression(1356,1357): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var a: A
 
 KtOperationReferenceExpression(1358,1360): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.plusAssign(b: kotlin.Int)
@@ -767,23 +890,27 @@ KtOperationReferenceExpression(1358,1360): '+='
 KtNameReferenceExpression(1367,1368): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var a: A
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var a: A
 
 KtOperationReferenceExpression(1368,1370): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.inc(): A
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) context(a@A)
       operator fun A.inc(): A
@@ -791,12 +918,14 @@ KtOperationReferenceExpression(1368,1370): '++'
 KtNameReferenceExpression(1376,1377): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var b: SimpleOperators
 
 KtOperationReferenceExpression(1378,1379): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun plus(b: kotlin.Int)
@@ -804,6 +933,7 @@ KtOperationReferenceExpression(1378,1379): '+'
 KtOperationReferenceExpression(1386,1387): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun unaryPlus()
@@ -811,12 +941,14 @@ KtOperationReferenceExpression(1386,1387): '+'
 KtNameReferenceExpression(1387,1388): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var b: SimpleOperators
 
 KtArrayAccessExpression(1393,1397): 'b[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun get(b: kotlin.Int)
@@ -824,12 +956,14 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
 KtNameReferenceExpression(1393,1394): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var b: SimpleOperators
 
 KtArrayAccessExpression(1402,1406): 'b[1]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun set(b: kotlin.Int, x: A)
@@ -837,12 +971,14 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
 KtNameReferenceExpression(1402,1403): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var b: SimpleOperators
 
 KtOperationReferenceExpression(1407,1408): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun set(b: kotlin.Int, x: A)
@@ -850,18 +986,21 @@ KtOperationReferenceExpression(1407,1408): '='
 KtCallExpression(1409,1412): 'A()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1409,1410): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) constructor()
 
 KtCallExpression(1417,1420): 'b()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun invoke()
@@ -869,18 +1008,21 @@ KtCallExpression(1417,1420): 'b()'
 KtNameReferenceExpression(1417,1418): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var b: SimpleOperators
 
 KtNameReferenceExpression(1425,1426): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var b: SimpleOperators
 
 KtOperationReferenceExpression(1427,1429): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun plusAssign(b: kotlin.Int)
@@ -888,23 +1030,27 @@ KtOperationReferenceExpression(1427,1429): '+='
 KtNameReferenceExpression(1436,1437): 'b'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var b: SimpleOperators
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: withoutContext) var b: SimpleOperators
 
 KtOperationReferenceExpression(1437,1439): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun inc(): SimpleOperators
 
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in SimpleOperators) context(a@A)
       operator fun inc(): SimpleOperators

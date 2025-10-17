@@ -65,6 +65,7 @@ internal class PriorityQueue<T>(initialCapacity: Int, private val comparator: Co
         return true
     }
 
+    @IgnorableReturnValue
     private fun removeAt(index: Int): T {
         val removedElement = elements[index]
         if (index == elements.size - 1) {

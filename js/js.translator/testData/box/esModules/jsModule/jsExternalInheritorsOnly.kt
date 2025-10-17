@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// DONT_TARGET_EXACT_BACKEND: WASM_JS
 // ES_MODULES
 
 @OptIn(ExperimentalStdlibApi::class)

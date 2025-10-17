@@ -2,6 +2,7 @@
   KtNameReferenceExpression(109,116): 'MyClass'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) class MyClass
 
@@ -9,6 +10,7 @@
   KtNameReferenceExpression(139,146): 'MyClass'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) class MyClass
 
@@ -16,6 +18,7 @@
   KtNameReferenceExpression(165,169): 'List'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
@@ -23,6 +26,7 @@
   KtNameReferenceExpression(196,207): 'MutableList'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
 
@@ -30,6 +34,7 @@
   KtNameReferenceExpression(240,247): 'MyClass'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) class MyClass
 
@@ -37,6 +42,7 @@
   KtNameReferenceExpression(303,310): 'MyClass'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) class MyClass
 
@@ -44,6 +50,7 @@
   KtNameReferenceExpression(346,353): 'MyClass'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) class MyClass
 
@@ -51,6 +58,7 @@
   KtNameReferenceExpression(385,389): 'List'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
@@ -58,6 +66,7 @@
   KtNameReferenceExpression(429,440): 'MutableList'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
 
@@ -65,5 +74,6 @@
   KtNameReferenceExpression(486,493): 'MyClass'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) class MyClass

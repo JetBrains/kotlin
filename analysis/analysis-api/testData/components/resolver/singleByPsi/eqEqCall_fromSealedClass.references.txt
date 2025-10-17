@@ -1,5 +1,6 @@
 KtNameReferenceExpression(199,201): 's1'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s1: SealedClass

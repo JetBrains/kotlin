@@ -1,3 +1,5 @@
 expression: a
-isStable: true
-smartCastType: kotlin.String
+smartCastInfo:
+    originalType: kotlin.Any
+    smartCastType: kotlin.String
+    isStable: true

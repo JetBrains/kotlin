@@ -19,10 +19,10 @@ const val i = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>ForConst.one() + "one"<!>
 const val j = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>4 * ForConst.two()<!>
 val k = 3 - ForConst.two()
 const val l = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>k<!>
-const val m = "123".toString()
+const val m = "123".<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
 const val n = "456".length
 val o = "789"
-const val p = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o.toString()<!>
+const val p = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!><!>
 const val q = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o.length<!>
 
 class ForConst{

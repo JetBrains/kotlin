@@ -100,35 +100,31 @@ interface MetadataLibrary {
 }
 
 interface IrLibrary {
-    val hasIr: Boolean
-    val hasFileEntriesTable: Boolean
-    fun irDeclaration(index: Int, fileIndex: Int): ByteArray
-    fun type(index: Int, fileIndex: Int): ByteArray
-    fun signature(index: Int, fileIndex: Int): ByteArray
-    fun string(index: Int, fileIndex: Int): ByteArray
-    fun body(index: Int, fileIndex: Int): ByteArray
-    fun debugInfo(index: Int, fileIndex: Int): ByteArray?
-    fun fileEntry(index: Int, fileIndex: Int): ByteArray?
-    fun file(index: Int): ByteArray
-    fun fileCount(): Int
+    val hasMainIr: Boolean
+    val mainIr: IrDirectory
 
-    fun types(fileIndex: Int): ByteArray
-    fun signatures(fileIndex: Int): ByteArray
-    fun strings(fileIndex: Int): ByteArray
-    fun declarations(fileIndex: Int): ByteArray
-    fun bodies(fileIndex: Int): ByteArray
-    fun fileEntries(fileIndex: Int): ByteArray?
+    // This directory, if present, stores prepared copies of inlinable functions, see KT-75794.
+    val hasInlinableFunsIr: Boolean
+    val inlinableFunsIr: IrDirectory
 
-    // Those duplicated structures store prepared copies of inlinable functions, see KT-75794.
-    val hasIrOfInlineableFuns: Boolean
-    fun irFileOfInlineableFuns(): ByteArray
-    fun irDeclarationOfInlineableFuns(index: Int): ByteArray
-    fun typeOfInlineableFuns(index: Int): ByteArray
-    fun signatureOfInlineableFuns(index: Int): ByteArray
-    fun stringOfInlineableFuns(index: Int): ByteArray
-    fun bodyOfInlineableFuns(index: Int): ByteArray
-    fun debugInfoOfInlineableFuns(index: Int): ByteArray?
-    fun fileEntryOfInlineableFuns(index: Int): ByteArray
+    interface IrDirectory {
+        fun irDeclaration(index: Int, fileIndex: Int): ByteArray
+        fun type(index: Int, fileIndex: Int): ByteArray
+        fun signature(index: Int, fileIndex: Int): ByteArray
+        fun string(index: Int, fileIndex: Int): ByteArray
+        fun body(index: Int, fileIndex: Int): ByteArray
+        fun debugInfo(index: Int, fileIndex: Int): ByteArray?
+        fun fileEntry(index: Int, fileIndex: Int): ByteArray?
+        fun file(index: Int): ByteArray
+        fun fileCount(): Int
+
+        fun types(fileIndex: Int): ByteArray
+        fun signatures(fileIndex: Int): ByteArray
+        fun strings(fileIndex: Int): ByteArray
+        fun declarations(fileIndex: Int): ByteArray
+        fun bodies(fileIndex: Int): ByteArray
+        fun fileEntries(fileIndex: Int): ByteArray?
+    }
 }
 
 /** Whether [this] is a Kotlin/Native stdlib. */
@@ -218,4 +214,4 @@ val KotlinLibrary.metadataVersion: MetadataVersion?
     }
 
 val KotlinLibrary.hasAbi: Boolean
-    get() = hasIr || irProviderName != null
+    get() = hasMainIr || irProviderName != null

@@ -5,7 +5,7 @@
 
 package foo
 
-<!JS_NAME_CLASH!>val bar<!> = 23
+val bar = 23
 
 // FILE: foobar.kt
 

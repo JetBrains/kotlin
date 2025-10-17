@@ -17,3 +17,4 @@ KaTypeAliasSymbol:
   getContainingFileSymbol: null
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
+  importableFqName: Foo.TA

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.konan.test.converters
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
-import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -44,7 +44,7 @@ class NativePreSerializationLoweringFacade(
             PhaseEngine(
                 phaseConfig,
                 PhaserState(),
-                NativePreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration, diagnosticReporter)
+                NativePreSerializationLoweringContext(inputArtifact.irBuiltIns, configuration, diagnosticReporter)
             ).runPreSerializationLoweringPhases(
                 nativeLoweringsOfTheFirstPhase(module.languageVersionSettings),
                 inputArtifact.irModuleFragment,

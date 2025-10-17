@@ -81,7 +81,7 @@ class CollectionLiteralResolver(
             return noTypeInfo(context)
         }
 
-        val resolutionResults = callResolver.resolveCollectionLiteralCallWithGivenDescriptor(context, expression, call, functionDescriptors)
+        val resolutionResults = callResolver.resolveCollectionLiteralWithGivenDescriptor(context, expression, call, functionDescriptors)
 
         if (!resolutionResults.isSingleResult) {
             return noTypeInfo(context)

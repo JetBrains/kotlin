@@ -31,6 +31,7 @@ KtWhenExpression(62,114): 'when (javaEnum) {'
 KtNameReferenceExpression(68,76): 'javaEnum'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -76,6 +77,7 @@ KtWhenConditionWithExpression(101,107): 'second'
 KtNameReferenceExpression(101,107): 'second'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

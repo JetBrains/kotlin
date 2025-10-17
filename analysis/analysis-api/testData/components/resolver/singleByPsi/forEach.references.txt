@@ -1,5 +1,6 @@
 KtNameReferenceExpression(132,138): 'listOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.collections) fun <T> listOf(vararg elements: T): kotlin.collections.List<T>

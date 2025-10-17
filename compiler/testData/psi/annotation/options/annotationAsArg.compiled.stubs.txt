@@ -41,9 +41,12 @@ Annotation.class:
 
 AnnotationAsArgKt.class:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationAsArgKt]]
+    facadeFqName: AnnotationAsArgKt
+    partSimpleName: "AnnotationAsArgKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+      origin: Facade(className=AnnotationAsArgKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=annotation]

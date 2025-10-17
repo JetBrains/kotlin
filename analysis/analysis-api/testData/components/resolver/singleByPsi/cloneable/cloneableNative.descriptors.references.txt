@@ -1,5 +1,6 @@
 KtNameReferenceExpression(69,78): 'Cloneable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) interface Cloneable

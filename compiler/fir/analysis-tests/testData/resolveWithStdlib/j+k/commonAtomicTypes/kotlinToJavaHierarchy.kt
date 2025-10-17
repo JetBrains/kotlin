@@ -29,7 +29,7 @@ fun usage(x: JavaClassWithFakeOverride) {
     x.foo(AtomicInt(0))
     x.foo(<!ARGUMENT_TYPE_MISMATCH!>AtomicInteger(0)<!>)
     val t1: AtomicInt = x.a
-    val t2: AtomicInteger = <!INITIALIZER_TYPE_MISMATCH!>x.a<!>
+    val t2: AtomicInteger <!INITIALIZER_TYPE_MISMATCH!>=<!> x.a
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,

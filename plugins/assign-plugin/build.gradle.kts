@@ -38,12 +38,7 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        generatedTestDir()
-    }
-    "testFixtures" {
-        projectDefault()
-    }
+    "testFixtures" { projectDefault() }
 }
 
 publish()
@@ -56,7 +51,7 @@ testsJar()
 projectTests {
     testData(project.isolated, "testData")
 
-    testGenerator("org.jetbrains.kotlin.assignment.plugin.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.assignment.plugin.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
     withScriptRuntime()

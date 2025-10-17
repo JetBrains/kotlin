@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
@@ -165,26 +164,11 @@ private class FirConstCheckVisitor(
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): ConstantArgumentKind {
-        if (!whenExpression.isProperlyExhaustive || !intrinsicConstEvaluation) {
-            return ConstantArgumentKind.NOT_CONST
-        }
-
-        whenExpression.subjectVariable?.initializer?.accept(this, data)?.ifNotValidConst { return it }
-        for (branch in whenExpression.branches) {
-            when (branch.condition) {
-                is FirElseIfTrueCondition -> { /* skip */ }
-                else -> branch.condition.accept(this, data).ifNotValidConst { return it }
-            }
-            branch.result.statements.forEach { stmt ->
-                if (stmt !is FirExpression) return ConstantArgumentKind.NOT_CONST
-                stmt.accept(this, data).ifNotValidConst { return it }
-            }
-        }
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.NOT_CONST
     }
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Nothing?): ConstantArgumentKind {
-        return if (intrinsicConstEvaluation) ConstantArgumentKind.VALID_CONST else ConstantArgumentKind.NOT_CONST
+        return ConstantArgumentKind.NOT_CONST
     }
 
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?): ConstantArgumentKind {
@@ -220,7 +204,7 @@ private class FirConstCheckVisitor(
                 return ConstantArgumentKind.NOT_CONST
             }
 
-            if (!exp.hasAllowedCompileTimeType() || exp.getExpandedType().isUnsignedType) {
+            if (!exp.hasAllowedCompileTimeType() || (!intrinsicConstEvaluation && exp.getExpandedType().isUnsignedType)) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
@@ -267,8 +251,8 @@ private class FirConstCheckVisitor(
         return ConstantArgumentKind.VALID_CONST
     }
 
-    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Nothing?): ConstantArgumentKind {
-        for (exp in arrayLiteral.arguments) {
+    override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: Nothing?): ConstantArgumentKind {
+        for (exp in collectionLiteral.arguments) {
             exp.accept(this, data).ifNotValidConst { return it }
         }
         return ConstantArgumentKind.VALID_CONST
@@ -473,13 +457,14 @@ private class FirConstCheckVisitor(
 
         val receiverClassId = this.dispatchReceiver?.getExpandedType()?.classId
 
-        if (receiverClassId in StandardClassIds.unsignedTypes) return false
+        if (!intrinsicConstEvaluation && receiverClassId in StandardClassIds.unsignedTypes) return false
 
         if (
             name in compileTimeFunctions ||
             name in compileTimeExtensionFunctions ||
             name == OperatorNameConventions.TO_STRING ||
-            name in OperatorNameConventions.NUMBER_CONVERSIONS
+            name in OperatorNameConventions.NUMBER_CONVERSIONS ||
+            (intrinsicConstEvaluation && name in OperatorNameConventions.UNSIGNED_CONVERSIONS)
         ) return true
 
         if (calleeReference.name == OperatorNameConventions.GET && receiverClassId == StandardClassIds.String) return true

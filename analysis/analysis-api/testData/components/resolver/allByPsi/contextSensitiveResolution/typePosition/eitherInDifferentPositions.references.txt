@@ -1,263 +1,307 @@
 KtNameReferenceExpression(157,158): 'E'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: Either.Left) out E
 
 KtNameReferenceExpression(161,167): 'Either'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) interface Either<out E, out A>
 
 KtNameReferenceExpression(168,169): 'E'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: Either.Left) out E
 
 KtNameReferenceExpression(171,178): 'Nothing'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Nothingprivate constructor
 
 KtNameReferenceExpression(219,220): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: Either.Right) out A
 
 KtNameReferenceExpression(223,229): 'Either'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) interface Either<out E, out A>
 
 KtNameReferenceExpression(230,237): 'Nothing'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Nothingprivate constructor
 
 KtNameReferenceExpression(239,240): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: Either.Right) out A
 
 KtNameReferenceExpression(256,262): 'Either'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) interface Either<out E, out A>
 
 KtNameReferenceExpression(263,269): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(271,274): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(298,299): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s: Either<kotlin.String, kotlin.Int>
 
 KtOperationReferenceExpression(300,302): 'is'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(303,307): 'Left'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Either) data class Left<out E>(error: E) : Either<E, kotlin.Nothing>
 
 KtNameReferenceExpression(311,312): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s: Either<kotlin.String, kotlin.Int>
 
 KtNameReferenceExpression(313,318): 'error'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Either.Left) val error: E
 
 KtNameReferenceExpression(319,325): 'length'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.String) override val length: kotlin.Int
 
 KtNameReferenceExpression(334,335): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s: Either<kotlin.String, kotlin.Int>
 
 KtOperationReferenceExpression(336,338): 'is'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(339,344): 'Right'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Either) data class Right<out A>(value: A) : Either<kotlin.Nothing, A>
 
 KtNameReferenceExpression(348,349): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s: Either<kotlin.String, kotlin.Int>
 
 KtNameReferenceExpression(350,355): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Either.Right) val value: A
 
 KtOperationReferenceExpression(356,357): '*'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) operator fun times(other: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(375,376): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s: Either<kotlin.String, kotlin.Int>
 
 KtOperationReferenceExpression(377,380): '!is'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(381,385): 'Left'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Either) data class Left<out E>(error: E) : Either<E, kotlin.Nothing>
 
 KtNameReferenceExpression(397,398): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s: Either<kotlin.String, kotlin.Int>
 
 KtCallExpression(399,409): 'hashCode()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(399,407): 'hashCode'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Any) open fun hashCode(): kotlin.Int
 
 KtOperationReferenceExpression(427,429): '=='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
 KtCallExpression(433,443): 'hashCode()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(433,441): 'hashCode'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Any) open fun hashCode(): kotlin.Int
 
 KtNameReferenceExpression(455,456): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s: Either<kotlin.String, kotlin.Int>
 
 KtOperationReferenceExpression(457,459): 'as'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(460,464): 'Left'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Either) data class Left<out E>(error: E) : Either<E, kotlin.Nothing>
 
 KtNameReferenceExpression(473,474): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s: Either<kotlin.String, kotlin.Int>
 
 KtNameReferenceExpression(475,480): 'error'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Either.Left) val error: E
 
 KtNameReferenceExpression(481,487): 'length'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.String) override val length: kotlin.Int
 
 KtNameReferenceExpression(500,501): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       s: Either<kotlin.String, kotlin.Int>
 
 KtOperationReferenceExpression(502,505): 'as?'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(506,511): 'Right'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Either) data class Right<out A>(value: A) : Either<kotlin.Nothing, A>
 
 KtNameReferenceExpression(514,519): 'value'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Either.Right) val value: A
 
 KtCallExpression(521,527): 'div(1)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(521,524): 'div'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) operator fun div(other: kotlin.Int): kotlin.Int

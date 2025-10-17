@@ -1,5 +1,6 @@
 KtNameReferenceExpression(165,166): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       x: (first: kotlin.Int) -> kotlin.Unit

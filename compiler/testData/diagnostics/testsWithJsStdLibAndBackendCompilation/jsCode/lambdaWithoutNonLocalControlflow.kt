@@ -6,21 +6,21 @@
 import kotlin.test.*
 
 inline fun testLambdaInline(
-    <!UNUSED_PARAMETER!>block<!>: (Unit) -> String,
+    block: (Unit) -> String,
 ): String {
-    return js("block()")
+    return js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"block()"<!>)
 }
 
 <!NOTHING_TO_INLINE!>inline<!> fun testLambdaNoInline(
-    noinline <!UNUSED_PARAMETER!>block<!>: (Unit) -> String,
+    noinline block: (Unit) -> String,
 ): String {
     return js("block()")
 }
 
 inline fun testLambdaCrossInline(
-    crossinline <!UNUSED_PARAMETER!>block<!>: (Unit) -> String,
+    crossinline block: (Unit) -> String,
 ): String {
-    return js("block()")
+    return js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"block()"<!>)
 }
 
 fun box(): String {

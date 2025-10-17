@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
  *
  * An example of the basic usage is:
  *  ```
- *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
+ *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
  *   val operation = toolchain.jvm.createClasspathSnapshottingOperation(classesDir)
  *   operation[GRANULARITY] = ClassSnapshotGranularity.CLASS_LEVEL
  *   toolchain.createBuildSession().use { it.executeOperation(operation) }

@@ -53,6 +53,7 @@ dependencies {
 
     testImplementation(project(":compiler:util"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.schema.kenerator.core)
     testImplementation(libs.schema.kenerator.serialization)
     testImplementation(libs.schema.kenerator.jsonschema)

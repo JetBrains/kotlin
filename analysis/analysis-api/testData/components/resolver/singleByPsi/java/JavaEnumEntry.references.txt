@@ -1,5 +1,6 @@
 KtNameReferenceExpression(69,76): 'RUNTIME'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in java.lang.annotation.RetentionPolicy) RUNTIME

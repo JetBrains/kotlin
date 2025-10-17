@@ -1,60 +1,71 @@
 KtNameReferenceExpression(115,116): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class A
 
 KtNameReferenceExpression(126,127): 'a'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       a: A
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(135,136): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class A
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(137,138): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) A
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(150,151): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class A
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(152,153): 'B'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) B
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

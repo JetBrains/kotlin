@@ -1,5 +1,6 @@
 KtNameReferenceExpression(127,133): 'Helper'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Foo) companion object Helper

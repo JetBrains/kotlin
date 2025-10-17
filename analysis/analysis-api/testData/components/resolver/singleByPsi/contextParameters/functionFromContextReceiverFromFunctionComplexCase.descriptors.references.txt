@@ -1,11 +1,13 @@
 KtNameReferenceExpression(119,120): 'c'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Container) context(Receiver@Receiver)
       fun c()
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

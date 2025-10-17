@@ -6,7 +6,7 @@ interface I1 {
     fun bar(): String // Implicitly @Ignorable
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 interface I2: I1 {
     override fun foo(): String // @MustUse
 }

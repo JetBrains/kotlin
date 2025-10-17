@@ -1,2 +1,0 @@
-class MainKotlin
-internal class MainKotlinInternal

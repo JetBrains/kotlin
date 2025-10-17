@@ -171,6 +171,9 @@ abstract class UsefulDeclarationProcessor(
                 it.owner.enqueue(irFunction, "overridden by a useful fake override", isContagious = false)
             }
         }
+        if (irFunction.isEffectivelyExternal()) {
+            irFunction.correspondingPropertySymbol?.owner?.enqueue(irFunction, "(accessor) for external property")
+        }
     }
 
     protected open fun processConstructor(irConstructor: IrConstructor) {
@@ -248,6 +251,8 @@ abstract class UsefulDeclarationProcessor(
                     is IrConstructor -> processConstructor(declaration)
                     is IrField -> processField(declaration)
                 }
+
+                if (declaration.isEffectivelyExternal()) continue
 
                 val body = when (declaration) {
                     is IrFunction -> declaration.body

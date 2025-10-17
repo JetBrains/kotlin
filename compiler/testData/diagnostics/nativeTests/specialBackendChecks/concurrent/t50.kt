@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 @file:OptIn(ObsoleteWorkersApi::class)
 import kotlin.native.concurrent.*
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -530,7 +530,7 @@ public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    fetchAndUpdate(transform)
+    val _ = fetchAndUpdate(transform)
 }
 
 /**
@@ -606,7 +606,7 @@ public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    fetchAndUpdate(transform)
+    val _ = fetchAndUpdate(transform)
 }
 
 /**
@@ -682,7 +682,7 @@ public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Uni
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    fetchAndUpdate(transform)
+    val _ = fetchAndUpdate(transform)
 }
 
 /**
@@ -756,7 +756,7 @@ public inline fun AtomicNativePtr.update(transform: (NativePtr) -> NativePtr): U
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    fetchAndUpdate(transform)
+    val _ = fetchAndUpdate(transform)
 }
 
 /**

@@ -1,0 +1,19 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Number
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Number
+      symbol: KaNamedClassSymbol(kotlin/Number)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Number)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+kotlin.Number

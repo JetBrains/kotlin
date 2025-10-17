@@ -5,4 +5,4 @@ fun foo() {
             0L)
 }
 
-// LINES(JS_IR): 1 1 2 3 4 5
+// LINES: 1 1 2 3 4 5

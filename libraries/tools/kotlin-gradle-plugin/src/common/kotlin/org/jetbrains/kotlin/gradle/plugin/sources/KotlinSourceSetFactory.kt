@@ -7,12 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.categoryByName
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -36,20 +32,15 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
     }
 
     private fun defineSourceSetConfigurations(project: Project, sourceSet: KotlinSourceSet) = with(project.configurations) {
-        val configurationNames = sourceSet.run {
+        sourceSet.run {
             listOfNotNull(
                 apiConfigurationName,
                 implementationConfigurationName,
                 compileOnlyConfigurationName,
                 runtimeOnlyConfigurationName,
             )
-        }
-        configurationNames.forEach { configurationName ->
-            if (!configurationName.endsWith(METADATA_CONFIGURATION_NAME_SUFFIX)) {
-                maybeCreateDependencyScope(configurationName)
-            } else {
-                maybeCreateResolvable(configurationName)
-            }
+        }.forEach { configurationName ->
+            maybeCreateDependencyScope(configurationName)
         }
     }
 
@@ -80,28 +71,10 @@ internal class DefaultKotlinSourceSetFactory(
     override fun setUpSourceSetDefaults(sourceSet: DefaultKotlinSourceSet) {
         super.setUpSourceSetDefaults(sourceSet)
         sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, SOURCE_SET_TYPE_RESOURCES))
-
-        val dependencyConfigurationWithMetadata = with(sourceSet) {
-            @Suppress("DEPRECATION")
-            listOf(
-                apiConfigurationName to apiMetadataConfigurationName,
-                implementationConfigurationName to implementationMetadataConfigurationName,
-                compileOnlyConfigurationName to compileOnlyMetadataConfigurationName,
-                null to intransitiveMetadataConfigurationName
-            )
-        }
-
-        dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
-            project.configurations.maybeCreateResolvable(metadataName).apply {
-                attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                isVisible = false
-
-                if (configurationName != null) {
-                    extendsFrom(project.configurations.maybeCreateDependencyScope(configurationName))
-                }
-            }
+        // Drop in KT-80897
+        @Suppress("DEPRECATION_ERROR")
+        project.configurations.maybeCreateResolvable(sourceSet.implementationMetadataConfigurationName) {
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))
         }
     }
 

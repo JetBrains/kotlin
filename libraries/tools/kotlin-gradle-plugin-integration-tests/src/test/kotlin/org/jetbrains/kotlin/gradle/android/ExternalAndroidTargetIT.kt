@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import org.gradle.api.provider.ValueSource
+import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
@@ -16,6 +20,7 @@ import org.jetbrains.kotlin.gradle.util.jetbrainsAnnotationDependencies
 import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.moveTo
 import kotlin.io.path.readText
@@ -174,6 +179,90 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
                 if (expectedDependency.removeWhiteSpaces() !in pomText.removeWhiteSpaces())
                     fail("Expected to find\n$expectedDependency\nIn POM file\n$pomText")
             }
+        }
+    }
+
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811)
+    @GradleAndroidTest
+    fun `KT-81249 - works with parcelize`(
+        gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "android-multiplatorm-library-with-parcelize",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = androidVersion)
+                .copy(compilerArgumentsLogLevel = "warning"),
+            buildJdk = jdkVersion.location,
+        ) {
+            build("assemble") {
+                val parcelizeJar = "kotlin-parcelize-compiler-$KOTLIN_VERSION.jar"
+
+                assertTasksExecuted(":compileAndroidMain")
+                @Suppress("DEPRECATION")
+                val compileAndroidArguments = extractTaskCompilerArguments<K2JVMCompilerArguments>(":compileAndroidMain")
+                if (compileAndroidArguments.pluginClasspaths.orEmpty().none { File(it).name == parcelizeJar }) {
+                    fail("Expected '$parcelizeJar' to be passed as a plugin classpath to the Kotlin compiler for :compileAndroidMain")
+                }
+
+                assertTasksExecuted(":compileKotlinJvm")
+                @Suppress("DEPRECATION")
+                val compileJvmArguments = extractTaskCompilerArguments<K2JVMCompilerArguments>(":compileKotlinJvm")
+                if (compileJvmArguments.pluginClasspaths.orEmpty().any { File(it).name == parcelizeJar }) {
+                    fail("Expected '$parcelizeJar' to NOT be passed as a plugin classpath to the Kotlin compiler for :compileKotlinJvm")
+                }
+            }
+        }
+    }
+
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811)
+    fun `KT-81060_transform_metadata_dependencies_doesnt_fail_on_configuration_cache_deserialization`(
+        gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+
+        // value source is always executed even with Configuration Cache
+        abstract class ClassLoaderHashCode : ValueSource<String, ValueSourceParameters.None> {
+            override fun obtain(): String {
+                val hash = this.javaClass.classLoader.hashCode()
+                println("ClassLoader hash code: #$hash.")
+                return """¯\_(ツ)_/¯""" // returned string shouldn't change to not invalidate the configuration cache
+            }
+        }
+
+        val testProject = project(
+            "kt-81060_agp_configuration_cache_class_not_found",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = androidVersion)
+                .enableIsolatedProjects(),
+            buildJdk = jdkVersion.location,
+        ) {
+            subProject("composeApp").buildScriptInjection {
+                val vs = project.providers.of(ClassLoaderHashCode::class.java) {}
+                // this will make value source part of Configuration Cache key -> it will be always executed
+                vs.get()
+            }
+        }
+
+        var hashCode = ""
+        testProject.build(":composeApp:transformCommonMainDependenciesMetadata", "--dry-run") {
+            hashCode = output.substringAfter("ClassLoader hash code: #").substringBefore(".")
+            assertConfigurationCacheStored()
+        }
+
+        // This drops previous project Class Loader from cache
+        project("empty", gradleVersion) {
+            build("help")
+            build("help")
+        }
+
+        testProject.build(":composeApp:transformCommonMainDependenciesMetadata", "--dry-run") {
+            val newHashCode = output.substringAfter("ClassLoader hash code: #").substringBefore(".")
+            if (hashCode == newHashCode) {
+                fail("ClassLoader hash code is not changed. It seems that Gradle Daemon didn't drop the Classloader Cache, and Heuristic didn't work. Please find another way to verify this issue.")
+            }
+            assertConfigurationCacheReused()
         }
     }
 

@@ -25,10 +25,7 @@ dependencies {
 
 sourceSets {
     "main" {}
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -53,13 +50,11 @@ projectTests {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt", generateTestsInBuildDirectory = true)
 }
 
 
 optInToK1Deprecation()
-
-val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
 
 tasks.register<Exec>("downloadJspecifyTests") {
     val tmpDirPath = createTempDirectory().toAbsolutePath().toString()
@@ -73,14 +68,6 @@ tasks.register<Exec>("downloadJspecifyTests") {
             into("${project.rootDir}/compiler/testData/foreignAnnotationsJava8/tests/jspecify/java")
         }
     }
-}
-
-tasks.test {
-    exclude("**/*JspecifyAnnotationsTestGenerated*")
-}
-tasks.register<Test>("jspecifyTests") {
-    workingDir(project.rootDir)
-    include("**/*JspecifyAnnotationsTestGenerated*")
 }
 
 testsJar()

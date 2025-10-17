@@ -39,7 +39,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     open val buildCfgForFiles: Boolean get() = !implicitTypeOnly
 
     final override val context: BodyResolveContext =
-        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext(session))
+        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext(session), isContextCollectorMode = false)
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context, expandTypeAliases)
 
@@ -424,13 +424,13 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirExpressionsResolveTransformer::transformCheckedSafeCallSubject,
     )
 
-    override fun transformArrayLiteral(
-        arrayLiteral: FirArrayLiteral,
+    override fun transformCollectionLiteral(
+        collectionLiteral: FirCollectionLiteral,
         data: ResolutionMode,
     ): FirStatement = expressionTransformation(
-        arrayLiteral,
+        collectionLiteral,
         data,
-        FirExpressionsResolveTransformer::transformArrayLiteral,
+        FirExpressionsResolveTransformer::transformCollectionLiteral,
     )
 
     override fun transformSmartCastExpression(

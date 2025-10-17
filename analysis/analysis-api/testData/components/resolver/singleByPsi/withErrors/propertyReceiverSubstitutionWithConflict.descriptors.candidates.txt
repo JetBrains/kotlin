@@ -1,6 +1,7 @@
 KtDotQualifiedExpression(118,123): 'f.foo'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -24,6 +25,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

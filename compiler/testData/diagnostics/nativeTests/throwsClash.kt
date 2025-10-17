@@ -23,7 +23,7 @@ fun foo1() {}
 @kotlin.Throws(Throwable::class)
 fun foo2() {}
 
-@<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
+@kotlin.native.<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo3() {}
 
 fun foo5(x: Throws) {}
@@ -33,7 +33,7 @@ fun foo7(x: kotlin.native.<!DEPRECATION!>Throws<!>) {}
 // FILE: main2.kt
 package abc2
 
-import kotlin.native.<!DEPRECATION!>Throws<!>
+import <!DEPRECATION!>kotlin.native.Throws<!>
 
 @<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo1() {}
@@ -41,7 +41,7 @@ fun foo1() {}
 @kotlin.Throws(Throwable::class)
 fun foo2() {}
 
-@<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
+@kotlin.native.<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo3() {}
 
 fun foo5(x: <!DEPRECATION!>Throws<!>) {}
@@ -59,7 +59,7 @@ fun foo1() {}
 @kotlin.Throws(Throwable::class)
 fun foo2() {}
 
-@<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
+@kotlin.native.<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo3() {}
 
 fun foo5(x: Throws) {}
@@ -70,7 +70,7 @@ fun foo7(x: kotlin.native.<!DEPRECATION!>Throws<!>) {}
 package abc4
 
 import kotlin.<!CONFLICTING_IMPORT!>Throws<!>
-import kotlin.native.<!CONFLICTING_IMPORT, DEPRECATION!>Throws<!>
+import <!DEPRECATION!>kotlin.native.<!CONFLICTING_IMPORT!>Throws<!><!>
 
 @Throws(Throwable::class)
 fun foo1() {}
@@ -78,7 +78,7 @@ fun foo1() {}
 @kotlin.Throws(Throwable::class)
 fun foo2() {}
 
-@<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
+@kotlin.native.<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo3() {}
 
 fun foo5(x: Throws) {}
@@ -96,7 +96,7 @@ fun foo1() {}
 @kotlin.Throws(Throwable::class)
 fun foo2() {}
 
-@<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
+@kotlin.native.<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo3() {}
 
 fun foo5(x: <!DEPRECATION!>Throws<!>) {}
@@ -114,7 +114,7 @@ fun foo1() {}
 @kotlin.Throws(Throwable::class)
 fun foo2() {}
 
-@<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
+@kotlin.native.<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo3() {}
 
 fun foo5(x: Throws) {}
@@ -133,7 +133,7 @@ fun foo1() {}
 @kotlin.Throws(Throwable::class)
 fun foo2() {}
 
-@<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
+@kotlin.native.<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo3() {}
 
 fun foo5(x: Throws) {}
@@ -144,7 +144,7 @@ fun foo7(x: kotlin.native.<!DEPRECATION!>Throws<!>) {}
 package abc8
 
 import kotlin.*
-import kotlin.native.<!DEPRECATION!>Throws<!>
+import <!DEPRECATION!>kotlin.native.Throws<!>
 
 @<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo1() {}
@@ -152,7 +152,7 @@ fun foo1() {}
 @kotlin.Throws(Throwable::class)
 fun foo2() {}
 
-@<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
+@kotlin.native.<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo3() {}
 
 fun foo5(x: <!DEPRECATION!>Throws<!>) {}
@@ -171,7 +171,7 @@ fun foo1() {}
 @kotlin.Throws(Throwable::class)
 fun foo2() {}
 
-@<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
+@kotlin.native.<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo3() {}
 
 fun foo5(x: Throws) {}

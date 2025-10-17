@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.ir.util.isAnnotationClass
 /**
  * Removes constructors of annotation classes.
  */
-@PhaseDescription(name = "Annotation")
 internal class AnnotationLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (irClass.isAnnotationClass) {

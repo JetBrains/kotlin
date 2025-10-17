@@ -67,6 +67,7 @@ KtWhenExpression(162,236): 'when (s) {'
 KtNameReferenceExpression(168,169): 's'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -91,6 +92,7 @@ KtWhenConditionWithExpression(181,186): 'FIRST'
 KtNameReferenceExpression(181,186): 'FIRST'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -121,6 +123,7 @@ KtWhenConditionWithExpression(200,206): 'SECOND'
 KtNameReferenceExpression(200,206): 'SECOND'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -151,6 +154,7 @@ KtWhenConditionWithExpression(220,225): 'THIRD'
 KtNameReferenceExpression(220,225): 'THIRD'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -255,6 +259,7 @@ KtBinaryExpression(302,312): 's == FIRST'
 KtNameReferenceExpression(302,303): 's'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -311,6 +316,7 @@ KtOperationReferenceExpression(304,306): '=='
 KtNameReferenceExpression(307,312): 'FIRST'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -379,6 +385,7 @@ KtBinaryExpression(326,337): 's == SECOND'
 KtNameReferenceExpression(326,327): 's'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -435,6 +442,7 @@ KtOperationReferenceExpression(328,330): '=='
 KtNameReferenceExpression(331,337): 'SECOND'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -503,6 +511,7 @@ KtBinaryExpression(351,361): 's == THIRD'
 KtNameReferenceExpression(351,352): 's'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -559,6 +568,7 @@ KtOperationReferenceExpression(353,355): '=='
 KtNameReferenceExpression(356,361): 'THIRD'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -598,6 +608,7 @@ KtProperty(416,447): 'val SECOND = test.Sample.SECOND'
 KtDotQualifiedExpression(429,447): 'test.Sample.SECOND'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -679,6 +690,7 @@ KtNameReferenceExpression(434,440): 'Sample'
 KtNameReferenceExpression(441,447): 'SECOND'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -733,6 +745,7 @@ KtProperty(492,521): 'val FIRST = test.Sample.THIRD'
 KtDotQualifiedExpression(504,521): 'test.Sample.THIRD'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -814,6 +827,7 @@ KtNameReferenceExpression(509,515): 'Sample'
 KtNameReferenceExpression(516,521): 'THIRD'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -841,6 +855,7 @@ KtWhenExpression(537,661): 'when (s) {'
 KtNameReferenceExpression(543,544): 's'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -865,6 +880,7 @@ KtWhenConditionWithExpression(560,565): 'FIRST'
 KtNameReferenceExpression(560,565): 'FIRST'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -892,6 +908,7 @@ KtWhenConditionWithExpression(583,589): 'SECOND'
 KtNameReferenceExpression(583,589): 'SECOND'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -921,6 +938,7 @@ KtWhenConditionWithExpression(607,624): 'test.Sample.FIRST'
 KtDotQualifiedExpression(607,624): 'test.Sample.FIRST'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1002,6 +1020,7 @@ KtNameReferenceExpression(612,618): 'Sample'
 KtNameReferenceExpression(619,624): 'FIRST'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

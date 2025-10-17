@@ -19,6 +19,7 @@ import org.w3c.dom.Document
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.xml.parsers.DocumentBuilderFactory
@@ -89,6 +90,9 @@ class GradleMetadataComponent(
         val url: String,
         val name: String = url,
         val size: Int = 0,
+        // This id is used as a sanity check to avoid overwriting mocks by accident
+        @kotlinx.serialization.Transient
+        val mockId: String = UUID.randomUUID().toString(),
         @kotlinx.serialization.Transient
         val type: MockVariantType = MockVariantType.EmptyJar,
     ) {
@@ -117,6 +121,7 @@ class MavenComponent(
     val packaging: String?,
     val dependencies: List<Dependency>,
     val gradleMetadataMarker: Boolean,
+    val mocks: List<MockArtifactType> = listOf(MockArtifactType.EmptyJar()),
 ) {
     class Dependency(
         val groupId: String?,
@@ -124,6 +129,12 @@ class MavenComponent(
         val version: String?,
         val scope: String?,
     )
+
+    sealed class MockArtifactType(
+        val classifier: String?
+    ) {
+        class EmptyJar(classifier: String? = null) : MockArtifactType(classifier)
+    }
 }
 
 fun generateMockRepository(
@@ -166,30 +177,30 @@ private class MockRepository(
                 )
             }
         )
-        gradleComponent.variants.forEach { variant ->
-            variant.files.forEach { file ->
-                val mockFile = componentRoot.resolve(file.url)
-                if (mockFile.exists()) {
-                    error("Trying to overwrite mock file: $mockFile")
+        gradleComponent.variants.flatMap { variant ->
+            variant.files
+        }.distinctBy { it.mockId }.forEach { file ->
+            val mockFile = componentRoot.resolve(file.url)
+            if (mockFile.exists()) {
+                error("Trying to overwrite mock file: $mockFile")
+            }
+            when (file.type) {
+                GradleMetadataComponent.MockVariantType.EmptyJar -> ZipOutputStream(FileOutputStream(mockFile)).use {  }
+                GradleMetadataComponent.MockVariantType.MetadataJar -> ZipOutputStream(FileOutputStream(mockFile)).use {
+                    it.putNextEntry(ZipEntry("META-INF/kotlin-project-structure-metadata.json"))
+                    it.closeEntry()
                 }
-                when (file.type) {
-                    GradleMetadataComponent.MockVariantType.EmptyJar -> ZipOutputStream(FileOutputStream(mockFile)).use {  }
-                    GradleMetadataComponent.MockVariantType.MetadataJar -> ZipOutputStream(FileOutputStream(mockFile)).use {
-                        it.putNextEntry(ZipEntry("META-INF/kotlin-project-structure-metadata.json"))
-                        it.closeEntry()
-                    }
-                    is GradleMetadataComponent.MockVariantType.UklibArchive -> {
-                        val temporaryDirectory = root.resolve("tmp")
-                        Uklib(
-                            module = UklibModule(
-                                fragments = file.type.fragments(temporaryDirectory)
-                            ),
-                            manifestVersion = Uklib.MAXIMUM_COMPATIBLE_UMANIFEST_VERSION,
-                        ).serializeToZipArchive(
-                            mockFile,
-                            temporaryDirectory,
-                        )
-                    }
+                is GradleMetadataComponent.MockVariantType.UklibArchive -> {
+                    val temporaryDirectory = root.resolve("tmp")
+                    Uklib(
+                        module = UklibModule(
+                            fragments = file.type.fragments(temporaryDirectory)
+                        ),
+                        manifestVersion = Uklib.MAXIMUM_COMPATIBLE_UMANIFEST_VERSION,
+                    ).serializeToZipArchive(
+                        mockFile,
+                        temporaryDirectory,
+                    )
                 }
             }
         }
@@ -200,10 +211,17 @@ private class MockRepository(
         componentRoot.resolve("${mavenComponent.artifactId}-${mavenComponent.version}.pom").writeText(
             generatePom(mavenComponent)
         )
-        componentRoot.resolve("${mavenComponent.artifactId}-${mavenComponent.version}.jar").also {
-            // Avoid overwriting Gradle variant
-            if (!it.exists()) {
-                ZipOutputStream(FileOutputStream(it)).use {}
+        mavenComponent.mocks.forEach { mock ->
+            val coordinate = listOfNotNull(
+                mavenComponent.artifactId,
+                mavenComponent.version,
+                mock.classifier
+            ).joinToString("-")
+            componentRoot.resolve("${coordinate}.jar").also {
+                // Avoid overwriting Gradle variant
+                if (!it.exists()) {
+                    ZipOutputStream(FileOutputStream(it)).use {}
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
 // JVM_ABI_K1_K2_DIFF: KT-63855
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // WASM_MUTE_REASON: Null leaking is not allowed by Wasm
 
 fun <T: Any?> nullableFun(): T {

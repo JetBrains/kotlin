@@ -17,5 +17,5 @@ class Test {
     }
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration,
-smartcast */
+/* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, functionDeclaration, functionalType, lambdaLiteral,
+propertyDeclaration, smartcast */

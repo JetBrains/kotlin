@@ -153,6 +153,12 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     }
 
     @Test
+    @TestMetadata("NonSerializableInCustom.kt")
+    public void testNonSerializableInCustom() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/NonSerializableInCustom.kt");
+    }
+
+    @Test
     @TestMetadata("NullabilityIncompatible.kt")
     public void testNullabilityIncompatible() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/NullabilityIncompatible.kt");
@@ -168,6 +174,12 @@ public class LLReversedSerializationDiagnosticsTestGenerated extends AbstractLLR
     @TestMetadata("ParametrizedExternalSerializers.kt")
     public void testParametrizedExternalSerializers() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/ParametrizedExternalSerializers.kt");
+    }
+
+    @Test
+    @TestMetadata("privateSerializer.kt")
+    public void testPrivateSerializer() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/privateSerializer.kt");
     }
 
     @Test

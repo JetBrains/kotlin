@@ -1798,6 +1798,7 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
 KtNameReferenceExpression(800,814): 'stringConstant'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

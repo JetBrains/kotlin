@@ -15,20 +15,24 @@ import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
 import kotlin.reflect.jvm.jvmErasure
 
 internal fun Type.toKType(
+    knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>,
     nullability: TypeNullability = TypeNullability.FLEXIBLE,
     replaceNonArrayArgumentsWithStarProjections: Boolean = false,
 ): KType {
     val base: SimpleKType = when (this) {
         is Class<*> -> {
-            if (typeParameters.isNotEmpty()) return createRawJavaType(this)
-            if (isArray) {
-                return createJavaSimpleType(this, kotlin, listOf(componentType.toKTypeProjection()), isMarkedNullable = false)
-                    .toFlexibleArrayElementVarianceType(this)
+            if (allTypeParameters().isNotEmpty() && !replaceNonArrayArgumentsWithStarProjections) {
+                return createRawJavaType(this, knownTypeParameters)
             }
-            createJavaSimpleType(this, kotlin, emptyList(), isMarkedNullable = false)
+            if (isArray) {
+                return createJavaSimpleType(
+                    this, kotlin, listOf(componentType.toKTypeProjection(knownTypeParameters)), isMarkedNullable = false,
+                ).toFlexibleArrayElementVarianceType(this)
+            }
+            createJavaSimpleType(this, kotlin, allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = false)
         }
         is GenericArrayType -> {
-            val componentType = genericComponentType.toKTypeProjection()
+            val componentType = genericComponentType.toKTypeProjection(knownTypeParameters)
             val componentClass = componentType.type!!.jvmErasure.java.createArrayType().kotlin
             return createJavaSimpleType(this, componentClass, listOf(componentType), isMarkedNullable = false)
                 .toFlexibleArrayElementVarianceType(this)
@@ -39,10 +43,11 @@ internal fun Type.toKType(
             if (replaceNonArrayArgumentsWithStarProjections)
                 collectAllArguments().map { KTypeProjection.STAR }
             else
-                collectAllArguments().map { it.toKTypeProjection() },
+                collectAllArguments().map { it.toKTypeProjection(knownTypeParameters) },
             isMarkedNullable = false,
         )
-        is TypeVariable<*> -> createJavaSimpleType(this, toKTypeParameter(), emptyList(), isMarkedNullable = false)
+        is TypeVariable<*> ->
+            createJavaSimpleType(this, findKTypeParameterInContainer(knownTypeParameters), emptyList(), isMarkedNullable = false)
         is WildcardType -> throw KotlinReflectionInternalError("Wildcard type is not possible here: $this")
         else -> throw KotlinReflectionInternalError("Type is not supported: $this (${this::class.java})")
     }
@@ -95,27 +100,39 @@ private fun createJavaSimpleType(
     computeJavaType = { type },
 )
 
-private fun createRawJavaType(klass: Class<*>): KType =
+private fun createRawJavaType(klass: Class<*>, knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>): KType =
     FlexibleKType.create(
         createJavaSimpleType(
             klass, klass.kotlin,
-            klass.typeParameters.map {
-                // For a lower bound of a raw type, we must take the corresponding bound of each type parameter, but erase their type
-                // arguments to star projections. E.g. `T : Comparable<String>` becomes `Comparable<*>`.
-                KTypeProjection.invariant(it.bounds.first().toKType(replaceNonArrayArgumentsWithStarProjections = true))
+            klass.allTypeParameters().map { typeParameter ->
+                // When creating a lower bound for a raw type, we must take the corresponding bound of each type parameter, but erase their
+                // type arguments to star projections. E.g. `T : Comparable<String>` becomes `Comparable<*>`. We have to be very careful not
+                // to translate the bound's own type parameters because it will lead to stack overflow in cases like `class A<T extends A>`.
+                // Since a type parameter's upper bound may be another type parameter, we need to unwrap it until we end up with anything
+                // but the type parameter (`Class` or `ParameterizedType`).
+                // Note that this is still not exactly how the compiler translates raw types
+                // (see `JavaClassifierType.toConeKotlinTypeForFlexibleBound` in K2, or `JavaTypeResolver.computeRawTypeArguments` in K1),
+                // but it's a good enough approximation.
+                val upperBound = generateSequence(typeParameter) { it.bounds.first() as? TypeVariable<*> }.last().bounds.first()
+                KTypeProjection.invariant(upperBound.toKType(knownTypeParameters, replaceNonArrayArgumentsWithStarProjections = true))
             },
             isMarkedNullable = false,
         ),
-        createJavaSimpleType(klass, klass.kotlin, klass.typeParameters.map { KTypeProjection.STAR }, isMarkedNullable = true),
+        createJavaSimpleType(klass, klass.kotlin, klass.allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = true),
         isRawType = true,
     ) { klass }
+
+internal fun Class<*>.allTypeParameters(): List<TypeVariable<*>> =
+    generateSequence(this) {
+        if (!Modifier.isStatic(it.modifiers)) it.declaringClass else null
+    }.flatMap { it.typeParameters.asSequence() }.toList()
 
 private fun ParameterizedType.collectAllArguments(): List<Type> =
     generateSequence(this) { it.ownerType as? ParameterizedType }.flatMap { it.actualTypeArguments.toList() }.toList()
 
-private fun Type.toKTypeProjection(): KTypeProjection {
+private fun Type.toKTypeProjection(knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>): KTypeProjection {
     if (this !is WildcardType) {
-        return KTypeProjection.invariant(toKType())
+        return KTypeProjection.invariant(toKType(knownTypeParameters))
     }
 
     val upperBounds = upperBounds
@@ -124,20 +141,36 @@ private fun Type.toKTypeProjection(): KTypeProjection {
         throw KotlinReflectionInternalError("Wildcard types with many bounds are not supported: $this")
     }
     return when {
-        lowerBounds.size == 1 -> KTypeProjection.contravariant(lowerBounds.single().toKType())
-        upperBounds.size == 1 -> KTypeProjection.covariant(upperBounds.single().toKType())
+        lowerBounds.size == 1 -> KTypeProjection.contravariant(lowerBounds.single().toKType(knownTypeParameters))
+        upperBounds.size == 1 -> KTypeProjection.covariant(upperBounds.single().toKType(knownTypeParameters))
         else -> KTypeProjection.STAR
     }
 }
 
-private fun TypeVariable<*>.toKTypeParameter(): KTypeParameter {
-    val container = genericDeclaration
-    // TODO (KT-80384): support type parameters of Java callables in new implementation
-    if (container !is Class<*>)
-        throw KotlinReflectionInternalError("Non-class container of a type parameter is not supported: $container ($this)")
+private val TypeVariable<*>.kotlinContainer: KTypeParameterOwnerImpl
+    get() {
+        val container = genericDeclaration
+        // TODO (KT-80384): support type parameters of Java callables in new implementation
+        if (container !is Class<*>)
+            throw KotlinReflectionInternalError("Non-class container of a type parameter is not supported: $container ($this)")
+        return container.kotlin as KClassImpl<*>
+    }
 
-    return container.kotlin.typeParameters.singleOrNull { it.name == name }
-        ?: throw KotlinReflectionInternalError("Type parameter $name is not found in $container")
+// The map `knownTypeParameters` is needed because when we're computing upper bounds of type parameters for a Java class, there's a moment
+// when the KTypeParameter instances are already created, but not yet stored in `KClass.typeParameters`.
+private fun TypeVariable<*>.findKTypeParameterInContainer(knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>): KTypeParameter =
+    knownTypeParameters[this]
+        ?: kotlinContainer.typeParameters.singleOrNull { it.name == name }
+        ?: throw KotlinReflectionInternalError("Type parameter $name is not found in $kotlinContainer")
+
+internal fun Array<out TypeVariable<*>>.toKTypeParameters(): List<KTypeParameter> {
+    val kTypeParameters = this.associateWith {
+        KTypeParameterImpl(it.kotlinContainer, it.name, KVariance.INVARIANT, isReified = false)
+    }
+    for ((typeVariable, kTypeParameter) in kTypeParameters) {
+        kTypeParameter.upperBounds = typeVariable.bounds.map { it.toKType(kTypeParameters) }
+    }
+    return kTypeParameters.values.toList()
 }
 
 private fun SimpleKType.toFlexibleArrayElementVarianceType(javaType: Type): FlexibleKType =

@@ -76,3 +76,11 @@ val KotlinBuildProperties.limitPlatformLibsCacheBuildingConcurrency: Boolean
         // if platform libs compilation parallelism is disabled, also disable parallel cache building by default.
         return !getBoolean("kotlin.native.platformLibs.parallelCaches", !limitPlatformLibsCompilationConcurrency)
     }
+
+/**
+ * If `true`, `:kotlin-native:platformLibs` should be built with the bootstrap compiler.
+ * Otherwise, they will be built with the snapshot compiler (i.e. built from the current sources)
+ * Default: `false`.
+ */
+val KotlinBuildProperties.buildPlatformLibsByBootstrapCompiler: Boolean
+    get() = getBoolean("kotlin.native.platformLibs.bootstrap", false)

@@ -49,6 +49,7 @@ private fun parseKeyValuePairs(
     argumentValue: Array<String>?,
     reportError: (String) -> Unit
 ): Map<String, String>? = argumentValue?.mapNotNull {
+    if (it.isBlank()) return@mapNotNull null
     val keyValueSeparatorIndex = it.indexOf('=')
     if (keyValueSeparatorIndex > 0) {
         it.substringBefore('=') to it.substringAfter('=')

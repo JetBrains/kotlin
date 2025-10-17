@@ -41,7 +41,7 @@ fun usage(y: Int) {
     <!TYPE_MISMATCH!>1.test2("")<!>
     <!CANNOT_INFER_PARAMETER_TYPE!>test3<!>("")
     <!TYPE_MISMATCH!>test4(1, listOf("a"))<!>
-    val x: In<String> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>id(y)<!>
+    val x: In<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> <!TYPE_MISMATCH!>id(y)<!>
     <!TYPE_MISMATCH!>test5(id(y))<!>
     id(y).<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>test6<!>()
     test7(B(), f2(A()))

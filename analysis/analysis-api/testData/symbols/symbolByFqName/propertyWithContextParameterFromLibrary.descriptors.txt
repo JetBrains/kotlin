@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.LibraryKt
     getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
+    importableFqName: null
   callableId: one/foo
   compilerVisibility: Public
   contextParameters: [
@@ -52,6 +53,7 @@ KaKotlinPropertySymbol:
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescContextReceiverBasedContextParameterSymbol
 
       deprecationStatus: null
+      importableFqName: null
     KaContextParameterSymbol:
       annotations: []
       callableId: null
@@ -77,6 +79,7 @@ KaKotlinPropertySymbol:
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescContextReceiverBasedContextParameterSymbol
 
       deprecationStatus: null
+      importableFqName: null
   ]
   contextReceivers: [
     KaContextReceiver:
@@ -118,6 +121,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: one.LibraryKt
     getContainingModule: KaLibraryModule "Library library"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -154,3 +158,4 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: one.foo

@@ -2,6 +2,7 @@
   KDocName(302,330): 'Container.containerExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -9,6 +10,7 @@
   KDocName(347,376): 'TContainer.containerExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -16,6 +18,7 @@
   KDocName(393,433): 'TNumberBoundContainer.containerExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -23,6 +26,7 @@
   KDocName(450,484): 'NumberContainer.containerExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -30,6 +34,7 @@
   KDocName(501,532): 'IntContainer.containerExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Container<*>.containerExtension()
 
@@ -37,5 +42,6 @@
   KDocName(549,583): 'StringContainer.containerExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Container<*>.containerExtension()

@@ -101,13 +101,18 @@ internal val KotlinTarget.uklibFragmentPlatformAttribute: UklibFragmentPlatformA
             return UklibFragmentPlatformAttribute.ConsumeInPlatformAndMetadataCompilationsAndPublishInUmanifest(supportedUklibTarget)
         }
 
-        return UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndFailOnPublication(targetName)
+        // FIXME: This is a temporary (KT-81394) workaround before proper external target support (KT-77074)
+        if (targetName == "android") {
+            return UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndPublishInUmanifest(targetName)
+        } else {
+            return UklibFragmentPlatformAttribute.ConsumeInMetadataCompilationsAndFailOnPublication(targetName)
+        }
     }
 
 /**
  * These attribute names will be recorded in and resolved from the Umanifest
  */
-private enum class UklibTargetFragmentAttribute {
+internal enum class UklibTargetFragmentAttribute {
     js_ir,
     wasm_js,
     wasm_wasi,

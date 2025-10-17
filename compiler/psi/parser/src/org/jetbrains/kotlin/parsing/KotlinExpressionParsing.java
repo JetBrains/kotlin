@@ -140,8 +140,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   ;
      */
     public void parseExpression() {
+        parseExpression("Expecting an expression");
+    }
+
+    private void parseExpression(String messageIfNotExpressionFirst) {
         if (!atSet(EXPRESSION_FIRST)) {
-            error("Expecting an expression");
+            error(messageIfNotExpressionFirst);
             return;
         }
 
@@ -991,11 +995,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
     private void parseInnerExpressions(String missingElementErrorMessage) {
         while (true) {
-            if (at(COMMA)) errorAndAdvance(missingElementErrorMessage);
             if (at(RBRACKET)) {
                 break;
             }
-            parseExpression();
+            parseExpression(missingElementErrorMessage);
 
             if (!at(COMMA)) break;
             advance(); // COMMA
@@ -1054,7 +1057,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private boolean parseLocalDeclaration(boolean rollbackIfDefinitelyNotExpression, boolean isScriptTopLevel) {
         PsiBuilder.Marker decl = mark();
         KotlinParsing.ModifierDetector detector = new KotlinParsing.ModifierDetector();
-        myKotlinParsing.parseModifierList(detector, TokenSet.EMPTY);
+        myKotlinParsing.parseModifierList(detector, TokenSet.EMPTY, /* localDeclaration = */true);
 
         IElementType declType = parseLocalDeclarationRest(detector, rollbackIfDefinitelyNotExpression, isScriptTopLevel);
 
@@ -1804,7 +1807,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (expect(LPAR, "Expecting an argument list", EXPRESSION_FOLLOW)) {
             if (!at(RPAR)) {
                 while (true) {
-                    while (at(COMMA)) errorAndAdvance("Expecting an argument");
                     parseValueArgument();
                     if (at(COLON) && lookahead(1) == IDENTIFIER) {
                         errorAndAdvance("Unexpected type specification", 2);
@@ -1849,7 +1851,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (at(MUL)) {
             advance(); // MUL
         }
-        parseExpression();
+        parseExpression("Expecting an argument");
         argument.done(VALUE_ARGUMENT);
     }
 

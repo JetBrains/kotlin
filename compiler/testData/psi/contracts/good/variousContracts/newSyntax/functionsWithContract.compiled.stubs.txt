@@ -1,7 +1,11 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithContractKt]]
+  facadeFqName: FunctionsWithContractKt
+  partSimpleName: "FunctionsWithContractKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test1]
+    contract: [ effect:Returns(WILDCARD) -> param(0) != null ]
+    origin: Facade(className=FunctionsWithContractKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg]
@@ -17,6 +21,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithContractKt]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=test2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test2]
+    contract: [
+      effect:Returns(WILDCARD) -> param(0) != null
+      effect:CallsInPlace(param(1), EXACTLY_ONCE)
+    ]
+    origin: Facade(className=FunctionsWithContractKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
@@ -41,6 +50,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithContractKt]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=test3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test3]
+    contract: [ effect:Returns(TRUE) -> param(0) != null ]
+    origin: Facade(className=FunctionsWithContractKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg]

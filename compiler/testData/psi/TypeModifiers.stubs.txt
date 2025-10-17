@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeModifiersKt]]
+  facadeFqName: TypeModifiersKt
+  partSimpleName: "TypeModifiersKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=p1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1]

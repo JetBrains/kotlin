@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 /**
  * Spec for D8 - this target is available only for Wasm
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalWasmDsl
 abstract class D8EnvSpec internal constructor() : org.jetbrains.kotlin.gradle.targets.js.d8.D8EnvSpec() {
 

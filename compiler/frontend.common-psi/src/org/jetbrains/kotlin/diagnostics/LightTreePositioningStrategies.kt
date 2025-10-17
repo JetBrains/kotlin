@@ -388,6 +388,22 @@ object LightTreePositioningStrategies {
             }
     }
 
+    val VARIABLE_INITIALIZER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val eqToken = tree.findChildByType(node, EQ)
+            return if (eqToken != null) {
+                markElement(eqToken, startOffset, endOffset, tree, node)
+            } else {
+                LAST_CHILD.mark(node, startOffset, endOffset, tree)
+            }
+        }
+    }
+
     val LAST_CHILD: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -1190,7 +1206,8 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            return super.mark(node, startOffset, startOffset + 1, tree)
+            return tree.findChildByType(node, MUL)?.let { markElement(it, startOffset, endOffset, tree, node) }
+                ?: super.mark(node, startOffset, endOffset, tree)
         }
     }
 

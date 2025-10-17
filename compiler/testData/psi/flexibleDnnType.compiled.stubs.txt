@@ -21,6 +21,7 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
+            upperBound: java.util.function.Function<kotlin.String .. kotlin.String?, T & Any .. T?>?
             USER_TYPE
               USER_TYPE
                 USER_TYPE
@@ -32,6 +33,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
+                    upperBound: kotlin.String?
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=String]
@@ -40,6 +42,7 @@ FILE[kind=File[packageFqName=<root>]]
                   INTERSECTION_TYPE
                     TYPE_REFERENCE
                       USER_TYPE
+                        upperBound: T?
                         REFERENCE_EXPRESSION[referencedName=T]
                     TYPE_REFERENCE
                       USER_TYPE

@@ -1,35 +1,25 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.sourceFileProvider
-import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
-import org.jetbrains.kotlin.test.services.targetPlatform
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayInputStream
 import java.nio.file.Path
@@ -37,13 +27,7 @@ import java.util.jar.Attributes
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.div
-import kotlin.io.path.exists
-import kotlin.io.path.nameWithoutExtension
-import kotlin.io.path.notExists
-import kotlin.io.path.outputStream
-import kotlin.io.path.pathString
+import kotlin.io.path.*
 
 abstract class CliTestModuleCompiler : TestModuleCompiler() {
     protected abstract fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String>
@@ -167,7 +151,6 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
 
             addAll(listOf(K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()))
         }
-        add("-XXLanguage:-${LanguageFeature.SkipStandaloneScriptsInSourceRoots.name}")
     }
 
     override fun doCompile(
@@ -180,7 +163,7 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
             sourcesPath = sourcesPath.absolutePathString(),
             contentDir = sourcesPath.toFile(),
             jarName = libraryOutputPath.nameWithoutExtension,
-            extraOptions = buildList<String> {
+            extraOptions = buildList {
                 addAll(options)
             },
             useJava11 = true,
@@ -189,7 +172,7 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
     }
 
     override fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = buildList {
-        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         for (file in compilerConfiguration.jvmClasspathRoots) {
             add(file.absolutePath)
         }
@@ -218,6 +201,7 @@ object JsKlibTestModuleCompiler : CliTestModuleCompiler() {
             sourceFiles.mapTo(this) { it.absolutePath }
             addAll(options)
         }
+
         MockLibraryUtil.runJsCompiler(commands)
     }
 
@@ -241,16 +225,16 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
     ) {
         val sourceFiles = sourcesPath.toFile().walkBottomUp()
 
-        CompilerTestUtil.executeCompilerAssertSuccessful(
-            KotlinMetadataCompiler(), buildList {
-                addAll(sourceFiles.mapTo(this) { it.absolutePath })
-                add(K2MetadataCompilerArguments::destination.cliArgument); add(libraryOutputPath.absolutePathString())
-                add(K2MetadataCompilerArguments::moduleName.cliArgument); add(libraryOutputPath.nameWithoutExtension)
-                add(K2MetadataCompilerArguments::classpath.cliArgument)
-                addAll(listOf(ForTestCompileRuntime.stdlibCommonForTests().absolutePath) + extraClasspath)
-                addAll(options)
-            }
-        )
+        val commands = buildList<String> {
+            addAll(sourceFiles.mapTo(this) { it.absolutePath })
+            add(K2MetadataCompilerArguments::destination.cliArgument); add(libraryOutputPath.absolutePathString())
+            add(K2MetadataCompilerArguments::moduleName.cliArgument); add(libraryOutputPath.nameWithoutExtension)
+            add(K2MetadataCompilerArguments::classpath.cliArgument)
+            addAll(listOf(ForTestCompileRuntime.stdlibCommonForTests().absolutePath) + extraClasspath)
+            addAll(options)
+        }
+
+        MockLibraryUtil.runMetadataCompiler(commands)
     }
 
     override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =

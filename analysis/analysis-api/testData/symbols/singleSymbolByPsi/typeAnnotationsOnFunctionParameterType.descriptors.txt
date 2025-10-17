@@ -35,6 +35,7 @@ KaNamedFunctionSymbol:
       compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -65,6 +66,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: TypeAnnotationsOnFunctionParameterTypeKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionParameterType.kt)
@@ -72,3 +74,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: foo

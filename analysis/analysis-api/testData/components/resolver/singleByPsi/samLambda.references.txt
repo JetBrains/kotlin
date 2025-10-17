@@ -1,5 +1,6 @@
 KtNameReferenceExpression(143,147): 'test'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Test) fun test(foo: Test.Foo)

@@ -2,6 +2,7 @@
   KDocName(96,103): 'Foo.ext'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) fun test.Foo.ext()
 
@@ -9,6 +10,7 @@
   KDocName(113,116): 'Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) class Foo
 
@@ -16,5 +18,6 @@
   KDocName(137,140): 'Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.WithMember) fun Foo()

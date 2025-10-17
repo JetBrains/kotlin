@@ -6,4 +6,3 @@ org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multi
 org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multiplatform.testOverrideInit_expectAnnotation,,STABLE
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11IrBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11FirLightTreeBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
-org.jetbrains.kotlin.gradle.js.JsContinuousBuildIT.testJsRunContinuousBuild,KT-79233,STABLE

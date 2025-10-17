@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.java.javaElementFinder
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
+import org.jetbrains.kotlin.fir.types.isNothingOrNullableNothing
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -58,6 +59,8 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fileOrNull
@@ -307,9 +310,6 @@ class Fir2IrConverter(
         }
 
         IrSimpleFunctionSymbolImpl().let { irSymbol ->
-            val lastStatement = codeFragment.block.statements.lastOrNull()
-            val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType() ?: builtins.unitType
-
             IrFactoryImpl.createSimpleFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
@@ -317,7 +317,7 @@ class Fir2IrConverter(
                 DescriptorVisibilities.PUBLIC,
                 isInline = false,
                 isExpect = false,
-                returnType,
+                computeCodeFragmentReturnType(codeFragment),
                 Modality.FINAL,
                 irSymbol,
                 isTailrec = false,
@@ -354,6 +354,21 @@ class Fir2IrConverter(
 
         declarationStorage.leaveScope(irClass.symbol)
         return irClass
+    }
+
+    private fun computeCodeFragmentReturnType(codeFragment: FirCodeFragment): IrType {
+        val lastStatement = codeFragment.block.statements.lastOrNull()
+        if (lastStatement is FirExpression) {
+            val lastStatementType = lastStatement.resolvedType
+            if (lastStatementType.isNothingOrNullableNothing) {
+                // Unless the last statement type is explicitly 'Unit', treat code fragments like they have a return value.
+                return builtins.anyType.makeNullable()
+            }
+
+            return lastStatementType.toIrType()
+        }
+
+        return builtins.unitType
     }
 
     // `irClass` is a source class and definitely is not a lazy class

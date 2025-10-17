@@ -46,7 +46,6 @@ internal open class PlatformImplementations {
 
     public open fun defaultPlatformRandom(): Random = FallbackThreadLocalRandom()
 
-    @ExperimentalTime
     public open fun getSystemClock(): Clock {
         throw UnsupportedOperationException("getSystemClock should not be called on the base PlatformImplementations.")
     }

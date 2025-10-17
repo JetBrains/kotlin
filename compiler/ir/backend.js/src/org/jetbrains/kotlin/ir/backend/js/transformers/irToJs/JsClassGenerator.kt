@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.tsexport.isOverriddenEnumProperty
 import org.jetbrains.kotlin.ir.backend.js.tsexport.isOverriddenExported
 import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
-import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics.RuntimeMetadataKind
+import org.jetbrains.kotlin.ir.backend.js.JsSymbols.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.suspendArityStore
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
@@ -439,7 +439,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             }
         }
 
-        val initMetadataSymbol = backendContext.intrinsics.getInitMetadataSymbol(metadataKind)!!
+        val initMetadataSymbol = backendContext.symbols.getInitMetadataSymbol(metadataKind)!!
 
         return if (metadataKind.isSpecial) {
             initMetadataSymbol.invokeWithoutNullArgs(ctor, parent, interfaces, suspendArity)
@@ -512,7 +512,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         if (!irClass.isAssociatedObjectAnnotatedAnnotation) return null
         return if (backendContext.incrementalCacheEnabled) {
             JsInvocation(
-                context.getNameForStaticFunction(backendContext.intrinsics.nextAssociatedObjectId.owner).makeRef(),
+                context.getNameForStaticFunction(backendContext.symbols.nextAssociatedObjectId.owner).makeRef(),
             )
         } else {
             val key = backendContext.nextAssociatedObjectKey++
@@ -546,7 +546,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         .map { (key, objectGetInstanceFunction) ->
                             JsPropertyInitializer(
                                 JsInvocation(
-                                    context.staticContext.getNameForStaticFunction(backendContext.intrinsics.getAssociatedObjectId.owner).makeRef(),
+                                    context.staticContext.getNameForStaticFunction(backendContext.symbols.getAssociatedObjectId.owner).makeRef(),
                                     key.getClassRef(context.staticContext),
                                 ),
                                 objectGetInstanceFunction
@@ -559,7 +559,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 // In ES5 object literals don't support computed keys, so we have to invoke a helper function to construct the associated
                 // object map.
                 JsInvocation(
-                    context.staticContext.getNameForStaticFunction(backendContext.intrinsics.makeAssociatedObjectMapES5.owner).makeRef(),
+                    context.staticContext.getNameForStaticFunction(backendContext.symbols.makeAssociatedObjectMapES5.owner).makeRef(),
                     JsArrayLiteral(
                         associatedObjects.flatMap { (key, objectGetInstanceFunction) ->
                             listOf(key.getClassRef(context.staticContext), objectGetInstanceFunction)

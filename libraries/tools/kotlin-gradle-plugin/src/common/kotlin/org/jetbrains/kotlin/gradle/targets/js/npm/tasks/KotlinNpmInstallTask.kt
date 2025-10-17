@@ -51,8 +51,15 @@ abstract class KotlinNpmInstallTask :
     @get:Internal
     abstract val nodeModules: DirectoryProperty
 
+    private val isOffline = project.gradle.startParameter.isOffline()
+
     @TaskAction
     fun resolve() {
+        val args = buildList {
+            addAll(args)
+            if (isOffline) add("--offline")
+        }
+
         npmResolutionManager.get()
             .installIfNeeded(
                 args = args,
@@ -66,7 +73,8 @@ abstract class KotlinNpmInstallTask :
     companion object {
         @Deprecated(
             "Use npmInstallTaskProvider from corresponding NodeJsRootExtension or WasmNodeJsRootExtension instead. " +
-                    "Scheduled for removal in Kotlin 2.4."
+                    "Scheduled for removal in Kotlin 2.4.",
+            level = DeprecationLevel.ERROR
         )
         const val NAME = "kotlinNpmInstall"
 

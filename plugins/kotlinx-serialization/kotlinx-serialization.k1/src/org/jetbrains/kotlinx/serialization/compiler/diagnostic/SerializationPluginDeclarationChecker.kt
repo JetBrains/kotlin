@@ -36,7 +36,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LOAD_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SAVE_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD_NAME
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationFqName
 
 val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
@@ -326,6 +325,25 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         checkCustomSerializerIsNotLocal(descriptor.module, descriptor, trace, declaration)
         checkCustomSerializerParameters(descriptor.module, descriptor, descriptor.defaultType, annotationPsi, declaration, trace)
         checkCustomSerializerNotAbstract(descriptor.module, descriptor.defaultType, descriptor, annotationPsi, trace, declaration)
+        checkVisibility(descriptor, declaration, annotationPsi, trace)
+    }
+
+    private fun checkVisibility(
+        classDescriptor: ClassDescriptor,
+        declaration: KtDeclaration,
+        annotationPsi: KtAnnotationEntry?,
+        trace: BindingTrace,
+    ) {
+        val serializerClass = classDescriptor.annotations.serializableWith(classDescriptor.module)?.toClassDescriptor ?: return
+        if (serializerClass.visibility == DescriptorVisibilities.PRIVATE && classDescriptor.visibility != DescriptorVisibilities.PRIVATE) {
+            trace.report(
+                SerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE.on(
+                    annotationPsi ?: declaration,
+                    serializerClass,
+                    classDescriptor
+                )
+            )
+        }
     }
 
     private val ClassDescriptor.isAnonymousObjectOrContained: Boolean
@@ -532,10 +550,11 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 checkCustomSerializerMatch(it.module, it.type, it.descriptor, element, trace, propertyPsi)
                 val annotationPsi = it.descriptor.findSerializableOrMetaAnnotationDeclaration()
                 checkCustomSerializerNotAbstract(it.module, it.type, it.descriptor, annotationPsi, trace, propertyPsi)
-                checkCustomSerializerParameters(it.module, it.descriptor, it.type, annotationPsi, propertyPsi, trace)
+                val hasParameters = checkCustomSerializerParameters(it.module, it.descriptor, it.type, annotationPsi, propertyPsi, trace)
                 checkCustomSerializerIsNotLocal(it.module, it.descriptor, trace, propertyPsi)
                 checkSerializerNullability(it.type, serializer.defaultType, element, trace, propertyPsi)
-                serializersDeclaredOnFile.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
+                if (hasParameters)
+                    serializersDeclaredOnFile.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
             } else {
                 serializersDeclaredOnFile.checkType(it.module, it.type, ktType, trace, propertyPsi)
                 checkGenericArrayType(it.type, ktType, trace, propertyPsi)
@@ -600,16 +619,16 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
         val serializer = findTypeSerializerOrContextUnchecked(module, type)
         if (serializer != null) {
-            type.annotations.serializableWith(module)?.let {
+            val hasParameters = type.annotations.serializableWith(module)?.let {
                 checkCustomSerializerMatch(module, type, type, element, trace, fallbackElement)
                 checkCustomSerializerIsNotLocal(module, type, trace, fallbackElement)
 
                 val annotationElement = type.findSerializableAnnotationDeclaration()
-                checkCustomSerializerParameters(module, type, type, annotationElement, fallbackElement, trace)
                 checkCustomSerializerNotAbstract(module, type, type, annotationElement, trace, fallbackElement)
+                checkCustomSerializerParameters(module, type, type, annotationElement, fallbackElement, trace)
             }
             checkSerializerNullability(type, serializer.defaultType, element, trace, fallbackElement)
-            checkTypeArguments(module, type, element, trace, fallbackElement)
+            if (hasParameters != false) checkTypeArguments(module, type, element, trace, fallbackElement)
         } else {
             if (!type.isEnum()) {
                 // enums are always serializable
@@ -688,23 +707,24 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         element: KtElement?,
         fallbackElement: PsiElement,
         trace: BindingTrace,
-    ) {
-        val serializerType = declaration.annotations.serializableWith(module) ?: return
-        val serializerDescriptor = serializerType.toClassDescriptor ?: return
+    ): Boolean {
+        val serializerType = declaration.annotations.serializableWith(module) ?: return false
+        val serializerDescriptor = serializerType.toClassDescriptor ?: return false
 
         if (serializerDescriptor.classId in SerializersClassIds.setOfSpecialSerializers) {
-            return
+            return false
         }
 
-        val primaryConstructor = serializerDescriptor.constructors.singleOrNull { constructor -> constructor.isPrimary } ?: return
+        val primaryConstructor = serializerDescriptor.constructors.singleOrNull { constructor -> constructor.isPrimary } ?: return false
 
         val targetElement = element ?: fallbackElement
+        val hasParameters = primaryConstructor.valueParameters.isNotEmpty()
+        // it is allowed that parameters are not passed to regular serializers at all
+        if (!hasParameters) return false
 
         val isExternalSerializer = serializerDescriptor.serializerForClass != null
         if ( // for external serializer, the verification will be carried out at the definition
             !isExternalSerializer
-            // it is allowed that parameters are not passed to regular serializers at all
-            && primaryConstructor.valueParameters.isNotEmpty()
             // if the parameters are still specified, then their number must match in the serializable class and constructor
             && primaryConstructor.valueParameters.size != serializableType.arguments.size
         ) {
@@ -736,6 +756,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 )
             }
         }
+        return true
     }
 
     private fun checkSerializerNullability(

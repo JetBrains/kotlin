@@ -497,7 +497,6 @@ public actual inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 @InlineOnly
 public actual inline fun cbrt(x: Double): Double = nativeMath.cbrt(x)
 
@@ -1068,7 +1067,6 @@ public actual inline fun max(a: Float, b: Float): Float = nativeMath.max(a, b)
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 @InlineOnly
 public actual inline fun cbrt(x: Float): Float = nativeMath.cbrt(x.toDouble()).toFloat()
 

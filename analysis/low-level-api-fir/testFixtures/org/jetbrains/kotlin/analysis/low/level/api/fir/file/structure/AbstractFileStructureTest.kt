@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.services.TestServices
 
 /**
@@ -73,7 +73,7 @@ abstract class AbstractFileStructureTest : AbstractAnalysisApiBasedTest() {
             })
         }
 
-        KotlinTestUtils.assertEqualsToFile(testDataPath, text)
+        TestDataAssertions.assertEqualsToFile(testDataPath, text)
 
         if (anchorElements.isNotEmpty()) {
             error(

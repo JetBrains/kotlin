@@ -1,6 +1,6 @@
 // WITH_STDLIB
-// FIR_IDENTICAL
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
+
 
 // MODULE: lib
 package com.example.klib.serialization.diagnostics

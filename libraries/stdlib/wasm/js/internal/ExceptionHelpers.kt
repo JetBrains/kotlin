@@ -17,8 +17,7 @@ internal fun throwValue(t: Throwable): Nothing {
 // If WebAssembly.JSTag is going to be used for wasm exceptions, use a helper function throwing an exception from JS.
 // It's required to work around [an issue in JavaScriptCore](https://bugs.webkit.org/show_bug.cgi?id=297134)
 // Otherwise, an empty function is provided, and exceptions will be thrown from wasm code.
-// TODO remove 'typeof wasmJsTag === 'undefined' || ' after bootstrap 
-@JsFun("typeof wasmJsTag === 'undefined' || wasmTag === wasmJsTag ? (e) => { throw e; } : () => {}")
+@JsFun("wasmTag === wasmJsTag ? (e) => { throw e; } : () => {}")
 internal external fun jsThrow(e: JsAny?)
 
 @ExcludedFromCodegen

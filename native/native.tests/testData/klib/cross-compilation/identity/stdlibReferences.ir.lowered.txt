@@ -44,9 +44,8 @@ MODULE_FRAGMENT name:<stdlibReferences>
               CONST Int type=kotlin.Int value=3
         BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
           VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Boolean [val]
-            BLOCK type=kotlin.Boolean origin=null
-              TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-                CALL 'test/boolean.<get-boolean>|<get-boolean>(){}[0]' type=kotlin.Boolean origin=GET_PROPERTY
+            TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
+              CALL 'test/boolean.<get-boolean>|<get-boolean>(){}[0]' type=kotlin.Boolean origin=GET_PROPERTY
           RETURNABLE_BLOCK type=kotlin.Unit origin=null
             INLINED_BLOCK type=kotlin.Unit origin=null
               inlinedFunctionSymbol: kotlin/require|require(kotlin.Boolean;kotlin.Function0<kotlin.Any>){}[0]
@@ -82,8 +81,7 @@ MODULE_FRAGMENT name:<stdlibReferences>
                 TYPE_OP type=kotlin.time.Duration origin=IMPLICIT_CAST typeOperand=kotlin.time.Duration
                   BLOCK type=kotlin.time.Duration origin=INLINE_ARGS_CONTAINER
                     VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.time.TimeSource.Monotonic [val]
-                      BLOCK type=kotlin.time.TimeSource.Monotonic origin=null
-                        GET_OBJECT 'kotlin.time/TimeSource.Monotonic|null[0]' type=kotlin.time.TimeSource.Monotonic
+                      GET_OBJECT 'kotlin.time/TimeSource.Monotonic|null[0]' type=kotlin.time.TimeSource.Monotonic
                     RETURNABLE_BLOCK type=kotlin.time.Duration origin=null
                       INLINED_BLOCK type=kotlin.time.Duration origin=null
                         inlinedFunctionSymbol: kotlin.time/measureTime|measureTime@kotlin.time.TimeSource.Monotonic(kotlin.Function0<kotlin.Unit>){}[0]

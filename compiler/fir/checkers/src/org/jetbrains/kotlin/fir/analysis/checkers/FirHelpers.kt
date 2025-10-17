@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -34,20 +33,16 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FinallyBlockExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.KtBackingField
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
@@ -59,6 +54,7 @@ import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -434,10 +430,9 @@ val Name.isDelegated: Boolean get() = asString().startsWith("\$\$delegate_")
 val ConeTypeProjection.isConflictingOrNotInvariant: Boolean get() = kind != ProjectionKind.INVARIANT || this is ConeKotlinTypeConflictingProjection
 
 val CheckerContext.secondToLastContainer: FirElement?
-    get() = when {
-        containingElements.size >= 2 -> containingElements[containingElements.lastIndex - 1]
-        else -> null
-    }
+    get() = nthLastContainer(2)
+
+fun CheckerContext.nthLastContainer(n: Int): FirElement? = containingElements.let { it.getOrNull(it.size - n) }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkTypeMismatch(
@@ -481,27 +476,6 @@ fun checkTypeMismatch(
         rValue.isNullLiteral && !lValueType.isMarkedOrFlexiblyNullable -> {
             reporter.reportOn(rValue.source, FirErrors.NULL_FOR_NONNULL_TYPE, lValueType)
         }
-        isInitializer -> {
-            if (reportReturnTypeMismatchInLambda(
-                    lValueType = lValueType.fullyExpandedType(),
-                    rValue = rValue,
-                    rValueType = rValueType.fullyExpandedType(),
-                )
-            ) return
-
-            val factory = when (source.elementType) {
-                KtNodeTypes.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
-                else -> FirErrors.INITIALIZER_TYPE_MISMATCH
-            }
-
-            reporter.reportOn(
-                source,
-                factory,
-                lValueType,
-                rValueType,
-                context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType)
-            )
-        }
         source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement || assignment?.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
             if (!lValueType.isMarkedOrFlexiblyNullable && rValueType.isMarkedOrFlexiblyNullable) {
                 val tempType = rValueType
@@ -515,9 +489,22 @@ fun checkTypeMismatch(
             }
         }
         else -> {
+            if (reportReturnTypeMismatchInLambda(
+                    lValueType = lValueType.fullyExpandedType(),
+                    rValue = rValue,
+                    rValueType = rValueType.fullyExpandedType(),
+                )
+            ) return
+
+            val factory = when {
+                !isInitializer -> FirErrors.ASSIGNMENT_TYPE_MISMATCH
+                source.elementType == KtNodeTypes.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
+                else -> FirErrors.INITIALIZER_TYPE_MISMATCH
+            }
+
             reporter.reportOn(
-                source,
-                FirErrors.ASSIGNMENT_TYPE_MISMATCH,
+                assignment?.source ?: source,
+                factory,
                 lValueType,
                 rValueType,
                 context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType)
@@ -1036,4 +1023,17 @@ fun FirBasedSymbol<*>?.isExpect(): Boolean {
         is FirClassLikeSymbol -> isExpect
         else -> false
     }
+}
+
+context(context: SessionHolder)
+fun FirResolvedQualifier.resolvedSymbolOrCompanionSymbol(): FirClassLikeSymbol<*>? {
+    return symbol?.applyIf(resolvedToCompanionObject) {
+        fullyExpandedClass()?.resolvedCompanionObjectSymbol
+    }
+}
+
+context(context: CheckerContext)
+fun FirExpression.isDispatchReceiver(): Boolean {
+    val parentElement = context.containingElements.elementAtOrNull(context.containingElements.size - 2)
+    return parentElement is FirQualifiedAccessExpression && parentElement.dispatchReceiver == this
 }

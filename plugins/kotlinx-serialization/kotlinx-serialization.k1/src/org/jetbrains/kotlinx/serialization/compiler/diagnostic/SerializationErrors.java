@@ -27,7 +27,7 @@ public interface SerializationErrors {
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory1<PsiElement, ClassDescriptor> COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, ClassDescriptor> COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<PsiElement> EXPLICIT_SERIALIZABLE_IS_REQUIRED = DiagnosticFactory0.create(WARNING);
 
@@ -44,6 +44,7 @@ public interface SerializationErrors {
     DiagnosticFactory3<PsiElement, KotlinType, KotlinType, String> CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<PsiElement, KotlinType, KotlinType, String> CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory0<PsiElement> TRANSIENT_MISSING_INITIALIZER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory2<PsiElement, ClassDescriptor, ClassDescriptor> CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory0<PsiElement> GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
 

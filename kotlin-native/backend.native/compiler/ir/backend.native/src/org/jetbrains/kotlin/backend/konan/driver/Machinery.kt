@@ -15,37 +15,18 @@ import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.util.PerformanceManager
 
-internal interface PerformanceManagerContext {
-    val performanceManager: PerformanceManager?
-}
-
 /**
- * Context is a set of resources that is shared between different phases. PhaseContext is a "minimal context",
- * effectively just a wrapper around [KonanConfig]. Still, it is more than enough in many cases.
- *
- * There is a fuzzy line between phase Input/Output and Context. We can consider them as a spectre:
- * * On the one end there is a [org.jetbrains.kotlin.backend.konan.Context] (circa 1.8.0). It has a lot of properties,
- * some even lateinit, which makes this object hard to construct and phases that depend on it are tightly coupled.
- * But we don't need to pass data between phases explicitly, which makes code easier to write.
- * * One the other end we can pass everything explicitly via I/O types. It will decouple code at the cost of boilerplate.
- *
- * So we have to find a point on this spectre for each phase.
- * We still don't have a rule of thumb for deciding whether object should be a part of context or not.
- * Some notes:
- * * Lifetime of context should be as small as possible: it reduces memory usage and forces a clean architecture.
- * * Frontend and backend are not really tied to IR and its friends, so we can pass more bytes via I/O.
- * * On the other hand, middle- and bitcode phases are hard to decouple due to the way the code was written many years ago.
- * It will take some time to rewrite it properly.
+ * A version of [PhaseContext] that is specific to the Native backend.
  */
-internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext, DisposableContext, PerformanceManagerContext
+internal interface NativeBackendPhaseContext : PhaseContext, ConfigChecks
 
-internal open class BasicPhaseContext(
+internal open class BasicNativeBackendPhaseContext(
         override val config: KonanConfig,
-) : PhaseContext {
+) : NativeBackendPhaseContext {
     override var inVerbosePhase = false
 
     override val messageCollector: MessageCollector
@@ -59,17 +40,17 @@ internal open class BasicPhaseContext(
         get() = config.configuration.perfManager
 }
 
-internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
+internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<NativeBackendPhaseContext>) -> Unit) {
     val phaserState = PhaserState()
     val phaseConfig = config.phaseConfig
-    val context = BasicPhaseContext(config)
-    val topLevelPhase = object : NamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
-        override fun phaseBody(context: PhaseContext, input: Any) {
+    val context = BasicNativeBackendPhaseContext(config)
+    val topLevelPhase = object : NamedCompilerPhase<NativeBackendPhaseContext, Any, Unit>("Compiler") {
+        override fun phaseBody(context: NativeBackendPhaseContext, input: Any) {
             val engine = PhaseEngine(phaseConfig, phaserState, context)
             body(engine)
         }
 
-        override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: PhaseContext, input: Any) {
+        override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: NativeBackendPhaseContext, input: Any) {
             error("Compiler was disabled")
         }
     }

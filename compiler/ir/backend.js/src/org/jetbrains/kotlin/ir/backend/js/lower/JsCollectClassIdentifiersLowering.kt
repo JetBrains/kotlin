@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.originalClassId
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.classId
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.classId
 class JsCollectClassIdentifiersLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass) {
-            declaration.classId?.let { context.classToItsId[declaration] = it.toString() }
+            declaration.classId?.let { declaration.originalClassId = it.toString() }
         }
         return null
     }

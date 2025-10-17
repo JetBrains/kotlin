@@ -13,4 +13,4 @@ open class A
 
 open class B : A()
 
-// LINES(JS_IR): 1 1 2 3 3 4 4 5 5 6 6 8 8 12 12 14 14 14
+// LINES: 1 1 2 3 3 4 4 5 5 6 6 8 8 12 12 14 14 14

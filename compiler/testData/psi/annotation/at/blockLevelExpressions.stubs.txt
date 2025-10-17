@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=BlockLevelExpressionsKt]]
+  facadeFqName: BlockLevelExpressionsKt
+  partSimpleName: "BlockLevelExpressionsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]

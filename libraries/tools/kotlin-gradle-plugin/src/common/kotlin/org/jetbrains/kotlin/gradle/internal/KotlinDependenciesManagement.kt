@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyApiConfigurationName
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
 internal const val KOTLIN_BUILD_TOOLS_API_IMPL = "kotlin-build-tools-impl"
+internal const val KOTLIN_BUILD_TOOLS_API_COMPAT = "kotlin-build-tools-compat"
 internal const val PLATFORM_INTEGERS_SUPPORT_LIBRARY = "platform-integers"
 
 internal val CustomizeKotlinDependenciesSetupAction = KotlinProjectSetupAction {
@@ -91,18 +93,14 @@ private fun excludeStdlibAndKotlinTestCommonFromPlatformCompilations(project: Pr
 
 // there several JVM-like targets, like KotlinWithJava, or KotlinAndroid, and they don't have common supertype
 // aside from KotlinTarget
-@Suppress("DEPRECATION_ERROR") // KT-58227, KT-64273
 private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilations() {
     compilations.all {
         listOfNotNull(
             it.compileDependencyConfigurationName,
-            it.defaultSourceSet.apiMetadataConfigurationName,
-            it.defaultSourceSet.implementationMetadataConfigurationName,
-            it.defaultSourceSet.compileOnlyMetadataConfigurationName,
+            @Suppress("DEPRECATION_ERROR") // KT-64273
             (it as? org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
-
             // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely
-            (it as? KotlinWithJavaCompilation<*, *>)?.apiConfigurationName
+            (it as? KotlinWithJavaCompilation<*, *>)?.legacyApiConfigurationName
         ).forEach { configurationName ->
             project.configurations.getByName(configurationName).apply {
                 exclude(mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-stdlib-common"))
@@ -112,6 +110,7 @@ private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilation
         }
     }
 }
+
 
 internal fun DependencyHandler.kotlinDependency(moduleName: String, versionOrNull: String?) =
     create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")

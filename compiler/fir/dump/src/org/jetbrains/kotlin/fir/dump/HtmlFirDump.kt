@@ -665,6 +665,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
         val type = typeAlias.expandedConeType
         if (type != null) {
+            // The upcast is safe here
             generate(type as ConeKotlinType)
         } else {
             +"<error expanded type>"
@@ -1251,12 +1252,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                         is NewConstraintError -> {
                             ident()
 
-                            generate(callDiagnostic.lowerType as ConeKotlinType)
+                            generate(callDiagnostic.lowerType.asCone())
 
                             ws
                             span(classes = "subtype-error") { +"<:" }
                             ws
-                            generate(callDiagnostic.upperType as ConeKotlinType)
+                            generate(callDiagnostic.upperType.asCone())
                         }
                         else -> {
                             ident()

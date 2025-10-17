@@ -25,7 +25,6 @@ sourceSets {
     "main" { none() }
     "test" {
         projectDefault()
-        generatedTestDir()
     }
     "testFixtures" { projectDefault() }
 }
@@ -37,10 +36,10 @@ projectTests {
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":native:native.tests").isolated, "testData/klib")
     testData(project(":native:native.tests").isolated, "testData/irProvidersMismatch")
+    testData(project(":native:native.tests").isolated, "testData/oneStageCompilation")
 
     nativeTestTask(
         "test",
-        null,
         allowParallelExecution = true,
         requirePlatformLibs = true,
     ) {
@@ -58,9 +57,8 @@ projectTests {
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt") {
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
-        dependsOn(":compiler:generateTestData")
     }
 }
 

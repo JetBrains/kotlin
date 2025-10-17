@@ -5,6 +5,6 @@ $TEMP_DIR$
 -ir-output-name
 out
 -language-version
-1.9
+2.1
 -libraries
 $STDLIB_JS$

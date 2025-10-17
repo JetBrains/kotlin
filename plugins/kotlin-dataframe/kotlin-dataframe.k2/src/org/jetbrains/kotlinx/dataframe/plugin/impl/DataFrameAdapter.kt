@@ -8,7 +8,7 @@ import org.jetbrains.kotlinx.dataframe.api.asDataColumn
 import org.jetbrains.kotlinx.dataframe.api.cast
 import org.jetbrains.kotlinx.dataframe.api.convert
 import org.jetbrains.kotlinx.dataframe.api.dataFrameOf
-import org.jetbrains.kotlinx.dataframe.api.with
+import org.jetbrains.kotlinx.dataframe.api.perRowCol
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.columns.FrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
@@ -24,8 +24,10 @@ fun DataFrame<ConeTypesAdapter>.toPluginDataFrameSchema() = PluginDataFrameSchem
 
 interface ConeTypesAdapter
 
-fun PluginDataFrameSchema.convert(columns: ColumnsResolver, converter: (Marker) -> Marker): PluginDataFrameSchema {
-    return asDataFrame().convert { columns }.with { converter(it as Marker) }.toPluginDataFrameSchema()
+fun PluginDataFrameSchema.convert(columns: ColumnsResolver, converter: (SimpleCol) -> Marker): PluginDataFrameSchema {
+    return asDataFrame().convert { columns }.perRowCol { _, col ->
+        converter(col.asSimpleColumn())
+    }.toPluginDataFrameSchema()
 }
 
 fun PluginDataFrameSchema.convertAsColumn(columns: ColumnsResolver, converter: (SimpleCol) -> SimpleCol): PluginDataFrameSchema {

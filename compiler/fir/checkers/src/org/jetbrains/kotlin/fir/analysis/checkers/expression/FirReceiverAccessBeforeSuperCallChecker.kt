@@ -13,12 +13,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.render
 
 object FirReceiverAccessBeforeSuperCallChecker : FirInaccessibleReceiverChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirInaccessibleReceiverExpression) {
+        if (expression.kind != InaccessibleReceiverKind.SecondaryConstructor) return
+
         val containingCall = context.callsOrAssignments.last() as FirQualifiedAccessExpression
         containingCall.run {
             require(
@@ -26,7 +29,7 @@ object FirReceiverAccessBeforeSuperCallChecker : FirInaccessibleReceiverChecker(
                         expression == extensionReceiver ||
                         expression in contextArguments ||
                         // Receiver can migrate here into an argument, see AbstractRawFirBuilder.convertFirSelector
-                        this is FirImplicitInvokeCall && expression == arguments.first()
+                        this is FirImplicitInvokeCall && expression in arguments
             ) {
                 "Inaccessible receiver ${expression.render()} isn't found in receivers of a call/access ${this.render()}"
             }

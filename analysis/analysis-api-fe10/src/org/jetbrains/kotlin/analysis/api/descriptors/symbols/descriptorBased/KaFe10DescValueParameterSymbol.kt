@@ -47,6 +47,9 @@ internal class KaFe10DescValueParameterSymbol(
     override val hasDefaultValue: Boolean
         get() = withValidityAssertion { descriptor.hasDefaultValue() }
 
+    override val hasDeclaredDefaultValue: Boolean
+        get() = withValidityAssertion { descriptor.declaresDefaultValue() }
+
     override val isVararg: Boolean
         get() = withValidityAssertion { descriptor.isVararg }
 

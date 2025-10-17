@@ -1,0 +1,106 @@
+/arrayLiteralsInCallsReturningAnnotations.kt:11:15: error: unsupported [Collection literals outside of annotations]
+val foo = Foo(["42"])
+              ^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:25:9: error: unsupported [Collection literals outside of annotations]
+    Foo(["42"])
+        ^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:26:9: error: unsupported [Collection literals outside of annotations]
+    Foo([])
+        ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:28:17: error: unsupported [Collection literals outside of annotations]
+        val x = ["42"]
+                ^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:32:16: error: unsupported [Collection literals outside of annotations]
+    NestedFoo(*[NestedFoo(arr = [NestedFoo()])])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:32:33: error: unsupported [Collection literals outside of annotations]
+    NestedFoo(*[NestedFoo(arr = [NestedFoo()])])
+                                ^^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:34:12: error: unsupported [Collection literals outside of annotations]
+    IntFoo([])
+           ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:35:12: error: unsupported [Collection literals outside of annotations]
+    IntFoo([42])
+           ^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:36:12: error: type mismatch: inferred type is Array<Int> but IntArray was expected
+    IntFoo(run { [42] })
+           ^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:36:18: error: unsupported [Collection literals outside of annotations]
+    IntFoo(run { [42] })
+                 ^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:37:12: error: type mismatch: inferred type is Array<Int> but IntArray was expected
+    IntFoo(run {
+           ^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:38:17: error: unsupported [Collection literals outside of annotations]
+        val x = [42]
+                ^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:42:27: error: unsupported [Collection literals outside of annotations]
+        val x: IntArray = [42]
+                          ^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:46:14: error: unsupported [Collection literals outside of annotations]
+    FooAlias([])
+             ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:47:14: error: unsupported [Collection literals outside of annotations]
+    FooAlias(["42"])
+             ^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:50:15: error: unsupported [Collection literals outside of annotations]
+    Foo(run { [nonConst] })
+              ^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:52:5: error: unsupported [Collection literals outside of annotations]
+    [nonConst].returnFoo([nonConst])
+    ^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:52:26: error: unsupported [Collection literals outside of annotations]
+    [nonConst].returnFoo([nonConst])
+                         ^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:53:5: error: not enough information to infer type variable T
+    [].returnFoo([])
+    ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:53:5: error: unsupported [Collection literals outside of annotations]
+    [].returnFoo([])
+    ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:53:18: error: unsupported [Collection literals outside of annotations]
+    [].returnFoo([])
+                 ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:55:5: error: not enough information to infer type variable T
+    returnFooGeneric([])
+    ^^^^^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:55:22: error: not enough information to infer type variable T
+    returnFooGeneric([])
+                     ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:55:22: error: unsupported [Collection literals outside of annotations]
+    returnFooGeneric([])
+                     ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:56:5: error: not enough information to infer type variable T
+    returnFooGeneric([42])
+    ^^^^^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:56:22: error: unsupported [Collection literals outside of annotations]
+    returnFooGeneric([42])
+                     ^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:57:5: error: not enough information to infer type variable T
+    returnFooGeneric(["42"])
+    ^^^^^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:57:22: error: unsupported [Collection literals outside of annotations]
+    returnFooGeneric(["42"])
+                     ^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:59:5: error: not enough information to infer type variable B
+    returnTypeParam(foo, [])
+    ^^^^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:59:26: error: not enough information to infer type variable T
+    returnTypeParam(foo, [])
+                         ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:59:26: error: unsupported [Collection literals outside of annotations]
+    returnTypeParam(foo, [])
+                         ^^
+/arrayLiteralsInCallsReturningAnnotations.kt:60:5: error: not enough information to infer type variable B
+    returnTypeParam(foo, [1, 2, 3])
+    ^^^^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:60:26: error: unsupported [Collection literals outside of annotations]
+    returnTypeParam(foo, [1, 2, 3])
+                         ^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:61:5: error: not enough information to infer type variable B
+    returnTypeParam(foo, ["1", "2", "3"])
+    ^^^^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:61:26: error: unsupported [Collection literals outside of annotations]
+    returnTypeParam(foo, ["1", "2", "3"])
+                         ^^^^^^^^^^^^^^^
+

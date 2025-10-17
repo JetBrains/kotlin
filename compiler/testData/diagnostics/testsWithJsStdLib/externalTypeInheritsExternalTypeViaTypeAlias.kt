@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 external interface Base
 

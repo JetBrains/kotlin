@@ -117,7 +117,7 @@ fun test13(list: List<String>?) {
 
 fun test14(list: List<String>?) {
     if (list is ArrayList || list != null) {
-        var k: ArrayList<String>? = <!INITIALIZER_TYPE_MISMATCH!>list<!>
+        var k: ArrayList<String>? <!INITIALIZER_TYPE_MISMATCH!>=<!> list
     }
 }
 

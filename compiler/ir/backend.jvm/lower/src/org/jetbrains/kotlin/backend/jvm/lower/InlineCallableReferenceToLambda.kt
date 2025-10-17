@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -42,7 +41,6 @@ private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
  *
  * `foo(::smth)` is transformed to `foo { a -> smth(a) }`.
  */
-@PhaseDescription(name = "JvmInlineCallableReferenceToLambdaPhase")
 class JvmInlineCallableReferenceToLambdaPhase(
     val context: JvmBackendContext,
 ) : FileLoweringPass, IrTransformer<IrDeclarationParent?>() {

@@ -20,8 +20,8 @@ class SwitchOptimizer(
     // TODO: reimplement optimization on top of IR
     constructor(context: JsGenerationContext) : this(context, isExpression = false, { it() })
 
-    private val jsEqeqeq = context.staticContext.backendContext.intrinsics.jsEqeqeq
-    private val jsEqeq = context.staticContext.backendContext.intrinsics.jsEqeq
+    private val jsEqeqeq = context.staticContext.backendContext.symbols.jsEqeqeq
+    private val jsEqeq = context.staticContext.backendContext.symbols.jsEqeq
 
     private fun IrConst.isTrueConstant(): Boolean {
         if (kind !== IrConstKind.Boolean) return false

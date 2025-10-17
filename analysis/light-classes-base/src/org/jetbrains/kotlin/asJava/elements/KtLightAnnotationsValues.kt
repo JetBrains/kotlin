@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypes
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.FqNameUnsafe
 
@@ -34,6 +38,25 @@ fun psiType(kotlinFqName: String, context: PsiElement, boxPrimitiveType: Boolean
         "kotlin.FloatArray" -> return PsiTypes.floatType().createArrayType()
     }
 
-    val javaFqName = JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(kotlinFqName))?.asSingleFqName()?.asString() ?: kotlinFqName
+    val javaFqName =
+        JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(kotlinFqName))?.asSingleFqName()?.asString()
+            ?: kotlinFqName.mapSuspendFunctionTypeToJvmType() // JavaToKotlinClassMap does not handle types like SuspendFunction0
+            ?: kotlinFqName
+
     return PsiType.getTypeByName(javaFqName, context.project, context.resolveScope)
+}
+
+/**
+ * See KDoc on [JavaToKotlinClassMap.mapJavaToKotlin] for the reason why we cannot use it for this mapping.
+ */
+private fun String.mapSuspendFunctionTypeToJvmType(): String? {
+    val kotlinPrefix = FunctionTypeKind.SuspendFunction.packageFqName.toString() + "." + FunctionTypeKind.SuspendFunction.classNamePrefix
+    val javaPrefix = "kotlin.jvm.functions.Function"
+
+    if (!startsWith(kotlinPrefix)) return null
+
+    val arity = removePrefix(kotlinPrefix).toIntOrNull() ?: return null
+    if (arity >= BuiltInFunctionArity.BIG_ARITY - 1) return null
+
+    return "$javaPrefix${arity + 1}"
 }

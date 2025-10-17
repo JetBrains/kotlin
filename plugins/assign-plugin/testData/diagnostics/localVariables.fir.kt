@@ -15,7 +15,7 @@ data class StringProperty(var v: String) {
 
 fun `should not work with local val for different type`() {
     val property = StringProperty("OK")
-    <!VAL_REASSIGNMENT!>property<!> = <!ASSIGNMENT_TYPE_MISMATCH!>"Fail"<!>
+    <!VAL_REASSIGNMENT!>property<!> <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "Fail"
 }
 
 fun `should not work with local val for same type`() {
@@ -25,7 +25,7 @@ fun `should not work with local val for same type`() {
 
 fun `should not work with local var for different type`() {
     var property = StringProperty("OK")
-    property = <!ASSIGNMENT_TYPE_MISMATCH!>"Fail"<!>
+    property <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "Fail"
 }
 
 fun `should work with local var for same type`() {
@@ -35,7 +35,7 @@ fun `should work with local var for same type`() {
 
 fun `should not work with method parameters`() {
     fun m1(property: StringProperty): Unit {
-        <!VAL_REASSIGNMENT!>property<!> = <!ASSIGNMENT_TYPE_MISMATCH!>"Fail"<!>
+        <!VAL_REASSIGNMENT!>property<!> <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "Fail"
     }
 
     fun m2(property: StringProperty): Unit {

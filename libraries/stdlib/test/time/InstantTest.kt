@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@
 
 package test.time
 
-import kotlin.random.*
+import kotlin.random.Random
 import kotlin.test.*
 import kotlin.time.*
 import kotlin.time.Duration.Companion.milliseconds
@@ -68,6 +68,15 @@ class InstantTest {
 
         val instant3 = instant1.plus(pow2_32.toDuration(DurationUnit.SECONDS))
         assertEquals(pow2_32, instant3.epochSeconds)
+    }
+
+    @Test
+    fun instantArithmeticWithOverflow() {
+        val future = Instant.fromEpochSeconds(Instant.DISTANT_FUTURE.toEpochMilliseconds() - 1L)
+        assertEquals(Long.MAX_VALUE, (future + Long.MAX_VALUE.milliseconds).toEpochMilliseconds())
+
+        val past = Instant.fromEpochSeconds(Instant.DISTANT_PAST.toEpochMilliseconds() + 1L)
+        assertEquals(Long.MIN_VALUE, (past - Long.MAX_VALUE.milliseconds).toEpochMilliseconds())
     }
 
     @Test
@@ -281,6 +290,39 @@ class InstantTest {
         assertEquals(Instant.fromEpochSeconds(0L, -999999).toEpochMilliseconds(), -1L)
         assertEquals(Instant.fromEpochSeconds(0L, -1000000).toEpochMilliseconds(), -1L)
         assertEquals(Instant.fromEpochSeconds(0L, -1000001).toEpochMilliseconds(), -2L)
+        assertEquals(Instant.fromEpochSeconds(-1L, 0L).toEpochMilliseconds(), -1000L)
+        assertEquals(Instant.fromEpochSeconds(-1L, 1000000L).toEpochMilliseconds(), -999L)
+        assertEquals(Instant.fromEpochSeconds(-1L, -1000000L).toEpochMilliseconds(), -1001L)
+        assertEquals(
+            Instant.fromEpochSeconds(Instant.MAX.epochSeconds - 1L, 0L).toEpochMilliseconds(),
+            (Instant.MAX.epochSeconds - 1L).seconds.toLong(DurationUnit.MILLISECONDS)
+        )
+        assertEquals(
+            Instant.fromEpochSeconds(Instant.MAX.epochSeconds, 0L).toEpochMilliseconds(),
+            Long.MAX_VALUE
+        )
+        assertEquals(Instant.fromEpochSeconds(Long.MAX_VALUE, 0L).toEpochMilliseconds(), Long.MAX_VALUE)
+        assertEquals(
+            Instant.fromEpochSeconds(Long.MAX_VALUE, 42.seconds.toLong(DurationUnit.NANOSECONDS)).toEpochMilliseconds(),
+            Long.MAX_VALUE
+        )
+        assertEquals(
+            Instant.fromEpochSeconds(Instant.MIN.epochSeconds + 1L, 0L).toEpochMilliseconds(),
+            (Instant.MIN.epochSeconds + 1L).seconds.toLong(DurationUnit.MILLISECONDS)
+        )
+        assertEquals(
+            Instant.fromEpochSeconds(Instant.MIN.epochSeconds, 0L).toEpochMilliseconds(),
+            Long.MIN_VALUE
+        )
+        assertEquals(Instant.fromEpochSeconds(Long.MIN_VALUE, 0L).toEpochMilliseconds(), Long.MIN_VALUE)
+        assertEquals(
+            Instant.fromEpochSeconds(Long.MIN_VALUE, -42.seconds.toLong(DurationUnit.NANOSECONDS)).toEpochMilliseconds(),
+            Long.MIN_VALUE
+        )
+        assertEquals(Instant.fromEpochSeconds(Instant.MAX.epochSeconds - 1L, Long.MAX_VALUE).toEpochMilliseconds(), Long.MAX_VALUE)
+        assertEquals(Instant.fromEpochSeconds(Instant.MIN.epochSeconds + 1L, Long.MIN_VALUE).toEpochMilliseconds(), Long.MIN_VALUE)
+        assertEquals(Instant.fromEpochSeconds(1L, 2L.seconds.toLong(DurationUnit.NANOSECONDS)).toEpochMilliseconds(), 3000L)
+        assertEquals(Instant.fromEpochSeconds(1L, -2L.seconds.toLong(DurationUnit.NANOSECONDS)).toEpochMilliseconds(), -1000L)
     }
 
     @Test

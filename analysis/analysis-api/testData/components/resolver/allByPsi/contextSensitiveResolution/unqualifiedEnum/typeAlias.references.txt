@@ -1,29 +1,34 @@
 KtNameReferenceExpression(120,124): 'Some'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class Some
 
 KtNameReferenceExpression(137,142): 'Other'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) typealias Other = Some
 
 KtNameReferenceExpression(152,153): 'o'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       o: Other /* = Some */
 
 KtNameReferenceExpression(161,166): 'FIRST'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Some) FIRST
 
 KtNameReferenceExpression(176,182): 'SECOND'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in Some) SECOND

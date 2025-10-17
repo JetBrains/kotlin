@@ -197,7 +197,7 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
             with(KotlinTypeMapper) {
                 val parameters = parameterSymbols.map { ConeTypeParameterLookupTag(it) }
                 typeContext.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->
-                    mapType(type as ConeKotlinType, mode, sw)
+                    mapType(type.asCone(), mode, sw)
                 }
             }
         }

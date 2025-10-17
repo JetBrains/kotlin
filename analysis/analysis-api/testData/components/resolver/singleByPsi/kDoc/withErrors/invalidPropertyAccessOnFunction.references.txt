@@ -1,5 +1,6 @@
 KDocName(51,59): 'A.toName'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) fun toName(): kotlin.String

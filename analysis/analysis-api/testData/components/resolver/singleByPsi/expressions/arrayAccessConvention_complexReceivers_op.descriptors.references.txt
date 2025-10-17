@@ -1,5 +1,6 @@
 KtOperationReferenceExpression(189,191): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int

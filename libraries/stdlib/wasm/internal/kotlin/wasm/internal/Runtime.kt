@@ -120,14 +120,14 @@ internal fun consumeFloatIntoVoid(a: Float): Void =
 internal fun consumeDoubleIntoVoid(a: Double): Void =
     implementedAsIntrinsic
 
-// TODO make intrinsic after bootstrap
-internal fun getWasmAbiVersion(): Int = 0
-
 @ExcludedFromCodegen
-internal fun stringGetPoolSize(): Int =
+internal fun getWasmAbiVersion(): Int =
     implementedAsIntrinsic
 
-// This initializer is a special case in FieldInitializersLowering (remove after bootstrap)
+// TODO remove after bootstrap (KT-81325)
+internal fun stringGetPoolSize(): Int = 0
+
+// TODO remove after bootstrap (KT-81325)
 @Suppress("DEPRECATION")
 @OptIn(ExperimentalStdlibApi::class)
 @EagerInitialization

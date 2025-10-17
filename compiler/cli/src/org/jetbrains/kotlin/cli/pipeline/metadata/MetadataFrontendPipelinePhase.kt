@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.asKtFilesList
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar

@@ -67,7 +67,11 @@ internal class KaFirDataFlowProvider(
                     return null
                 }
 
-                return KaBaseSmartCastInfo(smartCastType, firSmartCastExpression.isStable)
+                return KaBaseSmartCastInfo(
+                    backingOriginalType = originalType,
+                    backingSmartCastType = smartCastType,
+                    backingIsStable = firSmartCastExpression.isStable
+                )
             }
         }
 

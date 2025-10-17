@@ -46,6 +46,7 @@ KaSyntheticJavaPropertySymbol:
       getContainingJvmClassName: JavaClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -60,6 +61,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: JavaClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -103,6 +105,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingJvmClassName: JavaClass
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -122,3 +125,4 @@ KaSyntheticJavaPropertySymbol:
   javaGetterName: getFoo
   javaSetterName: null
   setterDeprecationStatus: null
+  importableFqName: null

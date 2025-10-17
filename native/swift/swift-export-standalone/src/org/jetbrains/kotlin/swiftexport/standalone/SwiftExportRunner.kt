@@ -203,7 +203,8 @@ private fun writeRuntimeSupportModule(
 
     val runtimeSupportContent = config.javaClass.getResource("/swift/KotlinRuntimeSupport.swift")?.readText()
         ?: error("Can't find runtime support module")
-    dumpTextAtFile(sequenceOf(runtimeSupportContent), outputPath.toFile())
+    // arrayOf() used as workaround to target method from older kotlin-stlib due to https://github.com/gradle/gradle/issues/34442
+    dumpTextAtFile(sequenceOf(*arrayOf(runtimeSupportContent)), outputPath.toFile())
 
     return SwiftExportModule.SwiftOnly(
         swiftApi = outputPath,
@@ -213,7 +214,8 @@ private fun writeRuntimeSupportModule(
 }
 
 private fun TranslationResult.writeModule(config: SwiftExportConfig): SwiftExportModule {
-    val swiftSources = sequenceOf(swiftModuleSources) + moduleConfig.unsupportedDeclarationReporter.messages.map { "// $it" }
+    // arrayOf() used as workaround to target method from older kotlin-stlib due to https://github.com/gradle/gradle/issues/34442
+    val swiftSources = sequenceOf(*arrayOf(swiftModuleSources)) + moduleConfig.unsupportedDeclarationReporter.messages.map { "// $it" }
     val modulePath = config.outputPath / swiftModuleName
     val outputFiles = SwiftExportFiles(
         swiftApi = (modulePath / "$swiftModuleName.swift"),

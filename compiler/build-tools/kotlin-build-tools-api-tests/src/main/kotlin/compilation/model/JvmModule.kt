@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.MODULE_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_REFLECT
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_STDLIB
 import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.FORCE_RECOMPILATION
@@ -30,8 +31,8 @@ import kotlin.io.path.toPath
 import kotlin.io.path.walk
 
 class JvmModule(
-    private val kotlinToolchain: KotlinToolchain,
-    val buildSession: KotlinToolchain.BuildSession,
+    private val kotlinToolchain: KotlinToolchains,
+    val buildSession: KotlinToolchains.BuildSession,
     project: Project,
     moduleName: String,
     moduleDirectory: Path,
@@ -39,6 +40,7 @@ class JvmModule(
     defaultStrategyConfig: ExecutionPolicy,
     private val snapshotConfig: SnapshotConfig,
     moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+    private val stdlibLocation: List<Path>,
 ) : AbstractModule(
     project,
     moduleName,
@@ -47,15 +49,14 @@ class JvmModule(
     defaultStrategyConfig,
     moduleCompilationConfigAction,
 ) {
-    private val stdlibLocation: Path =
-        KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath() // compile against the provided stdlib
+
 
     /**
      * It won't be a problem to cache [dependencyFiles] and [compileClasspath] currently,
      * but we might add tests where dependencies change between compilations
      */
     private val dependencyFiles: List<Path>
-        get() = dependencies.map { it.location }.plusElement(stdlibLocation)
+        get() = dependencies.map { it.location }.plus(stdlibLocation)
     private val compileClasspath: String
         get() = dependencyFiles.joinToString(File.pathSeparator)
 

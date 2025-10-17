@@ -279,7 +279,10 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun clearCachesRebuildAndCheckOutput(makeOverallResult: MakeResult) {
-        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot)
+        @Suppress("UnstableApiUsage") // KT-81463
+        FileUtil.delete(
+            BuildDataPathsImpl(myDataStorageRoot.toPath()).dataStorageDir.toFile()
+        )
 
         rebuildAndCheckOutput(makeOverallResult)
     }
@@ -671,7 +674,7 @@ private fun createCommonMappingsDump(project: ProjectDescriptor): String {
         result.pushIndent()
 
         val mapping = project.dataManager.getSourceToOutputMap(target)
-        mapping.sources.sorted().forEach {
+        mapping.sourcesIterator.asSequence().toList().sorted().forEach {
             val outputs = mapping.getOutputs(it)!!.sorted()
             if (outputs.isNotEmpty()) {
                 result.println("source $it -> $outputs")

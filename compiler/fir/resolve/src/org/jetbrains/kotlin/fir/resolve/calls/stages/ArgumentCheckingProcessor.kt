@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
@@ -122,6 +124,7 @@ internal object ArgumentCheckingProcessor {
                 is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
                 is FirPropertyAccessExpression -> preprocessSimpleNameReferenceForContextSensitiveResolution(atom)
+                is FirCollectionLiteral -> preprocessCollectionLiteral(atom)
                 else -> error("Unknown kind of atom with postponed child: ${atom.expression::class}")
             }
 
@@ -355,6 +358,25 @@ internal object ArgumentCheckingProcessor {
         candidate.addPostponedAtom(postponedAtom)
     }
 
+    /**
+     * TODO: Fallback in annotation is a temporary solution. See KT-81110 and
+     *  [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.useCollectionLiteralInAnnotationResolution].
+     */
+    private fun ArgumentContext.preprocessCollectionLiteral(atom: ConeResolutionAtomWithPostponedChild) {
+        val expression = atom.collectionLiteralExpression
+
+        val insideAnnotation = context.bodyResolveComponents.callCompleter.isInsideAnnotationContext()
+        if (insideAnnotation || !LanguageFeature.CollectionLiterals.isEnabled()) {
+            atom.useFallbackForDisabledCollectionLiterals()
+            resolveArgumentExpression(atom.subAtom!!)
+            return
+        }
+
+        val postponedAtom = ConeCollectionLiteralAtom(expression, expectedType, candidate)
+        atom.setPostponedSubAtom(postponedAtom)
+        candidate.addPostponedAtom(postponedAtom)
+    }
+
     private fun ArgumentContext.preprocessLambdaArgument(atom: ConeResolutionAtomWithPostponedChild) {
         if (createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(atom)) {
             return
@@ -378,7 +400,7 @@ internal object ArgumentCheckingProcessor {
 
         val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
             it.kind == ConstraintKind.EQUALITY && it.position.from is ConeExplicitTypeParameterConstraintPosition
-        }?.type as ConeKotlinType?
+        }?.type?.asCone()
 
         if (explicitTypeArgument != null && explicitTypeArgument.typeArguments.isEmpty()) {
             return false
@@ -456,7 +478,7 @@ internal object ArgumentCheckingProcessor {
             "Currently, we only extract lambda info from its shape when expected type is not function, but $expectedType"
         }
         val lambda = argument.anonymousFunction
-        val typeVariable = ConeTypeVariableForLambdaReturnType(lambda, "_L")
+        val typeVariable = ConeTypeVariableForLambdaReturnType(lambda, TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
 
         val receiverType = lambda.receiverType
         val returnType = lambda.returnType ?: typeVariable.defaultType
@@ -466,7 +488,9 @@ internal object ArgumentCheckingProcessor {
         val parameters = lambda.valueParameters.mapIndexed { i, it ->
             it.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?: defaultType
-                ?: ConeTypeVariableForLambdaParameterType("_P$i").apply { csBuilder.registerVariable(this) }.defaultType
+                ?: ConeTypeVariableForLambdaParameterType(TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + i).apply {
+                    csBuilder.registerVariable(this)
+                }.defaultType
         }
 
         val contextParameters = lambda.contextParameters.mapIndexed { i, it ->
@@ -530,4 +554,7 @@ internal object ArgumentCheckingProcessor {
 
     private val ConeResolutionAtomWithPostponedChild.callableReferenceExpression: FirCallableReferenceAccess
         get() = expression as? FirCallableReferenceAccess ?: error("Expected callable reference")
+
+    private val ConeResolutionAtomWithPostponedChild.collectionLiteralExpression: FirCollectionLiteral
+        get() = expression as? FirCollectionLiteral ?: error("Expected collection literal expression")
 }

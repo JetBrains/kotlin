@@ -409,6 +409,7 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
 KtNameReferenceExpression(422,424): 'c1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

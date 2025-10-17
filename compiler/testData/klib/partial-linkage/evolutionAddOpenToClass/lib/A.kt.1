@@ -1,0 +1,9 @@
+open class X {
+    fun foo(): String = "in open class"
+    val bar: String = "in open class"
+}
+
+class Y: X()
+
+fun qux(): X = Y()
+

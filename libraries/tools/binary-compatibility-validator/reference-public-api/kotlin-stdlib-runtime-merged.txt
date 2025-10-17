@@ -145,7 +145,7 @@ public abstract interface annotation class kotlin/Metadata : java/lang/annotatio
 	public abstract fun xs ()Ljava/lang/String;
 }
 
-public abstract interface annotation class kotlin/MustUseReturnValue : java/lang/annotation/Annotation {
+public abstract interface annotation class kotlin/MustUseReturnValues : java/lang/annotation/Annotation {
 }
 
 public class kotlin/NoWhenBranchMatchedException : java/lang/RuntimeException {
@@ -6494,6 +6494,9 @@ public final class kotlin/uuid/Uuid$Companion {
 	public final fun fromLongs (JJ)Lkotlin/uuid/Uuid;
 	public final fun fromUByteArray-GBYM_sE ([B)Lkotlin/uuid/Uuid;
 	public final fun fromULongs-eb3DHEI (JJ)Lkotlin/uuid/Uuid;
+	public final fun generateV4 ()Lkotlin/uuid/Uuid;
+	public final fun generateV7 ()Lkotlin/uuid/Uuid;
+	public final fun generateV7NonMonotonicAt (Lkotlin/time/Instant;)Lkotlin/uuid/Uuid;
 	public final fun getLEXICAL_ORDER ()Ljava/util/Comparator;
 	public final fun getNIL ()Lkotlin/uuid/Uuid;
 	public final fun parse (Ljava/lang/String;)Lkotlin/uuid/Uuid;

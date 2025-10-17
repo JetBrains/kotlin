@@ -139,8 +139,8 @@ fun main() {
      * K <: (C) -> Unit -> TypeVariable(_RP1) >: C
      * K == (B) -> Unit -> TypeVariable(_RP1) == B
      */
-    val x17: (C) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>selectB(id { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, id { it }, id<(B) -> Unit> { x -> x })<!>
-    val x18: (C) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>select(id { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, id<(B) -> Unit> { x -> x })<!>
+    val x17: (C) -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> selectB(id { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, id { it }, id<(B) -> Unit> { x -> x })
+    val x18: (C) -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> select(id { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, { <!DEBUG_INFO_EXPRESSION_TYPE("B")!>it<!> }, id<(B) -> Unit> { x -> x })
 
     // Resolution of extension/non-extension functions combination
     val x19: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this<!> }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>id(fun(x: String) {})<!>)
@@ -154,7 +154,7 @@ fun main() {
     // Convert to extension lambda is impossible because the lambda parameter types aren't specified explicitly
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), <!ARGUMENT_TYPE_MISMATCH!>{ x, <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>y<!> -> x }<!>)
     select(id(id(fun(x: String, y: String) { }), <!TOO_MANY_ARGUMENTS!>fun String.(x: String) {}<!>), { x, y -> x })
-    val x26: Int.(String) -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun (x: String) = 10<!> // it must be error, see KT-38439
+    val x26: Int.(String) -> Int <!INITIALIZER_TYPE_MISMATCH!>=<!> fun (x: String) = 10 // it must be error, see KT-38439
     // Receiver must be specified in anonymous function declaration
     val x27: Int.(String) -> Int = id(<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun (x: String) = 10<!>)
     select(id<Int.(String) -> Unit> {}, { x: Int, y: String -> x })

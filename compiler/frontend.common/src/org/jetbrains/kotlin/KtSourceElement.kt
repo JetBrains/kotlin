@@ -558,6 +558,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ErrorExpressionForTopLevelLambda : KtFakeSourceElementKind()
 
     /**
+     * To store diagnostics for erroneously resolved top-level collection literals.
+     */
+    object ErrorExpressionForTopLevelCollectionLiteral : KtFakeSourceElementKind()
+
+    /**
      * Arbitrary error expression for which we failed to build the real PSI.
      */
     object ErrorExpression : KtFakeSourceElementKind()
@@ -566,6 +571,16 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * When resolving ENTRY as `MyEnum.ENTRY` this is used for the `MyEnum` part
      */
     object QualifierForContextSensitiveResolution : KtFakeSourceElementKind()
+
+    /**
+     * When resolving a collection literal, for the explicit companion object receiver added to the call.
+     */
+    object CompanionObjectForOperatorOfCall : KtFakeSourceElementKind()
+
+    /**
+     * For the function call to operator `of` generated instead of a collection literal.
+     */
+    object OperatorOfCall : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

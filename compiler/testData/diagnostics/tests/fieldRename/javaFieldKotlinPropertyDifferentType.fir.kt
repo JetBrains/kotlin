@@ -10,12 +10,12 @@ public class Base {
 // FILE: Main.kt
 class Derived: Base() {
     val <!PROPERTY_HIDES_JAVA_FIELD!>value<!>: Int = 42
-    val something: String = <!INITIALIZER_TYPE_MISMATCH!>value<!>
+    val something: String <!INITIALIZER_TYPE_MISMATCH!>=<!> value
 
     val String.extension: Int get() = 42
     fun String.foo() {
         // K1 & K2 work in the same way here (resolve to an extension property)
-        val something: String = <!INITIALIZER_TYPE_MISMATCH!>extension<!>
+        val something: String <!INITIALIZER_TYPE_MISMATCH!>=<!> extension
     }
 }
 

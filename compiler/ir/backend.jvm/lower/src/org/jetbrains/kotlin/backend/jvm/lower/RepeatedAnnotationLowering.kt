@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
  *     @A.Container(value = [A(), A(), A()])
  *     fun f() {}
  */
-@PhaseDescription(name = "RepeatedAnnotation")
 internal class RepeatedAnnotationLowering(private val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(this)

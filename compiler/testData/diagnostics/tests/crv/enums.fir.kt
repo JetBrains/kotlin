@@ -2,7 +2,7 @@
 // WITH_STDLIB
 
 
-@MustUseReturnValue
+@MustUseReturnValues
 enum class WithMRV {
     A, B;
     fun foo() = ""

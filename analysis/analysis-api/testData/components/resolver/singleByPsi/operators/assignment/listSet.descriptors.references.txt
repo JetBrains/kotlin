@@ -1,5 +1,6 @@
 KtOperationReferenceExpression(57,58): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

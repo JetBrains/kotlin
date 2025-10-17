@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -65,7 +64,7 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         )
 
         if (callableReferenceAdaptation != null) {
-            if (!LanguageFeature.DisableCompatibilityModeForNewInference.isEnabled()) {
+            if (enableCompatibilityModeForNewInference()) {
                 sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
 

@@ -3,14 +3,14 @@
 
 package kt352
 
-val f : (Any) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>{  -> }<!>  //type mismatch
+val f : (Any) -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> {  -> }  //type mismatch
 
 fun foo() {
-    val f : (Any) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>{ -> }<!>  //!!! no error
+    val f : (Any) -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> { -> }  //!!! no error
 }
 
 class A() {
-    val f : (Any) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>{ -> }<!>  //type mismatch
+    val f : (Any) -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> { -> }  //type mismatch
 }
 
 //more tests

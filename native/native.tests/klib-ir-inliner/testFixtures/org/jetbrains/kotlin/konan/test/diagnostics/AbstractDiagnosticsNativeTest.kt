@@ -65,6 +65,7 @@ abstract class AbstractDiagnosticsNativeTestBase(
 
         defaultDirectives {
             LANGUAGE + "+EnableDfaWarningsInK2"
+            +FirDiagnosticsDirectives.FIR_IDENTICAL
         }
     }
 

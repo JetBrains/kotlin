@@ -5,4 +5,4 @@ fun foo() {
     println("after: $x")
 }
 
-// LINES(JS_IR): 1 1 2 3 3 4 4 5 5
+// LINES: 1 1 2 3 3 4 4 5 5

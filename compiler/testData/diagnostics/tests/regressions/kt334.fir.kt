@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
-// WITH_EXTRA_CHECKERS
 
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Comparable
 

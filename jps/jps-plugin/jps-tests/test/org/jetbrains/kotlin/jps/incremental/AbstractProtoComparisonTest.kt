@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.jps.incremental
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
@@ -98,7 +98,7 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
             p.println("CHANGES in $classId: ${changes.joinToString()}")
         }
 
-        KotlinTestUtils.assertEqualsToFile(expectedOutputFile(testDir), sb.toString())
+        TestDataAssertions.assertEqualsToFile(expectedOutputFile(testDir), sb.toString())
     }
 
     private fun classesForPrefixedSources(testDir: File, workingDir: File, prefix: String): Map<ClassId, PROTO_DATA> {

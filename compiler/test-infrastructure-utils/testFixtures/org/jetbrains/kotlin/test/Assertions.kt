@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.test
 import java.io.File
 import java.nio.file.Path
 
-abstract class Assertions {
-    val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
+val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
 
+abstract class Assertions {
     fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String = { it }) {
         assertEqualsToFile(expectedFile, actual, sanitizer) { "Actual data differs from file content" }
     }

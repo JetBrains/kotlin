@@ -168,9 +168,12 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         }.also { accessor ->
             accessor.parent = parent
             accessor.copyAttributes(source)
+            val capturedTypeParameters = capturedTypeParametersOfSyntheticAccessor(source)
+            accessor.copyTypeParameters(capturedTypeParameters, IrDeclarationOrigin.SYNTHETIC_ACCESSOR_CAPTURED_TYPE_PARAMETER)
             accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
-            accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
+            val typeParameterMapping = (capturedTypeParameters + source.typeParameters).zip(accessor.typeParameters).toMap()
+            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType, typeParameterMapping)
+            accessor.returnType = source.returnType.remapTypeParameters(source, accessor, typeParameterMapping)
 
             accessor.body = context.irFactory.createBlockBody(
                 accessor.startOffset, accessor.startOffset,
@@ -336,12 +339,11 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         call: IrFunctionAccessExpression,
         syntheticFunction: IrFunction
     ) {
-        var typeArgumentOffset = 0
-        if (syntheticFunction is IrConstructor) {
-            call.passTypeArgumentsFrom(syntheticFunction.parentAsClass)
-            typeArgumentOffset = syntheticFunction.parentAsClass.typeParameters.size
-        }
-        call.passTypeArgumentsFrom(syntheticFunction, offset = typeArgumentOffset)
+        syntheticFunction.allTypeParameters
+            .filter { it.origin != IrDeclarationOrigin.SYNTHETIC_ACCESSOR_CAPTURED_TYPE_PARAMETER }
+            .forEachIndexed { i, param ->
+                call.typeArguments[i] = param.defaultType
+            }
 
         val delegateTo = call.symbol.owner
 
@@ -434,7 +436,12 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             accessorSymbol is IrConstructorSymbol -> accessorSymbol.produceCallToSyntheticConstructor(oldExpression)
             else -> accessorSymbol.produceCallToSyntheticFunction(oldExpression)
         }
-        newExpression.copyTypeArgumentsFrom(oldExpression)
+        val capturedTypeParameters = if (oldExpression is IrCall)
+            capturedTypeParametersOfSyntheticAccessor(oldExpression.symbol.owner) else listOf()
+        capturedTypeParameters.forEachIndexed { index, typeParameter ->
+            newExpression.typeArguments[index] = typeParameter.defaultType
+        }
+        newExpression.copyTypeArgumentsFrom(oldExpression, shift = capturedTypeParameters.size)
         val newExpressionArguments = if (accessorSymbol is IrConstructorSymbol) {
             oldExpression.arguments + createAccessorMarkerArgument()
         } else {
@@ -443,6 +450,8 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         newExpression.arguments.assignFrom(newExpressionArguments)
         return newExpression
     }
+
+    protected open fun capturedTypeParametersOfSyntheticAccessor(declaration: IrDeclaration): List<IrTypeParameter> = listOf()
 
     private fun IrFunctionSymbol.produceCallToSyntheticFunction(
         oldExpression: IrFunctionAccessExpression

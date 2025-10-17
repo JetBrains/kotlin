@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.library.abi
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 
-fun main() {
-    System.setProperty("java.awt.headless", "true")
+fun main(args: Array<String>) {
+    val testsRoot = args[0]
 
-    generateTestGroupSuiteWithJUnit5 {
-        testGroup("compiler/util-klib-abi/tests-gen", "compiler/testData/klib/dump-abi") {
+    generateTestGroupSuiteWithJUnit5(args) {
+        testGroup(testsRoot, "compiler/testData/klib/dump-abi") {
             testClass<AbstractFirJsLibraryAbiReaderTest> {
                 model("content")
             }

@@ -249,7 +249,12 @@ abstract class ProjectTestsExtension(val project: Project) {
             }
         }
         val generatorTask = project.generator(taskName, fqName, fixturesSourceSet) {
-            this.args = listOf(generationPath.asFile.absolutePath)
+            this.args = buildList {
+                add(generationPath.asFile.absolutePath)
+                if (generateTestsInBuildDirectory) {
+                    add("allowGenerationOnTeamCity")
+                }
+            }
             if (generateTestsInBuildDirectory) {
                 this.outputs.dir(generationPath).withPropertyName("generatedTests")
                 doFirst {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.isMacabi
 import org.jetbrains.kotlin.konan.target.withOSVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
@@ -584,12 +585,29 @@ class SwiftCompilation<T : TestCompilationArtifact>(
 
         val optimizationModeFlags = swiftcOptimizationModeFlags(testRunSettings.get<OptimizationMode>())
 
-        val args = swiftExtraOpts + optimizationModeFlags + sources.map { it.absolutePath } + listOf(
-            "-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget,
-            "-o", outputFile(expectedArtifact).absolutePath,
-            "-g", // Xcode seems to pass -g even for optimized builds by default.
-            "-Xcc", "-Werror", // To fail compilation on warnings in framework header.
-        )
+        val args = buildList {
+            addAll(
+                listOf(
+                    "-sdk", configs.absoluteTargetSysRoot,
+                    "-target", swiftTarget,
+                    "-o", outputFile(expectedArtifact).absolutePath,
+                    "-g", // Xcode seems to pass -g even for optimized builds by default.
+                    "-Xcc", "-Werror", // To fail compilation on warnings in framework header.
+                )
+            )
+            if (configs.targetTriple.isMacabi) {
+                addAll(
+                    // Since the sysroot is for macOS, we should point the compiler to the directory with iOS system frameworks.
+                    listOf(
+                        "-Fsystem", "${configs.absoluteTargetSysRoot}/System/iOSSupport/System/Library/Frameworks",
+                        "-Xcc", "-isystem", "-Xcc", "${configs.absoluteTargetSysRoot}/System/iOSSupport/usr/include",
+                    )
+                )
+            }
+            addAll(sources.map { it.absolutePath })
+            addAll(optimizationModeFlags)
+            addAll(swiftExtraOpts)
+        }
 
         val loggedSwiftCParameters = LoggedData.SwiftCParameters(args, sources)
         val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out T>) = try {

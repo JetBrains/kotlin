@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // KT-66098: ClassCastException
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // WITH_STDLIB
 // WITH_COROUTINES
 

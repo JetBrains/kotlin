@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
-import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
+import org.jetbrains.kotlin.backend.konan.IntrinsicType
+import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -52,6 +52,21 @@ internal class InteropLowering(val context: Context, val fileLowerState: FileLow
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         InteropLoweringPart1(context, fileLowerState).lower(irBody, container)
         InteropLoweringPart2(context, fileLowerState).lower(irBody, container)
+    }
+
+    companion object {
+        /**
+         * InteropLowering uses this character to designate name placeholders in generated C stubs,
+         * so that InteropBridgesNameInventor replaces the placeholders with real names.
+         *
+         * So, ideally, this character should never be found in valid C code.
+         * Otherwise, something that is not a placeholder can be parsed as one (see e.g. KT-81538).
+         *
+         * It seems that the only reliable choice then is to use the null character.
+         * Which is not great because it is not normally displayed, making potential problems
+         * harder to diagnose.
+         */
+        const val NAME_PLACEHOLDER_QUOTE = '\u0000'
     }
 }
 
@@ -129,7 +144,10 @@ private abstract class BaseInteropIrTransformer(
                 addKotlin(declaration)
             }
 
-            override fun getUniqueCName(prefix: String) = "\$$prefix${nameCounter.getNext()}\$"
+            override fun getUniqueCName(prefix: String): String {
+                val quote = InteropLowering.NAME_PLACEHOLDER_QUOTE
+                return "$quote$prefix${nameCounter.getNext()}$quote"
+            }
 
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
                     fileLowerState.getFunctionReferenceImplUniqueName(prefix)

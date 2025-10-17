@@ -144,5 +144,10 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
             "Default parameters in open @Composable functions are not supported before language version 2.2 (configured version is {0})",
             KtDiagnosticRenderers.TO_STRING
         )
+
+        map.put(
+            ComposeErrors.KEY_CALL_WITH_NO_ARGUMENTS,
+            "key requires at least one argument."
+        )
     }
 }

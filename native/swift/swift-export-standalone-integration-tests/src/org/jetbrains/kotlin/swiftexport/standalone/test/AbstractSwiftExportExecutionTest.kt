@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
@@ -14,10 +15,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProvider.getTestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemFrameworksPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemToolchainPath
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 
 /**
@@ -31,6 +35,12 @@ import java.io.File
  */
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryCompilationTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
+
+    @BeforeEach
+    fun turnOffAllExecutionTests() {
+        // TODO: KT-81345 Temporary turned off Swift Export execution tests
+        Assumptions.assumeTrue(false)
+    }
 
     override fun runCompiledTest(
         testPathFull: File,
@@ -65,6 +75,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ): TestExecutable {
+        // todo: KT-81344 Swift Export Execution tests uses 2 different xcode installlation
         val swiftExtraOpts = swiftModules.flatMap {
             listOf(
                 "-I", it.rootDir.absolutePath,

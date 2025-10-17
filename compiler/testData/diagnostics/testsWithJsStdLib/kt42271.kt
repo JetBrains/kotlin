@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlin.properties.Delegates
 
 private var value by Delegates.notNull<Int>()

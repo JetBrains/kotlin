@@ -45,7 +45,7 @@ fun main() {
     A.bar(block)
 
     val block2: (String) -> CharSequence? = {
-        x -> x.toString()
+        x -> x.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
     }
 
     A.baz(<!ARGUMENT_TYPE_MISMATCH!>block<!>)

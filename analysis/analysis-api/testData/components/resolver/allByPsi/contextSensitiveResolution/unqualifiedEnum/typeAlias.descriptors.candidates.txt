@@ -58,6 +58,7 @@ KtWhenExpression(146,189): 'when (o) {'
 KtNameReferenceExpression(152,153): 'o'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

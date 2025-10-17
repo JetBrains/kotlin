@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.commonizer
 
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.DependencyAwareInlineSourceTestFactory
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.Parameters
-import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
 import kotlin.test.assertIs
@@ -52,7 +50,6 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             get() = DependencyAwareInlineSourceTestFactory(parentInlineSourceBuilder, dependencies.toTargetDependent())
 
 
-        @InlineSourcesCommonizationTestDsl
         fun outputTarget(vararg targets: String) {
             val outputTargets = outputTargets ?: mutableSetOf()
             targets.forEach { target ->
@@ -61,17 +58,14 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             this.outputTargets = outputTargets
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun target(target: CommonizerTarget, builder: TargetBuilder.() -> Unit) {
             targets = targets + TargetBuilder(target, inlineSourceBuilderFactory[target]).also(builder).build()
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun target(target: String, builder: TargetBuilder.() -> Unit) {
             return target(parseCommonizerTarget(target), builder)
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun registerDependency(vararg targets: CommonizerTarget, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             targets.forEach { target ->
                 val dependenciesList = dependencies.getOrPut(target) { mutableListOf() }
@@ -83,12 +77,10 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             }
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun registerDependency(vararg targets: String, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             registerDependency(targets = targets.map(::parseCommonizerTarget).withAllLeaves().toTypedArray(), builder)
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun simpleSingleSourceTarget(target: CommonizerTarget, @Language("kotlin") sourceContent: String) {
             target(target) {
                 module {
@@ -101,12 +93,10 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             simpleSingleSourceTarget(this, sourceContent)
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun simpleSingleSourceTarget(target: String, @Language("kotlin") sourceCode: String) {
             simpleSingleSourceTarget(parseCommonizerTarget(target), sourceCode)
         }
 
-        @InlineSourcesCommonizationTestDsl
         fun <T : Any> setting(type: CommonizerSettings.Key<T>, value: T) {
             val setting = MapBasedCommonizerSettings.Setting(type, value)
             check(setting.key !in settings.map { it.key }) {
@@ -149,7 +139,6 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
     class TargetBuilder(private val target: CommonizerTarget, private val inlineSourceBuilder: InlineSourceBuilder) {
         private var modules: List<InlineSourceBuilder.Module> = emptyList()
 
-        @InlineSourcesCommonizationTestDsl
         fun module(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             modules = modules + inlineSourceBuilder.createModule(builder)
         }
@@ -183,17 +172,18 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             outputTargets = outputTargets,
             manifestProvider = TargetDependent(outputTargets, manifestDataProvider),
             dependenciesProvider = TargetDependent(outputTargets.withAllLeaves()) { target ->
-                val explicitDependencies = dependencies.getOrNull(target).orEmpty().map { module -> createModuleDescriptor(module) }
-                val implicitDependencies = listOfNotNull(DefaultBuiltIns.Instance.builtInsModule)
-                val dependencies = explicitDependencies + implicitDependencies
-                if (dependencies.isEmpty()) null
-                else MockModulesProvider.create(dependencies)
+                val dependenciesMetadata = dependencies.getOrNull(target).orEmpty()
+                    .map { module -> createMetadata(module) }
+                    .plus(loadStdlibMetadata())
+                MockModulesProvider.create(dependenciesMetadata)
             },
             targetProviders = TargetDependent(outputTargets.allLeaves()) { commonizerTarget ->
                 val target = targets.singleOrNull { it.target == commonizerTarget } ?: return@TargetDependent null
                 TargetProvider(
                     target = commonizerTarget,
-                    modulesProvider = MockModulesProvider.create(target.modules.map { createModuleDescriptor(it) })
+                    modulesProvider = MockModulesProvider.create(
+                        target.modules.map { createMetadata(it) }
+                    )
                 )
             },
             resultsConsumer = resultsConsumer,
@@ -207,10 +197,6 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
 fun HierarchicalCommonizationResult.getTarget(target: CommonizerTarget): List<ResultsConsumer.ModuleResult> {
     return this.results[target] ?: fail("Missing target $target in results ${this.results.keys}")
-}
-
-fun HierarchicalCommonizationResult.getTarget(target: String): List<ResultsConsumer.ModuleResult> {
-    return getTarget(parseCommonizerTarget(target))
 }
 
 fun HierarchicalCommonizationResult.assertCommonized(
@@ -229,7 +215,7 @@ fun HierarchicalCommonizationResult.assertCommonized(
     val commonizedModule = assertIs<ResultsConsumer.ModuleResult>(module, "Expected ${module.libraryName} to be 'Commonized'")
 
     assertModulesAreEqual(
-        inlineSourceTest.createMetadata(referenceModule), commonizedModule.metadata, target
+        inlineSourceTest.createMetadata(referenceModule).metadata, commonizedModule.metadata, target
     )
 }
 
@@ -246,8 +232,3 @@ fun HierarchicalCommonizationResult.assertCommonized(
     target: String,
     moduleBuilder: InlineSourceBuilder.ModuleBuilder.() -> Unit
 ) = assertCommonized(parseCommonizerTarget(target), moduleBuilder)
-
-fun Collection<ResultsConsumer.ModuleResult>.assertSingleCommonizedModule(): ResultsConsumer.ModuleResult {
-    kotlin.test.assertEquals(1, size, "Expected exactly one module. Found: ${this.map { it.libraryName }}")
-    return assertIs(single(), "Expected single module to be 'Commonized'")
-}

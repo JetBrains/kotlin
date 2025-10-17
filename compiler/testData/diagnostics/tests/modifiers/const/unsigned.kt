@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // WITH_STDLIB
+// DIAGNOSTICS: -REDUNDANT_CALL_OF_CONVERSION_METHOD
 const val byteVal: UByte = 1u
 const val shortVal: UShort = 2u
 const val intVal: UInt = 3u

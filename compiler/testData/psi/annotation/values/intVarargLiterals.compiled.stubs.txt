@@ -5,6 +5,7 @@ One.class:
     CLASS[classId=/One, fqName=One, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=One, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
+          valueArguments: [ v -> [1] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -22,6 +23,7 @@ Spread.class:
     CLASS[classId=/Spread, fqName=Spread, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Spread, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
+          valueArguments: [ v -> [1, 2, 3, 4] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -39,6 +41,7 @@ Three.class:
     CLASS[classId=/Three, fqName=Three, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Three, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
+          valueArguments: [ v -> [1, 2, 3] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -56,6 +59,7 @@ Two.class:
     CLASS[classId=/Two, fqName=Two, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Two, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
+          valueArguments: [ v -> [1, 2] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -94,6 +98,7 @@ VarArg.class:
           MODIFIER_LIST[public companion]
           CLASS_BODY
             PROPERTY[fqName=VarArg.Companion.CONSTANT, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONSTANT]
+              constantInitializer: 3
               MODIFIER_LIST[public const]
               TYPE_REFERENCE
                 USER_TYPE

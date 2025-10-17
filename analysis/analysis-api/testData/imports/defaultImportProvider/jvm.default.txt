@@ -35,7 +35,7 @@ HIGH:
   import kotlin.Level
   import kotlin.Long
   import kotlin.LongArray
-  import kotlin.MustUseReturnValue
+  import kotlin.MustUseReturnValues
   import kotlin.Nothing
   import kotlin.Number
   import kotlin.OptIn

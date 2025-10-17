@@ -1,5 +1,6 @@
 KtNameReferenceExpression(104,106): 'va'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

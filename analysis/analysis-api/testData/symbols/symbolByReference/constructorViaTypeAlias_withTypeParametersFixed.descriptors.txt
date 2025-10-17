@@ -39,6 +39,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersFixed.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -47,6 +48,7 @@ KaConstructorSymbol:
       compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -70,9 +72,11 @@ KaConstructorSymbol:
       getContainingJvmClassName: test.MyClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(constructorViaTypeAlias_withTypeParametersFixed.kt)
   getContainingJvmClassName: test.MyClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: test.MyClass

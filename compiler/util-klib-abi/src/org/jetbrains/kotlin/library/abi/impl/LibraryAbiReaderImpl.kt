@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.CLASS_SYMBOL
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL
+import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -57,7 +58,7 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
     private val library: KotlinLibrary = try {
         ToolingSingleFileKlibResolveStrategy.tryResolve(KFile(libraryFile.absolutePath), DummyLogger)?.apply {
             check(uniqueName.isNotEmpty()) { "Can't read unique name from manifest" }
-            check(hasIr) { "Library does not have IR" }
+            check(hasMainIr) { "Library does not have IR" }
         }
     } catch (e: Exception) {
         throw malformedLibrary(libraryFile, e)
@@ -120,7 +121,7 @@ private class LibraryDeserializer(
         if (this != null && compositeFilter?.isDeclarationExcluded(this) == true) null else this
 
     private inner class FileDeserializer(fileIndex: Int) {
-        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library, fileIndex))
+        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library.mainIr, fileIndex))
 
         private val packageName: AbiCompoundName
         private val topLevelDeclarationIds: List<Int>
@@ -128,14 +129,15 @@ private class LibraryDeserializer(
         private val typeDeserializer: TypeDeserializer
 
         init {
-            val proto = ProtoFile.parseFrom(library.file(fileIndex).codedInputStream, IrLibraryFileFromBytes.extensionRegistryLite)
+            val mainIr = library.mainIr
+            val proto = ProtoFile.parseFrom(mainIr.file(fileIndex).codedInputStream, IrLibraryFileFromBytes.extensionRegistryLite)
             topLevelDeclarationIds = proto.declarationIdList
 
             val packageFQN = fileReader.deserializeFqName(proto.fqNameList)
             packageName = AbiCompoundName(packageFQN)
 
-            val fileEntry = library.fileEntry(proto, fileIndex)
-            val fileName = if (fileEntry.hasName()) fileEntry.name else "<unknown>"
+            val fileEntry = mainIr.fileEntry(proto, fileIndex)
+            val fileName = fileReader.deserializeFileEntryName(fileEntry)
 
             val fileSignature = FileSignature(
                 id = Any(), // Just an unique object.
@@ -785,7 +787,7 @@ private class LibraryDeserializer(
     fun deserialize(): AbiTopLevelDeclarations {
         val topLevels = ArrayList<AbiDeclaration>()
 
-        for (fileIndex in 0 until library.fileCount()) {
+        for (fileIndex in 0 until library.mainIr.fileCount()) {
             FileDeserializer(fileIndex).deserializeTo(topLevels)
         }
 

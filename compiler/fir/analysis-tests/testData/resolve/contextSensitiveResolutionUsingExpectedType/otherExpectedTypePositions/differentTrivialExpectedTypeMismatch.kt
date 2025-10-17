@@ -10,7 +10,7 @@ class MyClass {
 }
 
 val x: MyClass = X
-val y: MyClass = <!INITIALIZER_TYPE_MISMATCH!>Y<!>
+val y: MyClass <!INITIALIZER_TYPE_MISMATCH!>=<!> Y
 
 fun myX(): MyClass = X
 fun myY(): MyClass = <!RETURN_TYPE_MISMATCH!>Y<!>
@@ -31,7 +31,7 @@ val property4
 
 fun main() {
     var m: MyClass? = null
-    m = <!ASSIGNMENT_TYPE_MISMATCH!>Y<!>
+    m <!ASSIGNMENT_TYPE_MISMATCH!>=<!> Y
     m = X
 }
 

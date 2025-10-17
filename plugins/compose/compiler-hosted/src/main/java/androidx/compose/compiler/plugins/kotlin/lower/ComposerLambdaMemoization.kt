@@ -127,11 +127,21 @@ private class SymbolOwnerContext(override val declaration: IrSymbolOwner) : Decl
 private class FunctionContext(
     override val declaration: IrFunction,
     override val composable: Boolean,
+    /**
+     * The number of `IrTry` elements that are descendants of _d_ and ancestors of the current
+     * scope, where _d_ is [declaration] if [declaration] is not an inline lambda or the closest
+     * ancestor of [declaration] that is not an inline lambda, otherwise.
+     */
+    var enclosingTryCount: Int = 0,
 ) : DeclarationContext() {
     val locals = mutableSetOf<IrValueDeclaration>()
     override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
     var collectors = mutableListOf<CaptureCollector>()
-    val canRemember: Boolean get() = composable
+
+
+    // Composable function invocations are not allowed in `try` expressions, so memoization is not
+    // allowed in them.
+    val canRemember: Boolean get() = composable && enclosingTryCount == 0
 
     init {
         declaration.parameters.forEach {
@@ -414,7 +424,14 @@ class ComposerLambdaMemoization(
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val composable = declaration.allowsComposableCalls
-        val context = FunctionContext(declaration, composable)
+        val context = FunctionContext(
+            declaration,
+            composable,
+            // When creating a [FunctionContext] for an inline lambda, we must carry
+            // `enclosingTryCount` over, because the counted `try` expressions effectively enclose
+            // the contents of the inline lambda.
+            if (!inlineLambdaInfo.isInlineLambda(declaration)) 0 else currentFunctionContext?.enclosingTryCount ?: 0
+        )
         if (declaration.isLocal) {
             declarationContextStack.recordLocalDeclaration(context)
         }
@@ -451,6 +468,14 @@ class ComposerLambdaMemoization(
         declarationContextStack.push(context)
         val result = super.visitAnonymousInitializer(declaration)
         declarationContextStack.pop()
+        return result
+    }
+
+    override fun visitTry(aTry: IrTry): IrExpression {
+        currentFunctionContext?.enclosingTryCount++
+        val result = super.visitExpression(aTry)
+        currentFunctionContext?.enclosingTryCount--
+
         return result
     }
 

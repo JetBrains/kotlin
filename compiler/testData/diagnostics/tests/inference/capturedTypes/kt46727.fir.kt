@@ -26,7 +26,7 @@ public class Foo3<T> {
 // --- from Java --- //
 
 fun takeStarFoo(x: Foo<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
     x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
@@ -44,7 +44,7 @@ public class Bar<T> {
 }
 
 fun takeStarBar(x: Bar<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
     x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
@@ -58,7 +58,7 @@ fun main2() {
 // --- from Java (nullable) --- //
 
 fun takeStarFoo2(x: Foo2<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
     x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
@@ -75,7 +75,7 @@ public class Bar2<T> {
 }
 
 fun takeStarBar2(x: Bar2<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
     x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
@@ -89,7 +89,7 @@ fun main4() {
 // --- from Java (not-null) --- //
 
 fun takeStarFoo3(x: Foo3<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
     x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
@@ -107,7 +107,7 @@ class Bar3<T> {
 }
 
 fun takeStarBar3(x: Bar3<*>) {
-    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
     x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 

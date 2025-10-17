@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR, WASM_JS
 
 // KT-61141: mustCheckInImports throws kotlin.IllegalStateException instead of java.lang.IllegalStateException
 // IGNORE_BACKEND: NATIVE

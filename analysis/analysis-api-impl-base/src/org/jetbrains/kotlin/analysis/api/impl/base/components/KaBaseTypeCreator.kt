@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -99,11 +98,15 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     }
 
     class ByClassId(classId: ClassId, override val token: KaLifetimeToken) : KaBaseClassTypeBuilder() {
-        val classId: ClassId by validityAsserted(classId)
+        private val backingClassId: ClassId = classId
+
+        val classId: ClassId get() = withValidityAssertion { backingClassId }
     }
 
     class BySymbol(symbol: KaClassLikeSymbol, override val token: KaLifetimeToken) : KaBaseClassTypeBuilder() {
-        val symbol: KaClassLikeSymbol by validityAsserted(symbol)
+        private val backingSymbol: KaClassLikeSymbol = symbol
+
+        val symbol: KaClassLikeSymbol get() = withValidityAssertion { backingSymbol }
     }
 }
 
@@ -134,7 +137,9 @@ sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
         }
 
     class ByElementType(elementType: KaType, override val token: KaLifetimeToken) : KaBaseArrayTypeBuilder() {
-        val elementType: KaType by validityAsserted(elementType)
+        private val backingElementType: KaType = elementType
+
+        val elementType: KaType get() = withValidityAssertion { backingElementType }
     }
 }
 
@@ -163,6 +168,8 @@ sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
         }
 
     class BySymbol(symbol: KaTypeParameterSymbol, override val token: KaLifetimeToken) : KaBaseTypeParameterTypeBuilder() {
-        val symbol: KaTypeParameterSymbol by validityAsserted(symbol)
+        private val backingSymbol: KaTypeParameterSymbol = symbol
+
+        val symbol: KaTypeParameterSymbol get() = withValidityAssertion { backingSymbol }
     }
 }

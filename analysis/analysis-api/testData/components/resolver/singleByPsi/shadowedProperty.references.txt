@@ -1,5 +1,6 @@
 KtNameReferenceExpression(107,115): 'property'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in pack.Foo) val property: kotlin.String

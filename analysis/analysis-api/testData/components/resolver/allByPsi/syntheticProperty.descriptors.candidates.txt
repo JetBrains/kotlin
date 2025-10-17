@@ -744,6 +744,7 @@ KtValueArgument(84,103): 'javaClass.something'
 KtDotQualifiedExpression(84,103): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -798,6 +799,7 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
 KtNameReferenceExpression(84,93): 'javaClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -839,6 +841,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -857,6 +860,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
 KtNameReferenceExpression(94,103): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -878,6 +882,7 @@ KtNameReferenceExpression(94,103): 'something'
 KtBinaryExpression(109,132): 'javaClass.something = 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -900,6 +905,7 @@ KtBinaryExpression(109,132): 'javaClass.something = 1'
 KtDotQualifiedExpression(109,128): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -955,6 +961,7 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
 KtNameReferenceExpression(109,118): 'javaClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -996,6 +1003,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1014,6 +1022,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
 KtNameReferenceExpression(119,128): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1036,6 +1045,7 @@ KtNameReferenceExpression(119,128): 'something'
 KtOperationReferenceExpression(129,130): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1105,6 +1115,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
 KtDotQualifiedExpression(137,156): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1159,6 +1170,7 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
 KtNameReferenceExpression(137,146): 'javaClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1200,6 +1212,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1218,6 +1231,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
 KtNameReferenceExpression(147,156): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1322,6 +1336,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
 KtDotQualifiedExpression(166,185): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1376,6 +1391,7 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
 KtNameReferenceExpression(166,175): 'javaClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1417,6 +1433,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1435,6 +1452,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
 KtNameReferenceExpression(176,185): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1564,6 +1582,7 @@ KtOperationReferenceExpression(192,194): '--'
 KtDotQualifiedExpression(194,213): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1618,6 +1637,7 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
 KtNameReferenceExpression(194,203): 'javaClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1659,6 +1679,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1677,6 +1698,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
 KtNameReferenceExpression(204,213): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1752,6 +1774,7 @@ KtPostfixExpression(219,230): 'something++'
 KtNameReferenceExpression(219,228): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -1902,6 +1925,7 @@ KtParenthesizedExpression(235,246): '(something)'
 KtNameReferenceExpression(236,245): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -1995,6 +2019,7 @@ KtOperationReferenceExpression(246,248): '++'
 KtBinaryExpression(253,268): '(something) = 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -2038,6 +2063,7 @@ KtParenthesizedExpression(253,264): '(something)'
 KtNameReferenceExpression(254,263): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -2078,6 +2104,7 @@ KtNameReferenceExpression(254,263): 'something'
 KtOperationReferenceExpression(265,266): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -2121,6 +2148,7 @@ KtConstantExpression(267,268): '1'
 KtBinaryExpression(273,298): '(javaClass.something) = 1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2146,6 +2174,7 @@ KtParenthesizedExpression(273,294): '(javaClass.something)'
 KtDotQualifiedExpression(274,293): 'javaClass.something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2201,6 +2230,7 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
 KtNameReferenceExpression(274,283): 'javaClass'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2242,6 +2272,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2260,6 +2291,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
 KtNameReferenceExpression(284,293): 'something'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2282,6 +2314,7 @@ KtNameReferenceExpression(284,293): 'something'
 KtOperationReferenceExpression(295,296): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

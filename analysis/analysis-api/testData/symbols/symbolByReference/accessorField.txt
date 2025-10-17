@@ -27,3 +27,4 @@ KaBackingFieldSymbol:
   getContainingJvmClassName: AccessorFieldKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
+  importableFqName: null

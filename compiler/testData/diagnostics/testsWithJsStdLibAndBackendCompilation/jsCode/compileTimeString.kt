@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun testSimpleString() {
     js("var a = 123;")

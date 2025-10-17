@@ -24,7 +24,6 @@ org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.Appl
 org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.ApplicableAsExtensionCallable
 org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.ApplicableAsFunctionalVariableCall
 org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.NonApplicable
-org.jetbrains.kotlin.analysis.api.components.KaImportOptimizer
 org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener
 org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider
@@ -72,6 +71,7 @@ org.jetbrains.kotlin.analysis.api.components.ShortenOptions.Companion.DEFAULT
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy
+org.jetbrains.kotlin.analysis.api.components.computeExitPointSnapshot(List<KtExpression>)
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractCallsInPlaceContractEffectDeclaration.occurrencesRange
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractCallsInPlaceContractEffectDeclaration.valueParameterReference
 org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConditionalContractEffectDeclaration.condition

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(76,86): 'javaMethod'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in JavaClass) open fun javaMethod()

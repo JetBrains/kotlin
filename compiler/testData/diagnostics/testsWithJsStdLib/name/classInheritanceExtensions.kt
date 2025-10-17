@@ -8,4 +8,4 @@ open class Class {
         get() = 0
 }
 
-class <!JS_FAKE_NAME_CLASH!>MyClass1<!> : Class()
+class MyClass1 : Class()

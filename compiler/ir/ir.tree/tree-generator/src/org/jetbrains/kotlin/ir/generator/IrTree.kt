@@ -569,8 +569,8 @@ object IrTree : AbstractTreeBuilder() {
                 Stores implicit receiver parameters configured for the snippet.
             """.trimIndent()
         }
-        +listField("variablesFromOtherSnippets", variable, mutability = MutableList)
-        +listField("declarationsFromOtherSnippets", declaration, mutability = MutableList)
+        +listField("variablesFromOtherSnippets", variable, mutability = MutableList, isChild = false)
+        +listField("declarationsFromOtherSnippets", declaration, mutability = MutableList, isChild = false)
         +referencedSymbol("stateObject", classSymbol, nullable = true) {
             kDoc = """
                 Contains link to the static state object for this compilation session.

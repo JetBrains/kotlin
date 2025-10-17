@@ -4,10 +4,10 @@
 
 package foo
 
-<!WRONG_EXPORTED_DECLARATION("suspend function")!>@JsExport
-suspend fun suspendFun()<!> { }
+@JsExport
+suspend fun suspendFun() { }
 
 @JsExport
 class WithSuspendFunctionInside {
-    <!WRONG_EXPORTED_DECLARATION("suspend function")!>suspend fun suspendFun()<!> {}
+    suspend fun suspendFun() {}
 }

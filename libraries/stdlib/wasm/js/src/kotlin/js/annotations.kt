@@ -25,6 +25,33 @@ public actual annotation class JsExport {
         AnnotationTarget.CONSTRUCTOR,
     )
     public actual annotation class Ignore
+
+
+    /**
+     * This annotation indicates that the exported declaration should be exported as `default` on the JS platform.
+     *
+     * In ES modules, the annotated declaration is available as the `default` export.
+     * In CommonJS, UMD, and plain modules, the annotated declaration is available under the name `default`.
+     *
+     * This annotation is experimental, meaning that the restrictions described above are subject to change.
+     *
+     * Note: If the annotation is applied multiple times across the project, the behavior depends on the compilation granularity.
+     * 
+     * - **Whole-program compilation**: If multiple libraries apply the annotation, it results in a runtime error.
+     * - **Per-module compilation**: Conflicts across dependencies (like in `whole-program` mode) are resolved.
+     *   However, a runtime error occurs if the annotation is applied multiple times within a single module.
+     * - **Per-file compilation**: This mode resolves the issues present in `whole-program` and `per-module` modes.
+     *   However, a new issue arises if `@JsExport.Default` is applied multiple times within the same file.
+     */
+    @ExperimentalJsExport
+    @Retention(AnnotationRetention.BINARY)
+    @Target(
+        AnnotationTarget.CLASS,
+        AnnotationTarget.FUNCTION,
+        AnnotationTarget.PROPERTY,
+    )
+    @SinceKotlin("2.3")
+    public actual annotation class Default
 }
 
 /**
@@ -103,5 +130,5 @@ public actual annotation class JsModule(actual val import: String)
  */
 @ExperimentalWasmJsInterop
 @Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.FILE)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
 public actual annotation class JsQualifier(actual val value: String)

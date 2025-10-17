@@ -1,0 +1,7 @@
+fun foo(param: String = "none") = "foo after change $param"
+
+class X(val constructorParam: String = "none") {
+    fun bar(param: String = "none") = "bar after change $param and $constructorParam"
+}
+
+

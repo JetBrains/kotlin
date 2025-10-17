@@ -17,6 +17,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    implementation(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
 
     testCompileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
     testImplementation(kotlinTest("junit"))

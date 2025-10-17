@@ -24,6 +24,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: InlineDefaultSetterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /foo
   compilerVisibility: Public
   contextParameters: []
@@ -54,6 +55,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: InlineDefaultSetterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -99,6 +101,7 @@ KaKotlinPropertySymbol:
       compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -122,6 +125,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -134,6 +138,7 @@ KaKotlinPropertySymbol:
         compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
+        hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCrossinline: false
@@ -157,12 +162,14 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(inlineDefaultSetter.kt)
     getContainingJvmClassName: InlineDefaultSetterKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(inlineDefaultSetter.kt)
@@ -174,3 +181,4 @@ KaKotlinPropertySymbol:
   javaSetterName: setFoo
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: foo

@@ -102,8 +102,8 @@ import kotlin.time.Duration.Companion.seconds
  * instant.toString() // 2023-01-02T21:35:01Z
  * ```
  */
-@SinceKotlin("2.1")
-@ExperimentalTime
+@SinceKotlin("2.3")
+@WasExperimental(ExperimentalTime::class)
 public class Instant internal constructor(
     /**
      * The number of seconds from the epoch instant `1970-01-01T00:00:00Z` rounded down to a [Long] number.
@@ -296,7 +296,15 @@ public class Instant internal constructor(
 
         /**
          * Returns an [Instant] that is the [epochSeconds] number of seconds from the epoch instant `1970-01-01T00:00:00Z`
-         * and the [nanosecondAdjustment] number of nanoseconds from the whole second.
+         * and the [nanosecondAdjustment] number of nanoseconds.
+         *
+         * [nanosecondAdjustment] describes how many nanoseconds the given instant is later than the one defined by just [epochSeconds].
+         * For convenience and flexibility, [fromEpochSeconds] accepts [nanosecondAdjustment] values outside
+         * of [Instant.nanosecondsOfSecond] range. Negative [nanosecondAdjustment] means that the given instant will be earlier than
+         * the one defined by just [epochSeconds], and values greater than a second will contribute to the resulting number of seconds.
+         *
+         * For example, if [nanosecondAdjustment] is `-1`, the resulting [Instant] will be `1` nanosecond earlier than
+         * if [nanosecondAdjustment] was `0`, and if it is `1_000_000_000`, the resulting [Instant] will be `1` second later.
          *
          * The return value is clamped to the boundaries of [Instant] if the result exceeds them.
          * In any case, it is guaranteed that instants between [DISTANT_PAST] and [DISTANT_FUTURE] can be represented.
@@ -324,7 +332,15 @@ public class Instant internal constructor(
 
         /**
          * Returns an [Instant] that is the [epochSeconds] number of seconds from the epoch instant `1970-01-01T00:00:00Z`
-         * and the [nanosecondAdjustment] number of nanoseconds from the whole second.
+         * and the [nanosecondAdjustment] number of nanoseconds.
+         *
+         * [nanosecondAdjustment] describes how many nanoseconds the given instant is later than the one defined by just [epochSeconds].
+         * For convenience and flexibility, [fromEpochSeconds] accepts [nanosecondAdjustment] values outside
+         * of [Instant.nanosecondsOfSecond] range. Negative [nanosecondAdjustment] means that the given instant will be earlier than
+         * the one defined by just [epochSeconds], and values greater than a second will contribute to the resulting number of seconds.
+         *
+         * For example, if [nanosecondAdjustment] is `-1`, the resulting [Instant] will be `1` nanosecond earlier than
+         * if [nanosecondAdjustment] was `0`, and if it is `1_000_000_000`, the resulting [Instant] will be `1` second later.
          *
          * The return value is clamped to the boundaries of [Instant] if the result exceeds them.
          * In any case, it is guaranteed that instants between [DISTANT_PAST] and [DISTANT_FUTURE] can be represented.
@@ -396,8 +412,6 @@ public class Instant internal constructor(
          * @see Instant.toString for formatting.
          * @sample samples.time.Instants.parseOrNull
          */
-        @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-        @SinceKotlin("2.2")
         public fun parseOrNull(input: CharSequence): Instant? = parseIso(input).toInstantOrNull()
 
         /**
@@ -430,8 +444,8 @@ public class Instant internal constructor(
  *
  * @sample samples.time.Instants.isDistantPast
  */
-@SinceKotlin("2.1")
-@ExperimentalTime
+@SinceKotlin("2.3")
+@WasExperimental(ExperimentalTime::class)
 @kotlin.internal.InlineOnly
 public inline val Instant.isDistantPast: Boolean
     get() = this <= Instant.DISTANT_PAST
@@ -441,15 +455,14 @@ public inline val Instant.isDistantPast: Boolean
  *
  * @sample samples.time.Instants.isDistantFuture
  */
-@SinceKotlin("2.1")
-@ExperimentalTime
+@SinceKotlin("2.3")
+@WasExperimental(ExperimentalTime::class)
 @kotlin.internal.InlineOnly
 public inline val Instant.isDistantFuture: Boolean
     get() = this >= Instant.DISTANT_FUTURE
 
 // internal utilities
 
-@ExperimentalTime
 internal expect fun serializedInstant(instant: Instant): Any
 
 private const val DISTANT_PAST_SECONDS = -3217862419201
@@ -465,7 +478,6 @@ private const val MIN_SECOND = -31557014167219200L // -1000000000-01-01T00:00:00
  */
 private const val MAX_SECOND = 31556889864403199L // +1000000000-12-31T23:59:59
 
-@ExperimentalTime
 private class UnboundLocalDateTime(
     val year: Int,
     val month: Int,
@@ -553,7 +565,6 @@ private class UnboundLocalDateTime(
     }
 }
 
-@ExperimentalTime
 private fun parseIso(isoString: CharSequence): InstantParseResult {
     fun parseFailure(error: String): InstantParseResult.Failure = InstantParseResult.Failure(
         error = "$error when parsing an Instant from \"${isoString.truncateForErrorMessage(64)}\"",
@@ -689,7 +700,6 @@ private fun parseIso(isoString: CharSequence): InstantParseResult {
     return UnboundLocalDateTime(year, month, day, hour, minute, second, nanosecond).toInstant(offsetSeconds, InstantParseResult::Success)
 }
 
-@ExperimentalTime
 private sealed interface InstantParseResult {
     fun toInstant(): Instant
     fun toInstantOrNull(): Instant?
@@ -718,7 +728,6 @@ private sealed interface InstantParseResult {
     }
 }
 
-@ExperimentalTime
 private fun formatIso(instant: Instant): String = buildString {
     val ldt = UnboundLocalDateTime.fromInstant(instant)
     fun Appendable.appendTwoDigits(number: Int) {

@@ -78,6 +78,14 @@ fun anyDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinDependency
     override fun matches(dependency: IdeaKotlinDependency): Boolean = true
 }
 
+fun anyDependsOnDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinDependencyMatcher {
+    override val description: String get() = "any dependsOn dependency"
+    override fun matches(dependency: IdeaKotlinDependency): Boolean {
+        if (dependency !is IdeaKotlinSourceDependency) return false
+        return dependency.type == IdeaKotlinSourceDependency.Type.DependsOn
+    }
+}
+
 /* Duplicated: Aks Gradle for public API? */
 private fun Project.currentBuildId(): BuildIdentifier =
     (project as ProjectInternal).services.get(BuildState::class.java).buildIdentifier

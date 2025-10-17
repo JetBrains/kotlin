@@ -217,7 +217,7 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
 
     for (index in parameterCount - 1 downTo 0) {
         val valueParameter = valueParameters[index]
-        if (!valueParameter.hasDefaultValue) continue
+        if (!valueParameter.hasDeclaredDefaultValue) continue
         pickMask.clear(index)
 
         lightMethodCreator.create(

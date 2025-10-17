@@ -29,37 +29,9 @@ class NewParserTestParseNode(val production: SyntaxTreeBuilder.Production) : New
 
 class NewTestParser(parseMode: ParseMode) : AbstractTestParser<NewParserTestNode>(parseMode) {
     override fun parse(fileName: String, text: String): TestParseNode<out NewParserTestNode> {
-        return if (parseMode == ParseMode.KDocOnly) {
-            parseKDocOnlyNodes(text).wrapRootsIfNeeded(text.length)
-        } else {
-            val isLazy = parseMode == ParseMode.NoCollapsableAndKDoc
-            val parser = KotlinParser(isScript(fileName), isLazy)
-            parseToTestParseElement(text, 0, KotlinLexer(), parser)
-        }
-    }
-
-    private fun parseKDocOnlyNodes(text: String): List<TestParseNode<out NewParserTestNode>> {
-        val kotlinLexer = KotlinLexer()
-        kotlinLexer.start(text)
-
-        return buildList {
-            var kotlinTokenType = kotlinLexer.getTokenType()
-            while (kotlinTokenType != null) {
-                if (kotlinTokenType == KtTokens.DOC_COMMENT) {
-                    add(
-                        parseToTestParseElement(
-                            kotlinLexer.getTokenText(),
-                            kotlinLexer.getTokenStart(),
-                            KDocLexer(),
-                            KDocParser,
-                        )
-                    )
-                }
-
-                kotlinLexer.advance()
-                kotlinTokenType = kotlinLexer.getTokenType()
-            }
-        }
+        val isLazy = parseMode == ParseMode.NoCollapsableAndKDoc
+        val parser = KotlinParser(isScript(fileName), isLazy)
+        return parseToTestParseElement(text, 0, KotlinLexer(), parser)
     }
 
     private fun convertToTestParseElement(builder: SyntaxTreeBuilder, start: Int): TestParseNode<out NewParserTestNode> {
@@ -85,7 +57,7 @@ class NewTestParser(parseMode: ParseMode) : AbstractTestParser<NewParserTestNode
 
                 val node = when (tokenType) {
                     // `MARKDOWN_LINK` only can be encountered inside KDoc
-                    KDocTokens.MARKDOWN_LINK if (parseMode.isParseKDoc) -> {
+                    KDocTokens.MARKDOWN_LINK if parseMode == ParseMode.Full -> {
                         parseToTestParseElement(
                             tokens.getTokenText(leafTokenIndex)!!,
                             tokenStart,
@@ -93,7 +65,7 @@ class NewTestParser(parseMode: ParseMode) : AbstractTestParser<NewParserTestNode
                             KDocLinkParser,
                         )
                     }
-                    KtTokens.DOC_COMMENT if (parseMode.isParseKDoc) -> {
+                    KtTokens.DOC_COMMENT if parseMode == ParseMode.Full -> {
                         parseToTestParseElement(
                             tokens.getTokenText(leafTokenIndex)!!,
                             tokenStart,

@@ -9,6 +9,7 @@ import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SWIFT_EXPORT_COROUTINES_SUPPORT_TURNED_ON
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.swiftexport.standalone.*
@@ -74,6 +75,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
     }
 
     private fun createSwiftExportConfig(): SwiftExportConfig {
+        val userDefinedSettings = parameters.swiftExportSettings.getOrElse(emptyMap())
         return SwiftExportConfig(
             outputPath = parameters.outputPath.getFile().toPath(),
             stableDeclarationsOrder = parameters.stableDeclarationsOrder.getOrElse(true),
@@ -81,6 +83,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
             renderDocComments = parameters.renderDocComments.getOrElse(false),
             logger = swiftExportLogger,
             konanTarget = parameters.konanTarget.get(),
+            enableCoroutinesSupport = userDefinedSettings.getOrElse(SWIFT_EXPORT_COROUTINES_SUPPORT_TURNED_ON) { "false" } == "true"
         )
     }
 }

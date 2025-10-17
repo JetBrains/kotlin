@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutPackageKt]]
+  facadeFqName: WithoutPackageKt
+  partSimpleName: "WithoutPackageKt"
   FILE_ANNOTATION_LIST
     ANNOTATION_ENTRY[hasValueArguments=false, shortName=foo]
       ANNOTATION_TARGET[useSiteTarget=FILE]

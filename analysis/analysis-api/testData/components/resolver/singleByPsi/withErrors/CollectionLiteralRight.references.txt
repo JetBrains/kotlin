@@ -1,5 +1,6 @@
 KtCollectionLiteralExpression(20,29): '[1, 2, 3]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray

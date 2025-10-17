@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -33,9 +34,9 @@ internal fun runCommonAnalysisForSerialization(
     dependOnBuiltins: Boolean,
     dependencyContainerFactory: () -> CommonDependenciesContainer?
 ): CommonAnalysisResult? {
-    val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
+    val performanceManager = environment.configuration.perfManager
     @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
-    performanceManager.notifyCurrentPhaseFinishedIfNeeded()
+    performanceManager?.notifyCurrentPhaseFinishedIfNeeded()
 
     lateinit var analysisResultWithHasErrors: AnalysisResultWithHasErrors
     do {

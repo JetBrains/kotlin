@@ -1,5 +1,6 @@
 KtNameReferenceExpression(44,54): 'Annotation'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test.Annotation) constructor()

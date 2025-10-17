@@ -52,6 +52,7 @@ KaTypeAliasSymbol:
       getContainingFileSymbol: KaFileSymbol(localTypeAlias.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
       compilerVisibility: Local
@@ -68,8 +69,10 @@ KaTypeAliasSymbol:
       getContainingFileSymbol: KaFileSymbol(localTypeAlias.kt)
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(localTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

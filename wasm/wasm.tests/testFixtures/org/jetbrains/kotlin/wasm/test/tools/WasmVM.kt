@@ -63,7 +63,7 @@ internal sealed class WasmVM(
             )
     }
 
-    private object JavaScriptCore : WasmVM(shortName = "JSC", property = propertyWithPathToJavaScriptCore, entryPointIsJsFile = true) {
+    object JavaScriptCore : WasmVM(shortName = "JSC", property = "javascript.engine.path.JavaScriptCore", entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,
             jsFiles: List<String>,
@@ -108,17 +108,10 @@ internal sealed class WasmVM(
             tool.run(
                 *toolArgs.toTypedArray(),
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
-                *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
+                *jsFiles.toTypedArray(),
                 entryFile,
                 workingDirectory = workingDirectory
             )
-    }
-
-    companion object {
-        // TODO remove .local
-        private const val propertyWithPathToJavaScriptCore = "javascript.engine.path.JavaScriptCore.local"
-
-        val JavaScriptCoreOrNull: WasmVM? get() = if (System.getProperty(propertyWithPathToJavaScriptCore) != null) JavaScriptCore else null
     }
 }
 
@@ -152,12 +145,11 @@ internal class ExternalTool(val path: String) {
         while (true) {
             val line = bufferedStdout.readLine() ?: break
             stdout.appendLine(line)
-            println(line)
         }
 
         val exitValue = process.waitFor()
         if (exitValue != 0) {
-            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"")
+            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"\nOUTPUT:\n$stdout\n---")
         }
 
         return stdout.toString()

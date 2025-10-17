@@ -1,5 +1,6 @@
 KtOperationReferenceExpression(159,161): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test.WithOperator) operator fun plusAssign(f: test.Foo)

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 abstract class <!IMPLEMENTING_FUNCTION_INTERFACE!>A<!> : () -> Unit
 
 <!IMPLEMENTING_FUNCTION_INTERFACE!>object B<!> : (String, Int) -> Long {

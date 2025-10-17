@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.inline.classFileContainsMethod
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
@@ -477,7 +478,7 @@ fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: Jvm
         listOf(*Type.getArgumentTypes(originalDescriptor), Type.getObjectType("kotlin/coroutines/Continuation"))
             .joinToString(prefix = "(", postfix = ")", separator = "") + AsmTypes.OBJECT_TYPE
     else originalDescriptor
-    return org.jetbrains.kotlin.codegen.classFileContainsMethod(classId, context.state, Method(originalSignature.name, descriptor))
+    return classFileContainsMethod(classId, context.state, Method(originalSignature.name, descriptor))
 }
 
 val DeclarationDescriptorWithSource.psiElement: PsiElement?

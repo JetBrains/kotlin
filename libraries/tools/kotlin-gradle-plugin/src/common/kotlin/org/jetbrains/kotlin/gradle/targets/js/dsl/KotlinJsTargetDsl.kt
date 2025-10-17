@@ -182,7 +182,8 @@ interface KotlinJsTargetDsl :
      *
      * This is a convenience method, to simplify configuring the Kotlin JS compiler options directly.
      *
-     * For more information about generating TypeScript definitions, see https://kotl.in/kotlin-js-generate-typescript-defs
+     * For more information about generating TypeScript definitions, see
+     * https://kotl.in/kotlin-js-generate-typescript-defs
      */
     fun generateTypeScriptDefinitions()
 

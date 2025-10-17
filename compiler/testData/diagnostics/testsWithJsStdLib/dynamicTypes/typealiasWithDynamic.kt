@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 typealias Test1 = List<dynamic>
 
 typealias Test2 = (dynamic) -> dynamic

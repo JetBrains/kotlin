@@ -8,7 +8,12 @@ package org.jetbrains.kotlin.generators
 import org.jetbrains.kotlin.generators.dsl.TestGroup
 
 abstract class AbstractTestGenerator {
-    abstract fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean, mainClassName: String?): GenerationResult
+    abstract fun generateAndSave(
+        testClass: TestGroup.TestClass,
+        dryRun: Boolean,
+        allowGenerationOnTeamCity: Boolean,
+        mainClassName: String?,
+    ): GenerationResult
 
     data class GenerationResult(val newFileGenerated: Boolean, val testSourceFilePath: String)
 }

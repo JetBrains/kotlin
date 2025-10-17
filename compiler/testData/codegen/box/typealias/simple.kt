@@ -1,3 +1,4 @@
+// WASM_FAILS_IN: WasmEdge, NodeJs
 
 typealias S = String
 

@@ -226,7 +226,8 @@ internal fun KotlinStubs.generateCCall(
         val symbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cCallDirect, "name")!!
         val signature = callBuilder.cFunctionBuilder.buildSignature(targetFunctionName, language)
 
-        callBuilder.state.addC(listOf("""$signature __asm("$symbolName");"""))
+        val symbolNameLiteral = quoteAsCStringLiteral(symbolName)
+        callBuilder.state.addC(listOf("$signature __asm($symbolNameLiteral);"))
     }
 
     val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {
@@ -700,13 +701,6 @@ private fun CBridgeGenState.getNamedCStructType(kotlinClass: IrClass): CType? {
     val name = stubs.getUniqueCName("struct")
     addC(listOf("typedef ${cStructType.render(name)};"))
     return CTypes.simple(name)
-}
-
-// TODO: rework Boolean support.
-// TODO: What should be used on watchOS?
-internal fun cBoolType(target: KonanTarget): CType? = when (target.family) {
-    Family.IOS, Family.TVOS, Family.WATCHOS -> CTypes.C99Bool
-    else -> CTypes.signedChar
 }
 
 private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(

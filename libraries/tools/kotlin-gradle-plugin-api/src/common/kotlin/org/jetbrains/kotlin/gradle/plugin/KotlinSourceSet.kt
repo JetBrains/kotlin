@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.Named
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 /**
@@ -19,9 +21,11 @@ import org.jetbrains.kotlin.tooling.core.HasMutableExtras
  * kotlin.sourceSets.configureEach {
  *    // Here you can configure all Kotlin source sets.
  *    // For example, to add an additional source directory.
- *    kotlin.srcDir(project.layout.buildDirectory.dir("generatedSources"))
+ *    kotlin.srcDir(project.layout.projectDirectory.dir("src/additionalSources/kotlin"))
  * }
  * ```
+ *
+ * To add generated Kotlin sources use [generatedKotlin] [SourceDirectorySet].
  *
  * @see KotlinSourceSetContainer
  */
@@ -29,6 +33,9 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
 
     /**
      * Represents a set of Kotlin source files that are included in this [KotlinSourceSet].
+     *
+     * Does not include generated sources added to [generatedKotlin]. To get all sources including generated
+     * use [allKotlinSources].
      *
      * @see SourceDirectorySet
      */
@@ -107,33 +114,6 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     val dependsOn: Set<KotlinSourceSet>
 
     /**
-     * @suppress
-     */
-    @Deprecated(message = "KT-55312. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-    val apiMetadataConfigurationName: String
-
-    /**
-     * @suppress
-     */
-    @Deprecated(message = "KT-55312. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-    val implementationMetadataConfigurationName: String
-
-    /**
-     * @suppress
-     */
-    @Deprecated(message = "KT-55312. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-    val compileOnlyMetadataConfigurationName: String
-
-    /**
-     * @suppress
-     */
-    @Deprecated(
-        message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    val runtimeOnlyMetadataConfigurationName: String
-
-    /**
      * Constants for [KotlinSourceSet].
      */
     companion object {
@@ -169,4 +149,46 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
      * ```
      */
     fun addCustomSourceFilesExtensions(extensions: List<String>) {}
+
+    /**
+     * @suppress
+     */
+    @Deprecated(message = "KT-80897. Keep ABI compatibility with kotlinx-benchmarks", level = DeprecationLevel.HIDDEN)
+    val implementationMetadataConfigurationName: String
+
+    /**
+     * Represents a set of generated Kotlin source files that are included in this [KotlinSourceSet].
+     *
+     * Does not include sources added to [kotlin]. To get all sources including generated
+     * use [allKotlinSources].
+     *
+     * For example, here is a way to create a task generating Kotlin sources:
+     * ```
+     * val generatorTask = project.tasks.register("generator") {
+     *     val outputDirectory = project.layout.projectDirectory.dir("src/main/kotlinGen")
+     *     outputs.dir(outputDirectory)
+     *     doLast {
+     *         outputDirectory.file("generated.kt").asFile.writeText(
+     *             //language=kotlin
+     *             """
+     *             fun printHello() {
+     *                  println("hello")
+     *             }
+     *             """.trimIndent()
+     *         )
+     *     }
+     * }
+     *
+     * kotlin.sourceSets.getByName("main").generatedKotlin.srcDir(generatorTask)
+     * ```
+     */
+    @ExperimentalKotlinGradlePluginApi
+    val generatedKotlin: SourceDirectorySet
+
+    /**
+     * Represents a combined set of Kotlin source files that are included in [kotlin] and [generatedKotlin]
+     * [SourceDirectorySets][SourceDirectorySet].
+     */
+    @ExperimentalKotlinGradlePluginApi
+    val allKotlinSources: FileCollection
 }

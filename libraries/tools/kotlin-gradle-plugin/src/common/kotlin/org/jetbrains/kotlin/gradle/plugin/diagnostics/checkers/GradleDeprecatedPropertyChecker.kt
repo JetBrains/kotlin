@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
@@ -44,13 +43,21 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             details = "History based incremental compilation approach for JVM platform is removed." +
                     " Kotlin Gradle plugin is now using a more efficient approach based on ABI snapshots."
         ),
+        DeprecatedProperty(
+            propertyName = "kotlin.compiler.preciseCompilationResultsBackup",
+            details = "Backups of compilation outputs using the non-precise method have been deprecated and phased out. Only the precise backup method is now used, which is more efficient."
+        ), // since 2.3.0
+        DeprecatedProperty(
+            propertyName = "kotlin.compiler.keepIncrementalCompilationCachesInMemory",
+            details = "Backups of compilation outputs using the non-precise method have been deprecated and phased out. Incremental cache changes are now kept in memory until a successful compilation result, which is more efficient."
+        ), // since 2.3.0
+        DeprecatedProperty(
+            propertyName = "kotlin.mpp.import.enableKgpDependencyResolution",
+            details = "Legacy mode of KMP IDE import has been removed: https://kotl.in/KT-61127",
+        ),
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(
-        DeprecatedProperty(
-            KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY,
-            "Resolution strategy for resources shouldn't be specified. See https://youtrack.jetbrains.com/issue/KT-66133 for details.",
-        ),
         DeprecatedProperty(
             KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION,
             "See https://kotl.in/KT-75161 for details.",

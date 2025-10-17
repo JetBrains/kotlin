@@ -5,19 +5,51 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedCommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedCommonToolsArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedJsArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedMetadataArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedNativeArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedWasmArguments
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArguments
 
 val kotlinCompilerArguments = compilerArguments {
-    topLevel(CompilerArgumentsLevelNames.commonToolArguments, mergeWith = setOf(actualCommonToolsArguments)) {
-        subLevel(CompilerArgumentsLevelNames.commonCompilerArguments, mergeWith = setOf(actualCommonCompilerArguments)) {
-            subLevel(CompilerArgumentsLevelNames.jvmCompilerArguments, mergeWith = setOf(actualJvmCompilerArguments)) {}
-            subLevel(CompilerArgumentsLevelNames.commonKlibBasedArguments, mergeWith = setOf(actualCommonKlibBasedArguments)) {
-                subLevel(CompilerArgumentsLevelNames.wasmArguments, mergeWith = setOf(actualWasmArguments)) {
-                    subLevel(CompilerArgumentsLevelNames.jsArguments, mergeWith = setOf(actualJsArguments)) {}
+    topLevel(
+        name = CompilerArgumentsLevelNames.commonToolArguments,
+        mergeWith = setOf(actualCommonToolsArguments, removedCommonToolsArguments)
+    ) {
+        subLevel(
+            name = CompilerArgumentsLevelNames.commonCompilerArguments,
+            mergeWith = setOf(actualCommonCompilerArguments, removedCommonCompilerArguments)
+        ) {
+            subLevel(
+                name = CompilerArgumentsLevelNames.jvmCompilerArguments,
+                mergeWith = setOf(actualJvmCompilerArguments, removedJvmCompilerArguments)
+            ) {}
+            subLevel(
+                name = CompilerArgumentsLevelNames.commonKlibBasedArguments,
+                mergeWith = setOf(actualCommonKlibBasedArguments, removedCommonKlibBasedCompilerArguments)
+            ) {
+                subLevel(
+                    name = CompilerArgumentsLevelNames.wasmArguments,
+                    mergeWith = setOf(actualWasmArguments, removedWasmArguments)
+                ) {
+                    subLevel(
+                        name = CompilerArgumentsLevelNames.jsArguments,
+                        mergeWith = setOf(actualJsArguments, removedJsArguments)
+                    ) {}
                 }
-                subLevel(CompilerArgumentsLevelNames.nativeArguments, mergeWith = setOf(actualNativeArguments)) {}
+                subLevel(
+                    name = CompilerArgumentsLevelNames.nativeArguments,
+                    mergeWith = setOf(actualNativeArguments, removedNativeArguments)
+                ) {}
             }
-            subLevel(CompilerArgumentsLevelNames.metadataArguments, mergeWith = setOf(actualMetadataArguments)) {}
+            subLevel(
+                name = CompilerArgumentsLevelNames.metadataArguments,
+                mergeWith = setOf(actualMetadataArguments, removedMetadataArguments)
+            ) {}
         }
     }
 }

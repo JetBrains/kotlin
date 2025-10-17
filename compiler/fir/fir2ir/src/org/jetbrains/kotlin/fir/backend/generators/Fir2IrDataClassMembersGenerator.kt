@@ -294,7 +294,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                 requireNotNull(irValueParameter)
                 // `irClass` is a source class and definitely is not a lazy class
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
-                return irClass.properties.single { irProperty ->
+                return irClass.properties.first { irProperty ->
                     irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
                 }
             }

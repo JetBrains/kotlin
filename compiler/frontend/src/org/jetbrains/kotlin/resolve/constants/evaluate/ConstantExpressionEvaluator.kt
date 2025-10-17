@@ -164,7 +164,7 @@ class ConstantExpressionEvaluator(
         // array(1, <!>null<!>, 3) - error should be reported on inner expression
         val callArguments = when (argumentExpression) {
             is KtCallExpression -> getArgumentExpressionsForArrayCall(argumentExpression, trace)
-            is KtCollectionLiteralExpression -> getArgumentExpressionsForCollectionLiteralCall(argumentExpression, trace)
+            is KtCollectionLiteralExpression -> getArgumentExpressionsForCollectionLiteral(argumentExpression, trace)
             else -> null
         }
 
@@ -214,7 +214,7 @@ class ConstantExpressionEvaluator(
         return getArgumentExpressionsForArrayLikeCall(resolvedCall)
     }
 
-    private fun getArgumentExpressionsForCollectionLiteralCall(
+    private fun getArgumentExpressionsForCollectionLiteral(
         expression: KtCollectionLiteralExpression,
         trace: BindingTrace
     ): List<KtExpression>? {

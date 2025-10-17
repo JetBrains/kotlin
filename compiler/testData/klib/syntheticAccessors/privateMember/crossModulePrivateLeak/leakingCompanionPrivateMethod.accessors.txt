@@ -18,6 +18,6 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val result: String =
+    val result: String
         /* ACCESSOR use-site */ access$privateMethod($this = Companion)
         /* ACCESSOR use-site */ access$privateMethod($this = this)

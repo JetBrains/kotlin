@@ -333,7 +333,6 @@ org.jetbrains.kotlin.psi.KtArrayAccessExpression:getIndicesNode()
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getLeftBracket()
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getRightBracket()
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getTrailingComma()
-org.jetbrains.kotlin.psi.KtBackingField
 org.jetbrains.kotlin.psi.KtBackingField.equalsToken
 org.jetbrains.kotlin.psi.KtBackingField.fieldKeyword
 org.jetbrains.kotlin.psi.KtBackingField.namePlaceholder
@@ -373,7 +372,6 @@ org.jetbrains.kotlin.psi.KtCallElement:getTypeArgumentList()
 org.jetbrains.kotlin.psi.KtCallElement:getTypeArguments()
 org.jetbrains.kotlin.psi.KtCallElement:getValueArgumentList()
 org.jetbrains.kotlin.psi.KtCallElement:getValueArguments()
-org.jetbrains.kotlin.psi.KtCallExpression
 org.jetbrains.kotlin.psi.KtCallExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtCallExpression:constructor(KotlinPlaceHolderStub<KtCallExpression>)
 org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -764,15 +762,14 @@ org.jetbrains.kotlin.psi.KtNamedDeclaration:getNameAsSafeName()
 org.jetbrains.kotlin.psi.KtNamedDeclarationUtil
 org.jetbrains.kotlin.psi.KtNamedDeclarationUtil:getParentFqName(KtNamedDeclaration)
 org.jetbrains.kotlin.psi.KtNamedDeclarationUtil:getUnsafeFQName(KtNamedDeclaration)
-org.jetbrains.kotlin.psi.KtNamedFunction
+org.jetbrains.kotlin.psi.KtNamedFunction.funKeyword
+org.jetbrains.kotlin.psi.KtNamedFunction.hasTypeParameterListBeforeFunctionName()
+org.jetbrains.kotlin.psi.KtNamedFunction.isAnonymous
+org.jetbrains.kotlin.psi.KtNamedFunction.isTopLevel
+org.jetbrains.kotlin.psi.KtNamedFunction.mayHaveContract(Boolean)
+org.jetbrains.kotlin.psi.KtNamedFunction.shouldChangeModificationCount(PsiElement?)
 org.jetbrains.kotlin.psi.KtNamedFunction:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtNamedFunction:constructor(KotlinFunctionStub)
-org.jetbrains.kotlin.psi.KtNamedFunction:getFunKeyword()
-org.jetbrains.kotlin.psi.KtNamedFunction:hasTypeParameterListBeforeFunctionName()
-org.jetbrains.kotlin.psi.KtNamedFunction:isAnonymous()
-org.jetbrains.kotlin.psi.KtNamedFunction:isTopLevel()
-org.jetbrains.kotlin.psi.KtNamedFunction:mayHaveContract(boolean)
-org.jetbrains.kotlin.psi.KtNamedFunction:shouldChangeModificationCount(PsiElement)
 org.jetbrains.kotlin.psi.KtNullableType
 org.jetbrains.kotlin.psi.KtNullableType:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtNullableType:constructor(KotlinPlaceHolderStub<KtNullableType>)
@@ -874,7 +871,6 @@ org.jetbrains.kotlin.psi.KtProperty:isMember()
 org.jetbrains.kotlin.psi.KtProperty:isTopLevel()
 org.jetbrains.kotlin.psi.KtProperty:setInitializer(KtExpression)
 org.jetbrains.kotlin.psi.KtProperty:shouldChangeModificationCount(PsiElement)
-org.jetbrains.kotlin.psi.KtPropertyAccessor
 org.jetbrains.kotlin.psi.KtPropertyAccessor.isGetter
 org.jetbrains.kotlin.psi.KtPropertyAccessor.isSetter
 org.jetbrains.kotlin.psi.KtPropertyAccessor.leftParenthesis
@@ -2050,8 +2046,6 @@ org.jetbrains.kotlin.psi.stubs.StubUtils.createNestedClassId(StubElement<*>, KtC
 org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId(StubInputStream)
 org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId(StubOutputStream, ClassId?)
 org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation.INLINE_CLASS
-org.jetbrains.kotlin.psi.stubs.elements.KtAnnotationEntryElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtAnnotationEntryElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtAnnotationUseSiteTargetElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType:constructor(String)

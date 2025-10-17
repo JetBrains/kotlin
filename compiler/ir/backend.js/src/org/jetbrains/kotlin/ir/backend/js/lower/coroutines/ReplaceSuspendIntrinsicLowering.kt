@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     private val valueParamSizeToItsCreateCoroutineUnintercepted =
-        context.intrinsics.createCoroutineUninterceptedGeneratorVersion.groupPerValueParamSize()
+        context.symbols.createCoroutineUninterceptedGeneratorVersion.groupPerValueParamSize()
     private val valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion =
-        context.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion.groupPerValueParamSize()
+        context.symbols.startCoroutineUninterceptedOrReturnGeneratorVersion.groupPerValueParamSize()
 
     private val IrSimpleFunctionSymbol.regularParamCount: Int
         get() = owner.parameters.count { it.kind == IrParameterKind.Regular }
@@ -39,10 +39,10 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 when (val symbol = expression.symbol) {
-                    in context.intrinsics.createCoroutineUnintercepted -> {
+                    in context.symbols.createCoroutineUnintercepted -> {
                         expression.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.regularParamCount)
                     }
-                    in context.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion -> {
+                    in context.symbols.startCoroutineUninterceptedOrReturnNonGeneratorVersion -> {
                         expression.symbol =
                             valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion.getValue(symbol.regularParamCount)
                     }

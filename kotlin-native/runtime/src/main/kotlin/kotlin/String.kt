@@ -86,8 +86,8 @@ public actual class String : Comparable<String>, CharSequence {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-public actual inline operator fun kotlin.String?.plus(other: kotlin.Any?): kotlin.String =
-    (this?.toString() ?: "null").plus(other?.toString() ?: "null")
+public actual inline operator fun String?.plus(other: Any?): String =
+        (this ?: "null").plus(other?.toString() ?: "null")
 
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun Any?.toString(): String = this?.toString() ?: "null"

@@ -100,6 +100,7 @@ KtValueArgument(39,60): 'AnnotationTarget.TYPE'
 KtDotQualifiedExpression(39,60): 'AnnotationTarget.TYPE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -123,6 +124,7 @@ KtNameReferenceExpression(39,55): 'AnnotationTarget'
 KtNameReferenceExpression(56,60): 'TYPE'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -385,6 +387,7 @@ KtOperationReferenceExpression(233,234): '+'
 KtNameReferenceExpression(235,240): 'outer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -578,6 +581,7 @@ KtOperationReferenceExpression(255,256): '+'
 KtNameReferenceExpression(257,262): 'outer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -771,6 +775,7 @@ KtOperationReferenceExpression(277,278): '+'
 KtNameReferenceExpression(279,284): 'outer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -964,6 +969,7 @@ KtOperationReferenceExpression(318,319): '+'
 KtNameReferenceExpression(320,325): 'outer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1157,6 +1163,7 @@ KtOperationReferenceExpression(342,343): '+'
 KtNameReferenceExpression(344,349): 'outer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1491,22 +1498,22 @@ KtBinaryExpression(406,415): '6 + inner'
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
+    
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-
+    
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-
+    
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-
+    
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-
+    
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-
+    
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
@@ -1722,28 +1729,29 @@ KtOperationReferenceExpression(408,409): '+'
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
+    
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-
+    
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-
+    
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-
+    
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-
+    
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-
+    
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(410,415): 'inner'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2066,22 +2074,22 @@ KtBinaryExpression(428,437): '7 + inner'
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
+    
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-
+    
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-
+    
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-
+    
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-
+    
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-
+    
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
@@ -2297,28 +2305,29 @@ KtOperationReferenceExpression(430,431): '+'
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
+    
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-
+    
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-
+    
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-
+    
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-
+    
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-
+    
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(432,437): 'inner'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2641,22 +2650,22 @@ KtBinaryExpression(450,459): '8 + inner'
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
+    
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-
+    
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-
+    
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-
+    
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-
+    
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-
+    
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
@@ -2872,28 +2881,29 @@ KtOperationReferenceExpression(452,453): '+'
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
+    
     fun plus(other: Int): Int:
       Argument type mismatch: actual type is 'String', but 'Int' was expected.
-
+    
     fun plus(other: Byte): Int:
       Argument type mismatch: actual type is 'String', but 'Byte' was expected.
-
+    
     fun plus(other: Short): Int:
       Argument type mismatch: actual type is 'String', but 'Short' was expected.
-
+    
     fun plus(other: Long): Long:
       Argument type mismatch: actual type is 'String', but 'Long' was expected.
-
+    
     fun plus(other: Float): Float:
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
-
+    
     fun plus(other: Double): Double:
       Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(454,459): 'inner'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -3111,6 +3121,7 @@ KtOperationReferenceExpression(567,568): '+'
 KtNameReferenceExpression(569,574): 'inner'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -3306,6 +3317,7 @@ KtOperationReferenceExpression(592,593): '+'
 KtNameReferenceExpression(594,599): 'inner'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:

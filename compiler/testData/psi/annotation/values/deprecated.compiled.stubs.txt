@@ -5,6 +5,11 @@ Qualified.class:
     CLASS[classId=/Qualified, fqName=Qualified, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Qualified, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+          valueArguments: [
+            message -> "Deprecated"
+            replaceWith -> Value(classId=kotlin/ReplaceWith, argumentsMapping={expression="NewClass", imports=["foo.bar.baz.NewClass"]})
+            level -> DeprecationLevel.HIDDEN
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -24,6 +29,11 @@ Simple.class:
     CLASS[classId=/Simple, fqName=Simple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+          valueArguments: [
+            message -> "Deprecated"
+            replaceWith -> Value(classId=kotlin/ReplaceWith, argumentsMapping={expression="NewClass", imports=["foo.bar.baz.NewClass"]})
+            level -> DeprecationLevel.HIDDEN
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

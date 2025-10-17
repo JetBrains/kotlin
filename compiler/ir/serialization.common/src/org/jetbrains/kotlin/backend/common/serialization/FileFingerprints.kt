@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import java.io.File
@@ -57,20 +58,20 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
             return FingerprintHash(cityHash128WithSeed(withFileEntriesHash, file.declarations))
         }
 
-        private fun calculateFileFingerprint(lib: KotlinLibrary, fileIndex: Int): FingerprintHash {
-            val fileDataHash = cityHash128(lib.file(fileIndex))
-            val withTypesHash = cityHash128WithSeed(fileDataHash, lib.types(fileIndex))
-            val withSignaturesHash = cityHash128WithSeed(withTypesHash, lib.signatures(fileIndex))
-            val withStringsHash = cityHash128WithSeed(withSignaturesHash, lib.strings(fileIndex))
-            val withBodiesHash = cityHash128WithSeed(withStringsHash, lib.bodies(fileIndex))
-            val withFileEntriesHash = lib.fileEntries(fileIndex)?.let { cityHash128WithSeed(withBodiesHash, it) } ?: withBodiesHash
-            return FingerprintHash(cityHash128WithSeed(withFileEntriesHash, lib.declarations(fileIndex)))
+        private fun calculateFileFingerprint(ir: IrLibrary.IrDirectory, fileIndex: Int): FingerprintHash {
+            val fileDataHash = cityHash128(ir.file(fileIndex))
+            val withTypesHash = cityHash128WithSeed(fileDataHash, ir.types(fileIndex))
+            val withSignaturesHash = cityHash128WithSeed(withTypesHash, ir.signatures(fileIndex))
+            val withStringsHash = cityHash128WithSeed(withSignaturesHash, ir.strings(fileIndex))
+            val withBodiesHash = cityHash128WithSeed(withStringsHash, ir.bodies(fileIndex))
+            val withFileEntriesHash = ir.fileEntries(fileIndex)?.let { cityHash128WithSeed(withBodiesHash, it) } ?: withBodiesHash
+            return FingerprintHash(cityHash128WithSeed(withFileEntriesHash, ir.declarations(fileIndex)))
         }
     }
 
     constructor(file: SerializedIrFile) : this(calculateFileFingerprint(file))
 
-    constructor(lib: KotlinLibrary, fileIndex: Int) : this(calculateFileFingerprint(lib, fileIndex))
+    constructor(lib: KotlinLibrary, fileIndex: Int) : this(calculateFileFingerprint(lib.mainIr, fileIndex))
 
     override fun toString(): String {
         return fileFingerprint.toString()

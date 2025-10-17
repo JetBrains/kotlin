@@ -264,11 +264,19 @@ private fun CommonCompilerArguments.checkOutdatedVersions(language: LanguageVers
     val (version, supportedVersion, versionKind) = findOutdatedVersion(language, api) ?: return
     when {
         version.isUnsupported -> {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "${versionKind.text} version ${version.versionString} is no longer supported; " +
-                        "please, use version ${supportedVersion!!.versionString} or greater."
-            )
+            if ((!language.isJvmOnly || this !is K2JVMCompilerArguments)) {
+                collector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "${versionKind.text} version ${version.versionString} is no longer supported; " +
+                            "please, use version ${supportedVersion!!.versionString} or greater."
+                )
+            } else if (!suppressVersionWarnings) {
+                collector.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "${versionKind.text} version ${version.versionString} is deprecated in JVM " +
+                            "and its support will be removed in a future version of Kotlin"
+                )
+            }
         }
         version.isDeprecated && !suppressVersionWarnings -> {
             collector.report(
@@ -342,7 +350,13 @@ private fun CommonCompilerArguments.parseVersion(collector: MessageCollector, va
     if (value == null) null
     else LanguageVersion.fromVersionString(value)
         ?: run {
-            val versionStrings = LanguageVersion.entries.filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
+            val entries = LanguageVersion.entries
+            val versionStrings = if (versionOf == "API") {
+                // TODO: this branch can be dropped again after KT-80590
+                entries.map { ApiVersion.createByLanguageVersion(it) }.filterNot { it.isUnsupported }.map(ApiVersion::description)
+            } else {
+                entries.filterNot { it.isUnsupported && !it.isJvmOnly }.map(LanguageVersion::description)
+            }
             val message = "Unknown $versionOf version: $value\nSupported $versionOf versions: ${versionStrings.joinToString(", ")}"
             collector.report(CompilerMessageSeverity.ERROR, message, null)
             null

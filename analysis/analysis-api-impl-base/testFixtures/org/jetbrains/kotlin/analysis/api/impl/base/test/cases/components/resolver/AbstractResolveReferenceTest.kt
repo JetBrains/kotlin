@@ -118,6 +118,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
             val options = createRenderingOptions(renderPsiClassName)
             prettyPrint {
                 appendLine("isImplicitReferenceToCompanion: ${reference.isImplicitReferenceToCompanion()}")
+                appendLine("usesContextSensitiveResolution: ${reference.usesContextSensitiveResolution}")
                 appendLine("symbols:")
                 withIndent {
                     val resolvedSymbolsInfo = renderResolvedTo(

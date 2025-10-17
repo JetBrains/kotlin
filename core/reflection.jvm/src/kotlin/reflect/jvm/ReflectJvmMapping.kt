@@ -35,7 +35,7 @@ import kotlin.reflect.javaType as stdlibJavaType
  * or `null` if the property has no backing field.
  */
 val KProperty<*>.javaField: Field?
-    get() = this.asKPropertyImpl()?.javaField
+    get() = this.asReflectProperty()?.javaField
 
 /**
  * Returns a Java [Method] instance corresponding to the getter of the given property,
@@ -57,7 +57,7 @@ val KMutableProperty<*>.javaSetter: Method?
  * or `null` if this function is a constructor or cannot be represented by a Java [Method].
  */
 val KFunction<*>.javaMethod: Method?
-    get() = this.asKCallableImpl()?.caller?.member as? Method
+    get() = this.asReflectCallable()?.caller?.member as? Method
 
 /**
  * Returns a Java [Constructor] instance corresponding to the given Kotlin function,
@@ -65,7 +65,7 @@ val KFunction<*>.javaMethod: Method?
  */
 @Suppress("UNCHECKED_CAST")
 val <T> KFunction<T>.javaConstructor: Constructor<T>?
-    get() = this.asKCallableImpl()?.caller?.member as? Constructor<T>
+    get() = this.asReflectCallable()?.caller?.member as? Constructor<T>
 
 
 /**

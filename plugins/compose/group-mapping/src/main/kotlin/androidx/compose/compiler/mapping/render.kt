@@ -11,8 +11,7 @@ import androidx.compose.compiler.mapping.group.LambdaKeyCache
 import org.jetbrains.annotations.TestOnly
 
 @TestOnly
-context(lambdaKeys: LambdaKeyCache)
-fun ClassInfo.render(): String = buildString {
+fun ClassInfo.render(lambdaKeys: LambdaKeyCache): String = buildString {
     append(classId.fqName)
     append(" {")
     appendLine()
@@ -21,14 +20,15 @@ fun ClassInfo.render(): String = buildString {
         append("file: ")
         append(fileName)
         appendLine()
-        appendLine(methods.joinToString("\n") { it.render() })
+        appendLine(methods.joinToString("\n") {
+            it.render(lambdaKeys)
+        })
     }
 
     appendLine("}")
 }
 
-context(lambdaKeys: LambdaKeyCache)
-private fun MethodInfo.render(): String = buildString {
+private fun MethodInfo.render(lambdaKeys: LambdaKeyCache): String = buildString {
     append(id.methodName)
     append(id.methodDescriptor)
     appendLine()
@@ -36,7 +36,7 @@ private fun MethodInfo.render(): String = buildString {
     withIndent {
         appendLine(groups.joinToString("\n") {
             if (it.type == GroupType.Root && it.key == null) {
-                it.render(resolveLambdaKey() ?: it.key)
+                it.render(resolveLambdaKey(lambdaKeys) ?: it.key)
             } else {
                 it.render(it.key)
             }
@@ -44,8 +44,7 @@ private fun MethodInfo.render(): String = buildString {
     }
 }.trim()
 
-context(lambdaKeys: LambdaKeyCache)
-private fun MethodInfo.resolveLambdaKey(): Int? =
+private fun MethodInfo.resolveLambdaKey(lambdaKeys: LambdaKeyCache): Int? =
     lambdaKeys[id.toString()] ?: lambdaKeys[id.classId.fqName]
 
 private fun GroupInfo.render(key: Int?): String = buildString {

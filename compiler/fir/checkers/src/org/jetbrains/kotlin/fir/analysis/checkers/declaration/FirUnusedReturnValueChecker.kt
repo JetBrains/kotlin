@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 
@@ -66,8 +66,12 @@ object FirReturnValueOverrideChecker : FirCallableDeclarationChecker(MppCheckerK
 }
 
 object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    private val oldMustUse = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("MustUseReturnValue"))
+
     private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
-        toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue
+        toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValues
+
+    private fun FirAnnotation.isOldMustUse(session: FirSession): Boolean = toAnnotationClassId(session) == oldMustUse
 
     private fun FirAnnotation.isIgnorableValue(session: FirSession): Boolean =
         toAnnotationClassId(session) == StandardClassIds.Annotations.IgnorableReturnValue
@@ -78,7 +82,7 @@ object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerK
 
         val session = context.session
         declaration.annotations.forEach { annotation ->
-            if (annotation.isMustUseReturnValue(session) || annotation.isIgnorableValue(session)) {
+            if (annotation.isMustUseReturnValue(session) || annotation.isIgnorableValue(session) || annotation.isOldMustUse(session)) {
                 reporter.reportOn(
                     annotation.source,
                     FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED

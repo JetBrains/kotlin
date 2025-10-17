@@ -299,6 +299,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
   }
 
   @Test
+  @TestMetadata("parameterWithImplicitDefaultValueInActual.kt")
+  public void testParameterWithImplicitDefaultValueInActual() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/parameterWithImplicitDefaultValueInActual.kt");
+  }
+
+  @Test
+  @TestMetadata("parameterWithImplicitDefaultValueInOverride.kt")
+  public void testParameterWithImplicitDefaultValueInOverride() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/parameterWithImplicitDefaultValueInOverride.kt");
+  }
+
+  @Test
   @TestMetadata("propertyFromInitBlock.kt")
   public void testPropertyFromInitBlock() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyFromInitBlock.kt");

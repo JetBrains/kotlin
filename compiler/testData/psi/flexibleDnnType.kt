@@ -1,3 +1,4 @@
+// LIBRARY_PLATFORMS: JVM
 // FILE: FlexibleDnnType.kt
 abstract class FlexibleDnnType<T> {
     abstract val block: () -> T

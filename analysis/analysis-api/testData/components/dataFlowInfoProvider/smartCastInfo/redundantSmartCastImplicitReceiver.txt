@@ -1,3 +1,2 @@
 expression: foo
-isStable: null
-smartCastType: null
+smartCastInfo: null

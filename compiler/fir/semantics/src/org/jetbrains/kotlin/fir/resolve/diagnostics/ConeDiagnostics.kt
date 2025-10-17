@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -63,11 +64,17 @@ class ConeUnresolvedReferenceError(val name: Name) : ConeUnresolvedError {
 class ConeUnresolvedSymbolError(val classId: ClassId) : ConeUnresolvedError {
     override val qualifier: String get() = classId.asSingleFqName().asString()
     override val reason: String get() = "Symbol not found for $classId"
+
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unresolved symbol: $classId"
 }
 
 class ConeUnresolvedTypeQualifierError(val qualifiers: List<FirQualifierPart>) : ConeUnresolvedError {
     override val qualifier: String get() = qualifiers.joinToString(separator = ".") { it.name.asString() }
     override val reason: String get() = "Symbol not found for $qualifier"
+
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unresolved qualified name: $qualifier"
 }
 
 class ConeUnresolvedNameError(
@@ -192,7 +199,7 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
             get() = "no argument for call '$name' found"
     }
 
-    class NotAConstant(val element: Any) : ConeContractDescriptionError() {
+    class NotAConstant(val element: Any?) : ConeContractDescriptionError() {
         override val reason: String
             get() = "'$element' is not a constant reference"
     }
@@ -321,8 +328,8 @@ class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic {
     override val reason: String get() = "Cannot access ''${target}'' before the instance has been initialized"
 }
 
-class ConeUnsupportedCallableReferenceTarget(override val candidate: AbstractCallCandidate<*>) : ConeDiagnosticWithSingleCandidate {
-    override val reason: String get() = "Unsupported declaration for callable reference: ${candidate.symbol.fir.render()}"
+class ConeInaccessibleOuterClass(val symbol: FirClassSymbol<*>) : ConeDiagnostic {
+    override val reason: String get() = "Cannot access outer class ''${symbol.classId}'' of non-inner class"
 }
 
 class ConeTypeParameterSupertype(val symbol: FirTypeParameterSymbol) : ConeDiagnostic {
@@ -375,8 +382,9 @@ class ConeNotFunctionAsOperator(val symbol: FirBasedSymbol<*>) : ConeDiagnostic 
     override val reason: String get() = "Cannot use not function as an operator"
 }
 
-class ConeUnknownLambdaParameterTypeDiagnostic : ConeDiagnostic {
-    override val reason: String get() = "Unknown return lambda parameter type"
+class ConeUnknownLambdaParameterTypeDiagnostic(val isReturnType: Boolean) : ConeDiagnostic {
+    override val reason: String
+        get() = if (isReturnType) "Unknown lambda return type" else "Unknown lambda parameter type"
 }
 
 private fun describeSymbol(symbol: FirBasedSymbol<*>): String {

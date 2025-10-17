@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.library.impl.buffer
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.security.MessageDigest
 
 internal fun Hash128Bits.toProtoStream(out: CodedOutputStream) {
@@ -163,7 +163,6 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
 
         val booleanKeys = listOf(
             JSConfigurationKeys.SOURCE_MAP,
-            JSConfigurationKeys.META_INFO,
             JSConfigurationKeys.DEVELOPER_MODE,
             JSConfigurationKeys.USE_ES6_CLASSES,
             JSConfigurationKeys.GENERATE_POLYFILLS,
@@ -181,11 +180,14 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
         val enumKeys = listOf(
             JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
             JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
-            JSConfigurationKeys.MODULE_KIND,
-            JSConfigurationKeys.GRANULARITY
         )
         hashCalculator.updateConfigKeys(config, enumKeys) { value: Enum<*> ->
             hashCalculator.update(value.ordinal)
+        }
+
+        hashCalculator.updateConfigKeys(config, listOf(JSConfigurationKeys.ARTIFACT_CONFIGURATION)) { value ->
+            hashCalculator.update(value.moduleKind.ordinal)
+            hashCalculator.update(value.granularity.ordinal)
         }
 
         hashCalculator.updateConfigKeys(

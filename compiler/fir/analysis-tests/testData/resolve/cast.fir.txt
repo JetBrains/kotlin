@@ -18,8 +18,8 @@ FILE: cast.kt
     }
 
         public get(): R|(kotlin/String) -> kotlin/Boolean|
-    public final val hError: R|(ERROR CLASS: Cannot infer type for parameter <unused var>) -> ERROR CLASS: Cannot infer type variable TypeVariable(_L)| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)fun <anonymous>(<unused var>: <ERROR TYPE REF: Cannot infer type for parameter <unused var>>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_L)> <inline=NoInline>  {
+    public final val hError: R|(ERROR CLASS: Cannot infer type for parameter <unused var>) -> ERROR CLASS: Cannot infer type variable TypeVariable(_R)| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)fun <anonymous>(<unused var>: <ERROR TYPE REF: Cannot infer type for parameter <unused var>>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=NoInline>  {
         ^ Boolean(true)
     }
 
-        public get(): R|(ERROR CLASS: Cannot infer type for parameter <unused var>) -> ERROR CLASS: Cannot infer type variable TypeVariable(_L)|
+        public get(): R|(ERROR CLASS: Cannot infer type for parameter <unused var>) -> ERROR CLASS: Cannot infer type variable TypeVariable(_R)|

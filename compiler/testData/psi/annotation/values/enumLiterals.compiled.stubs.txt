@@ -94,6 +94,11 @@ WithEnumLiteral.class:
     CLASS[classId=test/WithEnumLiteral, fqName=test.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithEnumLiteral, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=EnumLiteral]
+          valueArguments: [
+            e1 -> E.E1
+            e2 -> E.E2
+            e3 -> E.E2
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

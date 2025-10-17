@@ -8,7 +8,7 @@ dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:cli-base"))
     api(project(":compiler:frontend"))
-    api(project(":compiler:backend-common"))
+    api(project(":compiler:ir.backend.common"))
     api(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
     api(project(":compiler:serialization"))
@@ -30,10 +30,13 @@ dependencies {
     api(project(":compiler:fir:fir-serialization"))
     api(project(":compiler:ir.inline"))
     api(project(":kotlin-util-io"))
+    implementation(project(":kotlin-build-common"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:jdom:2.0.6"))
+    compileOnly(libs.kotlinx.coroutines.core.jvm)
 }
 
 sourceSets {

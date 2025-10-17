@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Vari
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import kotlin.test.Test
+import org.junit.Test
 
 class GenerateMockRepositoryTest {
 

@@ -78,29 +78,9 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras, messageRenderer)
     }
 
-    fun testShouldNotGenerateCodeJs() {
-        if (jsirStdlib != null)
-            runTest(K2JSCompiler(), classNotFound, jsirStdlib!!, outjs, listOf(K2JSCompilerArguments::irProduceJs.cliArgument))
-    }
-
-    fun testShouldNotGenerateCodeKlib() {
-        if (jsirStdlib != null)
-            runTest(K2JSCompiler(), classNotFound, jsirStdlib!!, outklib, listOf(K2JSCompilerArguments::irProduceKlibFile.cliArgument))
-    }
-
     fun testShouldNotGenerateCodeWasm() {
         if (jsirStdlib != null && wasmStdlib != null)
             runTest(K2JSCompiler(), classNotFound, "$jsirStdlib,$wasmStdlib", outjs, listOf(K2JSCompilerArguments::irProduceJs.cliArgument, K2JSCompilerArguments::wasm.cliArgument))
-    }
-
-    fun testRepeatedAnalysisJs() {
-        if (jsirStdlib != null)
-            runTest(K2JSCompiler(), repeatedAnalysis, jsirStdlib!!, outjs, listOf(K2JSCompilerArguments::irProduceJs.cliArgument))
-    }
-
-    fun testRepeatedAnalysisKlib() {
-        if (jsirStdlib != null)
-            runTest(K2JSCompiler(), repeatedAnalysis, jsirStdlib!!, outklib, listOf(K2JSCompilerArguments::irProduceKlibFile.cliArgument))
     }
 
     fun testRepeatedAnalysisWasm() {

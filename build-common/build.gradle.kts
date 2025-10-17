@@ -23,7 +23,7 @@ dependencies {
     compileOnly(libs.intellij.asm)
     compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
 
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(protobufFull())
     testFixturesCompileOnly(project(":compiler:cli-common"))
@@ -39,6 +39,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.junit4)
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation("org.reflections:reflections:0.10.2")

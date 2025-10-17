@@ -686,6 +686,7 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
 KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -709,6 +710,7 @@ KtValueArgument(955,965): 'EnumValue1'
 KtNameReferenceExpression(955,965): 'EnumValue1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -766,6 +768,7 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
 KtNameReferenceExpression(972,989): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -829,6 +832,7 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
 KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -852,6 +856,7 @@ KtValueArgument(1029,1040): 'propMyClass'
 KtNameReferenceExpression(1029,1040): 'propMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -912,6 +917,7 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -935,6 +941,7 @@ KtValueArgument(1065,1069): 'prop'
 KtNameReferenceExpression(1065,1069): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -995,6 +1002,7 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1018,6 +1026,7 @@ KtValueArgument(1093,1102): 'constProp'
 KtNameReferenceExpression(1093,1102): 'constProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1078,6 +1087,7 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1101,6 +1111,7 @@ KtValueArgument(1126,1134): 'lazyProp'
 KtNameReferenceExpression(1126,1134): 'lazyProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1161,6 +1172,7 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1184,6 +1196,7 @@ KtValueArgument(1158,1168): 'lambdaProp'
 KtNameReferenceExpression(1158,1168): 'lambdaProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1244,6 +1257,7 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1267,6 +1281,7 @@ KtValueArgument(1192,1201): 'superProp'
 KtNameReferenceExpression(1192,1201): 'superProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1324,6 +1339,7 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
 KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1397,6 +1413,7 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
 KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1473,6 +1490,7 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1496,6 +1514,7 @@ KtValueArgument(1291,1301): 'lambdaProp'
 KtNameReferenceExpression(1291,1301): 'lambdaProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

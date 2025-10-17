@@ -10,7 +10,7 @@ object O {
 }
 
 class C {
-    @Suppress("TOPLEVEL_TYPEALIASES_ONLY", "UNSUPPORTED_FEATURE")
+    @Suppress("TOPLEVEL_TYPEALIASES_ONLY")
     typealias B = O
 }
 

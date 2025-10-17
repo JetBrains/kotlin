@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.irAttribute
 import java.io.File
 import java.util.*
 
@@ -68,12 +69,10 @@ class WasmICContextForTesting(
 }
 
 class IrFactoryImplForWasmIC(stageController: StageController) : IrFactory(stageController), IdSignatureRetriever {
-    private val declarationToSignature = WeakHashMap<IrDeclaration, IdSignature>()
-
     override fun <T : IrDeclaration> T.declarationCreated(): T {
         val parentSig = stageController.currentDeclaration?.let { declarationSignature(it) } ?: return this
 
-        stageController.createSignature(parentSig)?.let { declarationToSignature[this] = it }
+        stageController.createSignature(parentSig)?.let { this.signatureForWasmIC = it }
 
         return this
     }
@@ -84,8 +83,10 @@ class IrFactoryImplForWasmIC(stageController: StageController) : IrFactory(stage
     }
 
     override fun declarationSignature(declaration: IrDeclaration): IdSignature =
-        declarationToSignature[declaration]
+        declaration.signatureForWasmIC
             ?: declaration.symbol.signature?.let { eraseSignature(it, declaration) }
             ?: declaration.symbol.privateSignature?.let { eraseSignature(it, declaration) }
             ?: compilationException("Can't retrieve a signature", declaration)
 }
+
+private var IrDeclaration.signatureForWasmIC: IdSignature? by irAttribute(copyByDefault = false)

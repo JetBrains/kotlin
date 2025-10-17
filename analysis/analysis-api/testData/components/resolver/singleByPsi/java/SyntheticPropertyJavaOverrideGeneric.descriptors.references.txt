@@ -2,11 +2,13 @@
   KtNameReferenceExpression(192,195): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in <local>: JavaClass.foo) get()
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -14,11 +16,13 @@
   KtNameReferenceExpression(211,214): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in <local>: JavaClass.foo) set(value: (Foo<kotlin.String!>..Foo<kotlin.String!>?))
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -26,10 +30,12 @@
   KtNameReferenceExpression(329,332): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in <local>: JavaClass.foo) get()
 
     SyntheticPropertyAccessorReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)

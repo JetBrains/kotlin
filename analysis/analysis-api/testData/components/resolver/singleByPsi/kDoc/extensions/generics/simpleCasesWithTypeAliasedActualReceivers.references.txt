@@ -2,6 +2,7 @@
   KDocName(396,417): 'ChildGenericAlias.ext'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T> Base<T>.ext()
 
@@ -9,6 +10,7 @@
   KDocName(423,453): 'ChildGenericAlias.extRecursive'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T : Base<T>> Base<T>.extRecursive()
 
@@ -16,6 +18,7 @@
   KDocName(459,487): 'ChildGenericAlias.extNothing'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Base<kotlin.Nothing>.extNothing()
 
@@ -23,6 +26,7 @@
   KDocName(493,518): 'ChildGenericAlias.extStar'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Base<*>.extStar()
 
@@ -30,6 +34,7 @@
   KDocName(527,566): 'ChildGenericAliasWithStarProjection.ext'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T> Base<T>.ext()
 
@@ -37,6 +42,7 @@
   KDocName(572,620): 'ChildGenericAliasWithStarProjection.extRecursive'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -44,6 +50,7 @@
   KDocName(626,672): 'ChildGenericAliasWithStarProjection.extNothing'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -51,6 +58,7 @@
   KDocName(678,721): 'ChildGenericAliasWithStarProjection.extStar'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Base<*>.extStar()
 
@@ -58,6 +66,7 @@
   KDocName(730,762): 'ChildGenericAliasWithNothing.ext'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T> Base<T>.ext()
 
@@ -65,6 +74,7 @@
   KDocName(768,809): 'ChildGenericAliasWithNothing.extRecursive'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T : Base<T>> Base<T>.extRecursive()
 
@@ -72,6 +82,7 @@
   KDocName(815,854): 'ChildGenericAliasWithNothing.extNothing'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Base<kotlin.Nothing>.extNothing()
 
@@ -79,6 +90,7 @@
   KDocName(860,896): 'ChildGenericAliasWithNothing.extStar'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Base<*>.extStar()
 
@@ -86,6 +98,7 @@
   KDocName(905,949): 'ChildGenericAliasWithAnotherNothingAlias.ext'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T> Base<T>.ext()
 
@@ -93,6 +106,7 @@
   KDocName(955,1008): 'ChildGenericAliasWithAnotherNothingAlias.extRecursive'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -100,6 +114,7 @@
   KDocName(1014,1065): 'ChildGenericAliasWithAnotherNothingAlias.extNothing'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -107,5 +122,6 @@
   KDocName(1071,1119): 'ChildGenericAliasWithAnotherNothingAlias.extStar'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun Base<*>.extStar()

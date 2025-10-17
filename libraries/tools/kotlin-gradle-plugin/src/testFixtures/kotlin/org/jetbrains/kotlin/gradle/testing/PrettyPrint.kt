@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testing
 
+import java.io.File
 import kotlin.reflect.full.memberProperties
 
 /** Pretty print diffable by text and copypastable collection-like hierarchies */
@@ -18,7 +19,7 @@ class PrettyPrint<T : Any>(
         val nextIndentationDepth = indentation + 2
         val elements: Array<String> = when (value) {
             is Map<*, *> -> arrayOf(
-                "mutableMapOf(",
+                "mapOf(",
                 *value.map { it }.sortedBy { it.key.toString() }.map {
                     "${twoSpaces}${it.key?.prettyPrinted()} to ${it.value?.prettyPrinted(nextIndentationDepth)},"
                 }.toTypedArray(),
@@ -29,12 +30,12 @@ class PrettyPrint<T : Any>(
                 val innerValue = orderedValue.map { "${twoSpaces}${it?.prettyPrinted(nextIndentationDepth)}," }.toTypedArray()
                 when (orderedValue) {
                     is Set<*> -> arrayOf(
-                        "mutableSetOf(",
+                        "setOf(",
                         *innerValue,
                         ")",
                     )
                     else -> arrayOf(
-                        "mutableListOf(",
+                        "listOf(",
                         *innerValue,
                         ")",
                     )
@@ -45,6 +46,8 @@ class PrettyPrint<T : Any>(
                 if (packageName.startsWith("kotlin.") || packageName.startsWith("java.")) {
                     if (value is String) {
                         arrayOf("\"${value}\"")
+                    } else if (value is File) {
+                        arrayOf("File(\"${value}\")")
                     } else {
                         arrayOf(value.toString())
                     }

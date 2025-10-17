@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryKt]]
+  facadeFqName: RecoveryKt
+  partSimpleName: "RecoveryKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/A0, fqName=A0, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A0, superNames=[]]

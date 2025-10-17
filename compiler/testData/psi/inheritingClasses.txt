@@ -1,4 +1,6 @@
 KtFile: inheritingClasses.kt
+  PsiComment(EOL_COMMENT)('// LIBRARY_PLATFORMS: JVM, Common')
+  PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

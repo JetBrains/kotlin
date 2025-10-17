@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionLiteralsKt]]
+  facadeFqName: FunctionLiteralsKt
+  partSimpleName: "FunctionLiteralsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]

@@ -43,7 +43,7 @@ internal object TopDownAnalyzerFacadeForKonan {
         val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved(
                 config.resolvedLibraries, projectContext.storageManager, module.builtIns, config.languageVersionSettings,
                 config.friendModuleFiles, config.refinesModuleFiles,
-                config.resolve.includedLibraries.map { it.libraryFile }.toSet(), listOf(module),
+                config.includedLibraries.map { it.libraryFile }.toSet(), listOf(module),
                 isForMetadataCompilation = config.metadataKlib)
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()

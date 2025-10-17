@@ -8,6 +8,7 @@ A.class:
     CLASS[classId=foo/TopLevelMembers/A, fqName=foo.TopLevelMembers.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: [ allowedTargets -> [AnnotationTarget.FIELD] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -61,12 +62,15 @@ Nothing.class:
 
 TopLevelMembersKt.class:
   FILE[kind=Facade[packageFqName=foo.TopLevelMembers, facadeFqName=foo.TopLevelMembers.TopLevelMembersKt]]
+    facadeFqName: foo.TopLevelMembers.TopLevelMembersKt
+    partSimpleName: "TopLevelMembersKt"
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]
         REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
     IMPORT_LIST
     PROPERTY[fqName=foo.TopLevelMembers.immutable, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=immutable]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -74,6 +78,7 @@ TopLevelMembersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Double]
     PROPERTY[fqName=foo.TopLevelMembers.mutable, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=mutable]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -81,6 +86,7 @@ TopLevelMembersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Float]
     PROPERTY[fqName=foo.TopLevelMembers.ext, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=ext]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -96,6 +102,7 @@ TopLevelMembersKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=foo.TopLevelMembers.certainlyNothing, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=certainlyNothing]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[private]
       TYPE_REFERENCE
         USER_TYPE
@@ -103,6 +110,7 @@ TopLevelMembersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Nothing]
     PROPERTY[fqName=foo.TopLevelMembers.Main, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=Main]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -123,8 +131,10 @@ TopLevelMembersKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=foo.TopLevelMembers.Main, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[internal]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+          valueArguments: [ ]
           ANNOTATION_TARGET[useSiteTarget=FIELD]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
@@ -143,6 +153,7 @@ TopLevelMembersKt.class:
               REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
             REFERENCE_EXPRESSION[referencedName=D]
     FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -151,6 +162,7 @@ TopLevelMembersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
     FUN[fqName=foo.TopLevelMembers.funWithExprBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithExprBody]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -159,6 +171,7 @@ TopLevelMembersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
     FUN[fqName=foo.TopLevelMembers.funWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithParams]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
@@ -173,6 +186,7 @@ TopLevelMembersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
     FUN[fqName=foo.TopLevelMembers.ext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -193,6 +207,7 @@ TopLevelMembersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
     FUN[fqName=foo.TopLevelMembers.funWithVarargParam, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
@@ -214,6 +229,7 @@ TopLevelMembersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
     FUN[fqName=foo.TopLevelMembers.probablyNothing, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=probablyNothing]
+      origin: Facade(className=foo/TopLevelMembers/TopLevelMembersKt, jvmClassName=null)
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE

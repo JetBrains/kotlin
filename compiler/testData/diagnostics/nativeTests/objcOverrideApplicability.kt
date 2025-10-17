@@ -1,5 +1,4 @@
 // API_VERSION: 2.0
-// FIR_IDENTICAL
 // WITH_PLATFORM_LIBS
 
 import kotlinx.cinterop.*

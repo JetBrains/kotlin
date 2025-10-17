@@ -1,0 +1,215 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package kotlin.reflect.jvm.internal
+
+import org.jetbrains.kotlin.types.asSimpleType
+import kotlin.coroutines.Continuation
+import kotlin.jvm.internal.CallableReference
+import kotlin.reflect.KCallable
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.KType
+import kotlin.reflect.jvm.internal.calls.Caller
+import kotlin.reflect.jvm.internal.calls.getMfvcUnboxMethods
+import kotlin.reflect.jvm.internal.types.DescriptorKType
+import kotlin.reflect.jvm.javaType
+import kotlin.reflect.jvm.jvmErasure
+import java.lang.reflect.Array as ReflectArray
+
+/**
+ * This interface and its subinterfaces are used to provide operations supported by all implementations of [KCallable] in kotlin-reflect
+ * (K1 descriptor-based, kotlin-metadata-jvm, and Java-based) that are not yet exposed in the public API of [KCallable].
+ */
+internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerImpl {
+    val container: KDeclarationContainerImpl
+
+    val rawBoundReceiver: Any?
+
+    val receiverParameters: List<KParameter>
+
+    /**
+     * Instance which is used to perform a positional call, i.e. `call`.
+     */
+    val caller: Caller<*>
+
+    /**
+     * Instance which is used to perform a call "by name", i.e. `callBy`.
+     */
+    val defaultCaller: Caller<*>?
+
+    /**
+     * Returns an array that contains default values of all parameter types, which is copied and filled on every `callBy`.
+     *
+     * @see computeAbsentArguments
+     */
+    fun getAbsentArguments(): Array<Any?>
+
+    /**
+     * True if any parameter of this callable has a multi-field value class (MFVC) type and thus is expanded to multiple parameters in the
+     * JVM bytecode. This value should be cached in implementations, because computing it is not cheap, and it's queried on every `callBy`.
+     */
+    val parametersNeedMFVCFlattening: Lazy<Boolean>
+
+    @Suppress("UNCHECKED_CAST")
+    override fun call(vararg args: Any?): R = reflectionCall {
+        return caller.call(args) as R
+    }
+
+    override fun callBy(args: Map<KParameter, Any?>): R {
+        return if (isAnnotationConstructor) callAnnotationConstructor(args) else callDefaultMethod(args, null)
+    }
+}
+
+internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?> {
+    val signature: String
+}
+
+internal val ReflectKCallable<*>.isBound: Boolean
+    get() = rawBoundReceiver !== CallableReference.NO_RECEIVER
+
+internal fun ReflectKCallable<*>.computeAbsentArguments(): Array<Any?> {
+    val parameters = parameters
+    val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
+    val flattenedParametersSize =
+        if (parametersNeedMFVCFlattening.value) {
+            parameters.sumOf {
+                if (it.kind == KParameter.Kind.VALUE) it.getMultiFieldValueClassParameterTypeSize() else 0
+            }
+        } else {
+            parameters.count { it.kind == KParameter.Kind.VALUE }
+        }
+    val maskSize = (flattenedParametersSize + Integer.SIZE - 1) / Integer.SIZE
+
+    // Array containing the actual function arguments, masks, and +1 for DefaultConstructorMarker or MethodHandle.
+    val arguments = arrayOfNulls<Any?>(parameterSize + maskSize + 1)
+
+    // Set values of primitive (and inline class) arguments to the boxed default values (such as 0, 0.0, false) instead of nulls.
+    parameters.forEach { parameter ->
+        if (parameter.isOptional && !parameter.type.isInlineClassType) {
+            // For inline class types, the javaType refers to the underlying type of the inline class,
+            // but we have to pass null in order to mark the argument as absent for ValueClassAwareCaller.
+            arguments[parameter.index] = defaultPrimitiveValue(parameter.type.javaType)
+        } else if (parameter.isVararg) {
+            arguments[parameter.index] = defaultEmptyArray(parameter.type)
+        }
+    }
+
+    for (i in 0 until maskSize) {
+        arguments[parameterSize + i] = 0
+    }
+
+    return arguments
+}
+
+internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any?>, continuationArgument: Continuation<*>?): R {
+    val parameters = parameters
+
+    // Optimization for functions without value/receiver parameters.
+    if (parameters.isEmpty()) {
+        @Suppress("UNCHECKED_CAST")
+        return reflectionCall {
+            caller.call(if (isSuspend) arrayOf(continuationArgument) else emptyArray()) as R
+        }
+    }
+
+    val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
+
+    val arguments = getAbsentArguments().apply {
+        if (isSuspend) {
+            this[parameters.size] = continuationArgument
+        }
+    }
+
+    var valueParameterIndex = 0
+    var anyOptional = false
+
+    val hasMfvcParameters = parametersNeedMFVCFlattening.value
+    for (parameter in parameters) {
+        val parameterTypeSize = if (hasMfvcParameters) parameter.getMultiFieldValueClassParameterTypeSize() else 1
+        when {
+            args.containsKey(parameter) -> {
+                arguments[parameter.index] = args[parameter]
+            }
+            parameter.isOptional -> {
+                if (hasMfvcParameters) {
+                    for (valueSubParameterIndex in valueParameterIndex until (valueParameterIndex + parameterTypeSize)) {
+                        val maskIndex = parameterSize + (valueSubParameterIndex / Integer.SIZE)
+                        arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueSubParameterIndex % Integer.SIZE))
+                    }
+                } else {
+                    val maskIndex = parameterSize + (valueParameterIndex / Integer.SIZE)
+                    arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueParameterIndex % Integer.SIZE))
+                }
+                anyOptional = true
+            }
+            parameter.isVararg -> {}
+            else -> {
+                throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
+            }
+        }
+
+        if (parameter.kind == KParameter.Kind.VALUE) {
+            valueParameterIndex += parameterTypeSize
+        }
+    }
+
+    if (!anyOptional) {
+        @Suppress("UNCHECKED_CAST")
+        return reflectionCall {
+            caller.call(arguments.copyOf(parameterSize)) as R
+        }
+    }
+
+    val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
+
+    @Suppress("UNCHECKED_CAST")
+    return reflectionCall {
+        caller.call(arguments) as R
+    }
+}
+
+/**
+ * If this is a parameter of a multi-field value class, returns the number of JVM parameters this parameter is expanded to.
+ * Otherwise, returns 1.
+ */
+internal fun KParameter.getMultiFieldValueClassParameterTypeSize(): Int =
+    if (type.needsMultiFieldValueClassFlattening) {
+        val type = (type as DescriptorKType).type.asSimpleType()
+        getMfvcUnboxMethods(type)!!.size
+    } else {
+        1
+    }
+
+internal fun <R> ReflectKCallable<R>.callAnnotationConstructor(args: Map<KParameter, Any?>): R {
+    val arguments = parameters.map { parameter ->
+        when {
+            args.containsKey(parameter) -> {
+                args[parameter] ?: throw IllegalArgumentException("Annotation argument value cannot be null ($parameter)")
+            }
+            parameter.isOptional -> null
+            parameter.isVararg -> defaultEmptyArray(parameter.type)
+            else -> throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
+        }
+    }
+
+    val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
+
+    @Suppress("UNCHECKED_CAST")
+    return reflectionCall {
+        caller.call(arguments.toTypedArray()) as R
+    }
+}
+
+private fun defaultEmptyArray(type: KType): Any =
+    type.jvmErasure.java.run {
+        if (isArray) ReflectArray.newInstance(componentType, 0)
+        else throw KotlinReflectionInternalError(
+            "Cannot instantiate the default empty array of type $simpleName, because it is not an array type"
+        )
+    }
+
+internal val ReflectKCallable<*>.isAnnotationConstructor: Boolean
+    get() = name == "<init>" && container.jClass.isAnnotation

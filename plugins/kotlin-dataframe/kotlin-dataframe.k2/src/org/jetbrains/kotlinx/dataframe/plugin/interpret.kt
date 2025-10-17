@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -148,15 +150,12 @@ fun <T> KotlinTypeFacade.interpret(
                     "'$name' should be ${PluginDataFrameSchema::class.qualifiedName!!}, but plugin expect $expectedReturnType"
                 }
 
-                val objectWithSchema = it.expression.getSchema()
+                val objectWithSchema = context(session) { it.expression.resolvedType.findSchemaArgument(isTest) }
                 if (objectWithSchema == null) {
                     reporter.doNotReportInterpretationError()
                     null
                 } else {
-                    val arg = objectWithSchema.schemaArg
-                    val schemaTypeArg = (objectWithSchema.typeRef as ConeClassLikeType).typeArguments[arg]
-                    val schema = pluginDataFrameSchema(schemaTypeArg)
-                    Interpreter.Success(schema)
+                    Interpreter.Success(objectWithSchema.getSchema())
                 }
             }
 
@@ -276,6 +275,8 @@ private fun KotlinTypeFacade.extractValue(
 
             is FirErrorExpression -> null
 
+            is FirLiteralExpression -> result.value
+
             else -> null
         }
         col?.let { Interpreter.Success(it) }
@@ -322,7 +323,7 @@ fun SessionContext.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): 
         val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as? FirRegularClassSymbol
         rootSchemaSymbol?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
     } else {
-        symbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
+        symbol.unsubstitutedScope(session, ScopeSession(), false, FirResolvePhase.DECLARATIONS)
     }.let { scope ->
         val names = scope?.getCallableNames() ?: emptySet()
         names.flatMap { scope?.getProperties(it) ?: emptyList() }
@@ -509,26 +510,37 @@ internal fun FirFunctionCall.collectArgumentExpressions(): RefinedArguments {
     return RefinedArguments(refinedArgument)
 }
 
-internal val KotlinTypeFacade.getSchema: FirExpression.() -> ObjectWithSchema? get() = { getSchema(session) }
-
-internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
-    return resolvedType.toSymbol(session)?.let {
+context(session: FirSession)
+internal fun ConeKotlinType.findSchemaArgument(isTest: Boolean): ObjectWithSchema? {
+    return toSymbol(session)?.let {
         val (typeRef: ConeKotlinType, symbol) = if (it is FirTypeAliasSymbol) {
             it.resolvedExpandedTypeRef.coneType to it.resolvedExpandedTypeRef.toClassLikeSymbol(session)!!
         } else {
-            resolvedType to it
+            this to it
         }
-        symbol.resolvedAnnotationsWithArguments.firstNotNullOfOrNull {
+        val objectWithSchema = symbol.resolvedAnnotationsWithArguments.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
                 val argumentName = Name.identifier(HasSchema::schemaArg.name)
                 val schemaArg = (it.findArgumentByName(argumentName) as FirLiteralExpression).value
                 ObjectWithSchema((schemaArg as Number).toInt(), typeRef)
             }
-        } ?: error("Annotate $symbol with @HasSchema")
+        }
+        if (objectWithSchema == null && isTest) {
+            error("Annotate $symbol with @HasSchema")
+        }
+        objectWithSchema
     }
 }
 
 private const val THIS_CALL = "functionCall"
 
-internal class ObjectWithSchema(val schemaArg: Int, val typeRef: ConeKotlinType)
+internal class ObjectWithSchema(val schemaArg: Int, val annotatedType: ConeKotlinType)
+
+context(session: SessionContext)
+internal fun ObjectWithSchema.getSchema(): PluginDataFrameSchema {
+    val arg = schemaArg
+    val schemaTypeArg = (annotatedType as ConeClassLikeType).typeArguments[arg]
+    val schema = session.pluginDataFrameSchema(schemaTypeArg)
+    return schema
+}
 

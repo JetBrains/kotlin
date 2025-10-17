@@ -1,5 +1,6 @@
 KtNameReferenceExpression(138,153): 'MyRestrictedApi'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyRestrictedApi) {psi: ClsClassImpl} constructor({psi: ClsMethodImpl} explanation: kotlin.String, {psi: ClsMethodImpl} allowlistAnnotations: kotlin.Array<kotlin.reflect.KClass<out kotlin.Annotation!>>, {psi: ClsMethodImpl} allowedInTestonlyTargets: kotlin.Boolean)

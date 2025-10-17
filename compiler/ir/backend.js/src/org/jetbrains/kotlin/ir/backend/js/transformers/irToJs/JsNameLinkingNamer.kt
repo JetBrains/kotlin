@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.localClassName
 import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,7 +29,7 @@ class JsNameLinkingNamer(
 
     private fun IrDeclarationWithName.getName(): JsName {
         return nameMap.getOrPut(this) {
-            val name = (this as? IrClass)?.let { context.localClassNames[this] } ?: let {
+            val name = (this as? IrClass)?.localClassName ?: let {
                 this.nameIfPropertyAccessor() ?: getJsNameOrKotlinName().asString()
             }
             JsName(makeValidES5Identifier(name), true)
@@ -43,7 +44,8 @@ class JsNameLinkingNamer(
             val jsModule: String? = declaration.getJsModule()
             val maybeParentFile: IrFile? = declaration.parent as? IrFile
             val fileJsModule: String? = maybeParentFile?.getJsModule()
-            val jsQualifier: List<JsName>? = maybeParentFile?.getJsQualifier()?.split('.')?.map { JsName(it, false) }
+            val jsQualifier: List<JsName>? = (declaration.getJsQualifier() ?: maybeParentFile?.getJsQualifier())
+                ?.split('.')?.map { JsName(it, false) }
 
             return when {
                 jsModule != null -> declaration.generateImportForDeclarationWithJsModule(jsModule)
@@ -53,7 +55,7 @@ class JsNameLinkingNamer(
         }
 
         return declaration.getName().also {
-            if (declaration == context.intrinsics.void.owner.backingField) {
+            if (declaration == context.symbols.void.owner.backingField) {
                 it.constant = true
             }
         }

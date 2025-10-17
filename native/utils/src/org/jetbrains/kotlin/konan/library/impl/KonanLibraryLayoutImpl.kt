@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.konan.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.createTempDir
 import org.jetbrains.kotlin.konan.file.file
 import org.jetbrains.kotlin.konan.file.unzipTo
@@ -26,8 +27,8 @@ class BitcodeLibraryLayoutImpl(klib: File, component: String, target: KonanTarge
 
 }
 
-open class TargetedLibraryAccess<L : TargetedKotlinLibraryLayout>(klib: File, component: String, val target: KonanTarget?) :
-    BaseLibraryAccess<L>(klib, component) {
+open class TargetedLibraryAccess<L : TargetedKotlinLibraryLayout>(klib: File, component: String, val target: KonanTarget?, zipFileSystemAccessor: ZipFileSystemAccessor?) :
+    BaseLibraryAccess<L>(klib, component, zipFileSystemAccessor) {
 
     override val layout = TargetedLibraryLayoutImpl(klib, component, target)
     protected open val extractingLayout: TargetedKotlinLibraryLayout by lazy { ExtractingTargetedLibraryImpl(layout) }
@@ -40,8 +41,8 @@ open class TargetedLibraryAccess<L : TargetedKotlinLibraryLayout>(klib: File, co
             action(layout as L)
 }
 
-open class BitcodeLibraryAccess<L : BitcodeKotlinLibraryLayout>(klib: File, component: String, target: KonanTarget?) :
-    TargetedLibraryAccess<L>(klib, component, target) {
+open class BitcodeLibraryAccess<L : BitcodeKotlinLibraryLayout>(klib: File, component: String, target: KonanTarget?, zipFileSystemAccessor: ZipFileSystemAccessor?) :
+    TargetedLibraryAccess<L>(klib, component, target, zipFileSystemAccessor) {
 
     override val layout = BitcodeLibraryLayoutImpl(klib, component, target)
     override val extractingLayout: BitcodeKotlinLibraryLayout by lazy { ExtractingBitcodeLibraryImpl(layout) }

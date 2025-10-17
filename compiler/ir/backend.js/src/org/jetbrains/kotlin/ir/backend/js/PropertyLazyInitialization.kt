@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 
-class PropertyLazyInitialization(val enabled: Boolean, eagerInitialization: IrClassSymbol) {
-    val fileToInitializationFuns: MutableMap<IrFile, IrSimpleFunction?> = hashMapOf()
-    val fileToInitializerPureness: MutableMap<IrFile, Boolean> = hashMapOf()
-    val eagerInitialization: IrClassSymbol = eagerInitialization
-}
+class PropertyLazyInitialization(
+    val enabled: Boolean,
+    val eagerInitialization: IrClassSymbol,
+)

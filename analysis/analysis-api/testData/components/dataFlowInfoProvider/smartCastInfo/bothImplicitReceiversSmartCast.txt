@@ -1,6 +1,5 @@
 expression: foo
-isStable: null
-smartCastType: null
+smartCastInfo: null
 receiver: DISPATCH
     smartCastType: Foo
 receiver: EXTENSION

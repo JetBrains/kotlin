@@ -19,7 +19,7 @@ fun Wrapper(content: @Composable () -> Unit) { content() }
 @Composable
 fun Test(z: Int, x: Int, y: Result<Int>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)P(2!,1:kotlin.Result)<{>,<Wrappe...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(z,x,y:kotlin.Result)<{>,<Wrappe...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(z)) 0b0100 else 0b0010
@@ -62,7 +62,7 @@ fun Test(z: Int, x: Int, y: Result<Int>, %composer: Composer?, %changed: Int) {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Wrapper)<conten...>:Test.kt")
+  sourceInformation(%composer, "C(Wrapper)N(content)<conten...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010

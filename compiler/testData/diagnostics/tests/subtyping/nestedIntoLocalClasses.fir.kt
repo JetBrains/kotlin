@@ -19,7 +19,7 @@ private fun foo() = run {
 
 fun test() {
     var x = foo(1)
-    x = <!ASSIGNMENT_TYPE_MISMATCH!>foo()<!>
+    x <!ASSIGNMENT_TYPE_MISMATCH!>=<!> foo()
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, inner,

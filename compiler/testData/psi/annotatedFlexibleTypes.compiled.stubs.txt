@@ -25,6 +25,7 @@ FILE[kind=File[packageFqName=test]]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
+            upperBound: kotlin.collections.Collection<kotlin.Int .. kotlin.Int?>?
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -34,6 +35,7 @@ FILE[kind=File[packageFqName=test]]
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
+                    upperBound: kotlin.Int?
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Int]
@@ -42,6 +44,7 @@ FILE[kind=File[packageFqName=test]]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
+            upperBound: kotlin.Int?
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]

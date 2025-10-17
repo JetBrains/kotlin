@@ -64,15 +64,31 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
     }
     if (allConditionsReadsSameValue) return false
 
+    val supportedBasicTypes = setOf(
+        IrConstKind.Char,
+        IrConstKind.Int,
+    )
+
     // Check all kinds are the same
-    for (branch in extractedBranches) {
-        //TODO: Support all primitive types
-        if (!branch.conditions.all { it.const.kind.equals(IrConstKind.Int) }) return false
+    //TODO: Support all primitive types
+    val validBranches = supportedBasicTypes.any { type ->
+        extractedBranches.all { branch ->
+            branch.conditions.all { it.const.kind.equals(type) }
+        }
+    }
+    if (!validBranches) {
+        return false
     }
 
     val intBranches = extractedBranches.map { branch ->
         ExtractedWhenBranchWithIntConditions(
-            branch.conditions.map { it.const.value as Int }, branch.expression
+            branch.conditions.map {
+                when (val v = it.const.value) {
+                    is Int -> v
+                    is Char -> v.code
+                    else -> error("Unreachable branch")
+                }
+            }, branch.expression
         )
     }
 

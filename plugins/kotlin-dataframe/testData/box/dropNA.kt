@@ -13,5 +13,8 @@ fun box(): String {
 
     val df2 = df.dropNA(whereAllNA = true) { a and b }
     df2.compareSchemas(strict = true)
+
+    val df3 = df.dropNA()
+    df3.compareSchemas(strict = true)
     return "OK"
 }

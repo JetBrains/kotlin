@@ -1,7 +1,5 @@
 package enumValues
 
-import noEnumEntries.*
-
 enum class EnumLeftRightUpDown {
     LEFT, RIGHT, UP, DOWN
 }
@@ -15,9 +13,4 @@ enum class EnumValuesValues_ {
 }
 
 enum class EmptyEnum {
-}
-
-
-fun dceAvoidance() : NoEnumEntriesEnum {
-    return NoEnumEntriesEnum.ONE
 }

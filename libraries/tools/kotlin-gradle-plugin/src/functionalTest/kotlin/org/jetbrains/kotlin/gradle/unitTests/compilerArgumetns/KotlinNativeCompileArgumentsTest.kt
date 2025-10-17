@@ -223,11 +223,7 @@ class KotlinNativeCompileArgumentsTest {
         project.evaluate()
         val nativeCompilation = kotlin.linuxX64().compilations.main
 
-        val expectedPlatformDependencies = listOf("iconv", "posix", "zlib", "linux", "builtin").map {
-            "org.jetbrains.kotlin.native.platform.$it"
-        }.toSet()
-
-        val expectedDependencies = expectedPlatformDependencies + listOf("stdlib")
+        val expectedDependencies = setOf("stdlib", "nativeDependencies")
 
         val actualDependencies = nativeCompilation.compileDependencyFiles
             .map { it.name }
@@ -280,8 +276,12 @@ class KotlinNativeCompileArgumentsTest {
         }
 
         compileLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_x64")
+        compileLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
         compileLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_arm64")
+        compileLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
         linkLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_x64")
+        linkLinuxX64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
         linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("linux_arm64")
+        linkLinuxArm64.createCompilerArguments(default).libraries.assertFilePathsDontContain("nativeDependencies")
     }
 }

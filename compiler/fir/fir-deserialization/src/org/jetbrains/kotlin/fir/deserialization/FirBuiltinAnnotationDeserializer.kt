@@ -8,17 +8,15 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
 class FirBuiltinAnnotationDeserializer(
-    session: FirSession
-) : AbstractAnnotationDeserializer(session, BuiltInSerializerProtocol) {
+    private val session: FirSession
+) : AnnotationDeserializerWithProtocol(session, BuiltInSerializerProtocol) {
+    override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> =
+        typeProto.loadAnnotationsFromProtocol(session, protocol.typeAnnotation, typeProto.flags, nameResolver)
 
-    override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
-        if (!Flags.HAS_ANNOTATIONS.get(typeProto.flags)) return emptyList()
-        val annotations = typeProto.getExtension(protocol.typeAnnotation).orEmpty()
-        return annotations.map { deserializeAnnotation(it, nameResolver) }
-    }
+    override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
+        emptyList()
 }

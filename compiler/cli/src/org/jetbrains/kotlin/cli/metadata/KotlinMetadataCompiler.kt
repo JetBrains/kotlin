@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.metadata
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -81,7 +81,7 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         paths: KotlinPaths?
     ): ExitCode {
         val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
+        val performanceManager = configuration.perfManager
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
@@ -92,7 +92,7 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.METADATA_CONFIG_FILES)
 
         val sourceFiles = environment.getSourceFiles()
-        performanceManager.apply {
+        performanceManager?.apply {
             targetDescription = moduleName
             outputKind = if (arguments.metadataKlib) "KLib" else "metadata"
             addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))

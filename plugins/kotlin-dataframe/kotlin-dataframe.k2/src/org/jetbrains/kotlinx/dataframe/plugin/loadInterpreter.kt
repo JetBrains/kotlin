@@ -62,6 +62,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroup
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroupInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslNamedGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
@@ -104,7 +106,10 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfPairs
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConcatWithKeys
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertNotNull
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf3
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOfPairs
@@ -117,6 +122,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropLast0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropLast1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropLast2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNa0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNa1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNulls1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoinWith
@@ -143,19 +149,29 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherValuesInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCount0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCumSum
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCumSum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMax0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMax1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMax2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMaxOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMean0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMean1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMean2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMeanOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMedian0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByPercentile0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMedian1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMedian2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByPercentile1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMedianOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByPercentileOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMin0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMin1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMin2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByMinOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByPercentile2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceExpression
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReduceInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByReducePredicate
@@ -168,14 +184,17 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Last2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.LeftJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStd0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStd1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStd2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStdOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySumOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Implode
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ImplodeDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InnerJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InsertAt
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.IntoStringLambda
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.JoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.LeftJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
@@ -196,11 +215,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Min0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Min1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveAfter0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveBefore0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveInto0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveTo
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveTo1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToStart0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToStart1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToEnd0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveToEnd1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveUnder0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MoveUnder1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.NameContains0
@@ -219,6 +241,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PairToConstructor
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.PerRowCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Percentile1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameIntoLambda
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameMapping
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameColumn
@@ -237,6 +260,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Reorder
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReorderColumnsByName
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RightJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RightJoinWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SelectString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single2
@@ -270,7 +294,15 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypePattern
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypeZone
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateAt
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColLambda
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColMap
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColRow
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerRowCol
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateNotNull
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateNotNullWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWhere
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWithNull
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWithZero
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.WithoutNulls0
@@ -359,7 +391,12 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "ToSpecificTypePattern" -> ToSpecificTypePattern()
         "With0" -> With0()
         "ConvertAsColumn" -> ConvertAsColumn()
+        "ConvertNotNull" -> ConvertNotNull()
         "PerRowCol" -> PerRowCol()
+        "UpdatePerCol" -> UpdatePerColLambda()
+        "UpdatePerColRow" -> UpdatePerColRow()
+        "UpdatePerColMap" -> UpdatePerColMap()
+        "UpdatePerRowCol" -> UpdatePerRowCol()
         "Explode0" -> Explode0()
         "Implode" -> Implode()
         "ImplodeDefault" -> ImplodeDefault()
@@ -388,6 +425,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "Rename" -> Rename()
         "RenameMapping" -> RenameMapping()
         "Select0" -> Select0()
+        "SelectString" -> SelectString()
         "Distinct0" -> Select0()
         "NestedSelect" -> NestedSelect()
         "Expr0" -> Expr0()
@@ -395,16 +433,19 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "Remove0" -> Remove0()
         "Group0" -> Group0()
         "Into0" -> Into0()
+        "IntoStringLambda" -> IntoStringLambda()
         "Ungroup0" -> Ungroup0()
         "DropNulls0" -> DropNulls0()
         "DropNulls1" -> DropNulls1()
         "DropNa0" -> DropNa0()
+        "DropNa1" -> DropNa1()
         "Properties0" -> Properties0()
         "Preserve0" -> Preserve0()
         "Preserve1" -> Preserve1()
         "Exclude0" -> Exclude0()
         "Exclude1" -> Exclude1()
         "RenameInto" -> RenameInto()
+        "RenameIntoLambda" -> RenameIntoLambda()
         "DataFrameGroupBy" -> DataFrameGroupBy()
         "AsGroupBy" -> AsGroupBy()
         "AsGroupByDefault" -> AsGroupByDefault()
@@ -511,11 +552,17 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "ToDataFrameColumn" -> ToDataFrameColumn()
         "FillNulls0" -> FillNulls0()
         "UpdateWith0" -> UpdateWith0()
+        "UpdateNotNull" -> UpdateNotNullWith()
+        "UpdateNotNullDefault" -> UpdateNotNull()
+        "UpdateWithNull" -> UpdateWithNull()
+        "UpdateWithZero" -> UpdateWithZero()
         "Flatten0" -> Flatten0()
         "FlattenDefault" -> FlattenDefault()
         "AddId" -> AddId()
         "AddDslStringInvoke" -> AddDslStringInvoke()
         "AddDslNamedGroup" -> AddDslNamedGroup()
+        "AddDslAddGroup" -> AddDslAddGroup()
+        "AddDslAddGroupInto" -> AddDslAddGroupInto()
         "MapToFrame" -> MapToFrame()
         "Move0" -> Move0()
         "ToTop" -> ToTop()
@@ -534,8 +581,11 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "MoveToStart0" -> MoveToStart0()
         "MoveToStart1" -> MoveToStart1()
         "MoveToEnd0" -> MoveToEnd0()
+        "MoveToEnd1" -> MoveToEnd1()
+        "MoveBefore0" -> MoveBefore0()
         "MoveAfter0" -> MoveAfter0()
         "MoveTo" -> MoveTo()
+        "MoveTo1" -> MoveTo1()
         "GroupByAdd" -> GroupByAdd()
         "Merge0" -> Merge0()
         "MergeInto0" -> MergeInto0()
@@ -559,28 +609,42 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "Max1" -> Max1()
         "Percentile0" -> Percentile0()
         "Percentile1" -> Percentile1()
+        "DataFrameCumSum" -> DataFrameCumSum()
+        "DataFrameCumSum0" -> DataFrameCumSum0()
         "GroupByCount0" -> GroupByCount0()
         "GroupByMean0" -> GroupByMean0()
         "GroupByMean1" -> GroupByMean1()
+        "GroupByMean2" -> GroupByMean2()
         "GroupByMeanOf" -> GroupByMeanOf()
         "GroupByMedian0" -> GroupByMedian0()
         "GroupByMedian1" -> GroupByMedian1()
+        "GroupByMedian2" -> GroupByMedian2()
+        "GroupByPercentile0" -> GroupByPercentile0()
+        "GroupByPercentile1" -> GroupByPercentile1()
+        "GroupByPercentile2" -> GroupByPercentile2()
         "GroupByMedianOf" -> GroupByMedianOf()
+        "GroupByPercentileOf" -> GroupByPercentileOf()
         "GroupBySumOf" -> GroupBySumOf()
         "GroupBySum0" -> GroupBySum0()
         "GroupBySum1" -> GroupBySum1()
+        "GroupBySum2" -> GroupBySum2()
         "GroupByReducePredicate" -> GroupByReducePredicate()
         "GroupByReduceExpression" -> GroupByReduceExpression()
         "GroupByReduceInto" -> GroupByReduceInto()
         "GroupByMax0" -> GroupByMax0()
         "GroupByMax1" -> GroupByMax1()
+        "GroupByMax2" -> GroupByMax2()
         "GroupByMaxOf" -> GroupByMaxOf()
         "GroupByMin0" -> GroupByMin0()
         "GroupByMin1" -> GroupByMin1()
+        "GroupByMin2" -> GroupByMin2()
         "GroupByMinOf" -> GroupByMinOf()
         "GroupByStd0" -> GroupByStd0()
         "GroupByStd1" -> GroupByStd1()
+        "GroupByStd2" -> GroupByStd2()
         "GroupByStdOf" -> GroupByStdOf()
+        "GroupByCumSum0" -> GroupByCumSum0()
+        "GroupByCumSum" -> GroupByCumSum()
         "DataFrameXs" -> DataFrameXs()
         "GroupByXs" -> GroupByXs()
         "Gather0" -> Gather0()

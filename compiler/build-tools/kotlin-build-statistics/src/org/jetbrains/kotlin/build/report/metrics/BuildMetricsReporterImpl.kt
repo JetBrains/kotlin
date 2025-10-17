@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 
-open class BuildMetricsReporterImpl<B : BuildTime, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, Serializable {
+open class BuildMetricsReporterImpl<B : BuildTimeMetric, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, Serializable {
     private val myBuildTimeStartNs = HashMap<B, Long>()
     private val myGcPerformance = HashMap<String, GcMetric>()
     private val myBuildTimes = BuildTimes<B>()
@@ -45,19 +45,15 @@ open class BuildMetricsReporterImpl<B : BuildTime, P : BuildPerformanceMetric> :
         myBuildTimes.addTimeNs(time, durationNs)
     }
 
-    override fun addDynamicTimeMetricNs(time: String, parent: B, durationNs: Long) {
-        myBuildTimes.addDynamicTimeNs(DynamicBuildTimeKey(time, parent), durationNs)
-    }
-
     override fun addMetric(metric: P, value: Long) {
         myBuildMetrics.addLong(metric, value)
     }
 
     override fun addTimeMetric(metric: P) {
-        when (metric.getType()) {
+        when (metric.type) {
             ValueType.NANOSECONDS -> myBuildMetrics.addLong(metric, System.nanoTime())
             ValueType.MILLISECONDS, ValueType.TIME -> myBuildMetrics.addLong(metric, System.currentTimeMillis())
-            else -> error("Unable to add time metric for '${metric.getType()}' type")
+            else -> error("Unable to add time metric for '${metric.type}' type")
         }
 
     }
@@ -78,7 +74,7 @@ open class BuildMetricsReporterImpl<B : BuildTime, P : BuildPerformanceMetric> :
             gcMetrics = myGcMetrics
         )
 
-    override fun addMetrics(metrics: BuildMetrics<B, P>) {
+    override fun addMetrics(metrics: BuildMetrics<out B, out P>) {
         myBuildAttributes.addAll(metrics.buildAttributes)
         myBuildTimes.addAll(metrics.buildTimes)
         myBuildMetrics.addAll(metrics.buildPerformanceMetrics)

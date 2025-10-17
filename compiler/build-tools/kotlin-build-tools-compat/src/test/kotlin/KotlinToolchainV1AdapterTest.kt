@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-class KotlinToolchainV1AdapterTest {
+class KotlinToolchainsV1AdapterTest {
     @Test
     fun fixForFirCheck_noChange() {
         val argumentsList = listOf("abc", "def", "ghi")

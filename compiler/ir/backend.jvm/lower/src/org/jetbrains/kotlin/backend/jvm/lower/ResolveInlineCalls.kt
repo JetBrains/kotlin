@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.isMultifileBridge
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 /**
  * Statically resolves calls to inline methods to particular implementations.
  */
-@PhaseDescription(name = "ResolveInlineCalls")
 internal class ResolveInlineCalls(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
 

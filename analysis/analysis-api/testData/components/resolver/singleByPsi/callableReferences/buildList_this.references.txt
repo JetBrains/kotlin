@@ -1,5 +1,6 @@
 KtNameReferenceExpression(102,106): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       extension receiver with type kotlin.collections.MutableList<kotlin.String>

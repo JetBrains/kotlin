@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun foo() {
-    var f: Int = <!INITIALIZER_TYPE_MISMATCH!>if (true) <!ARGUMENT_TYPE_MISMATCH!>{ x: Long ->  }<!> else { x: Long ->  }<!>
+    var f: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> if (true) <!ARGUMENT_TYPE_MISMATCH!>{ x: Long ->  }<!> else { x: Long ->  }
 }
 
 class A {

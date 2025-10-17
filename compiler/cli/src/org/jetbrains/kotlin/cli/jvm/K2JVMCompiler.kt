@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
@@ -138,6 +139,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             // should be called after configuring jdk home from build file
             configuration.configureJdkClasspathRoots()
 
+            val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
             val environment = createCoreEnvironment(
                 rootDisposable, configuration, messageCollector,
                 moduleChunk.targetDescription()
@@ -154,6 +156,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 messageCollector.report(ERROR, "No source files")
                 return COMPILATION_ERROR
+            }
+
+            if (dumpModelDir != null) {
+                JvmFrontendPipelinePhase.dumpModel(dumpModelDir, chunk, configuration, arguments)
             }
 
             if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR

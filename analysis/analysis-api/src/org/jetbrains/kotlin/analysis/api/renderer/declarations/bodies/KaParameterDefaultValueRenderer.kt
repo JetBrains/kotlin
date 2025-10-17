@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaParameterDefaultValueRenderer {
     public fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter)
 
@@ -23,7 +25,7 @@ public interface KaParameterDefaultValueRenderer {
     @KaExperimentalApi
     public object THREE_DOTS : KaParameterDefaultValueRenderer {
         override fun renderDefaultValue(analysisSession: KaSession, symbol: KaValueParameterSymbol, printer: PrettyPrinter) {
-            if (symbol.hasDefaultValue) {
+            if (symbol.hasDeclaredDefaultValue) {
                 printer.append("...")
             }
         }

@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K1: ANY
 // FE 1.0 incorrectly resolves reference `Some::foo` (KT-45315)
-// DONT_TARGET_EXACT_BACKEND: WASM
+// DONT_TARGET_EXACT_BACKEND: WASM_JS, WASM_WASI
 // WASM_MUTE_REASON: Wasm box test does not support disabling only K1 mode with IGNORE_BACKEND directive
 // ISSUE: KT-55909
 // DUMP_IR

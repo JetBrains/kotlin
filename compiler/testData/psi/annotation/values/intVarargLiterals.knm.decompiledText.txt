@@ -1,0 +1,39 @@
+0_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @VarArg public final class One public constructor() {
+  }
+
+1_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @VarArg public final class Spread public constructor() {
+  }
+
+2_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @VarArg public final class Three public constructor() {
+  }
+
+3_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @VarArg public final class Two public constructor() {
+  }
+
+4_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class VarArg public constructor(vararg v: kotlin.Int) : kotlin.Annotation {
+      public companion object {
+          public const val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */
+      }
+
+      public final val v: kotlin.IntArray /* compiled code */
+  }

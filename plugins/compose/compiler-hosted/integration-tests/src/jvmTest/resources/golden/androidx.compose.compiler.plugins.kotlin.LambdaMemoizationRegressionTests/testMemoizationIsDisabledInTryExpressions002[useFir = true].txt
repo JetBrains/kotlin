@@ -1,0 +1,54 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+fun test() {
+    try {
+        val f = @Composable { if (true) foo(block = {}) }
+    } finally {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+fun test() {
+  try {
+    val f = ComposableSingletons%TestKt.lambda%652858494
+  } finally {
+  }
+}
+internal object ComposableSingletons%TestKt {
+  val lambda%652858494: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (true) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<{}>")
+        foo(<block>{
+          sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+          val tmp0_group = %composer.cache(false) {
+            {
+            }
+          }
+          sourceInformationMarkerEnd(%composer)
+          tmp0_group
+        })
+        %composer.endReplaceGroup()
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

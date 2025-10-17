@@ -97,7 +97,7 @@ sealed class ImplicitReceiverValue<S>(
     val useSiteSession: FirSession,
     protected val scopeSession: ScopeSession,
     mutable: Boolean,
-    private val inaccessibleReceiver: Boolean = false,
+    private val inaccessibleReceiverKind: InaccessibleReceiverKind? = null,
 ) : ImplicitValue<S>(type, originalType, mutable), ReceiverValue
         where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
 
@@ -123,7 +123,7 @@ sealed class ImplicitReceiverValue<S>(
         )
     }
 
-    override fun computeOriginalExpression(): FirExpression = receiverExpression(boundSymbol, originalType, inaccessibleReceiver)
+    override fun computeOriginalExpression(): FirExpression = receiverExpression(boundSymbol, originalType, inaccessibleReceiverKind)
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
 
@@ -152,7 +152,7 @@ sealed class ImplicitReceiverValue<S>(
 private fun receiverExpression(
     symbol: FirThisOwnerSymbol<*>,
     type: ConeKotlinType,
-    inaccessibleReceiver: Boolean
+    inaccessibleReceiverKind: InaccessibleReceiverKind?,
 ): FirExpression {
     // NB: we can't use `symbol.fir.source` as the source of `this` receiver. For instance, if this is an implicit receiver for a class,
     // the entire class itself will be set as a source. If combined with an implicit type operation, a certain assertion, like null
@@ -161,17 +161,18 @@ private fun receiverExpression(
         boundSymbol = symbol
     }
     val newSource = symbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitThisReceiverExpression)
-    return when (inaccessibleReceiver) {
-        false -> buildThisReceiverExpression {
+    return when (inaccessibleReceiverKind) {
+        null -> buildThisReceiverExpression {
             source = newSource
             this.calleeReference = calleeReference
             this.coneTypeOrNull = type
             isImplicit = true
         }
-        true -> buildInaccessibleReceiverExpression {
+        else -> buildInaccessibleReceiverExpression {
             source = newSource
             this.calleeReference = calleeReference
             this.coneTypeOrNull = type
+            this.kind = inaccessibleReceiverKind
         }
     }
 }
@@ -236,15 +237,21 @@ class InaccessibleImplicitReceiverValue private constructor(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean,
+    val kind: InaccessibleReceiverKind,
 ) : ImplicitReceiverValue<FirClassSymbol<*>>(
     boundSymbol, type, originalType, useSiteSession, scopeSession, mutable,
-    inaccessibleReceiver = true
+    inaccessibleReceiverKind = kind
 ) {
-    constructor(boundSymbol: FirClassSymbol<*>, type: ConeKotlinType, useSiteSession: FirSession, scopeSession: ScopeSession)
-            : this(boundSymbol, type, originalType = type, useSiteSession, scopeSession, mutable = true)
+    constructor(
+        boundSymbol: FirClassSymbol<*>,
+        type: ConeKotlinType,
+        kind: InaccessibleReceiverKind,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ) : this(boundSymbol, type, originalType = type, useSiteSession, scopeSession, mutable = true, kind)
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirClassSymbol<*>> {
-        return InaccessibleImplicitReceiverValue(boundSymbol, type, originalType, useSiteSession, scopeSession, keepMutable)
+        return InaccessibleImplicitReceiverValue(boundSymbol, type, originalType, useSiteSession, scopeSession, keepMutable, kind)
     }
 
     override val isContextReceiver: Boolean
@@ -252,7 +259,7 @@ class InaccessibleImplicitReceiverValue private constructor(
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): InaccessibleImplicitReceiverValue {
-        return InaccessibleImplicitReceiverValue(boundSymbol, type, originalType, newSession, newScopeSession, mutable)
+        return InaccessibleImplicitReceiverValue(boundSymbol, type, originalType, newSession, newScopeSession, mutable, kind)
     }
 }
 

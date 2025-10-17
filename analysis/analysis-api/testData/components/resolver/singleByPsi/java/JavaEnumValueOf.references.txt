@@ -1,5 +1,6 @@
 KtNameReferenceExpression(74,81): 'valueOf'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in java.lang.annotation.RetentionPolicy) fun valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy

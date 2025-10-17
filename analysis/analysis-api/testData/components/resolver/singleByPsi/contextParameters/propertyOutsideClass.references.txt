@@ -1,6 +1,7 @@
 KtNameReferenceExpression(245,259): 'propertyMember'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Base) context(a@A)
       val propertyMember: kotlin.String

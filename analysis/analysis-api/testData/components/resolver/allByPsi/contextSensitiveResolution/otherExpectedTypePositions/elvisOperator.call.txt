@@ -226,6 +226,7 @@ KtOperationReferenceExpression(433,435): '?:'
 KtNameReferenceExpression(436,447): 'myClassProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -267,6 +268,7 @@ KtOperationReferenceExpression(488,490): '?:'
 KtNameReferenceExpression(491,501): 'stringProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -423,6 +425,7 @@ KtOperationReferenceExpression(604,606): '?:'
 KtNameReferenceExpression(607,618): 'myClassProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -551,6 +554,7 @@ KtOperationReferenceExpression(657,659): '?:'
 KtNameReferenceExpression(660,670): 'stringProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

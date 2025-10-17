@@ -18,7 +18,7 @@ fun testParamType() {
     bar.checkType { _<(String) -> Unit>() }
 
     val bas: (String) -> Unit = fun (param: String) {}
-    val bag: (Int) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun (param: String) {}<!>
+    val bag: (Int) -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> fun (param: String) {}
 }
 
 fun testReceiverType() {
@@ -28,7 +28,7 @@ fun testReceiverType() {
 
     val bas: String.() -> Unit = fun String.() {}
 
-    val bag: Int.() -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun String.() {}<!>
+    val bag: Int.() -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> fun String.() {}
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, funWithExtensionReceiver, functionDeclaration,

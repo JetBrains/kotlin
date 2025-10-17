@@ -704,6 +704,7 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
 KtNameReferenceExpression(830,838): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -769,6 +770,7 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
 KtNameReferenceExpression(860,868): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -834,6 +836,7 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
 KtNameReferenceExpression(886,894): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -899,6 +902,7 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
 KtNameReferenceExpression(919,927): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -964,6 +968,7 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
 KtNameReferenceExpression(954,962): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1029,6 +1034,7 @@ KtCallExpression(981,995): 'lMyClass(prop)'
 KtNameReferenceExpression(981,989): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1094,6 +1100,7 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
 KtNameReferenceExpression(1000,1008): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1159,6 +1166,7 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
 KtNameReferenceExpression(1024,1032): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1224,6 +1232,7 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
 KtNameReferenceExpression(1048,1056): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1289,6 +1298,7 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
 KtNameReferenceExpression(1071,1079): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1354,6 +1364,7 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
 KtNameReferenceExpression(1097,1105): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1427,6 +1438,7 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
 KtNameReferenceExpression(1128,1136): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1500,6 +1512,7 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
 KtNameReferenceExpression(1149,1157): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

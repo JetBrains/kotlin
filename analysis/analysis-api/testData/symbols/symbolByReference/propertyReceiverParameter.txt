@@ -28,3 +28,4 @@ KaReceiverParameterSymbol:
   getContainingJvmClassName: PropertyReceiverParameterKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

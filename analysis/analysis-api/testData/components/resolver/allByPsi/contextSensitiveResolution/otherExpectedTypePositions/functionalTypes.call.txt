@@ -49,6 +49,7 @@ KtNameReferenceExpression(209,215): 'MyEnum'
 KtNameReferenceExpression(218,225): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -87,6 +88,7 @@ KtParameterList(283,285): '()'
 KtNameReferenceExpression(288,295): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -107,6 +109,7 @@ KtProperty(305,341): 'val EnumOptionAlias = MyEnum.Option1'
 KtDotQualifiedExpression(327,341): 'MyEnum.Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -130,6 +133,7 @@ KtNameReferenceExpression(327,333): 'MyEnum'
 KtNameReferenceExpression(334,341): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -204,6 +208,7 @@ KtContainerNode(399,402): 'arg'
 KtNameReferenceExpression(399,402): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -224,6 +229,7 @@ KtContainerNodeForControlStructureBody(404,412): 'enumProp'
 KtNameReferenceExpression(404,412): 'enumProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -247,6 +253,7 @@ KtContainerNodeForControlStructureBody(418,425): 'Option1'
 KtNameReferenceExpression(418,425): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -346,6 +353,7 @@ KtContainerNode(484,487): 'arg'
 KtNameReferenceExpression(484,487): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -447,6 +455,7 @@ KtContainerNode(594,597): 'arg'
 KtNameReferenceExpression(594,597): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -467,6 +476,7 @@ KtContainerNodeForControlStructureBody(599,607): 'enumProp'
 KtNameReferenceExpression(599,607): 'enumProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -490,6 +500,7 @@ KtContainerNodeForControlStructureBody(613,620): 'Option1'
 KtNameReferenceExpression(613,620): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -575,6 +586,7 @@ KtContainerNode(716,719): 'arg'
 KtNameReferenceExpression(716,719): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -595,6 +607,7 @@ KtContainerNodeForControlStructureBody(721,729): 'enumProp'
 KtNameReferenceExpression(721,729): 'enumProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -618,6 +631,7 @@ KtContainerNodeForControlStructureBody(735,742): 'Option1'
 KtNameReferenceExpression(735,742): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -659,6 +673,7 @@ KtBlockExpression(770,793): '{'
 KtNameReferenceExpression(780,787): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -751,6 +766,7 @@ KtContainerNode(889,892): 'arg'
 KtNameReferenceExpression(889,892): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -771,6 +787,7 @@ KtContainerNodeForControlStructureBody(894,902): 'enumProp'
 KtNameReferenceExpression(894,902): 'enumProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -794,6 +811,7 @@ KtContainerNodeForControlStructureBody(908,915): 'Option1'
 KtNameReferenceExpression(908,915): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1015,6 +1033,7 @@ KtOperationReferenceExpression(995,997): '=='
 KtNameReferenceExpression(998,1005): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

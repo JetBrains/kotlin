@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
@@ -15,6 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttributeMetadataCompilationOutputs
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
@@ -50,11 +54,41 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
     }
 }
 
-internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfiguration(): LazyResolvedConfiguration {
-    return LazyResolvedConfiguration(resolvableMetadataConfiguration) { attributes ->
+internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfiguration(): LazyResolvedConfigurationWithArtifacts {
+    return LazyResolvedConfigurationWithArtifacts(resolvableMetadataConfiguration) { attributes ->
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
         attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
     }
+}
+
+internal suspend fun Project.interprojectUklibManifestView(): FileCollection? {
+    when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
+        KmpPublicationStrategy.StandardKMPPublication -> return null
+        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {}
+    }
+    val files = objects.fileCollection()
+    project.multiplatformExtension.awaitSourceSets().forEach {
+        if (!it.internal.isSharedSourceSet()) return@forEach
+        files.from(it.internal.interprojectUklibManifestView())
+    }
+    return files
+}
+
+internal fun InternalKotlinSourceSet.interprojectUklibManifestView(): FileCollection {
+    return resolvableMetadataConfiguration.incoming.artifactView { view ->
+        view.componentFilter { it is ProjectComponentIdentifier }
+        view.isLenient = true
+    }.files
+}
+
+internal fun InternalKotlinSourceSet.interprojectUklibMetadataCompilationOutputView(): FileCollection {
+    return resolvableMetadataConfiguration.incoming.artifactView { view ->
+        view.componentFilter { it is ProjectComponentIdentifier }
+        view.isLenient = true
+        view.attributes {
+            it.attribute(uklibViewAttribute, uklibViewAttributeMetadataCompilationOutputs)
+        }
+    }.files
 }
 
 internal suspend fun Project.psmArtifactsForAllDependenciesFromSharedSourceSets(): List<FileCollection> {

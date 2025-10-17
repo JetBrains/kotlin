@@ -1,5 +1,6 @@
 KtNameReferenceExpression(49,56): 'JvmName'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.jvm.JvmName) constructor(name: kotlin.String)

@@ -10,13 +10,18 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.mpp.resources.unzip
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.ArchiveUklibTask
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.MavenModule
 import org.jetbrains.kotlin.gradle.util.parsePom
 import org.junit.jupiter.api.DisplayName
@@ -182,6 +187,84 @@ class UklibPublicationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `uklib contents - publication with cinterops`(
+        gradleVersion: GradleVersion,
+    ) {
+        val project = project(
+            "empty",
+            gradleVersion,
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                // Commonizer is not supported yet which will be captured by this test
+                project.extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, true)
+                project.setUklibPublicationStrategy()
+                project.applyMultiplatform {
+                    listOf(
+                        linuxArm64(),
+                        linuxX64(),
+                    ).forEach {
+                        val foo = project.layout.projectDirectory.file("foo.def")
+                        val bar = project.layout.projectDirectory.file("bar.def")
+
+                        foo.asFile.writeText(
+                            """
+                                language = C
+                                ---
+                                void foo(void);
+                            """.trimIndent()
+                        )
+                        bar.asFile.writeText(
+                            """
+                                language = C
+                                ---
+                                void bar(void);
+                            """.trimIndent()
+                        )
+
+                        it.compilations.getByName("main").cinterops.create("foo") {
+                            it.definitionFile.set(foo)
+                        }
+                        it.compilations.getByName("main").cinterops.create("bar") {
+                            it.definitionFile.set(bar)
+                        }
+                    }
+
+                    sourceSets.commonMain.get().compileSource("class Common")
+                }
+            }
+        }
+
+        val publication = project.publish()
+        assertPublishedFragments(
+            setOf(
+                Fragment(
+                    identifier = "commonMain", targets = mutableListOf("linux_arm64", "linux_x64"),
+                ),
+                Fragment(
+                    identifier = "linuxArm64Main", targets = mutableListOf("linux_arm64"),
+                ),
+                Fragment(
+                    identifier = "linuxArm64Main_cinterop_bar", targets = mutableListOf("linux_arm64"),
+                ),
+                Fragment(
+                    identifier = "linuxArm64Main_cinterop_foo", targets = mutableListOf("linux_arm64"),
+                ),
+                Fragment(
+                    identifier = "linuxX64Main", targets = mutableListOf("linux_x64"),
+                ),
+                Fragment(
+                    identifier = "linuxX64Main_cinterop_bar", targets = mutableListOf("linux_x64"),
+                ),
+                Fragment(
+                    identifier = "linuxX64Main_cinterop_foo", targets = mutableListOf("linux_x64"),
+                ),
+            ),
+            readProducedUklib(publication)
+        )
+    }
+
+    @GradleTest
     fun `uklib contents - bamboo metadata publication`(
         gradleVersion: GradleVersion,
     ) {
@@ -199,6 +282,11 @@ class UklibPublicationIT : KGPBaseTest() {
 
                     sourceSets.all {
                         it.compileStubSourceWithSourceSetName()
+                    }
+                }
+                project.tasks.configureEach {
+                    if (it is ArchiveUklibTask) {
+                        it.checkForBamboosInUklib.set(true)
                     }
                 }
             }
@@ -262,14 +350,14 @@ class UklibPublicationIT : KGPBaseTest() {
         publisher: ProducedUklib,
     ) {
         assertEquals(
-            Umanifest(expectedFragments),
-            publisher.umanifest,
+            Umanifest(expectedFragments).prettyPrinted,
+            publisher.umanifest.prettyPrinted,
         )
         assertEquals(
-            expectedFragments.map { it.identifier }.toSet(),
+            expectedFragments.map { it.identifier }.toSet().prettyPrinted,
             publisher.uklibContents.listDirectoryEntries().map {
                 it.name
-            }.filterNot { it == Uklib.UMANIFEST_FILE_NAME }.toSet(),
+            }.filterNot { it == Uklib.UMANIFEST_FILE_NAME }.toSet().prettyPrinted,
         )
     }
 
@@ -284,21 +372,27 @@ class UklibPublicationIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             val dependency = project("empty", gradleVersion) {
                 buildScriptInjection {
+                    project.setUklibPublicationStrategy()
+                    project.setUklibResolutionStrategy()
+                    project.plugins.apply("maven-publish")
                     project.group = "dependencyGroup"
                     project.version = "2.0"
                     project.applyMultiplatform {
                         linuxArm64()
                         linuxX64()
-                        sourceSets.linuxMain.get().compileStubSourceWithSourceSetName()
+                        jvm()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     }
                 }
             }
             val publisher = project("empty", gradleVersion) {
                 buildScriptInjection {
                     project.setUklibPublicationStrategy()
+                    project.setUklibResolutionStrategy()
                     project.applyMultiplatform {
                         linuxArm64()
                         linuxX64()
+                        jvm()
                         sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                         sourceSets.commonMain.dependencies {
                             implementation(project(":dependency"))
@@ -452,6 +546,37 @@ class UklibPublicationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `uklib POM - kotlin-dom-api-compat with pom type`(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = publishUklib(
+            gradleVersion = gradleVersion,
+            publisherConfig = PublisherConfiguration(group = "dependency")
+        ) {
+            jvm()
+            js()
+            wasmJs()
+            wasmWasi()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+        }.publishedProject
+
+        assertEquals(
+            listOf(
+                MavenModule(
+                    artifactId = "kotlin-dom-api-compat",
+                    groupId = "org.jetbrains.kotlin",
+                    scope = "runtime",
+                    type = "pom",
+                    version = KOTLIN_VERSION,
+                ),
+            ).prettyPrinted,
+            parsePom(producer.rootComponent.pom).dependencies().filterNot {
+                it.artifactId == "kotlin-stdlib"
+            }.prettyPrinted,
+        )
+    }
+
+    @GradleTest
     fun `uklib publication layout - with jvm target`(
         gradleVersion: GradleVersion,
     ) {
@@ -498,6 +623,30 @@ class UklibPublicationIT : KGPBaseTest() {
             "META-INF",
             unpackedJar.listDirectoryEntries().single().name,
         )
+    }
+
+    @GradleTest
+    fun `uklib assemble - without sources - doesn't fail build`(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            "empty", gradleVersion
+        ) {
+            buildScriptInjection {
+                project.setUklibPublicationStrategy()
+                project.setUklibResolutionStrategy()
+            }
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    iosArm64()
+                    iosX64()
+                }
+            }
+        }.build("assemble")
     }
 
     // FIXME: Test consumption of jvm variant of a Uklib publication in a java plugin consumer

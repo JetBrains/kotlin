@@ -4,4 +4,4 @@ fun box(x: Int): String {
            "suffix"
 }
 
-// LINES(JS_IR): 1 1 2 2 3 4
+// LINES: 1 1 2 2 3 4

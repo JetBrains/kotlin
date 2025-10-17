@@ -133,6 +133,7 @@ class WasmIrToText(
             indent--
 
         newLine()
+
         stringBuilder.append(wasmInstr.operator.mnemonic)
 
         if (
@@ -151,11 +152,13 @@ class WasmIrToText(
             wasmInstr.immediates.reversed().forEach {
                 appendImmediate(it)
             }
+            stringBuilder.append(wasmInstr.operator.tailMnemonic)
             return
         }
         wasmInstr.immediates.forEach {
             appendImmediate(it)
         }
+        stringBuilder.append(wasmInstr.operator.tailMnemonic)
     }
 
     private fun appendImmediate(x: WasmImmediate) {
@@ -508,7 +511,7 @@ class WasmIrToText(
                 }
             }
 
-            appendElement(wasmData.bytes.toWatData())
+            appendElement(wasmData.bytes.toWatString())
         }
     }
 
@@ -623,13 +626,7 @@ class WasmIrToText(
     }
 
     private fun toWatString(s: String) {
-        if (s.all { isValidWatIdentifierChar(it) }) {
-            stringBuilder.append(" \"")
-            stringBuilder.append(s)
-            stringBuilder.append('"')
-        } else {
-            stringBuilder.append(s.toByteArray().toWatData())
-        }
+        stringBuilder.append(s.toByteArray().toWatString())
     }
 }
 
@@ -670,8 +667,20 @@ class StringBuilderWithLocations {
 }
 
 
-fun Byte.toWatData() = "\\" + this.toUByte().toString(16).padStart(2, '0')
-fun ByteArray.toWatData(): String = "\"" + joinToString("") { it.toWatData() } + "\""
+private fun Byte.toWatHexString() = "\\" + this.toUByte().toString(16).padStart(2, '0')
+
+private fun Byte.toWatString(): String = when (this.toInt()) {
+    '\t'.code -> "\\t"
+    '\n'.code -> "\\n"
+    '\r'.code -> "\\r"
+    '"'.code -> "\\\""
+    '\''.code -> "\\\'"
+    '\\'.code -> "\\\\"
+    in 0x20..<0x7F -> this.toInt().toChar().toString()
+    else -> this.toWatHexString()
+}
+
+private fun ByteArray.toWatString(): String = joinToString("", prefix = "\"", postfix = "\"", transform = Byte::toWatString) 
 
 fun sanitizeWatIdentifier(indent: String): String {
     if (indent.isEmpty())

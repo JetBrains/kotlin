@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // OPT_IN: kotlin.native.internal.InternalForKotlinNative
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.*

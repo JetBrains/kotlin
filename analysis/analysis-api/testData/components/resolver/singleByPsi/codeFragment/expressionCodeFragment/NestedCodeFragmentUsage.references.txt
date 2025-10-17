@@ -1,5 +1,6 @@
 KtNameReferenceExpression(160,163): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: <no name>) fun bar()

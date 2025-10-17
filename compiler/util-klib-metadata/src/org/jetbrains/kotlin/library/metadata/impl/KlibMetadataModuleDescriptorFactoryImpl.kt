@@ -51,11 +51,11 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             descriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
 
         val provider = createPackageFragmentProvider(
-            library,
-            packageAccessHandler,
-            packageFragmentNames = libraryProto.packageFragmentNameList,
-            storageManager,
-            moduleDescriptor,
+            library = library,
+            packageAccessHandler = packageAccessHandler,
+            customMetadataProtoLoader = null,
+            storageManager = storageManager,
+            moduleDescriptor = moduleDescriptor,
             configuration = KlibCompilerDeserializationConfiguration(languageVersionSettings),
             compositePackageFragmentAddend = runIf(library.isAnyPlatformStdlib) {
                 functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
@@ -87,7 +87,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
     override fun createPackageFragmentProvider(
         library: KotlinLibrary,
         packageAccessHandler: PackageAccessHandler?,
-        packageFragmentNames: List<String>,
+        customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
         configuration: DeserializationConfiguration,
@@ -96,7 +96,12 @@ class KlibMetadataModuleDescriptorFactoryImpl(
     ): PackageFragmentProvider {
 
         val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
-            library, packageFragmentNames, moduleDescriptor, packageAccessHandler, storageManager, configuration
+            library = library,
+            moduleDescriptor = moduleDescriptor,
+            packageAccessedHandler = packageAccessHandler,
+            customMetadataProtoLoader = customMetadataProtoLoader,
+            storageManager = storageManager,
+            configuration = configuration
         )
 
         // Generate empty PackageFragmentDescriptor instances for packages that aren't mentioned in compilation units directly.

@@ -1,48 +1,56 @@
 KtNameReferenceExpression(8,12): 'util'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package util
 
 KtNameReferenceExpression(45,51): 'String'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(101,105): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 KtNameReferenceExpression(106,110): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 KtNameReferenceExpression(111,114): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(125,128): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(140,146): 'MyPair'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in util) data class MyPair(a: kotlin.collections.List<kotlin.collections.List<kotlin.Int>>, b: kotlin.Int)
 
 KtDestructuringDeclarationEntry(153,234): 'left: @Anno(0 + constant) List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       0: (in util) val left: @util.Anno(str = 0) kotlin.collections.List<@util.Anno(str = 1) kotlin.collections.List<@util.Anno(str = 2) kotlin.Int>>
       1: (in util.MyPair) operator fun component1(): kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
@@ -50,96 +58,112 @@ KtDestructuringDeclarationEntry(153,234): 'left: @Anno(0 + constant) List<@Anno(
 KtNameReferenceExpression(160,164): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in util.Anno) constructor(str: kotlin.String)
 
 KtValueArgument(165,177): '0 + constant'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       str: kotlin.String
 
 KtOperationReferenceExpression(167,168): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(169,177): 'constant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in util) const val constant: kotlin.Int
 
 KtNameReferenceExpression(179,183): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 KtNameReferenceExpression(185,189): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in util.Anno) constructor(str: kotlin.String)
 
 KtValueArgument(190,202): '1 + constant'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       str: kotlin.String
 
 KtOperationReferenceExpression(192,193): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(194,202): 'constant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in util) const val constant: kotlin.Int
 
 KtNameReferenceExpression(204,208): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 KtNameReferenceExpression(210,214): 'Anno'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in util.Anno) constructor(str: kotlin.String)
 
 KtValueArgument(215,227): '2 + constant'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       str: kotlin.String
 
 KtOperationReferenceExpression(217,218): '+'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(219,227): 'constant'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in util) const val constant: kotlin.Int
 
 KtNameReferenceExpression(229,232): 'Int'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtDestructuringDeclarationEntry(236,241): 'right'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       0: (in util) val right: kotlin.Int
       1: (in util.MyPair) operator fun component2(): kotlin.Int
@@ -147,5 +171,6 @@ KtDestructuringDeclarationEntry(236,241): 'right'
 KtNameReferenceExpression(245,249): 'pair'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in util) val pair: util.MyPair

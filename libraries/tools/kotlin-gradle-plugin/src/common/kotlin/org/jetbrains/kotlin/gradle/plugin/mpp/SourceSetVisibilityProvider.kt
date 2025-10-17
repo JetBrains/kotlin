@@ -14,7 +14,8 @@ import org.gradle.api.artifacts.component.ProjectComponentSelector
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationComponent
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
 import java.io.File
 
@@ -36,8 +37,8 @@ internal data class SourceSetVisibilityResult(
 internal class SourceSetVisibilityProvider {
     class PlatformCompilationData(
         val allSourceSets: Set<KotlinSourceSetName>,
-        val resolvedDependenciesConfiguration: LazyResolvedConfiguration,
-        val hostSpecificMetadataConfiguration: LazyResolvedConfiguration?,
+        val resolvedDependenciesConfiguration: LazyResolvedConfigurationComponent,
+        val hostSpecificMetadataConfiguration: LazyResolvedConfigurationWithArtifacts?,
         val compilationName: String,
         val targetName: String,
     ) {

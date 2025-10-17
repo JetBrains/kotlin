@@ -102,6 +102,14 @@ WithArrays.class:
     CLASS[classId=/WithArrays, fqName=WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrays, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
+          valueArguments: [
+            ia -> [1, 2, 3]
+            la -> [1.toLong()]
+            fa -> []
+            da -> [2.2.toDouble()]
+            ca -> [\u0061 ('a')]
+            ba -> [true, false]
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -119,6 +127,14 @@ WithExplicitArrays.class:
     CLASS[classId=/WithExplicitArrays, fqName=WithExplicitArrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithExplicitArrays, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
+          valueArguments: [
+            ia -> [1, 2, 3]
+            la -> [1.toLong()]
+            fa -> []
+            da -> [2.2.toDouble()]
+            ca -> [\u0061 ('a')]
+            ba -> [true, false]
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

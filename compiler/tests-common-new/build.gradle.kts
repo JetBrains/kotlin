@@ -96,10 +96,7 @@ tasks.processTestFixturesResources.configure {
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -137,7 +134,7 @@ projectTests {
         )
     )
 
-    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForTestCommonNewKt")
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForTestCommonNewKt", generateTestsInBuildDirectory = true)
 }
 
 testsJarToBeUsedAlongWithFixtures()

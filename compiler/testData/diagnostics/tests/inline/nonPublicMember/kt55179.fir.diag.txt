@@ -2,24 +2,18 @@
 
 /kt55179.fir.kt:(323,326): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor(): Foo'.
 
-/kt55179.fir.kt:(323,326): error: The accessed declaration 'constructor(): Foo' is declared in 'private-in-file' class 'Foo', but is accessed from 'internal' inline declaration.
-
 /kt55179.fir.kt:(323,326): error: The signature of 'constructor(): Foo' contains 'private-in-file' type 'Foo', but is accessed from 'internal' inline declaration.
 
 /kt55179.fir.kt:(337,346): error: 'private-in-file' type 'Foo.Companion' is accessed from 'internal' inline declaration.
 
 /kt55179.fir.kt:(337,346): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'companion object Companion : Any'.
 
-/kt55179.fir.kt:(351,354): error: 'private-in-file' type 'Foo.Companion' is accessed from 'internal' inline declaration.
-
 /kt55179.fir.kt:(351,354): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'companion object Companion : Any'.
 
 /kt55179.fir.kt:(355,363): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'fun buildFoo(): Foo'.
 
-/kt55179.fir.kt:(355,363): error: The accessed declaration 'fun buildFoo(): Foo' is declared in 'private-in-file' class 'Foo', but is accessed from 'internal' inline declaration.
-
 /kt55179.fir.kt:(355,363): error: The signature of 'fun buildFoo(): Foo' contains 'private-in-file' type 'Foo', but is accessed from 'internal' inline declaration.
 
-/kt55179.fir.kt:(384,390): error: 'private-in-file' type 'Foo.Companion.Nested' is accessed from 'internal' inline declaration.
+/kt55179.fir.kt:(355,363): error: The signature of 'fun buildFoo(): Foo' contains 'private-in-file' type 'Foo.Companion', but is accessed from 'internal' inline declaration.
 
-/kt55179.fir.kt:(391,394): error: The accessed declaration 'fun bar(): Unit' is declared in 'private-in-file' class 'Foo', but is accessed from 'internal' inline declaration.
+/kt55179.fir.kt:(391,394): error: The signature of 'fun bar(): Unit' contains 'private-in-file' type 'Foo.Companion.Nested', but is accessed from 'internal' inline declaration.

@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
@@ -75,7 +75,7 @@ abstract class AbstractResolvedCallsTest : KotlinTestWithEnvironment() {
         val output = renderOutput(originalText, text, resolvedCallsAt)
 
         val resolvedCallInfoFileName = FileUtil.getNameWithoutExtension(filePath) + ".txt"
-        KotlinTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), output)
+        TestDataAssertions.assertEqualsToFile(File(resolvedCallInfoFileName), output)
     }
 
     protected open fun renderOutput(originalText: String, text: String, resolvedCallsAt: List<Pair<Int, ResolvedCall<*>?>>): String =

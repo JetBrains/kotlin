@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.utils.configureAndroidVariants
 
 // Use apply plugin: 'kotlin-parcelize' to enable Android Extensions in an Android project.
@@ -23,8 +24,13 @@ class ParcelizeSubplugin : KotlinCompilerPluginSupportPlugin {
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
-        return when (kotlinCompilation.platformType) {
-            KotlinPlatformType.jvm, KotlinPlatformType.androidJvm -> true
+        return when {
+            // Legacy Android Target
+            kotlinCompilation.platformType == KotlinPlatformType.androidJvm -> true
+            // Heuristic for new Android KMP Target
+            // Should be safe, since 'android' target name is owned by AGP.
+            // FIXME: KT-81384 Provide integration surface for External targets and Gradle Subplugin API
+            kotlinCompilation.target is DecoratedExternalKotlinTarget && kotlinCompilation.target.name == "android" -> true
             else -> false
         }
     }

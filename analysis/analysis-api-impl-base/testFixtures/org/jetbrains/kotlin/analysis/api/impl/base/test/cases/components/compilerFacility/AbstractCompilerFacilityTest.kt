@@ -121,10 +121,10 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.testModule.languageVersionSettings)
 
             testFile.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()
-                ?.let { put(KaCompilerFacility.CODE_FRAGMENT_CLASS_NAME, it) }
+                ?.let { put(CODE_FRAGMENT_CLASS_NAME, it) }
 
             testFile.directives[Directives.CODE_FRAGMENT_METHOD_NAME].singleOrNull()
-                ?.let { put(KaCompilerFacility.CODE_FRAGMENT_METHOD_NAME, it) }
+                ?.let { put(CODE_FRAGMENT_METHOD_NAME, it) }
         }
 
         val callStack = mutableListOf<PsiElement>()

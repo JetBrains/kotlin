@@ -3494,8 +3494,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    @R|kotlin/annotation/Target|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class MustUseReturnValue : R|kotlin/Annotation|, R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MustUseReturnValue] constructor(): R|kotlin/MustUseReturnValue| {
+    @R|kotlin/annotation/Target|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class MustUseReturnValues : R|kotlin/Annotation|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MustUseReturnValues] constructor(): R|kotlin/MustUseReturnValues| {
             super<R|kotlin/Any|>()
         }
 

@@ -21,7 +21,7 @@ fun test() {
     val d = either(11, 2.3)
     checkSubtype<Any>(d)
 
-    val e: Float = <!INITIALIZER_TYPE_MISMATCH!>id(1)<!>
+    val e: Float <!INITIALIZER_TYPE_MISMATCH!>=<!> id(1)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,

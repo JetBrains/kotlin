@@ -55,5 +55,9 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshot
             Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
 
         val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
+
+        val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> = Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", false)
+
+        val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", false)
     }
 }

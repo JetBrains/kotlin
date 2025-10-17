@@ -22,6 +22,7 @@ KaNamedFunctionSymbol:
                   compilerVisibility: Local
                   contextReceivers: []
                   generatedPrimaryConstructorProperty: null
+                  hasDeclaredDefaultValue: false
                   hasDefaultValue: false
                   isActual: false
                   isCrossinline: false
@@ -45,6 +46,7 @@ KaNamedFunctionSymbol:
                   getContainingJvmClassName: ReturnsContractKt
                   getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
+                  importableFqName: null
   ]
   hasStableParameterNames: true
   isActual: false
@@ -76,6 +78,7 @@ KaNamedFunctionSymbol:
       compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -99,6 +102,7 @@ KaNamedFunctionSymbol:
       getContainingJvmClassName: ReturnsContractKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(returnsContract.kt)
@@ -106,3 +110,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: check

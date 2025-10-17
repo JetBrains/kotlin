@@ -12,6 +12,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -22,11 +24,14 @@ import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.targetDescription
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -35,6 +40,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -43,11 +49,109 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
+import javax.xml.stream.XMLOutputFactory
+import javax.xml.stream.XMLStreamWriter
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
+    fun dumpModel(
+        dir: String,
+        chunk: List<Module>,
+        configuration: CompilerConfiguration,
+        arguments: CommonCompilerArguments,
+    ) {
+        val dirFile = File(dir)
+        if (!dirFile.exists()) {
+            dirFile.mkdirs()
+        }
+        val fileName = "model-${chunk.first().getModuleName()}"
+        var counter = 0
+        fun file(): File {
+            val postfix = if (counter != 0) ".$counter" else ""
+            return File(dirFile, "$fileName$postfix.xml")
+        }
+
+        var outputFile: File
+        do {
+            outputFile = file()
+            counter++
+        } while (outputFile.exists())
+
+        // Write XML using StAX
+        outputFile.bufferedWriter().use { writer ->
+            val xmlFactory = XMLOutputFactory.newInstance()
+            with(xmlFactory.createXMLStreamWriter(writer)) {
+                writeStartDocument("UTF-8", "1.0")
+                val depth = PrettyPrintDepth(0)
+
+                // <modules>
+                start("modules", depth)
+
+                // compilerArguments
+                start("compilerArguments", depth)
+                for (arg in ArgumentUtils.convertArgumentsToStringList(arguments)) {
+                    empty("arg", depth)
+                    writeAttribute("value", arg)
+                }
+                end(depth) // compilerArguments
+
+                // modules
+                for (module in chunk) {
+                    start("module", depth)
+                    writeAttribute("timestamp", System.currentTimeMillis().toString())
+                    writeAttribute("name", module.getModuleName())
+                    writeAttribute("type", module.getModuleType())
+                    writeAttribute("outputDir", module.getOutputDirectory())
+
+                    for (friendDir in module.getFriendPaths()) {
+                        empty("friendDir", depth)
+                        writeAttribute("path", friendDir)
+                    }
+                    for (source in module.getSourceFiles()) {
+                        empty("sources", depth)
+                        writeAttribute("path", source)
+                    }
+                    for (javaSourceRoots in module.getJavaSourceRoots()) {
+                        start("javaSourceRoots", depth)
+                        writeAttribute("path", javaSourceRoots.path)
+                        javaSourceRoots.packagePrefix?.let { writeAttribute("packagePrefix", it) }
+                        end(depth)
+                    }
+                    for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
+                        when (classpath) {
+                            is JvmClasspathRoot -> {
+                                empty("classpath", depth)
+                                writeAttribute("path", classpath.file.absolutePath)
+                            }
+                            is JvmModulePathRoot -> {
+                                empty("modulepath", depth)
+                                writeAttribute("path", classpath.file.absolutePath)
+                            }
+                        }
+                    }
+                    for (commonSources in module.getCommonSourceFiles()) {
+                        empty("commonSources", depth)
+                        writeAttribute("path", commonSources)
+                    }
+                    module.modularJdkRoot?.let {
+                        empty("modularJdkRoot", depth)
+                        writeAttribute("path", it)
+                    }
+
+                    end(depth) // module
+                }
+
+                end(depth) // modules
+                writeCharacters("\n")
+                writeEndDocument()
+                flush()
+                close()
+            }
+        }
+    }
+
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
         val (configuration, diagnosticsCollector, rootDisposable) = input
         val messageCollector = configuration.messageCollector
@@ -375,4 +479,30 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         )
     }
+}
+
+
+// Pretty-printing helpers for StAX writer
+private data class PrettyPrintDepth(var value: Int)
+
+private fun XMLStreamWriter.indent(depth: PrettyPrintDepth) {
+    writeCharacters("\n")
+    if (depth.value > 0) writeCharacters("  ".repeat(depth.value))
+}
+
+private fun XMLStreamWriter.start(name: String, depth: PrettyPrintDepth) {
+    indent(depth)
+    writeStartElement(name)
+    depth.value++
+}
+
+private fun XMLStreamWriter.end(depth: PrettyPrintDepth) {
+    depth.value--
+    indent(depth)
+    writeEndElement()
+}
+
+private fun XMLStreamWriter.empty(name: String, depth: PrettyPrintDepth) {
+    indent(depth)
+    writeEmptyElement(name)
 }

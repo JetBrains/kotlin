@@ -2,11 +2,13 @@
   KtNameReferenceExpression(64,73): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
@@ -14,6 +16,7 @@
   KtNameReferenceExpression(82,91): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int
 
@@ -21,5 +24,6 @@
   KtNameReferenceExpression(104,113): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in A) var something: kotlin.Int

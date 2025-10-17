@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlin.native.concurrent.*
 
 class Z(val x: Int) {

@@ -58,10 +58,10 @@ internal val UserDefinedAttributesSetupAction = KotlinProjectSetupCoroutine {
 private val KotlinCompilation<*>.allOwnedConfigurationsNames
     get(): List<String> {
         val defaultConfigurations = listOfNotNull(
-            apiConfigurationName,
-            implementationConfigurationName,
-            compileOnlyConfigurationName,
-            runtimeOnlyConfigurationName,
+            legacyApiConfigurationName,
+            legacyImplementationConfigurationName,
+            legacyCompileOnlyConfigurationName,
+            legacyRuntimeOnlyConfigurationName,
             compileDependencyConfigurationName,
             runtimeDependencyConfigurationName,
             internal.configurations.hostSpecificMetadataConfiguration?.name,

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(156,164): 'FooAlias'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
+    usesContextSensitiveResolution: false
     symbols:
       (in test) typealias FooAlias = test.Foo

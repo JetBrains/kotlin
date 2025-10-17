@@ -1,5 +1,6 @@
 KtNameReferenceExpression(136,137): 's'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: usage) val s: kotlin.String

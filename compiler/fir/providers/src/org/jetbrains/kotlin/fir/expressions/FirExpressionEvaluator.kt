@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
@@ -100,8 +99,7 @@ object FirExpressionEvaluator {
     }
 
     private fun FirExpression?.canBeEvaluated(session: FirSession): Boolean {
-        val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
-        if (this == null || intrinsicConstEvaluation || this is FirLazyExpression || !isResolved) return false
+        if (this == null  || this is FirLazyExpression || !isResolved) return false
         return canBeEvaluatedAtCompileTime(this, session, allowErrors = false, calledOnCheckerStage = false)
     }
 
@@ -187,12 +185,12 @@ object FirExpressionEvaluator {
         }
 
         @OptIn(UnresolvedExpressionTypeAccess::class)
-        override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Nothing?): FirEvaluatorResult {
-            return buildArrayLiteral {
-                source = arrayLiteral.source
-                coneTypeOrNull = arrayLiteral.coneTypeOrNull
-                annotations.addAll(arrayLiteral.annotations)
-                argumentList = visitArgumentList(arrayLiteral.argumentList, data).unwrapOr { return it } ?: return NotEvaluated
+        override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: Nothing?): FirEvaluatorResult {
+            return buildCollectionLiteral {
+                source = collectionLiteral.source
+                coneTypeOrNull = collectionLiteral.coneTypeOrNull
+                annotations.addAll(collectionLiteral.annotations)
+                argumentList = visitArgumentList(collectionLiteral.argumentList, data).unwrapOr { return it } ?: return NotEvaluated
             }.wrap()
         }
 
@@ -428,6 +426,10 @@ private fun ConstantValueKind.toCompileTimeType(): CompileTimeType {
         ConstantValueKind.Short -> CompileTimeType.SHORT
         ConstantValueKind.Int -> CompileTimeType.INT
         ConstantValueKind.Long -> CompileTimeType.LONG
+        ConstantValueKind.UnsignedByte -> CompileTimeType.UBYTE
+        ConstantValueKind.UnsignedShort -> CompileTimeType.USHORT
+        ConstantValueKind.UnsignedInt -> CompileTimeType.UINT
+        ConstantValueKind.UnsignedLong -> CompileTimeType.ULONG
         ConstantValueKind.Double -> CompileTimeType.DOUBLE
         ConstantValueKind.Float -> CompileTimeType.FLOAT
         ConstantValueKind.Char -> CompileTimeType.CHAR

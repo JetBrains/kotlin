@@ -54,37 +54,37 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
             // which will confuse the autoboxing lowering downstream.
             return IrConstImpl.long(expression.startOffset, expression.endOffset, context.irBuiltIns.longType, v)
         }
-        return lowerConst(expression, context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
+        return lowerConst(expression, context.symbols.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
     }
 
     override fun visitConst(expression: IrConst): IrExpression {
-        with(context.intrinsics) {
+        with(context.symbols) {
             if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
                 return when (expression.type.classifierOrNull) {
-                    uByteClassSymbol -> lowerConst(
+                    context.irBuiltIns.ubyteClass -> lowerConst(
                         expression,
-                        uByteClassSymbol,
+                        context.irBuiltIns.ubyteClass!!,
                         IrConstImpl.Companion::byte,
                         expression.value as Byte
                     )
 
-                    uShortClassSymbol -> lowerConst(
+                    context.irBuiltIns.ushortClass -> lowerConst(
                         expression,
-                        uShortClassSymbol,
+                        context.irBuiltIns.ushortClass!!,
                         IrConstImpl.Companion::short,
                         expression.value as Short
                     )
 
-                    uIntClassSymbol -> lowerConst(
+                    context.irBuiltIns.uintClass -> lowerConst(
                         expression,
-                        uIntClassSymbol,
+                        context.irBuiltIns.uintClass!!,
                         IrConstImpl.Companion::int,
                         expression.value as Int
                     )
 
-                    uLongClassSymbol -> lowerConst(
+                    context.irBuiltIns.ulongClass -> lowerConst(
                         expression,
-                        uLongClassSymbol,
+                        context.irBuiltIns.ulongClass!!,
                         { _, _, _, v -> createLong(expression, v) },
                         expression.value as Long
                     )

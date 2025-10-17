@@ -3,6 +3,6 @@
 // as the IR BE can resolve such name collisions. Furthermore, the IR BE mangles names differently.
 package foo
 
-<!JS_NAME_CLASH!>fun bar(x: Int)<!> = x
+fun bar(x: Int) = x
 
-<!JS_NAME_CLASH!>fun `bar_za3lpa$`()<!> = 42
+fun `bar_za3lpa$`() = 42

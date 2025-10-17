@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.compilerRunner
 import org.gradle.api.JavaVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.START_TASK_ACTION_EXECUTION
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -272,11 +273,11 @@ internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode
 }
 
 internal fun UsesBuildMetricsService.addBuildMetricsForTaskAction(
-    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     languageVersion: KotlinVersion?,
     fn: () -> Any
 ) {
-    metricsReporter.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
+    metricsReporter.addTimeMetric(START_TASK_ACTION_EXECUTION)
     buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, metricsReporter) }
 
     try {

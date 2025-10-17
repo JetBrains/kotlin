@@ -1,0 +1,28 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirLocalPropertySymbol lvar str: R|kotlin/String?|
+
+FILE: [ResolvedTo(IMPORTS)] onNullAssignmentClosingBrace.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar str: R|kotlin/String?| = Null(null)
+        R|<local>/str| = String(not null)
+        R|kotlin/io/println|(R|<local>/str|)
+        R|<local>/str| = Null(null)
+        R|kotlin/io/println|(R|<local>/str|)
+    }

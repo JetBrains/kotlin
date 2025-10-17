@@ -70,7 +70,7 @@ internal class InsertAfter0 : AbstractInterpreter<PluginDataFrameSchema>() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.asDataFrame()
-            .insert(receiver.column.asDataColumn()).after(column.col.path)
+            .insert(receiver.column.asDataColumn()).after { column.col.path }
             .toPluginDataFrameSchema()
     }
 }

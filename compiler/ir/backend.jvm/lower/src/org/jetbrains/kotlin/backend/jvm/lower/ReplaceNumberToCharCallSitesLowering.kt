@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.ir.IrElement
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
  * Also, this allows to invoke `toChar` on `Number` subclasses declared in Java, which do not have it declared, even though the
  * compiler sees it there because `java.lang.Number` is mapped to `kotlin.Number`.
  */
-@PhaseDescription(name = "ReplaceNumberToCharCallSites")
 internal class ReplaceNumberToCharCallSitesLowering(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptChildren(this, null)

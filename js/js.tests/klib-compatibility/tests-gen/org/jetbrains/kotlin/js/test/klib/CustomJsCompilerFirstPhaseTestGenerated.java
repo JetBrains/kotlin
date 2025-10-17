@@ -400,6 +400,18 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
+      @TestMetadata("recursiveAnnotationWithVarargAndDefaultValue.kt")
+      public void testRecursiveAnnotationWithVarargAndDefaultValue() {
+        runTest("compiler/testData/codegen/box/annotations/recursiveAnnotationWithVarargAndDefaultValue.kt");
+      }
+
+      @Test
+      @TestMetadata("recursiveAnnotationWithVarargAndWithoutDefaultValue.kt")
+      public void testRecursiveAnnotationWithVarargAndWithoutDefaultValue() {
+        runTest("compiler/testData/codegen/box/annotations/recursiveAnnotationWithVarargAndWithoutDefaultValue.kt");
+      }
+
+      @Test
       @TestMetadata("resolveWithLowPriorityAnnotation.kt")
       public void testResolveWithLowPriorityAnnotation() {
         runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
@@ -3825,6 +3837,18 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         runTest("compiler/testData/codegen/box/bridges/typeParameterInExtensionReceiver.kt");
       }
 
+      @Test
+      @TestMetadata("varargBridge1.kt")
+      public void testVarargBridge1() {
+        runTest("compiler/testData/codegen/box/bridges/varargBridge1.kt");
+      }
+
+      @Test
+      @TestMetadata("varargBridge2.kt")
+      public void testVarargBridge2() {
+        runTest("compiler/testData/codegen/box/bridges/varargBridge2.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/bridges/declarationDifferentSignature")
       @TestDataPath("$PROJECT_ROOT")
@@ -7101,6 +7125,18 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
+      @TestMetadata("kt81257.kt")
+      public void testKt81257() {
+        runTest("compiler/testData/codegen/box/casts/kt81257.kt");
+      }
+
+      @Test
+      @TestMetadata("kt81617.kt")
+      public void testKt81617() {
+        runTest("compiler/testData/codegen/box/casts/kt81617.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaToUnitCast.kt")
       public void testLambdaToUnitCast() {
         runTest("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
@@ -7164,6 +7200,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       @TestMetadata("wasmCastMessages.kt")
       public void testWasmCastMessages() {
         runTest("compiler/testData/codegen/box/casts/wasmCastMessages.kt");
+      }
+
+      @Test
+      @TestMetadata("wasmCastMessagesWasmJs.kt")
+      public void testWasmCastMessagesWasmJs() {
+        runTest("compiler/testData/codegen/box/casts/wasmCastMessagesWasmJs.kt");
       }
 
       @Nested
@@ -9369,27 +9411,56 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
+      @TestMetadata("genericCollection.kt")
+      public void testGenericCollection() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/genericCollection.kt");
+      }
+
+      @Test
+      @TestMetadata("multipleOfOverloads.kt")
+      public void testMultipleOfOverloads() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/multipleOfOverloads.kt");
+      }
+
+      @Test
+      @TestMetadata("nonGenericCollection.kt")
+      public void testNonGenericCollection() {
+        runTest("compiler/testData/codegen/box/collectionLiterals/nonGenericCollection.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/collectionLiteralsInAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @HeavyTest()
+    public class CollectionLiteralsInAnnotations {
+      @Test
+      public void testAllFilesPresentInCollectionLiteralsInAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiteralsInAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
       @TestMetadata("collectionLiteralsInArgumentPosition.kt")
       public void testCollectionLiteralsInArgumentPosition() {
-        runTest("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsInArgumentPosition.kt");
+        runTest("compiler/testData/codegen/box/collectionLiteralsInAnnotations/collectionLiteralsInArgumentPosition.kt");
       }
 
       @Test
       @TestMetadata("collectionLiteralsWithConstants.kt")
       public void testCollectionLiteralsWithConstants() {
-        runTest("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsWithConstants.kt");
+        runTest("compiler/testData/codegen/box/collectionLiteralsInAnnotations/collectionLiteralsWithConstants.kt");
       }
 
       @Test
       @TestMetadata("collectionLiteralsWithVarargs.kt")
       public void testCollectionLiteralsWithVarargs() {
-        runTest("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsWithVarargs.kt");
+        runTest("compiler/testData/codegen/box/collectionLiteralsInAnnotations/collectionLiteralsWithVarargs.kt");
       }
 
       @Test
       @TestMetadata("defaultAnnotationParameterValues.kt")
       public void testDefaultAnnotationParameterValues() {
-        runTest("compiler/testData/codegen/box/collectionLiterals/defaultAnnotationParameterValues.kt");
+        runTest("compiler/testData/codegen/box/collectionLiteralsInAnnotations/defaultAnnotationParameterValues.kt");
       }
     }
 
@@ -11269,6 +11340,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("forInArrayWithIndexNameBasedDestructuringShortForm.kt")
+        public void testForInArrayWithIndexNameBasedDestructuringShortForm() {
+          runTest("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInArrayWithIndexNameBasedDestructuringShortForm.kt");
+        }
+
+        @Test
         @TestMetadata("forInArrayWithIndexNoElementVar.kt")
         public void testForInArrayWithIndexNoElementVar() {
           runTest("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInArrayWithIndexNoElementVar.kt");
@@ -11406,6 +11483,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("forInCharSequenceWithIndexNameBasedDestructuringShortForm.kt")
+        public void testForInCharSequenceWithIndexNameBasedDestructuringShortForm() {
+          runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSequenceWithIndexNameBasedDestructuringShortForm.kt");
+        }
+
+        @Test
         @TestMetadata("forInCharSequenceWithIndexNoElementVarCheckSideEffects.kt")
         public void testForInCharSequenceWithIndexNoElementVarCheckSideEffects() {
           runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSequenceWithIndexNoElementVarCheckSideEffects.kt");
@@ -11427,6 +11510,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         @TestMetadata("forInStringWithIndex.kt")
         public void testForInStringWithIndex() {
           runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndex.kt");
+        }
+
+        @Test
+        @TestMetadata("forInStringWithIndexNameBasedDestructuringShortForm.kt")
+        public void testForInStringWithIndexNameBasedDestructuringShortForm() {
+          runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInStringWithIndexNameBasedDestructuringShortForm.kt");
         }
 
         @Test
@@ -11628,6 +11717,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         @TestMetadata("forInSequenceWithIndexCheckSideEffects.kt")
         public void testForInSequenceWithIndexCheckSideEffects() {
           runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndexCheckSideEffects.kt");
+        }
+
+        @Test
+        @TestMetadata("forInSequenceWithIndexNameBasedDestructuringShortForm.kt")
+        public void testForInSequenceWithIndexNameBasedDestructuringShortForm() {
+          runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndexNameBasedDestructuringShortForm.kt");
         }
 
         @Test
@@ -19862,12 +19957,6 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
-      @TestMetadata("enumEntriesIntrinsicWithoutFeature.kt")
-      public void testEnumEntriesIntrinsicWithoutFeature() {
-        runTest("compiler/testData/codegen/box/enum/enumEntriesIntrinsicWithoutFeature.kt");
-      }
-
-      @Test
       @TestMetadata("enumEntriesMultimodule.kt")
       public void testEnumEntriesMultimodule() {
         runTest("compiler/testData/codegen/box/enum/enumEntriesMultimodule.kt");
@@ -25151,6 +25240,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
+      @TestMetadata("ifWithAssignmentAndNothingBranch.kt")
+      public void testIfWithAssignmentAndNothingBranch() {
+        runTest("compiler/testData/codegen/box/inference/ifWithAssignmentAndNothingBranch.kt");
+      }
+
+      @Test
       @TestMetadata("inferenceWithTypeVariableInsideCapturedType.kt")
       public void testInferenceWithTypeVariableInsideCapturedType() {
         runTest("compiler/testData/codegen/box/inference/inferenceWithTypeVariableInsideCapturedType.kt");
@@ -25289,6 +25384,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
+      @TestMetadata("noCheckNotNullForFlexibleTypeInWhenAtAssignment.kt")
+      public void testNoCheckNotNullForFlexibleTypeInWhenAtAssignment() {
+        runTest("compiler/testData/codegen/box/inference/noCheckNotNullForFlexibleTypeInWhenAtAssignment.kt");
+      }
+
+      @Test
       @TestMetadata("noCoercionToUniForNullableLambdaReturnType.kt")
       public void testNoCoercionToUniForNullableLambdaReturnType() {
         runTest("compiler/testData/codegen/box/inference/noCoercionToUniForNullableLambdaReturnType.kt");
@@ -25379,9 +25480,45 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
+      @TestMetadata("tryCatchAtAssignment.kt")
+      public void testTryCatchAtAssignment() {
+        runTest("compiler/testData/codegen/box/inference/tryCatchAtAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatchAtAssignmentWithSmartCast.kt")
+      public void testTryCatchAtAssignmentWithSmartCast() {
+        runTest("compiler/testData/codegen/box/inference/tryCatchAtAssignmentWithSmartCast.kt");
+      }
+
+      @Test
+      @TestMetadata("tryWithAssignmentAndNothingTypedCatch.kt")
+      public void testTryWithAssignmentAndNothingTypedCatch() {
+        runTest("compiler/testData/codegen/box/inference/tryWithAssignmentAndNothingTypedCatch.kt");
+      }
+
+      @Test
       @TestMetadata("unsafeVarianceCodegen.kt")
       public void testUnsafeVarianceCodegen() {
         runTest("compiler/testData/codegen/box/inference/unsafeVarianceCodegen.kt");
+      }
+
+      @Test
+      @TestMetadata("whenAtAssignment.kt")
+      public void testWhenAtAssignment() {
+        runTest("compiler/testData/codegen/box/inference/whenAtAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("whenAtAssignmentWithSmartCast.kt")
+      public void testWhenAtAssignmentWithSmartCast() {
+        runTest("compiler/testData/codegen/box/inference/whenAtAssignmentWithSmartCast.kt");
+      }
+
+      @Test
+      @TestMetadata("whenAtAssignmentWithSmartCastInsideCapturedLambda.kt")
+      public void testWhenAtAssignmentWithSmartCastInsideCapturedLambda() {
+        runTest("compiler/testData/codegen/box/inference/whenAtAssignmentWithSmartCastInsideCapturedLambda.kt");
       }
 
       @Nested
@@ -26840,6 +26977,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       @TestMetadata("defaultArgs.kt")
       public void testDefaultArgs() {
         runTest("compiler/testData/codegen/box/inline/defaultArgs.kt");
+      }
+
+      @Test
+      @TestMetadata("defaultArgsLateinitLowering.kt")
+      public void testDefaultArgsLateinitLowering() {
+        runTest("compiler/testData/codegen/box/inline/defaultArgsLateinitLowering.kt");
       }
 
       @Test
@@ -35665,6 +35808,24 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
+      @TestMetadata("ubyteOperations.kt")
+      public void testUbyteOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/ubyteOperations.kt");
+      }
+
+      @Test
+      @TestMetadata("uintOperations.kt")
+      public void testUintOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/uintOperations.kt");
+      }
+
+      @Test
+      @TestMetadata("ulongOperations.kt")
+      public void testUlongOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/ulongOperations.kt");
+      }
+
+      @Test
       @TestMetadata("unsignedConst.kt")
       public void testUnsignedConst() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/unsignedConst.kt");
@@ -35674,6 +35835,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       @TestMetadata("useCorrectToString.kt")
       public void testUseCorrectToString() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/useCorrectToString.kt");
+      }
+
+      @Test
+      @TestMetadata("ushortOperations.kt")
+      public void testUshortOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/ushortOperations.kt");
       }
 
       @Nested
@@ -35764,12 +35931,6 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
-        @TestMetadata("ifConstVal.kt")
-        public void testIfConstVal() {
-          runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/ifConstVal.kt");
-        }
-
-        @Test
         @TestMetadata("kCallableName.kt")
         public void testKCallableName() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableName.kt");
@@ -35806,6 +35967,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       @HeavyTest()
       public class Serialization {
         @Test
+        @TestMetadata("actualAnnotationOnFakeOverride.kt")
+        public void testActualAnnotationOnFakeOverride() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/actualAnnotationOnFakeOverride.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInSerialization() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/serialization"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
@@ -35823,9 +35990,27 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("annotationOnFakeOverrideProperty.kt")
+        public void testAnnotationOnFakeOverrideProperty() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverrideProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationOnFakeOverrideWithJava.kt")
+        public void testAnnotationOnFakeOverrideWithJava() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverrideWithJava.kt");
+        }
+
+        @Test
         @TestMetadata("annotationOnParameterOnFakeOverride.kt")
         public void testAnnotationOnParameterOnFakeOverride() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnParameterOnFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationOnSecondParameterOnFakeOverride.kt")
+        public void testAnnotationOnSecondParameterOnFakeOverride() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnSecondParameterOnFakeOverride.kt");
         }
 
         @Test
@@ -35844,6 +36029,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         @TestMetadata("annotationWithArray.kt")
         public void testAnnotationWithArray() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithArray.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationWithDefaultValueOnFakeOverride.kt")
+        public void testAnnotationWithDefaultValueOnFakeOverride() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithDefaultValueOnFakeOverride.kt");
         }
 
         @Test
@@ -36396,6 +36587,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       @TestMetadata("ambiguousJavaVararg.kt")
       public void testAmbiguousJavaVararg() {
         runTest("compiler/testData/codegen/box/javaInterop/ambiguousJavaVararg.kt");
+      }
+
+      @Test
+      @TestMetadata("attemptToEvaluateConstantFromJava.kt")
+      public void testAttemptToEvaluateConstantFromJava() {
+        runTest("compiler/testData/codegen/box/javaInterop/attemptToEvaluateConstantFromJava.kt");
       }
 
       @Test
@@ -46431,6 +46628,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("backingFieldAndPropertyWithTheSameName.kt")
+        public void testBackingFieldAndPropertyWithTheSameName() {
+          runTest("compiler/testData/codegen/box/properties/backingField/backingFieldAndPropertyWithTheSameName.kt");
+        }
+
+        @Test
         @TestMetadata("backingFieldInitializedInInit.kt")
         public void testBackingFieldInitializedInInit() {
           runTest("compiler/testData/codegen/box/properties/backingField/backingFieldInitializedInInit.kt");
@@ -46512,6 +46715,18 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         @TestMetadata("overriddenPropertiesWithExplicitBackingFields.kt")
         public void testOverriddenPropertiesWithExplicitBackingFields() {
           runTest("compiler/testData/codegen/box/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideWithExplicitBackingField.kt")
+        public void testOverrideWithExplicitBackingField() {
+          runTest("compiler/testData/codegen/box/properties/backingField/overrideWithExplicitBackingField.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyWithBackingFieldAndWithContext.kt")
+        public void testPropertyWithBackingFieldAndWithContext() {
+          runTest("compiler/testData/codegen/box/properties/backingField/propertyWithBackingFieldAndWithContext.kt");
         }
       }
 
@@ -46709,24 +46924,6 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
           }
 
           @Test
-          @TestMetadata("companionObjectField.kt")
-          public void testCompanionObjectField() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/companionObjectField.kt");
-          }
-
-          @Test
-          @TestMetadata("emptyLhs.kt")
-          public void testEmptyLhs() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/emptyLhs.kt");
-          }
-
-          @Test
-          @TestMetadata("innerSubclass.kt")
-          public void testInnerSubclass() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/innerSubclass.kt");
-          }
-
-          @Test
           @TestMetadata("isInitializedMultiFile.kt")
           public void testIsInitializedMultiFile() {
             runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/isInitializedMultiFile.kt");
@@ -46739,33 +46936,9 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
           }
 
           @Test
-          @TestMetadata("nonInlineLambda.kt")
-          public void testNonInlineLambda() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/nonInlineLambda.kt");
-          }
-
-          @Test
-          @TestMetadata("propertyImportedFromObject.kt")
-          public void testPropertyImportedFromObject() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/propertyImportedFromObject.kt");
-          }
-
-          @Test
-          @TestMetadata("sideEffects.kt")
-          public void testSideEffects() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/sideEffects.kt");
-          }
-
-          @Test
           @TestMetadata("simpleIsInitialized.kt")
           public void testSimpleIsInitialized() {
             runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/simpleIsInitialized.kt");
-          }
-
-          @Test
-          @TestMetadata("topLevelProperty.kt")
-          public void testTopLevelProperty() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelProperty.kt");
           }
         }
 
@@ -56443,9 +56616,21 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
           }
 
           @Test
-          @TestMetadata("defaultImpls.kt")
-          public void testDefaultImpls() {
-            runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/defaultImpls.kt");
+          @TestMetadata("equals.kt")
+          public void testEquals() {
+            runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/equals.kt");
+          }
+
+          @Test
+          @TestMetadata("inInterface.kt")
+          public void testInInterface() {
+            runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inInterface.kt");
+          }
+
+          @Test
+          @TestMetadata("inInterfaceDefaultImpls.kt")
+          public void testInInterfaceDefaultImpls() {
+            runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inInterfaceDefaultImpls.kt");
           }
 
           @Test
@@ -56527,6 +56712,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("functionSupertype.kt")
+        public void testFunctionSupertype() {
+          runTest("compiler/testData/codegen/box/reflection/supertypes/functionSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("genericSubstitution.kt")
         public void testGenericSubstitution() {
           runTest("compiler/testData/codegen/box/reflection/supertypes/genericSubstitution.kt");
@@ -56566,6 +56757,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         @TestMetadata("simpleSupertypes.kt")
         public void testSimpleSupertypes() {
           runTest("compiler/testData/codegen/box/reflection/supertypes/simpleSupertypes.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionSupertype.kt")
+        public void testSuspendFunctionSupertype() {
+          runTest("compiler/testData/codegen/box/reflection/supertypes/suspendFunctionSupertype.kt");
         }
       }
 
@@ -56702,6 +56899,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         @TestMetadata("primitiveJavaTypes.kt")
         public void testPrimitiveJavaTypes() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/primitiveJavaTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("rawRecursiveType.kt")
+        public void testRawRecursiveType() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/rawRecursiveType.kt");
         }
 
         @Test
@@ -57060,9 +57263,21 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
-        @TestMetadata("innerGenericParameter.kt")
-        public void testInnerGenericParameter() {
-          runTest("compiler/testData/codegen/box/reflection/typeParameters/innerGenericParameter.kt");
+        @TestMetadata("functionClasses.kt")
+        public void testFunctionClasses() {
+          runTest("compiler/testData/codegen/box/reflection/typeParameters/functionClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("innerGeneric.kt")
+        public void testInnerGeneric() {
+          runTest("compiler/testData/codegen/box/reflection/typeParameters/innerGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("innerGenericJava.kt")
+        public void testInnerGenericJava() {
+          runTest("compiler/testData/codegen/box/reflection/typeParameters/innerGenericJava.kt");
         }
 
         @Test
@@ -57354,6 +57569,18 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       @TestMetadata("commonSupertypeContravariant2.kt")
       public void testCommonSupertypeContravariant2() {
         runTest("compiler/testData/codegen/box/regressions/commonSupertypeContravariant2.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassInInlineFunctionWithTypeParameters.kt")
+      public void testDataClassInInlineFunctionWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/regressions/dataClassInInlineFunctionWithTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassInRegularFunctionWithTypeParameters.kt")
+      public void testDataClassInRegularFunctionWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/regressions/dataClassInRegularFunctionWithTypeParameters.kt");
       }
 
       @Test
@@ -59221,6 +59448,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         @TestMetadata("kt19251_child.kt")
         public void testKt19251_child() {
           runTest("compiler/testData/codegen/box/sam/constructors/kt19251_child.kt");
+        }
+
+        @Test
+        @TestMetadata("missingSuperinterface.kt")
+        public void testMissingSuperinterface() {
+          runTest("compiler/testData/codegen/box/sam/constructors/missingSuperinterface.kt");
         }
 
         @Test
@@ -62452,6 +62685,209 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/typeErasure")
+    @TestDataPath("$PROJECT_ROOT")
+    @HeavyTest()
+    public class TypeErasure {
+      @Test
+      public void testAllFilesPresentInTypeErasure() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeErasure"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameter.kt")
+      public void testFunWithReifiedTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterAndContextParameter.kt")
+      public void testFunWithReifiedTypeParameterAndContextParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterAndContextParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterAndExtensionReceiver.kt")
+      public void testFunWithReifiedTypeParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterContextParameterAndExtensionReceiver.kt")
+      public void testFunWithReifiedTypeParameterContextParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterContextParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass.kt")
+      public void testFunWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt")
+      public void testFunWithReifiedTypeParameterInlinesFunWithThreeTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInlinesFunWithThreeTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInlinesFunWithTwoTypeParameters.kt")
+      public void testFunWithReifiedTypeParameterInlinesFunWithTwoTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInlinesFunWithTwoTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInsideClass.kt")
+      public void testFunWithReifiedTypeParameterInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInsideInnerClass.kt")
+      public void testFunWithReifiedTypeParameterInsideInnerClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInsideInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInsideNestedClass.kt")
+      public void testFunWithReifiedTypeParameterInsideNestedClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInsideNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterWithTwoUpperBounds.kt")
+      public void testFunWithReifiedTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterWithUpperBound.kt")
+      public void testFunWithReifiedTypeParameterWithUpperBound() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterWithUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameter.kt")
+      public void testFunWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterAndContextParameter.kt")
+      public void testFunWithTypeParameterAndContextParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterAndContextParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterAndExtensionReceiver.kt")
+      public void testFunWithTypeParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterContextParameterAndExtensionReceiver.kt")
+      public void testFunWithTypeParameterContextParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterContextParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterContextParameterAndExtensionReceiverInsideClass.kt")
+      public void testFunWithTypeParameterContextParameterAndExtensionReceiverInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterContextParameterAndExtensionReceiverInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterInsideClass.kt")
+      public void testFunWithTypeParameterInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterInsideInnerClass.kt")
+      public void testFunWithTypeParameterInsideInnerClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterInsideNestedClass.kt")
+      public void testFunWithTypeParameterInsideNestedClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterWithTwoUpperBounds.kt")
+      public void testFunWithTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterWithUpperBound.kt")
+      public void testFunWithTypeParameterWithUpperBound() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterWithUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters.kt")
+      public void testOuterClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndChainOfInnerClassesWithTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter.kt")
+      public void testOuterClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndInlineFunctionWithReifiedTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndInlineFunctionWithTypeParameter.kt")
+      public void testOuterClassWithTypeParameterAndInlineFunctionWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndInlineFunctionWithTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterAndInnerClassWithTypeParameter.kt")
+      public void testOuterClassWithTypeParameterAndInnerClassWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterAndInnerClassWithTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterWithTwoUpperBounds.kt")
+      public void testOuterClassWithTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("outerClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds.kt")
+      public void testOuterClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/outerClassWithTypeParameterWithUpperBoundAndInlineFunctionWithReifiedTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("twoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters.kt")
+      public void testTwoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/twoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("twoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters.kt")
+      public void testTwoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/twoFunWithReifiedTypeParametersInlineFunWithTwoTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("twoFunWithTypeParametersInlineFunWithReifiedTypeParameters.kt")
+      public void testTwoFunWithTypeParametersInlineFunWithReifiedTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/twoFunWithTypeParametersInlineFunWithReifiedTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("twoFunWithTypeParametersWithUpperBoundsInlineFunWithReifiedTypeParameters.kt")
+      public void testTwoFunWithTypeParametersWithUpperBoundsInlineFunWithReifiedTypeParameters() {
+        runTest("compiler/testData/codegen/box/typeErasure/twoFunWithTypeParametersWithUpperBoundsInlineFunWithReifiedTypeParameters.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/typeInfo")
     @TestDataPath("$PROJECT_ROOT")
     @HeavyTest()
@@ -64323,6 +64759,359 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/wasm-old-exception-handling")
+    @TestDataPath("$PROJECT_ROOT")
+    @HeavyTest()
+    public class Wasm_old_exception_handling {
+      @Test
+      public void testAllFilesPresentInWasm_old_exception_handling() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/wasm-old-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("breakAndOuterFinally.kt")
+      public void testBreakAndOuterFinally() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/breakAndOuterFinally.kt");
+      }
+
+      @Test
+      @TestMetadata("catch1.kt")
+      public void testCatch1() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/catch1.kt");
+      }
+
+      @Test
+      @TestMetadata("catch2.kt")
+      public void testCatch2() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/catch2.kt");
+      }
+
+      @Test
+      @TestMetadata("catch3.kt")
+      public void testCatch3() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/catch3.kt");
+      }
+
+      @Test
+      @TestMetadata("catch4.kt")
+      public void testCatch4() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/catch4.kt");
+      }
+
+      @Test
+      @TestMetadata("catch5.kt")
+      public void testCatch5() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/catch5.kt");
+      }
+
+      @Test
+      @TestMetadata("catch6.kt")
+      public void testCatch6() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/catch6.kt");
+      }
+
+      @Test
+      @TestMetadata("catch7.kt")
+      public void testCatch7() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/catch7.kt");
+      }
+
+      @Test
+      @TestMetadata("catch8.kt")
+      public void testCatch8() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/catch8.kt");
+      }
+
+      @Test
+      @TestMetadata("continueAndOuterFinally.kt")
+      public void testContinueAndOuterFinally() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/continueAndOuterFinally.kt");
+      }
+
+      @Test
+      @TestMetadata("decrementInFinally.kt")
+      public void testDecrementInFinally() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/decrementInFinally.kt");
+      }
+
+      @Test
+      @TestMetadata("extend0.kt")
+      public void testExtend0() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/extend0.kt");
+      }
+
+      @Test
+      @TestMetadata("finally1.kt")
+      public void testFinally1() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally1.kt");
+      }
+
+      @Test
+      @TestMetadata("finally10.kt")
+      public void testFinally10() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally10.kt");
+      }
+
+      @Test
+      @TestMetadata("finally11.kt")
+      public void testFinally11() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally11.kt");
+      }
+
+      @Test
+      @TestMetadata("finally2.kt")
+      public void testFinally2() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally2.kt");
+      }
+
+      @Test
+      @TestMetadata("finally3.kt")
+      public void testFinally3() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally3.kt");
+      }
+
+      @Test
+      @TestMetadata("finally4.kt")
+      public void testFinally4() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally4.kt");
+      }
+
+      @Test
+      @TestMetadata("finally5.kt")
+      public void testFinally5() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally5.kt");
+      }
+
+      @Test
+      @TestMetadata("finally6.kt")
+      public void testFinally6() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally6.kt");
+      }
+
+      @Test
+      @TestMetadata("finally7.kt")
+      public void testFinally7() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally7.kt");
+      }
+
+      @Test
+      @TestMetadata("finally8.kt")
+      public void testFinally8() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally8.kt");
+      }
+
+      @Test
+      @TestMetadata("finally9.kt")
+      public void testFinally9() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finally9.kt");
+      }
+
+      @Test
+      @TestMetadata("finallyAndFinally.kt")
+      public void testFinallyAndFinally() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/finallyAndFinally.kt");
+      }
+
+      @Test
+      @TestMetadata("kt31923_break.kt")
+      public void testKt31923_break() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/kt31923_break.kt");
+      }
+
+      @Test
+      @TestMetadata("kt31923_continue.kt")
+      public void testKt31923_continue() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/kt31923_continue.kt");
+      }
+
+      @Test
+      @TestMetadata("kt31923_return.kt")
+      public void testKt31923_return() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/kt31923_return.kt");
+      }
+
+      @Test
+      @TestMetadata("kt3549.kt")
+      public void testKt3549() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/kt3549.kt");
+      }
+
+      @Test
+      @TestMetadata("kt3706.kt")
+      public void testKt3706() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/kt3706.kt");
+      }
+
+      @Test
+      @TestMetadata("kt3867.kt")
+      public void testKt3867() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/kt3867.kt");
+      }
+
+      @Test
+      @TestMetadata("kt3874.kt")
+      public void testKt3874() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/kt3874.kt");
+      }
+
+      @Test
+      @TestMetadata("kt3894.kt")
+      public void testKt3894() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/kt3894.kt");
+      }
+
+      @Test
+      @TestMetadata("kt4134.kt")
+      public void testKt4134() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/kt4134.kt");
+      }
+
+      @Test
+      @TestMetadata("loopAndFinally.kt")
+      public void testLoopAndFinally() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/loopAndFinally.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedFinallyAndNonFinallyTry.kt")
+      public void testNestedFinallyAndNonFinallyTry() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/nestedFinallyAndNonFinallyTry.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedFinallyAndNonFinallyTry2.kt")
+      public void testNestedFinallyAndNonFinallyTry2() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/nestedFinallyAndNonFinallyTry2.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedFinallyAndNonFinallyTry3.kt")
+      public void testNestedFinallyAndNonFinallyTry3() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/nestedFinallyAndNonFinallyTry3.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedFinallyAndNonFinallyTry4.kt")
+      public void testNestedFinallyAndNonFinallyTry4() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/nestedFinallyAndNonFinallyTry4.kt");
+      }
+
+      @Test
+      @TestMetadata("notChainCatch.kt")
+      public void testNotChainCatch() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/notChainCatch.kt");
+      }
+
+      @Test
+      @TestMetadata("objectInFinally.kt")
+      public void testObjectInFinally() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/objectInFinally.kt");
+      }
+
+      @Test
+      @TestMetadata("rethrow.kt")
+      public void testRethrow() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/rethrow.kt");
+      }
+
+      @Test
+      @TestMetadata("returnNullFromInlined.kt")
+      public void testReturnNullFromInlined() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/returnNullFromInlined.kt");
+      }
+
+      @Test
+      @TestMetadata("returnsDifferentTypes.kt")
+      public void testReturnsDifferentTypes() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/returnsDifferentTypes.kt");
+      }
+
+      @Test
+      @TestMetadata("someStuff.kt")
+      public void testSomeStuff() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/someStuff.kt");
+      }
+
+      @Test
+      @TestMetadata("throw0.kt")
+      public void testThrow0() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/throw0.kt");
+      }
+
+      @Test
+      @TestMetadata("throw_from_catch.kt")
+      public void testThrow_from_catch() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/throw_from_catch.kt");
+      }
+
+      @Test
+      @TestMetadata("try1.kt")
+      public void testTry1() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/try1.kt");
+      }
+
+      @Test
+      @TestMetadata("try2.kt")
+      public void testTry2() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/try2.kt");
+      }
+
+      @Test
+      @TestMetadata("try3.kt")
+      public void testTry3() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/try3.kt");
+      }
+
+      @Test
+      @TestMetadata("try4.kt")
+      public void testTry4() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/try4.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatch.kt")
+      public void testTryCatch() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/tryCatch.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatchFinallyWithHandleResult.kt")
+      public void testTryCatchFinallyWithHandleResult() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/tryCatchFinallyWithHandleResult.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatchWithHandleResult.kt")
+      public void testTryCatchWithHandleResult() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/tryCatchWithHandleResult.kt");
+      }
+
+      @Test
+      @TestMetadata("tryFinally.kt")
+      public void testTryFinally() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/tryFinally.kt");
+      }
+
+      @Test
+      @TestMetadata("tryFinallyInsideInlineLambda.kt")
+      public void testTryFinallyInsideInlineLambda() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/tryFinallyInsideInlineLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("tryFinallyWithHandleResult.kt")
+      public void testTryFinallyWithHandleResult() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/tryFinallyWithHandleResult.kt");
+      }
+
+      @Test
+      @TestMetadata("tryLoopTry.kt")
+      public void testTryLoopTry() {
+        runTest("compiler/testData/codegen/box/wasm-old-exception-handling/tryLoopTry.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/when")
     @TestDataPath("$PROJECT_ROOT")
     @HeavyTest()
@@ -65204,12 +65993,6 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       @TestMetadata("fakeOverrideInDefaultMultiModule.kt")
       public void testFakeOverrideInDefaultMultiModule() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideInDefaultMultiModule.kt");
-      }
-
-      @Test
-      @TestMetadata("fakeOverrideLocalGenericBase.kt")
-      public void testFakeOverrideLocalGenericBase() {
-        runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideLocalGenericBase.kt");
       }
 
       @Test
@@ -71354,6 +72137,41 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       @TestMetadata("tryCatchFinally.kt")
       public void testTryCatchFinally() {
         runTest("compiler/testData/codegen/boxInline/wasm-new-exception-handling/tryCatchFinally.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/boxInline/wasm-old-exception-handling")
+    @TestDataPath("$PROJECT_ROOT")
+    @HeavyTest()
+    public class Wasm_old_exception_handling {
+      @Test
+      public void testAllFilesPresentInWasm_old_exception_handling() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/wasm-old-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("kt5863.kt")
+      public void testKt5863() {
+        runTest("compiler/testData/codegen/boxInline/wasm-old-exception-handling/kt5863.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatch.kt")
+      public void testTryCatch() {
+        runTest("compiler/testData/codegen/boxInline/wasm-old-exception-handling/tryCatch.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatch2.kt")
+      public void testTryCatch2() {
+        runTest("compiler/testData/codegen/boxInline/wasm-old-exception-handling/tryCatch2.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatchFinally.kt")
+      public void testTryCatchFinally() {
+        runTest("compiler/testData/codegen/boxInline/wasm-old-exception-handling/tryCatchFinally.kt");
       }
     }
   }

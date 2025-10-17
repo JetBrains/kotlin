@@ -215,7 +215,7 @@ private fun createAndInitializeKlibBasedStdlibCommonDescriptor(
     val klibPackageFragmentProvider = metadataModuleDescriptorFactory.createPackageFragmentProvider(
         library = stdlibKlib,
         packageAccessHandler = null,
-        packageFragmentNames = parseModuleHeader(stdlibKlib.moduleHeaderData).packageFragmentNameList,
+        customMetadataProtoLoader = null,
         storageManager = projectContext.storageManager,
         moduleDescriptor = stdlibCommonDescriptor,
         configuration = KlibCompilerDeserializationConfiguration(environment.configuration.languageVersionSettings),

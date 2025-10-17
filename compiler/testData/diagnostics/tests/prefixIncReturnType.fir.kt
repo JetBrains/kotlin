@@ -12,7 +12,7 @@ var topLevel: I
     set(value) {}
 
 fun main() {
-    val x: ST = <!INITIALIZER_TYPE_MISMATCH!>++topLevel<!>
+    val x: ST <!INITIALIZER_TYPE_MISMATCH!>=<!> ++topLevel
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, incrementDecrementExpression,

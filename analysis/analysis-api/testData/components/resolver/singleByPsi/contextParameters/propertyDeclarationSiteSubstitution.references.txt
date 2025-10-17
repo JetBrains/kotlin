@@ -1,6 +1,7 @@
 KtNameReferenceExpression(193,196): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Another) context(cp1@kotlin.Long, cp2@kotlin.Boolean)
       override val foo: kotlin.Long

@@ -117,12 +117,6 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
 
 }
 
-@DisplayName("Incremental scenarios with expect/actual - K1")
-class ExpectActualIncrementalCompilationK1IT : AbstractExpectActualIncrementalCompilationIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK1()
-}
-
 @DisplayName("Incremental scenarios with expect/actual - K2")
 class ExpectActualIncrementalCompilationK2IT : AbstractExpectActualIncrementalCompilationIT() {
 

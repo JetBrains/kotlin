@@ -470,6 +470,24 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("resultNothing.kt")
+    public void testResultNothing() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/resultNothing.kt");
+    }
+
+    @Test
+    @TestMetadata("resultNothingBeforeSmartCast.kt")
+    public void testResultNothingBeforeSmartCast() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/resultNothingBeforeSmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("resultNothingSmartCast.kt")
+    public void testResultNothingSmartCast() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/resultNothingSmartCast.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/simple.kt");
@@ -864,6 +882,34 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       @TestMetadata("variousLocalReturns.kt")
       public void testVariousLocalReturns() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/variousLocalReturns.kt");
+      }
+
+      @Nested
+      @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/defaultValues")
+      @TestDataPath("$PROJECT_ROOT")
+      public class DefaultValues {
+        @Test
+        public void testAllFilesPresentInDefaultValues() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/defaultValues"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("defaultValueDownByStack.kt")
+        public void testDefaultValueDownByStack() {
+          runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/defaultValues/defaultValueDownByStack.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultValueInEnclosingFun.kt")
+        public void testDefaultValueInEnclosingFun() {
+          runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/defaultValues/defaultValueInEnclosingFun.kt");
+        }
+
+        @Test
+        @TestMetadata("ignoredDefaultValueInEnclosingFun.kt")
+        public void testIgnoredDefaultValueInEnclosingFun() {
+          runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/defaultValues/ignoredDefaultValueInEnclosingFun.kt");
+        }
       }
     }
   }

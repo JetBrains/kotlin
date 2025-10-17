@@ -508,6 +508,7 @@ KtOperationReferenceExpression(32,33): '+'
 KtNameReferenceExpression(34,35): 'a'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -583,6 +584,7 @@ KtOperationReferenceExpression(76,78): '?:'
 KtNameReferenceExpression(79,80): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

@@ -2,6 +2,7 @@
   KDocName(121,140): 'WithGenerics.intExt'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) fun test.WithGenerics<kotlin.Int>.intExt()
 
@@ -9,5 +10,6 @@
   KDocName(146,168): 'WithGenerics.stringExt'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) fun test.WithGenerics<kotlin.String>.stringExt()

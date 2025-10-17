@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.EffectDeclaration
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.parsing.*
+import org.jetbrains.kotlin.resolve.ContractsDslNames
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
@@ -64,10 +65,10 @@ internal class PsiCallsEffectParser(
         if (!descriptor.parents.first().isInvocationKindEnum()) return null
 
         return when (descriptor.fqNameSafe.shortName()) {
-            ContractsDslNames.AT_MOST_ONCE_KIND -> EventOccurrencesRange.AT_MOST_ONCE
-            ContractsDslNames.EXACTLY_ONCE_KIND -> EventOccurrencesRange.EXACTLY_ONCE
-            ContractsDslNames.AT_LEAST_ONCE_KIND -> EventOccurrencesRange.AT_LEAST_ONCE
-            ContractsDslNames.UNKNOWN_KIND -> EventOccurrencesRange.UNKNOWN
+            ContractsDslNames.AT_MOST_ONCE_KIND.callableName -> EventOccurrencesRange.AT_MOST_ONCE
+            ContractsDslNames.EXACTLY_ONCE_KIND.callableName -> EventOccurrencesRange.EXACTLY_ONCE
+            ContractsDslNames.AT_LEAST_ONCE_KIND.callableName -> EventOccurrencesRange.AT_LEAST_ONCE
+            ContractsDslNames.UNKNOWN_KIND.callableName -> EventOccurrencesRange.UNKNOWN
             else -> null
         }
     }

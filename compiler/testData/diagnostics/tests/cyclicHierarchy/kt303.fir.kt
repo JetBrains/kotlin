@@ -9,6 +9,6 @@ open class Bar() : <!CYCLIC_INHERITANCE_HIERARCHY!>Foo<!>() {
 
 }
 
-val x : Int = <!INITIALIZER_TYPE_MISMATCH!>Foo()<!>
+val x : Int <!INITIALIZER_TYPE_MISMATCH!>=<!> Foo()
 
 /* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

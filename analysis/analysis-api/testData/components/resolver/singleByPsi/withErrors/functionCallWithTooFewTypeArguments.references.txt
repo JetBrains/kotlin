@@ -1,5 +1,6 @@
 KtNameReferenceExpression(45,52): 'generic'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) fun <A, B, C> generic()

@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
+import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.deserializeFileEntryName
 import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -71,10 +75,19 @@ class KonanDriver(
             when {
                 !filesToCache.isNullOrEmpty() -> filesToCache
                 configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true -> {
-                    val lib = createKonanLibrary(File(libPath), "default", null, true)
-                    (0 until lib.fileCount()).map { fileIndex ->
-                        val proto = IrFile.parseFrom(lib.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
-                        lib.fileEntry(proto, fileIndex).name
+                    val lib = createKonanLibrary(
+                            File(libPath),
+                            "default",
+                            null,
+                            true,
+                            configuration.zipFileSystemAccessor
+                    )
+                    val mainIr = lib.mainIr
+                    (0 until mainIr.fileCount()).map { fileIndex ->
+                        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, fileIndex))
+                        val proto = IrFile.parseFrom(mainIr.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
+                        val fileEntry = fileReader.fileEntry(proto)
+                        fileReader.deserializeFileEntryName(fileEntry)
                     }
                 }
                 else -> null

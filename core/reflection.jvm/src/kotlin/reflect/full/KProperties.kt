@@ -20,7 +20,7 @@ package kotlin.reflect.full
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KProperty2
-import kotlin.reflect.jvm.internal.KPropertyImpl
+import kotlin.reflect.jvm.internal.DescriptorKProperty
 
 /**
  * Returns the instance of a delegated **extension property**, or `null` if this property is not delegated.
@@ -31,7 +31,7 @@ import kotlin.reflect.jvm.internal.KPropertyImpl
 @SinceKotlin("1.1")
 fun KProperty1<*, *>.getExtensionDelegate(): Any? {
     @Suppress("UNCHECKED_CAST")
-    return (this as KProperty1<Any?, *>).getDelegate(KPropertyImpl.EXTENSION_PROPERTY_DELEGATE)
+    return (this as KProperty1<Any?, *>).getDelegate(DescriptorKProperty.EXTENSION_PROPERTY_DELEGATE)
 }
 
 /**
@@ -45,5 +45,5 @@ fun KProperty1<*, *>.getExtensionDelegate(): Any? {
 @SinceKotlin("1.1")
 fun <D> KProperty2<D, *, *>.getExtensionDelegate(receiver: D): Any? {
     @Suppress("UNCHECKED_CAST")
-    return (this as KProperty2<D, Any?, *>).getDelegate(receiver, KPropertyImpl.EXTENSION_PROPERTY_DELEGATE)
+    return (this as KProperty2<D, Any?, *>).getDelegate(receiver, DescriptorKProperty.EXTENSION_PROPERTY_DELEGATE)
 }

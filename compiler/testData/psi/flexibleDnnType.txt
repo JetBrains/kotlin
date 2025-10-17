@@ -4,6 +4,8 @@ KtFile: flexibleDnnType.kt
   IMPORT_LIST
     <empty list>
   CLASS
+    PsiComment(EOL_COMMENT)('// LIBRARY_PLATFORMS: JVM')
+    PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// FILE: FlexibleDnnType.kt')
     PsiWhiteSpace('\n')
     MODIFIER_LIST

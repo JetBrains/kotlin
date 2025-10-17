@@ -505,7 +505,7 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
     private fun createEnumEntriesBody(entriesGetter: IrFunction, enumClass: IrClass): IrBlockBody {
         val entriesField = enumClass.buildEntriesField()
         val valuesFunction = enumClass.searchForValuesFunction()
-        val createEnumEntriesFunction = context.createEnumEntries
+        val createEnumEntriesFunction = context.symbols.createEnumEntries
         return context.createIrBuilder(entriesGetter.symbol).run {
             irBlockBody {
                 +irIfThen(
@@ -526,7 +526,7 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
     private fun IrClass.buildEntriesField(): IrField = with(context) {
         addField {
             name = Name.identifier(ENTRIES_FIELD_NAME)
-            type = enumEntries.defaultType
+            type = context.symbols.enumEntries.defaultType
             visibility = PRIVATE
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRIES
             isFinal = true

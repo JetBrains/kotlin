@@ -43,13 +43,18 @@ androidx-collections = "1.5.0" # Used for Compose compiler plugin tests
 ant = "1.10.14"
 # It is recommended to skip at least one major release, e.g., use 2.0.21 when the default bootstrap version is 2.2.
 # This ensures additional verification that Gradle-related code does not get dependencies of higher LV
-kotlin-for-gradle-plugins-compilation = "2.0.21"
+kotlin-for-gradle-plugins-compilation = "2.1.21"
 intellij-asm = "9.6.1"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
-fastutil = "8.5.13-jb4"
+fastutil = "8.5.14-jb1"
+rwmutex-idea = "0.0.7"
 # Wasm specific
 wasmedge = "0.14.0"
+jscSequoia = "299490"
+jscLinux = "299491"
+jscWindows = "299491"
+jsShell = "134.0.2"
 vavr = "0.10.4"
 downloadTask = "5.6.0"
 oshi = "6.6.5"
@@ -62,7 +67,7 @@ commons-beanutils = "1.11.0"
 commons-compress = "1.27.1"
 commons-io = "2.18.0"
 commons-lang = "3.18.0"
-dataframe-dev = "1.0.0-dev-8218"
+dataframe-dev = "1.0.0-dev-8729"
 org-jetbrains-syntax-api = "0.3.340"
 org-jetbrains-annotations = "26.0.2"
 schema-kenerator = "2.1.2"
@@ -82,6 +87,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
 kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadataJvm" }
 shadow-gradlePlugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
@@ -145,6 +151,7 @@ android-gradle-plugin-builder-model = { module = "com.android.tools.build:builde
 android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
 
 intellij-fastutil = { module = "org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil", version.ref = "fastutil" }
+rwmutex-idea = { module = "org.jetbrains.intellij.deps:rwmutex-idea", version.ref = "rwmutex-idea" }
 
 xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 

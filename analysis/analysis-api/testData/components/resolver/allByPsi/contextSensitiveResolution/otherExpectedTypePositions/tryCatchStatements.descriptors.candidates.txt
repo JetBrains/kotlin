@@ -786,6 +786,7 @@ KtValueArgument(382,383): 'm'
 KtNameReferenceExpression(382,383): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1401,6 +1402,7 @@ KtValueArgument(416,417): 'm'
 KtNameReferenceExpression(416,417): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2016,6 +2018,7 @@ KtValueArgument(450,451): 'm'
 KtNameReferenceExpression(450,451): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2125,6 +2128,7 @@ KtCallExpression(507,510): 'b()'
 KtNameReferenceExpression(507,508): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2239,6 +2243,7 @@ KtBlockExpression(1070,1102): '{'
 KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2491,6 +2496,7 @@ KtBlockExpression(1451,1491): '{'
 KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -2857,6 +2863,7 @@ KtBlockExpression(1841,1881): '{'
 KtNameReferenceExpression(1855,1871): 'ClassMemberAlias'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

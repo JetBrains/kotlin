@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Action
+import org.gradle.api.Named
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -35,33 +39,6 @@ internal fun <T : BuildService<P>, P : BuildServiceParameters> Gradle.registerCl
 }
 
 /**
- * Will return the [BuildIdentifier.getName] for older Gradle versions (deprecated),
- * and will calculate the 'buildName' from the new 'buildPath' for Gradle versions higher than 8.2
- */
-internal val BuildIdentifier.buildNameCompat: String
-    get() = if (GradleVersion.current() >= GradleVersion.version("8.2"))
-        if (buildPath == ":") ":" else buildPath.split(":").last()
-    else @Suppress("DEPRECATION") this.name
-
-
-/**
- * Will return [BuildIdentifier.getBuildPath] for Gradle versions higher than 8.2
- * Will calculate the build path from the previously accessible [BuildIdentifier.getName]:
- * Note, this calculation will not be correct for nested composite builds!
- */
-internal val BuildIdentifier.buildPathCompat: String
-    get() = if (GradleVersion.current() >= GradleVersion.version("8.2")) buildPath
-    else @Suppress("DEPRECATION") if (name.startsWith(":")) name else ":$name"
-
-/**
- * Will return [ProjectComponentIdentifier.getBuildTreePath] for Gradle versions higher than 8.3
- * For the lower version will calculate from [buildPathCompat] and [ProjectComponentIdentifier.getProjectPath]
- */
-internal val ProjectComponentIdentifier.buildTreePathCompat: String
-    get() = if (GradleVersion.current() >= GradleVersion.version("8.3")) buildTreePath
-    else build.buildPathCompat + ":" + projectPath
-
-/**
  * Will return the [ProjectComponentIdentifier.getBuild] if the component
  * represents a project.
  */
@@ -74,3 +51,31 @@ internal val ComponentIdentifier.buildOrNull: BuildIdentifier?
  */
 internal val ComponentIdentifier.projectPathOrNull: String?
     get() = (this as? ProjectComponentIdentifier)?.projectPath
+
+internal val ProjectDependency.projectPathCompat: String
+    get() = if (GradleVersion.current().baseVersion >= GradleVersion.version("8.11")) {
+        path
+    } else {
+        // FIXME: replace with propper Compatibility service [VariantImplementationFactories]
+        val dependencyProject = this.javaClass.getMethod("getDependencyProject").invoke(this) as Project
+        dependencyProject.path
+    }
+
+/**
+ * Getting value from [AttributeContainer.getAttribute] that came from external places
+ * e.g. from resolution result, or from configurations of other gradle plugins
+ * can return null if passed attribute instance differs from the ones that are stored in the container.
+ *
+ * This method should provide safe way of accessing these attributes by using underlying [Attribute.name]
+ * as a key.
+ */
+internal fun <T : Named> AttributeContainer.getAttributeSafely(attribute: Attribute<T>): String? {
+    val attributeKeyByName = keySet().associateBy { it.name }
+    val attributeKey = attributeKeyByName[attribute.name] ?: return null
+    val value = getAttribute(attributeKey)
+    return when (value) {
+        is String -> value
+        is Named -> value.name
+        else -> null
+    }
+}

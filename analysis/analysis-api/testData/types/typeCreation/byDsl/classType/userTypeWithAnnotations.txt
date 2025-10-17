@@ -1,0 +1,26 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: [
+    MyAnno1()
+      psi: null
+    MyAnno2()
+      psi: null
+    MyAnno3()
+      psi: null
+  ]
+  classId: A
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: A
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(A)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+@MyAnno1 @MyAnno2 @MyAnno3 A

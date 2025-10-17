@@ -16,11 +16,17 @@ enum class TargetBackend(
     JS_IR(true),
     JS_IR_ES6(true, JS_IR),
     WASM(true),
-    WASM_WASI(true),
+    WASM_JS(true, WASM),
+    WASM_WASI(true, WASM),
     ANDROID(true, JVM),
     NATIVE(true),
     JVM_IR_WITH_OLD_EVALUATOR(true),
     JVM_IR_WITH_IR_EVALUATOR(true);
 
     val compatibleWith get() = compatibleWithTargetBackend ?: ANY
+
+    fun isTransitivelyCompatibleWith(backend: TargetBackend): Boolean {
+        if (this == backend) return true
+        return compatibleWithTargetBackend?.isTransitivelyCompatibleWith(backend) ?: false
+    }
 }

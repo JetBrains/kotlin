@@ -64,7 +64,7 @@ class IrInlineCodegen(
             nodeAndSmap = sourceCompiler.compileInlineFunction(jvmSignature).apply {
                 node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
             }
-            val result = inlineCall(nodeAndSmap, function.isInlineOnly())
+            val result = inlineCall(nodeAndSmap, function.isInlineOnly(), expression)
             leaveTemps()
             codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
             codegen.markLineNumberAfterInlineIfNeeded(isInsideIfCondition)
@@ -255,7 +255,7 @@ class IrInlineCodegen(
         return canInlineArgumentsInPlace(sourceCompiler.compileInlineFunction(jvmSignature).node)
     }
 
-    private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, isInlineOnly: Boolean): InlineResult {
+    private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, isInlineOnly: Boolean, expression: IrFunctionAccessExpression): InlineResult {
         val node = nodeAndSmap.node
         if (maskStartIndex != -1) {
             val parameters = invocationParamBuilder.buildParameters()
@@ -340,6 +340,9 @@ class IrInlineCodegen(
         if (shouldSpillStack) {
             addInlineMarker(codegen.visitor, false)
         }
+
+        PrivateTypeFromNonPrivateInlineUsageChecker.check(codegen.irFunction, expression, function, adapter, codegen.context)
+
         return result
     }
 
@@ -493,4 +496,14 @@ class IrExpressionLambdaImpl(
         invokeMethodParameters = freeParameters.map { it.type }
         invokeMethodReturnType = unboxedReturnType ?: function.returnType
     }
+}
+
+private enum class ValueKind {
+    GENERAL,
+    DEFAULT_PARAMETER,
+    DEFAULT_INLINE_PARAMETER,
+    DEFAULT_MASK,
+    METHOD_HANDLE_IN_DEFAULT,
+    READ_OF_INLINE_LAMBDA_FOR_INLINE_SUSPEND_PARAMETER,
+    READ_OF_OBJECT_FOR_INLINE_SUSPEND_PARAMETER
 }

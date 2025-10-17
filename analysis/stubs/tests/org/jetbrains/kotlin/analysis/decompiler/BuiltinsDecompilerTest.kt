@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.analysis.decompiler
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
-import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirBinaryTestConfigurator
+import org.jetbrains.kotlin.analysis.stubs.CompiledStubsTestEngine
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
@@ -30,7 +28,7 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.io.path.name
 
-class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/testData/builtins") {
+class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/testData/builtins/customData") {
     override val configurator: AnalysisApiTestConfigurator = object : AnalysisApiFirBinaryTestConfigurator() {
         override val testModuleFactory: KtTestModuleFactory = object : KtTestModuleFactory {
             override fun createModule(
@@ -78,13 +76,13 @@ class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/
 
             """.trimMargin()
 
-        // Decompiled stub
-        testServices.assertions.assertEquals(expectedInvalidStub, file.calcStubTree().root.serializeToString())
+        val fileStub = CompiledStubsTestEngine.compute(file)
 
-        // Compiled stub
         testServices.assertions.assertEquals(
-            expectedInvalidStub,
-            KotlinBuiltInDecompiler().stubBuilder.buildFileStub(FileContentImpl.createByFile(file.virtualFile))?.serializeToString(),
+            expected = expectedInvalidStub,
+            actual = CompiledStubsTestEngine.render(fileStub),
         )
+
+        CompiledStubsTestEngine.validate(testServices, file, fileStub)
     }
 }

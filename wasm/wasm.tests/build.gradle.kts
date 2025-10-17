@@ -38,11 +38,67 @@ repositories {
         metadataSources { artifact() }
         content { includeModule("org.wasmedge", "wasmedge") }
     }
+    ivy {
+        url = URI("https://packages.jetbrains.team/files/p/kt/kotlin-file-dependencies/javascriptcore/")
+        patternLayout {
+            artifact("[classifier]_[revision].zip")
+        }
+        metadataSources { artifact() }
+        content { includeModule("org.jsc", "jsc") }
+    }
 }
 
 enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
 enum class OsArch { X86_32, X86_64, ARM64, UNKNOWN }
 data class OsType(val name: OsName, val arch: OsArch)
+
+
+abstract class CreateJscRunner : DefaultTask() {
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val inputDirectory: DirectoryProperty
+
+    @get:OutputFile
+    abstract val outputFile: RegularFileProperty
+
+    @get:Input
+    abstract val osTypeName: Property<OsName>
+
+    @TaskAction
+    fun action() {
+        val jscBinariesDir = inputDirectory.get().asFile.let { dir ->
+            when (osTypeName.get()) {
+                OsName.MAC -> dir.resolve("Release")
+                OsName.LINUX -> dir
+                OsName.WINDOWS -> dir.resolve("bin")
+                else -> error("unsupported os name")
+            }
+        }
+
+        val runnerContent = getJscRunnerContent(jscBinariesDir, osTypeName.get())
+        val outputFile = outputFile.get().asFile
+        with(outputFile) {
+            writeText(runnerContent)
+            setExecutable(true)
+        }
+    }
+
+    fun getJscRunnerContent(jscBinariesDir: File, osTypeName: OsName) = when (osTypeName) {
+        OsName.MAC ->
+            """#!/usr/bin/env bash
+DYLD_FRAMEWORK_PATH="$jscBinariesDir" DYLD_LIBRARY_PATH="$jscBinariesDir" "$jscBinariesDir/jsc" "$@"
+"""
+        OsName.LINUX ->
+            """#!/usr/bin/env bash
+LD_LIBRARY_PATH="$jscBinariesDir/lib" exec "$jscBinariesDir/lib/ld-linux-x86-64.so.2" "$jscBinariesDir/bin/jsc" "$@"
+"""
+        OsName.WINDOWS ->
+            """@echo off
+"$jscBinariesDir\\jsc.exe" %*
+"""
+        else -> error("unsupported os type $osTypeName")
+    }
+}
 
 val currentOsType = run {
     val gradleOs = OperatingSystem.current()
@@ -65,8 +121,7 @@ val currentOsType = run {
     OsType(osName, osArch)
 }
 
-
-val jsShellVersion = "134.0.2"
+val jsShellVersion = libs.versions.jsShell
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
@@ -103,6 +158,34 @@ val wasmEdge by configurations.creating {
     isCanBeConsumed = false
 }
 
+val jscOsDependentVersion = when (currentOsType.name) {
+    OsName.MAC -> libs.versions.jscSequoia
+    OsName.LINUX -> libs.versions.jscLinux
+    OsName.WINDOWS -> libs.versions.jscWindows
+    else -> error("unsupported os type $currentOsType")
+}.get()
+
+//https://youtrack.jetbrains.com/articles/KT-A-950/JavaScript-Core-Update-instruction
+val jscOsDependentClassifier = when (currentOsType.name) {
+    OsName.MAC -> "sequoia"
+    OsName.LINUX -> "linux64"
+    OsName.WINDOWS -> "win64"
+    else -> error("unsupported os type $currentOsType")
+}
+
+val jscOsDependentRevision = when (currentOsType.name) {
+    OsName.MAC -> libs.versions.jscSequoia
+    OsName.LINUX -> libs.versions.jscLinux
+    OsName.WINDOWS -> libs.versions.jscWindows
+    else -> error("unsupported os type $currentOsType")
+}.get()
+
+
+val jsc by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -112,17 +195,23 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
+    jsShell("org.mozilla:jsshell:${jsShellVersion.get()}:$jsShellSuffix@zip")
 
-    implicitDependencies("org.mozilla:jsshell:$jsShellVersion:win64@zip")
-    implicitDependencies("org.mozilla:jsshell:$jsShellVersion:linux-x86_64@zip")
-    implicitDependencies("org.mozilla:jsshell:$jsShellVersion:mac@zip")
+    implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:win64@zip")
+    implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:linux-x86_64@zip")
+    implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:mac@zip")
 
     wasmEdge("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:$wasmEdgeSuffix")
 
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:windows@zip")
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:manylinux_2_28_x86_64@tar.gz")
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
+
+    jsc("org.jsc:jsc:$jscOsDependentRevision:$jscOsDependentClassifier")
+
+    implicitDependencies("org.jsc:jsc:${libs.versions.jscSequoia.get()}:sequoia")
+    implicitDependencies("org.jsc:jsc:${libs.versions.jscLinux.get()}:linux64")
+    implicitDependencies("org.jsc:jsc:${libs.versions.jscWindows.get()}:win64")
 }
 
 optInToExperimentalCompilerApi()
@@ -165,6 +254,7 @@ fun Test.setupGradlePropertiesForwarding() {
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 val typescriptTestsDir = testDataDir.resolve("typescript-export")
 val wasmTestDir = typescriptTestsDir.resolve("wasm")
+val toolsDirectory = layout.buildDirectory.dir("tools")
 
 fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.register<NpmTask>("generate-ts-for-$dir") {
     val baseDir = wasmTestDir.resolve(dir)
@@ -198,16 +288,26 @@ val generateTypeScriptTests by parallel(
         .map { generateTypeScriptTestFor(it.name) }
 )
 
+
+val jsShellDirectory = toolsDirectory.map { it.dir("JsShell").asFile }
+val jsShellUnpackedDirectory = jsShellDirectory.map { it.resolve("jsshell-$jsShellSuffix-${jsShellVersion.get()}") }
 val unzipJsShell by task<Copy> {
     dependsOn(jsShell)
     from {
         zipTree(jsShell.singleFile)
     }
-    into(layout.buildDirectory.dir("tools/jsshell-$jsShellSuffix-$jsShellVersion"))
+    into(jsShellUnpackedDirectory)
 }
 
+val wasmEdgeDirectory = toolsDirectory.map { it.dir("WasmEdge").asFile }
+val wasmEdgeDirectoryName = wasmEdgeVersion.map { version -> "WasmEdge-$version-$wasmEdgeInnerSuffix" }
+val wasmEdgeUnpackedDirectory = wasmEdgeDirectory.map { it.resolve(wasmEdgeDirectoryName.get()) }
 val unzipWasmEdge by task<Copy> {
     dependsOn(wasmEdge)
+
+    val wasmEdgeDirectory = wasmEdgeDirectory
+    val currentOsTypeForConfigurationCache = currentOsType.name
+    val wasmEdgeUnpackedDirectory = wasmEdgeUnpackedDirectory
 
     from {
         if (wasmEdge.singleFile.extension == "zip") {
@@ -216,19 +316,15 @@ val unzipWasmEdge by task<Copy> {
             tarTree(wasmEdge.singleFile)
         }
     }
-
-    val distDir = layout.buildDirectory.dir("tools")
-    val currentOsTypeForConfigurationCache = currentOsType.name
-    val resultDir = "WasmEdge-${wasmEdgeVersion.get()}-$wasmEdgeInnerSuffix"
-
-    into(distDir)
+    into(wasmEdgeDirectory)
+    inputs.property("currentOsTypeForConfigurationCache", currentOsTypeForConfigurationCache)
 
     doLast {
         if (currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX)) return@doLast
 
-        val wasmEdgeDirectory = distDir.get().dir(resultDir).asFile
+        val unpackedWasmEdgeDirectory = wasmEdgeUnpackedDirectory.get().toPath()
 
-        val libDirectory = wasmEdgeDirectory.toPath()
+        val libDirectory = unpackedWasmEdgeDirectory
             .resolve(if (currentOsTypeForConfigurationCache == OsName.MAC) "lib" else "lib64")
 
         val targets = if (currentOsTypeForConfigurationCache == OsName.MAC)
@@ -246,29 +342,90 @@ val unzipWasmEdge by task<Copy> {
     }
 }
 
+
+val jscDirectory = toolsDirectory.map { it.dir("JavaScriptCore").asFile }
+val jscUnpackedDirectory = jscDirectory.map { it.resolve("jsc-$jscOsDependentClassifier-$jscOsDependentRevision") }
+val unzipJsc by task<Copy> {
+    dependsOn(jsc)
+    from { zipTree(jsc.singleFile) }
+
+    val jscUnpackedDirectory = jscUnpackedDirectory
+    into(jscUnpackedDirectory)
+
+    val isLinux = currentOsType.name == OsName.LINUX
+    inputs.property("isLinux", isLinux)
+
+    doLast {
+        if (isLinux) {
+            val libDirectory = File(jscUnpackedDirectory.get(), "lib")
+            for (file in libDirectory.listFiles()) {
+                if (file.isFile && file.length() < 100) { // seems unpacked file link
+                    val linkTo = file.readText()
+                    file.delete()
+                    Files.createSymbolicLink(file.toPath(), File(linkTo).toPath())
+                }
+            }
+        }
+    }
+}
+
+val createJscRunner by task<CreateJscRunner> {
+    osTypeName.set(currentOsType.name)
+
+    val runnerFileName = if (currentOsType.name == OsName.WINDOWS) "runJsc.cmd" else "runJsc"
+    val runnerFilePath = jscDirectory.map { it.resolve(runnerFileName) }
+    outputFile.fileProvider(runnerFilePath)
+
+    inputDirectory.fileProvider(unzipJsc.map { it.outputs.files.singleFile })
+}
+
 fun Test.setupSpiderMonkey() {
-    dependsOn(unzipJsShell)
-    val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
-    systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+    val jsShellExecutablePath = unzipJsShell
+        .map { it.outputs.files.singleFile }
+        .map { it.resolve("js").absolutePath }
+
+    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(jsShellExecutablePath)
+        property.set("javascript.engine.path.SpiderMonkey")
+    }
 }
 
 fun Test.setupWasmEdge() {
-    val wasmEdgeDirectory = unzipWasmEdge
-        .map { it.destinationDir.resolve("WasmEdge-${wasmEdgeVersion.get()}-$wasmEdgeInnerSuffix") }
+    val wasmEdgeExecutablePath = unzipWasmEdge
+        .map { it.outputs.files.singleFile }
+        .map { it.resolve(wasmEdgeDirectoryName.get()) }
+        .map { it.resolve("bin/wasmedge").absolutePath }
 
-    inputs.dir(wasmEdgeDirectory)
-        .withPathSensitivity(PathSensitivity.RELATIVE)
-        .withPropertyName("wasmEdgeDirectory")
+    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(wasmEdgeExecutablePath)
+        property.set("wasm.engine.path.WasmEdge")
+    }
+}
 
-    jvmArgumentProviders.add { listOf("-Dwasm.engine.path.WasmEdge=${wasmEdgeDirectory.get().resolve("bin/wasmedge")}") }
+fun Test.setupJsc() {
+    val jscRunnerExecutablePath = createJscRunner
+        .map { it.outputFile.asFile.get() }
+        .map { it.absolutePath }
+
+    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(jscRunnerExecutablePath)
+        property.set("javascript.engine.path.JavaScriptCore")
+    }
 }
 
 testsJar {}
 
 projectTests {
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt") {
-        dependsOn(":compiler:generateTestData")
-    }
+    testData(project(":compiler").isolated, "testData/debug")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":js:js.translator").isolated, "testData/box")
+    testData(project(":js:js.translator").isolated, "testData/incremental")
+    testData(project(":js:js.translator").isolated, "testData/typescript-export")
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt")
 
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
         testTask(
@@ -281,28 +438,31 @@ projectTests {
                 setupV8()
             }
             with(nodeJsKotlinBuild) {
-                setupNodeJs()
+                setupNodeJs(nodejsVersion)
             }
             with(binaryenKotlinBuild) {
                 setupBinaryen()
             }
             setupSpiderMonkey()
             setupWasmEdge()
+            setupJsc()
             useJUnitPlatform()
             setupWasmStdlib("js")
             setupWasmStdlib("wasi")
             setupGradlePropertiesForwarding()
-            systemProperty("kotlin.wasm.test.root.out.dir", "${layout.buildDirectory.get().asFile}/")
+            val buildDirectory = layout.buildDirectory.map { "${it.asFile}/" }
+            jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
+                classpath.from(buildDirectory)
+                property.set("kotlin.wasm.test.root.out.dir")
+            }
             body()
         }
     }
 
     // Test everything
-    wasmProjectTest("test")
-
-    wasmProjectTest("testFir", skipInLocalBuild = true) {
+    wasmProjectTest("test") {
         dependsOn(generateTypeScriptTests)
-        include("**/Fir*.class")
+        include("**/*.class")
     }
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {

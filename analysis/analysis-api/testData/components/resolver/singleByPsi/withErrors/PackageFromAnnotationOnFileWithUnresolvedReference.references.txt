@@ -1,5 +1,6 @@
 KtNameReferenceExpression(28,31): 'jvm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package kotlin.jvm

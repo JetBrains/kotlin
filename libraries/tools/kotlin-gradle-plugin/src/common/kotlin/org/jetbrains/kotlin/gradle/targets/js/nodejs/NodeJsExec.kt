@@ -140,7 +140,9 @@ constructor(
                 it.versions.value(nodeJsRoot.versions)
                     .disallowChanges()
                 it.executable = nodeJsEnvSpec.executable.get()
-                if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                if (compilation.target.wasmTargetType == KotlinWasmTargetType.WASI) {
+                    it.nodeArgs += "--experimental-wasm-exnref"
+                } else {
                     it.workingDir(npmProject.dir)
                     it.dependsOn(
                         nodeJsRoot.npmInstallTaskProvider,
@@ -179,7 +181,8 @@ constructor(
 
         @Deprecated(
             "Use register instead. Scheduled for removal in Kotlin 2.4.",
-            ReplaceWith("register(compilation, name, configuration)")
+            ReplaceWith("register(compilation, name, configuration)"),
+            level = DeprecationLevel.ERROR
         )
         fun create(
             compilation: KotlinJsIrCompilation,

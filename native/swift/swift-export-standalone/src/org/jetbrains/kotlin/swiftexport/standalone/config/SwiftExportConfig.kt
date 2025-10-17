@@ -22,6 +22,7 @@ public data class SwiftExportConfig(
     val outputPath: Path,
     val stableDeclarationsOrder: Boolean = false,
     val renderDocComments: Boolean = false,
+    val enableCoroutinesSupport: Boolean,
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val konanTarget: KonanTarget,
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,

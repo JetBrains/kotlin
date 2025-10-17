@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * with `SuspendFunction{n}.invoke`. This is needed because normally the type e.g. `kotlin.reflect.KFunction2` is mapped to
  * `kotlin.reflect.KFunction` (a real class, without arity), which doesn't have the corresponding `invoke`.
  */
-@PhaseDescription(name = "ReplaceKFunctionInvokeWithFunctionInvoke")
 internal class ReplaceKFunctionInvokeWithFunctionInvoke(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) :
     IrVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {

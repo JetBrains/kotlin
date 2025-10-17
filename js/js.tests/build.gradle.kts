@@ -75,7 +75,7 @@ dependencies {
         testJsRuntime(kotlinTest("js")) // to be sure that kotlin-test-js built before tests run
     }
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
-    testRuntimeOnly(project(":compiler:backend-common"))
+    testRuntimeOnly(project(":compiler:ir.backend.common"))
     testRuntimeOnly(project(":kotlin-util-klib-abi"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
@@ -124,14 +124,21 @@ val installTsDependencies by task<NpmTask> {
 
 fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.register<NpmTask>("generate-ts-for-$dir") {
     val baseDir = jsTestsDir.resolve(dir)
-    val mainTsFile = fileTree(baseDir).files.find { it.name.endsWith("__main.ts") } ?: return@register
+    val mainTsFile = fileTree(baseDir).files.find {
+        it.name.endsWith("__main.ts") || it.name.endsWith("__main.mts")
+    } ?: return@register
+
     val mainJsFile = baseDir.resolve("${mainTsFile.nameWithoutExtension}.js")
+    val mainMjsFile = baseDir.resolve("${mainTsFile.nameWithoutExtension}.mjs")
 
     workingDir.set(testDataDir)
 
     inputs.file(mainTsFile)
     outputs.file(mainJsFile)
-    outputs.upToDateWhen { mainJsFile.exists() }
+    outputs.file(mainMjsFile)
+    outputs.upToDateWhen {
+        mainJsFile.exists() || mainMjsFile.exists()
+    }
 
     args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/js/$dir/tsconfig.json"))
 }
@@ -266,9 +273,7 @@ projectTests {
         forwardProperties()
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
-        dependsOn(":compiler:generateTestData")
-    }
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 }
 
 testsJar {}

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains.LLAnalysisSessionStatistics
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
@@ -292,6 +293,7 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
                 }
             } else if (existingLatch == null) {
                 LOG.trace { "K2 cache cleanup scheduled from ${Thread.currentThread()}, $analyzerCount analyses left" }
+                LLFlightRecorder.stopWorldSessionInvalidationScheduled()
                 cleanupScheduleMs = System.currentTimeMillis()
                 cleanupLatch = CountDownLatch(1)
             }
@@ -307,6 +309,10 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
      */
     private fun performCleanup() {
         try {
+            // `performCleanup` might be called from the low-memory watcher's thread even after project disposal. Cleaning the caches of a
+            // disposed project is unnecessary, so we skip invalidation. This also avoids potential exceptions and undefined behavior.
+            if (project.isDisposed) return
+
             analysisSessionStatistics?.lowMemoryCacheCleanupInvocationCounter?.add(1)
 
             val cleanupMs = measureTimeMillis {
@@ -318,6 +324,8 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
 
             val totalMs = System.currentTimeMillis() - cleanupScheduleMs
             LOG.trace { "K2 cache cleanup complete from ${Thread.currentThread()} in $cleanupMs ms ($totalMs ms after the request)" }
+
+            LLFlightRecorder.stopWorldSessionInvalidationComplete()
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
 

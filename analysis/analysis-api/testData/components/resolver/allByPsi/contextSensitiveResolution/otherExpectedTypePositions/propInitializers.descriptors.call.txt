@@ -129,6 +129,7 @@ KtNameReferenceExpression(393,399): 'MyEnum'
 KtNameReferenceExpression(402,413): 'OptionAlias'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -206,6 +207,7 @@ KtNameReferenceExpression(534,541): 'Option1'
 KtBinaryExpression(546,557): 'm = Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -224,6 +226,7 @@ KtBinaryExpression(546,557): 'm = Option1'
 KtNameReferenceExpression(546,547): 'm'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -242,6 +245,7 @@ KtNameReferenceExpression(546,547): 'm'
 KtOperationReferenceExpression(548,549): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -265,6 +269,7 @@ KtNameReferenceExpression(550,557): 'Option1'
 KtBinaryExpression(562,577): 'm = OptionAlias'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -283,6 +288,7 @@ KtBinaryExpression(562,577): 'm = OptionAlias'
 KtNameReferenceExpression(562,563): 'm'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -301,6 +307,7 @@ KtNameReferenceExpression(562,563): 'm'
 KtOperationReferenceExpression(564,565): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -319,6 +326,7 @@ KtOperationReferenceExpression(564,565): '='
 KtNameReferenceExpression(566,577): 'OptionAlias'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -336,6 +344,7 @@ KtNameReferenceExpression(566,577): 'OptionAlias'
 KtBinaryExpression(582,596): 'm = stringProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -354,6 +363,7 @@ KtBinaryExpression(582,596): 'm = stringProp'
 KtNameReferenceExpression(582,583): 'm'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -372,6 +382,7 @@ KtNameReferenceExpression(582,583): 'm'
 KtOperationReferenceExpression(584,585): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

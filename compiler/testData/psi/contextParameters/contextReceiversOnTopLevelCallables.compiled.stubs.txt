@@ -38,9 +38,12 @@ B.class:
 
 ContextReceiversOnTopLevelCallablesKt.class:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnTopLevelCallablesKt]]
+    facadeFqName: ContextReceiversOnTopLevelCallablesKt
+    partSimpleName: "ContextReceiversOnTopLevelCallablesKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
+      origin: Facade(className=ContextReceiversOnTopLevelCallablesKt, jvmClassName=null)
       MODIFIER_LIST[private]
         CONTEXT_RECEIVER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=A]
@@ -52,6 +55,7 @@ ContextReceiversOnTopLevelCallablesKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+          valueArguments: [ ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -70,6 +74,7 @@ ContextReceiversOnTopLevelCallablesKt.class:
         MODIFIER_LIST[private final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
+      origin: Facade(className=ContextReceiversOnTopLevelCallablesKt, jvmClassName=null)
       MODIFIER_LIST[private]
         CONTEXT_RECEIVER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=A]
@@ -81,6 +86,7 @@ ContextReceiversOnTopLevelCallablesKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+          valueArguments: [ ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -108,6 +114,7 @@ ContextReceiversOnTopLevelCallablesKt.class:
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
     FUN[fqName=function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=function]
+      origin: Facade(className=ContextReceiversOnTopLevelCallablesKt, jvmClassName=null)
       MODIFIER_LIST[private]
         CONTEXT_RECEIVER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=A]
@@ -119,6 +126,7 @@ ContextReceiversOnTopLevelCallablesKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+          valueArguments: [ ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

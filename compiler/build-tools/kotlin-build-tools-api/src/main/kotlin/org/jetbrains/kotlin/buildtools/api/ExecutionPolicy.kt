@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
-import kotlin.time.Duration
 
 /**
  * An execution policy for a build operation.
  *
  * This interface is not intended to be implemented by the API consumers.
  *
- * You can obtain an instance of this type from [KotlinToolchain.createInProcessExecutionPolicy] or [KotlinToolchain.createInProcessExecutionPolicy]
+ * You can obtain an instance of this type from [KotlinToolchains.createInProcessExecutionPolicy] or [KotlinToolchains.createInProcessExecutionPolicy]
  *
  * @since 2.3.0
  */
@@ -58,10 +57,10 @@ public sealed interface ExecutionPolicy {
             public val JVM_ARGUMENTS: Option<List<String>?> = Option("JVM_ARGUMENTS")
 
             /**
-             * The time that the daemon process continues to live after all clients have disconnected.
+             * The time in milliseconds that the daemon process continues to live after all clients have disconnected.
              */
             @JvmField
-            public val SHUTDOWN_DELAY: Option<Duration?> = Option("SHUTDOWN_DELAY")
+            public val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS")
         }
     }
 }

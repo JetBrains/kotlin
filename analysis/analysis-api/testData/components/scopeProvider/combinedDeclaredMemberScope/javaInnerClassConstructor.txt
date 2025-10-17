@@ -25,6 +25,7 @@ KaConstructorSymbol:
       compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -47,6 +48,7 @@ KaConstructorSymbol:
       getContainingJvmClassName: JavaClass.InnerClass
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PACKAGE_PRIVATE
   getDispatchReceiver(): KaUsualClassType:
@@ -57,3 +59,4 @@ KaConstructorSymbol:
   getContainingJvmClassName: JavaClass.InnerClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

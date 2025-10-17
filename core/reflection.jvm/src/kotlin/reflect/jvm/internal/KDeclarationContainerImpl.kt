@@ -16,7 +16,10 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
 import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
@@ -25,10 +28,12 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.metadata.KmProperty
+import kotlin.metadata.isVar
+import kotlin.reflect.KProperty0
 import kotlin.reflect.jvm.internal.calls.toJvmDescriptor
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
@@ -48,34 +53,27 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getFunctions(name: Name): Collection<FunctionDescriptor>
 
-    abstract fun getLocalProperty(index: Int): PropertyDescriptor?
+    abstract fun getLocalPropertyDescriptor(index: Int): PropertyDescriptor?
 
-    protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<KCallableImpl<*>> {
-        val visitor = object : CreateKCallableVisitor(this) {
-            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallableImpl<*> =
-                throw IllegalStateException("No constructors should appear here: $descriptor")
+    abstract fun getLocalPropertyMetadata(index: Int): KmProperty?
+
+    fun createLocalProperty(index: Int, signature: String): KProperty0<*>? {
+        val kmProperty = getLocalPropertyMetadata(index) ?: return null
+        if (kmProperty.receiverParameterType != null) {
+            throw KotlinReflectionInternalError("Local property ${kmProperty.name} is an extension, which is not yet supported")
         }
-        return scope.getContributedDescriptors().mapNotNull { descriptor ->
-            if (descriptor is CallableMemberDescriptor &&
-                descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE &&
-                belonginess.accept(descriptor)
-            ) descriptor.accept(visitor, Unit) else null
-        }.toList()
-    }
 
-    protected enum class MemberBelonginess {
-        DECLARED,
-        INHERITED;
-
-        fun accept(member: CallableMemberDescriptor): Boolean =
-            member.kind.isReal == (this == DECLARED)
+        return if (kmProperty.isVar)
+            KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
+        else
+            KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
     }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
         val match = LOCAL_PROPERTY_SIGNATURE.matchEntire(signature)
         if (match != null) {
             val (number) = match.destructured
-            return getLocalProperty(number.toInt())
+            return getLocalPropertyDescriptor(number.toInt())
                 ?: throw KotlinReflectionInternalError("Local property #$number not found in $jClass")
         }
 
@@ -310,6 +308,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     companion object {
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
 
-        internal val LOCAL_PROPERTY_SIGNATURE = "<v#(\\d+)>".toRegex()
+        @JvmField
+        val LOCAL_PROPERTY_SIGNATURE = "<v#(\\d+)>".toRegex()
     }
 }

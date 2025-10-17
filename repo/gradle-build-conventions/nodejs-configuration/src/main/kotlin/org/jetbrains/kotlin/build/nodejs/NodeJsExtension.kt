@@ -12,8 +12,9 @@ abstract class NodeJsExtension(
     private val nodeJsRoot: NodeJsRootExtension
 ) {
     @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-    fun Test.setupNodeJs() {
+    fun Test.setupNodeJs(version: String) {
         dependsOn(nodeJsRoot.nodeJsSetupTaskProvider)
+        nodeJsRoot.version = version
         val nodeJsExecutablePath = project.provider {
             nodeJsRoot.requireConfigured().nodeExecutable
         }

@@ -1,9 +1,10 @@
 // WITH_REFLECT
 // WITH_STDLIB
+
+// FILE: lib.kt
 package test
 
 import kotlin.reflect.*
-import kotlin.test.assertEquals
 
 class Container<T>
 
@@ -14,6 +15,11 @@ class C<INV, in IN, out OUT> {
 }
 
 inline fun <reified X, Y : X> getY() = typeOf<Container<Y>>().arguments.single().type!!.classifier as KTypeParameter
+
+// FILE: main.kt
+package test
+import kotlin.reflect.*
+import kotlin.test.assertEquals
 
 fun box(): String {
     val c = C<Any, Any, Any>()

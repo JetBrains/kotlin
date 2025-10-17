@@ -7,7 +7,7 @@ class ST : I()
 
 fun main() {
     var local = I()
-    val x: ST = <!INITIALIZER_TYPE_MISMATCH!>local++<!>
+    val x: ST <!INITIALIZER_TYPE_MISMATCH!>=<!> local++
     val y: ST = local
 }
 

@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutFileAnnotationAndPackageDeclarationKt]]
+  facadeFqName: WithoutFileAnnotationAndPackageDeclarationKt
+  partSimpleName: "WithoutFileAnnotationAndPackageDeclarationKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]

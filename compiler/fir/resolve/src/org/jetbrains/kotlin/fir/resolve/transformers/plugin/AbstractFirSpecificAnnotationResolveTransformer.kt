@@ -159,9 +159,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             return indexedAccessAugmentedAssignment
         }
 
-        override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement {
-            arrayLiteral.transformChildren(transformer, data)
-            return arrayLiteral
+        override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement {
+            collectionLiteral.transformChildren(transformer, data)
+            return collectionLiteral
         }
 
         override fun transformAnonymousObjectExpression(

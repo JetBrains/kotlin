@@ -43,11 +43,14 @@ dependencies {
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
+    evaluateApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
     interpreterApi(project(":compiler:ir.tree"))
+    interpreterApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     protobufApi(kotlinStdlib())
     protobufCompareApi(testFixtures(project(":kotlin-build-common")))
+    protobufCompareApi(testFixtures(project(":compiler:tests-common")))
     nativeInteropRuntimeApi(kotlinStdlib())
 
     testApi(builtinsSourceSet.output)

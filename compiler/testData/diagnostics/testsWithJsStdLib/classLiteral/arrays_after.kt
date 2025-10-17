@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +BareArrayClassLiteral +ProhibitGenericArrayClassLiteral
 
 val a01 = Array::class

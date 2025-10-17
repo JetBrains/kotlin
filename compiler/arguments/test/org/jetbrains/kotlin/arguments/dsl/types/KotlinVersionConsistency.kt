@@ -59,12 +59,26 @@ class KotlinVersionConsistency {
     @Test
     fun versionIsRemoved() {
         LanguageVersion.entries
-            .filter { it.isUnsupported }
+            .filter { it.isUnsupported && !it.isJvmOnly }
             .forEach { languageVersion ->
                 languageVersion.toKotlinVersionOrNull()?.let {
                     assertTrue(
                         actual = it.releaseVersionsMetadata.removedVersion != null,
                         message = "LanguageVersion $languageVersion is not supported, while $it KotlinVersion is marked as supported"
+                    )
+                }
+            }
+    }
+
+    @Test
+    fun versionIsExperimental() {
+        LanguageVersion.entries
+            .filter { it > LanguageVersion.LATEST_STABLE }
+            .forEach { languageVersion ->
+                languageVersion.toKotlinVersionOrNull()?.let {
+                    assertTrue(
+                        actual = it.releaseVersionsMetadata.stabilizedVersion == null,
+                        message = "LanguageVersion $languageVersion is not yet stable, while $it KotlinVersion is marked as stable"
                     )
                 }
             }

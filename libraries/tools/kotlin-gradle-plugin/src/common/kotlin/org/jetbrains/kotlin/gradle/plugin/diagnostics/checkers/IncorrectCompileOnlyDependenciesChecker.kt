@@ -8,8 +8,11 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.IncorrectCompileOnlyDependencyWarning.CompilationDependenciesPair
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CompilationDependenciesPair
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.IncorrectCompileOnlyDependenciesChecker.isProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
+import org.jetbrains.kotlin.gradle.utils.stringCoordinates
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyCompileOnlyConfigurationName
 
 /**
  * Verify that if a dependency is declared as `compileOnly`, in non-JVM targets it is also exposed as an `api` element.
@@ -64,7 +67,7 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
 
         return compilationsIncompatibleWithCompileOnly.map { compilation ->
             val compileOnlyDependencies = project.configurations
-                .findByName(compilation.compileOnlyConfigurationName)
+                .findByName(compilation.legacyCompileOnlyConfigurationName)
                 ?.allDependencies
                 .orEmpty()
 
@@ -91,7 +94,7 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
         return when (target) {
             KotlinPlatformType.jvm,
             KotlinPlatformType.androidJvm,
-            -> true
+                -> true
 
             // Technically, compileOnly dependencies should also be forbidden for
             // common compilations, but in practice such dependencies will
@@ -99,23 +102,17 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
             // Therefore, to avoid duplicated warning messages for dependencies
             // in commonMain and a ${target}Main, don't check common targets.
             KotlinPlatformType.common,
-            -> true
+                -> true
 
             KotlinPlatformType.wasm,
             KotlinPlatformType.js,
-            -> false
+                -> false
 
             KotlinPlatformType.native -> {
                 @Suppress("DEPRECATION_ERROR")
                 PropertiesProvider(project).ignoreIncorrectNativeDependencies == true
             }
         }
-    }
-
-    private fun Dependency.stringCoordinates(): String = buildString {
-        group?.let { append(it).append(':') }
-        append(name)
-        version?.let { append(':').append(it) }
     }
 
     /**

@@ -33,3 +33,4 @@ KaNamedClassSymbol:
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: kotlin.io.FileWalkDirection

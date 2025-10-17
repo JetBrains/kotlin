@@ -89,7 +89,7 @@ class ScriptHostUtilTest : TestCase() {
 
 
         fun addRandomFragment(): FragmentedText {
-            val randomText = (1..28).joinToString(separator = "") { charPool.random().toString() }
+            val randomText = (1..28).joinToString(separator = "") { charPool.random() }
             return addFragment(randomText)
         }
 

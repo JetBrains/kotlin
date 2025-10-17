@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpressio
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePostponedInferenceDiagnostic
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -31,6 +33,7 @@ internal inline var FirExpression.resultType: ConeKotlinType
     }
 
 internal fun remapArgumentsWithVararg(
+    session: FirSession,
     varargParameter: FirValueParameter,
     varargArrayType: ConeKotlinType,
     argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>,
@@ -39,7 +42,21 @@ internal fun remapArgumentsWithVararg(
     // Create a FirVarargArgumentExpression for the vararg arguments.
     // The order of arguments in the mapping must be preserved for FIR2IR, hence we have to find where the vararg arguments end.
     // FIR2IR uses the mapping order to determine if arguments need to be reordered.
-    val varargElementType = varargArrayType.arrayElementType()?.approximateIntegerLiteralType()
+    val varargElementType = varargArrayType.arrayElementType()
+        ?.approximateIntegerLiteralType()
+        ?.removeAnnotations()
+
+    val annotationsRemovingSubstitutor = object : AbstractConeSubstitutor(session.typeContext) {
+        override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+            if (type !is ConeClassLikeType) return null
+            if (!type.isNonPrimitiveArray) return null
+            val argument = type.typeArguments.singleOrNull() ?: return null
+            val newArgument = argument.replaceType(argument.type?.removeAnnotations() ?: return null)
+            return type.withArguments(arrayOf(newArgument))
+        }
+    }
+
+    val varargArrayType = annotationsRemovingSubstitutor.substituteOrSelf(varargArrayType)
     var indexAfterVarargs = argumentList.size
     val newArgumentMapping = linkedMapOf<FirExpression, FirValueParameter?>()
     val varargArgument = buildVarargArgumentsExpression {

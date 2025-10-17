@@ -1,3 +1,4 @@
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-70507
 // WITH_STDLIB

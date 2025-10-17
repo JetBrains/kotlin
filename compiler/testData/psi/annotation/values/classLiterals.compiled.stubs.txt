@@ -66,6 +66,10 @@ WithClassLiteral.class:
     CLASS[classId=/WithClassLiteral, fqName=WithClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithClassLiteral, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
+          valueArguments: [
+            c1 -> NormalClass(value=/WithClassLiteral)
+            c2 -> NormalClass(value=kotlin/Boolean)
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

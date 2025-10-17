@@ -22,7 +22,6 @@ dependencies {
 
 sourceSets {
     "main" { }
-    "test" { generatedTestDir() }
     "testFixtures" { projectDefault() }
 }
 
@@ -36,7 +35,7 @@ projectTests {
 
     testTask(jUnitMode = JUnitMode.JUnit5)
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt")
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt", generateTestsInBuildDirectory = true)
 }
 
 optInToK1Deprecation()

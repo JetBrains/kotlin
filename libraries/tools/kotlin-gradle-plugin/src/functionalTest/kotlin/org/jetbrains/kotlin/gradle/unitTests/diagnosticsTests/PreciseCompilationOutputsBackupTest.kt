@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
-import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
@@ -17,37 +14,38 @@ import org.junit.Test
 
 class PreciseCompilationOutputsBackupTest {
     @Test
+    fun testEnablingPreciseOutputsBackupProducesWarning() {
+        testPropertyUsage("kotlin.compiler.preciseCompilationResultsBackup", "true")
+    }
+
+    @Test
     fun testDisablingPreciseOutputsBackupProducesWarning() {
-        buildProjectWithJvm(preApplyCode = {
-            extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP, "false")
-        }) {
-            triggerPropertiesRead()
-            assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedLegacyCompilationOutputsBackup)
-        }
+        testPropertyUsage("kotlin.compiler.preciseCompilationResultsBackup", "false")
+    }
+
+    @Test
+    fun testEnablingInMemoryCachesProducesWarning() {
+        testPropertyUsage("kotlin.compiler.keepIncrementalCompilationCachesInMemory", "true")
     }
 
     @Test
     fun testDisablingInMemoryCachesProducesWarning() {
+        testPropertyUsage("kotlin.compiler.keepIncrementalCompilationCachesInMemory", "false")
+    }
+
+    private fun testPropertyUsage(propertyKey: String, propertyValue: String) {
         buildProjectWithJvm(preApplyCode = {
-            extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY, "false")
+            extraProperties.set(propertyKey, propertyValue)
         }) {
-            triggerPropertiesRead()
-            assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedLegacyCompilationOutputsBackup)
+            assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
         }
     }
 
     @Test
     fun testDefaultValuesDoNotProduceWarning() {
         buildProjectWithJvm {
-            triggerPropertiesRead()
-            assertNoDiagnostics(KotlinToolingDiagnostics.DeprecatedLegacyCompilationOutputsBackup)
-        }
-    }
-
-    private fun Project.triggerPropertiesRead() {
-        tasks.withType(AbstractKotlinCompile::class.java).all {
-            it.preciseCompilationResultsBackup.orNull
-            it.keepIncrementalCompilationCachesInMemory.orNull
+            assertNoDiagnostics(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
+            assertNoDiagnostics(KotlinToolingDiagnostics.DeprecatedErrorGradleProperties)
         }
     }
 }

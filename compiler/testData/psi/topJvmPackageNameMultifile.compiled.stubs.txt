@@ -1,13 +1,17 @@
 OtherKt.class:
   FILE[kind=MultifileClass[packageFqName=some.other, facadeFqName=some.other.jvm.OtherKt, facadePartSimpleNames=[OtherKt__TopJvmPackageNameMultifileKt]]]
+    facadeFqName: some.other.jvm.OtherKt
+    facadePartSimpleNames: [ "OtherKt__TopJvmPackageNameMultifileKt" ]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=some]
         REFERENCE_EXPRESSION[referencedName=other]
     IMPORT_LIST
     FUN[fqName=some.other.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+      origin: MultiFileFacade(className=some/other/jvm/OtherKt__TopJvmPackageNameMultifileKt, facadeClassName=some/other/jvm/OtherKt)
       MODIFIER_LIST[public]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+          valueArguments: [ version -> "1.2" ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -24,14 +28,18 @@ OtherKt.class:
 
 OtherKt__TopJvmPackageNameMultifileKt.class:
   FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.jvm.OtherKt__TopJvmPackageNameMultifileKt]]
+    facadeFqName: some.other.jvm.OtherKt__TopJvmPackageNameMultifileKt
+    partSimpleName: "OtherKt__TopJvmPackageNameMultifileKt"
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=some]
         REFERENCE_EXPRESSION[referencedName=other]
     IMPORT_LIST
     FUN[fqName=some.other.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+      origin: Facade(className=some/other/OtherKt__TopJvmPackageNameMultifileKt, jvmClassName=some/other/jvm/OtherKt__TopJvmPackageNameMultifileKt)
       MODIFIER_LIST[public]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+          valueArguments: [ version -> "1.2" ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

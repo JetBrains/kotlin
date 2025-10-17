@@ -29,6 +29,7 @@ KaPropertySetterSymbol:
     compilerVisibility: Local
     contextReceivers: []
     generatedPrimaryConstructorProperty: null
+    hasDeclaredDefaultValue: false
     hasDefaultValue: false
     isActual: false
     isCrossinline: false
@@ -52,6 +53,7 @@ KaPropertySetterSymbol:
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
@@ -69,6 +71,7 @@ KaPropertySetterSymbol:
       compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -92,9 +95,11 @@ KaPropertySetterSymbol:
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(setterWithAnnotations.kt)
   getContainingJvmClassName: SetterWithAnnotationsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

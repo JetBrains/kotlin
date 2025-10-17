@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 class U {
     operator fun contains(g: String): Boolean {
         return false
@@ -15,7 +16,7 @@ fun foo(u: U) {
     val w = +i
 
     val g = "" !in u
-    val f = <!IMPOSSIBLE_IS_CHECK_ERROR!>"" !is Boolean<!>
+    val f = <!IMPOSSIBLE_IS_CHECK_WARNING!>"" !is Boolean<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, localProperty, operator,

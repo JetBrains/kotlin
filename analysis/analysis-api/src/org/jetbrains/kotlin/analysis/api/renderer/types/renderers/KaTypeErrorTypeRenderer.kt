@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaErrorTypeRenderer {
     public fun renderType(
         analysisSession: KaSession,

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // OPT_IN: kotlin.js.ExperimentalJsExport
 
 package foo

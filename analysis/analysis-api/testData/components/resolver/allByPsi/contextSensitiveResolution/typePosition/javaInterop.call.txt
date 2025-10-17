@@ -40,6 +40,7 @@ KtWhenExpression(93,216): 'when (instance) {'
 KtNameReferenceExpression(99,107): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -79,6 +80,7 @@ KtDotQualifiedExpression(131,145): 'instance.prop1'
 KtNameReferenceExpression(131,139): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -123,6 +125,7 @@ KtDotQualifiedExpression(167,181): 'instance.prop2'
 KtNameReferenceExpression(167,175): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -167,6 +170,7 @@ KtDotQualifiedExpression(200,213): 'instance.prop'
 KtNameReferenceExpression(200,208): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -228,6 +232,7 @@ KtIsExpression(282,303): 'instance is SCOption1'
 KtNameReferenceExpression(282,290): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -266,6 +271,7 @@ KtReturnExpression(315,336): 'return instance.prop1'
 KtDotQualifiedExpression(322,336): 'instance.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -288,6 +294,7 @@ KtDotQualifiedExpression(322,336): 'instance.prop1'
 KtNameReferenceExpression(322,330): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -305,6 +312,7 @@ KtNameReferenceExpression(322,330): 'instance'
 KtNameReferenceExpression(331,336): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -336,6 +344,7 @@ KtIsExpression(351,372): 'instance is SCOption2'
 KtNameReferenceExpression(351,359): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -374,6 +383,7 @@ KtReturnExpression(384,405): 'return instance.prop2'
 KtDotQualifiedExpression(391,405): 'instance.prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -396,6 +406,7 @@ KtDotQualifiedExpression(391,405): 'instance.prop2'
 KtNameReferenceExpression(391,399): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -413,6 +424,7 @@ KtNameReferenceExpression(391,399): 'instance'
 KtNameReferenceExpression(400,405): 'prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -471,6 +483,7 @@ KtWhenExpression(497,586): 'when (instance) {'
 KtNameReferenceExpression(503,511): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -503,6 +516,7 @@ KtNameReferenceExpression(522,531): 'SCOption1'
 KtDotQualifiedExpression(535,549): 'instance.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -525,6 +539,7 @@ KtDotQualifiedExpression(535,549): 'instance.prop1'
 KtNameReferenceExpression(535,543): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -542,6 +557,7 @@ KtNameReferenceExpression(535,543): 'instance'
 KtNameReferenceExpression(544,549): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -579,6 +595,7 @@ KtNameReferenceExpression(557,566): 'SCOption2'
 KtDotQualifiedExpression(570,584): 'instance.prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -601,6 +618,7 @@ KtDotQualifiedExpression(570,584): 'instance.prop2'
 KtNameReferenceExpression(570,578): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -618,6 +636,7 @@ KtNameReferenceExpression(570,578): 'instance'
 KtNameReferenceExpression(579,584): 'prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -679,6 +698,7 @@ KtIsExpression(657,678): 'instance is SCOption1'
 KtNameReferenceExpression(657,665): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -708,6 +728,7 @@ KtNameReferenceExpression(669,678): 'SCOption1'
 KtDotQualifiedExpression(682,696): 'instance.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -730,6 +751,7 @@ KtDotQualifiedExpression(682,696): 'instance.prop1'
 KtNameReferenceExpression(682,690): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -747,6 +769,7 @@ KtNameReferenceExpression(682,690): 'instance'
 KtNameReferenceExpression(691,696): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -778,6 +801,7 @@ KtIsExpression(701,722): 'instance is SCOption2'
 KtNameReferenceExpression(701,709): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -807,6 +831,7 @@ KtNameReferenceExpression(713,722): 'SCOption2'
 KtDotQualifiedExpression(726,740): 'instance.prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:
@@ -829,6 +854,7 @@ KtDotQualifiedExpression(726,740): 'instance.prop2'
 KtNameReferenceExpression(726,734): 'instance'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -846,6 +872,7 @@ KtNameReferenceExpression(726,734): 'instance'
 KtNameReferenceExpression(735,740): 'prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaSmartCastedReceiverValue:

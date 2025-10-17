@@ -129,6 +129,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
         return firJavaClass
     }
 
+    @OptIn(FirImplementationDetail::class)
     private fun createFirJavaClass(
         javaClass: JavaClass,
         classSymbol: FirRegularClassSymbol,
@@ -217,7 +218,8 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
 }
 
 /** @see FirJavaDeclarationList */
-private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularClassSymbol, javaPackage: JavaPackage?) : FirJavaDeclarationList {
+@FirImplementationDetail
+class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularClassSymbol, javaPackage: JavaPackage?) : FirJavaDeclarationList {
     /**
      * [LazyThreadSafetyMode.PUBLICATION] is used here to avoid any potential problems with deadlocks
      * as we cannot control how Java resolution will access [declarations].

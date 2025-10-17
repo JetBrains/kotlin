@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlin.native.ref.*
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)

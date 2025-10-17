@@ -2,22 +2,20 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.*
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactsExtension.Companion.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION
-import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinArtifact : Named, ExtensionAware {
     val artifactName: String
     val modules: Set<Any>
@@ -29,7 +27,7 @@ interface KotlinArtifact : Named, ExtensionAware {
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeArtifact : KotlinArtifact {
     val modes: Set<NativeBuildType>
     val isStatic: Boolean
@@ -47,7 +45,7 @@ interface KotlinNativeArtifact : KotlinArtifact {
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeLibrary : KotlinNativeArtifact {
     val target: KonanTarget
 }
@@ -55,46 +53,31 @@ interface KotlinNativeLibrary : KotlinNativeArtifact {
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeFramework : KotlinNativeArtifact {
     val target: KonanTarget
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeFatFramework : KotlinNativeArtifact {
     val targets: Set<KonanTarget>
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeXCFramework : KotlinNativeArtifact {
     val targets: Set<KonanTarget>
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinArtifactConfig {
     val artifactName: String
     val modules: Set<Any>
@@ -106,7 +89,7 @@ interface KotlinArtifactConfig {
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeArtifactConfig : KotlinArtifactConfig {
     var modes: Set<NativeBuildType>
     fun modes(vararg modes: NativeBuildType)
@@ -125,7 +108,7 @@ interface KotlinNativeArtifactConfig : KotlinArtifactConfig {
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeLibraryConfig : KotlinNativeArtifactConfig {
     var target: KonanTarget
 }
@@ -133,49 +116,34 @@ interface KotlinNativeLibraryConfig : KotlinNativeArtifactConfig {
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeFrameworkConfig : KotlinNativeArtifactConfig {
     var target: KonanTarget
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeFatFrameworkConfig : KotlinNativeArtifactConfig {
     var targets: Set<KonanTarget>
     fun targets(vararg targets: KonanTarget)
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
  * @suppress
  */
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeXCFrameworkConfig : KotlinNativeArtifactConfig {
     var targets: Set<KonanTarget>
     fun targets(vararg targets: KonanTarget)
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode?
 }
 
 /**
  * @suppress
  */
 @Suppress("DEPRECATION")
-@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinArtifactsExtension {
     //Extending by external plugins:
     //
@@ -202,29 +170,30 @@ interface KotlinArtifactsExtension {
 /**
  * @suppress
  */
-@Deprecated(KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+@Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
 interface KotlinNativeArtifactDSL {
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     fun Library(name: String, configure: Action<KotlinNativeLibraryConfig>)
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     fun Library(configure: Action<KotlinNativeLibraryConfig>)
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     fun Framework(name: String, configure: Action<KotlinNativeFrameworkConfig>)
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     fun Framework(configure: Action<KotlinNativeFrameworkConfig>)
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     fun FatFramework(name: String, configure: Action<KotlinNativeFatFrameworkConfig>)
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     fun FatFramework(configure: Action<KotlinNativeFatFrameworkConfig>)
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     fun XCFramework(name: String, configure: Action<KotlinNativeXCFrameworkConfig>)
 
-    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION)
+    @Deprecated(KotlinArtifactsExtension.KOTLIN_NATIVE_ARTIFACTS_DEPRECATION, level = DeprecationLevel.ERROR)
     fun XCFramework(configure: Action<KotlinNativeXCFrameworkConfig>)
 }

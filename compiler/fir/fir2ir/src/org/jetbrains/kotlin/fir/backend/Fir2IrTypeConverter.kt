@@ -195,14 +195,14 @@ class Fir2IrTypeConverter(
                 return IrDynamicTypeImpl(typeAnnotations, Variance.INVARIANT)
             }
             is ConeFlexibleType -> with(session.typeContext) {
-                if (type.upperBound is ConeClassLikeType) {
-                    val upper = type.upperBound as ConeClassLikeType
+                val upper = type.upperBound
+                if (upper is ConeClassLikeType) {
                     val lower = type.lowerBound
                     val isRaw = type.attributes.contains(CompilerConeAttributes.RawType)
                     val intermediate = if (lower is ConeClassLikeType && lower.lookupTag == upper.lookupTag && !isRaw) {
                         lower.replaceArguments(upper.getArguments())
                     } else lower
-                    (intermediate.withNullability(upper.isMarkedNullable) as ConeKotlinType)
+                    intermediate.withNullability(upper.isMarkedNullable).asCone()
                         .withAttributes(type.attributes)
                         .toIrType(
                             typeOrigin,
@@ -213,7 +213,7 @@ class Fir2IrTypeConverter(
                             addRawTypeAnnotation = isRaw,
                         )
                 } else {
-                    type.upperBound.toIrType(
+                    upper.toIrType(
                         typeOrigin,
                         annotations,
                         hasFlexibleNullability = type.lowerBound.isMarkedNullable != type.upperBound.isMarkedNullable,

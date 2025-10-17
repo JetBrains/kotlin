@@ -2,12 +2,15 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
 
-import kotlin.test.*
+// FILE: lib.kt
 import kotlin.reflect.*
 
 inline fun <reified R> kType() = typeOf<R>()
 
 inline fun <reified R> kType(obj: R) = kType<R>()
+
+// FILE: main.kt
+import kotlin.test.*
 
 class C<T>
 class D

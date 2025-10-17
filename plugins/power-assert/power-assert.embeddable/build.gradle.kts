@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     embedded(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
+    embedded(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 }
 
 publish {

@@ -47,6 +47,41 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test swift export resolvable configuration is present with apple targets`() {
+        with(buildProjectWithMPP()) {
+            kotlin {
+                iosArm64()
+            }
+            configureRepositoriesForTests()
+            evaluate()
+
+            val swiftExportClasspath = configurations.findByName("swiftExportClasspath")
+            val swiftExportClasspathResolvable = configurations.findByName("swiftExportClasspathResolvable")
+
+            assertNotNull(swiftExportClasspath)
+            assertNotNull(swiftExportClasspathResolvable)
+            assertTrue(swiftExportClasspathResolvable.isCanBeResolved, "configuration should be resolvable")
+        }
+    }
+
+    @Test
+    fun `test swift export resolvable configuration is not present without apple targets`() {
+        with(buildProjectWithMPP()) {
+            kotlin {
+                linuxX64()
+            }
+            configureRepositoriesForTests()
+            evaluate()
+
+            val swiftExportClasspath = configurations.findByName("swiftExportClasspath")
+            val swiftExportClasspathResolvable = configurations.findByName("swiftExportClasspathResolvable")
+
+            assertNull(swiftExportClasspath)
+            assertNull(swiftExportClasspathResolvable)
+        }
+    }
+
+    @Test
     fun `test swift export compilation`() {
         val project = swiftExportProject()
         project.evaluate()
@@ -224,6 +259,7 @@ class SwiftExportUnitTests {
         val linkTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64") as KotlinNativeLink
         val projectLibraries = linkTask.libraries
             .filter { it.name.contains("stdlib").not() }
+            .filter { it.name.contains("nativeDependencies").not() }
 
         val mainProjectLibrary = project.layout.buildDirectory
             .file("classes/kotlin/iosSimulatorArm64/main/klib/shared").get().asFile

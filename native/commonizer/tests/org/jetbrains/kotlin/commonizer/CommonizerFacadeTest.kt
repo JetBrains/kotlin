@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
@@ -18,55 +20,83 @@ import kotlin.test.assertTrue
 
 @ExperimentalContracts
 class CommonizerFacadeTest {
+    private class TestDisposable : Disposable {
+        override fun dispose() {}
+    }
+
+    private inline fun withDisposable(block: (Disposable) -> Unit) {
+        val disposable = TestDisposable()
+        try {
+            block(disposable)
+        } finally {
+            disposeRootInWriteAction(disposable)
+        }
+    }
 
     @Test
-    fun nothingToCommonize0() = doTestNothingToCommonize(
-        emptyMap()
-    )
+    fun nothingToCommonize0() = withDisposable { disposable ->
+        doTestNothingToCommonize(emptyMap(), disposable)
+    }
 
     @Test
-    fun commonized1() = doTestSuccessfulCommonization(
-        mapOf(
-            "target1" to listOf("foo"),
-            "target2" to listOf("foo")
+    fun commonized1() = withDisposable { disposable ->
+        doTestSuccessfulCommonization(
+            mapOf(
+                "target1" to listOf("foo"),
+                "target2" to listOf("foo")
+            ),
+            disposable,
         )
-    )
+    }
 
     @Test
-    fun commonized2() = doTestSuccessfulCommonization(
-        mapOf(
-            "target1" to listOf("foo", "bar"),
-            "target2" to listOf("bar", "foo")
+    fun commonized2() = withDisposable { disposable ->
+        doTestSuccessfulCommonization(
+            mapOf(
+                "target1" to listOf("foo", "bar"),
+                "target2" to listOf("bar", "foo")
+            ),
+            disposable,
         )
-    )
+    }
 
     @Test
-    fun commonized3() = doTestSuccessfulCommonization(
-        mapOf(
-            "target1" to listOf("foo")
+    fun commonized3() = withDisposable { disposable ->
+        doTestSuccessfulCommonization(
+            mapOf(
+                "target1" to listOf("foo")
+            ),
+            disposable,
         )
-    )
+    }
 
     @Test
-    fun commonizedWithDifferentModules() = doTestNothingToCommonize(
-        mapOf(
-            "target1" to listOf("foo"),
-            "target2" to listOf("bar")
+    fun commonizedWithDifferentModules() = withDisposable { disposable ->
+        doTestNothingToCommonize(
+            mapOf(
+                "target1" to listOf("foo"),
+                "target2" to listOf("bar")
+            ),
+            disposable,
         )
-    )
+    }
 
     @Test
-    fun commonizedWithMissingModules() = doTestSuccessfulCommonization(
-        mapOf(
-            "target1" to listOf("foo", "bar"),
-            "target2" to listOf("foo", "qix")
+    fun commonizedWithMissingModules() = withDisposable { disposable ->
+        doTestSuccessfulCommonization(
+            mapOf(
+                "target1" to listOf("foo", "bar"),
+                "target2" to listOf("foo", "qix")
+            ),
+            disposable,
         )
-    )
+    }
 
     companion object {
 
         private fun Map<String, List<String>>.toCommonizerParameters(
             resultsConsumer: ResultsConsumer,
+            disposable: Disposable,
             manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) },
             commonizerSettings: CommonizerSettings = DefaultCommonizerSettings,
         ): CommonizerParameters {
@@ -80,7 +110,7 @@ class CommonizerFacadeTest {
                 targetProviders = targetDependentModuleNames.map { target, moduleNames ->
                     TargetProvider(
                         target = target,
-                        modulesProvider = MockModulesProvider.create(moduleNames)
+                        modulesProvider = MockModulesProvider.create(moduleNames, disposable)
                     )
                 },
                 resultsConsumer = resultsConsumer,
@@ -88,16 +118,16 @@ class CommonizerFacadeTest {
             )
         }
 
-        private fun doTestNothingToCommonize(originalModules: Map<String, List<String>>) {
+        private fun doTestNothingToCommonize(originalModules: Map<String, List<String>>, disposable: Disposable) {
             val results = MockResultsConsumer()
-            runCommonization(originalModules.toCommonizerParameters(results))
+            runCommonization(originalModules.toCommonizerParameters(results, disposable))
             assertEquals(Status.NOTHING_TO_DO, results.status)
             assertTrue(results.modulesByTargets.isEmpty())
         }
 
-        private fun doTestSuccessfulCommonization(originalModules: Map<String, List<String>>) {
+        private fun doTestSuccessfulCommonization(originalModules: Map<String, List<String>>, disposable: Disposable) {
             val results = MockResultsConsumer()
-            runCommonization(originalModules.toCommonizerParameters(results))
+            runCommonization(originalModules.toCommonizerParameters(results, disposable))
             assertEquals(Status.DONE, results.status)
 
             val expectedCommonModuleNames = mutableSetOf<String>()

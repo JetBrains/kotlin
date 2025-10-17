@@ -2,6 +2,7 @@
   KDocName(628,649): 'Derived.someExtension'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T : Bound> Base<T>.someExtension()
 
@@ -9,6 +10,7 @@
   KDocName(655,677): 'Derived.someExtension2'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T : Bound, U : Bound> Base<T>.someExtension2(u: U)
 
@@ -16,6 +18,7 @@
   KDocName(683,705): 'Derived.someExtension3'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T : Bound, U : kotlin.collections.Iterable<T>> Base<T>.someExtension3(u: U)
 
@@ -23,6 +26,7 @@
   KDocName(711,733): 'Derived.someExtension4'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         Nothing (Unresolved reference)
 
@@ -30,5 +34,6 @@
   KDocName(739,773): 'DerivedWithIterable.someExtension4'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun <T : kotlin.collections.Iterable<U>, U : Bound> Base<T>.someExtension4(u: U)

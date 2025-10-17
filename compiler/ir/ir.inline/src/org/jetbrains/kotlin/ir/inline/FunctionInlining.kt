@@ -9,16 +9,13 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
+import org.jetbrains.kotlin.resolve.ContractsDslNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.at
-import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.*
@@ -35,7 +32,6 @@ import org.jetbrains.kotlin.name.Name.identifier
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-@PhaseDescription("FunctionInlining")
 class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
@@ -56,10 +52,10 @@ class FunctionInlining(
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrExpression {
         expression.transformChildren(this, data)
 
-        val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression
-        if (expression is IrCall && PreSerializationSymbols.isTypeOfIntrinsic(actualCallee.symbol)) {
+        if (expression is IrCall && PreSerializationSymbols.isTypeOfIntrinsic(expression.symbol)) {
             return expression
         }
+        val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression
         if (actualCallee.body == null) {
             return expression
         }
@@ -346,7 +342,7 @@ private class CallInlining(
     ) {
         for ((parameter, argument) in callee.parameters.zip(callSite.arguments)) {
             val isDefaultArg = argument == null && parameter.defaultValue != null
-            val variableInitializer = when {
+            val argumentValue = when {
                 argument != null -> argument
                 parameter.defaultValue != null -> parameter.defaultValue!!.expression
                 parameter.varargElementType != null -> callSiteBuilder.emptyVararg(parameter)
@@ -358,14 +354,14 @@ private class CallInlining(
              * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
              * not only for those referring to inlinable lambdas.
              */
-            if (parameter.isInlineParameter() && variableInitializer is IrRichCallableReference<*>) {
+            if (parameter.isInlineParameter() && argumentValue is IrRichCallableReference<*>) {
                 val evaluationBuilder = if (isDefaultArg) inlinedBlockBuilder else callSiteBuilder
                 // If function reference has bound values, they need to be computed in advance, not at call-site
                 // So, we store them to local variables, if they are untrivial
-                substituteMap[parameter] = variableInitializer
-                for (index in variableInitializer.boundValues.indices) {
-                    val irExpression = variableInitializer.boundValues[index]
-                    val boundParameter = variableInitializer.invokeFunction.parameters[index]
+                substituteMap[parameter] = argumentValue
+                for (index in argumentValue.boundValues.indices) {
+                    val irExpression = argumentValue.boundValues[index]
+                    val boundParameter = argumentValue.invokeFunction.parameters[index]
                     val variableSymbol =
                         if (irExpression is IrGetValue && irExpression.symbol.owner.isImmutable && irExpression.type == boundParameter.type) {
                             irExpression.symbol
@@ -376,29 +372,25 @@ private class CallInlining(
                                 isMutable = false,
                             ).symbol
                         }
-                    variableInitializer.boundValues[index] = irGetValueWithoutLocation(variableSymbol)
+                    argumentValue.boundValues[index] = irGetValueWithoutLocation(variableSymbol)
                 }
                 continue
             }
             // inline parameters should never be stored to temporaries, as it would prevent their inlining
-            variableInitializer.tryGetLoadedInlineParameter()?.let {
+            argumentValue.tryGetLoadedInlineParameter()?.let {
                 substituteMap[parameter] = irGetValueWithoutLocation(it)
                 continue
             }
 
-            fun IrBuilderWithScope.computeInitializer() = irBlock(resultType = parameter.type) {
-                +variableInitializer.doImplicitCastIfNeededTo(parameter.type)
-            }
+            val castedArgumentValue = argumentValue.doImplicitCastIfNeededTo(parameter.type)
 
             val valueForTmpVar = if (isDefaultArg) {
-                inlinedBlockBuilder
-                    .at(variableInitializer)
-                    .computeInitializer()
+                castedArgumentValue
             } else {
                 // This variable is required to trigger argument evaluation outside the scope of the inline function
                 val tempVarOutsideInlineBlock = callSiteBuilder
                     .at(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                    .irTemporary(callSiteBuilder.computeInitializer())
+                    .irTemporary(castedArgumentValue)
                 inlinedBlockBuilder
                     .at(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
                     .irGet(tempVarOutsideInlineBlock)

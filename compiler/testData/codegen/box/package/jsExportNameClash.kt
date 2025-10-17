@@ -3,7 +3,8 @@
 // TARGET_BACKEND: JS_IR_ES6
 // TARGET_BACKEND: WASM
 // KT-65779: SyntaxError: Identifier 'bar' has already been declared
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 // MODULE: m1
 // FILE: f1.kt

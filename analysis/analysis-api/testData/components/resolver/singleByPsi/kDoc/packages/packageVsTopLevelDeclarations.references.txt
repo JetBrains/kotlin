@@ -2,6 +2,7 @@
   KDocName(50,53): 'foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in foo) interface foo
         1: (in foo) fun foo()
@@ -11,6 +12,7 @@
   KDocName(62,65): 'foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         package foo
 
@@ -18,6 +20,7 @@
   KDocName(75,82): 'foo.foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         0: (in foo) interface foo
         1: (in foo) fun foo()

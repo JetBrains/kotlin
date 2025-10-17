@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.originalSnippetValueSymbol
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.name.NameUtils
 
 val REPL_SNIPPET_EVAL_FUN_NAME = Name.identifier("\$\$eval")
 
-@PhaseDescription(name = "ReplSnippetsToClasses")
 internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val snippets = mutableListOf<IrReplSnippet>()
@@ -509,23 +507,6 @@ private class ReplSnippetToClassTransformer(
             )
         }
         return super.visitLocalDelegatedPropertyReference(expression, data)
-    }
-
-    override fun visitConstructorCall(
-        expression: IrConstructorCall,
-        data: ScriptLikeToClassTransformerContext,
-    ): IrElement {
-        return if ((expression.symbol.owner.parent as? IrDeclaration)?.let { it in irSnippet.declarationsFromOtherSnippets } == true) {
-            expression.arguments +=
-                accessCallsGenerator.createAccessToSnippet(
-                    ((expression.symbol.owner.parent as IrClass).parent as IrClass).symbol,
-                    expression.startOffset, expression.endOffset
-                )
-            expression.transformChildren(this, data)
-            expression
-        } else {
-            super.visitConstructorCall(expression, data)
-        }
     }
 
     override fun visitClass(declaration: IrClass, data: ScriptLikeToClassTransformerContext): IrClass {

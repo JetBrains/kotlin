@@ -27,6 +27,7 @@ internal data class Uklib(
 
         const val FRAGMENTS = "fragments"
         const val FRAGMENT_IDENTIFIER = "identifier"
+        const val FRAGMENT_FILES = "files"
         const val ATTRIBUTES = "targets"
         const val UMANIFEST_VERSION = "manifestVersion"
 

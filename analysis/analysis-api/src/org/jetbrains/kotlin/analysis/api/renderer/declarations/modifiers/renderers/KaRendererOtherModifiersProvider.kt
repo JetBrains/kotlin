@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaRendererOtherModifiersProvider {
     public fun getOtherModifiers(analysisSession: KaSession, symbol: KaDeclarationSymbol): List<KtModifierKeywordToken>
 

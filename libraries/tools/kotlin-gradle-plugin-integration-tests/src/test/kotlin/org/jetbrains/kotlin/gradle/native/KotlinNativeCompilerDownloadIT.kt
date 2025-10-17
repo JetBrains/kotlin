@@ -297,6 +297,47 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun checkNativeDownloadForCommonizeTask_KT_77732(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
+        project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                val defPath = project.layout.projectDirectory.file("test.def")
+                defPath.asFile.writeText(
+                    """
+                    language = C
+                    ---
+                    #include <stddef.h>
+
+                    void foo(size_t);
+                """.trimIndent()
+                )
+
+                project.applyMultiplatform {
+                    listOf(
+                        linuxX64(),
+                        linuxArm64(),
+                    ).forEach {
+                        it.compilations.getByName("main").cinterops.create("foo") {
+                            it.definitionFile.set(defPath)
+                        }
+                    }
+
+                    sourceSets.commonMain.dependencies {
+                        sourceSets.commonMain.get().compileSource("class Main")
+                    }
+                }
+            }
+
+            build(
+                ":commonizeCInterop", "-Pkotlin.mpp.enableCInteropCommonization=true", buildOptions = defaultBuildOptions.copy(
+                    konanDataDir = konanTemp,
+                )
+            )
+        }
+
+    }
+
     private fun Path.appendKonanToGradleProperties(konanAbsolutePathString: String) {
         this.appendText(
             """

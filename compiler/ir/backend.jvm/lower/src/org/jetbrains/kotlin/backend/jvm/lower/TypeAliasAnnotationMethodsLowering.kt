@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.name.Name
  * annotations on that method (similarly to properties), so that if this typealias is used in another module, the compiler would be able
  * to know where to look for the annotations.
  */
-@PhaseDescription(name = "TypeAliasAnnotationMethodsLowering")
 internal class TypeAliasAnnotationMethodsLowering(val context: CommonBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         irClass.visitTypeAliases()

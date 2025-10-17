@@ -1,5 +1,6 @@
 KtNameReferenceExpression(27,31): 'util'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package java.util

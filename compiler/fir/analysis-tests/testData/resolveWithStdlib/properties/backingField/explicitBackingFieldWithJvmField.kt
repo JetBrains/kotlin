@@ -4,4 +4,4 @@
 val it: List<Int>
     field = mutableListOf()
 
-/* GENERATED_FIR_TAGS: propertyDeclaration */
+/* GENERATED_FIR_TAGS: explicitBackingField, propertyDeclaration */

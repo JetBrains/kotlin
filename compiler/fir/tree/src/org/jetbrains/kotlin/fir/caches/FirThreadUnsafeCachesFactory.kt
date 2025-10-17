@@ -40,15 +40,11 @@ object FirThreadUnsafeCachesFactory : FirCachesFactory() {
 
     override fun <V> createPossiblySoftLazyValue(createValue: () -> V): FirLazyValue<V> =
         createLazyValue(createValue)
-
-    @PerformanceWise
-    override val isThreadSafe: Boolean
-        get() = false
 }
 
 @Suppress("UNCHECKED_CAST")
 private class FirThreadUnsafeCache<K : Any, V, CONTEXT>(
-    private val map: NullableMap<K, V> = NullableMap<K, V>(),
+    private val map: NullableMap<K, V> = NullableMap(),
     private val createValue: (K, CONTEXT) -> V
 ) : FirCache<K, V, CONTEXT>() {
 
@@ -61,8 +57,11 @@ private class FirThreadUnsafeCache<K : Any, V, CONTEXT>(
 
     override fun getValueIfComputed(key: K): V? =
         map.getOrElse(key) { null as V }
-}
 
+    @FirCacheInternals
+    override val cachedValues: Collection<V>
+        get() = map.valuesSnapshot.toList()
+}
 
 private class FirThreadUnsafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
     private val createValue: (K, CONTEXT) -> Pair<V, DATA>,
@@ -78,10 +77,13 @@ private class FirThreadUnsafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
             createdValue
         }
 
-
     @Suppress("UNCHECKED_CAST")
     override fun getValueIfComputed(key: K): V? =
         map.getOrElse(key) { null as V }
+
+    @FirCacheInternals
+    override val cachedValues: Collection<V>
+        get() = map.valuesSnapshot.toList()
 }
 
 private class FirThreadUnsafeValue<V>(createValue: () -> V) : FirLazyValue<V>() {

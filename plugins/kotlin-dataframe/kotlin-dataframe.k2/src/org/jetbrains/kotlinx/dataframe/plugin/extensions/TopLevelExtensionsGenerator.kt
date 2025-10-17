@@ -173,7 +173,11 @@ fun FirDeclarationGenerationExtension.buildExtensionPropertiesApi(
                 isMarkedNullable = false
             ),
             propertyName = name,
-            returnType = resolvedReturnType,
+            returnType = if (resolvedReturnType.toClassLikeSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true) {
+                resolvedReturnType.projectOverDataRowType()
+            } else {
+                resolvedReturnType
+            },
             source = owner.source,
             typeParameters = typeParameters,
         )

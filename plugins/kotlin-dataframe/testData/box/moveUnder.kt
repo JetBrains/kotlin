@@ -7,11 +7,11 @@ fun box(): String {
     val df = dataFrameOf("a", "b", "c")(1, 2, 3)
         .group { a and b }.into("d")
         .move { c }.under { d }
-    df.compareSchemas(strict = true)
+    df.checkCompileTimeSchemaEqualsRuntime()
 
     // alias for group into
     dataFrameOf("a", "b", "c")(1, 2, 3)
         .move { a and b }.under("d")
-        .compareSchemas(strict = true)
+        .checkCompileTimeSchemaEqualsRuntime()
     return "OK"
 }

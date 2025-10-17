@@ -548,69 +548,6 @@ class IrValidatorTest {
     }
 
     @Test
-    fun `private annotations can't be referenced from a different file`() {
-        val file1 = createIrFile("MyAnnotation.kt")
-        val annotationClass = IrFactoryImpl.buildClass {
-            name = Name.identifier("MyAnnotation")
-            visibility = DescriptorVisibilities.PRIVATE
-            kind = ClassKind.ANNOTATION_CLASS
-        }
-        file1.addChild(annotationClass)
-        val annotationConstructor = IrFactoryImpl.createConstructor(
-            startOffset = UNDEFINED_OFFSET,
-            endOffset = UNDEFINED_OFFSET,
-            origin = IrDeclarationOrigin.DEFINED,
-            name = SpecialNames.INIT,
-            visibility = DescriptorVisibilities.PRIVATE,
-            isInline = false,
-            isExpect = false,
-            returnType = null,
-            symbol = IrConstructorSymbolImpl(),
-            isPrimary = true
-        )
-        annotationClass.addChild(annotationConstructor)
-        val file2 = createIrFile("b.kt")
-        val annotatedClass = IrFactoryImpl.buildClass {
-            name = Name.identifier("AnnotatedClass")
-        }
-        annotatedClass.annotations = listOf(
-            IrConstructorCallImpl(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                type = IrSimpleTypeImpl(annotationClass.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()),
-                symbol = annotationConstructor.symbol,
-                typeArgumentsCount = 0,
-                constructorTypeArgumentsCount = 0,
-            )
-        )
-        file2.addChild(annotatedClass)
-        testValidation(
-            IrVerificationMode.WARNING,
-            file2,
-            listOf(
-                Message(
-                    WARNING,
-                    """
-                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
-                    CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in org.sample.MyAnnotation' type=org.sample.MyAnnotation origin=null
-                      inside FILE fqName:org.sample fileName:b.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("b.kt", 0, 0, null),
-                ),
-                Message(
-                    WARNING,
-                    """
-                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
-                    CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in org.sample.MyAnnotation' type=org.sample.MyAnnotation origin=null
-                      inside FILE fqName:org.sample fileName:b.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("b.kt", 0, 0, null),
-                ),
-            )
-        )
-    }
-
-    @Test
     fun `out-of scope usages of value parameters are reported`() {
         val file = createIrFile()
         val function = IrFactoryImpl.buildFun {

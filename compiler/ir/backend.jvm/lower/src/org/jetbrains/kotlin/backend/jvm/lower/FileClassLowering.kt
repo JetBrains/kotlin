@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.classNameOverride
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -54,7 +53,6 @@ import java.io.File
 /**
  * Puts file-level function and property declaration into a class.
  */
-@PhaseDescription(name = "FileClass")
 internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val classes = ArrayList<IrClass>()

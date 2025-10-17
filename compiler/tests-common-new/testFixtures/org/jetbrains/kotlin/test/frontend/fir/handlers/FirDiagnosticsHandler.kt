@@ -646,7 +646,8 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         val result = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
 
         lazyDeclarationResolver.disableLazyResolveContractChecksInside {
-            val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(platformPart.module)
+            val configuration =
+                testServices.compilerConfigurationProvider.getCompilerConfiguration(platformPart.module, CompilationStage.FIRST)
             val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
             fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {

@@ -46,6 +46,7 @@ KtWhenExpression(120,162): 'when (a) {'
 KtNameReferenceExpression(126,127): 'a'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -70,6 +71,7 @@ KtWhenConditionWithExpression(135,138): 'A.A'
 KtDotQualifiedExpression(135,138): 'A.A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -111,6 +113,7 @@ KtNameReferenceExpression(135,136): 'A'
 KtNameReferenceExpression(137,138): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -144,6 +147,7 @@ KtWhenConditionWithExpression(150,153): 'A.B'
 KtDotQualifiedExpression(150,153): 'A.B'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -185,6 +189,7 @@ KtNameReferenceExpression(150,151): 'A'
 KtNameReferenceExpression(152,153): 'B'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

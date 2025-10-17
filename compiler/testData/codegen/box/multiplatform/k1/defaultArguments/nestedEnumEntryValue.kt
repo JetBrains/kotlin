@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
 //  JS IR & Wasm: https://youtrack.jetbrains.com/issue/KT-51225
 
 // MODULE: lib

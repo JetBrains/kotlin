@@ -5,7 +5,6 @@ description = "Kotlin Compiler Infrastructure for Scripting"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("project-tests-convention")
 }
 
 dependencies {
@@ -26,20 +25,11 @@ dependencies {
     compileOnly(intellijAnalysis())
 
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
-    testApi(project(":compiler:frontend"))
-    testApi(project(":compiler:plugin-api"))
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":compiler:cli-common"))
-    testApi(project(":compiler:frontend.java"))
-    testApi(testFixtures(project(":compiler:tests-common")))
-    testImplementation(libs.junit4)
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" { none() }
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -51,9 +41,3 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-
-projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
-        workingDir = rootDir
-    }
-}

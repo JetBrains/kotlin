@@ -5,6 +5,7 @@ MyRepeatableAnnotation.class:
     CLASS[classId=/MyRepeatableAnnotation, fqName=MyRepeatableAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyRepeatableAnnotation, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Repeatable]
+          valueArguments: [ ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -52,6 +53,7 @@ RepeatableAnnotation.class:
         CLASS[classId=/RepeatableAnnotation.ClassWithOneRepeatableAnnotation, fqName=RepeatableAnnotation.ClassWithOneRepeatableAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithOneRepeatableAnnotation, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyRepeatableAnnotation]
+              valueArguments: [ index -> 1 ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -63,11 +65,13 @@ RepeatableAnnotation.class:
         CLASS[classId=/RepeatableAnnotation.ClassWithTwoRepeatableAnnotations, fqName=RepeatableAnnotation.ClassWithTwoRepeatableAnnotations, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithTwoRepeatableAnnotations, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyRepeatableAnnotation]
+              valueArguments: [ index -> 1 ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyRepeatableAnnotation]
+              valueArguments: [ index -> 2 ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -79,16 +83,19 @@ RepeatableAnnotation.class:
         CLASS[classId=/RepeatableAnnotation.ClassWithThreeRepeatableAnnotations, fqName=RepeatableAnnotation.ClassWithThreeRepeatableAnnotations, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithThreeRepeatableAnnotations, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyRepeatableAnnotation]
+              valueArguments: [ index -> 1 ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyRepeatableAnnotation]
+              valueArguments: [ index -> 2 ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyRepeatableAnnotation]
+              valueArguments: [ index -> 3 ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE

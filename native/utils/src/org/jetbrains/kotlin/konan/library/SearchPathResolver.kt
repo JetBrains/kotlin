@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibraryComponents
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -17,13 +18,15 @@ fun defaultResolver(
     target: KonanTarget,
     distribution: Distribution,
     logger: Logger = DummyLogger,
-    skipCurrentDir: Boolean = false
+    skipCurrentDir: Boolean = false,
+    zipFileSystemAccessor: ZipFileSystemAccessor? = null,
 ): SearchPathResolverWithTarget<KonanLibrary> = KonanLibraryProperResolver(
     directLibs = directLibs,
     target = target,
     distributionKlib = distribution.klib,
     skipCurrentDir = skipCurrentDir,
-    logger = logger
+    logger = logger,
+    zipFileSystemAccessor,
 )
 
 class KonanLibraryProperResolver(
@@ -31,7 +34,8 @@ class KonanLibraryProperResolver(
     override val target: KonanTarget,
     distributionKlib: String?,
     skipCurrentDir: Boolean,
-    override val logger: Logger
+    override val logger: Logger,
+    val zipFileSystemAccessor: ZipFileSystemAccessor? = null,
 ) : KotlinLibraryProperResolverWithAttributes<KonanLibrary>(
     directLibs = directLibs,
     distributionKlib = distributionKlib,
@@ -39,7 +43,8 @@ class KonanLibraryProperResolver(
     logger = logger,
     knownIrProviders = listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
 ), SearchPathResolverWithTarget<KonanLibrary> {
-    override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKonanLibraryComponents(file, target, isDefault)
+    override fun libraryComponentBuilder(file: File, isDefault: Boolean) =
+        createKonanLibraryComponents(file, target, isDefault, zipFileSystemAccessor)
 
     override val distPlatformHead: File?
         get() = distributionKlib?.File()?.child("platform")?.child(target.visibleName)

@@ -4,6 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/RepeatableAnnotationClass, fqName=RepeatableAnnotationClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=RepeatableAnnotationClass, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Repeatable]
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

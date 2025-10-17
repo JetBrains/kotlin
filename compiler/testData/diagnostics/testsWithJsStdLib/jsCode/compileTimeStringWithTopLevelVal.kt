@@ -52,6 +52,6 @@ fun testValFromThisFile2() {
 }
 
 fun testValWithGetter() {
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"var ${valWithGetter} = 1;"<!>)
-    js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>"var " + valWithGetter + " = 1;"<!>)
+    js("var ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valWithGetter<!>} = 1;")
+    js("var " + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>valWithGetter<!> + " = 1;")
 }

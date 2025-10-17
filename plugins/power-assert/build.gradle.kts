@@ -5,6 +5,7 @@ plugins {
     id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val junit5Classpath by configurations.creating
@@ -44,9 +45,6 @@ testsJar()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        workingDir = rootDir
-
         val localJunit5Classpath: FileCollection = junit5Classpath
 
         doFirst {
@@ -54,7 +52,13 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.powerassert.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.powerassert.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+
+    testData(project.isolated, "testData")
 }

@@ -2,11 +2,11 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
 
+// FILE: lib.kt
 package test
 
 import kotlin.reflect.typeOf
 import kotlin.reflect.KType
-import kotlin.test.assertEquals
 
 interface C
 
@@ -17,6 +17,10 @@ inline fun <reified U> get1() = get<U?>()
 inline fun <reified V> get2(): KType {
     return get1<Map<in V?, Array<V>>>()
 }
+
+// FILE: main.kt
+package test
+import kotlin.test.assertEquals
 
 fun box(): String {
     assertEquals("C?", get1<C>().toString())

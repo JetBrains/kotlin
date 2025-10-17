@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  * Note that [IrValueParameter.defaultValue] property does not track default values in super-parameters.
  * See [KT-28637](youtrack.jetbrains.com/issue/KT-28637).
  */
-@PhaseDescription(name = "JvmOverloadsAnnotation")
 internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {

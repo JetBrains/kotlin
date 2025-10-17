@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValueClassKt]]
+  facadeFqName: ValueClassKt
+  partSimpleName: "ValueClassKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/value, fqName=value, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=value, superNames=[]]

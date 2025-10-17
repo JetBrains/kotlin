@@ -9,7 +9,7 @@ class C3 {
 }
 
 context(_: String)
-fun C3.foo() {}
+fun C3.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() {}
 
 abstract class Cache {
     fun get(): Int = 10

@@ -160,7 +160,7 @@ fun checkSteppingTestResult(
 
         val containsBackend =
             currentBackends.any {
-                it.backend == TargetBackend.ANY || (it.backend == targetBackend && it.contains(directives, directivesInTestFile))
+                it.backend == TargetBackend.ANY || (targetBackend.isTransitivelyCompatibleWith(it.backend) && it.contains(directives, directivesInTestFile))
             }
         if (containsBackend && currentFrontends.contains(frontendKind)) {
             if (actualLineNumbersIterator.hasNext()) {

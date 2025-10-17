@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
-    id("project-tests-convention")
 }
 
 dependencies {
@@ -12,7 +11,6 @@ dependencies {
     testFixturesImplementation(intellijCore())
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
 
     testFixturesImplementation(kotlinTest("junit"))
     testFixturesImplementation(project(":analysis:analysis-internal-utils"))
@@ -34,15 +32,6 @@ sourceSets {
     "test" { none() }
     "testFixtures" { projectDefault() }
 }
-
-projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":plugins:plugin-sandbox:plugin-annotations:jar")
-        workingDir = rootDir
-    }
-}
-
-testsJar()
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.optIn.addAll(

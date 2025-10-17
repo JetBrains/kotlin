@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 object O
 
 class TopLevel {

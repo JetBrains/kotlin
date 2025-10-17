@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.caches
 
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import java.util.concurrent.ConcurrentHashMap
 
 internal class FirThreadSafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
@@ -25,4 +26,8 @@ internal class FirThreadSafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
 
     override fun getValueIfComputed(key: K): V? =
         map[key]?.getValueIfComputed()
+
+    @FirCacheInternals
+    override val cachedValues: Collection<V>
+        get() = map.values.mapNotNull { it.getValueIfComputed() }
 }

@@ -127,6 +127,9 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
         override val hasDefaultValue: Boolean
             get() = withValidityAssertion { false }
 
+        override val hasDeclaredDefaultValue: Boolean
+            get() = withValidityAssertion { false }
+
         override val isVararg: Boolean
             get() = withValidityAssertion { false }
 

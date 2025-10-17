@@ -40,7 +40,7 @@ fun foo7(
 <!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p4: Boolean?<!>
 ): Unit {
     p0.toString()
-    p1.toString()
+    p1.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
     p2.toString()
     p3.toString()
     p4.toString()

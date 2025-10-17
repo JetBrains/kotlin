@@ -7,11 +7,28 @@ pluginManagement {
             url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
             content {
                 includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+                includeGroupByRegex("com.intellij.platform.*")
+                includeGroupByRegex("org.jetbrains.jps.*")
             }
         }
-        maven { url "https://redirector.kotlinlang.org/maven/kotlin-dependencies" }
-        google { url "https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2" }
-        mavenCentral { url "https://cache-redirector.jetbrains.com/maven-central" }
+        maven {
+            url "https://redirector.kotlinlang.org/maven/kotlin-dependencies"
+            content {
+                includeGroup("org.jetbrains.kotlin")
+                includeGroup("org.spdx")
+                includeGroup("org.jetbrains.kotlinx")
+                includeGroup("org.jetbrains.kotlinx.benchmark")
+            }
+        }
+        google {
+            url "https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2"
+            content {
+                includeGroup("com.android.tools")
+            }
+        }
+        mavenCentral {
+            url "https://cache-redirector.jetbrains.com/maven-central"
+        }
         gradlePluginPortal()
     }
 
@@ -139,7 +156,6 @@ include ":benchmarks",
         ":compiler:backend.jvm.lower",
         ":compiler:backend.jvm.codegen",
         ":compiler:backend.jvm.entrypoint",
-        ":compiler:backend-common",
         ":compiler:backend",
         ":compiler:plugin-api",
         ":compiler:light-classes",
@@ -154,7 +170,6 @@ include ":benchmarks",
         ":compiler:tests-common",
         ":compiler:tests-integration",
         ":compiler:tests-mutes",
-        ":compiler:tests-mutes:tc-integration",
         ":compiler:tests-mutes:mutes-junit4",
         ":compiler:tests-mutes:mutes-junit5",
         ":compiler:tests-against-klib",
@@ -213,10 +228,16 @@ include ":benchmarks",
         ":dependencies:bootstrap:kotlin-stdlib-bootstrap",
         ":dependencies:bootstrap:kotlin-build-tools-api-bootstrap",
         ":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap",
+        ":dependencies:bootstrap:kotlin-build-tools-compat-bootstrap",
+        ":dependencies:bootstrap:kotlin-build-tools-cri-impl-bootstrap",
         ":dependencies:bootstrap:kotlin-script-runtime-bootstrap",
+        ":dependencies:bootstrap:kotlin-scripting-common-bootstrap",
+        ":dependencies:bootstrap:kotlin-scripting-jvm-bootstrap",
         ":dependencies:bootstrap:kotlin-daemon-client-bootstrap",
         ":dependencies:bootstrap:kotlin-reflect-bootstrap",
-        ":dependencies:bootstrap:kotlin-compiler-embeddable-bootstrap"
+        ":dependencies:bootstrap:kotlin-tooling-core-bootstrap",
+        ":dependencies:bootstrap:kotlin-compiler-embeddable-bootstrap",
+        ":dependencies:bootstrap:kotlin-compiler-runner-bootstrap"
 
 include ":kotlin-allopen-compiler-plugin",
         ":kotlin-allopen-compiler-plugin.embeddable",
@@ -519,7 +540,8 @@ include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-api-tests",
         ":compiler:build-tools:kotlin-build-tools-jdk-utils",
         ":compiler:build-tools:kotlin-build-tools-options-generator",
-        ":compiler:build-tools:util-kotlinpoet"
+        ":compiler:build-tools:util-kotlinpoet",
+        ":compiler:build-tools:kotlin-build-tools-cri-impl"
 
 if (!buildProperties.inJpsBuildIdeaSync) {
     include ":plugins:compose-compiler-plugin",

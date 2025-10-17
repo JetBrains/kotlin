@@ -8,17 +8,17 @@ abstract class C
 interface I
 
 @JsExport
-fun <<!NON_EXPORTABLE_TYPE("upper bound; C")!>T : C<!>>foo() { }
+fun <T : <!NON_EXPORTABLE_TYPE("upper bound; C")!>C<!>>foo() { }
 
 @JsExport
-class A<<!NON_EXPORTABLE_TYPE("upper bound; C")!>T : C<!>, <!NON_EXPORTABLE_TYPE("upper bound; I")!>S: I<!>>
+class A<T : <!NON_EXPORTABLE_TYPE("upper bound; C")!>C<!>, S: <!NON_EXPORTABLE_TYPE("upper bound; I")!>I<!>>
 
 @JsExport
-interface I2<<!NON_EXPORTABLE_TYPE("upper bound; C"), NON_EXPORTABLE_TYPE("upper bound; I")!>T<!>> where T : C, T : I
+interface I2<T> where T : <!NON_EXPORTABLE_TYPE("upper bound; C")!>C<!>, T : <!NON_EXPORTABLE_TYPE("upper bound; I")!>I<!>
 
 @JsExport
-class B<T>(val a: T, <!NON_EXPORTABLE_TYPE!>val b: Comparable<T><!>) {
-    <!NON_EXPORTABLE_TYPE!>val c: Comparable<T><!> = b
+class B<T>(val a: T, <!NON_EXPORTABLE_TYPE("parameter; Comparable<T (of class B<T>)>")!>val b: Comparable<T><!>) {
+    <!NON_EXPORTABLE_TYPE("property; Comparable<T (of class B<T>)>")!>val c: Comparable<T><!> = b
 }
 
 @JsExport

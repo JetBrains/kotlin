@@ -100,12 +100,12 @@ fun Task.assertTaskDependenciesEquals(dependencies: Set<Task>) {
 fun Project.assertContainsTaskWithName(taskName: String): Task {
     this.getKotlinPluginVersion()
     return project.tasks.findByName(taskName)
-        ?: fail("Expected task with name $taskName in project ${this.path}")
+        ?: fail("Expected task with name $taskName in project ${this.path}. All tasks: ${project.tasks.names}")
 }
 
 fun Project.assertContainsNoTaskWithName(taskName: String) {
     if (taskName in tasks.names) {
-        fail("Expected *no* task with name $taskName in project ${this.path}")
+        fail("Expected *no* task with name $taskName in project ${this.path}. All tasks: ${project.tasks.names}")
     }
 }
 

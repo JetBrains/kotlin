@@ -14,7 +14,7 @@ enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
 
     override fun toString() = "$major.$minor"
 
-    open fun toAbiVersionForManifest(): KotlinAbiVersion = KotlinAbiVersion(major, minor, 0)
+    fun toAbiVersionForManifest(): KotlinAbiVersion = KotlinAbiVersion(major, minor, 0)
 
     fun isAtLeast(other: KlibAbiCompatibilityLevel): Boolean =
         major > other.major || major == other.major && minor >= other.minor

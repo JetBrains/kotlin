@@ -1,5 +1,6 @@
 KtNameReferenceExpression(102,106): 'this'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: test) fun kotlin.collections.MutableList<kotlin.String>.(): kotlin.Unit

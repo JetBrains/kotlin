@@ -50,12 +50,17 @@ sourceSets {
 optInToK1Deprecation()
 
 projectTests {
+    val modelDumpAndReadTest = "org.jetbrains.kotlin.fir.ModelDumpAndReadTest"
+
     testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit4) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
         systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
         workingDir = rootDir
         val composePluginClasspath = composeCompilerPlugin.asPath
 
+        filter {
+            excludeTestsMatching(modelDumpAndReadTest)
+        }
         run {
             systemProperty("fir.bench.compose.plugin.classpath", composePluginClasspath)
             val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
@@ -63,6 +68,14 @@ projectTests {
                 val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
                 jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
             }
+        }
+    }
+
+    testTask("modelDumpTest", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        filter {
+            includeTestsMatching(modelDumpAndReadTest)
         }
     }
 }

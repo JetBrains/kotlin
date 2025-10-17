@@ -164,6 +164,7 @@ KtBinaryExpression(304,329): 'settings == BasicSettings'
 KtNameReferenceExpression(304,312): 'settings'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -347,6 +348,7 @@ KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
 KtNameReferenceExpression(354,367): 'basicSettings'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -530,6 +532,7 @@ KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
 KtNameReferenceExpression(414,427): 'basicSettings'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -881,6 +884,7 @@ KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
 KtNameReferenceExpression(707,715): 'settings'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1064,6 +1068,7 @@ KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
 KtNameReferenceExpression(761,774): 'basicSettings'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1249,6 +1254,7 @@ KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings
 KtNameReferenceExpression(825,838): 'basicSettings'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

@@ -49,6 +49,7 @@ KtNameReferenceExpression(174,180): 'MyEnum'
 KtNameReferenceExpression(183,190): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -87,6 +88,7 @@ KtParameterList(248,250): '()'
 KtNameReferenceExpression(253,260): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -107,6 +109,7 @@ KtProperty(270,306): 'val EnumOptionAlias = MyEnum.Option1'
 KtDotQualifiedExpression(292,306): 'MyEnum.Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -130,6 +133,7 @@ KtNameReferenceExpression(292,298): 'MyEnum'
 KtNameReferenceExpression(299,306): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -165,6 +169,7 @@ KtNameReferenceExpression(320,326): 'MyEnum'
 KtNameReferenceExpression(329,336): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -200,6 +205,7 @@ KtNameReferenceExpression(349,355): 'MyEnum'
 KtNameReferenceExpression(358,366): 'enumProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -235,6 +241,7 @@ KtNameReferenceExpression(379,385): 'MyEnum'
 KtNameReferenceExpression(388,398): 'stringProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -273,6 +280,7 @@ KtNameReferenceExpression(434,440): 'MyEnum'
 KtNameReferenceExpression(443,450): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -311,6 +319,7 @@ KtNameReferenceExpression(491,497): 'MyEnum'
 KtNameReferenceExpression(500,510): 'stringProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -367,6 +376,7 @@ KtContainerNode(551,552): 'b'
 KtNameReferenceExpression(551,552): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -390,6 +400,7 @@ KtReturnExpression(554,568): 'return Option1'
 KtNameReferenceExpression(561,568): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -413,6 +424,7 @@ KtReturnExpression(573,587): 'return Option2'
 KtNameReferenceExpression(580,587): 'Option2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

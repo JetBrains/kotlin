@@ -18,6 +18,5 @@ fun main() {
     worker.requestTermination().result
     waitWorkerTermination(worker)
 
-    // Enforce GC on program exit:
-    kotlin.native.runtime.Debugging.forceCheckedShutdown = true
+    kotlin.native.runtime.GC.collect()
 }

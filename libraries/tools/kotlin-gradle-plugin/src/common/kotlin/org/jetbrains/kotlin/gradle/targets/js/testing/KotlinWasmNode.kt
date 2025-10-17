@@ -81,6 +81,7 @@ internal class KotlinWasmNode(
 
         val args = mutableListOf<String>()
         with(args) {
+//            add("--experimental-wasm-exnref")
             addAll(nodeJsArgs)
             add(testRunnerFile.absolutePath)
             addAll(cliArgs.toList())

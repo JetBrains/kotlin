@@ -1,5 +1,6 @@
 KtNameReferenceExpression(132,136): 'List'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>

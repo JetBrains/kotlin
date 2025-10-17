@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
+import org.jetbrains.kotlin.ir.util.convertTo
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.javac.kaptError
@@ -953,12 +954,12 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return when (result) {
             is FirLiteralExpression -> result.value?.let { constValue ->
                 when (result.kind) {
-                    ConstantValueKind.Int -> (constValue as Number).toInt()
-                    ConstantValueKind.UnsignedInt -> (constValue as Number).toInt()
-                    ConstantValueKind.Byte -> (constValue as Number).toByte()
-                    ConstantValueKind.UnsignedByte -> (constValue as Number).toByte()
-                    ConstantValueKind.Short -> (constValue as Number).toShort()
-                    ConstantValueKind.UnsignedShort -> (constValue as Number).toShort()
+                    ConstantValueKind.Int -> convertTo<Int>(constValue)
+                    ConstantValueKind.UnsignedInt ->  convertTo<Int>(constValue)
+                    ConstantValueKind.Byte ->  convertTo<Byte>(constValue)
+                    ConstantValueKind.UnsignedByte -> convertTo<Byte>(constValue)
+                    ConstantValueKind.Short ->  convertTo<Short>(constValue)
+                    ConstantValueKind.UnsignedShort ->  convertTo<Short>(constValue)
                     else -> constValue
                 }
             }
@@ -966,7 +967,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 val enumType = AsmUtil.asmTypeByClassId(enumEntry.callableId.classId!!)
                 arrayOf(enumType.descriptor, enumEntry.name.asString())
             }
-            is FirArrayLiteral -> {
+            is FirCollectionLiteral -> {
                 result.argumentList.arguments.map(::evaluateFirExpression)
             }
             else -> null
@@ -1505,7 +1506,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     ): JCExpression? {
         if (!isValidIdentifier(name)) return null
         val expr = when (value) {
-            is FirArrayLiteral -> {
+            is FirCollectionLiteral -> {
                 convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments)
             }
             is FirVarargArgumentsExpression -> {

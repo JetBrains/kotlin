@@ -60,6 +60,16 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
+        name = "Xwasm-included-module-only"
+        description = "Compile only a module passed using `-include` option.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xwasm-generate-wat"
         description = "Generate a .wat file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -113,7 +123,16 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     compilerArgument {
         name = "Xwasm-use-new-exception-proposal"
         description = "Use an updated version of the exception proposal with try_table.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        valueType = BooleanType(
+            isNullable = ReleaseDependent(
+                true,
+                KotlinReleaseVersion.v2_1_20..KotlinReleaseVersion.v2_2_20 to false,
+            ),
+            defaultValue = ReleaseDependent(
+                null,
+                KotlinReleaseVersion.v2_1_20..KotlinReleaseVersion.v2_2_20 to false,
+            )
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,

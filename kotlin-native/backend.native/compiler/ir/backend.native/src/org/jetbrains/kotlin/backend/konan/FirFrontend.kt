@@ -68,7 +68,7 @@ internal inline fun <F> PhaseContext.firFrontend(
 
     val outputs = sessionsWithSources.map { (session, sources) ->
         buildResolveAndCheckFir(session, sources, diagnosticsReporter).also {
-            if (shouldPrintFiles()) {
+            if (config.configuration.getBoolean(KonanConfigKeys.PRINT_FILES)) {
                 it.fir.forEach { file -> println(file.render()) }
             }
         }

@@ -299,6 +299,7 @@ private class SirEnumCaseFromKtSymbol(
             selfParameter = null,
             extensionReceiverParameter = null,
             errorParameter = null,
+            isAsync = false,
         )
     }
 

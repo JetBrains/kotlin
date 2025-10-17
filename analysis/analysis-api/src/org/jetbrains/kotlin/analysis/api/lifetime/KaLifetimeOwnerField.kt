@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,9 @@ import kotlin.reflect.KProperty
  *
  * @see KaLifetimeOwner
  * @see validityAsserted
+ * @see withValidityAssertion
  */
+@Deprecated("Use a backing element + `withValidityAssertion` instead")
 @JvmInline
 public value class KaLifetimeOwnerField<T>(public val value: T) : ReadOnlyProperty<KaLifetimeOwner, T> {
     public override fun getValue(thisRef: KaLifetimeOwner, property: KProperty<*>): T {

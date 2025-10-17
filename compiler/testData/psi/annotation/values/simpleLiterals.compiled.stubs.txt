@@ -128,6 +128,16 @@ WithNamedSimple.class:
     CLASS[classId=/WithNamedSimple, fqName=WithNamedSimple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNamedSimple, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+          valueArguments: [
+            i -> 12
+            l -> 12.toLong()
+            b -> 12.toByte()
+            d -> 3.3.toDouble()
+            f -> 3.3.toFloat()
+            c -> \u0061 ('a')
+            b1 -> true
+            b2 -> false
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -145,6 +155,16 @@ WithSimple.class:
     CLASS[classId=/WithSimple, fqName=WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSimple, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+          valueArguments: [
+            i -> 12
+            l -> 12.toLong()
+            b -> 12.toByte()
+            d -> 3.3.toDouble()
+            f -> 3.3.toFloat()
+            c -> \u0061 ('a')
+            b1 -> true
+            b2 -> false
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -162,6 +182,16 @@ WithSimpleOperations.class:
     CLASS[classId=/WithSimpleOperations, fqName=WithSimpleOperations, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSimpleOperations, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+          valueArguments: [
+            i -> 2
+            l -> 2.toLong()
+            b -> 12.toByte()
+            d -> 0.2999999999999998.toDouble()
+            f -> 6.6.toFloat()
+            c -> \u0061 ('a')
+            b1 -> false
+            b2 -> true
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

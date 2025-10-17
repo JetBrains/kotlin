@@ -55,9 +55,12 @@ internal class LLFirSessionInvalidationEventPublisher(private val project: Proje
         // global invalidation, or when unstable dangling file sessions are replaced during `LLFirSessionCache.getSession`.
         val invalidatedModules = this.invalidatedModules ?: return
 
-        // Session invalidation events don't need to be published for unstable dangling file modules.
+        // Session invalidation events don't need to be published for unstable dangling file modules. However, since the file(s) might have
+        // been modified, we need to check the module's validity before checking `isStable`, as otherwise an exception might occur in
+        // `isStable`. Even if the module is invalid, we still want to publish a session invalidation event so that the downstream analysis
+        // session can be invalidated.
         val ktModule = session.ktModule
-        if (ktModule is KaDanglingFileModule && !ktModule.isStable) {
+        if (ktModule is KaDanglingFileModule && ktModule.isValid && !ktModule.isStable) {
             return
         }
 

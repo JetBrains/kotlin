@@ -37,6 +37,7 @@ class BodyGenerator(
     private val functionContext: WasmFunctionCodegenContext,
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    private val inlineUnitGetter: Boolean,
 ) : IrVisitorVoid() {
     val body: WasmExpressionBuilder = functionContext.bodyGen
 
@@ -48,10 +49,17 @@ class BodyGenerator(
     private val unitInstanceField by lazy { backendContext.findUnitInstanceField() }
 
     fun WasmExpressionBuilder.buildGetUnit() {
-        buildGetGlobal(
-            wasmFileCodegenContext.referenceGlobalField(unitInstanceField.symbol),
-            SourceLocation.NoLocation("GET_UNIT")
-        )
+        if (inlineUnitGetter) {
+            buildGetGlobal(
+                wasmFileCodegenContext.referenceGlobalField(unitInstanceField.symbol),
+                SourceLocation.NoLocation("GET_UNIT")
+            )
+        } else {
+            buildCall(
+                wasmFileCodegenContext.referenceFunction(unitGetInstance.symbol),
+                SourceLocation.NoLocation("GET_UNIT")
+            )
+        }
     }
 
     fun getStructFieldRef(field: IrField): WasmSymbol<Int> {
@@ -1157,10 +1165,6 @@ class BodyGenerator(
                 body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
             }
 
-            wasmSymbols.stringGetPoolSize -> {
-                body.buildConstI32Symbol(wasmFileCodegenContext.wasmStringsElements.stringPoolSize, location)
-            }
-
             wasmSymbols.getWasmAbiVersion -> {
                 body.buildConstI32Symbol(wasmAbiVersion, location)
             }
@@ -1528,7 +1532,12 @@ class BodyGenerator(
         val init = declaration.initializer!!
         generateExpression(init)
         val varName = functionContext.referenceLocal(declaration.symbol)
-        body.buildSetLocal(varName, init.getSourceLocation())
+        val location = if (declaration.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) {
+            SourceLocation.NoLocation("Temporary variable")
+        } else {
+            init.getSourceLocation()
+        }
+        body.buildSetLocal(varName, location)
     }
 
     // Return true if function is recognized as intrinsic.

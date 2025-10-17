@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.createSyntheticMethodForPropertyDelegate
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
  * Optimizes `val x by C` where `C` is either a constant or singleton: instead of storing the value `C` in a field, we access it every time
  * from the getter and setter of `x`.
  */
-@PhaseDescription(name = "SingletonOrConstantDelegation")
 internal class SingletonOrConstantDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transform(SingletonOrConstantDelegationTransformer(context), null)

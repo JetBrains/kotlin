@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 @OptIn(ExperimentalStdlibApi::class)
 fun anyExample(@JsExternalArgument x : Any) = x

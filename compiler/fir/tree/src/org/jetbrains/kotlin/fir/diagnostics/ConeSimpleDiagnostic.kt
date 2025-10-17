@@ -36,7 +36,10 @@ abstract class ConeCannotInferType : ConeDiagnostic
 class ConeCannotInferTypeParameterType(
     val typeParameter: FirTypeParameterSymbol,
     override val reason: String = "Cannot infer type for parameter ${typeParameter.name}"
-) : ConeCannotInferType()
+) : ConeCannotInferType() {
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unknown type for type parameter ${typeParameter.name}"
+}
 
 class ConeCannotInferValueParameterType(
     val valueParameter: FirValueParameterSymbol?,
@@ -48,16 +51,25 @@ class ConeCannotInferValueParameterType(
     private val _reason: String? = reason
 
     override val reason: String get() = _reason ?: ("Cannot infer type for parameter " + (valueParameter?.let { "${it.name}" } ?: "it"))
+
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unknown type for value parameter " + (valueParameter?.let { "${it.name}" } ?: "it")
 }
 
 class ConeCannotInferReceiverParameterType(
     override val reason: String = "Cannot infer type for receiver parameter"
-) : ConeCannotInferType()
+) : ConeCannotInferType() {
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unknown type for receiver parameter"
+}
 
 class ConeTypeVariableTypeIsNotInferred(
     val typeVariableType: ConeTypeVariableType,
     override val reason: String = "Type for ${typeVariableType.typeConstructor.debugName} is not inferred"
-) : ConeCannotInferType()
+) : ConeCannotInferType() {
+    override val readableDescriptionAsTypeConstructor: String
+        get() = "Unknown type for ${typeVariableType.typeConstructor.debugName}"
+}
 
 class ConeAmbiguousSuper(val candidateTypes: List<ConeKotlinType>) : ConeDiagnostic {
     override val reason: String
@@ -92,6 +104,10 @@ object ConeNoConstructorError : ConeDiagnostic {
     override val reason: String get() = "This type does not have a constructor"
 }
 
+object ConeNoImplicitDefaultConstructorOnExpectClass : ConeDiagnostic {
+    override val reason: String get() = "No implicit default constructor on expect class"
+}
+
 object ConeContractShouldBeFirstStatement : ConeDiagnostic {
     override val reason: String get() = "Contract should be the first statement."
 }
@@ -102,6 +118,10 @@ object ConeContractMayNotHaveLabel : ConeDiagnostic {
 
 object ConeContextParameterWithDefaultValue : ConeDiagnostic {
     override val reason: String get() = "Context parameters cannot have default values"
+}
+
+object ConeUnsupportedCollectionLiteralType : ConeDiagnostic {
+    override val reason: String get() = "Unsupported collection literal type"
 }
 
 enum class DiagnosticKind {

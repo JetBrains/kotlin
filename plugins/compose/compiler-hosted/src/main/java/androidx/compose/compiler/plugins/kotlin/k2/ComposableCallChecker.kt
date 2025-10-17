@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.k2
 
+import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -101,6 +102,17 @@ private fun checkComposableCall(
     context: CheckerContext,
     reporter: DiagnosticReporter,
 ) {
+    if (calleeFunction.callableId == ComposeCallableIds.key) {
+        // If key call only has the block argument, report it
+        if (expression is FirFunctionCall && expression.arguments.size == 1) {
+            reporter.reportOn(
+                expression.calleeReference.source,
+                ComposeErrors.KEY_CALL_WITH_NO_ARGUMENTS,
+                context
+            )
+        }
+    }
+
     context.visitCurrentScope(
         visitInlineLambdaParameter = { parameter ->
             val containingDeclarationSymbol = parameter.containingDeclarationSymbol

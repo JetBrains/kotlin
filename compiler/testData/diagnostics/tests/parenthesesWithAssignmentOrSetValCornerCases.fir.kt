@@ -1,3 +1,4 @@
+// LANGUAGE: +ForbidParenthesizedLhsInAssignments
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-70507
 // DIAGNOSTICS: -VARIABLE_WITH_REDUNDANT_INITIALIZER
@@ -51,7 +52,7 @@ object C {
 }
 
 fun bad(c: C?) {
-    <!ASSIGNMENT_TYPE_MISMATCH!>c?.<!VAL_REASSIGNMENT!>p<!> += 10<!>
+    c?.<!VAL_REASSIGNMENT!>p<!> <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 10
     (c?.p) <!NONE_APPLICABLE!>+=<!> 10
 
     c?.pa += 10

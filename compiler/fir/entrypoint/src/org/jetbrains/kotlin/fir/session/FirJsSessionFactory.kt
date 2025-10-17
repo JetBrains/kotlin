@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeSpecificityComparatorProvide
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.resolve.calls.js.JsCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
+import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.resolve.JsDefaultImportsProvider
 import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparatorWithoutDelegate
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 @OptIn(SessionConfiguration::class)
 object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.Context, FirJsSessionFactory.Context>() {
@@ -78,7 +78,7 @@ object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.C
         if (moduleKind != null) {
             register(FirJsModuleKind::class, FirJsModuleKind(moduleKind))
         }
-        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(JsPlatformAnalyzerServices))
+        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(JsDefaultImportsProvider))
     }
 
     // ==================================== Utilities ====================================

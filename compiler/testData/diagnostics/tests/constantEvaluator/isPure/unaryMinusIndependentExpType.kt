@@ -40,16 +40,16 @@ package test
 
 
 // val i1: false
-<!DEBUG_INFO_CONSTANT_VALUE("false")!>val i1: Byte = <!TYPE_MISMATCH!>-1.toInt()<!><!>
+<!DEBUG_INFO_CONSTANT_VALUE("false")!>val i1: Byte = <!TYPE_MISMATCH!>-1L.toInt()<!><!>
 
 // val i2: false
-<!DEBUG_INFO_CONSTANT_VALUE("false")!>val i2: Int = -1.toInt()<!>
+<!DEBUG_INFO_CONSTANT_VALUE("false")!>val i2: Int = -1L.toInt()<!>
 
 // val i3: false
-<!DEBUG_INFO_CONSTANT_VALUE("false")!>val i3: Long = <!TYPE_MISMATCH!>-1.toInt()<!><!>
+<!DEBUG_INFO_CONSTANT_VALUE("false")!>val i3: Long = <!TYPE_MISMATCH!>-1L.toInt()<!><!>
 
 // val i4: false
-<!DEBUG_INFO_CONSTANT_VALUE("false")!>val i4: Short = <!TYPE_MISMATCH!>-1.toInt()<!><!>
+<!DEBUG_INFO_CONSTANT_VALUE("false")!>val i4: Short = <!TYPE_MISMATCH!>-1L.toInt()<!><!>
 
 // val s1: false
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val s1: Byte = <!TYPE_MISMATCH!>-1.toShort()<!><!>

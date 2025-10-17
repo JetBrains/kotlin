@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
@@ -93,7 +94,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun KotlinTypeMarker.isError(): Boolean {
-        return this is ConeErrorType || this is ConeErrorType || this.typeConstructor().isError() ||
+        return this is ConeErrorType || this.typeConstructor().isError() ||
                 (this is ConeClassLikeType && this.lookupTag is ConeClassLikeErrorLookupTag)
     }
 
@@ -513,7 +514,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
         val argument = when (val argument = annotationCall.argumentMapping.mapping.values.firstOrNull() ?: return null) {
             is FirVarargArgumentsExpression -> argument.arguments.firstOrNull()
-            is FirArrayLiteral -> argument.arguments.firstOrNull()
+            is FirCollectionLiteral -> argument.arguments.firstOrNull()
             is FirNamedArgumentExpression -> argument.expression
             else -> argument
         } ?: return null
@@ -589,7 +590,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return classId.asSingleFqName().toUnsafe()
     }
 
-    override fun TypeParameterMarker.getName(): Name = (this as ConeTypeParameterLookupTag).name
+    override fun TypeParameterMarker.getName(): Name = this.asCone().name
 
     override fun TypeParameterMarker.isReified(): Boolean {
         require(this is ConeTypeParameterLookupTag)

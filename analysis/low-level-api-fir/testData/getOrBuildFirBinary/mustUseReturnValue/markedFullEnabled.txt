@@ -1,6 +1,6 @@
 KT element: KtClass
 KT element text:
-@kotlin.MustUseReturnValue public final class Marked public constructor() {
+@kotlin.MustUseReturnValues public final class Marked public constructor() {
     public final var prop: kotlin.String /* compiled code */
         public final get() { /* compiled code */ }
         public final set(value: kotlin.String) { /* compiled code */ }
@@ -27,7 +27,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|kotlin/MustUseReturnValue|() public final [ResolvedTo(BODY_RESOLVE)] class Marked : R|kotlin/Any| {
+@R|kotlin/MustUseReturnValues|() public final [ResolvedTo(BODY_RESOLVE)] class Marked : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] enum class E : R|kotlin/Enum<Marked.E>| {
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String|
 

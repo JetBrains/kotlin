@@ -24,6 +24,7 @@ import java.io.File
  */
 fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
     taskName: String,
+    tag: String? = null,
     requirePlatformLibs: Boolean = false,
     configure: Test.() -> Unit = {}
 ) : TaskProvider<Test> {
@@ -67,6 +68,9 @@ fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
                 implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") {
                     because("workaround for KTIJ-30065, remove after its resolution")
                 }
+                implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3") {
+                    because("workaround for KTIJ-30065, remove after its resolution")
+                }
                 implicitDependencies("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0") {
                     because("workaround for KTIJ-30065, remove after its resolution")
                 }
@@ -79,11 +83,9 @@ fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
             }
         }
 
-    val testTags = project.findProperty("kotlin.native.tests.tags")?.toString()
-
     return nativeTestTask(
         taskName = taskName,
-        tag = "$testTags|none()",
+        tag = tag,
         requirePlatformLibs = requirePlatformLibs,
     ) {
         /**

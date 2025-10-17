@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
-import org.jetbrains.kotlin.fir.correspondingProperty
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -19,10 +16,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
@@ -34,7 +31,6 @@ import org.jetbrains.kotlin.fir.scopes.computeImportingScopes
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
-import org.jetbrains.kotlin.fir.shouldSuppressInlineContextAt
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -47,6 +43,7 @@ class BodyResolveContext(
     @set:PrivateForInline
     var returnTypeCalculator: ReturnTypeCalculator,
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
+    private val isContextCollectorMode: Boolean
 ) {
     val fileImportsScope: MutableList<FirScope> = mutableListOf()
 
@@ -90,6 +87,7 @@ class BodyResolveContext(
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
 
+    // TODO: Remove it once LanguageFeature.EqualityConstraintForOperatorsUnderAssignments is gone KT-81144
     @set:PrivateForInline
     var isInsideAssignmentRhs: Boolean = false
 
@@ -357,8 +355,9 @@ class BodyResolveContext(
             implicitReceiverValue = InaccessibleImplicitReceiverValue(
                 owningClass.symbol,
                 owningClass.defaultType(),
+                InaccessibleReceiverKind.SecondaryConstructor,
                 holder.session,
-                holder.scopeSession
+                holder.scopeSession,
             )
         )
     }
@@ -617,10 +616,24 @@ class BodyResolveContext(
         val scopeForEnumEntries = forConstructorHeader
 
         val newTowerDataContextForStaticNestedClasses =
-            if ((owner as? FirRegularClass)?.classKind?.isSingleton == true)
+            if ((owner as? FirRegularClass)?.classKind?.isSingleton == true) {
                 forMembersResolution
-            else
+            } else if (!isContextCollectorMode) {
+                // ContextCollector is used by the IDE for completion, reference shortening, etc.
+                // Creating the inaccessible receiver in this mode would lead to the appearance of new completion items that would always
+                // lead to red code unless we specifically filter it out in all relevant call-sites.
+                // Instead, we just don't create it when running in ContextCollector mode.
+                val inaccessibleImplicitReceiverValue = InaccessibleImplicitReceiverValue(
+                    owner.symbol,
+                    type,
+                    InaccessibleReceiverKind.OuterClassOfNonInner,
+                    holder.session,
+                    holder.scopeSession,
+                )
+                staticsAndCompanion.addReceiver(labelName, inaccessibleImplicitReceiverValue)
+            } else {
                 staticsAndCompanion
+            }
 
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
         val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
@@ -1011,7 +1024,10 @@ class BodyResolveContext(
             withContainer(accessor) {
                 val type = receiverTypeRef?.coneType
                 val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
-                withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
+
+                withInlineFunctionIfApplicable(accessor) {
+                    withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
+                }
             }
         }
     }

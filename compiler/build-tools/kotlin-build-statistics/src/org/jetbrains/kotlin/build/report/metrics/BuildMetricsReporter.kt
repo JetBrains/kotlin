@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.lang.management.ManagementFactory
 
-interface BuildMetricsReporter<B : BuildTime, P : BuildPerformanceMetric> {
+interface BuildMetricsReporter<B : BuildTimeMetric, P : BuildPerformanceMetric> {
     fun startMeasure(time: B)
     fun endMeasure(time: B)
     fun addTimeMetricNs(time: B, durationNs: Long)
-    fun addDynamicTimeMetricNs(time: String, parent: B, durationNs: Long)
 
     @Deprecated("Use addTimeMetricNs instead", ReplaceWith("addTimeMetricNs(time, durationNs)"))
     fun addTimeMetricMs(time: B, durationMs: Long) = addTimeMetricNs(time, durationMs * 1_000_000)
@@ -27,10 +26,10 @@ interface BuildMetricsReporter<B : BuildTime, P : BuildPerformanceMetric> {
     fun addAttribute(attribute: BuildAttribute)
 
     fun getMetrics(): BuildMetrics<B, P>
-    fun addMetrics(metrics: BuildMetrics<B, P>)
+    fun addMetrics(metrics: BuildMetrics<out B, out P>)
 }
 
-inline fun <B : BuildTime, P : BuildPerformanceMetric, T> BuildMetricsReporter<B, P>.measure(time: B, fn: () -> T): T {
+inline fun <B : BuildTimeMetric, P : BuildPerformanceMetric, T> BuildMetricsReporter<B, P>.measure(time: B, fn: () -> T): T {
     startMeasure(time)
     try {
         return fn()
@@ -40,13 +39,13 @@ inline fun <B : BuildTime, P : BuildPerformanceMetric, T> BuildMetricsReporter<B
 }
 
 
-fun <B : BuildTime, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.startMeasureGc() {
+fun <B : BuildTimeMetric, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.startMeasureGc() {
     ManagementFactory.getGarbageCollectorMXBeans().forEach {
         startGcMetric(it.name, GcMetric(it.collectionTime, it.collectionCount))
     }
 }
 
-fun <B : BuildTime, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.endMeasureGc() {
+fun <B : BuildTimeMetric, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.endMeasureGc() {
     ManagementFactory.getGarbageCollectorMXBeans().forEach {
         endGcMetric(it.name, GcMetric(it.collectionTime, it.collectionCount))
     }

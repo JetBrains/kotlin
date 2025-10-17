@@ -1,5 +1,7 @@
 StringLiteral.kt:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=StringLiteralKt]]
+    facadeFqName: StringLiteralKt
+    partSimpleName: "StringLiteralKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/StringLiteral, fqName=StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[]]

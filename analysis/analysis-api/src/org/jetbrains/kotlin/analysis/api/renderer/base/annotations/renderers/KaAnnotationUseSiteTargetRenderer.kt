@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaAnnotationUseSiteTargetRenderer {
     public fun renderUseSiteTarget(
         analysisSession: KaSession,

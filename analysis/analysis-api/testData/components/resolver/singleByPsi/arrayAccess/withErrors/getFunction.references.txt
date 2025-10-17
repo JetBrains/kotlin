@@ -1,5 +1,6 @@
 KtArrayAccessExpression(44,48): '1[2]'
   KtArrayAccessReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) fun kotlin.Int.get(index: kotlin.Int): kotlin.Int

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.wasm.ir
 
 import org.jetbrains.kotlin.wasm.ir.WasmImmediateKind.*
-import java.util.EnumSet
 
 enum class WasmImmediateKind {
     CONST_U8,
@@ -122,7 +121,8 @@ sealed class WasmImmediate {
 enum class WasmOp(
     val mnemonic: String,
     val opcode: Int,
-    val immediates: List<WasmImmediateKind> = emptyList()
+    val immediates: List<WasmImmediateKind> = emptyList(),
+    val tailMnemonic: String = "",
 ) {
 
     // Unary
@@ -397,13 +397,13 @@ enum class WasmOp(
     REF_TEST("ref.test", 0xFB_14, HEAP_TYPE),
     REF_TEST_NULL("ref.test null", 0xFB_15, HEAP_TYPE),
     REF_CAST("ref.cast", 0xFB_16, HEAP_TYPE),
-    REF_CAST_NULL("ref.cast null", 0xFB_17, HEAP_TYPE),
+    REF_CAST_NULL("ref.cast (ref null", 0xFB_17, HEAP_TYPE, tailMnemonic = ")"),
 
     BR_ON_CAST("br_on_cast", 0xFB_18, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
     BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB_19, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
 
-    EXTERN_INTERNALIZE("extern.internalize", 0xFB_1A), // externref -> anyref
-    EXTERN_EXTERNALIZE("extern.externalize", 0xFB_1B), // anyref -> externref
+    EXTERN_INTERNALIZE("any.convert_extern", 0xFB_1A), // externref -> anyref
+    EXTERN_EXTERNALIZE("extern.convert_any", 0xFB_1B), // anyref -> externref
 
     // ============================================================
     // Exception handling
@@ -419,6 +419,7 @@ enum class WasmOp(
     ;
 
     constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())
+    constructor(mnemonic: String, opcode: Int, immediate: WasmImmediateKind, tailMnemonic: String) : this(mnemonic, opcode, listOf(immediate), tailMnemonic)
 }
 
 const val WASM_OP_PSEUDO_OPCODE = 0xFFFF

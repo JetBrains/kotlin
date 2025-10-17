@@ -29,8 +29,10 @@ val LLFirSession.moduleData: LLFirModuleData
 val FirBasedSymbol<*>.llFirModuleData: LLFirModuleData
     get() = fir.llFirModuleData
 
-
-class LLFirModuleData private constructor(val ktModule: KaModule) : FirModuleData() {
+/**
+ * The [FirModuleData] for FIR elements managed by the Analysis API. In Analysis API mode, all FIR elements must have [LLFirModuleData].
+ */
+open class LLFirModuleData internal constructor(val ktModule: KaModule) : FirModuleData() {
     constructor(session: LLFirSession) : this(session.ktModule) {
         bindSession(session)
     }

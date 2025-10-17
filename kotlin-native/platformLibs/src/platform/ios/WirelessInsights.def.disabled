@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.WirelessInsights
+
+modules = WirelessInsights
+compilerOpts = -framework WirelessInsights
+linkerOpts = -framework WirelessInsights
+#Disabled: Swift-only framework

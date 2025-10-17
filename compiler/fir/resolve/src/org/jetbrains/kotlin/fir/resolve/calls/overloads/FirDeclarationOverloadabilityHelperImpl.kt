@@ -71,6 +71,22 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
         }
     }
 
+    override fun isExtensionShadowedByMember(extension: FirCallableSymbol<*>, member: FirCallableSymbol<*>): Boolean {
+        val sigExtension = createSignatureForPossiblyShadowedExtension(extension)
+        val sigMember = createSignature(member, ignoreContextParameters = true)
+
+        val cs = createEmptyConstraintSystem()
+        val state = cs.signatureComparisonStateIfEquallyOrMoreSpecific(sigExtension, sigMember) ?: return false
+
+        // The complexity of this check is O(a.contextParameterSymbols.size * b.contextParameterSymbols.size),
+        // to limit quadratic explosion, we only check below a certain threshold.
+        if (extension.contextParameterSymbols.size * member.contextParameterSymbols.size > MAX_COMPLEXITY_FOR_CONTEXT_PARAMETERS) {
+            return false
+        }
+
+        return isShadowingContextParameters(member, extension, cs, state)
+    }
+
     private fun isShadowingContextParameters(
         a: FirCallableSymbol<*>,
         b: FirCallableSymbol<*>,
@@ -89,12 +105,12 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
         }
     }
 
-    override fun isEquallyOrMoreSpecific(
+    private fun isEquallyOrMoreSpecific(
         sigA: FlatSignature<FirCallableSymbol<*>>,
         sigB: FlatSignature<FirCallableSymbol<*>>,
     ): Boolean = createEmptyConstraintSystem().signatureComparisonStateIfEquallyOrMoreSpecific(sigA, sigB) != null
 
-    override fun createSignature(declaration: FirCallableSymbol<*>, ignoreContextParameters: Boolean): FlatSignature<FirCallableSymbol<*>> {
+    private fun createSignature(declaration: FirCallableSymbol<*>, ignoreContextParameters: Boolean): FlatSignature<FirCallableSymbol<*>> {
         val valueParameters = (declaration as? FirFunctionSymbol<*>)?.valueParameterSymbols.orEmpty()
 
         return FlatSignature(
@@ -119,18 +135,17 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
     /**
      * See [org.jetbrains.kotlin.resolve.calls.results.createForPossiblyShadowedExtension]
      */
-    override fun createSignatureForPossiblyShadowedExtension(declaration: FirCallableSymbol<*>): FlatSignature<FirCallableSymbol<*>> {
+    private fun createSignatureForPossiblyShadowedExtension(declaration: FirCallableSymbol<*>): FlatSignature<FirCallableSymbol<*>> {
         val valueParameters = (declaration as? FirFunctionSymbol<*>)?.valueParameterSymbols.orEmpty()
 
         return FlatSignature(
             origin = declaration,
             typeParameters = declaration.typeParameterSymbols.map { it.toLookupTag() },
             valueParameterTypes = buildList<KotlinTypeMarker> {
-                declaration.contextParameterSymbols.mapTo(this) { it.resolvedReturnType }
                 valueParameters.mapTo(this) { it.resolvedReturnType }
             },
             hasExtensionReceiver = false,
-            contextReceiverCount = declaration.contextParameterSymbols.size,
+            contextReceiverCount = 0,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = 0,
             isExpect = declaration.isExpect,

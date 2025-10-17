@@ -1,0 +1,875 @@
+FILE[kind=File[packageFqName=kotlin.reflect]]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=kotlin]
+      REFERENCE_EXPRESSION[referencedName=reflect]
+  IMPORT_LIST
+  CLASS[classId=kotlin/reflect/KCallable, fqName=kotlin.reflect.KCallable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KCallable, superNames=[]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=R]
+        MODIFIER_LIST[out]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.reflect.KCallable.name, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
+            valueArguments: [ ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=internal]
+                  REFERENCE_EXPRESSION[referencedName=IntrinsicConstEvaluation]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=kotlin/reflect/KClass, fqName=kotlin.reflect.KClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KClass, superNames=[KClassifier]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Any]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KClassifier]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.reflect.KClass.simpleName, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=simpleName]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=kotlin.reflect.KClass.qualifiedName, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=qualifiedName]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+      FUN[fqName=kotlin.reflect.KClass.isInstance, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isInstance]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "1.1" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Any]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+      FUN[fqName=kotlin.reflect.KClass.equals, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+        MODIFIER_LIST[public expect abstract operator MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Any]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+      FUN[fqName=kotlin.reflect.KClass.hashCode, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=kotlin/reflect/KClassifier, fqName=kotlin.reflect.KClassifier, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KClassifier, superNames=[]]
+    MODIFIER_LIST[public]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        valueArguments: [ version -> "1.1" ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    CLASS_BODY
+  CLASS[classId=kotlin/reflect/KFunction, fqName=kotlin.reflect.KFunction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KFunction, superNames=[KCallable, Function]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=R]
+        MODIFIER_LIST[out]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KCallable]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=R]
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Function]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=R]
+    CLASS_BODY
+  CLASS[classId=kotlin/reflect/KMutableProperty, fqName=kotlin.reflect.KMutableProperty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KMutableProperty, superNames=[KProperty]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=V]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KProperty]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+    CLASS_BODY
+  CLASS[classId=kotlin/reflect/KMutableProperty0, fqName=kotlin.reflect.KMutableProperty0, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KMutableProperty0, superNames=[KProperty0, KMutableProperty]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=V]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KProperty0]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KMutableProperty]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+    CLASS_BODY
+      FUN[fqName=kotlin.reflect.KMutableProperty0.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=V]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  CLASS[classId=kotlin/reflect/KMutableProperty1, fqName=kotlin.reflect.KMutableProperty1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KMutableProperty1, superNames=[KProperty1, KMutableProperty]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+      TYPE_PARAMETER[fqName=null, name=V]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KProperty1]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KMutableProperty]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+    CLASS_BODY
+      FUN[fqName=kotlin.reflect.KMutableProperty1.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=T]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=V]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  CLASS[classId=kotlin/reflect/KMutableProperty2, fqName=kotlin.reflect.KMutableProperty2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KMutableProperty2, superNames=[KProperty2, KMutableProperty]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=D]
+      TYPE_PARAMETER[fqName=null, name=E]
+      TYPE_PARAMETER[fqName=null, name=V]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KProperty2]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=D]
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=E]
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KMutableProperty]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+    CLASS_BODY
+      FUN[fqName=kotlin.reflect.KMutableProperty2.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver1]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=D]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver2]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=E]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=V]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
+  CLASS[classId=kotlin/reflect/KProperty, fqName=kotlin.reflect.KProperty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KProperty, superNames=[KCallable]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=V]
+        MODIFIER_LIST[out]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KCallable]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+    CLASS_BODY
+  CLASS[classId=kotlin/reflect/KProperty0, fqName=kotlin.reflect.KProperty0, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KProperty0, superNames=[KProperty]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=V]
+        MODIFIER_LIST[out]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KProperty]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=V]
+    CLASS_BODY
+      FUN[fqName=kotlin.reflect.KProperty0.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=V]
+  CLASS[classId=kotlin/reflect/KProperty1, fqName=kotlin.reflect.KProperty1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KProperty1, superNames=[KProperty]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+      TYPE_PARAMETER[fqName=null, name=V]
+        MODIFIER_LIST[out]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KProperty]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=V]
+    CLASS_BODY
+      FUN[fqName=kotlin.reflect.KProperty1.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=T]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=V]
+  CLASS[classId=kotlin/reflect/KProperty2, fqName=kotlin.reflect.KProperty2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KProperty2, superNames=[KProperty]]
+    MODIFIER_LIST[public expect]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=D]
+      TYPE_PARAMETER[fqName=null, name=E]
+      TYPE_PARAMETER[fqName=null, name=V]
+        MODIFIER_LIST[out]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KProperty]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=V]
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=D]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=E]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=V]
+    CLASS_BODY
+      FUN[fqName=kotlin.reflect.KProperty2.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver1]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=D]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver2]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=E]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=V]
+  CLASS[classId=kotlin/reflect/KType, fqName=kotlin.reflect.KType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KType, superNames=[]]
+    MODIFIER_LIST[public expect]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.reflect.KType.classifier, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=classifier]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "1.1" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KClassifier]
+      PROPERTY[fqName=kotlin.reflect.KType.arguments, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=arguments]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+            valueArguments: [ version -> "1.1" ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=collections]
+            REFERENCE_EXPRESSION[referencedName=List]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=reflect]
+                    REFERENCE_EXPRESSION[referencedName=KTypeProjection]
+      PROPERTY[fqName=kotlin.reflect.KType.isMarkedNullable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isMarkedNullable]
+        MODIFIER_LIST[public expect abstract MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  CLASS[classId=kotlin/reflect/KTypeParameter, fqName=kotlin.reflect.KTypeParameter, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KTypeParameter, superNames=[KClassifier]]
+    MODIFIER_LIST[public]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        valueArguments: [ version -> "1.1" ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KClassifier]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.reflect.KTypeParameter.name, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
+        MODIFIER_LIST[public abstract MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=kotlin.reflect.KTypeParameter.upperBounds, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=upperBounds]
+        MODIFIER_LIST[public abstract MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=collections]
+            REFERENCE_EXPRESSION[referencedName=List]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=reflect]
+                    REFERENCE_EXPRESSION[referencedName=KType]
+      PROPERTY[fqName=kotlin.reflect.KTypeParameter.variance, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=variance]
+        MODIFIER_LIST[public abstract MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KVariance]
+      PROPERTY[fqName=kotlin.reflect.KTypeParameter.isReified, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isReified]
+        MODIFIER_LIST[public abstract MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  CLASS[classId=kotlin/reflect/KTypeProjection, fqName=kotlin.reflect.KTypeProjection, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=KTypeProjection, superNames=[]]
+    MODIFIER_LIST[public final data]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        valueArguments: [ version -> "1.1" ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=KTypeProjection]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=variance]
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KVariance]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=type]
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KType]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=kotlin/reflect/KTypeProjection.Companion, fqName=kotlin.reflect.KTypeProjection.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[public companion]
+        CLASS_BODY
+          PROPERTY[fqName=kotlin.reflect.KTypeProjection.Companion.star, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=star]
+            MODIFIER_LIST[internal final MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=PublishedApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=PublishedApi]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KTypeProjection]
+          PROPERTY[fqName=kotlin.reflect.KTypeProjection.Companion.STAR, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=STAR]
+            MODIFIER_LIST[public final MustUseReturnValue]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KTypeProjection]
+            PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+              MODIFIER_LIST[public final]
+              VALUE_PARAMETER_LIST
+          FUN[fqName=kotlin.reflect.KTypeProjection.Companion.invariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invariant]
+            MODIFIER_LIST[public final MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmStatic]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=jvm]
+                      REFERENCE_EXPRESSION[referencedName=JvmStatic]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=type]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=reflect]
+                    REFERENCE_EXPRESSION[referencedName=KType]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KTypeProjection]
+          FUN[fqName=kotlin.reflect.KTypeProjection.Companion.contravariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contravariant]
+            MODIFIER_LIST[public final MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmStatic]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=jvm]
+                      REFERENCE_EXPRESSION[referencedName=JvmStatic]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=type]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=reflect]
+                    REFERENCE_EXPRESSION[referencedName=KType]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KTypeProjection]
+          FUN[fqName=kotlin.reflect.KTypeProjection.Companion.covariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=covariant]
+            MODIFIER_LIST[public final MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmStatic]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=jvm]
+                      REFERENCE_EXPRESSION[referencedName=JvmStatic]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=type]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=reflect]
+                    REFERENCE_EXPRESSION[referencedName=KType]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=reflect]
+                REFERENCE_EXPRESSION[referencedName=KTypeProjection]
+      PROPERTY[fqName=kotlin.reflect.KTypeProjection.variance, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=variance]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KVariance]
+      PROPERTY[fqName=kotlin.reflect.KTypeProjection.type, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=type]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KType]
+      FUN[fqName=kotlin.reflect.KTypeProjection.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+        MODIFIER_LIST[public open MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+      FUN[fqName=kotlin.reflect.KTypeProjection.component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component1]
+        MODIFIER_LIST[public final operator MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KVariance]
+      FUN[fqName=kotlin.reflect.KTypeProjection.component2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component2]
+        MODIFIER_LIST[public final operator MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KType]
+      FUN[fqName=kotlin.reflect.KTypeProjection.copy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=variance]
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=reflect]
+                  REFERENCE_EXPRESSION[referencedName=KVariance]
+            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=type]
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=reflect]
+                  REFERENCE_EXPRESSION[referencedName=KType]
+            REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=reflect]
+            REFERENCE_EXPRESSION[referencedName=KTypeProjection]
+      FUN[fqName=kotlin.reflect.KTypeProjection.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+        MODIFIER_LIST[public open operator MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Any]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+      FUN[fqName=kotlin.reflect.KTypeProjection.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+        MODIFIER_LIST[public open MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=kotlin/reflect/KVariance, fqName=kotlin.reflect.KVariance, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=KVariance, superNames=[Enum]]
+    MODIFIER_LIST[public final enum]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        valueArguments: [ version -> "1.1" ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=KVariance]
+      MODIFIER_LIST[private MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Enum]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=reflect]
+                    REFERENCE_EXPRESSION[referencedName=KVariance]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=kotlin.reflect.KVariance.INVARIANT, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=INVARIANT, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.reflect.KVariance.IN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=IN, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.reflect.KVariance.OUT, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OUT, superNames=[]]

@@ -1,5 +1,6 @@
 KtOperationReferenceExpression(58,65): 'infixOp'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) infix fun kotlin.Int.infixOp(rhs: kotlin.String)

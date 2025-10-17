@@ -19,7 +19,7 @@ internal inline fun internalInlineFun(o: String, k: String): String
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val o: String =
+    val o: String
         /* ACCESSOR use-site */ access$foo$tAKt(x = o)
-    val k: String =
+    val k: String
         /* ACCESSOR use-site */ access$foo$tAKt(x = k)

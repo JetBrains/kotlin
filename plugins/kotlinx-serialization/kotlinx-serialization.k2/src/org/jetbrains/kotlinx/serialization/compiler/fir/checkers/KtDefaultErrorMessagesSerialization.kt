@@ -61,7 +61,7 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             "This class is a companion object for a @Serializable class {0}. Companion objects of serializable classes can't be serializable with other serializers," +
                     "because this may lead to runtime errors and incorrect results. The only case where this is allowed is when both class {0} and its companion" +
                     "have the same serializer specified in @Serializable(with = ...) annotation. " +
-                    "This warning will be promoted to error in the future. See https://youtrack.jetbrains.com/issue/KT-70110 for details.",
+                    "See https://youtrack.jetbrains.com/issue/KT-70110 for details.",
             FirDiagnosticRenderers.DECLARATION_NAME
         )
         map.put(
@@ -136,6 +136,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.RENDER_TYPE,
             FirDiagnosticRenderers.RENDER_TYPE,
             CommonRenderers.STRING
+        )
+        map.put(
+            FirSerializationErrors.CUSTOM_SERIALIZER_MAY_BE_INACCESSIBLE,
+            "Custom serializer ''{0}'' is private, while the type ''{1}'' is not. This can cause ''serializer not found'' errors on use sites. Consider aligning the visibilities.",
+            FirDiagnosticRenderers.DECLARATION_NAME,
+            FirDiagnosticRenderers.DECLARATION_NAME
         )
         map.put(
             FirSerializationErrors.TRANSIENT_MISSING_INITIALIZER,

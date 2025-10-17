@@ -17,7 +17,7 @@ val ClassMemberAlias = MyClass.NestedInheritor
 
 fun testElvis() {
     var i100: MyClass = NestedInheritor <!USELESS_ELVIS!>?: myClassProp<!>
-    var i110: MyClass = <!INITIALIZER_TYPE_MISMATCH!>NestedInheritor <!USELESS_ELVIS!>?: stringProp<!><!>
+    var i110: MyClass <!INITIALIZER_TYPE_MISMATCH!>=<!> NestedInheritor <!USELESS_ELVIS!>?: stringProp<!>
     var i120: MyClass = NestedInheritor <!USELESS_ELVIS!>?: <!UNRESOLVED_REFERENCE!>getNestedInheritor<!>()<!>
 
     receive<MyClass>(NestedInheritor <!USELESS_ELVIS!>?: myClassProp<!>)

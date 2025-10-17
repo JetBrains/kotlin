@@ -34,7 +34,9 @@ excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     asl_decode_buffer asl_encode_buffer asl_remove_index \
                     averunnable dbm_forder pidlock ttyaction ttylock ttymsg ttyunlock uuid_generate_early_random \
                     vm_stats \
-                    clock_get_res clock_set_res mach_vm_region_info mach_vm_region_info_64 task_wire vm_map_64 vm_map_exec_lockdown vm_mapped_pages_info vm_region vm_region_recurse xpc_debugger_api_misuse_info
+                    clock_get_res clock_set_res mach_vm_region_info mach_vm_region_info_64 task_wire vm_map_64 vm_map_exec_lockdown \
+                    vm_mapped_pages_info vm_region vm_region_recurse xpc_debugger_api_misuse_info \
+                    mach_vm_reclaim_update_kernel_accounting_trap
 
 compilerOpts = -D_XOPEN_SOURCE -DSYSCTL_DEF_ENABLED
 linkerOpts = -ldl -lz -lbz2 -lcompression -late

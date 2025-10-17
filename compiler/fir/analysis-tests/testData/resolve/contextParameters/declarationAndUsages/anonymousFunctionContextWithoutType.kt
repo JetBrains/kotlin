@@ -1,11 +1,16 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
-fun foo(f: context(String) () -> String) {}
+fun foo(f: context(String) () -> Unit) {}
 
-fun test() {
-    // Should become green when context receivers are removed and we parse `c` as parameter without name instead of context receiver.
-    foo(<!ARGUMENT_TYPE_MISMATCH!>context(<!CONTEXT_PARAMETER_WITHOUT_NAME, UNRESOLVED_REFERENCE!>c<!>) fun() { return <!UNRESOLVED_REFERENCE!>c<!> }<!>)
+fun test(c: String) {
+    // Invalid syntax: context call and anonymous function declaration are separated
+    foo(<!NONE_APPLICABLE!>context<!>(c)<!SYNTAX!><!> <!TOO_MANY_ARGUMENTS!>fun() { }<!>)
+}
+
+fun test2() {
+    // Correct: pass an anonymous function with the context parameters
+    foo(context(x: String) fun() { })
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, typeWithContext */

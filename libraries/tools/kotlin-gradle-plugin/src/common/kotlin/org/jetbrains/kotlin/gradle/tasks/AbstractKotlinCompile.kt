@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.CompilerExecutionSettings
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.UsesCompilerSystemPropertiesService
+import org.jetbrains.kotlin.compilerRunner.btapi.UsesBuildSessionService
 import org.jetbrains.kotlin.compilerRunner.createGradleCompilerRunner
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
@@ -61,6 +62,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     UsesClassLoadersCachingBuildService,
     UsesKotlinToolingDiagnostics,
     UsesBuildIdProviderService,
+    UsesBuildSessionService,
     UsesBuildFusService,
     BaseKotlinCompile {
 
@@ -201,18 +203,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                     classLoadersCachingService,
                                     buildFinishedListenerService,
                                     buildIdService,
-                                    buildFusService.orNull?.getFusMetricsConsumer()
+                                    buildSessionService,
+                                    buildFusService.orNull?.getFusMetricsConsumer(),
+                                    this
                                 )
                             }
                     }
             }
         )
-
-    @get:Internal
-    internal abstract val preciseCompilationResultsBackup: Property<Boolean>
-
-    @get:Internal
-    internal abstract val keepIncrementalCompilationCachesInMemory: Property<Boolean>
 
     /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableUnsafeIncrementalCompilationForMultiplatform] */
     @get:Internal
@@ -233,8 +231,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     fun execute(inputChanges: InputChanges) {
         kotlinGradleBuildServices.orNull // KT-76379: just instantiate the build service if it wasn't yet
         val buildMetrics = metrics.get()
-        buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
-        buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
+        buildMetrics.addTimeMetric(START_TASK_ACTION_EXECUTION)
+        buildMetrics.measure(OUT_OF_WORKER_TASK_ACTION) {
             buildFusService.orNull?.reportFusMetrics {
                 CompileKotlinTaskMetrics.collectMetrics(
                     name,
@@ -253,7 +251,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             // To prevent this, we backup outputs before incremental build and restore when exception is thrown
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
-                    buildMetrics.measure(GradleBuildTime.BACKUP_OUTPUT) {
+                    buildMetrics.measure(BACKUP_OUTPUT) {
                         TaskOutputsBackup(
                             fileSystemOperations,
                             projectLayout.buildDirectory.dir("snapshot/kotlin/$name"),
@@ -298,8 +296,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     protected open fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return IncrementalCompilationFeatures(
             usePreciseJavaTracking = false, // not generally applicable
-            preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
-            keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
+            preciseCompilationResultsBackup = true,
+            keepIncrementalCompilationCachesInMemory = true,
             enableUnsafeIncrementalCompilationForMultiplatform = enableUnsafeIncrementalCompilationForMultiplatform.get(),
             enableMonotonousIncrementalCompileSetExpansion = enableMonotonousIncrementalCompileSetExpansion.get(),
         )

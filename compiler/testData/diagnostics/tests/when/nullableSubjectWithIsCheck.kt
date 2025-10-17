@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
 // ISSUE: KT-49710
 // WITH_STDLIB
@@ -35,7 +34,7 @@ fun <T> List<T>.isNull1() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
     <!USELESS_IS_CHECK!>is List<*><!> -> false
 }
 
-fun <T: Int?> isNull(arg: T) = <!NO_ELSE_IN_WHEN!>when<!>(arg) {
+fun <T: Int?> isNullG(arg: T) = <!NO_ELSE_IN_WHEN!>when<!>(arg) {
     is Int -> false
     null -> true
 }

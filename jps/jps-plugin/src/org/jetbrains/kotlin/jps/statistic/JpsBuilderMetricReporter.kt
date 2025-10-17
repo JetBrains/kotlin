@@ -9,11 +9,11 @@ import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.JpsBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.JpsBuildTime
+import org.jetbrains.kotlin.build.report.metrics.JpsBuildTimeMetric
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.compilerRunner.JpsCompilationResult
 
-interface JpsBuilderMetricReporter : BuildMetricsReporter<JpsBuildTime, JpsBuildPerformanceMetric> {
+interface JpsBuilderMetricReporter : BuildMetricsReporter<JpsBuildTimeMetric, JpsBuildPerformanceMetric> {
     fun flush(context: CompileContext): JpsCompileStatisticsData
 
     fun buildFinish(moduleChunk: ModuleChunk, context: CompileContext, exitCode: String)

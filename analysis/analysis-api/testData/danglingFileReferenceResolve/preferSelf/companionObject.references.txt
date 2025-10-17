@@ -1,5 +1,6 @@
 KtNameReferenceExpression(61,64): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: true
+    usesContextSensitiveResolution: false
     symbols:
       (in Foo) companion object [fake.kt]

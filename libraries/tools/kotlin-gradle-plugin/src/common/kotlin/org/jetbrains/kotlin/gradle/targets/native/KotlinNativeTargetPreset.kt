@@ -9,13 +9,12 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
+import org.jetbrains.kotlin.gradle.targets.native.internal.getOrRegisterDownloadKotlinNativeDistributionTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
-import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropPropagatedDependencies
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
 import org.jetbrains.kotlin.gradle.utils.Future
@@ -65,8 +64,8 @@ internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>
         createTargetConfigurator().configureTarget(result)
 
         SingleActionPerProject.run(project, "setupCInteropDependencies") {
+            project.getOrRegisterDownloadKotlinNativeDistributionTask()
             project.setupCInteropCommonizerDependencies()
-            project.setupCInteropPropagatedDependencies()
         }
 
         return result
@@ -139,9 +138,9 @@ internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSuppor
         else -> project.future { true }
     }
 
-// The same as `KotlinNativeTarget.publishable`, but with a fallback to `enabledOnCurrentHostForKlibCompilation`
+// KT-81134 with a fallback to `enabledOnCurrentHostForKlibCompilation`
 @Suppress("DEPRECATION")
-internal val KotlinNativeTarget.crossCompilationPublishable: Boolean
+internal val KotlinNativeTarget.publishableWithFallback: Boolean
     get() = crossCompilationOnCurrentHostSupported.lenient.getOrNull()
         ?: konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
 

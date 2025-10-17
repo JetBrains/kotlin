@@ -1,5 +1,6 @@
 KtNameReferenceExpression(51,60): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in lib) open class JavaClass

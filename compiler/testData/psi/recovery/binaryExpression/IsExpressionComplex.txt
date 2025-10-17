@@ -1,0 +1,60 @@
+KtFile: IsExpressionComplex.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// It's found during working on binary expression optimizing KT-77993')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('x')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('z')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(EQEQ)('==')
+            PsiWhiteSpace(' ')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('y')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(GT)('>')
+              PsiWhiteSpace(' ')
+              IS_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(is)('is')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('A')
+        PsiErrorElement:Expecting ')
+          <empty list>
+        PsiWhiteSpace(' ')
+        THEN
+          PsiErrorElement:Expecting an expression
+            <empty list>
+      OPERATION_REFERENCE
+        PsiElement(DIV)('/')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(RPAR)(')')

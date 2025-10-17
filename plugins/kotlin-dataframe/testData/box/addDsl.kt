@@ -12,9 +12,14 @@ fun box(): String {
         group("group1") {
             "b" from { it }
         }
+        group {
+            "c" from { it }
+        } into "group2"
     }
 
     df.group.a
     df.group1.b
+    df.group2.c
+    df.compareSchemas(strict = true)
     return "OK"
 }

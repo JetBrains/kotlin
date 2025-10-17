@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.nonLazyPublishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.impl.hasTypeOf
@@ -224,6 +225,7 @@ class FirSamResolver(
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }.apply {
             containingClassForStaticMemberAttr = outerClassManager?.outerClass(firRegularClass.symbol)?.toLookupTag()
+            nonLazyPublishedApiEffectiveVisibility = firRegularClass.nonLazyPublishedApiEffectiveVisibility
         }.symbol
     }
 
@@ -262,6 +264,8 @@ class FirSamResolver(
                 typeAliasSymbol,
                 substitutor = null,
             )
+            // Typealias cannot be published itself, so we should take the attribute from the expansion class
+            it.nonLazyPublishedApiEffectiveVisibility = expansionRegularClass.nonLazyPublishedApiEffectiveVisibility
         }.symbol
     }
 

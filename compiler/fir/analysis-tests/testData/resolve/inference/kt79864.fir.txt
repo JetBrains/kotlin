@@ -1,0 +1,21 @@
+FILE: kt79864.kt
+    public final val <T> R|kotlin/reflect/KClass<T & Any>|.myJava: R|java/lang/Class<T>|
+        public get(): R|java/lang/Class<T>| {
+            ^ Null(null)!!
+        }
+    public final fun <F : R|kotlin/Enum<*>|> field(defValue: R|F|): R|kotlin/Unit| {
+        lval tmp: R|java/lang/Class<out F>| = <getClass>(R|<local>/defValue|).R|/myJava|<R|CapturedType(out F)|>
+        Q|java/lang/Enum|.R|java/lang/Enum.valueOf*s|<R|CapturedType(out F)!|>(R|<local>/tmp|, String(str))
+        Q|java/lang/Enum|.R|java/lang/Enum.valueOf*s|<R|ft<CapturedType(out F), CapturedType(out F)?>|>(<getClass>(R|<local>/defValue|).R|/myJava|<R|ft<CapturedType(out F), CapturedType(out F)?>|>, String(str))
+        R|/expect|(<L> = expect@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=NoInline>  {
+            lval tmp: R|java/lang/Class<out F>| = <getClass>(R|<local>/defValue|).R|/myJava|<R|CapturedType(out F)|>
+            Q|java/lang/Enum|.R|java/lang/Enum.valueOf*s|<R|CapturedType(out F)!|>(R|<local>/tmp|, String(str))
+        }
+        )
+        R|/expect|(<L> = expect@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=NoInline>  {
+            Q|java/lang/Enum|.R|java/lang/Enum.valueOf*s|<R|ft<CapturedType(out F), CapturedType(out F)?>|>(<getClass>(R|<local>/defValue|).R|/myJava|<R|ft<CapturedType(out F), CapturedType(out F)?>|>, String(str))
+        }
+        )
+    }
+    public final fun expect(f: R|(kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+    }

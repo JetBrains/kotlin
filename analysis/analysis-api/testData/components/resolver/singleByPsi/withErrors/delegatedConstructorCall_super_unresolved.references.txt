@@ -1,5 +1,6 @@
 KtConstructorDelegationReferenceExpression(108,113): 'super'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Base) constructor(p1: kotlin.Int)

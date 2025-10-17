@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import java.io.File
 import java.nio.file.Paths
 import kotlin.io.path.readText
@@ -31,7 +31,7 @@ abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTes
         val firDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
 
         val expectedFile = File(expectedPath(filePath, ".txt"))
-        KotlinTestUtils.assertEqualsToFile(expectedFile, firDump)
+        TestDataAssertions.assertEqualsToFile(expectedFile, firDump)
         checkAnnotationOwners(filePath, firFile)
     }
 }

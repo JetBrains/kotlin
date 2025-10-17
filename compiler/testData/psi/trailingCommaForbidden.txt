@@ -259,12 +259,11 @@ KtFile: trailingCommaForbidden.kt
             PsiElement(CLOSING_QUOTE)('"')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PsiErrorElement:Expecting an argument
-          PsiElement(COMMA)(',')
-        PsiWhiteSpace('\n    ')
         VALUE_ARGUMENT
-          PsiErrorElement:Expecting an expression
+          PsiErrorElement:Expecting an argument
             <empty list>
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   FUN
@@ -300,8 +299,10 @@ KtFile: trailingCommaForbidden.kt
                 PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PsiErrorElement:Expecting an argument
-          PsiElement(COMMA)(',')
+        VALUE_ARGUMENT
+          PsiErrorElement:Expecting an argument
+            <empty list>
+        PsiElement(COMMA)(',')
         VALUE_ARGUMENT
           STRING_TEMPLATE
             PsiElement(OPEN_QUOTE)('"')
@@ -343,8 +344,10 @@ KtFile: trailingCommaForbidden.kt
                 PsiElement(RPAR)(')')
         PsiElement(COMMA)(',')
         PsiWhiteSpace('\n    ')
-        PsiErrorElement:Expecting an argument
-          PsiElement(COMMA)(',')
+        VALUE_ARGUMENT
+          PsiErrorElement:Expecting an argument
+            <empty list>
+        PsiElement(COMMA)(',')
         VALUE_ARGUMENT
           STRING_TEMPLATE
             PsiElement(OPEN_QUOTE)('"')
@@ -386,9 +389,10 @@ KtFile: trailingCommaForbidden.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('3')
             PsiElement(COMMA)(',')
-            PsiWhiteSpace('\n            ')
             PsiErrorElement:Expecting an index element
-              PsiElement(COMMA)(',')
+              <empty list>
+            PsiWhiteSpace('\n            ')
+            PsiElement(COMMA)(',')
             PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n    ')
       PROPERTY
@@ -404,7 +408,8 @@ KtFile: trailingCommaForbidden.kt
           INDICES
             PsiElement(LBRACKET)('[')
             PsiErrorElement:Expecting an index element
-              PsiElement(COMMA)(',')
+              <empty list>
+            PsiElement(COMMA)(',')
             PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n    ')
       PROPERTY
@@ -420,7 +425,8 @@ KtFile: trailingCommaForbidden.kt
           INDICES
             PsiElement(LBRACKET)('[')
             PsiErrorElement:Expecting an index element
-              PsiElement(COMMA)(',')
+              <empty list>
+            PsiElement(COMMA)(',')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
             PsiElement(RBRACKET)(']')
@@ -438,8 +444,9 @@ KtFile: trailingCommaForbidden.kt
           INDICES
             PsiElement(LBRACKET)('[')
             PsiErrorElement:Expecting an index element
-              PsiElement(COMMA)(',')
-            PsiErrorElement:Expecting an expression
+              <empty list>
+            PsiElement(COMMA)(',')
+            PsiErrorElement:Expecting an index element
               <empty list>
             PsiElement(COMMA)(',')
             INTEGER_CONSTANT
@@ -459,7 +466,8 @@ KtFile: trailingCommaForbidden.kt
           INDICES
             PsiElement(LBRACKET)('[')
             PsiErrorElement:Expecting an index element
-              PsiElement(COMMA)(',')
+              <empty list>
+            PsiElement(COMMA)(',')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
             PsiElement(COMMA)(',')
@@ -1084,11 +1092,10 @@ KtFile: trailingCommaForbidden.kt
         PsiElement(IDENTIFIER)('foo')
       VALUE_ARGUMENT_LIST
         PsiElement(LPAR)('(')
-        PsiErrorElement:Expecting an argument
-          PsiElement(COMMA)(',')
         VALUE_ARGUMENT
-          PsiErrorElement:Expecting an expression
+          PsiErrorElement:Expecting an argument
             <empty list>
+        PsiElement(COMMA)(',')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       LAMBDA_ARGUMENT

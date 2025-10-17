@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubsti
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.ExclusiveForOverloadResolutionByLambdaReturnType
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.safeSubstitute
@@ -63,6 +65,10 @@ class FirCallCompleter(
         get() = transformer.context.inferenceSession
 
     val completer: ConstraintSystemCompleter = ConstraintSystemCompleter(components)
+
+    fun isInsideAnnotationContext(): Boolean {
+        return transformer.expressionsTransformer?.enableArrayOfCallTransformation == true
+    }
 
     fun <T> completeCall(
         call: T,
@@ -118,7 +124,7 @@ class FirCallCompleter(
                 checkStorageConstraintsAfterFullCompletion(readOnlyConstraintStorage)
 
                 val finalSubstitutor = readOnlyConstraintStorage
-                    .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
+                    .buildAbstractResultingSubstitutor(session.typeContext).asCone()
                 call.transformSingle(
                     createCompletionResultsWriter(finalSubstitutor),
                     null
@@ -145,7 +151,7 @@ class FirCallCompleter(
                     // Frankly speaking, this is some sort of hack, which currently I don't know how to resolve properly.
                     val storage = candidate.system.currentStorage()
                     val finalSubstitutor = storage
-                        .buildCurrentSubstitutor(session.typeContext, emptyMap()) as ConeSubstitutor
+                        .buildCurrentSubstitutor(session.typeContext, emptyMap()).asCone()
                     call.transformSingle(
                         createCompletionResultsWriter(finalSubstitutor),
                         null
@@ -197,6 +203,7 @@ class FirCallCompleter(
             // compiler/testData/diagnostics/tests/inference/nestedIfWithExpectedType.kt.
             resolutionMode.forceFullCompletion && candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(expectedType) -> {
                 system.addEqualityConstraintIfCompatible(initialType, expectedType, ConeExpectedTypeConstraintPosition)
+                candidate.markWasExpectedTypeAddedAsEqualityForSyntheticCall()
             }
             resolutionMode.fromCast -> {
                 if (candidate.isFunctionForExpectTypeFromCastFeature()) {
@@ -248,7 +255,7 @@ class FirCallCompleter(
     private fun Candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(expectedType: ConeKotlinType): Boolean {
         // If we're inside an assignment's RHS, we mustn't add an equality constraint because it might prevent smartcasts.
         // Example: val x: String? = null; x = if (foo) "" else throw Exception()
-        if (components.context.isInsideAssignmentRhs) return false
+        if (!LanguageFeature.EqualityConstraintForOperatorsUnderAssignments.isEnabled() && components.context.isInsideAssignmentRhs) return false
 
         val symbol = symbol as? FirCallableSymbol ?: return false
         if (symbol.origin != FirDeclarationOrigin.Synthetic.FakeFunction ||
@@ -309,7 +316,7 @@ class FirCallCompleter(
         atom: ConeResolvedLambdaAtom,
         candidate: Candidate,
     ) {
-        val returnVariable = ConeTypeVariableForLambdaReturnType(atom.anonymousFunction, "_R")
+        val returnVariable = ConeTypeVariableForLambdaReturnType(atom.anonymousFunction, PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
         val csBuilder = candidate.system.getBuilder()
         csBuilder.registerVariable(returnVariable)
         val functionalType = csBuilder.buildCurrentSubstitutor()
@@ -338,6 +345,7 @@ class FirCallCompleter(
             components.samResolver,
             components.context,
             mode,
+            insideAnnotationContext = isInsideAnnotationContext(),
         )
     }
 

@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=foo.bar.goo, facadeFqName=foo.bar.goo.Imports_ERRKt]]
+  facadeFqName: foo.bar.goo.Imports_ERRKt
+  partSimpleName: "Imports_ERRKt"
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +InlineClasses, -JsAllowValueClassesInExternals, -JsExternalPropertyParameters
 // DIAGNOSTICS: -OPT_IN_USAGE, -INLINE_CLASS_DEPRECATED
 

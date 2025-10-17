@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
@@ -21,11 +20,7 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 interface FakeInliningLocalVariables<Container : IrElement> {
@@ -53,7 +48,6 @@ interface FakeInliningLocalVariables<Container : IrElement> {
 /**
  * Adds fake locals to identify the range of inlined functions and lambdas.
  */
-@PhaseDescription(name = "FakeLocalVariablesForBytecodeInlinerLowering")
 internal class FakeLocalVariablesForBytecodeInlinerLowering(
     override val context: JvmBackendContext
 ) : IrInlineReferenceLocator(context), FakeInliningLocalVariables<IrFunction>, FileLoweringPass {

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -314,7 +313,9 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         val kotlinParameterTypes = jvmSignature.parameters
         val syntheticParameterCount = nonDispatchParameters.count { it.isSkippedInGenericSignature }
 
-        visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
+        val annotableParamCount = kotlinParameterTypes.size - syntheticParameterCount
+        mv.visitAnnotableParameterCount(annotableParamCount, true)
+        mv.visitAnnotableParameterCount(annotableParamCount, false)
 
         for ((i, parameterType) in kotlinParameterTypes.withIndex()) {
             val parameter = nonDispatchParameters[i]

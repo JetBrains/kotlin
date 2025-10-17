@@ -5,9 +5,10 @@ plugins {
 
 dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
+    implementation(kotlin("stdlib", coreDepsVersion))
+    testImplementation(kotlin("stdlib", coreDepsVersion))
     testImplementation(libs.junit4)
-    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test", coreDepsVersion))
 }
 
 sourceSets {

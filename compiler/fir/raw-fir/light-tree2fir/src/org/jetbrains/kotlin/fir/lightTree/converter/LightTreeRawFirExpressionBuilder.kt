@@ -1160,12 +1160,12 @@ class LightTreeRawFirExpressionBuilder(
         expression.forEachChildren {
             if (it.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(it, "Incorrect collection literal argument")
         }
-
-        return buildArrayLiteral {
+        val arguments = buildArgumentList {
+            arguments += firExpressionList
+        }
+        return buildCollectionLiteral {
             source = expression.toFirSourceElement()
-            argumentList = buildArgumentList {
-                arguments += firExpressionList
-            }
+            argumentList = arguments
         }
     }
 

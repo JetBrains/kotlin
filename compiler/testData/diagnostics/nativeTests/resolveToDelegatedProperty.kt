@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 interface A {
     val bar: String

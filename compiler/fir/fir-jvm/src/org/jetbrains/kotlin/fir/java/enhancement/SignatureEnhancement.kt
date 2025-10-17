@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java.enhancement
 
-import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.deferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1089,21 +1089,21 @@ private class EnhancementSignatureParts(
     override fun FirAnnotation.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean = this is FirJavaExternalAnnotation
 
     override val KotlinTypeMarker.annotations: Iterable<FirAnnotation>
-        get() = (this as ConeKotlinType).typeAnnotations
+        get() = this.asCone().typeAnnotations
 
     override val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
-        get() = (this as? ConeKotlinType)?.classId?.asSingleFqName()?.toUnsafe()
+        get() = this.asCone().classId?.asSingleFqName()?.toUnsafe()
 
-    override val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
-        get() = (this as ConeKotlinType).enhancedTypeForWarning
+    override val KotlinTypeMarker.enhancedForWarnings: ConeKotlinType?
+        get() = this.asCone().enhancedTypeForWarning
 
     override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
         AbstractTypeChecker.equalTypes(session.typeContext, this, other)
 
-    override fun KotlinTypeMarker.isArrayOrPrimitiveArray(): Boolean = (this as ConeKotlinType).isArrayOrPrimitiveArray
+    override fun KotlinTypeMarker.isArrayOrPrimitiveArray(): Boolean = this.asCone().isArrayOrPrimitiveArray
 
     override val TypeParameterMarker.isFromJava: Boolean
-        get() = (this as ConeTypeParameterLookupTag).symbol.fir.origin is FirDeclarationOrigin.Java
+        get() = this.asCone().symbol.fir.origin is FirDeclarationOrigin.Java
 
     override val KotlinTypeMarker.shouldPropagateBoundNullness: Boolean
         // If 'annotations' is empty or any annotation should propagate nullability, the type should propagate bound nullness.
@@ -1136,47 +1136,21 @@ class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : F
     class EnhancementSymbolsCache(cachesFactory: FirCachesFactory) {
         @OptIn(PrivateForInline::class)
         val enhancedFunctions: FirCache<FirFunctionSymbol<*>, FirFunctionSymbol<*>, FunctionEnhancementContext> =
-            when {
-                // TODO: Leave only `else` branch if there are no exceptions (KT-71929)
-                // TODO: Also consider removing PerformanceWise as well
-                // `cachesFactory.isThreadSafe` is used just for sake of not calling the registry in the compiler
-                @OptIn(FirCachesFactory.PerformanceWise::class)
-                cachesFactory.isThreadSafe && isRegistryForPostComputeEnhancedJavaFunctionsCache ->
-                    cachesFactory.createCacheWithPostCompute(
-                        createValue = { original, context ->
-                            context.enhancement.enhance(original, context.name, context.precomputedOverridden) to context.enhancement
-                        },
-                        postCompute = { _, enhancedVersion, enhancement ->
-                            val enhancedVersionFir = enhancedVersion.fir
-                            (enhancedVersionFir.initialSignatureAttr)?.let {
-                                enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it, it.name)
-                            }
-                        }
-                    )
-                else ->
-                    cachesFactory.createCache { original, context ->
-                        context.enhancement.enhance(original, context.name, context.precomputedOverridden).also { enhancedVersion ->
-                            val enhancedVersionFir = enhancedVersion.fir
-                            enhancedVersionFir.initialSignatureAttr?.let {
-                                enhancedVersionFir.initialSignatureAttr =
-                                    context.enhancement.enhancedFunction(it, it.name)
-                            }
-                        }
+            cachesFactory.createCache { original, context ->
+                context.enhancement.enhance(original, context.name, context.precomputedOverridden).also { enhancedVersion ->
+                    val enhancedVersionFir = enhancedVersion.fir
+                    enhancedVersionFir.initialSignatureAttr?.let {
+                        enhancedVersionFir.initialSignatureAttr =
+                            context.enhancement.enhancedFunction(it, it.name)
                     }
+                }
             }
-
 
         @OptIn(PrivateForInline::class)
         val enhancedVariables: FirCache<FirVariableSymbol<*>, FirVariableSymbol<*>, Pair<FirSignatureEnhancement, Name>> =
             cachesFactory.createCache { original, (enhancement, name) ->
                 enhancement.enhance(original, name)
             }
-
-        private companion object {
-            private val isRegistryForPostComputeEnhancedJavaFunctionsCache by lazy(LazyThreadSafetyMode.PUBLICATION) {
-                Registry.`is`("kotlin.analysis.postComputeEnhancedJavaFunctionsCache", false)
-            }
-        }
     }
 }
 

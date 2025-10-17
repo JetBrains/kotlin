@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.utils.DFS
  * This phase generates `toArray` overrides for `Collection` subclasses which call `kotlin.jvm.internal.CollectionToArray.toArray`,
  * unless the function is already declared in the class.
  */
-@PhaseDescription(name = "ToArray")
 internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     private val symbols = context.symbols
 

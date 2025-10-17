@@ -1,5 +1,6 @@
 KtNameReferenceExpression(23,31): 'Suppress'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Suppress) constructor(vararg names: kotlin.String)

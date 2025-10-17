@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=MissingCommaInValueParameterListWithValOrVarKt]]
+  facadeFqName: MissingCommaInValueParameterListWithValOrVarKt
+  partSimpleName: "MissingCommaInValueParameterListWithValOrVarKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Test, fqName=Test, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Test, superNames=[]]

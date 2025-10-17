@@ -33,9 +33,10 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -92,6 +93,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeFunctionCallExpectedError -> FirErrors.FUNCTION_CALL_EXPECTED.createOn(source, this.name.asString(), this.hasValueParameters, session)
     is ConeFunctionExpectedError -> FirErrors.FUNCTION_EXPECTED.createOn(source, this.expression, this.type, session)
     is ConeNoConstructorError -> FirErrors.NO_CONSTRUCTOR.createOn(callOrAssignmentSource ?: source, session)
+    is ConeNoImplicitDefaultConstructorOnExpectClass -> FirErrors.NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS.createOn(callOrAssignmentSource ?: source, session)
     is ConeResolutionToClassifierError -> when (this.candidateSymbol.classKind) {
         ClassKind.INTERFACE -> FirErrors.INTERFACE_AS_FUNCTION.createOn(source, this.candidateSymbol, session)
         ClassKind.CLASS -> when {
@@ -121,7 +123,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>, session)
     is ConeAmbiguityError -> @OptIn(ApplicabilityDetail::class) when {
-        // Don't report ambiguity when some non-lambda, non-callable-reference argument has an error type
+        // Don't report ambiguity when some non-lambda, non-callable-reference, non-collection-literal argument has an error type
         candidates.all {
             if (it !is AbstractCallCandidate<*>) return@all false
             // Ambiguous candidates may be not fully processed, so argument mapping may be not initialized
@@ -214,6 +216,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeCannotInferReceiverParameterType -> FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE.createOn(source, session)
     is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(callOrAssignmentSource ?: source, session)
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target, session)
+    is ConeInaccessibleOuterClass -> FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER.createOn(source, this.symbol, session)
     is ConeUnreportedDuplicateDiagnostic -> null // Unreported because we always report something different
     is ConeIntermediateDiagnostic -> null // At least some usages are accounted in FirMissingDependencyClassChecker
     is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason, session)
@@ -247,6 +250,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, FirDynamicUnsupportedChecker.MESSAGE, session)
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source, session)
     is ConeCyclicTypeBound -> null // reported in FirCyclicTypeBoundsChecker
+    is ConeUnsupportedCollectionLiteralType -> FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE.createOn(source, session)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
@@ -261,8 +265,10 @@ private fun ConeAmbiguityError.candidatesWithDiagnosticMessages(
 }
 
 private fun AbstractConeResolutionAtom.containsErrorTypeForSuppressingAmbiguityError(): Boolean {
-    val arg = expression
-    return arg.resolvedType.hasError() && arg !is FirAnonymousFunctionExpression && arg !is FirCallableReferenceAccess
+    return when (expression) {
+        is FirCollectionLiteral, is FirCallableReferenceAccess, is FirAnonymousFunctionExpression -> false
+        else -> expression.resolvedType.hasError()
+    }
 }
 
 /**
@@ -572,6 +578,12 @@ private fun mapInapplicableCandidateError(
                 rootCause.desiredCount, rootCause.symbol, session
             )
 
+            is InaccessibleOuterClassReceiver -> FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER.createOn(
+                qualifiedAccessSource ?: source,
+                rootCause.symbol,
+                session
+            )
+
             else -> genericDiagnostic
         }
     }.distinct()
@@ -799,15 +811,18 @@ private fun ConstraintSystemError.toDiagnostic(
         is NotEnoughInformationForTypeParameter<*> -> if (candidate.symbol is FirConstructorSymbol &&
             candidate.callInfo.callSite is FirDelegatedConstructorCall
         ) {
-            FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
-                source,
-                ((this.typeVariable as ConeTypeVariable).typeConstructor.originalTypeParameter as ConeTypeParameterLookupTag).typeParameterSymbol,
-                session
-            )
+            val lookupTag = this.typeVariable.asCone().typeConstructor.originalTypeParameter?.asCone()
+            if (lookupTag != null) {
+                FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
+                    source,
+                    lookupTag.typeParameterSymbol,
+                    session
+                )
+            } else null
         } else null
 
         is InferredEmptyIntersection -> {
-            val typeVariable = typeVariable as ConeTypeVariable
+            val typeVariable = typeVariable.asCone()
             val narrowedSource = candidate.sourceOfCallToSymbolWith(typeVariable)
 
             @Suppress("UNCHECKED_CAST")
@@ -831,7 +846,7 @@ private fun ConstraintSystemError.toDiagnostic(
         }
 
         is AnonymousFunctionBasedMultiLambdaBuilderInferenceRestriction -> {
-            val typeParameterSymbol = (typeParameter as ConeTypeParameterLookupTag).typeParameterSymbol
+            val typeParameterSymbol = typeParameter.asCone().typeParameterSymbol
             FirErrors.BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION.createOn(
                 anonymous.source ?: source,
                 typeParameterSymbol.name,
@@ -852,7 +867,7 @@ private fun ConeKotlinType.substituteTypeVariableTypes(
     typeContext: ConeTypeContext,
 ): ConeKotlinType {
     val nonErrorSubstitutionMap = candidate.system.asReadOnlyStorage().fixedTypeVariables.filterValues { it !is ConeErrorType }
-    val substitutor = typeContext.typeSubstitutorByTypeConstructor(nonErrorSubstitutionMap) as ConeSubstitutor
+    val substitutor = typeContext.typeSubstitutorByTypeConstructor(nonErrorSubstitutionMap).asCone()
 
     return substitutor.substituteOrSelf(this).removeTypeVariableTypes(typeContext, TypeVariableReplacement.ErrorType)
 }
@@ -906,8 +921,8 @@ private fun reportInferredIntoEmptyIntersection(
     return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText, session)
 }
 
-private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
-private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
+private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType.asCone()
+private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType.asCone()
 
 private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnosticFactory0 {
     return when (kind) {

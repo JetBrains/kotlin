@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.SourcesKind
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.isKtFile
@@ -83,7 +84,7 @@ abstract class CustomKlibCompilerFirstPhaseFacade(
 
         val (regularDependencies: Set<String>, friendDependencies: Set<String>) = collectDependencies(module)
 
-        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         val outputKlibPath: String = compilerConfiguration.computeOutputKlibPath()
 
         return compileKlib(

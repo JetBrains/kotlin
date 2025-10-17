@@ -18,21 +18,21 @@ val OptionAlias = MyEnum.Option2
 val tlEnumProp1: MyEnum = Option1
 val tlEnumProp2: MyEnum = OptionAlias
 val tlEnumProp3: MyEnum = enumProp
-val topLevelProp4: MyEnum = <!INITIALIZER_TYPE_MISMATCH!>stringProp<!>
+val topLevelProp4: MyEnum <!INITIALIZER_TYPE_MISMATCH!>=<!> stringProp
 
 fun testReassignment() {
     var m: MyEnum = Option1
     m = Option1
     m = OptionAlias
-    m = <!ASSIGNMENT_TYPE_MISMATCH!>stringProp<!>
+    m <!ASSIGNMENT_TYPE_MISMATCH!>=<!> stringProp
 }
 
 fun testCorrectDefaultParam(arg1: MyEnum = Option1, arg2: MyEnum = enumProp) {}
-fun testWrongDefaultParam(arg: MyEnum = <!INITIALIZER_TYPE_MISMATCH!>stringProp<!>) {}
+fun testWrongDefaultParam(arg: MyEnum <!INITIALIZER_TYPE_MISMATCH!>=<!> stringProp) {}
 
 class PropOwner(val prop: MyEnum = Option2) {
     val prop2: MyEnum = enumProp
-    val prop3: MyEnum = <!INITIALIZER_TYPE_MISMATCH!>stringProp<!>
+    val prop3: MyEnum <!INITIALIZER_TYPE_MISMATCH!>=<!> stringProp
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,

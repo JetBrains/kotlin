@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
-import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Enables
-import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
-import org.jetbrains.kotlin.cli.common.arguments.GradleOption
 import org.jetbrains.kotlin.config.LanguageFeature
 
 val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
@@ -146,7 +143,12 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         name = "jvm-target"
         description = ReleaseDependent(
             current = "The target version of the generated JVM bytecode (${JvmTarget.CURRENT_SUPPORTED_VERSIONS_DESCRIPTION}), " +
-                    "with ${JvmTarget.CURRENT_DEFAULT_VERSION} as the default."
+                    "with ${JvmTarget.CURRENT_DEFAULT_VERSION} as the default.",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v2_2_20 to
+                        "The target version of the generated JVM bytecode (1.8 and 9-24), " +
+                        "with ${JvmTarget.CURRENT_DEFAULT_VERSION} as the default.",
+            )
         )
 
         valueType = KotlinJvmTargetType(
@@ -638,9 +640,17 @@ default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
 
     compilerArgument {
         name = "Xjdk-release"
-        description = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
+        description = ReleaseDependent(
+            current = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
 The supported versions depend on the JDK used; for JDK 17+, the supported versions are ${JvmTarget.CURRENT_SUPPORTED_VERSIONS_DESCRIPTION}.
-This also sets the value of '-jvm-target' to be equal to the selected JDK version.""".asReleaseDependent()
+This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v2_2_20 to
+                        """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9-24.
+This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
+            )
+        )
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
 
@@ -895,35 +905,12 @@ inside suspend functions and lambdas to distinguish them from user code by debug
     }
 
     compilerArgument {
-        name = "Xir-inliner"
-        compilerName = "enableIrInliner"
-        description = "Inline functions using the IR inliner instead of the bytecode inliner.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_9_0,
-            removedVersion = KotlinReleaseVersion.v2_3_0
-        )
-    }
-
-    compilerArgument {
         name = "Xuse-inline-scopes-numbers"
         description = "Use inline scopes numbers for inline marker variables.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_0,
-        )
-    }
-
-    compilerArgument {
-        name = "Xuse-k2-kapt"
-        description = "Enable the experimental support for K2 KAPT.".asReleaseDependent()
-        valueType = BooleanType.defaultNull
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_0,
-            removedVersion = KotlinReleaseVersion.v2_3_0,
         )
     }
 

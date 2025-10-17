@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -123,7 +123,10 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3)
+                assertOutputContainsAny(
+                    "-P plugin:blah-blah:blah-blah1=1 -P plugin:blah-blah:blah-blah2=1 -P plugin:blah-blah:blah-blah3=1",
+                    "-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1"
+                )
             }
         }
     }
@@ -166,7 +169,17 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 // we do not allow modifying free args for K/N at execution time
             )
             build(*compileTasks.toTypedArray()) {
-                assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * compileTasks.size) // 3 times per task
+                if (output.contains("-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1")) {
+                    // output from BTA
+                    assertOutputContainsExactlyTimes(
+                        "-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1",
+                        1
+                    )
+                    // output from KGP: 3 times per non-JVM compile task + 1 from JVM task (BTA)
+                    assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * (compileTasks.size - 1) + 1)
+                } else {
+                    assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * compileTasks.size) // 3 times per task
+                }
             }
         }
     }
@@ -279,6 +292,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             build("compileNativeMainKotlinMetadata") {
                 assertTasksExecuted(":compileNativeMainKotlinMetadata")
                 val taskOutput = getOutputForTask(":compileNativeMainKotlinMetadata", logLevel = LogLevel.INFO)
+                @Suppress("DEPRECATION")
                 val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assertEquals(
                     setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
@@ -289,6 +303,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             build("compileKotlinLinux64") {
                 assertTasksExecuted(":compileKotlinLinux64")
                 val taskOutput = getOutputForTask(":compileKotlinLinux64", logLevel = LogLevel.INFO)
+                @Suppress("DEPRECATION")
                 val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assertEquals(
                     setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
@@ -317,6 +332,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             build("compileKotlinHost") {
                 val expectedOptIn = listOf("kotlin.RequiresOptIn", "my.CustomOptIn")
+                @Suppress("DEPRECATION")
                 val arguments = parseCompilerArguments<K2NativeCompilerArguments>()
                 if (arguments.optIn?.toList() != listOf("kotlin.RequiresOptIn", "my.CustomOptIn")) {
                     fail(

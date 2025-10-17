@@ -1,7 +1,10 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=DocCommentForFirstDeclarationKt]]
+  facadeFqName: DocCommentForFirstDeclarationKt
+  partSimpleName: "DocCommentForFirstDeclarationKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    origin: Facade(className=DocCommentForFirstDeclarationKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

@@ -62,6 +62,7 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
     }
 
     @Override
+    @SuppressWarnings("deprecation") // KT-78356
     public boolean isWhitespaceOrComment(@NotNull IElementType elementType) {
         assert delegateImpl != null : "PsiBuilderImpl not found";
         return delegateImpl.whitespaceOrComment(elementType);

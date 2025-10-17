@@ -42,3 +42,4 @@ KaNamedClassSymbol:
 
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: one.Foo

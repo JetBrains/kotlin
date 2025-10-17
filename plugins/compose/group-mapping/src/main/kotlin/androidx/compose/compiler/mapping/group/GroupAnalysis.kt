@@ -8,8 +8,9 @@ import androidx.compose.compiler.mapping.bytecode.BytecodeToken.*
 import org.objectweb.asm.Label
 import org.objectweb.asm.tree.MethodNode
 
-context(reporter: ErrorReporter, keyCache: LambdaKeyCache)
 internal fun analyzeGroups(
+    keyCache: LambdaKeyCache,
+    reporter: ErrorReporter,
     classId: ClassId,
     methodNode: MethodNode
 ): List<GroupInfo> {
@@ -30,7 +31,7 @@ internal fun analyzeGroups(
         return methodNode.emptyGroup(isComposable)
     }
 
-    return parseGroupInfoFromTokens(methodNode, tokens, isComposable).getOrElse { e ->
+    return parseGroupInfoFromTokens(keyCache, methodNode, tokens, isComposable).getOrElse { e ->
         reporter.reportError(IllegalStateException("Failed to parse $methodId", e))
         return methodNode.emptyGroup(isComposable)
     }
@@ -60,8 +61,8 @@ private fun MethodNode.emptyGroup(isComposable: Boolean): List<GroupInfo> =
         emptyList()
     }
 
-context(keyCache: LambdaKeyCache)
 private fun parseGroupInfoFromTokens(
+    keyCache: LambdaKeyCache,
     methodNode: MethodNode,
     tokens: List<BytecodeToken>,
     isComposable: Boolean
@@ -80,8 +81,8 @@ private fun parseGroupInfoFromTokens(
 
     val result = mutableSetOf<GroupInfo>()
     var currentLine = -1
-    for (i in tokens.indices) {
-        val token = tokens[i]
+    for (tokenIndex in tokens.indices) {
+        val token = tokens[tokenIndex]
         val currentNode = nodeStack.lastOrNull()
         when (token) {
             is LineToken -> {
@@ -118,9 +119,9 @@ private fun parseGroupInfoFromTokens(
                 token.labels.forEach {
                     val label = it.label
                     val labelIndex = tokens.indexOfFirst { it is LabelToken && it.labelInsn.label == label }
-                    if (labelIndex > i) {
+                    if (labelIndex > tokenIndex) {
                         // Only consider forward branches, backward branches are already processed
-                        currentNode?.incompleteLabels += label
+                        currentNode?.incompleteLabels?.add(label)
                     }
                 }
             }

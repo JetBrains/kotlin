@@ -9,8 +9,11 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -18,7 +21,6 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
-import java.io.File
 import javax.inject.Inject
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
@@ -26,7 +28,7 @@ const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 abstract class DefaultKotlinSourceSet @Inject constructor(
     final override val project: Project,
     val displayName: String,
-) : AbstractKotlinSourceSet() {
+) : AbstractKotlinSourceSet () {
 
     override val extras: MutableExtras = mutableExtrasOf()
 
@@ -42,33 +44,13 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override val runtimeOnlyConfigurationName: String
         get() = disambiguateName(RUNTIME_ONLY)
 
-    @Deprecated("KT-55312")
-    override val apiMetadataConfigurationName: String
-        get() = lowerCamelCaseName(apiConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
-
-    @Deprecated("KT-55312")
-    override val implementationMetadataConfigurationName: String
-        get() = lowerCamelCaseName(implementationConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
-
-    @Deprecated("KT-55312")
-    override val compileOnlyMetadataConfigurationName: String
-        get() = lowerCamelCaseName(compileOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
-
-    @Deprecated(message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation")
-    override val runtimeOnlyMetadataConfigurationName: String
-        get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
-
-    /**
-     * Dependencies added to this configuration will not be exposed to any other source set.
-     */
-    val intransitiveMetadataConfigurationName: String
-        get() = lowerCamelCaseName(disambiguateName(INTRANSITIVE), METADATA_CONFIGURATION_NAME_SUFFIX)
-
-    override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source")
+    override val kotlin: SourceDirectorySet = project.objects
+        .kotlinSourceDirectorySet(name, "kotlin", "sources")
 
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder(project)
 
-    internal var actualResources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
+    internal var actualResources: SourceDirectorySet = project.objects
+        .kotlinSourceDirectorySet(name, "resources", "resources")
 
     override val resources: SourceDirectorySet get() = actualResources
 
@@ -120,58 +102,27 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-    //region IDE import for Granular source sets metadata
-
-    data class MetadataDependencyTransformation(
-        val groupId: String?,
-        val moduleName: String,
-        val projectPath: String?,
-        val projectStructureMetadata: KotlinProjectStructureMetadata?,
-        val allVisibleSourceSets: Set<String>,
-        /** If empty, then this source set does not see any 'new' source sets of the dependency, compared to its dependsOn parents, but it
-         * still does see all what the dependsOn parents see. */
-        val useFilesForSourceSets: Map<String, Iterable<File>>,
-    )
-
-    @Suppress("unused", "UNUSED_PARAMETER") // Used in IDE import, [configurationName] is kept for backward compatibility
-    fun getDependenciesTransformation(configurationName: String): Iterable<MetadataDependencyTransformation> {
-        return getDependenciesTransformation()
-    }
-
     fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(this)
 
-    internal fun getDependenciesTransformation(): Iterable<MetadataDependencyTransformation> {
-        val metadataDependencyResolutionByModule =
-            metadataTransformation.metadataDependencyResolutionsOrEmpty
-                .associateBy { ModuleIds.fromComponent(project, it.dependency) }
+    @Deprecated("KT-80897. Keep ABI compatibility with kotlinx-benchmarks", level = DeprecationLevel.ERROR)
+    override val implementationMetadataConfigurationName: String
+        get() = lowerCamelCaseName(implementationConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
-        return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
-            val (group, name) = groupAndName
-            val dependencyIdentifier = resolution.dependency.id
-            val projectPath = dependencyIdentifier.projectPathOrNull?.takeIf { dependencyIdentifier in project.currentBuild }
-
-            when (resolution) {
-                // No metadata transformation leads to original dependency being used during import
-                is MetadataDependencyResolution.KeepOriginalDependency -> null
-
-                // We should pass empty transformation for excluded dependencies.
-                // No transformation at all will result in a composite metadata jar being used as a dependency.
-                is MetadataDependencyResolution.Exclude ->
-                    MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
-
-                is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
-                    MetadataDependencyTransformation(
-                        group, name, projectPath,
-                        resolution.projectStructureMetadata,
-                        resolution.allVisibleSourceSetNames,
-                        project.transformMetadataLibrariesForIde(resolution)
-                    )
-                }
-            }
+    @ExperimentalKotlinGradlePluginApi
+    override val generatedKotlin: SourceDirectorySet = project.objects
+        .kotlinSourceDirectorySet(name, "generatedKotlin", "generated sources")
+        .apply {
+            destinationDirectory.convention(kotlin.destinationDirectory)
         }
-    }
 
-    //endregion
+    internal val allKotlin = project.objects.kotlinSourceDirectorySet(name, "allKotlin", "all sources")
+        .apply {
+            source(kotlin)
+            source(generatedKotlin)
+        }
+
+    @ExperimentalKotlinGradlePluginApi
+    override val allKotlinSources: FileCollection get() = allKotlin
 }
 
 internal val defaultSourceSetLanguageSettingsChecker =
@@ -190,8 +141,11 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
     return lowerCamelCaseName(*nameParts.toTypedArray())
 }
 
-internal fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
-    project.objects.sourceDirectorySet(name!!, name)
+private fun ObjectFactory.kotlinSourceDirectorySet(
+    name: String,
+    type: String,
+    typeDescription: String,
+): SourceDirectorySet = sourceDirectorySet("$name $type", "$name Kotlin $typeDescription")
 
 val Iterable<KotlinSourceSet>.dependsOnClosure: Set<KotlinSourceSet>
     get() = flatMap { it.internal.dependsOnClosure }.toSet() - this.toSet()
@@ -202,3 +156,8 @@ val Iterable<KotlinSourceSet>.withDependsOnClosure: Set<KotlinSourceSet>
 fun KotlinMultiplatformExtension.findSourceSetsDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
     return sourceSet.closure { seedSourceSet -> sourceSets.filter { otherSourceSet -> seedSourceSet in otherSourceSet.dependsOn } }
 }
+
+internal val KotlinSourceSet.defaultImpl: DefaultKotlinSourceSet
+    get() = (this as? DefaultKotlinSourceSet) ?: throw IllegalArgumentException(
+        "KotlinSourceSet $name (${this::class}) does not implement ${DefaultKotlinSourceSet::class.simpleName}"
+    )

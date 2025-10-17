@@ -117,11 +117,18 @@ fun runWithA(block: context(String) () -> Unit) {
 }
 
 fun localFunctionsContextParametersWithoutType() {
-    val t2 = context(<!CONTEXT_PARAMETER_WITHOUT_NAME, UNRESOLVED_REFERENCE!>a<!>) fun () { }
-    runWithA(context(<!CONTEXT_PARAMETER_WITHOUT_NAME, UNRESOLVED_REFERENCE!>a<!>) fun () { })
+    val t2 = context(<!UNRESOLVED_REFERENCE!>a<!>)<!SYNTAX!><!> fun () { }
+    runWithA(context(<!UNRESOLVED_REFERENCE!>a<!>)<!SYNTAX!><!> <!TOO_MANY_ARGUMENTS!>fun () { }<!>)
 
-    context(<!CONTEXT_PARAMETER_WITHOUT_NAME, UNRESOLVED_REFERENCE!>a<!>)
+    context(<!UNRESOLVED_REFERENCE!>a<!>)
     fun contextReceiverSyntax() {}
+}
+
+fun localFunctionsContextParametersDisambiguation(a: Int) {
+    // `context` is a call with missing lambda argument (that's why inapplicable)
+    // `localFun` is a declaration that's not related to the context call
+    <!NONE_APPLICABLE!>context<!>(a)
+    fun localFun() {}
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, crossinline, destructuringDeclaration,

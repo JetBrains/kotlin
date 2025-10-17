@@ -1,0 +1,21 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+context(a: A, _: B) @MyAnnotation public val kotlin.Int.property: kotlin.Int /* compiled code */
+    public final get() { /* compiled code */ }
+
+context(a: A, _: B) @MyAnnotation public var kotlin.Int.propertyWithSetter: kotlin.Int /* compiled code */
+    public final get() { /* compiled code */ }
+    public final set(v: kotlin.Int) { /* compiled code */ }
+
+context(a: A, _: B) @MyAnnotation public fun kotlin.Int.function(): kotlin.Int { /* compiled code */ }
+
+public final annotation class MyAnnotation public constructor() : kotlin.Annotation {
+}
+
+public final class A public constructor() {
+    public final val x: kotlin.Int /* compiled code */
+}
+
+public final class B public constructor() {
+}

@@ -29,12 +29,12 @@ fun testIfElse(i: Int) {
         }
         else ClassMemberAlias
 
-    val s2: MyClass =
-        <!INITIALIZER_TYPE_MISMATCH!>if (i == 2) {
+    val s2: MyClass <!INITIALIZER_TYPE_MISMATCH!>=<!>
+        if (i == 2) {
             <!UNRESOLVED_REFERENCE!>stringProp<!>
             stringProp
         }
-        else ClassMemberAlias<!>
+        else ClassMemberAlias
 
     receive<MyClass>(
         if (i == 0) {

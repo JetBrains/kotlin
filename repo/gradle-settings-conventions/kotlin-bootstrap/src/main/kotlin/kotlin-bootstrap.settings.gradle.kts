@@ -252,7 +252,7 @@ private fun Settings.applyBootstrapConfiguration(
                 exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
             }
 
-            // Overriding built tools API classpath
+            // Overriding build tools API classpath
             if (name == "kotlinBuildToolsApiClasspath") {
                 if (path == ":compiler:build-tools:kotlin-build-tools-api") {
                     resolutionStrategy.dependencySubstitution {
@@ -264,10 +264,40 @@ private fun Settings.applyBootstrapConfiguration(
                         substitute(module("org.jetbrains.kotlin:kotlin-daemon-client"))
                             .using(project(":dependencies:bootstrap:kotlin-daemon-client-bootstrap"))
                     }
+                } else if (path == ":kotlin-scripting-common") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-scripting-common"))
+                            .using(project(":dependencies:bootstrap:kotlin-scripting-common-bootstrap"))
+                    }
+                } else if (path == ":kotlin-scripting-jvm") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-scripting-jvm"))
+                            .using(project(":dependencies:bootstrap:kotlin-scripting-jvm-bootstrap"))
+                    }
+                } else if (path == ":kotlin-tooling-core") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-tooling-core"))
+                            .using(project(":dependencies:bootstrap:kotlin-tooling-core-bootstrap"))
+                    }
                 } else if (path == ":compiler:build-tools:kotlin-build-tools-impl") {
                     resolutionStrategy.dependencySubstitution {
                         substitute(module("org.jetbrains.kotlin:kotlin-build-tools-impl"))
                             .using(project(":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap"))
+                    }
+                } else if (path == ":compiler:build-tools:kotlin-build-tools-compat") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-build-tools-compat"))
+                            .using(project(":dependencies:bootstrap:kotlin-build-tools-compat-bootstrap"))
+                    }
+                } else if (path == ":compiler:build-tools:kotlin-build-tools-cri-impl") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-build-tools-cri-impl"))
+                            .using(project(":dependencies:bootstrap:kotlin-build-tools-cri-impl-bootstrap"))
+                    }
+                } else if (path == ":kotlin-compiler-runner") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-compiler-runner"))
+                            .using(project(":dependencies:bootstrap:kotlin-compiler-runner-bootstrap"))
                     }
                 }
 

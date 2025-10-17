@@ -9,7 +9,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
-    id("gradle-plugin-compiler-dependency-configuration")
+    id("gradle-plugin-published-compiler-dependency-configuration") // the test compilation's output is injected into test project's build classpath for the buildscript injection
 }
 
 testsJar()
@@ -51,6 +51,7 @@ dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
         (this as ModuleDependency).isTransitive = false
     }
+    testImplementation(project(":compiler:cli-common"))
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-allopen"))
     testImplementation(project(":kotlin-noarg"))
@@ -77,11 +78,11 @@ dependencies {
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
+    testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(intellijJDom())
     testImplementation(intellijPlatformUtil())
     testImplementation(project(":compiler:cli-common"))
-    testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler
     testCompileOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))

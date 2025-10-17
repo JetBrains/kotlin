@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests
 
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.test.TestMetadata
@@ -57,10 +61,13 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
 
     private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
         scenario(strategyConfig) {
+            val compilerArgumentsConf: (JvmCompilationOperation) -> Unit = {
+                it.compilerArguments[VERBOSE] = true
+            }
             val module1 = if (useTrackedModules) {
-                trackedModule("kotlin-java-mixed")
+                trackedModule("kotlin-java-mixed", compilationConfigAction = compilerArgumentsConf)
             } else {
-                module("kotlin-java-mixed")
+                module("kotlin-java-mixed", compilationConfigAction = compilerArgumentsConf)
             }
 
             module1.replaceFileWithVersion("main.kt", "add-argument")
@@ -68,6 +75,14 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             module1.compile { module, scenarioModule ->
                 assertCompiledSources(module, "main.kt", "bpkg/BClass.kt")
                 assertOutputs(module, "bpkg/MainKt.class", "bpkg/BClass.class")
+                if (strategyConfig.first::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
+                    val count = if (useTrackedModules) {
+                        1
+                    } else {
+                        2 // the second occurrence is in the SourcesChanges log line
+                    }
+                    assertLogContainsSubstringExactlyTimes(LogLevel.DEBUG, "AClass.java", count) // no duplication of java sources
+                }
             }
         }
     }

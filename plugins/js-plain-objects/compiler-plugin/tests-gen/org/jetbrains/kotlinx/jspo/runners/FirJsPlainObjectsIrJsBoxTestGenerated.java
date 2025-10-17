@@ -36,6 +36,12 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("escapedIdentifierAndJsName.kt")
+  public void testEscapedIdentifierAndJsName() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/escapedIdentifierAndJsName.kt");
+  }
+
+  @Test
   @TestMetadata("jsExport.kt")
   public void testJsExport() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/jsExport.kt");

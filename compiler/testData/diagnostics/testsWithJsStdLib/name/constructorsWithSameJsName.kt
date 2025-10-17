@@ -38,12 +38,12 @@ class ClassC {
     val x: String
 
     @JsName("constructorC")
-    constructor(y: String) {
+    <!JS_NAME_CLASH!>constructor(y: String)<!> {
         x = "fromString:$y"
     }
 
     @JsName("constructorC")
-    constructor(y: Int) {
+    <!JS_NAME_CLASH!>constructor(y: Int)<!> {
         x = "fromInt:$y"
     }
 }

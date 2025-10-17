@@ -1,54 +1,25 @@
 element: String
 implicit values:
-  KaImplicitReceiver:
-    scopeIndexInTower = 0
-    type = kotlin.String
-    ownerSymbol = KaContextParameterSymbol:
-      String: kotlin.String
-
 scopes:
-  TypeScope, index = 0
+  LocalScope, index = 0
     packages: 0
-    classifiers: 1
-      companion object
-    callables: 8
-      fun compareTo(other: kotlin.String): kotlin.Int
-      fun equals(other: kotlin.Any?): kotlin.Boolean
-      fun get(index: kotlin.Int): kotlin.Char
-      fun plus(other: kotlin.Any?): kotlin.String
-      fun subSequence(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence
-      fun toString(): kotlin.String
-      val length: kotlin.Int
-      fun hashCode(): kotlin.Int
-    constructors: 1
-      constructor()
+    classifiers: 0
+    callables: 0
+    constructors: 0
 
   LocalScope, index = 1
     packages: 0
     classifiers: 0
-    callables: 1
-      p: kotlin.Int
+    callables: 0
     constructors: 0
 
-  LocalScope, index = 2
+  ExplicitSimpleImportingScope, index = 2
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  LocalScope, index = 3
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
-
-  ExplicitSimpleImportingScope, index = 4
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
-
-  PackageMemberScope, index = 5
+  PackageMemberScope, index = 3
     packages: 6
       META-INF
       java
@@ -61,15 +32,15 @@ scopes:
       fun foo()
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 6
+  DefaultSimpleImportingScope, index = 4
 
-  DefaultSimpleImportingScope, index = 7
+  DefaultSimpleImportingScope, index = 5
 
-  ExplicitStarImportingScope, index = 8
+  ExplicitStarImportingScope, index = 6
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 9
+  DefaultStarImportingScope, index = 7
 

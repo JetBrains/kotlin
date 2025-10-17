@@ -18,13 +18,14 @@ import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
+    val testRoot = args[0]
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
     val k1BoxTestDir = listOf("multiplatform/k1")
     val k2BoxTestDir = listOf("multiplatform/k2")
     val excludedScriptDirs = listOf("script")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
-        testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
+        testGroup(testRoot, testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
@@ -144,7 +145,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
+        testGroup(testRoot, testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeJvmIrTextTest> {
                 model(
                     "ir/irText",
@@ -176,7 +177,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/fir/fir2ir/tests-gen", "compiler/tests-spec/testData") {
+        testGroup(testRoot, "compiler/tests-spec/testData") {
             testClass<AbstractFirBlackBoxCodegenTestSpec> {
                 model(
                     relativeRootPath = "codegen/box",

@@ -229,7 +229,7 @@ object StandardClassIds {
 
         val WasExperimental = "WasExperimental".baseId()
 
-        val MustUseReturnValue = "MustUseReturnValue".baseId()
+        val MustUseReturnValues = "MustUseReturnValues".baseId()
         val IgnorableReturnValue = "IgnorableReturnValue".baseId()
 
         val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
@@ -244,14 +244,13 @@ object StandardClassIds {
 
         val jsExport = "JsExport".jsId()
         val jsExportIgnore = jsExport.createNestedClassId(Name.identifier("Ignore"))
+        val jsExportDefault = jsExport.createNestedClassId(Name.identifier("Default"))
         val jsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()
 
         val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()
 
         val associatedObjectAnnotations = hashSetOf(AssociatedObjectKey, ExperimentalAssociatedObjects)
-
-        val ActualizeByJvmBuiltinProvider = "ActualizeByJvmBuiltinProvider".internalId()
 
         val JvmBuiltin = "JvmBuiltin".internalId()
         val SuppressBytecodeGeneration = "SuppressBytecodeGeneration".internalId()

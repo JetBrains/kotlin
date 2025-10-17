@@ -4,7 +4,7 @@
 // WITH_STDLIB
 // DIAGNOSTICS: -VARIABLE_NEVER_READ -ASSIGNED_VALUE_IS_NEVER_READ -CAN_BE_VAL_LATEINIT
 
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 import kotlin.properties.ReadOnlyProperty
 
 fun stringF(): String = ""
@@ -64,7 +64,7 @@ fun stringConcat(): String {
     return "answer is $y" // used
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 class ISE: Exception()
 
 fun throws(): Nothing {

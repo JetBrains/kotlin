@@ -321,7 +321,7 @@ fun generatedTestClassLoader(
     module: TestModule,
     classFileFactory: ClassFileFactory,
 ): GeneratedClassLoader {
-    val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+    val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
     val classpath = computeTestRuntimeClasspath(testServices, module)
     if (PREFER_IN_TEST_OVER_STDLIB in module.directives) {
         val libPathProvider = testServices.standardLibrariesPathProvider

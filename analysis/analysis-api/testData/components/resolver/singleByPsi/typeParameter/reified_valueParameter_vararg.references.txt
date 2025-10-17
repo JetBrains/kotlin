@@ -1,5 +1,6 @@
 KtNameReferenceExpression(61,62): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: functionWithVararg) reified T

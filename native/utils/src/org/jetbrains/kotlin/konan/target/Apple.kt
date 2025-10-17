@@ -33,7 +33,11 @@ class AppleConfigurablesImpl(
     private val xcodeAddonDependency = this.additionalToolsDir!!
 
     override val absoluteTargetSysRoot: String get() = when (val provider = xcodePartsProvider) {
-        is XcodePartsProvider.Local -> provider.xcode.pathToPlatformSdk(platformName())
+        is XcodePartsProvider.Local -> {
+            // In the case of Mac Catalyst, we use sysroot from macOS.
+            val platformName = if (targetTriple.isMacabi) "MacOSX" else platformName()
+            provider.xcode.pathToPlatformSdk(platformName)
+        }
         XcodePartsProvider.InternalServer -> absolute(sdkDependency)
     }
 

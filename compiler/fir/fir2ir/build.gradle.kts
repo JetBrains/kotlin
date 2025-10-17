@@ -21,6 +21,7 @@ dependencies {
     compileOnly(project(":compiler:fir:fir-deserialization"))
     compileOnly(project(":compiler:frontend.common.jvm"))
     compileOnly(project(":compiler:config.jvm"))
+    compileOnly(project(":compiler:frontend"))
 
     compileOnly(intellijCore())
 
@@ -60,7 +61,6 @@ optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { generatedTestDir() }
     "testFixtures" { projectDefault() }
 }
 
@@ -97,7 +97,7 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFir2IrTestsKt")
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFir2IrTestsKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
     withScriptRuntime()

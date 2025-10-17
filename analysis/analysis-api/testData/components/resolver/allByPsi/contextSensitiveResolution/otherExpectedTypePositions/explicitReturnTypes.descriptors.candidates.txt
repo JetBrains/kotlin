@@ -220,6 +220,7 @@ KtContainerNode(551,552): 'b'
 KtNameReferenceExpression(551,552): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

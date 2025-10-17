@@ -1,23 +1,27 @@
 KtNameReferenceExpression(44,52): 'JavaEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) enum class JavaEnum
 
 KtNameReferenceExpression(62,70): 'javaEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       javaEnum: JavaEnum
 
 KtNameReferenceExpression(78,83): 'FIRST'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in JavaEnum) FIRST
 
 KtNameReferenceExpression(93,99): 'SECOND'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: true
     symbols:
       (in JavaEnum) SECOND

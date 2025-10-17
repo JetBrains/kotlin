@@ -1,7 +1,6 @@
 KaFunctionType:
   abbreviation: null
   annotations: []
-  arity: 2
   classId: kotlin/reflect/KFunction2
   contextReceivers: Could not render due to java.lang.AssertionError: Not a function type: KFunction2<A<*>, [@kotlin.ParameterName] Nothing, Unit>
 

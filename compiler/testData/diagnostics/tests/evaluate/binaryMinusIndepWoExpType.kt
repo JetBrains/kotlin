@@ -2,7 +2,7 @@
 val p1 = 1 - 1
 val p2 = 1 - 1.toLong()
 val p3 = 1 - 1.toByte()
-val p4 = 1 - 1.toInt()
+val p4 = 1 - 1L.toInt()
 val p5 = 1 - 1.toShort()
 
 fun fooInt(p: Int) = p

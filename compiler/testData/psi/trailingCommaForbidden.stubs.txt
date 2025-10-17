@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaForbiddenKt]]
+  facadeFqName: TrailingCommaForbiddenKt
+  partSimpleName: "TrailingCommaForbiddenKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[A1, A2]]

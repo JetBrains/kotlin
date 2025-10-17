@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
+import org.jetbrains.kotlin.test.TestDataAssertions;
 import org.junit.runners.model.MultipleFailureException;
 
 import java.io.File;
@@ -110,7 +110,7 @@ public class DirectiveTestUtils {
                 code.append("\n");
             }
             String msg = "Functions " + StringUtil.join(functionNames, ", ") + " got different generated JS code";
-            KotlinTestUtils.assertEqualsToFile(msg, expectedFile, code.toString());
+            TestDataAssertions.assertEqualsToFile(msg, expectedFile, code.toString());
         }
     };
 

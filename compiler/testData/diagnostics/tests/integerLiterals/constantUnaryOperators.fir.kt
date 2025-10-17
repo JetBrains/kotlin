@@ -19,11 +19,11 @@ val ll3 = (3000000000 * 2 + 1).unaryMinus()
 // ------------- non const -------------
 
 val i4 = (2 + 2 * 3).inc()
-val l4: Long = <!INITIALIZER_TYPE_MISMATCH!>(2 + 2 * 3).inc()<!>
+val l4: Long <!INITIALIZER_TYPE_MISMATCH!>=<!> (2 + 2 * 3).inc()
 val ll4 = (3000000000 * 2 + 1).inc()
 
 val i5 = (2 + 2 * 3).dec()
-val l5: Long = <!INITIALIZER_TYPE_MISMATCH!>(2 + 2 * 3).dec()<!>
+val l5: Long <!INITIALIZER_TYPE_MISMATCH!>=<!> (2 + 2 * 3).dec()
 val ll5 = (3000000000 * 2 + 1).dec()
 
 /* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, multiplicativeExpression, propertyDeclaration */

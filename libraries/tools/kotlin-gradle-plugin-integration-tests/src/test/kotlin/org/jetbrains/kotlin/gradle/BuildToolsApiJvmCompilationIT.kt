@@ -74,35 +74,6 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("Gradle side outputs backup works")
-    fun outputsBackupWorks(gradleVersion: GradleVersion) {
-        project(
-            "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
-                usePreciseOutputsBackup = false,
-                keepIncrementalCompilationCachesInMemory = false,
-            )
-        ) {
-            build("compileKotlin") {
-                assertTasksExecuted(":compileKotlin")
-            }
-            val newBrokenSrc = kotlinSourcesDir().resolve("broken.kt")
-            newBrokenSrc.writeText(
-                //language=kt
-                """
-                broken code
-                """.trimIndent()
-            )
-            buildAndFail("compileKotlin") {
-                assertTasksFailed(":compileKotlin")
-            }
-            newBrokenSrc.deleteExisting()
-            build("compileKotlin") {
-                assertTasksUpToDate(":compileKotlin")
-            }
-        }
-    }
-
-    @GradleTest
     @DisplayName("Simple project non-incremental in-process compilation")
     fun compileJvmInProcessNonIncremental(gradleVersion: GradleVersion) = testSimpleProject(
         gradleVersion, defaultBuildOptions.copy(

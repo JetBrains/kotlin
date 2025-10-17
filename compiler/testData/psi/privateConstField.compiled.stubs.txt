@@ -6,6 +6,7 @@ A.class:
     CLASS[classId=test/A, fqName=test.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+          valueArguments: [ value -> AnnotationRetention.RUNTIME ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -42,6 +43,7 @@ PrivateConstField.class:
           MODIFIER_LIST[private companion]
           CLASS_BODY
             PROPERTY[fqName=test.PrivateConstField.Companion.CONST, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST]
+              constantInitializer: 10
               MODIFIER_LIST[public const]
               TYPE_REFERENCE
                 USER_TYPE
@@ -50,8 +52,10 @@ PrivateConstField.class:
                   REFERENCE_EXPRESSION[referencedName=Int]
               REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
             PROPERTY[fqName=test.PrivateConstField.Companion.CONST_WITH_ANNOTATION, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST_WITH_ANNOTATION]
+              constantInitializer: 10
               MODIFIER_LIST[public const]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
@@ -59,6 +63,7 @@ PrivateConstField.class:
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=A]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+                  valueArguments: [ ]
                   ANNOTATION_TARGET[useSiteTarget=FIELD]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
@@ -84,6 +89,7 @@ PrivateConstField.class:
             PROPERTY[fqName=test.PrivateConstField.Companion.fieldWithAnnotation, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=fieldWithAnnotation]
               MODIFIER_LIST[public final]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE

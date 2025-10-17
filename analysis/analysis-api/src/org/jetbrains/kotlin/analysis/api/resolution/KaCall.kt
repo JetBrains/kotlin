@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -133,6 +134,12 @@ public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
      * The kind of access to the variable (read or write), alongside additional information.
      */
     public val simpleAccess: KaSimpleVariableAccess
+
+    /**
+     * Whether the call was resolved using the [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature
+     */
+    @KaExperimentalApi
+    public val isContextSensitive: Boolean
 }
 
 /**

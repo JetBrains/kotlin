@@ -1,59 +1,69 @@
 KtNameReferenceExpression(23,27): 'main'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package main
 
 KtNameReferenceExpression(54,60): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package kotlin
 
 KtNameReferenceExpression(61,72): 'collections'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package kotlin.collections
 
 KtNameReferenceExpression(82,88): 'kotlin'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package kotlin
 
 KtNameReferenceExpression(89,93): 'text'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package kotlin.text
 
 KtNameReferenceExpression(120,124): 'java'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package java
 
 KtNameReferenceExpression(125,129): 'util'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package java.util
 
 KtNameReferenceExpression(139,143): 'java'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package java
 
 KtNameReferenceExpression(144,148): 'lang'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       package java.lang
 
 KtNameReferenceExpression(149,153): 'Math'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in java.lang) class Math

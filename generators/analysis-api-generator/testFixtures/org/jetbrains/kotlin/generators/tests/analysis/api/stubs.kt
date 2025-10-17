@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
-import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractDecompiledTextTest
-import org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
-import org.jetbrains.kotlin.analysis.stubs.AbstractDecompiledStubsTest
+import org.jetbrains.kotlin.analysis.decompiler.psi.common.AbstractDecompiledCommonTextTest
+import org.jetbrains.kotlin.analysis.decompiler.psi.js.AbstractDecompiledJsTextTest
+import org.jetbrains.kotlin.analysis.decompiler.psi.jvm.AbstractDecompiledJvmTextTest
 import org.jetbrains.kotlin.analysis.stubs.AbstractSourceStubsTest
+import org.jetbrains.kotlin.analysis.stubs.common.AbstractCompiledCommonStubsTest
+import org.jetbrains.kotlin.analysis.stubs.js.AbstractCompiledJsStubsTest
+import org.jetbrains.kotlin.analysis.stubs.jvm.AbstractCompiledJvmStubsTest
 import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
@@ -18,16 +21,32 @@ internal fun TestGroupSuite.generateStubsTests() {
             model("psi", pattern = TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
 
-        testClass<AbstractCompiledStubsTest> {
+        testClass<AbstractCompiledJvmStubsTest> {
             model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
-        testClass<AbstractDecompiledStubsTest> {
+        testClass<AbstractCompiledJsStubsTest> {
+            // 1.9 is not supported for non-JVM platforms, so k1 is excluded
+            model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractCompiledCommonStubsTest> {
+            // 1.9 is not supported for non-JVM platforms, so k1 is excluded
+            model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractDecompiledJvmTextTest> {
             model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
-        testClass<AbstractDecompiledTextTest> {
-            model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        testClass<AbstractDecompiledJsTextTest> {
+            // 1.9 is not supported for non-JVM platforms, so k1 is excluded
+            model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractDecompiledCommonTextTest> {
+            // 1.9 is not supported for non-JVM platforms, so k1 is excluded
+            model("psi", excludeDirs = listOf("k1"), pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 }

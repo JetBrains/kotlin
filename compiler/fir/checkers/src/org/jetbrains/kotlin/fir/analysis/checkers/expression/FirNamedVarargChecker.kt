@@ -28,7 +28,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
         if (expression !is FirFunctionCall &&
             expression !is FirAnnotation &&
             expression !is FirDelegatedConstructorCall &&
-            expression !is FirArrayLiteral) return
+            expression !is FirCollectionLiteral) return
         val isAnnotation = expression is FirAnnotation
         val redundantSpreadWarningFactory =
             if (isAnnotation) FirErrors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION
@@ -38,13 +38,13 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
             if (!isNamedSpread(argument)) return
             if (!argument.isFakeSpread && argument.isNamed) {
                 if (isVararg && (expression as? FirResolvable)?.calleeReference !is FirResolvedErrorReference) {
-                    reporter.reportOn(argument.expression.source, redundantSpreadWarningFactory)
+                    reporter.reportOn(argument.source, redundantSpreadWarningFactory)
                 }
                 return
             }
             val type = argument.expression.resolvedType.fullyExpandedType().lowerBoundIfFlexible()
             if (type is ConeErrorType) return
-            if (argument.expression is FirArrayLiteral) return
+            if (argument.expression is FirCollectionLiteral) return
 
             if (type.isArrayType) return
 
@@ -62,8 +62,8 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
             }
         }
 
-        if (expression is FirArrayLiteral) {
-            // FirArrayLiteral has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
+        if (expression is FirCollectionLiteral) {
+            // FirCollectionLiteral has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
             expression.arguments.forEach { checkArgument(it, isVararg = isNamedSpread(it), expression.resolvedType) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return

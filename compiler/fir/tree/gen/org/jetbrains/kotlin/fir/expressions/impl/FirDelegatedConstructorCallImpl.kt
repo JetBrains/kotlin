@@ -47,6 +47,7 @@ internal class FirDelegatedConstructorCallImpl(
         argumentList.accept(visitor, data)
         contextArguments.forEach { it.accept(visitor, data) }
         constructedTypeRef.accept(visitor, data)
+        dispatchReceiver?.accept(visitor, data)
         calleeReference.accept(visitor, data)
     }
 

@@ -28,6 +28,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /I.p
   compilerVisibility: Private
   contextParameters: []
@@ -62,6 +63,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -102,6 +104,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -133,6 +136,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /I.bar
   compilerVisibility: Public
   contextParameters: []
@@ -167,6 +171,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -212,6 +217,7 @@ KaKotlinPropertySymbol:
       compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -235,6 +241,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -247,6 +254,7 @@ KaKotlinPropertySymbol:
         compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
+        hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCrossinline: false
@@ -270,6 +278,7 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaLibraryModule "Library main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -280,6 +289,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -295,6 +305,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setBar
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -326,6 +337,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /I.doo
   compilerVisibility: Public
   contextParameters: []
@@ -369,6 +381,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: I
       getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
+      importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -383,6 +396,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -426,6 +440,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -446,6 +461,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -488,6 +504,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -519,6 +536,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /I.foo
   compilerVisibility: Public
   contextParameters: []
@@ -553,6 +571,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: false
@@ -593,6 +612,7 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -624,6 +644,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   callableId: /I.zoo
   compilerVisibility: Public
   contextParameters: []
@@ -667,6 +688,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: I
       getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
+      importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -681,6 +703,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   hasBackingField: true
   hasGetter: true
   hasSetter: true
@@ -724,6 +747,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -749,6 +773,7 @@ KaKotlinPropertySymbol:
       compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -772,6 +797,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: null
       getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
+      importableFqName: null
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
@@ -796,6 +822,7 @@ KaKotlinPropertySymbol:
       getContainingJvmClassName: I
       getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
+      importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -807,6 +834,7 @@ KaKotlinPropertySymbol:
         compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
+        hasDeclaredDefaultValue: false
         hasDefaultValue: false
         isActual: false
         isCrossinline: false
@@ -830,6 +858,7 @@ KaKotlinPropertySymbol:
         getContainingJvmClassName: null
         getContainingModule: KaLibraryModule "Library main"
         deprecationStatus: null
+        importableFqName: null
     ]
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -840,6 +869,7 @@ KaKotlinPropertySymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
@@ -855,6 +885,7 @@ KaKotlinPropertySymbol:
   javaSetterName: setZoo
   setterDeprecationStatus: null
   isInline: false
+  importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
@@ -904,6 +935,7 @@ KaNamedFunctionSymbol:
     getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -920,6 +952,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
+  importableFqName: null
 
 KaConstructorSymbol:
   annotations: []
@@ -948,6 +981,7 @@ KaConstructorSymbol:
       compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -971,9 +1005,11 @@ KaConstructorSymbol:
       getContainingJvmClassName: I
       getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(I.class)
   getContainingJvmClassName: I
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
+  importableFqName: I

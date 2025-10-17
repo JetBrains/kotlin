@@ -26,11 +26,11 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.ExpectRefinement,
         StandardClassIds.Annotations.Suppress,
         StandardClassIds.Annotations.WasExperimental,
-        StandardClassIds.Annotations.ActualizeByJvmBuiltinProvider,
         StandardClassIds.Annotations.jsExport,
         StandardClassIds.Annotations.jsExportIgnore,
-        StandardClassIds.Annotations.MustUseReturnValue,
+        StandardClassIds.Annotations.MustUseReturnValues,
         StandardClassIds.Annotations.IgnorableReturnValue,
+        StandardClassIds.Annotations.jsExportDefault,
         OptInNames.OPT_IN_CLASS_ID,
         OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID,
     )

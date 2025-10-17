@@ -20,6 +20,18 @@ sealed class ConeTypeProjection : TypeArgumentMarker {
     }
 }
 
+/**
+ * Make a transformation from marker interface to cone-based type
+ *
+ * In K2 frontend context such a transformation is normally safe,
+ * as K1-based types and IR-based types cannot occur here.
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun TypeArgumentMarker.asCone(): ConeTypeProjection = this as ConeTypeProjection
+
+@Deprecated(message = "This call is redundant, please just drop it", level = DeprecationLevel.ERROR)
+fun ConeTypeProjection.asCone(): ConeTypeProjection = this
+
 object ConeStarProjection : ConeTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.STAR

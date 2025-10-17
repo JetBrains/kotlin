@@ -1,9 +1,9 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencySimple/source.kt:7:7: error: cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
     b.foo()
       ^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencySimple/source.kt:10:21: error: initializer type mismatch: expected 'String', actual 'A'.
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencySimple/source.kt:10:19: error: initializer type mismatch: expected 'String', actual 'A'.
     val x: String = b.foo()
-                    ^^^^^^^
+                  ^
 compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencySimple/source.kt:10:23: error: cannot access class 'A'. Check your module classpath for missing or conflicting dependencies.
     val x: String = b.foo()
                       ^^^

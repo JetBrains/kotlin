@@ -60,12 +60,8 @@ projectTests {
     nativeTestTask("standaloneTest", "standalone")
     nativeTestTask("gcTest", "gc")
 
-    val testTags = findProperty("kotlin.native.tests.tags")?.toString()
-    // Note: arbitrary JUnit tag expressions can be used in this property.
-    // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
     nativeTestTask(
         "test",
-        testTags,
         requirePlatformLibs = true,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,  // required in CompilerOutputTest via AbstractCliTest.getNormalizedCompilerOutput
@@ -91,7 +87,6 @@ projectTests {
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
-        dependsOn(":compiler:generateTestData")
     }
 }
 

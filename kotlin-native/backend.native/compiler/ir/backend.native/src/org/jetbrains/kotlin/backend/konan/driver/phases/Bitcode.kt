@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.ALL
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.NO
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.STRONG
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.YES
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
@@ -42,7 +42,7 @@ internal data class WriteBitcodeFileInput(
 /**
  * Write in-memory LLVM module to filesystem as a bitcode.
  */
-internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<PhaseContext, WriteBitcodeFileInput>(
+internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, WriteBitcodeFileInput>(
         "WriteBitcodeFile",
 ) { context, (llvmModule, outputFile) ->
     // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
@@ -71,7 +71,7 @@ internal class OptimizationState(
         konanConfig: KonanConfig,
         val llvmConfig: LlvmPipelineConfig,
         override val performanceManager: PerformanceManager?,
-) : BasicPhaseContext(konanConfig)
+) : BasicNativeBackendPhaseContext(konanConfig)
 
 internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, PerformanceManager?, LoggingContext) -> LlvmOptimizationPipeline) =
         createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
@@ -150,12 +150,12 @@ internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<Nativ
         op = { context, input -> linkBitcodeDependencies(context, input) }
 )
 
-internal val VerifyBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LLVMModuleRef>(
+internal val VerifyBitcodePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, LLVMModuleRef>(
         name = "VerifyBitcode",
         op = { _, llvmModule -> verifyModule(llvmModule) }
 )
 
-internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LLVMModuleRef>(
+internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, LLVMModuleRef>(
         name = "PrintBitcode",
         op = { _, llvmModule -> LLVMDumpModule(llvmModule) }
 )

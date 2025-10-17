@@ -939,8 +939,11 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
 
             CXIdxEntity_Typedef -> {
-                val type = clang_getCursorType(cursor)
-                getTypedef(type)
+                // todo: KT-81201
+                if (isAvailable(cursor)) {
+                    val type = clang_getCursorType(cursor)
+                    getTypedef(type)
+                }
             }
 
             CXIdxEntity_Function -> {
@@ -996,7 +999,14 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
             CXIdxEntity_ObjCProperty -> {
                 val container = clang_getCursorSemanticParent(cursor)
-                if (isAvailable(cursor) && isAvailable(container)) {
+
+                // todo: KT-81201
+                val classIfCategory = if (container.kind == CXCursorKind.CXCursor_ObjCCategoryDecl) {
+                    getObjCCategoryClassCursor(container)
+                } else {
+                    null
+                }
+                if (isAvailable(cursor) && isAvailable(container) && classIfCategory?.let(::isAvailable) ?: true) {
                     val propertyInfo = clang_index_getObjCPropertyDeclInfo(info.ptr)!!.pointed
                     val getter = getObjCMethod(propertyInfo.getter!!.pointed.cursor.readValue())
                     val setter = propertyInfo.setter?.let {

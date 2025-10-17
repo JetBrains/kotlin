@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// WITH_EXTRA_CHECKERS
 // JET-72 Type inference doesn't work when iterating over ArrayList
 
 import java.util.ArrayList

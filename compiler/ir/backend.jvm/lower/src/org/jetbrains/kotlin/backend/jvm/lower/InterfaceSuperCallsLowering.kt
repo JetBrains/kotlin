@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createDelegatingCallWithPlaceholderTypeArguments
 import org.jetbrains.kotlin.backend.jvm.ir.isDefinitelyNotDefaultImplsMethod
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 /**
  * Redirects super interface calls to DefaultImpls.
  */
-@PhaseDescription(name = "InterfaceSuperCalls")
 internal class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)

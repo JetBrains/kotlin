@@ -77,4 +77,106 @@ class LambdaMemoizationRegressionTests(useFir: Boolean) : AbstractIrTransformTes
             }
         """
     )
+
+    // The next three tests ensure that memoization is disabled in `try` expressions. They serve as
+    // regression tests against b/419049140.
+
+    @Test
+    fun testMemoizationIsDisabledInTryExpressions001() = verifyGoldenComposeIrTransform(
+        extra = """
+            fun foo(block: () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                try {
+                    try {
+                        if (true) {
+                            foo(block = {})
+                        }
+                    } catch (ignored: Exception) {
+                        if (true) {
+                            foo(block = {})
+                        }
+                    } finally {
+                        if (true) {
+                            foo(block = {})
+                        }
+                    }
+
+                    if (true) {
+                        foo(block = {})
+                    }
+                } catch (ignored: Exception) {
+                    if (true) {
+                        foo(block = {})
+                    }
+                } finally {
+                    if (true) {
+                        foo(block = {})
+                    }
+                }
+
+                if (true) {
+                    foo(block = {})
+                }
+            }
+        """
+    )
+
+    @Test
+    fun testMemoizationIsDisabledInTryExpressions002() = verifyGoldenComposeIrTransform(
+        extra = """
+            fun foo(block: () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            fun test() {
+                try {
+                    val f = @Composable { if (true) foo(block = {}) }
+                } finally {}
+            }
+    """
+    )
+
+    @Test
+    fun testMemoizationIsDisabledInTryExpressions003() = verifyGoldenComposeIrTransform(
+        extra = """
+            fun foo(block: () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            fun test() {
+                val f = @Composable {
+                    try {
+                        if (true) foo(block = {})
+                    } finally {}
+                }
+            }
+    """
+    )
+
+    @Test
+    fun testMemoizationIsDisabledInTryExpressions004() = verifyGoldenComposeIrTransform(
+        extra = """
+            fun foo(block: () -> Unit) {}
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            fun test() {
+                val f = @Composable {
+                    try {
+                        repeat (3) {
+                            if (true) foo(block = {})
+                        }
+                    } finally {}
+                }
+            }
+    """
+    )
 }

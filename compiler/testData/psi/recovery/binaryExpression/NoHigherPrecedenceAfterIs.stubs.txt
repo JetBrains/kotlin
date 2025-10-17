@@ -1,0 +1,6 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=NoHigherPrecedenceAfterIsKt]]
+  facadeFqName: NoHigherPrecedenceAfterIsKt
+  partSimpleName: "NoHigherPrecedenceAfterIsKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=x]

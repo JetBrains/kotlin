@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.caches
 import org.jetbrains.kotlin.util.PrivateForInline
 
 /**
- * [Map] which allows store null values
+ * A [Map] which allows storing `null` values.
  */
 @OptIn(PrivateForInline::class)
 @JvmInline
@@ -16,7 +16,6 @@ value class NullableMap<K, V>(
     @property:PrivateForInline
     val map: MutableMap<K, Any> = HashMap()
 ) {
-
     /**
      * Get value if it is present in map
      * Execute [orElse] otherwise and return it result,
@@ -34,6 +33,19 @@ value class NullableMap<K, V>(
     inline operator fun set(key: K, value: V) {
         map[key] = value ?: NullValue
     }
+
+    /**
+     * Returns a snapshot of all values in the cache. Changes to the cache do not reflect in the resulting collection.
+     */
+    val valuesSnapshot: Collection<V>
+        get() = map.values.mapNotNull { value ->
+            if (value == NullValue) {
+                null
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                value as V
+            }
+        }
 
     @PrivateForInline
     object NullValue

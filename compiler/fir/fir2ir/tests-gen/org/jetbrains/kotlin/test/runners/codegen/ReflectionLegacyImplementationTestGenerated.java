@@ -3674,6 +3674,12 @@ public class ReflectionLegacyImplementationTestGenerated extends AbstractReflect
     }
 
     @Test
+    @TestMetadata("rawRecursiveType.kt")
+    public void testRawRecursiveType() {
+      runTest("compiler/testData/codegen/box/reflection/typeOf/rawRecursiveType.kt");
+    }
+
+    @Test
     @TestMetadata("rawTypes.kt")
     public void testRawTypes() {
       runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes.kt");
@@ -4024,9 +4030,15 @@ public class ReflectionLegacyImplementationTestGenerated extends AbstractReflect
     }
 
     @Test
-    @TestMetadata("innerGenericParameter.kt")
-    public void testInnerGenericParameter() {
-      runTest("compiler/testData/codegen/box/reflection/typeParameters/innerGenericParameter.kt");
+    @TestMetadata("innerGeneric.kt")
+    public void testInnerGeneric() {
+      runTest("compiler/testData/codegen/box/reflection/typeParameters/innerGeneric.kt");
+    }
+
+    @Test
+    @TestMetadata("innerGenericJava.kt")
+    public void testInnerGenericJava() {
+      runTest("compiler/testData/codegen/box/reflection/typeParameters/innerGenericJava.kt");
     }
 
     @Test

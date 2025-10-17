@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// WITH_EXTRA_CHECKERS
 
 // FILE: a.kt
 
@@ -21,7 +20,7 @@ abstract class Foo<T>() {
 package foobar.a
     import java.util.*
 
-    val b : List<Int>? = <!INITIALIZER_TYPE_MISMATCH!>a<!>
+    val b : List<Int>? <!INITIALIZER_TYPE_MISMATCH!>=<!> a
     val b1 : <!UNRESOLVED_REFERENCE!>util<!>.List<Int>? = a
 
 // FILE: d.kt

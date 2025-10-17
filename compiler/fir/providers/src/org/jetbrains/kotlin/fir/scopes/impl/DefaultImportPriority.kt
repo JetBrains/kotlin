@@ -6,27 +6,27 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.resolve.DefaultImportProvider
+import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.ImportPath
 
 enum class DefaultImportPriority {
     HIGH {
         override fun getAllDefaultImports(
-            defaultImportProvider: DefaultImportProvider?,
+            defaultImportsProvider: DefaultImportsProvider?,
             languageVersionSettings: LanguageVersionSettings
         ): List<ImportPath>? =
-            defaultImportProvider?.getDefaultImports(includeLowPriorityImports = false)
+            defaultImportsProvider?.getDefaultImports(includeLowPriorityImports = false)
     },
     LOW {
         override fun getAllDefaultImports(
-            defaultImportProvider: DefaultImportProvider?,
+            defaultImportsProvider: DefaultImportsProvider?,
             languageVersionSettings: LanguageVersionSettings
         ): List<ImportPath>? =
-            defaultImportProvider?.defaultLowPriorityImports
+            defaultImportsProvider?.defaultLowPriorityImports
     };
 
     abstract fun getAllDefaultImports(
-        defaultImportProvider: DefaultImportProvider?,
+        defaultImportsProvider: DefaultImportsProvider?,
         languageVersionSettings: LanguageVersionSettings
     ): List<ImportPath>?
 }

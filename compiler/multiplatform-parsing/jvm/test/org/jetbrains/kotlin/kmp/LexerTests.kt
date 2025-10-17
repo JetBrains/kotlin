@@ -32,7 +32,4 @@ class LexerTests : AbstractRecognizerTests<IElementType, SyntaxElementType, Test
 
     override val recognizerName: String = "lexer"
     override val recognizerSyntaxElementName: String = "token"
-
-    override val expectedDumpOnWindowsNewLine: String = """BAD_CHARACTER [1:1..2)
-WHITE_SPACE [1:2..2:1)"""
 }

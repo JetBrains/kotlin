@@ -2,6 +2,7 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
 
+// FILE: lib.kt
 import kotlin.reflect.typeOf
 
 var x: Int = 1
@@ -15,6 +16,7 @@ inline fun <reified T> foo(): String {
     return x
 }
 
+// FILE: main.kt
 fun box(): String {
     if (foo<kotlin.Unit>() != "Unit")
         return "FAIL"

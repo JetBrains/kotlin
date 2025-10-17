@@ -1,0 +1,13 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=SoftModifierAsInfixFunctionKt]]
+  facadeFqName: SoftModifierAsInfixFunctionKt
+  partSimpleName: "SoftModifierAsInfixFunctionKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=x]
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=C, superNames=[]]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Ann]

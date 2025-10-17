@@ -1,0 +1,1 @@
+val x = "ueau<caret_type>oa"

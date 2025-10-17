@@ -45,7 +45,7 @@ internal fun Uklib.serializeToZipArchive(
     zipUklibContents(
         manifest = manifest,
         fragmentToArtifact = module.fragments.associate {
-            it.identifier to it.file
+            it.identifier to it.files.single()
         },
         outputZip = outputZip,
         temporariesDirectory = temporariesDirectory,
@@ -65,6 +65,10 @@ internal data class IncompatibleUklibFragmentFile(val file: File) : IllegalState
  */
 private val allowRepackingArchivesWithExtensions = setOf(
     "klib",
+)
+
+// Always pack jars as is to support MR jars
+private val packArchiveAsIs = setOf(
     "jar",
 )
 
@@ -91,6 +95,12 @@ private fun zipUklibContents(
             if (file.isDirectory) {
                 packDirectory(
                     directory = file,
+                    identifier = identifier,
+                    zipOutputStream = zipOutputStream,
+                )
+            } else if (file.extension in packArchiveAsIs) {
+                packFile(
+                    file = file,
                     identifier = identifier,
                     zipOutputStream = zipOutputStream,
                 )
@@ -130,6 +140,19 @@ private fun packDirectory(
             zipOutputStream.closeEntry()
         }
     }
+}
+
+private fun packFile(
+    file: File,
+    identifier: String,
+    zipOutputStream: ZipOutputStream
+) {
+    val zipEntry = ZipEntry(identifier)
+    zipOutputStream.putNextEntry(zipEntry)
+    file.inputStream().use { inputStream ->
+        inputStream.copyTo(zipOutputStream)
+    }
+    zipOutputStream.closeEntry()
 }
 
 private fun unzip(zipFilePath: File, outputFolderPath: File) {

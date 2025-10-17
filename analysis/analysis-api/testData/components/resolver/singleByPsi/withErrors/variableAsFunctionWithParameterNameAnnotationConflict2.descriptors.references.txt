@@ -1,10 +1,12 @@
 KtNameReferenceExpression(165,166): 'x'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       x: (first: kotlin.Int) -> kotlin.Unit
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       Nothing (Unresolved reference)

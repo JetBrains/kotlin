@@ -5,5 +5,5 @@
 // IGNORE_BACKEND_K1: JS_IR
 // DIAGNOSTICS: -UNUSED_PARAMETER
 fun Int.foo(x: Int) {
-    js("this = x<!JSCODE_ERROR!><!>;")
+    js(<!JSCODE_ERROR!>"this = x;"<!>)
 }

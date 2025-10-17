@@ -93,3 +93,5 @@ internal fun getOldestSupportedVersion(kotlinVersion: KotlinReleaseVersion): Kot
     }
 
 internal fun KotlinCompilerArgumentsLevel.isLeaf(): Boolean = nestedLevels.isEmpty()
+
+internal val kotlinVersionType = ClassName(API_PACKAGE, "KotlinReleaseVersion")

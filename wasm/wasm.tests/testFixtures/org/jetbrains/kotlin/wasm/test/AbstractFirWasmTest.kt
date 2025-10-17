@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -16,11 +17,14 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
@@ -30,16 +34,10 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
-import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 import org.jetbrains.kotlin.test.services.SplittingTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
@@ -57,11 +55,12 @@ fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
 }
 
 abstract class AbstractFirWasmTest(
+    targetBackend: TargetBackend,
     targetPlatform: TargetPlatform,
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
 ) : AbstractWasmBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
-    FrontendKinds.FIR, TargetBackend.WASM, targetPlatform, pathToTestDir, testGroupOutputDirPrefix
+    FrontendKinds.FIR, targetBackend, targetPlatform, pathToTestDir, testGroupOutputDirPrefix
 ) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
@@ -92,6 +91,12 @@ abstract class AbstractFirWasmTest(
                     ::FirResolvedTypesVerifier,
                 )
             }
+            defaultDirectives {
+                LANGUAGE with listOf(
+                    "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
+            }
         }
     }
 }
@@ -99,19 +104,18 @@ abstract class AbstractFirWasmTest(
 open class AbstractFirWasmJsTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractFirWasmTest(WasmPlatforms.wasmJs, pathToTestDir, testGroupOutputDirPrefix) {
+) : AbstractFirWasmTest(TargetBackend.WASM_JS, WasmPlatforms.wasmJs, pathToTestDir, testGroupOutputDirPrefix) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmBoxRunner
 
-    override val wasmEnvironmentConfigurator: Constructor<EnvironmentConfigurator>
-        get() = ::WasmEnvironmentConfiguratorJs
+    override val wasmTarget: WasmTarget
+        get() = WasmTarget.JS
 }
-
 
 open class AbstractFirWasmJsCodegenBoxTest(
     testGroupOutputDirPrefix: String = "codegen/firBox/"
 ) : AbstractFirWasmJsTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
+    pathToTestDir = "compiler/testData/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -165,7 +169,7 @@ open class AbstractFirWasmJsCodegenBoxInlineTest : AbstractFirWasmJsTest(
 }
 
 open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
-    "compiler/testData/codegen/wasmJsInterop",
+    "compiler/testData/codegen/boxWasmJsInterop",
     "codegen/firWasmJsInterop"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -258,12 +262,12 @@ open class AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest : AbstractFirW
 open class AbstractFirWasmWasiTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractFirWasmTest(WasmPlatforms.wasmWasi, pathToTestDir, testGroupOutputDirPrefix) {
+) : AbstractFirWasmTest(TargetBackend.WASM_WASI, WasmPlatforms.wasmWasi, pathToTestDir, testGroupOutputDirPrefix) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasiBoxRunner
 
-    override val wasmEnvironmentConfigurator: Constructor<EnvironmentConfigurator>
-        get() = ::WasmEnvironmentConfiguratorWasi
+    override val wasmTarget: WasmTarget
+        get() = WasmTarget.WASI
 
     override val additionalSourceProvider: Constructor<AdditionalSourceProvider>?
         get() = ::WasmWasiBoxTestHelperSourceProvider
@@ -277,9 +281,9 @@ open class AbstractFirWasmWasiTest(
 }
 
 open class AbstractFirWasmWasiCodegenBoxTest(
-    testGroupOutputDirPrefix: String = "codegen/firWasiBox/"
+    testGroupOutputDirPrefix: String = "codegen/wasi/"
 ) : AbstractFirWasmWasiTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
+    pathToTestDir = "compiler/testData/codegen/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(62,65): 'bar'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       bar: kotlin.Int [fake.kt]

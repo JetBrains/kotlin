@@ -637,8 +637,8 @@ public final class LongArray : kotlin.Any, kotlin.Cloneable, java.io.Serializabl
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE, AnnotationTarget.CLASS}) @kotlin.SinceKotlin(version = "2.2") public final annotation class MustUseReturnValue : kotlin.Annotation {
-    /*primary*/ public constructor MustUseReturnValue()
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE, AnnotationTarget.CLASS}) @kotlin.SinceKotlin(version = "2.3") public final annotation class MustUseReturnValues : kotlin.Annotation {
+    /*primary*/ public constructor MustUseReturnValues()
 }
 
 public final class Nothing {

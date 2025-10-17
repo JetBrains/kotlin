@@ -2,6 +2,7 @@
   KDocName(47,61): 'C.ensureActive'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun C.ensureActive()
 
@@ -9,5 +10,6 @@
   KDocName(83,97): 'C.ensureActive'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in ROOT) fun C.ensureActive()

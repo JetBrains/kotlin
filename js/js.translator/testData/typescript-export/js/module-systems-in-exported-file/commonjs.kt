@@ -36,3 +36,6 @@ fun arrayOfLists(): Array<List<Int>> =
 
 
 fun acceptArrayOfPairs(array: Array<Pair<String, String>>) {}
+
+@JsExport.Default
+fun justSomeDefaultExport() = "OK"

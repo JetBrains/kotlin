@@ -1,5 +1,6 @@
 KtNameReferenceExpression(48,49): 'y'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) val y: kotlin.Int

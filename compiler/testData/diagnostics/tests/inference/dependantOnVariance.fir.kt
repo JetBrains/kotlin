@@ -14,7 +14,7 @@ fun <T> readFromMyList(l: MyList<out T>, t: T) {}
 fun test1(int: Int, any: Any) {
     val a0 : MyList<Any> = getMyList(int)
 
-    val a1 : MyList<Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyList(any)<!>
+    val a1 : MyList<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> getMyList(any)
 
     val a2 : MyList<out Any> = getMyList(int)
 
@@ -25,17 +25,17 @@ fun test1(int: Int, any: Any) {
     val a5 : MyList<in Int> = getMyListToWriteTo(any)
 
 
-    val a6 : MyList<in Any> = <!INITIALIZER_TYPE_MISMATCH!>getMyList<Int>(int)<!>
+    val a6 : MyList<in Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> getMyList<Int>(int)
     val a7 : MyList<in Any> = getMyList(int)
 
-    val a8 : MyList<in Any> = <!INITIALIZER_TYPE_MISMATCH!>getMyListToReadFrom<Int>(int)<!>
-    val a9 : MyList<in Any> = <!INITIALIZER_TYPE_MISMATCH!>getMyListToReadFrom(int)<!>
+    val a8 : MyList<in Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> getMyListToReadFrom<Int>(int)
+    val a9 : MyList<in Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> getMyListToReadFrom(int)
 
-    val a10 : MyList<out Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyList<Any>(any)<!>
-    val a11 : MyList<out Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyList(any)<!>
+    val a10 : MyList<out Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> getMyList<Any>(any)
+    val a11 : MyList<out Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> getMyList(any)
 
-    val a12 : MyList<out Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyListToWriteTo<Any>(any)<!>
-    val a13 : MyList<out Int> = <!INITIALIZER_TYPE_MISMATCH!>getMyListToWriteTo(any)<!>
+    val a12 : MyList<out Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> getMyListToWriteTo<Any>(any)
+    val a13 : MyList<out Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> getMyListToWriteTo(any)
 
     useMyList(getMyList(int), int)
     useMyList(getMyList(any), int)

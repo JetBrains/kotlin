@@ -2,6 +2,7 @@
   KDocName(54,65): 'test.extFun'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) fun test.Foo.extFun()
 
@@ -9,6 +10,7 @@
   KDocName(71,77): 'extFun'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) fun test.Foo.extFun()
 
@@ -16,6 +18,7 @@
   KDocName(86,96): 'Foo.extFun'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) fun test.Foo.extFun()
 
@@ -23,5 +26,6 @@
   KDocName(102,117): 'test.Foo.extFun'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) fun test.Foo.extFun()

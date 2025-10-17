@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap.mapKotlinToJava
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.VersionIndependentOpcodes
-import org.jetbrains.kotlin.codegen.addRecordComponent
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -403,7 +402,7 @@ class ClassCodegen private constructor(
         }
 
         if (irClass.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) && !field.isStatic) {
-            val rcv = visitor.addRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
+            val rcv = visitor.newRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
             val annotationCodegen = object : AnnotationCodegen(this@ClassCodegen) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return rcv.visitAnnotation(descr, visible)

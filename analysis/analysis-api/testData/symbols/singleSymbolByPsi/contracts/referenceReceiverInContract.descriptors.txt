@@ -41,6 +41,7 @@ KaNamedFunctionSymbol:
               getContainingJvmClassName: ReferenceReceiverInContractKt
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+              importableFqName: null
       occurrencesRange: EXACTLY_ONCE
   ]
   hasStableParameterNames: true
@@ -89,6 +90,7 @@ KaNamedFunctionSymbol:
     getContainingJvmClassName: ReferenceReceiverInContractKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -101,3 +103,4 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: referenceReceiverInContract

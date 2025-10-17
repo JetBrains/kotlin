@@ -12,11 +12,10 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
@@ -222,11 +221,14 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
 
     private fun createValueParametersObject(valueParameters: Iterable<IrValueParameter>): String {
         val listOfParameters = valueParameters.joinToString(", ") {
-            val (key, value) = it.name.run {
-                if (identifier.isValidES5Identifier() && identifier !in RESERVED_KEYWORDS) identifier to identifier
+            val keyName = it.getJsNameOrKotlinName()
+            val valueName = it.name
+
+            val (key, value) = valueName.run {
+                if (identifier.isValidES5Identifier() && identifier !in RESERVED_KEYWORDS) "\"${keyName.identifier}\"" to identifier
                 else {
                     val newName: Name = Name.identifier(sanitizeName(identifier)).apply { it.name = this }
-                    "\"${identifier}\"" to newName.identifier
+                    "\"${keyName.identifier}\"" to newName.identifier
                 }
             }
             "$key:$value"

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.ConfigurablesWithEmulator
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.isMacabi
 import org.jetbrains.kotlin.konan.target.isSimulator
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.native.executors.*
@@ -33,6 +34,7 @@ val Settings.testProcessExecutor: Executor
                 get<ForcedNoopTestRunner>().value -> {
                     NoOpExecutor("${ClassLevelProperty.COMPILE_ONLY.name} option was specified to skip execution")
                 }
+                configurables.targetTriple.isMacabi -> HostExecutor()
                 get<XCTestRunner>().isEnabled -> {
                     // Forcibly run tests with XCTest
                     check(configurables is AppleConfigurables) {

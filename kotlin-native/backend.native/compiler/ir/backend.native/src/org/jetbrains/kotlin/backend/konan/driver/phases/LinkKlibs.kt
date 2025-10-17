@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
 import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.LinkKlibsInput
 import org.jetbrains.kotlin.backend.konan.LinkKlibsOutput
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.linkKlibs
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
@@ -27,7 +27,7 @@ internal class LinkKlibsContextImpl(
         config: KonanConfig,
         private val moduleDescriptor: ModuleDescriptor,
         override val bindingContext: BindingContext,
-) : BasicPhaseContext(config), LinkKlibsContext {
+) : BasicNativeBackendPhaseContext(config), LinkKlibsContext {
     // TODO: Invalidate properly in dispose method.
     override val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
 

@@ -28,7 +28,7 @@ class ReturnValueCheckerModeConsistency {
         val returnValueCheckerArg = actualCommonCompilerArguments.arguments.single { it.name == "Xreturn-value-checker" }
 
         assertEquals(
-            expected = 329987405,
+            expected = 10644755,
             actual = returnValueCheckerArg.valueDescription.hashCode(),
             message = "Value description in '${returnValueCheckerArg.name}' should be updated by moving current value to 'oldValues'."
         )

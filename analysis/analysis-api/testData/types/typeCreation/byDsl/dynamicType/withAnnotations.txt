@@ -1,0 +1,17 @@
+KaType
+KaDynamicType:
+  abbreviation: null
+  annotations: [
+    MyAnno1()
+      psi: null
+    MyAnno2()
+      psi: null
+    MyAnno3()
+      psi: null
+  ]
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+
+Rendered type:
+dynamic

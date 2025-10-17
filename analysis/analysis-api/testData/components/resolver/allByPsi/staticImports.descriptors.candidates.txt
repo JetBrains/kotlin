@@ -322,6 +322,7 @@ KtProperty(469,505): 'val explicitBar = TopLevelObject.bar'
 KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -346,6 +347,7 @@ KtNameReferenceExpression(487,501): 'TopLevelObject'
 KtNameReferenceExpression(502,505): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -370,6 +372,7 @@ KtProperty(510,531): 'val importedBar = bar'
 KtNameReferenceExpression(528,531): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -615,6 +618,7 @@ KtProperty(773,822): 'val explicitDoo = TopLevelObject.NestedObject.doo'
 KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -645,6 +649,7 @@ KtNameReferenceExpression(806,818): 'NestedObject'
 KtNameReferenceExpression(819,822): 'doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -669,6 +674,7 @@ KtProperty(827,867): 'val explicitNestedDoo = NestedObject.doo'
 KtDotQualifiedExpression(851,867): 'NestedObject.doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -693,6 +699,7 @@ KtNameReferenceExpression(851,863): 'NestedObject'
 KtNameReferenceExpression(864,867): 'doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
@@ -717,6 +724,7 @@ KtProperty(872,893): 'val importedDoo = doo'
 KtNameReferenceExpression(890,893): 'doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -737,6 +745,7 @@ KtNameReferenceExpression(890,893): 'doo'
 KtBinaryExpression(899,910): 'doo = "str"'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -758,6 +767,7 @@ KtBinaryExpression(899,910): 'doo = "str"'
 KtNameReferenceExpression(899,902): 'doo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:
@@ -779,6 +789,7 @@ KtNameReferenceExpression(899,902): 'doo'
 KtOperationReferenceExpression(903,904): '='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaImplicitReceiverValue:

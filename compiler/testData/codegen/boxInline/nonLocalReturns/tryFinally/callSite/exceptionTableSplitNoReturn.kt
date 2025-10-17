@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WASM_FAILS_IN: WasmEdge
+
 // FILE: 1.kt
 package test
 

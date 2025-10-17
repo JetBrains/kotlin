@@ -1,5 +1,6 @@
 KtNameReferenceExpression(70,78): 'Conflict'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: testFoo.Conflict) constructor()

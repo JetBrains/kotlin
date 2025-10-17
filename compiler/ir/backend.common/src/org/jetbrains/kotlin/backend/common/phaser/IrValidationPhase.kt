@@ -64,8 +64,6 @@ class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Co
             .withCheckers(IrExpressionBodyInFunctionChecker)
 }
 
-
-@PhaseDescription(name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase")
 class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringContext>(
     context: Context,
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker,
@@ -73,7 +71,9 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
-            //.withVisibilityChecks() // TODO: Enable checking visibilities (KT-69516)
+            .applyIf(context.configuration.enableIrVisibilityChecks) {
+                withCheckers(IrVisibilityChecker.Strict)
+            }
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             .applyIf(context.configuration.enableIrVarargTypesChecks) {
                 withVarargChecks()
@@ -104,7 +104,8 @@ class IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase<Context : Loweri
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig()
-            .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
+    // Enable after KT-81470 fix
+//            .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
 }
 
 open class IrValidationAfterLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {

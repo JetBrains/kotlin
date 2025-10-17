@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
@@ -151,38 +150,7 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
     }
 }
 
-@DisplayName("K/JS multi-project IC with disabled precise outputs backups")
-abstract class IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
-}
-
-class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-
-    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
-    @GradleTest
-    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
-        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
-        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
-    }
-}
-
 class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-}
-
-class IncrementalCompilationK1JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-
-    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
-    @GradleTest
-    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
-        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
-        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
-    }
-}
-
-class IncrementalCompilationK2JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
@@ -342,53 +310,6 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
             }
         }
     }
-}
-
-@DisplayName("K/JVM multi-project IC with disabled precise outputs backups")
-abstract class IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
-}
-
-@DisplayName("K/JVM multi-project IC with disabled precise outputs backups and BTA enabled")
-open class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
-
-    @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
-    @GradleTest
-    override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
-    }
-}
-
-@DisplayName("K/JVM multi-project IC with disabled precise outputs backups and BTA enabled using FIR runner")
-class IncrementalCompilationK2JvmMultiProjectFirRunnerBuildToolsApiDaemonIT : IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
-}
-
-@DisplayName("In Process: K/JVM multi-project IC with disabled precise outputs backups and BTA enabled")
-open class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
-
-    @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
-    @GradleTest
-    override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
-    }
-}
-
-@DisplayName("In Process: K/JVM multi-project IC with disabled precise outputs backups and BTA with FIR runner enabled")
-class IncrementalCompilationK2JvmMultiProjectFirRunnerBuildToolsApiInProcessIT : IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
-}
-
-class IncrementalCompilationK1JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-}
-
-open class IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-}
-
-open class IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupFirRunnerIT : IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
 class IncrementalCompilationK1JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
@@ -811,6 +732,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 ":lib:$compileKotlinTaskName",
                 buildOptions = defaultBuildOptions.copy(
                     compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
+                    incremental = false
                 ),
             ) {
                 projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/classpath-snapshot").let {
@@ -821,7 +743,12 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             // Perform the next build using Kotlin daemon without making a change and check that tasks are up-to-date. This is to ensure
             // that the `kotlin.compiler.execution.strategy` property used above is not an input to the KotlinCompile task; otherwise the
             // test in the next build would not be effective.
-            build(":lib:$compileKotlinTaskName") {
+            build(
+                ":lib:$compileKotlinTaskName",
+                buildOptions = defaultBuildOptions.copy(
+                    incremental = false,
+                )
+            ) {
                 assertTasksUpToDate(":lib:$compileKotlinTaskName")
             }
 

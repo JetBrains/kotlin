@@ -1,13 +1,17 @@
 MainKt.class:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=MainKt]]
+    facadeFqName: MainKt
+    partSimpleName: "MainKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=bar, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=bar]
+      origin: Facade(className=MainKt, jvmClassName=null)
       MODIFIER_LIST[public]
         CONTEXT_RECEIVER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -15,6 +19,7 @@ MainKt.class:
             TYPE_REFERENCE
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
@@ -26,6 +31,7 @@ MainKt.class:
                     TYPE_REFERENCE
                       MODIFIER_LIST[]
                         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+                          valueArguments: [ ]
                           CONSTRUCTOR_CALLEE
                             TYPE_REFERENCE
                               USER_TYPE
@@ -43,11 +49,13 @@ MainKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+      origin: Facade(className=MainKt, jvmClassName=null)
       MODIFIER_LIST[public]
         CONTEXT_RECEIVER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -55,6 +63,7 @@ MainKt.class:
             TYPE_REFERENCE
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
@@ -66,6 +75,7 @@ MainKt.class:
                     TYPE_REFERENCE
                       MODIFIER_LIST[]
                         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+                          valueArguments: [ ]
                           CONSTRUCTOR_CALLEE
                             TYPE_REFERENCE
                               USER_TYPE
@@ -89,6 +99,7 @@ MyAnnotation.class:
     CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

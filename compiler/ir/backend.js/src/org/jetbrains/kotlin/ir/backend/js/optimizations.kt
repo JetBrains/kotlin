@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.JsClass
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.inline.clean.ClassPostProcessor
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 fun optimizeProgramByIr(
     modules: Iterable<IrModuleFragment>,
@@ -36,7 +36,7 @@ fun optimizeProgramByIr(
 }
 
 fun optimizeFragmentByJsAst(fragment: JsIrProgramFragment, context: JsStaticContext) {
-    val voidName = context.backendContext.intrinsics.void.owner.backingField?.let(context::getNameForField)
+    val voidName = context.backendContext.symbols.void.owner.backingField?.let(context::getNameForField)
 
     val optimizer = object : RecursiveJsVisitor() {
         override fun visitFunction(x: JsFunction) {

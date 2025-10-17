@@ -58,7 +58,7 @@ interface KlibMetadataModuleDescriptorFactory {
     fun createPackageFragmentProvider(
         library: KotlinLibrary,
         packageAccessHandler: PackageAccessHandler?,
-        packageFragmentNames: List<String>,
+        customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
         configuration: DeserializationConfiguration,

@@ -6,7 +6,7 @@
 object DelegateTest {
     var result = ""
     val f by lazy {
-        result += <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: cycle"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f<!>.toString() // Compiler crash
+        result += <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Recursive implicit type"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f<!>.toString() // Compiler crash
         "hello"
     }
 }
@@ -14,7 +14,7 @@ object DelegateTest {
 object DelegateTest2 {
     var result = ""
     val f by lazy {
-        result += <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: cycle"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f<!>
+        result += <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Recursive implicit type"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f<!>
         "hello"
     }
 }

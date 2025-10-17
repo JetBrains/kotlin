@@ -1,5 +1,6 @@
 KtConstructorDelegationReferenceExpression(106,111): 'super'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Any) constructor()

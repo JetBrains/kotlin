@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsExtension
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.js.JavaScript
+import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
+import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.js.test.converters.finalizePath
 import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.RUN_PLAIN_BOX_FUNCTION
@@ -115,11 +116,11 @@ fun getAdditionalMainFiles(
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
     val additionalFiles = mutableListOf<File>()
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main.js")
+    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main$REGULAR_EXTENSION")
         .takeIf { it.exists() }
         ?.let { additionalFiles += it }
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main.mjs")
+    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main$ESM_EXTENSION")
         .takeIf { it.exists() }
         ?.let {
             File(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode), it.name).apply {
@@ -133,7 +134,8 @@ fun getAdditionalMainFiles(
 
 fun testWithModuleSystem(testServices: TestServices): Boolean {
     val globalDirectives = testServices.moduleStructure.allDirectives
-    val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(getMainModule(testServices))
+    val configuration =
+        testServices.compilerConfigurationProvider.getCompilerConfiguration(getMainModule(testServices), CompilationStage.SECOND)
     val mainModuleKind = configuration[JSConfigurationKeys.MODULE_KIND]
     return mainModuleKind != ModuleKind.PLAIN && mainModuleKind != ModuleKind.ES && NO_JS_MODULE_SYSTEM !in globalDirectives
 }
@@ -274,6 +276,7 @@ fun extractTestPackage(testServices: TestServices, ignoreEsModules: Boolean = tr
 
 fun extractEntryModulePath(
     mode: TranslationMode,
+    jsFilePaths: List<String>,
     testServices: TestServices,
 ): String? =
     if (getBoxFunction(testServices) == null) {
@@ -285,7 +288,7 @@ fun extractEntryModulePath(
                     ?.let {
                         JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode).absolutePath +
                                 File.separator + getNameFor(it, testServices)
-                    }
+                    } ?: jsFilePaths.find { it.endsWith("__main$ESM_EXTENSION") }
             }
 
     } else {

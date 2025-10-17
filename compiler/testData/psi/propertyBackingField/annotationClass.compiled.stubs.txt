@@ -55,6 +55,7 @@ AnnoWithCustomNameAndDefaultValue.class:
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
         PROPERTY[fqName=AnnoWithCustomNameAndDefaultValue.string, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=string]
+          constantInitializer: "str"
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -121,6 +122,7 @@ AnnoWithDefaultNameAndDefaultValue.class:
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
         PROPERTY[fqName=AnnoWithDefaultNameAndDefaultValue.value, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
+          constantInitializer: 1
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -189,6 +191,7 @@ AnnoWithVarargAndDefaultVakue.class:
               REFERENCE_EXPRESSION[referencedName=Annotation]
       CLASS_BODY
         PROPERTY[fqName=AnnoWithVarargAndDefaultVakue.value, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
+          constantInitializer: [0]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE

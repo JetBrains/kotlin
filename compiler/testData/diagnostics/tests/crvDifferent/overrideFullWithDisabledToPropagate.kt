@@ -48,7 +48,7 @@ class C2: C1() {
     override fun bar(): String = ""
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 class C3: C1() {
     override fun foo(): String = ""
     override fun bar(): String = ""

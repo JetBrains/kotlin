@@ -185,6 +185,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("superType")
         }
         val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE by error<PsiElement>()
+        val JVM_RECORDS_ILLEGAL_BYTECODE_TARGET by error<PsiElement>()
     }
 
     val MODULES by object : DiagnosticGroup("JVM Modules") {

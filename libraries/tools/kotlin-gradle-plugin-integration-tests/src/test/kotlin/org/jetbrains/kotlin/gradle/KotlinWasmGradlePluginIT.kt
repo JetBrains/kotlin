@@ -587,9 +587,18 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                         commonWebpackConfig {
                             it.outputFileName = "check.js"
                             it.devServer = (it.devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                                @Suppress("DEPRECATION")
                                 static = (static ?: mutableListOf()).apply {
                                     add("bar")
                                 }
+                            }
+                        }
+
+                        runTask {
+                            it.devServerProperty.set(it.devServerProperty.get().copy())
+
+                            if (it.devServerProperty.get().statics.isEmpty()) {
+                                error("No dev server statics after copying of data class")
                             }
                         }
                     }

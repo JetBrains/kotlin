@@ -18,6 +18,7 @@ import org.eclipse.jgit.submodule.SubmoduleWalk
 import org.eclipse.jgit.transport.URIish
 import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.RowExpression
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.DisplayConfiguration
 import org.jetbrains.kotlinx.dataframe.io.readCsv
@@ -299,6 +300,15 @@ abstract class BenchmarkTemplate(
         )
     }
 
+    fun percentageChange(columnName: String): RowExpression<Any?, String> {
+        return {
+            val stableReleaseConfiguration = column<Double>("${columnName}: $stableKotlinVersions").getValue(this)
+            val currentReleaseConfiguration = column<Double>("${columnName}: $currentKotlinVersion").getValue(this)
+            val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
+            String.format("%.2f", percent) + "%"
+        }
+    }
+
     // Not working as intended due to this bug: https://github.com/gradle/gradle-profiler/issues/317
     fun aggregateBenchmarkResults(benchmarkResults: List<BenchmarkResult>) {
         println("Aggregating benchmark results...")
@@ -320,7 +330,7 @@ abstract class BenchmarkTemplate(
                             when {
                                 column == "scenario" -> totalExecutionTime[column]
                                 column == "value" -> "execution only time"
-                                column.startsWith("measured") -> (totalExecutionTime[column] as Int) - (configurationTime[column] as Int)
+                                column.startsWith("measured") -> (totalExecutionTime[column] as Double) - (configurationTime[column] as Double)
                                 else -> error(column)
                             }!!
                         )
@@ -365,26 +375,11 @@ abstract class BenchmarkTemplate(
                 // "Scenario" column should always be in the first place
                 if (it.name() == "Scenario") "0000Scenario" else it.name()
             }
-            .insert("Configuration diff from stable release") {
-                val stableReleaseConfiguration = column<Double>("Configuration: $stableKotlinVersions").getValue(this)
-                val currentReleaseConfiguration = column<Double>("Configuration: $currentKotlinVersion").getValue(this)
-                val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
-                "${percent}%"
-            }
+            .insert("Configuration diff from stable release", expression = percentageChange("Configuration"))
             .after("Configuration: $currentKotlinVersion")
-            .insert("Execution only diff from stable release") {
-                val stableReleaseConfiguration = column<Int>("Execution only: $stableKotlinVersions").getValue(this)
-                val currentReleaseConfiguration = column<Int>("Execution only: $currentKotlinVersion").getValue(this)
-                val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
-                "${percent}%"
-            }
+            .insert("Execution only diff from stable release", expression = percentageChange("Execution only"))
             .after("Execution only: $currentKotlinVersion")
-            .insert("Execution diff from stable release") {
-                val stableReleaseConfiguration = column<Double>("Execution: $stableKotlinVersions").getValue(this)
-                val currentReleaseConfiguration = column<Double>("Execution: $currentKotlinVersion").getValue(this)
-                val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
-                "${percent}%"
-            }
+            .insert("Execution diff from stable release", expression = percentageChange("Execution"))
             .after("Execution: $currentKotlinVersion")
 
         println("Benchmark results:")

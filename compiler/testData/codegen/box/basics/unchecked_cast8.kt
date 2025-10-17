@@ -1,5 +1,5 @@
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // WITH_STDLIB
 
 interface I1

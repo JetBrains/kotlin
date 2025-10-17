@@ -24,6 +24,7 @@ KaSamConstructorSymbol:
       compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
+      hasDeclaredDefaultValue: false
       hasDefaultValue: false
       isActual: false
       isCrossinline: false
@@ -52,9 +53,11 @@ KaSamConstructorSymbol:
       getContainingJvmClassName: one.SamConstructorFromTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
+      importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samConstructorFromTypeAlias.kt)
   getContainingJvmClassName: one.SamConstructorFromTypeAliasKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: one.MyAlias

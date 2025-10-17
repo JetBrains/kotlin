@@ -35,6 +35,9 @@ internal val useK1Implementation = runCatching {
  * This system property instructs kotlin-reflect to load Kotlin metadata directly in the new implementation, avoiding descriptors.
  * This is more efficient if you only use API that is already implemented without descriptors. However, this is less efficient if API
  * implemented via descriptors (such as `KClass.members`) is used as well, because it will lead to second parsing of Kotlin metadata.
+ *
+ * Note: at the moment, using reflection for Kotlin built-in classes that are mapped to Java classes is not fully supported when this
+ * property is enabled. Such classes will be seen as their corresponding Java counterparts.
  */
 internal val loadMetadataDirectly = runCatching {
     System.getProperty("kotlin.reflect.jvm.loadMetadataDirectly")

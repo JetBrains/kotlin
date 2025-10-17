@@ -16,11 +16,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.retrieveExternalDependencies
-import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependenciesWithNativeDistribution
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.utils.Future
@@ -92,7 +93,7 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                 compilation.allKotlinSourceSets
                     .groupBy { it.fragmentName() }
                     .map { (fragmentName, sourceSets) ->
-                        val sourceFiles = sourceSets.map { it.kotlin.asFileTree }
+                        val sourceFiles = sourceSets.map { it.defaultImpl.allKotlin.asFileTree }
                             .reduce { acc, fileTree -> acc + fileTree }
                         K2MultiplatformStructure.Fragment(
                             fragmentName,
@@ -137,7 +138,7 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                                 .filterIsInstance<AbstractKotlinNativeCompilation>()
                                 .map { compilation -> compilation.konanTarget.name }.toSet()
                             if (mostCommonFragmentPerNativePlatforms[nativePlatforms] == fragmentName) {
-                                add(metadataCompilation.retrievePlatformDependencies())
+                                add(metadataCompilation.retrievePlatformDependenciesWithNativeDistribution())
                             }
                         }
                     }

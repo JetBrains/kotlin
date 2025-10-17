@@ -183,6 +183,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeTags.STRUCT_REF -> WasmStructRef
                 TypeTags.UNREACHABLE_TYPE -> WasmUnreachableType
                 TypeTags.V12 -> WasmV128
+                TypeTags.ARRAY_REF -> WasmArrayRef
                 else -> tagError(tag)
             }
         }
@@ -653,8 +654,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             createStringLiteralUtf16 = deserializeSymbol(::deserializeFunction),
             createStringLiteralLatin1 = deserializeSymbol(::deserializeFunction),
             createStringLiteralType = deserializeSymbol(::deserializeFunctionType),
-            stringPoolSize = deserializeSymbol(::deserializeInt),
-            stringPoolFieldInitializer = deserializeNullable(::deserializeIdSignature),
         )
     }
 

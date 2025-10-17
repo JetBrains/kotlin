@@ -1,0 +1,15 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public interface Foo<T> {
+}
+
+public final class AnonymousReturnWithGenericType<T> public constructor() {
+    public final val v1: Foo<T> /* compiled code */
+
+    private final val v2: kotlin.Any /* compiled code */
+
+    public final fun f1(): Foo<T> { /* compiled code */ }
+
+    private final fun f2(): kotlin.Any { /* compiled code */ }
+}

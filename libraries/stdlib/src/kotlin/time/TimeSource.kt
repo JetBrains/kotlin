@@ -12,6 +12,10 @@ import kotlin.jvm.JvmInline
  *
  * The only operation provided by the time source is [markNow]. It returns a [TimeMark], which can be used to query the elapsed time later.
  *
+ * In general, [TimeSource] may not be monotonic, which may result in a negative duration returned from [TimeMark.elapsedNow]
+ * for a [TimeMark] obtained from a particular [TimeSource].
+ * The monotonicity is guaranteed for [TimeSource.Monotonic].
+ *
  * @see [measureTime]
  * @see [measureTimedValue]
  */
@@ -64,6 +68,17 @@ public interface TimeSource {
         @WasExperimental(ExperimentalTime::class)
         @JvmInline
         public value class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : ComparableTimeMark {
+            /**
+             * Returns the amount of time passed from this mark measured with the time source from which this mark was taken.
+             *
+             * Note that the value returned by this function can change on subsequent invocations.
+             *
+             * The value returned by this function may be infinitely large (in terms of [Duration.isInfinite]).
+             *
+             * @throws IllegalArgumentException an implementation may throw if calculating the elapsed time involves
+             * adding a positive infinite duration to an infinitely distant past time mark or
+             * a negative infinite duration to an infinitely distant future time mark.
+             */
             override fun elapsedNow(): Duration = MonotonicTimeSource.elapsedFrom(this)
             override fun plus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, duration)
             override fun minus(duration: Duration): ValueTimeMark = MonotonicTimeSource.adjustReading(this, -duration)
@@ -121,6 +136,13 @@ public interface TimeMark {
      * Returns the amount of time passed from this mark measured with the time source from which this mark was taken.
      *
      * Note that the value returned by this function can change on subsequent invocations.
+     *
+     * The value returned by this function may be infinitely large (in terms of [Duration.isInfinite]).
+     *
+     * Depending on monotonicity guarantees of a [TimeSource] from which a [TimeMark] was obtained,
+     * subsequence calls may return non-increasing (or even negative) [Duration] values.
+     * Consult with a documentation of a particular [TimeSource] implementation for more details about
+     * monotonicity guarantees.
      *
      * @throws IllegalArgumentException an implementation may throw if calculating the elapsed time involves
      * adding a positive infinite duration to an infinitely distant past time mark or

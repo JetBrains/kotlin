@@ -85,18 +85,12 @@ void kotlin::initGlobalMemory() noexcept {
     mm::GlobalData::init();
 }
 
-extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
+extern "C" void DeinitMemory(MemoryState* state) {
     // We need the native state to avoid a deadlock on unregistering the thread.
     // The deadlock is possible if we are in the runnable state and the GC already locked
     // the thread registery and waits for threads to suspend or go to the native state.
     AssertThreadState(state, ThreadState::kNative);
     auto* node = mm::FromMemoryState(state);
-    if (destroyRuntime) {
-        ThreadStateGuard guard(state, ThreadState::kRunnable);
-        mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
-        // TODO: Why not just destruct `GC` object and its thread data counterpart entirely?
-        mm::GlobalData::Instance().allocator().stopFinalizerThreadIfRunning();
-    }
     if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
         // we can clear reference in advance, as Unregister function can't use it anyway
         mm::ThreadRegistry::ClearCurrentThreadData();
@@ -424,14 +418,6 @@ PERFORMANCE_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool ree
     Kotlin_initRuntimeIfNeeded();
     thread_ = mm::GetMemoryState();
     oldState_ = SwitchThreadState(thread_, ThreadState::kRunnable, reentrant_);
-}
-
-void kotlin::StartFinalizerThreadIfNeeded() noexcept {
-    mm::GlobalData::Instance().allocator().startFinalizerThreadIfNeeded();
-}
-
-bool kotlin::FinalizersThreadIsRunning() noexcept {
-    return mm::GlobalData::Instance().allocator().finalizersThreadIsRunning();
 }
 
 RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object) {

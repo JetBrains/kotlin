@@ -478,6 +478,7 @@ KtWhenExpression(337,432): 'when (s) {'
 KtNameReferenceExpression(343,344): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -613,6 +614,7 @@ KtWhenExpression(471,536): 'when (s) {'
 KtNameReferenceExpression(477,478): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -708,6 +710,7 @@ KtWhenExpression(577,636): 'when (s) {'
 KtNameReferenceExpression(583,584): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -806,6 +809,7 @@ KtBinaryExpressionWithTypeRHS(675,681): 's as A'
 KtNameReferenceExpression(675,676): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -874,6 +878,7 @@ KtBinaryExpressionWithTypeRHS(735,741): 's as B'
 KtNameReferenceExpression(735,736): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -942,6 +947,7 @@ KtBinaryExpressionWithTypeRHS(796,809): 's as Sealed.A'
 KtNameReferenceExpression(796,797): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1016,6 +1022,7 @@ KtBinaryExpressionWithTypeRHS(864,877): 's as Sealed.B'
 KtNameReferenceExpression(864,865): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1090,6 +1097,7 @@ KtBinaryExpressionWithTypeRHS(934,944): 's as foo.A'
 KtNameReferenceExpression(934,935): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1164,6 +1172,7 @@ KtBinaryExpressionWithTypeRHS(1001,1011): 's as foo.B'
 KtNameReferenceExpression(1001,1002): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1238,6 +1247,7 @@ KtBinaryExpressionWithTypeRHS(1062,1068): 's as C'
 KtNameReferenceExpression(1062,1063): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1308,6 +1318,7 @@ KtBinaryExpressionWithTypeRHS(1119,1125): 's as D'
 KtNameReferenceExpression(1119,1120): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1409,6 +1420,7 @@ KtBinaryExpression(1183,1189): 's == A'
 KtNameReferenceExpression(1183,1184): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1530,6 +1542,7 @@ KtBinaryExpression(1232,1245): 's == Sealed.A'
 KtNameReferenceExpression(1232,1233): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1657,6 +1670,7 @@ KtBinaryExpression(1290,1300): 's == foo.A'
 KtNameReferenceExpression(1290,1291): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -1784,6 +1798,7 @@ KtBinaryExpression(1339,1352): 's == Sealed.C'
 KtNameReferenceExpression(1339,1340): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

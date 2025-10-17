@@ -26,3 +26,4 @@ KaContextParameterSymbol:
   getContainingJvmClassName: ContextParameterOnFunctionKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

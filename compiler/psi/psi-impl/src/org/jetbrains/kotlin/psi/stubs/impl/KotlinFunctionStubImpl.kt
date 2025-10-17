@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
+import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableCollection
+import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableCollection
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import java.io.IOException
 
 @OptIn(KtImplementationDetail::class)
 class KotlinFunctionStubImpl(
@@ -39,12 +40,10 @@ class KotlinFunctionStubImpl(
 
     override fun getName(): String? = StringRef.toString(nameRef)
 
-    @Throws(IOException::class)
     fun serializeContract(dataStream: StubOutputStream) {
-        val effects: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = contract
-        dataStream.writeVarInt(effects?.size ?: 0)
-        val visitor = KotlinContractSerializationVisitor(dataStream)
-        effects?.forEach { it.accept(visitor, null) }
+        dataStream.writeNullableCollection(contract) { effect ->
+            effect.accept(KotlinContractSerializationVisitor(this), null)
+        }
     }
 
     @KtImplementationDetail
@@ -63,14 +62,11 @@ class KotlinFunctionStubImpl(
     )
 
     companion object {
-        fun deserializeContract(dataStream: StubInputStream): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>> {
-            val effects = mutableListOf<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>()
-            val count: Int = dataStream.readVarInt()
-            for (i in 0 until count) {
-                val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[dataStream.readVarInt()]
-                effects.add(effectType.deserialize(dataStream))
-            }
-            return effects
+        fun deserializeContract(
+            dataStream: StubInputStream,
+        ): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = dataStream.readNullableCollection {
+            val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[readVarInt()]
+            effectType.deserialize(dataStream)
         }
     }
 }

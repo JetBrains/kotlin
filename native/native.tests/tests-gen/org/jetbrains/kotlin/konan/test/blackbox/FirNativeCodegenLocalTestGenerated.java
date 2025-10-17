@@ -257,6 +257,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("kt81538.kt")
+    public void testKt81538() {
+      runTest("native/native.tests/testData/codegen/cinterop/kt81538.kt");
+    }
+
+    @Test
     @TestMetadata("libiconv.kt")
     public void testLibiconv() {
       runTest("native/native.tests/testData/codegen/cinterop/libiconv.kt");
@@ -452,6 +458,18 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       }
 
       @Test
+      @TestMetadata("functionWithAsmAttributeWithDollar.kt")
+      public void testFunctionWithAsmAttributeWithDollar() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/functionWithAsmAttributeWithDollar.kt");
+      }
+
+      @Test
+      @TestMetadata("functionWithAsmAttributeWithSpecialChars.kt")
+      public void testFunctionWithAsmAttributeWithSpecialChars() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/functionWithAsmAttributeWithSpecialChars.kt");
+      }
+
+      @Test
       @TestMetadata("sameFunctionWithDifferentSignatures.kt")
       public void testSameFunctionWithDifferentSignatures() {
         runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/sameFunctionWithDifferentSignatures.kt");
@@ -638,6 +656,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       @TestMetadata("kt65260.kt")
       public void testKt65260() {
         runTest("native/native.tests/testData/codegen/cinterop/objc/kt65260.kt");
+      }
+
+      @Test
+      @TestMetadata("kt81652.kt")
+      public void testKt81652() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/kt81652.kt");
       }
 
       @Test

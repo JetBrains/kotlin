@@ -73,6 +73,7 @@ WithArrays.class:
     CLASS[classId=/WithArrays, fqName=WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrays, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
+          valueArguments: [ value -> [MyEnum.ENTRY1, MyEnum.ENTRY2] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

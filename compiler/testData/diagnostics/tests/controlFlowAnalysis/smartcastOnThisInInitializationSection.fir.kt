@@ -8,7 +8,7 @@ open class Base<T> {
     init {
         this as Derived
         x = "O"
-        this.<!VAL_REASSIGNMENT!>y<!> = <!ASSIGNMENT_TYPE_MISMATCH!>"O"<!>
+        this.<!VAL_REASSIGNMENT!>y<!> <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "O"
     }
 }
 

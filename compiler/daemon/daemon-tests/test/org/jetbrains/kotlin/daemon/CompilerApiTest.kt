@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
@@ -104,7 +104,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             val expectedFile = File(testDataDir, logName + ".expected")
             val normalizedContent = normalizeOutput(File(testDataDir), "OUT:\n$scriptOut\nReturn code: 0")
 
-            KotlinTestUtils.assertEqualsToFile(expectedFile, normalizedContent)
+            TestDataAssertions.assertEqualsToFile(expectedFile, normalizedContent)
         }
     }
 

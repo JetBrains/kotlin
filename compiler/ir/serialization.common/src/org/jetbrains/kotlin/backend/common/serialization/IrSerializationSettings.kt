@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.ir.IrFileEntry
  *   (i.e. whether path separators should be replaced by '/') before serializing these paths to the IR file proto.
  *   Note: This transformation is only applied to those paths that were not relativized, i.e., have no common prefixes with [sourceBaseDirs].
  * @property shouldCheckSignaturesOnUniqueness Whether to run checks on uniqueness of generated signatures.
- * @property reuseExistingSignaturesForSymbols Do not recompute signatures (i.e., reuse existing ones) for symbols where a signature
- *   is already known.
  */
 data class IrSerializationSettings(
     val languageVersionSettings: LanguageVersionSettings,
@@ -40,7 +38,6 @@ data class IrSerializationSettings(
     val sourceBaseDirs: Collection<String>,
     val normalizeAbsolutePaths: Boolean,
     val shouldCheckSignaturesOnUniqueness: Boolean,
-    val reuseExistingSignaturesForSymbols: Boolean,
     val abiCompatibilityLevel: KlibAbiCompatibilityLevel,
 ) {
     constructor(
@@ -51,7 +48,6 @@ data class IrSerializationSettings(
         sourceBaseDirs: Collection<String> = configuration.klibRelativePathBases,
         normalizeAbsolutePaths: Boolean = configuration.klibNormalizeAbsolutePath,
         shouldCheckSignaturesOnUniqueness: Boolean = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
-        reuseExistingSignaturesForSymbols: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization),
         abiCompatibilityLevel: KlibAbiCompatibilityLevel = configuration.klibAbiCompatibilityLevel,
     ) : this(
         languageVersionSettings = languageVersionSettings,
@@ -60,7 +56,6 @@ data class IrSerializationSettings(
         sourceBaseDirs = sourceBaseDirs,
         normalizeAbsolutePaths = normalizeAbsolutePaths,
         shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
-        reuseExistingSignaturesForSymbols = reuseExistingSignaturesForSymbols,
         abiCompatibilityLevel = abiCompatibilityLevel,
     )
 }

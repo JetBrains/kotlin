@@ -4,6 +4,7 @@ KaValueParameterSymbol:
   compilerVisibility: Local
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
+  hasDeclaredDefaultValue: false
   hasDefaultValue: false
   isActual: false
   isCrossinline: false
@@ -27,3 +28,4 @@ KaValueParameterSymbol:
   getContainingJvmClassName: ValueParameterKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

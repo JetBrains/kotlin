@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
+    val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("plugins/power-assert/tests-gen", "plugins/power-assert/testData") {
+        testGroup(testsRoot, "plugins/power-assert/testData") {
             testClass<AbstractIrBlackBoxCodegenTestForPowerAssert> {
                 model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }

@@ -1,13 +1,17 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
-import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.isNullableNothing
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
+import org.jetbrains.kotlinx.dataframe.plugin.findSchemaArgument
+import org.jetbrains.kotlinx.dataframe.plugin.getSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 data class PluginDataFrameSchema(
@@ -106,9 +110,16 @@ data class SimpleColumnGroup(
     }
 }
 
-fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
-    return if (type.fullyExpandedClassId(session) == Names.DATA_ROW_CLASS_ID) {
-        val schema = pluginDataFrameSchema(type.typeArguments[0])
+fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType ): SimpleCol {
+    fun extractSchema(): PluginDataFrameSchema {
+        val objectWithSchema = context(session) { type.findSchemaArgument(isTest) } ?: error("Cannot extract DataFrame schema from type: $type")
+        val schema = objectWithSchema.getSchema()
+        return schema
+    }
+
+    val nullableDataRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = true)
+    return if (!type.isNullableNothing && type.isSubtypeOf(nullableDataRow, session)) {
+        val schema = extractSchema()
         val group = SimpleColumnGroup(name, schema.columns())
         val column = if (type.isMarkedNullable) {
             makeNullable(group)
@@ -116,8 +127,8 @@ fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleC
             group
         }
         column
-    } else if (type.fullyExpandedClassId(session) == Names.DF_CLASS_ID && !type.isMarkedNullable) {
-        val schema = pluginDataFrameSchema(type.typeArguments[0])
+    } else if (!type.isMarkedNullable && type.isSubtypeOf(Names.DF_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection)), session)) {
+        val schema = extractSchema()
         SimpleFrameColumn(name, schema.columns())
     } else {
         SimpleDataColumn(name, type.wrap())

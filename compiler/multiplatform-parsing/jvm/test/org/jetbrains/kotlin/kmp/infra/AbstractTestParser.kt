@@ -9,12 +9,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 
 enum class ParseMode {
     /**
-     * Used for the new parser testing, KDoc was implemented at first.
-     * Probably it will be removed later because it's superseded by [Full] mode
-     */
-    KDocOnly,
-
-    /**
      * Blocks and lambdas remain collapsed.
      * It is maybe useful for working in IDE and testing with the same mode in PSI
      */
@@ -29,9 +23,6 @@ enum class ParseMode {
      * Useful for testing and comparison with PSI
      */
     Full;
-
-    val isParseKDoc: Boolean
-        get() = this == KDocOnly || this == Full
 }
 
 abstract class AbstractTestParser<T>(val parseMode: ParseMode) {

@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaDataFlowProvider : KaSessionComponent {
     /**
      * [Smart cast information][KaSmartCastInfo] for the given [KtExpression], or `null` if smart casts are not applied to it.
@@ -54,6 +52,12 @@ public interface KaSmartCastInfo : KaLifetimeOwner {
      * Whether the smart cast is [stable](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability).
      */
     public val isStable: Boolean
+
+    /**
+     * The original type of the expression before the smart cast was applied.
+     */
+    @KaExperimentalApi
+    public val originalType: KaType
 
     /**
      * The type with the smart cast applied.
@@ -178,28 +182,45 @@ public class KaDataFlowExitPointSnapshot(
 }
 
 /**
- * @see KaDataFlowProvider.smartCastInfo
+ * [Smart cast information][KaSmartCastInfo] for the given [KtExpression], or `null` if smart casts are not applied to it.
  */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(context: KaDataFlowProvider)
+context(s: KaSession)
 public val KtExpression.smartCastInfo: KaSmartCastInfo?
-    get() = with(context) { smartCastInfo }
+    get() = with(s) { smartCastInfo }
 
 /**
- * @see KaDataFlowProvider.implicitReceiverSmartCasts
+ * The list of [implicit receiver smart casts][KaImplicitReceiverSmartCast] which have refined the expression's implicit receivers to a
+ * more specific type. These smart casts are required for the expression to be evaluated. The list does not include smart casts for
+ * explicit receivers.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * if (this is String) {
+ *   this.substring()   // 'this' receiver is explicit, so there is no implicit smart cast here.
+ *
+ *   smartcast()        // 'this' receiver is implicit, therefore there is an implicit smart cast involved.
+ * }
+ * ```
  */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
-context(context: KaDataFlowProvider)
+@KaContextParameterApi
+context(s: KaSession)
 public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
-    get() = with(context) { implicitReceiverSmartCasts }
+    get() = with(s) { implicitReceiverSmartCasts }
 
-/**
- * @see KaDataFlowProvider.computeExitPointSnapshot
- */
-@KaContextParameterApi
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
-context(context: KaDataFlowProvider)
+@KaK1Unsupported
+@KaContextParameterApi
+context(s: KaSession)
 public fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot {
-    return with(context) { computeExitPointSnapshot(statements) }
+    return with(s) {
+        computeExitPointSnapshot(
+            statements = statements,
+        )
+    }
 }

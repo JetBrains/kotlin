@@ -6,7 +6,7 @@ typealias `_` = Int
 
 fun main() {
     val x: MutableList<String> = mutableListOf<_>()
-    val y: MutableList<String> = <!INITIALIZER_TYPE_MISMATCH!>mutableListOf<`_`>()<!>
+    val y: MutableList<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> mutableListOf<`_`>()
     val z: MutableList<Int> = mutableListOf<`_`>()
 }
 

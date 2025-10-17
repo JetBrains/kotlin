@@ -236,28 +236,28 @@ class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : Ir
     }
 }
 
-class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int) : IrLibraryBytesSource() {
-    override fun irDeclaration(index: Int): ByteArray = klib.irDeclaration(index, fileIndex)
-    override fun type(index: Int): ByteArray = klib.type(index, fileIndex)
-    override fun signature(index: Int): ByteArray = klib.signature(index, fileIndex)
-    override fun string(index: Int): ByteArray = klib.string(index, fileIndex)
-    override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
-    override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
-    override fun fileEntry(index: Int): ByteArray? = klib.fileEntry(index, fileIndex)
+class IrKlibBytesSource(private val ir: IrLibrary.IrDirectory, private val fileIndex: Int) : IrLibraryBytesSource() {
+    override fun irDeclaration(index: Int): ByteArray = ir.irDeclaration(index, fileIndex)
+    override fun type(index: Int): ByteArray = ir.type(index, fileIndex)
+    override fun signature(index: Int): ByteArray = ir.signature(index, fileIndex)
+    override fun string(index: Int): ByteArray = ir.string(index, fileIndex)
+    override fun body(index: Int): ByteArray = ir.body(index, fileIndex)
+    override fun debugInfo(index: Int): ByteArray? = ir.debugInfo(index, fileIndex)
+    override fun fileEntry(index: Int): ByteArray? = ir.fileEntry(index, fileIndex)
 }
 
 fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::string)
 
-fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
-    val fileEntry = deserializeFileEntry(fileEntry(fileProto))
+fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile, irInterner: IrInterningService): IrFile {
+    val fileEntry = deserializeFileEntry(fileEntry(fileProto), irInterner)
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
     val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(module.descriptor, fqName)
     val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
     return IrFileImpl(fileEntry, symbol, fqName, module)
 }
 
-internal fun deserializeFileEntry(fileEntryProto: ProtoFileEntry): IrFileEntry {
+internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry, irInterner: IrInterningService): IrFileEntry {
     val lineStartOffsets: IntArray
     if (fileEntryProto.lineStartOffsetDeltaCount > 0) {
         lineStartOffsets = IntArray(fileEntryProto.lineStartOffsetDeltaCount)
@@ -271,10 +271,16 @@ internal fun deserializeFileEntry(fileEntryProto: ProtoFileEntry): IrFileEntry {
     }
 
     return NaiveSourceBasedFileEntryImpl(
-        name = fileEntryProto.name,
+        name = irInterner.string(deserializeFileEntryName(fileEntryProto)),
         lineStartOffsets = lineStartOffsets,
         firstRelevantLineIndex = fileEntryProto.firstRelevantLineIndex
     )
+}
+
+fun IrLibraryFile.deserializeFileEntryName(fileEntryProto: ProtoFileEntry): String = when {
+    fileEntryProto.hasName() -> string(fileEntryProto.name)
+    fileEntryProto.hasNameOld() -> fileEntryProto.nameOld
+    else -> error("Malformed KLIB: File entry has no name")
 }
 
 
@@ -286,8 +292,8 @@ fun IrLibraryFile.fileEntry(protoFile: ProtoFile): FileEntry =
         protoFile.fileEntry
     }
 
-fun IrLibrary.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
-    if (protoFile.hasFileEntryId() && hasFileEntriesTable) {
+fun IrLibrary.IrDirectory.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
+    if (protoFile.hasFileEntryId()) {
         val fileEntry = fileEntry(protoFile.fileEntryId, fileIndex) ?: error("Invalid KLib: cannot read file entry by its index")
         ProtoFileEntry.parseFrom(fileEntry)
     } else {

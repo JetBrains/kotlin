@@ -28,7 +28,7 @@ fun test() {
         var variable = getTypeVariable()
         variable = TargetType()
         variable.targetTypeMemberFunction()
-        variable = <!ASSIGNMENT_TYPE_MISMATCH!>DifferentType()<!>
+        variable <!ASSIGNMENT_TYPE_MISMATCH!>=<!> DifferentType()
         variable.targetTypeMemberFunction()
         variable = TargetType()
         variable.targetTypeMemberFunction()

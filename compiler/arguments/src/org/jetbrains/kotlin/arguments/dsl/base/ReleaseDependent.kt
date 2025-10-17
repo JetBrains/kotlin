@@ -22,7 +22,19 @@ import org.jetbrains.kotlin.arguments.serialization.json.ReleaseDependentSeriali
 data class ReleaseDependent<T>(
     val current: T,
     val valueInVersions: Map<ClosedRange<KotlinReleaseVersion>, T>
-)
+) {
+    override fun equals(other: Any?): Boolean =
+        other is ReleaseDependent<*> && current == other.current && valueInVersions == other.valueInVersions
+
+    override fun hashCode(): Int {
+        var result = current?.hashCode() ?: 0
+        for ((range, value) in valueInVersions) {
+            val rangeHash = 31 * range.start.name.hashCode() + range.endInclusive.name.hashCode()
+            result += rangeHash xor value.hashCode()
+        }
+        return result
+    }
+}
 
 /**
  * Creates an instance of [ReleaseDependent] class.

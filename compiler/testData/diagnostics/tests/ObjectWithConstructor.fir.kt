@@ -1,12 +1,12 @@
 // RUN_PIPELINE_TILL: FRONTEND
 object A1<!CONSTRUCTOR_IN_OBJECT!>()<!> {
-    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = <!INITIALIZER_TYPE_MISMATCH!>""<!>, y: Int)<!> : <!UNRESOLVED_REFERENCE!>this<!>() {
+    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> "", y: Int)<!> : <!UNRESOLVED_REFERENCE!>this<!>() {
         x + y
     }
 }
 
 object A2 public <!CONSTRUCTOR_IN_OBJECT!>constructor(private val prop: Int)<!> {
-    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = <!INITIALIZER_TYPE_MISMATCH!>""<!>, y: Int)<!> : <!NONE_APPLICABLE!>this<!>(x * y) {
+    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> "", y: Int)<!> : <!NONE_APPLICABLE!>this<!>(x * y) {
         x + y
     }
 }

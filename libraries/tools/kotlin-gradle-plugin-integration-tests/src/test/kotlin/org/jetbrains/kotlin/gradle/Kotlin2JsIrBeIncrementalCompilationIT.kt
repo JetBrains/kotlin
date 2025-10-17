@@ -18,13 +18,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-@DisplayName("Incremental compilation tests for Kotlin JS IR backend with K1")
-@JsGradlePluginTests
-class Kotlin2JsK1IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK1()
-}
-
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend with K2")
 @JsGradlePluginTests
 class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
@@ -231,7 +224,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun testCacheGuardInvalidation(gradleVersion: GradleVersion) {
         project("kotlin2JsIrICProject", gradleVersion) {
-            build("nodeDevelopmentRun") {
+            build("nodeDevelopmentRun", "--debug") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains("module [main] was built clean")
                 assertOutputContains(">>> TEST OUT: Hello, Gradle.")
@@ -244,7 +237,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             srcFile.writeText(srcFile.readText().replace("greeting(\"Gradle\")", "greeting(\"Kotlin\")"))
 
             cacheGuard.createNewFile()
-            build("nodeDevelopmentRun") {
+            build("nodeDevelopmentRun", "--debug") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains(Regex("Cache guard file detected, cache directory '.+' cleared"))
                 assertOutputContains("module [main] was built clean")

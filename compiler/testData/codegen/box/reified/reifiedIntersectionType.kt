@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitIntersectionReifiedTypeParameter
 // KJS_WITH_FULL_RUNTIME
 
 // KT-37163

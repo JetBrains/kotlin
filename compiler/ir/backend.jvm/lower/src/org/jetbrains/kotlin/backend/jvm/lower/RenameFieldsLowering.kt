@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.fields
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Renames private fields (including fields copied from companion object) to avoid JVM declaration clash.
  */
-@PhaseDescription(name = "RenameFields")
 internal class RenameFieldsLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val fields = irClass.fields.toMutableList()

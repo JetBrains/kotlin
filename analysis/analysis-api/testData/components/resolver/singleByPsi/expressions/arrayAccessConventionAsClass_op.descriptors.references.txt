@@ -1,5 +1,6 @@
 KtOperationReferenceExpression(250,252): '+='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in MyClass) operator fun plus(v: MyClass): MyClass

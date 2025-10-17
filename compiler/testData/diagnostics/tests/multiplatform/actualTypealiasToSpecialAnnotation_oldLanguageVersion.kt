@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -MultiplatformRestrictions
-// FIR_IDENTICAL
+// LANGUAGE: -ForbidTypeAliasToCompilerRequiredAnnotation -MultiplatformRestrictions
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt

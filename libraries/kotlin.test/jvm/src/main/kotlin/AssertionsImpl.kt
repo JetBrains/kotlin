@@ -73,7 +73,7 @@ public fun <T : Any, R> assertNotNullNoInline(actual: T?, message: String? = nul
     contract { returns() implies (actual != null) }
     asserter.assertNotNull(message, actual)
     if (actual != null) {
-        block(actual)
+        val _ = block(actual)
     }
 }
 

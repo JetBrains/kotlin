@@ -1,3 +1,4 @@
+// FILE: lib.kt
 
 interface A<T1, T2>
 interface B<T>
@@ -37,6 +38,7 @@ inline fun <T: A<K, L>, K: B<T>, L: C<T>> test2(a: Any): String {
     return s1 + s2 + s3
 }
 
+// FILE: main.kt
 fun box(): String {
     var result = ""
 

@@ -11,11 +11,11 @@ Base.kt:
               REFERENCE_EXPRESSION[referencedName=String]
     CLASS[classId=/Base2, fqName=Base2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Base2, superNames=[]]
       MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValues]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=MustUseReturnValue]
+                REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
       CLASS_BODY
         FUN[fqName=Base2.mustUse, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
           VALUE_PARAMETER_LIST
@@ -73,11 +73,11 @@ Impl.kt:
               REFERENCE_EXPRESSION[referencedName=String]
     CLASS[classId=/Impl3, fqName=Impl3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl3, superNames=[Base2]]
       MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValues]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=MustUseReturnValue]
+                REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE

@@ -397,6 +397,24 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Test
+  @TestMetadata("emptyArguments.kt")
+  public void testEmptyArguments() {
+    runTest("compiler/testData/psi/emptyArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("emptyArgumentsInAnnotations.kt")
+  public void testEmptyArgumentsInAnnotations() {
+    runTest("compiler/testData/psi/emptyArgumentsInAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("emptyArgumentsInArrayAccesses.kt")
+  public void testEmptyArgumentsInArrayAccesses() {
+    runTest("compiler/testData/psi/emptyArgumentsInArrayAccesses.kt");
+  }
+
+  @Test
   @TestMetadata("emptyEnum.kt")
   public void testEmptyEnum() {
     runTest("compiler/testData/psi/emptyEnum.kt");
@@ -1360,12 +1378,6 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
-    @TestMetadata("annotatedDefaultPropertyAccessorK1.kt")
-    public void testAnnotatedDefaultPropertyAccessorK1() {
-      runTest("compiler/testData/psi/annotation/annotatedDefaultPropertyAccessorK1.kt");
-    }
-
-    @Test
     @TestMetadata("AnnotatedExpressions.kt")
     public void testAnnotatedExpressions() {
       runTest("compiler/testData/psi/annotation/AnnotatedExpressions.kt");
@@ -1375,12 +1387,6 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @TestMetadata("annotatedProperties.kt")
     public void testAnnotatedProperties() {
       runTest("compiler/testData/psi/annotation/annotatedProperties.kt");
-    }
-
-    @Test
-    @TestMetadata("annotatedPropertiesK1.kt")
-    public void testAnnotatedPropertiesK1() {
-      runTest("compiler/testData/psi/annotation/annotatedPropertiesK1.kt");
     }
 
     @Test
@@ -2095,6 +2101,18 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @TestMetadata("labelInFunctionTypeContext.kt")
     public void testLabelInFunctionTypeContext() {
       runTest("compiler/testData/psi/contextParameters/labelInFunctionTypeContext.kt");
+    }
+
+    @Test
+    @TestMetadata("parsingWithLocalDeclarations.kt")
+    public void testParsingWithLocalDeclarations() {
+      runTest("compiler/testData/psi/contextParameters/parsingWithLocalDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("parsingWithLocalDeclarationsIncorrect.kt")
+    public void testParsingWithLocalDeclarationsIncorrect() {
+      runTest("compiler/testData/psi/contextParameters/parsingWithLocalDeclarationsIncorrect.kt");
     }
 
     @Test
@@ -2813,6 +2831,172 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @TestMetadata("nullableTypes.kt")
     public void testNullableTypes() {
       runTest("compiler/testData/psi/greatSyntacticShift/nullableTypes.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/psi/k1")
+  @TestDataPath("$PROJECT_ROOT")
+  public class K1 {
+    @Test
+    public void testAllFilesPresentInK1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/k1"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotatedDefaultPropertyAccessorK1.kt")
+    public void testAnnotatedDefaultPropertyAccessorK1() {
+      runTest("compiler/testData/psi/k1/annotatedDefaultPropertyAccessorK1.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedFlexibleTypes.kt")
+    public void testAnnotatedFlexibleTypes() {
+      runTest("compiler/testData/psi/k1/annotatedFlexibleTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterInEnumConstructor.kt")
+    public void testAnnotatedParameterInEnumConstructor() {
+      runTest("compiler/testData/psi/k1/annotatedParameterInEnumConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedParameterInInnerClassConstructor.kt")
+    public void testAnnotatedParameterInInnerClassConstructor() {
+      runTest("compiler/testData/psi/k1/annotatedParameterInInnerClassConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedPropertiesK1.kt")
+    public void testAnnotatedPropertiesK1() {
+      runTest("compiler/testData/psi/k1/annotatedPropertiesK1.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationClass.kt")
+    public void testAnnotationClass() {
+      runTest("compiler/testData/psi/k1/annotationClass.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationValues.kt")
+    public void testAnnotationValues() {
+      runTest("compiler/testData/psi/k1/annotationValues.kt");
+    }
+
+    @Test
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() {
+      runTest("compiler/testData/psi/k1/annotations.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationsOnNullableTypes.kt")
+    public void testAnnotationsOnNullableTypes() {
+      runTest("compiler/testData/psi/k1/annotationsOnNullableTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationsOnParenthesizedTypes.kt")
+    public void testAnnotationsOnParenthesizedTypes() {
+      runTest("compiler/testData/psi/k1/annotationsOnParenthesizedTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("classMembers.kt")
+    public void testClassMembers() {
+      runTest("compiler/testData/psi/k1/classMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("classObject.kt")
+    public void testClassObject() {
+      runTest("compiler/testData/psi/k1/classObject.kt");
+    }
+
+    @Test
+    @TestMetadata("const.kt")
+    public void testConst() {
+      runTest("compiler/testData/psi/k1/const.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiversCallableMembers.kt")
+    public void testContextReceiversCallableMembers() {
+      runTest("compiler/testData/psi/k1/contextReceiversCallableMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiversOnClass.kt")
+    public void testContextReceiversOnClass() {
+      runTest("compiler/testData/psi/k1/contextReceiversOnClass.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiversOnFunctionType.kt")
+    public void testContextReceiversOnFunctionType() {
+      runTest("compiler/testData/psi/k1/contextReceiversOnFunctionType.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiversOnTopLevelCallables.kt")
+    public void testContextReceiversOnTopLevelCallables() {
+      runTest("compiler/testData/psi/k1/contextReceiversOnTopLevelCallables.kt");
+    }
+
+    @Test
+    @TestMetadata("contracts.kt")
+    public void testContracts() {
+      runTest("compiler/testData/psi/k1/contracts.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() {
+      runTest("compiler/testData/psi/k1/dataClass.kt");
+    }
+
+    @Test
+    @TestMetadata("dataObject.kt")
+    public void testDataObject() {
+      runTest("compiler/testData/psi/k1/dataObject.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultImplsInInterface.kt")
+    public void testDefaultImplsInInterface() {
+      runTest("compiler/testData/psi/k1/defaultImplsInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedWithInitializer.kt")
+    public void testDelegatedWithInitializer() {
+      runTest("compiler/testData/psi/k1/delegatedWithInitializer.kt");
+    }
+
+    @Test
+    @TestMetadata("enum.kt")
+    public void testEnum() {
+      runTest("compiler/testData/psi/k1/enum.kt");
+    }
+
+    @Test
+    @TestMetadata("EnumIn.kt")
+    public void testEnumIn() {
+      runTest("compiler/testData/psi/k1/EnumIn.kt");
+    }
+
+    @Test
+    @TestMetadata("multifileClass.kt")
+    public void testMultifileClass() {
+      runTest("compiler/testData/psi/k1/multifileClass.kt");
+    }
+
+    @Test
+    @TestMetadata("multifileClass2.kt")
+    public void testMultifileClass2() {
+      runTest("compiler/testData/psi/k1/multifileClass2.kt");
     }
   }
 
@@ -3767,6 +3951,40 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @TestMetadata("WithWithoutInAndMultideclaration.kt")
     public void testWithWithoutInAndMultideclaration() {
       runTest("compiler/testData/psi/recovery/WithWithoutInAndMultideclaration.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/psi/recovery/binaryExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    public class BinaryExpression {
+      @Test
+      public void testAllFilesPresentInBinaryExpression() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/binaryExpression"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("IsAndSubsequentExpressions.kt")
+      public void testIsAndSubsequentExpressions() {
+        runTest("compiler/testData/psi/recovery/binaryExpression/IsAndSubsequentExpressions.kt");
+      }
+
+      @Test
+      @TestMetadata("IsExpressionComplex.kt")
+      public void testIsExpressionComplex() {
+        runTest("compiler/testData/psi/recovery/binaryExpression/IsExpressionComplex.kt");
+      }
+
+      @Test
+      @TestMetadata("NoHigherPrecedenceAfterIs.kt")
+      public void testNoHigherPrecedenceAfterIs() {
+        runTest("compiler/testData/psi/recovery/binaryExpression/NoHigherPrecedenceAfterIs.kt");
+      }
+
+      @Test
+      @TestMetadata("SoftModifierAsInfixFunction.kt")
+      public void testSoftModifierAsInfixFunction() {
+        runTest("compiler/testData/psi/recovery/binaryExpression/SoftModifierAsInfixFunction.kt");
+      }
     }
 
     @Nested

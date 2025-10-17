@@ -1,5 +1,6 @@
 KtNameReferenceExpression(69,73): 'name'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: Foo.foo) val name: kotlin.String [fake.kt]

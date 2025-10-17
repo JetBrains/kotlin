@@ -1,5 +1,6 @@
 KtNameReferenceExpression(78,85): 'suspend'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin) inline fun <R> suspend(noinline block: suspend () -> R): suspend () -> R

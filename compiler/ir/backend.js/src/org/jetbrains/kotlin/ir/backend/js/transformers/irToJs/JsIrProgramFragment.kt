@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICModule
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.serializeTo
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.config.ModuleKind
 import java.io.File
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.OutputStream
 
 class JsIrProgramFragments(override val mainFragment: JsIrProgramFragment, override val exportFragment: JsIrProgramFragment? = null) :

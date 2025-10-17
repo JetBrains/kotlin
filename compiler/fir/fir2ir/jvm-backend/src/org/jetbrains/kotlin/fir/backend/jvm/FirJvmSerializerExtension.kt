@@ -221,14 +221,14 @@ open class FirJvmSerializerExtension(
 
     override fun serializeTypeAnnotations(annotations: List<FirAnnotation>, proto: ProtoBuf.Type.Builder) {
         for (annotation in annotations) {
-            proto.addExtensionOrNull(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
+            annotationSerializer.serializeAnnotation(annotation)?.let { proto.addAnnotation(it) }
         }
     }
 
 
     override fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
         for (annotation in typeParameter.nonSourceAnnotations(session)) {
-            proto.addExtensionOrNull(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
+            annotationSerializer.serializeAnnotation(annotation)?.let { proto.addAnnotation(it) }
         }
     }
 

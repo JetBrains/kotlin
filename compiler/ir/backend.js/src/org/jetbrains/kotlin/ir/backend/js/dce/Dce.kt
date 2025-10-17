@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.mainFunctionWrapper
+import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
 import org.jetbrains.kotlin.ir.declarations.*
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun eliminateDeadDeclarations(
@@ -127,10 +127,10 @@ private fun buildRoots(
         ?.mainFunctionWrapper
         ?.let { add(it) }
 
-    addIfNotNull(context.intrinsics.void.owner.backingField)
+    addIfNotNull(context.symbols.void.owner.backingField)
 
     if (moduleKind == ModuleKind.UMD) {
-        add(context.intrinsics.globalThis.owner)
+        add(context.symbols.globalThis.owner)
     }
 
     addAll(context.testFunsPerFile.values)
@@ -139,8 +139,8 @@ private fun buildRoots(
 
 internal fun RuntimeDiagnostic.unreachableDeclarationMethod(context: JsIrBackendContext) =
     when (this) {
-        RuntimeDiagnostic.LOG -> context.intrinsics.jsUnreachableDeclarationLog
-        RuntimeDiagnostic.EXCEPTION -> context.intrinsics.jsUnreachableDeclarationException
+        RuntimeDiagnostic.LOG -> context.symbols.jsUnreachableDeclarationLog
+        RuntimeDiagnostic.EXCEPTION -> context.symbols.jsUnreachableDeclarationException
     }
 
 internal fun IrField.isKotlinPackage() =

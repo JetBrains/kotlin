@@ -53,6 +53,22 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
         return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
     }
 
+    protected fun CallableId.propertySymbol(): IrPropertySymbol {
+        val elements = propertySymbols()
+        require(elements.isNotEmpty()) { "No property $this found" }
+        require(elements.size == 1) {
+            "Several properties $this found:\n${elements.joinToString("\n")}"
+        }
+        return elements.single()
+    }
+
+    protected fun CallableId.functionSymbolOrNull(): IrSimpleFunctionSymbol? {
+        val elements = functionSymbols()
+        require(elements.size <= 1) {
+            "Several functions $this found:\n${elements.joinToString("\n")}\nTry using functionSymbol(condition) instead to filter" }
+        return elements.singleOrNull()
+    }
+
     protected fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
         val elements = functionSymbols()
         require(elements.isNotEmpty()) { "No function $this found" }
@@ -71,10 +87,14 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
         }
     }
 
-    protected inline fun <K> CallableId.functionSymbolAssociatedBy(crossinline getKey: (IrSimpleFunction) -> K): Lazy<Map<K, IrSimpleFunctionSymbol>> {
+    protected inline fun <K> CallableId.functionSymbolAssociatedBy(
+        crossinline condition: (IrSimpleFunction) -> Boolean = { true },
+        crossinline getKey: (IrSimpleFunction) -> K
+    ): Lazy<Map<K, IrSimpleFunctionSymbol>> {
         val unfilteredElements = functionSymbols()
         return lazy {
-            unfilteredElements.associateBy { getKey(it.owner) }
+            val elements = unfilteredElements.filter { condition(it.owner) }
+            elements.associateBy { getKey(it.owner) }
         }
     }
 
@@ -84,6 +104,15 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
         require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
         return lazy {
             elements.single().owner.getter!!.symbol
+        }
+    }
+
+    protected fun CallableId.setterSymbol(): Lazy<IrSimpleFunctionSymbol> {
+        val elements = propertySymbols()
+        require(elements.isNotEmpty()) { "No properties $this found" }
+        require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
+        return lazy {
+            elements.single().owner.setter!!.symbol
         }
     }
 

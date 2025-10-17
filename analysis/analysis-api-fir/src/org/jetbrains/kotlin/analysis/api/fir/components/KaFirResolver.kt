@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
@@ -71,7 +72,9 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
+import org.jetbrains.kotlin.psi.psiUtil.topParenthesizedParentOrMe
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.toKtPsiSourceElement
@@ -133,6 +136,23 @@ internal class KaFirResolver(
 
         return wholeQualifier.resolvedToCompanionObject
     }
+
+    override val KtReference.usesContextSensitiveResolution: Boolean
+        get() = withPsiValidityAssertion(element) {
+            if (this !is KtSimpleNameReference) {
+                return false
+            }
+
+            val fir = element.getOrBuildFir(analysisSession.resolutionFacade) ?: return false
+            when (fir) {
+                is FirResolvedTypeRef -> fir.resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
+                is FirResolvedQualifier -> fir.resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
+                else -> {
+                    val firReference = fir.toReference(analysisSession.firSession) ?: return false
+                    firReference.isContextSensitive
+                }
+            }
+        }
 
     override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
         return doResolveToSymbols(this)
@@ -361,7 +381,7 @@ internal class KaFirResolver(
                     else -> null
                 }
             }
-            is FirArrayLiteral -> toKtCallInfo()
+            is FirCollectionLiteral -> toKtCallInfo()
             is FirComparisonExpression -> compareToCall.toKtCallInfo(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,
@@ -725,6 +745,7 @@ internal class KaFirResolver(
                     partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                     typeArgumentsMapping,
                     KaBaseSimpleVariableWriteAccess(rhs),
+                    isContextSensitive = calleeReference.isContextSensitive,
                 )
             }
             is FirPropertyAccessExpression, is FirCallableReferenceAccess -> {
@@ -735,6 +756,7 @@ internal class KaFirResolver(
                             partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                             typeArgumentsMapping,
                             KaBaseSimpleVariableReadAccess,
+                            isContextSensitive = calleeReference.isContextSensitive,
                         )
                     }
                     // if errorsness call without ()
@@ -839,6 +861,7 @@ internal class KaFirResolver(
                 backingPartiallyAppliedSymbol = variableSymbol,
                 typeArgumentsMapping = typeArgumentsMapping,
                 simpleAccess = KaBaseSimpleVariableReadAccess,
+                isContextSensitive = false,
             )
         } else {
             KaBaseCompoundVariableAccessCall(
@@ -1008,7 +1031,7 @@ internal class KaFirResolver(
         val substitutor = unwrapLValue()?.createConeSubstitutorFromTypeArguments(rootModuleSession) ?: return null
         val ktSignature = variableSymbol.toKaSignature()
         return KaBasePartiallyAppliedSymbol(
-            backingSignature = with(analysisSession) { ktSignature.substitute(substitutor.toKaSubstitutor()) },
+            backingSignature = ktSignature.substitute(substitutor.toKaSubstitutor()),
             dispatchReceiver = dispatchReceiver?.toKtReceiverValue(),
             extensionReceiver = extensionReceiver?.toKtReceiverValue(),
             contextArguments = contextArguments.toKaContextParameterValues(),
@@ -1049,7 +1072,7 @@ internal class KaFirResolver(
         }
         val ktSignature = operationSymbol.toKaSignature()
         return KaBasePartiallyAppliedSymbol(
-            backingSignature = with(analysisSession) { ktSignature.substitute(substitutor.toKaSubstitutor()) },
+            backingSignature = ktSignature.substitute(substitutor.toKaSubstitutor()),
             dispatchReceiver = dispatchReceiverValue,
             extensionReceiver = extensionReceiverValue,
             contextArguments = contextArguments.toKaContextParameterValues(),
@@ -1181,7 +1204,7 @@ internal class KaFirResolver(
         return result
     }
 
-    private fun FirArrayLiteral.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
+    private fun FirCollectionLiteral.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
         val elementType = resolvedType.arrayElementType()?.asKaType() ?: return emptyMap()
         val typeParameter = symbol.typeParameters.singleOrNull() ?: return emptyMap()
         return mapOf(typeParameter to elementType)
@@ -1422,7 +1445,7 @@ internal class KaFirResolver(
             }
         }
 
-    private fun FirArrayLiteral.toKtCallInfo(): KaCallInfo? {
+    private fun FirCollectionLiteral.toKtCallInfo(): KaCallInfo? {
         val arrayOfSymbol = with(analysisSession) {
 
             val type = resolvedType as? ConeClassLikeType
@@ -1473,7 +1496,7 @@ internal class KaFirResolver(
         )
     }
 
-    private fun FirArrayLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaNamedFunctionSymbol): KaSubstitutor {
+    private fun FirCollectionLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaNamedFunctionSymbol): KaSubstitutor {
         val firSymbol = arrayOfSymbol.firSymbol
         // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
         val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KaSubstitutor.Empty(token)
@@ -1549,7 +1572,7 @@ internal class KaFirResolver(
         return ktArgumentMapping
     }
 
-    private fun FirArrayLiteral.createArgumentMapping(
+    private fun FirCollectionLiteral.createArgumentMapping(
         arrayOfSymbol: KaNamedFunctionSymbol,
         substitutor: KaSubstitutor,
     ): Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
@@ -1629,3 +1652,6 @@ internal class KaFirResolver(
             ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token))
     }
 }
+
+private val FirReference.isContextSensitive: Boolean
+    get() = this is FirResolvedNamedReference && resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -59,7 +60,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
     override fun prepareFilesInModule(ktTestModule: KtTestModule, testServices: TestServices) {
         val testModule = ktTestModule.testModule
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-        val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
+        val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(testModule, CompilationStage.FIRST)
         val project = compilerConfigurationProvider.getProject(testModule)
         val packageProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
 

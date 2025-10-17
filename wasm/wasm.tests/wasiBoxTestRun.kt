@@ -5,7 +5,7 @@
 
 @kotlin.wasm.WasmExport
 fun runBoxTest(): Boolean {
-    val boxResult = box() //TODO: Support non-root package box functions
+    val boxResult = box()
     val isOk = boxResult == "OK"
     if (!isOk) {
         println("Wrong box result '${boxResult}'; Expected 'OK'")

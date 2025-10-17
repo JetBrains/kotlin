@@ -10,21 +10,25 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.capabilities.Capability
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.KlibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.utils.currentBuildId
-import org.jetbrains.kotlin.gradle.utils.buildNameCompat
-import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 
 
-internal fun IdeaKotlinProjectCoordinates(identifier: ProjectComponentIdentifier): IdeaKotlinProjectCoordinates {
+internal fun IdeaKotlinProjectCoordinates(
+    identifier: ProjectComponentIdentifier,
+    buildIdentifierCompatAccessor: Provider<BuildIdentifierAccessor.Factory>,
+): IdeaKotlinProjectCoordinates {
     return IdeaKotlinProjectCoordinates(
-        buildPath = identifier.build.buildPathCompat,
-        buildName = identifier.build.buildNameCompat,
+        buildPath = identifier.build.compatAccessor(buildIdentifierCompatAccessor).buildPath,
+        buildName = identifier.build.compatAccessor(buildIdentifierCompatAccessor).buildName,
         projectPath = identifier.projectPath,
         projectName = identifier.projectName
     )
@@ -33,8 +37,8 @@ internal fun IdeaKotlinProjectCoordinates(identifier: ProjectComponentIdentifier
 internal fun IdeaKotlinProjectCoordinates(project: Project): IdeaKotlinProjectCoordinates {
     val buildIdentifier = project.currentBuildId()
     return IdeaKotlinProjectCoordinates(
-        buildPath = buildIdentifier.buildPathCompat,
-        buildName = buildIdentifier.buildNameCompat,
+        buildPath = buildIdentifier.compatAccessor(project).buildPath,
+        buildName = buildIdentifier.compatAccessor(project).buildName,
         projectPath = project.path,
         projectName = project.name
     )

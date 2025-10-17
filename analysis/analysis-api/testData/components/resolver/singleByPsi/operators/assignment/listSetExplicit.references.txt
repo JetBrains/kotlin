@@ -1,5 +1,6 @@
 KtNameReferenceExpression(54,57): 'set'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E

@@ -63,7 +63,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         val library = deserializedContainerSource.klib
         val moduleDeserializer = moduleDeserializers.getOrPut(library) {
-            runIf(library.hasIrOfInlineableFuns) {
+            runIf(library.hasInlinableFunsIr) {
                 ModuleDeserializer(
                     library = library,
                     detachedSymbolTable = detachedSymbolTable,
@@ -85,10 +85,10 @@ class NonLinkingIrInlineFunctionDeserializer(
     class ModuleDeserializer(
         library: KotlinLibrary,
         detachedSymbolTable: SymbolTable,
-        irInterner: IrInterningService,
+        private val irInterner: IrInterningService,
         irBuiltIns: IrBuiltIns,
     ) {
-        private val fileReader = IrLibraryFileFromBytes(InlinableFunsFileIrKlibBytesSource(library))
+        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library.inlinableFunsIr, 0))
 
         private val dummyFileSymbol = IrFileImpl(
             fileEntry = object : IrFileEntry {
@@ -143,7 +143,7 @@ class NonLinkingIrInlineFunctionDeserializer(
          * if the declaration happens to have multiple inline functions.
          */
         val reversedSignatureIndex: Map<IdSignature, Int> = run {
-            val fileStream = library.irFileOfInlineableFuns().codedInputStream
+            val fileStream = library.inlinableFunsIr.file(0).codedInputStream
             val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
             fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
         }
@@ -154,10 +154,15 @@ class NonLinkingIrInlineFunctionDeserializer(
             deserializedFunctionCache.getOrPut(signature) {
                 val idSigIndex = reversedSignatureIndex[signature] ?: return@getOrPut null
                 val functionProto = fileReader.declaration(idSigIndex)
+
+                // Drop after KT-81470 fix
+                val (s, _) = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(functionProto.irFunction.base.base.symbol)
+                if (s.signature !is IdSignature.CompositeSignature) return@getOrPut null
+
                 val function = declarationDeserializer.deserializeDeclaration(functionProto) as IrSimpleFunction
 
                 val fileEntryProto = fileReader.fileEntry(functionProto.irFunction.preparedInlineFunctionFileEntryId)!!
-                val fileEntry = deserializeFileEntry(fileEntryProto)
+                val fileEntry = fileReader.deserializeFileEntry(fileEntryProto, irInterner)
                 val file = IrFileImpl(
                     symbol = IrFileSymbolImpl(with(originalFunctionPackage.symbol) { runIf(hasDescriptor) { descriptor } }),
                     packageFqName = originalFunctionPackage.packageFqName,
@@ -169,15 +174,5 @@ class NonLinkingIrInlineFunctionDeserializer(
 
                 function
             }
-    }
-
-    class InlinableFunsFileIrKlibBytesSource(private val klib: IrLibrary) : IrLibraryBytesSource() {
-        override fun irDeclaration(index: Int): ByteArray = klib.irDeclarationOfInlineableFuns(index)
-        override fun type(index: Int): ByteArray = klib.typeOfInlineableFuns(index)
-        override fun signature(index: Int): ByteArray = klib.signatureOfInlineableFuns(index)
-        override fun string(index: Int): ByteArray = klib.stringOfInlineableFuns(index)
-        override fun body(index: Int): ByteArray = klib.bodyOfInlineableFuns(index)
-        override fun debugInfo(index: Int): ByteArray? = klib.debugInfoOfInlineableFuns(index)
-        override fun fileEntry(index: Int): ByteArray = klib.fileEntryOfInlineableFuns(index)
     }
 }

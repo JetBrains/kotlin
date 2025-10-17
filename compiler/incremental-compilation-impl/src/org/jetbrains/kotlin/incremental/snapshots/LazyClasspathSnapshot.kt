@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.snapshots
 
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.LookupStorage
@@ -61,9 +61,9 @@ internal class LazyClasspathSnapshot(
             val metricsReporter = if (metricToReportIfComputing is LazySnapshotLoadingMetrics.OnClasspathDiffComputation) {
                 ClasspathSnapshotShrinker.MetricsReporter(
                     reporter,
-                    GradleBuildTime.GET_LOOKUP_SYMBOLS,
-                    GradleBuildTime.FIND_REFERENCED_CLASSES,
-                    GradleBuildTime.FIND_TRANSITIVELY_REFERENCED_CLASSES
+                    GET_LOOKUP_SYMBOLS,
+                    FIND_REFERENCED_CLASSES,
+                    FIND_TRANSITIVELY_REFERENCED_CLASSES
                 )
             } else ClasspathSnapshotShrinker.MetricsReporter()
             shrinkClasspath(
@@ -93,29 +93,29 @@ internal class LazyClasspathSnapshot(
 }
 
 internal sealed interface LazySnapshotLoadingMetrics {
-    val loadClasspathSnapshotTag: GradleBuildTime
-    val removeDuplicateClassesTag: GradleBuildTime
-    val calculateShrunkClasspathTag: GradleBuildTime
-    val loadShrunkClasspathTag: GradleBuildTime
+    val loadClasspathSnapshotTag: GradleBuildTimeMetric
+    val removeDuplicateClassesTag: GradleBuildTimeMetric
+    val calculateShrunkClasspathTag: GradleBuildTimeMetric
+    val loadShrunkClasspathTag: GradleBuildTimeMetric
 
     object OnClasspathDiffComputation : LazySnapshotLoadingMetrics {
-        override val loadClasspathSnapshotTag = GradleBuildTime.LOAD_CURRENT_CLASSPATH_SNAPSHOT
-        override val removeDuplicateClassesTag = GradleBuildTime.REMOVE_DUPLICATE_CLASSES
-        override val calculateShrunkClasspathTag = GradleBuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT
-        override val loadShrunkClasspathTag = GradleBuildTime.LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT
+        override val loadClasspathSnapshotTag = LOAD_CURRENT_CLASSPATH_SNAPSHOT
+        override val removeDuplicateClassesTag = REMOVE_DUPLICATE_CLASSES
+        override val calculateShrunkClasspathTag = SHRINK_CURRENT_CLASSPATH_SNAPSHOT
+        override val loadShrunkClasspathTag = LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT
     }
 
     object OnIncrementalShrunkClasspathUpdate : LazySnapshotLoadingMetrics {
-        override val loadClasspathSnapshotTag = GradleBuildTime.INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT
-        override val removeDuplicateClassesTag = GradleBuildTime.INCREMENTAL_REMOVE_DUPLICATE_CLASSES
-        override val calculateShrunkClasspathTag = GradleBuildTime.INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT
-        override val loadShrunkClasspathTag = GradleBuildTime.INCREMENTAL_LOAD_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AGAINST_PREVIOUS_LOOKUPS
+        override val loadClasspathSnapshotTag = INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT
+        override val removeDuplicateClassesTag = INCREMENTAL_REMOVE_DUPLICATE_CLASSES
+        override val calculateShrunkClasspathTag = INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT
+        override val loadShrunkClasspathTag = INCREMENTAL_LOAD_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AGAINST_PREVIOUS_LOOKUPS
     }
 
     object OnNonIncrementalShrunkClasspathUpdate : LazySnapshotLoadingMetrics {
-        override val loadClasspathSnapshotTag = GradleBuildTime.NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT
-        override val removeDuplicateClassesTag = GradleBuildTime.NON_INCREMENTAL_REMOVE_DUPLICATE_CLASSES
-        override val calculateShrunkClasspathTag = GradleBuildTime.NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT
+        override val loadClasspathSnapshotTag = NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT
+        override val removeDuplicateClassesTag = NON_INCREMENTAL_REMOVE_DUPLICATE_CLASSES
+        override val calculateShrunkClasspathTag = NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT
         override val loadShrunkClasspathTag
             get() = error("Non-incremental classpath shrinker should not need previous shrunk classpath.")
     }

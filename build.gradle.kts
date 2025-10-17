@@ -127,7 +127,7 @@ if (!project.hasProperty("versions.kotlin-native")) {
     } else if (kotlinBuildProperties.isKotlinNativeEnabled) {
         kotlinBuildProperties.defaultSnapshotVersion
     } else {
-        "2.3.0-dev-5665"
+        "2.3.20-dev-670"
     }
 }
 
@@ -269,7 +269,6 @@ val fe10CompilerModules = arrayOf(
     ":compiler:backend.js",
     ":compiler:backend.wasm",
     ":kotlin-util-klib-metadata",
-    ":compiler:backend-common",
     ":compiler:backend",
     ":compiler:plugin-api",
     ":compiler:javac-wrapper",
@@ -674,6 +673,8 @@ allprojects {
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
             content {
                 includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+                includeGroupByRegex("com.intellij.platform.*")
+                includeGroupByRegex("org.jetbrains.jps.*")
                 includeVersion("org.jetbrains.jps", "jps-javac-extension", "7")
                 includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
                 includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
@@ -738,10 +739,6 @@ gradle.taskGraph.whenReady {
 
 val dist = tasks.register("dist") {
     dependsOn(":kotlin-compiler:dist")
-}
-
-val syncMutedTests = tasks.register("syncMutedTests") {
-    dependsOn(":compiler:tests-mutes:tc-integration:run")
 }
 
 tasks.register("createIdeaHomeForTests") {
@@ -848,15 +845,15 @@ tasks {
     }
 
     register("wasmCompilerTest") {
-        dependsOn(":wasm:wasm.tests:diagnosticTest")
+        // KTI-2670: TODO: don't invoke this obsolete task in KTI
+    }
+
+    register("wasmFirCompilerTest") {
+        dependsOn(":wasm:wasm.tests:test")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
             dependsOn(":wasm:wasm.ir:test")
         }
-    }
-
-    register("wasmFirCompilerTest") {
-        dependsOn(":wasm:wasm.tests:testFir")
     }
 
     // These tests run Native compiler and will be run in many different compilation modes that the compiler supports:
@@ -967,6 +964,8 @@ tasks {
         dependsOn("compilerPluginTest")
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn(":compiler:arguments:test")
+        dependsOn(":compiler:fir:modularized-tests:modelDumpTest")
+        dependsOn(":compiler:multiplatform-parsing:jvmTest")
     }
 
     register("miscTest") {
@@ -1015,6 +1014,7 @@ tasks {
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
         dependsOn(":tools:ide-plugin-dependencies-validator:test")
+        dependsOn(":tools:stats-analyser:test")
     }
 
     register("examplesTest") {

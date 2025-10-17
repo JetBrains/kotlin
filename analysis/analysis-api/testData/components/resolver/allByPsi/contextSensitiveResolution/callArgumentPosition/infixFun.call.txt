@@ -243,6 +243,7 @@ KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
 KtNameReferenceExpression(330,340): 'EnumValue1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:

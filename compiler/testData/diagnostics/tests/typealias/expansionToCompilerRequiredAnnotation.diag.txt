@@ -1,0 +1,7 @@
+/expansionToCompilerRequiredAnnotation.kt:20:11: error: 'public' typealias exposes 'internal' in expanded type JvmPackageName
+typealias JvmPackageNameTA = kotlin.jvm.JvmPackageName
+          ^^^^^^^^^^^^^^^^
+/expansionToCompilerRequiredAnnotation.kt:20:41: error: cannot access 'JvmPackageName': it is internal in 'kotlin.jvm'
+typealias JvmPackageNameTA = kotlin.jvm.JvmPackageName
+                                        ^^^^^^^^^^^^^^
+

@@ -1,5 +1,6 @@
 KtOperationReferenceExpression(97,98): '>'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) operator fun <T> T.compareTo(int: kotlin.Int): kotlin.Int

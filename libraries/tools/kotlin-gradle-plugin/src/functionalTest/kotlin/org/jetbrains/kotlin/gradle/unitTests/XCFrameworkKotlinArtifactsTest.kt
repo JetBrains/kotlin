@@ -2,16 +2,18 @@
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("FunctionName", "DEPRECATION")
+@file:Suppress("FunctionName", "DEPRECATION", "DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinNativeLinkArtifactTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.assertIsInstance
+import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.kotlinArtifacts
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume
@@ -30,6 +32,7 @@ class XCFrameworkKotlinArtifactsTest {
     fun `xcframework task graph - with universal and regular frameworks`() {
         val project = buildProjectWithMPP {
             kotlin { linuxArm64() }
+            @Suppress("DEPRECATION_ERROR")
             kotlinArtifacts {
                 Native.XCFramework { xcframeworkConfig ->
                     xcframeworkConfig.targets(
@@ -102,6 +105,7 @@ class XCFrameworkKotlinArtifactsTest {
     fun `parent task dependency - is created`() {
         val project = buildProjectWithMPP {
             kotlin { linuxArm64() }
+            @Suppress("DEPRECATION_ERROR")
             kotlinArtifacts {
                 Native.XCFramework { xcframeworkConfig ->
                     xcframeworkConfig.targets(

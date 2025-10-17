@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsConfigurationUpdater
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
@@ -75,12 +74,12 @@ class Ir2JsTransformer private constructor(
         dceRuntimeDiagnostic = configuration.dceRuntimeDiagnostic,
         safeExternalBoolean = configuration.safeExternalBoolean,
         safeExternalBooleanDiagnostic = configuration.safeExternalBooleanDiagnostic,
-        granularity = configuration.granularity!!,
+        granularity = configuration.artifactConfiguration!!.granularity,
         dce = configuration.dce,
         minimizedMemberNames = configuration.minimizedMemberNames,
     )
 
-    private val performanceManager = module.compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+    private val performanceManager = module.compilerConfiguration.perfManager
 
     private fun lowerIr(): LoweredIr {
         return compile(
@@ -192,12 +191,14 @@ internal class K2JsCompilerImpl(
         JsBackendPipelinePhase.compileIncrementally(
             icCaches,
             configuration,
-            moduleKind ?: return INTERNAL_ERROR,
-            moduleName,
-            outputDir,
-            outputName,
-            arguments.granularity,
-            arguments.dtsStrategy
+            WebArtifactConfiguration(
+                moduleKind ?: return INTERNAL_ERROR,
+                moduleName,
+                outputDir,
+                outputName,
+                arguments.granularity,
+                arguments.dtsStrategy
+            )
         )
         @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
         performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)`, but it's not always started
@@ -220,12 +221,15 @@ internal class K2JsCompilerImpl(
         val outputs = JsBackendPipelinePhase.compileNonIncrementally(
             messageCollector,
             ir2JsTransformer,
-            // moduleKind for JS compilation is always not null (see [JsConfigurationUpdater.fillConfiguration])
-            moduleKind!!,
-            moduleName,
-            outputDir,
-            outputName,
-            arguments.dtsStrategy
+            WebArtifactConfiguration(
+                // moduleKind for JS compilation is always not null (see [JsConfigurationUpdater.fillConfiguration])
+                moduleKind!!,
+                moduleName,
+                outputDir,
+                outputName,
+                arguments.granularity,
+                arguments.dtsStrategy,
+            )
         )
 
         return if (outputs != null) OK else INTERNAL_ERROR

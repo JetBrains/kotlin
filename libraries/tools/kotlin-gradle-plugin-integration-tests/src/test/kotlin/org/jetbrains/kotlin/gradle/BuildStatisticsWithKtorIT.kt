@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.ktor.http.*
@@ -17,10 +16,13 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.NATIVE_IN_EXECUTOR
+import org.jetbrains.kotlin.build.report.metrics.NATIVE_IN_PROCESS
+import org.jetbrains.kotlin.build.report.metrics.RUN_ENTRY_POINT
 import org.jetbrains.kotlin.build.report.statistics.BuildDataType
 import org.jetbrains.kotlin.build.report.statistics.BuildFinishStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.build.report.statistics.json.buildExecutionDataGson
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -94,7 +96,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             validateCall(port) { jsonObject ->
                 val type = jsonObject["type"].asString
                 assertEquals(BuildDataType.TASK_DATA, BuildDataType.valueOf(type))
-                val taskData = Gson().fromJson(jsonObject, GradleCompileStatisticsData::class.java)
+                val taskData = buildExecutionDataGson.fromJson(jsonObject, GradleCompileStatisticsData::class.java)
                 validate(taskData)
             }
         }
@@ -103,7 +105,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             validateCall(port) { jsonObject ->
                 val type = jsonObject["type"].asString
                 assertEquals(BuildDataType.BUILD_DATA, BuildDataType.valueOf(type))
-                val buildData = Gson().fromJson(jsonObject, BuildFinishStatisticsData::class.java)
+                val buildData = buildExecutionDataGson.fromJson(jsonObject, BuildFinishStatisticsData::class.java)
                 validate(buildData)
             }
         }
@@ -320,10 +322,9 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             validateTaskData(port) { taskReport ->
                 assertEquals(commonizerNativeDistributionTask, taskReport.getTaskName())
 
-
                 assertContains(
                     taskReport.getBuildTimesMetrics().keys,
-                    GradleBuildTime.NATIVE_IN_EXECUTOR,
+                    NATIVE_IN_EXECUTOR,
                     "Assertion failed for task \"$commonizerNativeDistributionTask\""
                 )
                 assertEquals(
@@ -344,12 +345,12 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
                     assertContains(
                         taskReport.getBuildTimesMetrics().keys,
-                        GradleBuildTime.NATIVE_IN_PROCESS,
+                        NATIVE_IN_PROCESS,
                         "Assertion failed for task \"$task\""
                     )
                     assertContains(
                         taskReport.getBuildTimesMetrics().keys,
-                        GradleBuildTime.RUN_ENTRY_POINT,
+                        RUN_ENTRY_POINT,
                         "Assertion failed for task \"$task\""
                     )
                     assertEquals(
@@ -360,7 +361,6 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             }
         }
     }
-
 
     private fun TestProject.setProjectForTest(port: Int) {
         enableStatisticReports(BuildReportType.HTTP, "http://localhost:$port/put")

@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=DelegateAndInitializerKt]]
+  facadeFqName: DelegateAndInitializerKt
+  partSimpleName: "DelegateAndInitializerKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=a, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=a]

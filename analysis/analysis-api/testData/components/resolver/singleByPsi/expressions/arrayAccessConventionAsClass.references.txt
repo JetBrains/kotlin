@@ -1,5 +1,6 @@
 KtNameReferenceExpression(238,246): 'variable'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) var variable: MyClass

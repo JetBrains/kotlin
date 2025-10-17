@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.caches
 
 import kotlin.reflect.KProperty
 
+@RequiresOptIn("This API exposes FIR cache internals. It should not used in production.")
+annotation class FirCacheInternals
+
 /**
  * A cache class with an embedded value computation strategy.
  * It uses key [K] and the passed context [CONTEXT] to compute and cache the value [V].
@@ -23,6 +26,12 @@ import kotlin.reflect.KProperty
 abstract class FirCache<in K : Any, out V, in CONTEXT> {
     abstract fun getValue(key: K, context: CONTEXT): V
     abstract fun getValueIfComputed(key: K): V?
+
+    /**
+     * Returns a snapshot of all non-null values in the cache. Changes to the cache do not reflect in the resulting collection.
+     */
+    @FirCacheInternals
+    abstract val cachedValues: Collection<V>
 }
 
 @Suppress("NOTHING_TO_INLINE")

@@ -5,9 +5,28 @@ Using APIs from this module should be the preferred way to work with Kotlin comp
 The Kotlin stdlib of at least Kotlin 1.4 is expected to be a dependency of a consumer of the API. 
 
 The default implementation of the API is located in the [kotlin-build-tools-impl](../kotlin-build-tools-impl) directory.
-Interfaces implementation are expected to be loaded using the [ServiceLoader](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html).
-The purpose of such a segregation is to allow using this API with different Kotlin compiler versions. 
+It is recommended to load the implementation in an isolated classloader. For example:
 
+```kotlin
+val compilerImplClasspath = 
+    arrayOf(
+        "/path/to/build-tools-impl-2.3.0.jar",             // (1)
+        // ...                                             // (2)
+    )
+val compilerClassloader = URLClassLoader(
+    args.map { Path.of(it).toUri().toURL() }.toTypedArray(), 
+    SharedApiClassesClassLoader()                          // (3)
+)
+val toolchains = KotlinToolchains.loadImplementation(compilerClassloader)
+```
+
+Please notice the following:
+1. The `build-tools-impl` JAR file matches the compiler version that you want to use for compiling code.
+
+   > For using the `build-tools-api` package Kotlin compiler versions older than 2.3.0, please see the [kotlin-build-tools-compat](../kotlin-build-tools-compat) module. 
+2. You can put any other JARs required for compilation, e.g. compiler plugins, into the classpath.
+3. `SharedApiClassesClassLoader` from the `build-tools-api` package must be used as the parent ClassLoader for the compiler implementation in order to share the necessary interfaces between API and implementation.
+ 
 # Generated files
 
 This module generates files from compiler arguments descriptions located in `:compiler:arguments`.

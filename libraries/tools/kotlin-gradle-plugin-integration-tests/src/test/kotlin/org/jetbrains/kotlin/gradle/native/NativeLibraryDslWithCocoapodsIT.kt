@@ -169,6 +169,7 @@ class NativeLibraryDslWithCocoapodsIT : KGPBaseTest() {
             subProject("shared").buildGradleKts.appendText(
                 //language=kotlin
                 """
+                @Suppress("DEPRECATION_ERROR")
                 kotlinArtifacts {
                     Native.Library {
                          target = linuxX64

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(62,65): 'Foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) object Foo

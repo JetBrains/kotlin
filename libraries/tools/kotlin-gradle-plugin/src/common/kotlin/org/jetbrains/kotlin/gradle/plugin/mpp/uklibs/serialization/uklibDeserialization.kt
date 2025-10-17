@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization
 import com.google.gson.Gson
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.ATTRIBUTES
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_FILES
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENTS
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_IDENTIFIER
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.MAXIMUM_COMPATIBLE_UMANIFEST_VERSION
@@ -23,33 +24,39 @@ internal data class IncompatibleUklibVersion(
     val maximumCompatibleVersion: String,
 ) : IllegalStateException("Can't read Uklib at path $uklibDirectory with version ${uklibVersion}, maximum compatible version: $maximumCompatibleVersion")
 
-internal fun deserializeUklibFromDirectory(directory: File): Uklib {
+internal fun deserializeUklibFromDirectory(
+    directory: File,
+): Uklib {
     val umanifest = directory.resolve(UMANIFEST_FILE_NAME)
     if (!umanifest.exists()) error("Can't deserialize Uklib from ${directory} because $UMANIFEST_FILE_NAME doesn't exist")
-    @Suppress("UNCHECKED_CAST")
-    val json = Gson().fromJson(umanifest.reader(), Map::class.java) as Map<String, Any>
+    return umanifest.reader().use { umanifestStream ->
+        @Suppress("UNCHECKED_CAST")
+        val json = Gson().fromJson(umanifestStream, Map::class.java) as Map<String, Any>
 
-    val manifestVersion = json.property<String>(UMANIFEST_VERSION)
-    assertCanReadUManifest(manifestVersion, directory)
+        val manifestVersion = json.property<String>(UMANIFEST_VERSION)
+        assertCanReadUManifest(manifestVersion, directory)
 
-    val fragments = (json.property<List<Map<String, Any>>>(FRAGMENTS)).map { fragment ->
-        val fragmentIdentifier = fragment.property<String>(FRAGMENT_IDENTIFIER)
-        UklibFragment(
-            identifier = fragmentIdentifier,
-            attributes = fragment.property<List<String>>(ATTRIBUTES).toSet(),
-            file = directory.resolve(fragmentIdentifier)
+        val fragments = (json.property<List<Map<String, Any>>>(FRAGMENTS)).map { fragment ->
+            val fragmentIdentifier = fragment.property<String>(FRAGMENT_IDENTIFIER)
+            UklibFragment(
+                identifier = fragmentIdentifier,
+                attributes = fragment.property<List<String>>(ATTRIBUTES).toSet(),
+                files = if (fragment.keys.contains(FRAGMENT_FILES))
+                    fragment.property<List<String>>(FRAGMENT_FILES).map(::File)
+                else listOf(directory.resolve(fragmentIdentifier))
+            )
+        }.toSet()
+
+        Uklib(
+            module = UklibModule(
+                fragments = fragments,
+            ),
+            manifestVersion = manifestVersion,
         )
-    }.toSet()
-
-    return Uklib(
-        module = UklibModule(
-            fragments = fragments,
-        ),
-        manifestVersion = manifestVersion,
-    )
+    }
 }
 
-private inline fun <reified T> Map<String, Any>.property(named: String): T {
+internal inline fun <reified T> Map<String, Any>.property(named: String): T {
     if (!containsKey(named)) {
         error(
             """

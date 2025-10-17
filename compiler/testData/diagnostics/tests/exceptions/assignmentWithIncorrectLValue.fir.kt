@@ -4,7 +4,7 @@
 object A
 
 fun test() {
-    A.<!SYNTAX!>else<!> = <!ASSIGNMENT_TYPE_MISMATCH!>42<!>
+    A.<!SYNTAX!>else<!> <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 42
 }
 
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, objectDeclaration */

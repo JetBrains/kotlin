@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// WITH_EXTRA_CHECKERS
 // JAVAC_EXPECTED_FILE
 // KT-498 Very strange error in the type checker
 

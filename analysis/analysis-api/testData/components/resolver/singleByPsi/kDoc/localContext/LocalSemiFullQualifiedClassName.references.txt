@@ -1,5 +1,6 @@
 KDocName(164,168): 'X.YY'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in <local>: f.C.X) class YY

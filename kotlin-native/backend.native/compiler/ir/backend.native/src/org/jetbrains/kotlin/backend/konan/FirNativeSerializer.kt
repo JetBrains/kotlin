@@ -51,7 +51,7 @@ internal fun PhaseContext.firSerializerBase(
                     configuration,
                     firResult.outputs,
                     fir2IrOutput?.fir2irActualizedResult,
-                    exportKDoc = shouldExportKDoc(),
+                    exportKDoc = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC),
                     produceHeaderKlib = produceHeaderKlib,
             ),
             cleanFiles = emptyList(),

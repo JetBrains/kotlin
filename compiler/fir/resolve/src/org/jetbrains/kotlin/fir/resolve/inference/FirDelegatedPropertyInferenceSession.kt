@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.processPostponedAtoms
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -138,7 +139,7 @@ class FirDelegatedPropertyInferenceSession(
         val completedCalls = completeCandidatesForRootSession()
 
         val finalSubstitutor = parentConstraintSystem.asReadOnlyStorage()
-            .buildAbstractResultingSubstitutor(components.session.typeContext) as ConeSubstitutor
+            .buildAbstractResultingSubstitutor(components.session.typeContext).asCone()
 
         val callCompletionResultsWriter = callCompleter.createCompletionResultsWriter(
             finalSubstitutor,

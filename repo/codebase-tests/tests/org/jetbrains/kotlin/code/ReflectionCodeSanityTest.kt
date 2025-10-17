@@ -48,9 +48,10 @@ class ReflectionCodeSanityTest : TestCase() {
         val badMembers = linkedSetOf<Member>()
         for (klass in collectClassesWithSupers(
             "KClassImpl",
-            "KMutableProperty0Impl",
-            "KMutableProperty1Impl",
-            "KMutableProperty2Impl"
+            "DescriptorKMutableProperty0",
+            "DescriptorKMutableProperty1",
+            "DescriptorKMutableProperty2",
+            "KotlinKMutableProperty0",
         )) {
             badMembers.addAll(klass.declaredFields.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })
             badMembers.addAll(klass.declaredMethods.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })

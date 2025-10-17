@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 abstract class FirSerializerExtensionBase(
     val protocol: SerializerExtensionProtocol,
+    val annotationsInMetadataLanguageFeature: LanguageFeature? = null,
 ) : FirSerializerExtension() {
     final override val stringTable: FirElementAwareSerializableStringTable = FirElementAwareSerializableStringTable()
 
@@ -46,7 +48,7 @@ abstract class FirSerializerExtensionBase(
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
     ) {
-        klass.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.classAnnotation)
+        klass.serializeAnnotations(proto, protocol.classAnnotation, proto::addAnnotation)
     }
 
     override fun serializeScript(
@@ -61,7 +63,7 @@ abstract class FirSerializerExtensionBase(
         proto: ProtoBuf.Constructor.Builder,
         childSerializer: FirElementSerializer
     ) {
-        constructor.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.constructorAnnotation)
+        constructor.serializeAnnotations(proto, protocol.constructorAnnotation, proto::addAnnotation)
     }
 
     override fun serializeFunction(
@@ -70,13 +72,11 @@ abstract class FirSerializerExtensionBase(
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: FirElementSerializer
     ) {
-        function.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.functionAnnotation)
+        function.serializeAnnotations(proto, protocol.functionAnnotation, proto::addAnnotation)
         function.receiverParameter?.serializeAnnotations(
-            session,
-            additionalMetadataProvider,
-            annotationSerializer,
             proto,
-            protocol.functionExtensionReceiverAnnotation
+            protocol.functionExtensionReceiverAnnotation,
+            proto::addExtensionReceiverAnnotation,
         )
     }
 
@@ -97,30 +97,24 @@ abstract class FirSerializerExtensionBase(
             destination += annotation
         }
 
-        property.allRequiredAnnotations(session, additionalMetadataProvider).serializeAnnotations(proto, protocol.propertyAnnotation)
-        fieldPropertyAnnotations.serializeAnnotations(proto, protocol.propertyBackingFieldAnnotation)
-        delegatePropertyAnnotations.serializeAnnotations(proto, protocol.propertyDelegatedFieldAnnotation)
+        property.serializeAnnotations(proto, protocol.propertyAnnotation, proto::addAnnotation)
+        fieldPropertyAnnotations.serializeAnnotations(
+            proto,
+            protocol.propertyBackingFieldAnnotation,
+            proto::addBackingFieldAnnotation,
+        )
+        delegatePropertyAnnotations.serializeAnnotations(
+            proto,
+            protocol.propertyDelegatedFieldAnnotation,
+            proto::addDelegateFieldAnnotation,
+        )
 
-        property.getter?.serializeAnnotations(
-            session,
-            additionalMetadataProvider,
-            annotationSerializer,
-            proto,
-            protocol.propertyGetterAnnotation
-        )
-        property.setter?.serializeAnnotations(
-            session,
-            additionalMetadataProvider,
-            annotationSerializer,
-            proto,
-            protocol.propertySetterAnnotation
-        )
+        property.getter?.serializeAnnotations(proto, protocol.propertyGetterAnnotation, proto::addGetterAnnotation)
+        property.setter?.serializeAnnotations(proto, protocol.propertySetterAnnotation, proto::addSetterAnnotation)
         property.receiverParameter?.serializeAnnotations(
-            session,
-            additionalMetadataProvider,
-            annotationSerializer,
             proto,
-            protocol.propertyExtensionReceiverAnnotation
+            protocol.propertyExtensionReceiverAnnotation,
+            proto::addExtensionReceiverAnnotation,
         )
 
         if (!Flags.HAS_CONSTANT.get(proto.flags)) return
@@ -140,38 +134,55 @@ abstract class FirSerializerExtensionBase(
     }
 
     override fun serializeEnumEntry(enumEntry: FirEnumEntry, proto: ProtoBuf.EnumEntry.Builder) {
-        enumEntry.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.enumEntryAnnotation)
+        enumEntry.serializeAnnotations(proto, protocol.enumEntryAnnotation, proto::addAnnotation)
     }
 
     override fun serializeValueParameter(parameter: FirValueParameter, proto: ProtoBuf.ValueParameter.Builder) {
-        parameter.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.parameterAnnotation)
+        parameter.serializeAnnotations(proto, protocol.parameterAnnotation, proto::addAnnotation)
     }
 
     override fun serializeTypeAnnotations(annotations: List<FirAnnotation>, proto: ProtoBuf.Type.Builder) {
-        annotations.serializeAnnotations(proto, protocol.typeAnnotation)
+        annotations.serializeAnnotations(proto, protocol.typeAnnotation, proto::addAnnotation)
     }
 
     override fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
-        typeParameter.serializeAnnotations(
+        typeParameter.serializeAnnotations(proto, protocol.typeParameterAnnotation, proto::addAnnotation)
+    }
+
+    private fun <
+            MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+            BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+            > FirAnnotationContainer.serializeAnnotations(
+        proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+        extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
+        addAnnotation: (ProtoBuf.Annotation) -> Unit,
+    ) {
+        serializeAnnotations(
             session,
             additionalMetadataProvider,
             annotationSerializer,
             proto,
-            protocol.typeParameterAnnotation
+            extension,
+            addAnnotation,
+            annotationsInMetadataLanguageFeature,
         )
     }
 
-    @Suppress("Reformat")
     private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
-    > List<FirAnnotation>.serializeAnnotations(
+            MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+            BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+            > List<FirAnnotation>.serializeAnnotations(
         proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
+        addAnnotation: (ProtoBuf.Annotation) -> Unit,
     ) {
-        if (extension == null) return
-        for (annotation in this) {
-            proto.addExtensionOrNull(extension, annotationSerializer.serializeAnnotation(annotation))
-        }
+        serializeAnnotations(
+            session,
+            annotationSerializer,
+            proto,
+            extension,
+            addAnnotation,
+            annotationsInMetadataLanguageFeature,
+        )
     }
 }

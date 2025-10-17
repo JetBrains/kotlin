@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics.RuntimeMetadataKind
+import org.jetbrains.kotlin.ir.backend.js.JsSymbols.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
@@ -42,11 +42,11 @@ internal class JsUsefulDeclarationProcessor(
 
         private fun tryToProcessIntrinsicCall(expression: IrCall, data: IrDeclaration): Boolean {
             if (expression.usePrototype(data)) {
-                context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
+                context.symbols.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
             }
 
             return when (expression.symbol) {
-                context.intrinsics.jsBoxIntrinsic -> {
+                context.symbols.jsBoxIntrinsic -> {
                     val inlineClass = expression.typeArguments[0]?.let {
                         context.inlineClassesUtils.getRuntimeClassFor(it)
                     } ?: compilationException("Unexpected type argument in box intrinsic", expression)
@@ -56,7 +56,7 @@ internal class JsUsefulDeclarationProcessor(
                     true
                 }
 
-                context.intrinsics.jsClass -> {
+                context.symbols.jsClass -> {
                     val ref = expression.typeArguments[0]!!.classifierOrFail.owner as IrDeclaration
                     ref.enqueue(data, "intrinsic: jsClass")
                     referencedJsClasses += ref
@@ -89,14 +89,14 @@ internal class JsUsefulDeclarationProcessor(
                     true
                 }
 
-                context.intrinsics.jsObjectCreateSymbol -> {
+                context.symbols.jsObjectCreateSymbol -> {
                     val classToCreate = expression.typeArguments[0]!!.classifierOrFail.owner as IrClass
                     classToCreate.enqueue(data, "intrinsic: jsObjectCreateSymbol")
                     addConstructedClass(classToCreate)
                     true
                 }
 
-                context.intrinsics.jsCreateThisSymbol -> {
+                context.symbols.jsCreateThisSymbol -> {
                     val jsClassOrThis = expression.arguments[0]
 
                     val classTypeToCreate = when (jsClassOrThis) {
@@ -114,31 +114,31 @@ internal class JsUsefulDeclarationProcessor(
                     true
                 }
 
-                context.intrinsics.jsEquals -> {
+                context.symbols.jsEquals -> {
                     equalsMethod.enqueue(data, "intrinsic: jsEquals")
                     true
                 }
 
-                context.intrinsics.jsToString -> {
+                context.symbols.jsToString -> {
                     toStringMethod.enqueue(data, "intrinsic: jsToString")
                     true
                 }
 
-                context.intrinsics.jsHashCode -> {
+                context.symbols.jsHashCode -> {
                     hashCodeMethod.enqueue(data, "intrinsic: jsHashCode")
                     true
                 }
 
-                context.intrinsics.jsPlus -> {
+                context.symbols.jsPlus -> {
                     if (expression.arguments[0]?.type?.classOrNull == context.irBuiltIns.stringClass) {
                         toStringMethod.enqueue(data, "intrinsic: jsPlus")
                     }
                     true
                 }
 
-                context.intrinsics.jsInvokeSuspendSuperType,
-                context.intrinsics.jsInvokeSuspendSuperTypeWithReceiver,
-                context.intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam -> {
+                context.symbols.jsInvokeSuspendSuperType,
+                context.symbols.jsInvokeSuspendSuperTypeWithReceiver,
+                context.symbols.jsInvokeSuspendSuperTypeWithReceiverAndParam -> {
                     invokeFunForLambda(expression)
                         .enqueue(data, "intrinsic: suspendSuperType")
                     true
@@ -190,28 +190,28 @@ internal class JsUsefulDeclarationProcessor(
         }
 
         for (metadataKind in metadataKinds) {
-            context.intrinsics
+            context.symbols
                 .getInitMetadataSymbol(metadataKind)
                 ?.owner
                 ?.enqueue(irClass, "${metadataKind.name.lowercase().replace('_', ' ')} metadata")
         }
 
         if (irClass.containsInterfaceDefaultImplementation()) {
-            context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "interface default implementation")
+            context.symbols.jsPrototypeOfSymbol.owner.enqueue(irClass, "interface default implementation")
         }
 
         if (irClass.isInner || irClass.isObject) {
-            context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irClass, "object lazy initialization")
+            context.symbols.jsDefinePropertySymbol.owner.enqueue(irClass, "object lazy initialization")
         }
 
         if (context.es6mode) return
 
         if (!irClass.isInterface) {
-            context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "class prototype access")
+            context.symbols.jsPrototypeOfSymbol.owner.enqueue(irClass, "class prototype access")
         }
 
         if (irClass.superTypes.any { !it.isInterface() }) {
-            context.intrinsics.jsObjectCreateSymbol.owner.enqueue(irClass, "class inheritance code")
+            context.symbols.jsObjectCreateSymbol.owner.enqueue(irClass, "class inheritance code")
         }
     }
 
@@ -229,8 +229,8 @@ internal class JsUsefulDeclarationProcessor(
         val property = irFunction.correspondingPropertySymbol?.owner ?: return
 
         if (property.isExported(context) || property.getJsName() != null || property.isOverriddenExternal()) {
-            context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irFunction, "property for export")
-            context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irFunction, "property for export")
+            context.symbols.jsPrototypeOfSymbol.owner.enqueue(irFunction, "property for export")
+            context.symbols.jsDefinePropertySymbol.owner.enqueue(irFunction, "property for export")
         }
     }
 

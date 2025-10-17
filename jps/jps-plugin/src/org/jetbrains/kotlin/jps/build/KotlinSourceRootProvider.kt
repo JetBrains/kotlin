@@ -42,7 +42,7 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
         val kotlinSourceRootType = if (target.isTests) TestSourceKotlinRootType else SourceKotlinRootType
         module.getSourceRoots(kotlinSourceRootType).forEach {
             result.add(
-                JavaSourceRootDescriptor(
+                JavaSourceRootDescriptor.createJavaSourceRootDescriptor(
                     it.file,
                     target,
                     false,
@@ -104,6 +104,7 @@ private val JpsModuleSourceRootType<*>.isTestsRootType
         else -> null
     }
 
+@Suppress("DEPRECATION") // KT-81463
 class KotlinIncludedModuleSourceRoot(
     root: File,
     target: ModuleBuildTarget,

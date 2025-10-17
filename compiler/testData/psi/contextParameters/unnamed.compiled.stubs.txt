@@ -1,7 +1,10 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnnamedKt]]
+  facadeFqName: UnnamedKt
+  partSimpleName: "UnnamedKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=unnamedProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=unnamedProperty]
+    origin: Facade(className=UnnamedKt, jvmClassName=null)
     MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
@@ -25,6 +28,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnnamedKt]]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
   FUN[fqName=unnamedFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unnamedFunction]
+    origin: Facade(className=UnnamedKt, jvmClassName=null)
     MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]

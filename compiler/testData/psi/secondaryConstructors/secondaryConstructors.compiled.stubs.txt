@@ -18,6 +18,7 @@ SecondaryConstructors.class:
         SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SecondaryConstructors]
           MODIFIER_LIST[public]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=anno]
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -83,6 +84,7 @@ SecondaryConstructors.class:
             SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
               MODIFIER_LIST[public]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=anno]
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE

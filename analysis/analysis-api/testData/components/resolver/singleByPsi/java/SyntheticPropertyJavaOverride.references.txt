@@ -2,6 +2,7 @@
   KtNameReferenceExpression(147,156): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -9,6 +10,7 @@
   KtNameReferenceExpression(172,181): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -16,11 +18,13 @@
   KtNameReferenceExpression(200,209): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -28,11 +32,13 @@
   KtNameReferenceExpression(229,238): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -40,11 +46,13 @@
   KtNameReferenceExpression(257,266): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -52,11 +60,13 @@
   KtNameReferenceExpression(271,280): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -64,6 +74,7 @@
   KtNameReferenceExpression(384,393): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -71,6 +82,7 @@
   KtNameReferenceExpression(415,424): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -78,11 +90,13 @@
   KtNameReferenceExpression(449,458): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -90,11 +104,13 @@
   KtNameReferenceExpression(484,493): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
@@ -102,10 +118,12 @@
   KtNameReferenceExpression(518,527): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int
 
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in JavaClass) open var something: kotlin.Int

@@ -3,7 +3,7 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
 expect class Foo() {
     fun x(): String
@@ -30,7 +30,7 @@ fun commonMain() {
 // <init>, p: MustUse -> MustUse :ok:
 // x: MustUse -> ExplicitlyIgnorable :error:
 // ign: ExplicitlyIgnorable -> MustUse :error:
-@MustUseReturnValue
+@MustUseReturnValues
 actual class Foo actual constructor() {
     @IgnorableReturnValue actual fun x(): String = ""
     actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ign<!>(): String = ""

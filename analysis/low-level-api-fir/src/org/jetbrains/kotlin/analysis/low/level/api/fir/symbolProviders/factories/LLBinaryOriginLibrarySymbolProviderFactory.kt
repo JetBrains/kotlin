@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factorie
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -34,17 +35,18 @@ import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatform
-import org.jetbrains.kotlin.util.Logger as KLogger
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
+import org.jetbrains.kotlin.util.Logger as KLogger
 
 /**
  * [LLLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.BINARIES][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.BINARIES].
@@ -100,7 +102,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
     ): List<FirSymbolProvider> {
         val moduleData = session.moduleData
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
-        val forwardDeclarationsModuleData = FirBinaryDependenciesModuleData(FORWARD_DECLARATIONS_MODULE_NAME).apply {
+        val forwardDeclarationsModuleData = LLNativeForwardDeclarationsModuleData(moduleData.ktModule).apply {
             bindSession(session)
         }
 
@@ -110,6 +112,16 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
             KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kLibs),
             NativeForwardDeclarationsSymbolProvider(session, forwardDeclarationsModuleData, kotlinScopeProvider, kLibs),
         )
+    }
+
+    /**
+     * The module data specifically for [originalModule]'s associated native forward declarations. In particular, this module data is an
+     * [LLFirModuleData]-compliant replacement for the [FirBinaryDependenciesModuleData] used on the compiler side (see
+     * `FirNativeSessionFactory.createAdditionalDependencyProviders`).
+     */
+    private class LLNativeForwardDeclarationsModuleData(originalModule: KaModule) : LLFirModuleData(originalModule) {
+        override val name: Name
+            get() = FORWARD_DECLARATIONS_MODULE_NAME
     }
 
     override fun createJsLibrarySymbolProvider(

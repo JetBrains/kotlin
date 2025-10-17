@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K1: ANY
 // Ignore Wasm and Native because they fail at runtime KT-67691
-// IGNORE_BACKEND_K2: WASM, NATIVE
+// IGNORE_BACKEND_K2: WASM_JS, WASM_WASI, NATIVE
 class In<in K>
 
 fun <E> intersect(vararg x: In<E>): E = null as E

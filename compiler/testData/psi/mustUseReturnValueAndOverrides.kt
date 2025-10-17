@@ -6,7 +6,7 @@ interface Base1 {
     fun unspecified(): String
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 interface Base2 {
     fun mustUse(): String
     @IgnorableReturnValue fun ignorable(): String
@@ -22,7 +22,7 @@ class Impl2: Base2 {
     override fun ignorable(): String = ""
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 class Impl3: Base2 {
     override fun mustUse(): String = ""
     @IgnorableReturnValue override fun ignorable(): String = ""

@@ -41,8 +41,8 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
 
         val cacheDirectory = configuration.icCacheDirectory
         val outputDirPath = configuration.outputDir
-        messageCollector.report(CompilerMessageSeverity.INFO, "Produce executable: $outputDirPath")
-        messageCollector.report(CompilerMessageSeverity.INFO, "Cache directory: $cacheDirectory")
+        messageCollector.report(CompilerMessageSeverity.LOGGING, "Produce executable: $outputDirPath")
+        messageCollector.report(CompilerMessageSeverity.LOGGING, "Cache directory: $cacheDirectory")
 
         val mainCallArguments = if (configuration.callMainMode == K2JsArgumentConstants.NO_CALL) null else emptyList<String>()
 
@@ -76,7 +76,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
                             generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
                         )
                         else -> IcCachesConfigurationData.Js(
-                            granularity = configuration.granularity!!
+                            granularity = configuration.artifactConfiguration!!.granularity
                         )
                     },
                     messageCollector = messageCollector,

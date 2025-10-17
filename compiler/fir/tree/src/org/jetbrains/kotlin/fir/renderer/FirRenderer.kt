@@ -501,7 +501,7 @@ class FirRenderer(
             renderPhaseAndAttributes(danglingModifierList)
             annotationRenderer?.render(danglingModifierList)
             renderContexts(danglingModifierList.contextParameters)
-            print("<DANGLING MODIFIER: ${danglingModifierList.diagnostic.reason}>")
+            print(typeRenderer.renderDiagnostic(danglingModifierList.diagnostic, prefix = "<DANGLING MODIFIER: ", suffix = ">"))
         }
 
         override fun visitBlock(block: FirBlock) {
@@ -848,7 +848,7 @@ class FirRenderer(
 
         override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
             annotationRenderer?.render(errorTypeRef)
-            print("<ERROR TYPE REF: ${errorTypeRef.diagnostic.reason}>")
+            print(typeRenderer.renderDiagnostic(errorTypeRef.diagnostic, prefix = "<ERROR TYPE REF: ", suffix = ">"))
         }
 
         override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
@@ -953,7 +953,7 @@ class FirRenderer(
         }
 
         override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference) {
-            print("<${errorNamedReference.diagnostic.reason}>#")
+            print(typeRenderer.renderDiagnostic(errorNamedReference.diagnostic, prefix = "<", suffix = ">#"))
         }
 
         override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference) {
@@ -1180,10 +1180,10 @@ class FirRenderer(
             print(")")
         }
 
-        override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral) {
-            annotationRenderer?.render(arrayLiteral)
-            print("<implicitArrayOf>")
-            visitCall(arrayLiteral)
+        override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral) {
+            annotationRenderer?.render(collectionLiteral)
+            print("<collectionLiteralCall>")
+            visitCall(collectionLiteral)
         }
 
         override fun visitThrowExpression(throwExpression: FirThrowExpression) {

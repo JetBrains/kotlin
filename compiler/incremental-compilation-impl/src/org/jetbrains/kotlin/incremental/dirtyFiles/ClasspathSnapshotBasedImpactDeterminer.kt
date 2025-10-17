@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
@@ -28,7 +26,7 @@ internal class ClasspathSnapshotBasedImpactDeterminer (
     private val classpathChanges: ClasspathChanges,
 
     private val lazyClasspathSnapshot: LazyClasspathSnapshot,
-    private val reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
 ) : ImpactedFilesDeterminer {
 
     override fun determineChangedAndImpactedSymbols(): ChangesEither {
@@ -37,8 +35,8 @@ internal class ClasspathSnapshotBasedImpactDeterminer (
         return when (classpathChanges) {
             // Note: classpathChanges is deserialized, so they are no longer singleton objects and need to be compared using `is` (not `==`)
             is NoChanges -> ChangesEither.Known(emptySet(), emptySet())
-            is ToBeComputedByIncrementalCompiler -> reporter.measure(GradleBuildTime.COMPUTE_CLASSPATH_CHANGES) {
-                reporter.addMetric(GradleBuildPerformanceMetric.COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT, 1)
+            is ToBeComputedByIncrementalCompiler -> reporter.measure(COMPUTE_CLASSPATH_CHANGES) {
+                reporter.addMetric(COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT, 1)
                 val classpathChanges = computeClasspathChanges(
                     caches.lookupCache,
                     lazyClasspathSnapshot,

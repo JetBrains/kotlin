@@ -6,7 +6,7 @@ fun box(): String {
     val grouped = df.group { a and b }.into("g")
 
     val dfMovedAfterNested = grouped.move { c }.after { g.a }
+    dfMovedAfterNested.checkCompileTimeSchemaEqualsRuntime()
     val cNested: DataColumn<Int> = dfMovedAfterNested.g.c
-
     return "OK"
 }

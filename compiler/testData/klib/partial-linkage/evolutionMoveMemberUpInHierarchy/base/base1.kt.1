@@ -1,0 +1,10 @@
+open class X {
+    fun foo() = "non-open member function moved higher"
+    val bar = "non-open member property moved higher"
+    fun nux() = "non-open member function moved higher to cause conflict"
+    val zip = "non-open member property moved higher to cause conflict"
+    open fun ril() = "open member function moved higher"
+    open val det = "open member property moved higher"
+}
+
+

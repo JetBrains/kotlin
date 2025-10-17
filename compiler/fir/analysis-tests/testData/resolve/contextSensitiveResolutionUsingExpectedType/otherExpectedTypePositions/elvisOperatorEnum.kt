@@ -18,8 +18,8 @@ fun testElvis() {
     var i10: MyEnum = Option1 <!USELESS_ELVIS!>?: Option2<!>
     var i11: MyEnum? = Option1 <!USELESS_ELVIS!>?: Option2<!>
     var i20: MyEnum = enumProp <!USELESS_ELVIS!>?: Option2<!>
-    var i30: MyEnum = <!INITIALIZER_TYPE_MISMATCH!>enumProp <!USELESS_ELVIS!>?: stringProp<!><!>
-    var i40: MyEnum = <!INITIALIZER_TYPE_MISMATCH!>stringProp <!USELESS_ELVIS!>?: enumProp<!><!>
+    var i30: MyEnum <!INITIALIZER_TYPE_MISMATCH!>=<!> enumProp <!USELESS_ELVIS!>?: stringProp<!>
+    var i40: MyEnum <!INITIALIZER_TYPE_MISMATCH!>=<!> stringProp <!USELESS_ELVIS!>?: enumProp<!>
     var i50: MyEnum = <!UNRESOLVED_REFERENCE!>getOption<!>() ?: enumProp
 
     receive<MyEnum>(Option1 <!USELESS_ELVIS!>?: Option2<!>)

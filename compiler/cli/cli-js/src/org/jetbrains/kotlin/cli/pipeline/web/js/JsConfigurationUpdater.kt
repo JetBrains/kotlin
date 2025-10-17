@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JsCompilerImpl
+import org.jetbrains.kotlin.cli.js.initializeFinalArtifactConfiguration
 import org.jetbrains.kotlin.cli.js.moduleKindMap
 import org.jetbrains.kotlin.cli.js.targetVersion
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.getJsLowerings
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
     override fun fillConfiguration(
@@ -38,7 +38,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         // setup phase config for the second compilation stage (JS codegen)
         if (arguments.includes != null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                it.list(getJsLowerings(configuration))
+                if (arguments.listPhases) it.list(getJsLowerings(configuration))
             }
         }
     }
@@ -49,16 +49,17 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
      */
     internal fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
         val messageCollector = configuration.messageCollector
-        val targetVersion = initializeAndCheckTargetVersion(arguments, configuration, messageCollector)
+        val targetVersion = initializeAndCheckTargetVersion(arguments, messageCollector)
         configuration.optimizeGeneratedJs = arguments.optimizeGeneratedJs
         val isES2015 = targetVersion == EcmaVersion.es2015
-        val moduleKind = configuration.moduleKind
+        configuration.moduleKind = configuration.moduleKind
             ?: moduleKindMap[arguments.moduleKind]
-            ?: ModuleKind.ES.takeIf { isES2015 }
-            ?: ModuleKind.UMD
+                    ?: ModuleKind.ES.takeIf { isES2015 }
+                    ?: ModuleKind.UMD
+
+        initializeFinalArtifactConfiguration(configuration, arguments)
 
         configuration.keep = arguments.irKeep?.split(",")?.filterNot { it.isEmpty() }.orEmpty()
-        configuration.moduleKind = moduleKind
         configuration.safeExternalBoolean = arguments.irSafeExternalBoolean
         configuration.minimizedMemberNames = arguments.irMinimizedMemberNames
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
@@ -94,12 +95,9 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
 
     private fun initializeAndCheckTargetVersion(
         arguments: K2JSCompilerArguments,
-        configuration: CompilerConfiguration,
         messageCollector: MessageCollector,
     ): EcmaVersion? {
-        val targetVersion = arguments.targetVersion?.also {
-            configuration.target = it
-        }
+        val targetVersion = arguments.targetVersion
 
         if (targetVersion == null) {
             messageCollector.report(ERROR, "Unsupported ECMA version: ${arguments.target}")

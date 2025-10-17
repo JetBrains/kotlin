@@ -1,0 +1,32 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public abstract [ResolvedTo(STATUS)] interface MyCollection : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|MyCollection.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun of([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] vararg x: R|kotlin/IntArray|): R|MyCollection| {
+                ^of object : R|MyCollection| {
+                    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|MyCollection| = Q|MyCollection.Companion|.R|/MyCollection.Companion.of|(vararg(Int(1), Int(2), Int(3)))
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|MyCollection| = Q|MyCollection.Companion|.R|/MyCollection.Companion.of|(vararg(Int(1), Int(2), Int(3)))
+    }

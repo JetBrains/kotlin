@@ -502,6 +502,7 @@ KtBinaryExpression(505,513): 'foo += 1'
 KtNameReferenceExpression(505,508): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -528,6 +529,7 @@ KtBinaryExpression(518,526): 'foo -= 1'
 KtNameReferenceExpression(518,521): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -554,6 +556,7 @@ KtBinaryExpression(531,539): 'foo /= 1'
 KtNameReferenceExpression(531,534): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -580,6 +583,7 @@ KtBinaryExpression(544,552): 'foo *= 1'
 KtNameReferenceExpression(544,547): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -606,6 +610,7 @@ KtBinaryExpression(557,565): 'foo %= 1'
 KtNameReferenceExpression(557,560): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

@@ -1,5 +1,6 @@
 KtNameReferenceExpression(54,62): 'function'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in ROOT) fun <A, B> A.function(a: B)

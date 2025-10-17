@@ -116,7 +116,7 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
     objectFactory: ObjectFactory,
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
-    private val parameters = GranularMetadataTransformation.Params(project, sourceSet, transformProjectDependencies = false)
+    private val parameters = GranularMetadataTransformation.Params(project, sourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs = false)
 
     sealed class Cleaning : Serializable {
         abstract fun cleanOutputDirectory(outputDirectory: File)

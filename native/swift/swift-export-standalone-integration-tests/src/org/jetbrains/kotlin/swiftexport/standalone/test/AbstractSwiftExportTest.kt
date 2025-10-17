@@ -84,7 +84,8 @@ abstract class AbstractSwiftExportTest {
             distribution = Distribution(KonanHome.konanHomePath),
             konanTarget = targets.testTarget,
             errorTypeStrategy = ErrorTypeStrategy.Fail,
-            unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType
+            unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType,
+            enableCoroutinesSupport = true,
         )
 
         // run swift export

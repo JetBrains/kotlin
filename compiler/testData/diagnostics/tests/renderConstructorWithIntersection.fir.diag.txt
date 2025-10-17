@@ -1,1 +1,1 @@
-/Main.kt:(120,157): error: Initializer type mismatch: expected 'Int', actual 'A! & B!'.
+/Main.kt:(118,119): error: Initializer type mismatch: expected 'Int', actual 'A! & B!'.

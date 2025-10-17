@@ -116,6 +116,7 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
 KtNameReferenceExpression(80,84): 'prop'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -159,6 +160,7 @@ KtCallExpression(85,94): 'action1()'
 KtNameReferenceExpression(85,92): 'action1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -218,6 +220,7 @@ KtCallExpression(99,112): 'action1(prop)'
 KtNameReferenceExpression(99,106): 'action1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -242,6 +245,7 @@ KtValueArgument(107,111): 'prop'
 KtNameReferenceExpression(107,111): 'prop'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -263,6 +267,7 @@ KtDotQualifiedExpression(118,132): 'prop.action2()'
 KtNameReferenceExpression(118,122): 'prop'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -328,6 +333,7 @@ KtCallExpression(151,164): 'action2(prop)'
 KtNameReferenceExpression(151,158): 'action2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -352,6 +358,7 @@ KtValueArgument(159,163): 'prop'
 KtNameReferenceExpression(159,163): 'prop'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

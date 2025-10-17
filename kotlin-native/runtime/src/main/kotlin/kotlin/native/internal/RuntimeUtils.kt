@@ -16,9 +16,16 @@ import kotlinx.cinterop.*
 import kotlinx.cinterop.NativePtr
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.native.internal.ref.ExternalRCRef
+import kotlin.native.internal.ref.dereferenceExternalRCRef
+import kotlin.native.internal.ref.disposeExternalRCRef
+import kotlin.native.internal.ref.releaseExternalRCRef
 
 @ExportForCppRuntime
+// KT-81154: Fine-tune KlibIrValidationBeforeLoweringPhase/IrVisibilityValidator or split CEnumByValueFunctionGenerator, to get rid of @PublishedApi here,
+// since ThrowNullPointerException() is not used by compiler during 1st compilation stage
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun ThrowNullPointerException(): Nothing {
     throw NullPointerException()
 }
@@ -35,26 +42,26 @@ internal fun ThrowArrayIndexOutOfBoundsException(): Nothing {
 }
 
 @ExportForCppRuntime
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun ThrowClassCastException(instance: Any, typeInfo: NativePtr): Nothing {
     val clazz = KClassImpl<Any>(typeInfo)
     throw ClassCastException("${instance::class} cannot be cast to $clazz")
 }
 
 @ExportForCppRuntime
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun ThrowTypeCastException(instance: Any, typeName: String): Nothing {
     throw TypeCastException("${instance::class} cannot be cast to class $typeName")
 }
 
 @ExportForCppRuntime
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun ThrowKotlinNothingValueException(): Nothing {
     throw KotlinNothingValueException()
 }
 
 @ExportForCppRuntime
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun ThrowInvalidReceiverTypeException(klass: KClass<*>): Nothing {
     throw RuntimeException("Unexpected receiver type: " + (klass.qualifiedName ?: "noname"))
 }
@@ -74,7 +81,7 @@ internal fun ThrowOutOfMemoryError() : Nothing {
     throw OutOfMemoryError()
 }
 
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
@@ -127,6 +134,11 @@ internal fun ThrowFileFailedToInitializeException(reason: Throwable?) {
 }
 
 @ExportForCppRuntime
+internal fun ThrowRuntimeException(message: String?): Nothing {
+    throw RuntimeException(message)
+}
+
+@ExportForCppRuntime
 internal fun PrintThrowable(throwable: Throwable) {
     println(throwable)
 }
@@ -145,23 +157,6 @@ internal object UnhandledExceptionHookHolder {
     internal val hook: AtomicReference<ReportUnhandledExceptionHook?> = AtomicReference<ReportUnhandledExceptionHook?>(null)
 }
 
-// TODO: Can be removed only when native-mt coroutines stop using it.
-@PublishedApi
-@ExportForCppRuntime
-@OptIn(ExperimentalNativeApi::class)
-internal fun OnUnhandledException(throwable: Throwable) {
-    val handler = UnhandledExceptionHookHolder.hook.load()
-    if (handler == null) {
-        ReportUnhandledException(throwable);
-        return
-    }
-    try {
-        handler(throwable)
-    } catch (t: Throwable) {
-        ReportUnhandledException(t)
-    }
-}
-
 @ExportForCppRuntime("Kotlin_runUnhandledExceptionHook")
 @OptIn(ExperimentalNativeApi::class)
 internal fun runUnhandledExceptionHook(throwable: Throwable) {
@@ -172,7 +167,7 @@ internal fun runUnhandledExceptionHook(throwable: Throwable) {
 @ExportForCppRuntime
 internal fun TheEmptyString() = ""
 
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
     var left = 0
     var right = values.size - 1
@@ -188,7 +183,7 @@ internal fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
     throw IllegalArgumentException("Invalid enum value name: $name")
 }
 
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") Array<T?>(values.size)
     for (value in values)
@@ -209,34 +204,15 @@ public external fun initInstance(thiz: Any, constructorCall: Any): Unit
 @InternalForKotlinNative
 public external fun <T> createUninitializedArray(size: Int): T
 
+@UsedFromCompilerGeneratedCode
 @TypedIntrinsic(IntrinsicType.CREATE_EMPTY_STRING)
 @InternalForKotlinNative
-@PublishedApi
 internal external fun createEmptyString(): String
 
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 @TypedIntrinsic(IntrinsicType.IS_SUBTYPE)
 internal external fun <T> isSubtype(objTypeInfo: NativePtr): Boolean
 
-@PublishedApi
-internal fun checkProgressionStep(step: Int): Int =
-        if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
-@PublishedApi
-internal fun checkProgressionStep(step: Long): Long =
-        if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
-
-@PublishedApi
-internal fun getProgressionLast(start: Char, end: Char, step: Int): Char =
-        getProgressionLast(start.code, end.code, step).toChar()
-
-@PublishedApi
-internal fun getProgressionLast(start: Int, end: Int, step: Int): Int =
-        getProgressionLastElement(start, end, step)
-@PublishedApi
-internal fun getProgressionLast(start: Long, end: Long, step: Long): Long =
-        getProgressionLastElement(start, end, step)
-
-@PublishedApi
 // Called by the debugger.
 @ExportForCppRuntime
 internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
@@ -259,7 +235,16 @@ internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
     return string.encodeToByteArray()
 }
 
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 @TypedIntrinsic(IntrinsicType.IMMUTABLE_BLOB)
 @Escapes.Nothing
 internal external fun immutableBlobOfImpl(data: String): ImmutableBlob
+
+@ExportForCppRuntime("Kotlin_internal_executeAndRelease")
+internal fun executeAndRelease(actionRef: ExternalRCRef) {
+    @Suppress("UNCHECKED_CAST")
+    val action = dereferenceExternalRCRef(actionRef) as () -> Unit
+    releaseExternalRCRef(actionRef)
+    disposeExternalRCRef(actionRef)
+    action()
+}

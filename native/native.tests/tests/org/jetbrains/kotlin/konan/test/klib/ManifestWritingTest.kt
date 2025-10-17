@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.konan.test.blackbox.toOutput
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -108,7 +108,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         )
 
         val expectedOutput = rootDir.resolve("output.txt")
-        KotlinTestUtils.assertEqualsToFile(expectedOutput, compilationResult.toOutput().sanitizeCompilationOutput())
+        TestDataAssertions.assertEqualsToFile(expectedOutput, compilationResult.toOutput().sanitizeCompilationOutput())
 
         compareManifests(compilationResult, rootDir.resolve("manifest"))
     }
@@ -130,7 +130,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             val klibRoot = compilationResult.assertSuccess().resultingArtifact
             val actualManifestSanitizedText = readManifestAndSanitize(klibRoot.klibFile, targets.testTarget)
 
-            KotlinTestUtils.assertEqualsToFile(expectedManifest, actualManifestSanitizedText)
+            TestDataAssertions.assertEqualsToFile(expectedManifest, actualManifestSanitizedText)
         }
 
 

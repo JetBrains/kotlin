@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
 
 class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowering(context) {
-    private val getClassData = context.intrinsics.jsClass
-    private val primitiveClassesObject = context.intrinsics.primitiveClassesObject
-    private val longArrayClassSymbol = context.intrinsics.longArrayClass
+    private val getClassData = context.symbols.jsClass
+    private val primitiveClassesObject = context.symbols.primitiveClassesObject
+    private val longArrayClassSymbol = context.symbols.longArrayClass
 
     private val primitiveClassProperties by lazy(LazyThreadSafetyMode.NONE) {
         primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()

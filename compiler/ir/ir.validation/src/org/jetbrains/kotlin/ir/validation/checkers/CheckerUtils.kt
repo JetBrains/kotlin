@@ -98,10 +98,6 @@ private fun IrDeclarationWithVisibility.isVisibleAsPrivate(file: IrFile): Boolea
     return file.fileEntry == fileOrNull?.fileEntry
 }
 
-// Most of the internal annotations declared in these packages make visibility checks fail (KT-78100)
-private val EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS =
-    listOf("kotlin.jvm", "kotlin.internal", "kotlin.native", "kotlin.native.internal").mapTo(hashSetOf(), ::FqName)
-
 context(checker: IrChecker)
 internal fun checkVisibility(
     referencedDeclarationSymbol: IrSymbol,
@@ -117,11 +113,7 @@ internal fun checkVisibility(
         return
     }
 
-    if (context.withinAnnotationUsageSubTree &&
-        referencedDeclarationSymbol.owner.getPackageFragment()?.packageFqName in EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS
-    ) {
-        return
-    }
+    if (context.withinAnnotationUsageSubTree) return
 
     if (context.file.module.name in EXCLUDED_MODULE_NAMES) return
 

@@ -1,0 +1,6 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=IsExpressionComplexKt]]
+  facadeFqName: IsExpressionComplexKt
+  partSimpleName: "IsExpressionComplexKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  PROPERTY[fqName=x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=x]

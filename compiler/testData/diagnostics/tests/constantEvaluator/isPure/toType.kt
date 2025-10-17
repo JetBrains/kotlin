@@ -5,7 +5,7 @@ package test
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val prop1 = 1.toLong()<!>
 
 // val prop2: false
-<!DEBUG_INFO_CONSTANT_VALUE("false")!>val prop2 = 1.toInt()<!>
+<!DEBUG_INFO_CONSTANT_VALUE("false")!>val prop2 = 1L.toInt()<!>
 
 // val prop3: false
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val prop3 = 1.toByte()<!>

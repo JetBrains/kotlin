@@ -6,6 +6,7 @@ jvm - Jvm.kt:
     KtNameReferenceExpression(183,205): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
+        usesContextSensitiveResolution: false
         symbols:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
@@ -13,6 +14,7 @@ jvm - Jvm.kt:
     KtNameReferenceExpression(226,248): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
+        usesContextSensitiveResolution: false
         symbols:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
@@ -20,5 +22,6 @@ jvm - Jvm.kt:
     KtNameReferenceExpression(273,295): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
+        usesContextSensitiveResolution: false
         symbols:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */

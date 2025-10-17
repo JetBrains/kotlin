@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -191,7 +194,7 @@ class FirSyntheticCallGenerator(
     }
 
     fun generateSyntheticArrayOfCall(
-        arrayLiteral: FirArrayLiteral,
+        arrayLiteral: FirCollectionLiteral,
         expectedType: ConeKotlinType,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
@@ -248,6 +251,41 @@ class FirSyntheticCallGenerator(
             .firstOrNull() // TODO: it should be single() after KTIJ-26465 is fixed
     }
 
+    fun resolveCollectionLiteralExpressionWithSyntheticOuterCall(
+        collectionLiteral: FirCollectionLiteral,
+        expectedTypeData: ResolutionMode.WithExpectedType?,
+        context: ResolutionContext,
+    ): FirExpression {
+        val argumentList = buildUnaryArgumentList(collectionLiteral)
+        val reference = generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
+            collectionLiteral,
+            argumentList,
+            expectedTypeData?.expectedType,
+            context,
+        )
+
+        val fakeCall = buildFunctionCall {
+            calleeReference = reference
+            this.argumentList = argumentList
+        }
+
+        components.dataFlowAnalyzer.enterCallArguments(fakeCall, argumentList.arguments)
+        components.dataFlowAnalyzer.exitCallArguments()
+
+        val resultingFakeCall = components.callCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
+        components.dataFlowAnalyzer.exitFunctionCall(fakeCall, callCompleted = true)
+
+        val resolvedCollectionLiteral = resultingFakeCall.arguments.single()
+
+        return when (val calleeReference = resultingFakeCall.calleeReference) {
+            is FirResolvedErrorReference -> resolvedCollectionLiteral.withAdaptedError(
+                calleeReference.diagnostic,
+                collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.ErrorExpressionForTopLevelCollectionLiteral),
+            )
+            else -> resolvedCollectionLiteral
+        }
+    }
+
     fun resolveAnonymousFunctionExpressionWithSyntheticOuterCall(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         expectedTypeData: ResolutionMode.WithExpectedType?,
@@ -255,10 +293,13 @@ class FirSyntheticCallGenerator(
     ): FirExpression {
         val argumentList = buildUnaryArgumentList(anonymousFunctionExpression)
 
+        val expectedType =
+            expectedTypeData?.expectedType?.adaptExpectedTypeForLambdaIfNeeded(anonymousFunctionExpression.anonymousFunction)
+
         val reference = generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
             anonymousFunctionExpression,
             argumentList,
-            expectedTypeData?.expectedType,
+            expectedType,
             context,
         )
 
@@ -280,56 +321,105 @@ class FirSyntheticCallGenerator(
         (resultingCall.calleeReference as? FirResolvedErrorReference)?.let {
             val diagnostic = it.diagnostic
 
-            if (!anonymousFunctionExpression.adaptForTrivialTypeMismatchToBeReportedInChecker(diagnostic)) {
-                // Frankly speaking, all the diagnostics reported further should be transformed into some YT issue
-                // with the `kotlin-error-message` tag.
-                //
-                // Generally, all the diagnostics we have might be replaced with some checker diagnostic, but
-                // there are still known cases like KT-74912 when it doesn't work like this, and it's hard to make sure that there are
-                // no other cases.
-                return buildErrorExpression(
-                    anonymousFunctionExpression.source?.fakeElement(KtFakeSourceElementKind.ErrorExpressionForTopLevelLambda),
-                    diagnostic,
-                    resolvedArgument
-                )
-            }
+            return anonymousFunctionExpression.withAdaptedError(
+                diagnostic,
+                anonymousFunctionExpression.source?.fakeElement(KtFakeSourceElementKind.ErrorExpressionForTopLevelLambda),
+            )
         }
 
         return resolvedArgument
     }
 
+    private fun ConeKotlinType.adaptExpectedTypeForLambdaIfNeeded(lambda: FirAnonymousFunction): ConeKotlinType {
+        if (!lambda.hasExplicitParameterList) return this
+        if (!isSomeFunctionType(session)) return this
+
+        val isThereReceiver = receiverType(session) != null
+        if (!isThereReceiver && contextParameterNumberForFunctionType == 0) return this
+
+        val classLikeType = unwrapLowerBound() as? ConeClassLikeType ?: return this
+
+        return when {
+            lambda.valueParameters.size == classLikeType.valueParameterTypesIncludingReceiver(session).size ->
+                classLikeType.withAttributes(
+                    classLikeType.attributes
+                        .remove(CompilerConeAttributes.ExtensionFunctionType::class)
+                        .remove(CompilerConeAttributes.ContextFunctionTypeParams::class)
+                )
+            else -> this
+        }
+    }
+
     /**
-     * After resolution of a top-level lambda via synthetic call, we have some diagnostic, which in most of the cases says
-     * that the type of the lambda can't be passed to the given expected type.
+     * After resolution of a top-level lambda/collection literal via synthetic call, we have some diagnostic, which in most of the cases says
+     * that the type of the lambda/collection literal can't be passed to the given expected type.
      *
      * But the thing is that in
      * [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.transformAnonymousFunction]
      * even for red code we set the whole lambda expression type to the expected type,
      * so here, to report the proper diagnostic, we set it back.
      *
+     * For collection literal, this function doesn't reset any types, just checking if the error is expected to be reported.
+     *
      * @return true if the error is expected to be reported by some checker.
      */
-    private fun FirAnonymousFunctionExpression.adaptForTrivialTypeMismatchToBeReportedInChecker(
+    private fun FirExpression.adaptForTypeMismatch(
         diagnostic: ConeDiagnostic,
     ): Boolean {
         if (diagnostic !is ConeInapplicableCandidateError) return false
 
         val candidate = diagnostic.candidate as Candidate
 
-        val argumentTypeMismatchOnWholeLambda = candidate.diagnostics.singleOrNull {
+        val argumentTypeMismatchOnWholeExpression = candidate.diagnostics.singleOrNull {
             it is ArgumentTypeMismatch && it.argument == this
         } as ArgumentTypeMismatch? ?: return false
 
-        val storage = if (candidate.usedOuterCs) candidate.system.currentStorage() else candidate.system.asReadOnlyStorage()
-        val substitutor = storage.buildCurrentSubstitutor(components.session.typeContext, emptyMap())
+        when (this) {
+            is FirAnonymousFunctionExpression -> {
+                val storage = if (candidate.usedOuterCs) candidate.system.currentStorage() else candidate.system.asReadOnlyStorage()
+                val substitutor = storage.buildCurrentSubstitutor(components.session.typeContext, emptyMap())
+                val substitutedType = substitutor.safeSubstitute(
+                    components.session.typeContext,
+                    argumentTypeMismatchOnWholeExpression.actualType
+                ).asCone()
 
-        anonymousFunction.replaceTypeRef(
-            anonymousFunction.typeRef.withReplacedConeType(
-                substitutor.safeSubstitute(components.session.typeContext, argumentTypeMismatchOnWholeLambda.actualType) as ConeKotlinType
-            )
-        )
+                anonymousFunction.replaceTypeRef(
+                    anonymousFunction.typeRef.withReplacedConeType(substitutedType)
+                )
+            }
+            is FirFunctionCall -> {
+                // completed collection literal
+                check(
+                    session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
+                            && source?.kind == KtFakeSourceElementKind.OperatorOfCall
+                ) {
+                    "Expected ${FirFunctionCall::class.simpleName} originating from ${FirCollectionLiteral::class.simpleName}"
+                }
+            }
+            else -> {
+                error("Expected ${FirAnonymousFunctionExpression::class.simpleName} or ${FirFunctionCall::class.simpleName}")
+            }
+        }
 
         return true
+    }
+
+    /**
+     * For collection literal or lambda, adapts error to either `TYPE_MISMATCH` or explicit `FirError` node
+     */
+    private fun FirExpression.withAdaptedError(
+        diagnostic: ConeDiagnostic,
+        sourceIfNotAdaptedForTypeMismatch: KtSourceElement?,
+    ): FirExpression {
+        if (adaptForTypeMismatch(diagnostic))
+            return this
+        // Frankly speaking, all the diagnostics reported further should be transformed into some YT issue
+        // with the `kotlin-error-message` tag.
+        //
+        // Generally, all the diagnostics we have might be replaced with some checker diagnostic, but
+        // there are still known cases like KT-74912 when it doesn't work like this, and it's hard to make sure that there are
+        // no other cases.
+        return buildErrorExpression(sourceIfNotAdaptedForTypeMismatch, diagnostic, this)
     }
 
     fun resolveCallableReferenceWithSyntheticOuterCall(

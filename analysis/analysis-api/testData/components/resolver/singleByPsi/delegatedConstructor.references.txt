@@ -1,5 +1,6 @@
 KtNameReferenceExpression(126,127): 'A'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in A) constructor(x: kotlin.Int)

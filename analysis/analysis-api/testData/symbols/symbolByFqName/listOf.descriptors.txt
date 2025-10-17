@@ -34,3 +34,4 @@ KaNamedClassSymbol:
 
   annotationApplicableTargets: null
   deprecationStatus: null
+  importableFqName: kotlin.io.FileWalkDirection

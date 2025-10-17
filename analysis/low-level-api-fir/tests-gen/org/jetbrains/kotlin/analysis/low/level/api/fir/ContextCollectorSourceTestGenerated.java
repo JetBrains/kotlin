@@ -672,12 +672,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
-    @TestMetadata("anonymousFunctionContextReceiver.kt")
-    public void testAnonymousFunctionContextReceiver() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/anonymousFunctionContextReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("anonymousFunctionContextReceiver2.kt")
     public void testAnonymousFunctionContextReceiver2() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/anonymousFunctionContextReceiver2.kt");
@@ -687,12 +681,6 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("anonymousFunctionContextReceiver3.kt")
     public void testAnonymousFunctionContextReceiver3() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/anonymousFunctionContextReceiver3.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousFunctionContextReceiverExpression.kt")
-    public void testAnonymousFunctionContextReceiverExpression() {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters/anonymousFunctionContextReceiverExpression.kt");
     }
 
     @Test
@@ -1303,6 +1291,24 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("onLabel.kt")
     public void testOnLabel() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onLabel.kt");
+    }
+
+    @Test
+    @TestMetadata("onNullAssignment.kt")
+    public void testOnNullAssignment() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onNullAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("onNullAssignment2.kt")
+    public void testOnNullAssignment2() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onNullAssignment2.kt");
+    }
+
+    @Test
+    @TestMetadata("onNullAssignmentClosingBrace.kt")
+    public void testOnNullAssignmentClosingBrace() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/smartCasts/onNullAssignmentClosingBrace.kt");
     }
 
     @Test

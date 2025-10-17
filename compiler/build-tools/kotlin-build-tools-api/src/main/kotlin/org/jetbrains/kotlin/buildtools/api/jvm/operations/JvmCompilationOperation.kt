@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
  *
  * An example of the basic usage is:
  *  ```
- *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
+ *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
  *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
  *   operation.compilerArguments[CommonCompilerArguments.LANGUAGE_VERSION] = KotlinVersion.V2_0
  *   toolchain.createBuildSession().use { it.executeOperation(operation, toolchain.createDaemonExecutionPolicy()) }
@@ -102,5 +102,20 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
          */
         @JvmField
         public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
+
+        /**
+         * Controls at which logging level to display the command line arguments passed to the compiler.
+         *
+         * Defaults to [CompilerArgumentsLogLevel.DEBUG].
+         */
+        @JvmField
+        public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> = Option("COMPILER_ARGUMENTS_LOG_LEVEL")
+    }
+
+    public enum class CompilerArgumentsLogLevel {
+        ERROR,
+        WARNING,
+        INFO,
+        DEBUG;
     }
 }

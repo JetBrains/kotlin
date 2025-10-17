@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -299,6 +300,8 @@ internal class StubBasedFirTypeDeserializer(
     private fun KtFunctionType.isSuspend(): Boolean {
         val parent = parent as? KtElementImplStub<*>
             ?: error("Expected parent of KtTypeElement to have type KtElementImplStub<*>, but actual $parent")
+
+        @Suppress("DEPRECATION") // KT-78356
         val modifiers = parent.getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
         return modifiers.any { it.hasSuspendModifier() }
     }
@@ -334,7 +337,10 @@ internal class StubBasedFirTypeDeserializer(
         }
         val type = typeElement as KtUserType
         val referencedName = type.referencedName
-        return typeParameterSymbol(referencedName!!) ?: type.classId().toLookupTag()
+        return runIf(type.qualifier == null) {
+            // Things like Foo.T can never be resolved to type parameter T
+            typeParameterSymbol(referencedName!!)
+        } ?: type.classId().toLookupTag()
     }
 
     private fun getComposableFunctionClassId(arity: Int): ClassId {

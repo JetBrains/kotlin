@@ -1,5 +1,6 @@
 KtPropertyDelegate(11,19): 'by Foo()'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in Foo) operator fun getValue(_this: kotlin.Any?, p: kotlin.Any?): kotlin.Int

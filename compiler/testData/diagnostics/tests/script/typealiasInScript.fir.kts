@@ -1,12 +1,11 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 typealias TopLevelInScript = String
 
 class C {
-    <!UNSUPPORTED_FEATURE!>typealias NestedInClass = String<!>
+    typealias Nested = String
 }
 
-fun foo() {
-    <!UNSUPPORTED_FEATURE!>typealias Local = String<!>
-}
+val s1: TopLevelInScript = "TopLevelInScript"
+val s2: C.Nested = "C.Nested"
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration, typeAliasDeclaration */

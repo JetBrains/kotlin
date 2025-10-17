@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.tests
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.objcexport.StubRenderer
 import org.jetbrains.kotlin.backend.konan.testUtils.baseDeclarationsDir
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -41,7 +41,7 @@ class ObjCExportBaseDeclarationsTest(
             .flatMap { declaration -> StubRenderer.render(declaration) }
             .joinToString(System.lineSeparator())
 
-        KotlinTestUtils.assertEqualsToFile(headerFile, renderedDeclarations)
+        TestDataAssertions.assertEqualsToFile(headerFile, renderedDeclarations)
     }
 
     fun interface BaseDeclarationsGenerator {

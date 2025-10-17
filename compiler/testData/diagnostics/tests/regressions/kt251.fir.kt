@@ -3,7 +3,7 @@ class A() {
     var x: Int = 0
         get() = <!RETURN_TYPE_MISMATCH!>"s"<!>
         set(value: <!WRONG_SETTER_PARAMETER_TYPE!>String<!>) {
-            field = <!ASSIGNMENT_TYPE_MISMATCH!>value<!>
+            field <!ASSIGNMENT_TYPE_MISMATCH!>=<!> value
         }
     val y: Int
         get(): <!WRONG_GETTER_RETURN_TYPE("Int; String")!>String<!> = "s"

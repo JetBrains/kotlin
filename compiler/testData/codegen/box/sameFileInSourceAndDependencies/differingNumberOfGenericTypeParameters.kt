@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE, JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: NATIVE, JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
 // IGNORE_BACKEND_K2: JVM_IR
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR, NATIVE
 // ^^^ UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
 @KaExperimentalApi
+@KaExtensibleApi
 public interface KaSuperTypesCallArgumentsRenderer {
     public fun renderSuperTypeArguments(
         analysisSession: KaSession,

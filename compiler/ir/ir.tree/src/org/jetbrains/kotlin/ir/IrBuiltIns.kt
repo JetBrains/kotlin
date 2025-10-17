@@ -248,9 +248,6 @@ abstract class SymbolFinder {
     abstract fun findProperties(callableId: CallableId): Iterable<IrPropertySymbol>
     abstract fun findClass(classId: ClassId): IrClassSymbol?
 
-    // TODO: replace this with lazy get
-    abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
-
     fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol> {
         return findFunctions(CallableId(FqName.fromSegments(listOf(*packageNameSegments)), name))
     }
@@ -270,12 +267,6 @@ abstract class SymbolFinder {
     fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
         return findClass(ClassId(packageFqName, name))
     }
-
-    fun topLevelClass(classId: ClassId): IrClassSymbol =
-        findClass(classId.shortClassName, classId.packageFqName) ?: error("No class $classId found")
-
-    fun topLevelClass(packageName: FqName, name: String): IrClassSymbol =
-        findClass(Name.identifier(name), packageName) ?: error("No class ${packageName}.${name} found")
 
     fun topLevelProperty(packageName: FqName, name: String): IrPropertySymbol {
         val elements = findProperties(Name.identifier(name), packageName).toList()
@@ -308,8 +299,4 @@ abstract class SymbolFinder {
     ): IrSimpleFunctionSymbol {
         return topLevelFunction(CallableId(packageName, Name.identifier(name)), condition)
     }
-
-    fun findTopLevelPropertyGetter(packageName: FqName, name: String) =
-        findGetter(topLevelProperty(packageName, name))
-            ?: irError("Cannot find getter for $packageName.$name")
 }

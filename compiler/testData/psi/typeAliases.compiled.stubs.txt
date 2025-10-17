@@ -6,6 +6,7 @@ Ann.class:
     CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: [ allowedTargets -> [AnnotationTarget.TYPEALIAS] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -29,15 +30,19 @@ Ann.class:
 
 DependencyKt.class:
   FILE[kind=Facade[packageFqName=dependency, facadeFqName=dependency.DependencyKt]]
+    facadeFqName: dependency.DependencyKt
+    partSimpleName: "DependencyKt"
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST
     FUN[fqName=dependency.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+      origin: Facade(className=dependency/DependencyKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
             FUNCTION_TYPE
+              abbreviatedType: dependency.A
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
@@ -161,6 +166,7 @@ TypeAliases.class:
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
               TYPE_REFERENCE
                 FUNCTION_TYPE
+                  abbreviatedType: dependency.A
                   VALUE_PARAMETER_LIST
                   TYPE_REFERENCE
                     USER_TYPE
@@ -170,10 +176,12 @@ TypeAliases.class:
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
               TYPE_REFERENCE
                 FUNCTION_TYPE
+                  abbreviatedType: test.TypeAliases.B
                   VALUE_PARAMETER_LIST
                     VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                       TYPE_REFERENCE
                         FUNCTION_TYPE
+                          abbreviatedType: dependency.A
                           VALUE_PARAMETER_LIST
                           TYPE_REFERENCE
                             USER_TYPE
@@ -188,6 +196,7 @@ TypeAliases.class:
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ta]
               TYPE_REFERENCE
                 USER_TYPE
+                  abbreviatedType: test.Outer.Inner.TA<kotlin.Boolean>
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -261,6 +270,7 @@ TypeAliases.class:
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=body]
               TYPE_REFERENCE
                 USER_TYPE
+                  abbreviatedType: test.Z
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=dependency]
                   REFERENCE_EXPRESSION[referencedName=SomeClass]
@@ -300,6 +310,7 @@ TypeAliases.class:
         TYPEALIAS[classId=test/TypeAliases.Parametrized, fqName=test.TypeAliases.Parametrized, isTopLevel=false, name=Parametrized]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -329,6 +340,8 @@ TypeAliases.class:
 
 TypeAliasesKt.class:
   FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasesKt]]
+    facadeFqName: test.TypeAliasesKt
+    partSimpleName: "TypeAliasesKt"
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST

@@ -205,7 +205,11 @@ internal class BtaImplGenerator(
                 when {
                     type.classifier in enumNameAccessors -> {
                         add(maybeGetNullabilitySign(argument))
-                        add(".let { %T.entries.first { entry -> entry.stringValue == it } }", argumentTypeParameter.copy(nullable = false))
+                        add(
+                            $$".let { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                            argumentTypeParameter.copy(nullable = false),
+                            MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+                        )
                     }
                     argument.valueType is IntType -> {
                         add(maybeGetNullabilitySign(argument))
@@ -252,7 +256,7 @@ internal class BtaImplGenerator(
                 CodeBlock.builder()
                     .beginControlFlow(
                         "if (key.availableSinceVersion > %T(%L, %L, %L))",
-                        ClassName("kotlin", "KotlinVersion"),
+                        kotlinVersionType,
                         kotlinVersion.major,
                         kotlinVersion.minor,
                         kotlinVersion.patch
@@ -317,7 +321,7 @@ private fun FunSpec.Builder.addSafeSetStatement(
         val errorMessage = CodeBlock.of(
             "%P",
             buildString {
-                append($$"Compiler parameter not recognized: $$name. Current compiler version is: $KC_VERSION}, but")
+                append($$"Compiler parameter not recognized: $$name. Current compiler version is: $KC_VERSION, but")
                 if (wasIntroducedRecently) {
                     append(" the argument was introduced in ${argument.releaseVersionsMetadata.introducedVersion.releaseName}")
                 }

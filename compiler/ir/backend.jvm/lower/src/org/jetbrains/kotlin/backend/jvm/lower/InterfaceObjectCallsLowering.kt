@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.ir.IrElement
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 /**
  * Resolves calls to Object methods on interface types to virtual methods.
  */
-@PhaseDescription(name = "InterfaceObjectCalls")
 internal class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) = irFile.acceptChildren(this, null)
 

@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
     ReplaceWith(
         "BinaryenPlugin",
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin"
-    )
+    ),
+    level = DeprecationLevel.ERROR
 )
 @ExperimentalWasmDsl
 open class BinaryenRootPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         project.plugins.apply(BinaryenPlugin::class.java)
     }
 }

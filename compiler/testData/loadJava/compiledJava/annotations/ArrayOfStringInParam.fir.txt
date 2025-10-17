@@ -1,5 +1,5 @@
 public abstract interface ArrayOfStringInParam : R|kotlin/Any| {
-    @R|test/ArrayOfStringInParam.MyAnnotation|(value = <implicitArrayOf>(String(a), String(b), String(c))) public open class A : R|kotlin/Any| {
+    @R|test/ArrayOfStringInParam.MyAnnotation|(value = <collectionLiteralCall>(String(a), String(b), String(c))) public open class A : R|kotlin/Any| {
         public constructor(): R|test/ArrayOfStringInParam.A|
 
     }

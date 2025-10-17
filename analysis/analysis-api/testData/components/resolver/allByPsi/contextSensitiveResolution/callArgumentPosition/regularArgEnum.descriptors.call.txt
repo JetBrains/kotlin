@@ -228,6 +228,7 @@ KtValueArgument(280,284): 'arg1'
 KtNameReferenceExpression(280,284): 'arg1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null
@@ -319,6 +320,7 @@ KtValueArgument(302,306): 'arg2'
 KtNameReferenceExpression(302,306): 'arg2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      isContextSensitive = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         contextArguments = []
         dispatchReceiver = null

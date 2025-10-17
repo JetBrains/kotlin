@@ -1,0 +1,24 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public interface T {
+    public abstract val g: kotlin.Int
+
+    public abstract fun f(): kotlin.Unit
+}
+
+public final class A public constructor() : T {
+    public open val g: kotlin.Int /* compiled code */
+
+    public open fun f(): kotlin.Unit { /* compiled code */ }
+}
+
+public final class Delegation public constructor(c: kotlin.Int = COMPILED_CODE, a: A) : T {
+    public final val c: kotlin.Int /* compiled code */
+
+    public open val g: kotlin.Int /* compiled code */
+
+    public final fun ff(): kotlin.Int { /* compiled code */ }
+
+    public open fun f(): kotlin.Unit { /* compiled code */ }
+}

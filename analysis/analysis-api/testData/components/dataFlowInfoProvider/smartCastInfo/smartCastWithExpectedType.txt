@@ -1,0 +1,5 @@
+expression: b
+smartCastInfo:
+    originalType: B
+    smartCastType: C
+    isStable: true

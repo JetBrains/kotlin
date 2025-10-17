@@ -1,5 +1,6 @@
 KDocName(25,55): 'dependency.JavaClass.staticFun'
   KDocReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in dependency.JavaClass) open fun staticFun()

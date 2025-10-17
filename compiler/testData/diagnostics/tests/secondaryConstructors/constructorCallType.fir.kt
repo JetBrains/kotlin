@@ -21,7 +21,7 @@ val y4: B<Int> = B<Int>("")
 
 val y5: B<String> = B<String>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 val y6: B<String> = B<String>("")
-val y7: B<String> = <!INITIALIZER_TYPE_MISMATCH!>B(1)<!>
+val y7: B<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> B(1)
 val y8: B<String> = B("")
 
 val y9 = B(1)

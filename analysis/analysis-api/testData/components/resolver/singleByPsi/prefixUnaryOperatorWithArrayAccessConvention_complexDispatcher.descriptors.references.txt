@@ -1,5 +1,6 @@
 KtOperationReferenceExpression(182,184): '++'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in kotlin.Int) operator fun inc(): kotlin.Int

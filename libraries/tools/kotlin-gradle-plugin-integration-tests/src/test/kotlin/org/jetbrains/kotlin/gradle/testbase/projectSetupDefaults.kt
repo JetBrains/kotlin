@@ -41,6 +41,7 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
             id "org.jetbrains.kotlin.gradle-subplugin-example" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.atomicfu" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.compose" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.plugin.parcelize" version "${'$'}kotlin_version"
             
             id "org.jetbrains.kotlin.test.gradle-warnings-detector" version "${'$'}test_fixes_version"
             id "org.jetbrains.kotlin.test.kotlin-compiler-args-properties" version "${'$'}test_fixes_version"
@@ -198,6 +199,7 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             id("org.jetbrains.kotlin.gradle-subplugin-example") version kotlin_version
             id("org.jetbrains.kotlin.plugin.atomicfu") version kotlin_version
             id("org.jetbrains.kotlin.plugin.compose") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.parcelize") version kotlin_version
 
             id("org.jetbrains.kotlin.test.gradle-warnings-detector") version test_fixes_version
             id("org.jetbrains.kotlin.test.kotlin-compiler-args-properties") version test_fixes_version

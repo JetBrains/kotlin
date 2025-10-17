@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
+import org.jetbrains.kotlin.backend.wasm.jsFunctionForExternalAdapterFunction
 import org.jetbrains.kotlin.backend.wasm.topLevelFunctionForNestedExternal
 import org.jetbrains.kotlin.backend.wasm.utils.getJsBuiltinDescriptor
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
@@ -124,6 +125,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             modality = Modality.FINAL
             isExternal = true
         }
+        function.jsFunctionForExternalAdapterFunction = jsFunction
 
         jsFunction.parent = function.parent
         function.isExternal = false

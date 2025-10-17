@@ -17,14 +17,14 @@
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import kotlin.annotation.AnnotationTarget.*
 import kotlin.reflect.KFunction
+import kotlin.reflect.jvm.internal.DescriptorKFunction
 import kotlin.reflect.jvm.internal.EmptyContainerForLocal
-import kotlin.reflect.jvm.internal.KFunctionImpl
 import kotlin.reflect.jvm.internal.deserializeToDescriptor
 
 /**
@@ -47,7 +47,7 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
     )
 
     @Suppress("UNCHECKED_CAST")
-    return KFunctionImpl(EmptyContainerForLocal, descriptor) as KFunction<R>
+    return DescriptorKFunction(EmptyContainerForLocal, descriptor) as KFunction<R>
 }
 
 /**

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-68094
 
 import kotlin.Throws

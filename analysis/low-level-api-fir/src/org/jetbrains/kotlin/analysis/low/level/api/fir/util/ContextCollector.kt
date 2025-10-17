@@ -261,7 +261,8 @@ private class ContextCollectorVisitor(
 
     private val context = BodyResolveContext(
         returnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
-        dataFlowAnalyzerContext = DataFlowAnalyzerContext(bodyHolder.session)
+        dataFlowAnalyzerContext = DataFlowAnalyzerContext(bodyHolder.session),
+        isContextCollectorMode = true,
     )
 
     private val result = HashMap<ContextKey, Context>()
@@ -1017,7 +1018,6 @@ private class ContextCollectorVisitor(
      *
      * @see processAnnotations
      */
-    @ContextCollectorDsl
     private fun Processor.processRawAnnotations(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
             process(annotation)
@@ -1029,7 +1029,6 @@ private class ContextCollectorVisitor(
      *
      * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
      */
-    @ContextCollectorDsl
     private fun Processor.processAnnotations(declaration: FirDeclaration) {
         @OptIn(PrivateForInline::class)
         context.withContainer(declaration) {
@@ -1046,7 +1045,6 @@ private class ContextCollectorVisitor(
     private inner class Processor(private val delegate: FirVisitorVoid) {
         private val elementsToSkip = HashSet<FirElement>()
 
-        @ContextCollectorDsl
         fun process(element: FirElement?) {
             if (isActive && element != null) {
                 element.accept(delegate)
@@ -1054,7 +1052,6 @@ private class ContextCollectorVisitor(
             }
         }
 
-        @ContextCollectorDsl
         fun <T : FirElement?> process(element: T?, customVisit: (T & Any) -> Unit) {
             if (element != null) {
                 customVisit(element)
@@ -1062,7 +1059,6 @@ private class ContextCollectorVisitor(
             }
         }
 
-        @ContextCollectorDsl
         fun processList(elements: Collection<FirElement>) {
             for (element in elements) {
                 if (!isActive) {
@@ -1073,7 +1069,6 @@ private class ContextCollectorVisitor(
             }
         }
 
-        @ContextCollectorDsl
         fun processChildren(element: FirElement, checkIsActive: Boolean = true) {
             if (checkIsActive && !isActive) {
                 return
@@ -1167,5 +1162,3 @@ private class ContextCollectorVisitor(
     }
 }
 
-@DslMarker
-private annotation class ContextCollectorDsl

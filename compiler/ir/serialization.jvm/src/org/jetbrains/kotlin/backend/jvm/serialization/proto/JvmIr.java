@@ -1207,12 +1207,6 @@ public final class JvmIr {
           return false;
         }
       }
-      for (int i = 0; i < getFileEntryCount(); i++) {
-        if (!getFileEntry(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -1578,12 +1572,6 @@ public final class JvmIr {
         }
         for (int i = 0; i < getBodyCount(); i++) {
           if (!getBody(i).isInitialized()) {
-            
-            return false;
-          }
-        }
-        for (int i = 0; i < getFileEntryCount(); i++) {
-          if (!getFileEntry(i).isInitialized()) {
             
             return false;
           }

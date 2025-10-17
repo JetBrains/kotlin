@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.interop
 
+import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.abort
@@ -24,7 +25,7 @@ private fun assertFilesEqual(expected: File, actual: File, message: () -> String
             """.trimMargin()
         }
     } catch (e: AssertionFailedError) {
-        if (JUnit5Assertions.isTeamCityBuild) {
+        if (isTeamCityBuild) {
             if (actual.isFile) {
                 println(actual.readText())
             }

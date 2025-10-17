@@ -1,4 +1,3 @@
-warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/js/languageVersion.kt:6:13: error: the feature "break continue in inline lambdas" is only available since language version 2.2
             break
             ^^^^^

@@ -68,8 +68,10 @@ abstract class FirInferenceSession {
      * See `getAndSemiFixCurrentResultIfTypeVariable` chapter at [docs/fir/pcla.md]
      *
      * NB: The callee must pay attention that exactly current common CS will be modified.
+     * NB: Unlike [FirInferenceSession.getAndSemiFixCurrentResultIfTypeVariable] this one allows to semi-fix a type variable Tv into some
+     * other type variable Kv, currently it's only used for input types for OverloadResolutionByLambdaReturnType.
      */
-    open fun semiFixTypeVariablesAllowingFixationToOuterOnes(
+    open fun semiFixTypeVariablesAllowingFixationToOtherOnes(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
     ) {

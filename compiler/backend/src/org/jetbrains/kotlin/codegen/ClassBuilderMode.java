@@ -16,39 +16,16 @@
 
 package org.jetbrains.kotlin.codegen;
 
-public class ClassBuilderMode {
+public enum ClassBuilderMode {
+    FULL( /* bodies = */ true, /* sourceRetention = */ false),
+    KAPT3( /* bodies = */ false, /* sourceRetention = */ true),
+    ;
+
     public final boolean generateBodies;
     public final boolean generateSourceRetentionAnnotations;
 
-    private ClassBuilderMode(
-            boolean generateBodies,
-            boolean generateSourceRetentionAnnotations
-    ) {
+    ClassBuilderMode(boolean generateBodies, boolean generateSourceRetentionAnnotations) {
         this.generateBodies = generateBodies;
         this.generateSourceRetentionAnnotations = generateSourceRetentionAnnotations;
     }
-
-    /**
-     * Full function bodies
-     */
-    public final static ClassBuilderMode FULL = new ClassBuilderMode(
-            /* bodies = */ true,
-            /* sourceRetention = */ false
-    );
-
-    /**
-     * Generating light classes: Only function signatures
-     */
-    public final static ClassBuilderMode LIGHT_CLASSES = new ClassBuilderMode(
-            /* bodies = */ false,
-            /* sourceRetention = */ true
-    );
-
-    /**
-     * Same as light classes: Only function signatures
-     */
-    public final static ClassBuilderMode KAPT3 = new ClassBuilderMode(
-            /* bodies = */ false,
-            /* sourceRetention = */ true
-    );
 }

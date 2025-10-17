@@ -228,8 +228,28 @@ open class IrFileSerializer(
         saveOriginIndex(originIndex)
     }
 
-    private fun serializeCoordinates(start: Int, end: Int): Long =
-        if (settings.publicAbiOnly && !isInsideInline) 0 else BinaryCoordinates.encode(start, end)
+    private fun serializeCoordinates(start: Int, end: Int): Long {
+        if (settings.publicAbiOnly && !isInsideInline) {
+            return 0
+        }
+
+        return if (start > end) {
+            // Kotlin < 2.3 does not support deserializing coordinates where start < end. Such coordinates are generally invalid, but
+            // so far we don't have a mechanism to ensure they are not created. So they might occur (especially in the case of
+            // compiler plugins) and we need to "fix" them somehow. See also KT-80910.
+            if (end >= 0) {
+                // We simply flip start with end, which still encompasses the same span, and is likely what was intended by the creator
+                // of this IR element.
+                BinaryCoordinates.encode(end, start)
+            } else {
+                // Here, endOffset is one of the special "unknown" offset values. It is quite fair to make the entire coordinates "unknown"
+                // in the same way.
+                BinaryCoordinates.encode(end, end)
+            }
+        } else {
+            BinaryCoordinates.encode(start, end)
+        }
+    }
 
     /* ------- Strings ---------------------------------------------------------- */
 
@@ -292,18 +312,11 @@ open class IrFileSerializer(
 
     private fun serializeIrSymbol(symbol: IrSymbol, isDeclared: Boolean = false): Long {
         val signature: IdSignature = when {
-            !symbol.isBound && settings.reuseExistingSignaturesForSymbols -> symbol.signature
+            !symbol.isBound -> symbol.signature
                 ?: error("Given symbol is unbound and have no signature: $symbol")
             symbol is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
             else -> {
-                var symbolOwner = symbol.owner
-
-                // Prefer a real inline function over its prepared copy - the latter is only used store inlinable body,
-                // and only the former has the correct declaration shape (such as parameters) allowing to compute
-                // a valid signature of the function.
-                (symbolOwner as? IrSimpleFunction)?.originalOfPreparedInlineFunctionCopy?.let {
-                    symbolOwner = it
-                }
+                val symbolOwner = symbol.owner
 
                 // Compute the signature:
                 when {
@@ -1096,8 +1109,10 @@ open class IrFileSerializer(
     }
 
     private fun serializeStatement(statement: IrElement): ProtoStatement {
-
-        val coordinates = serializeCoordinates(statement.startOffset, statement.endOffset)
+        val coordinates =
+            // Both IrExpression and IrDeclaration have their own coordinate fields, the one on ProtoStatement is ignored for them.
+            if (statement is IrExpression || statement is IrDeclaration) 0
+            else serializeCoordinates(statement.startOffset, statement.endOffset)
         val proto = ProtoStatement.newBuilder()
             .setCoordinates(coordinates)
 
@@ -1249,7 +1264,15 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(variable, LocalVariableFlags.encode(variable)))
             .setNameType(serializeNameAndType(variable.name, variable.type))
 
-        variable.delegate?.let { proto.delegate = serializeIrVariable(it) }
+        when (val delegate = variable.delegate) {
+            null -> requireAbiAtLeast(
+                abiCompatibilityLevel = ABI_LEVEL_2_3,
+                prefix = { "Nullable 'delegate' property in ${it::class.simpleName}" },
+                irNode = { variable }
+            )
+            else -> proto.delegate = serializeIrVariable(delegate)
+        }
+
         proto.getter = serializeIrFunction(variable.getter)
         variable.setter?.let { proto.setSetter(serializeIrFunction(it)) }
 
@@ -1410,9 +1433,8 @@ open class IrFileSerializer(
 
     // This class is needed solely to have generated `equals()` and `hashCode()` for `FileEntry`, to compare objects by value.
     // For correct deduplication, it must have the same fields as `FileEntry` in `KotlinIr.proto`.
-    // TODO: KT-74258: bump Protobuf version to >3.x to have generated `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`
     data class ProtoFileEntryDeduplicationKey(
-        val name: String,
+        val name: Any,
         val lineStartOffsetList: List<Int>,
         val firstRelevantLineIndex: Int
     )
@@ -1425,7 +1447,7 @@ open class IrFileSerializer(
         val proto = serializeFileEntry(entry, includeLineStartOffsets, relevantLinesRange)
         return protoIrFileEntryMap.getOrPut(
             ProtoFileEntryDeduplicationKey(
-                proto.name,
+                if (proto.hasName()) proto.name else proto.nameOld,
                 if (proto.lineStartOffsetDeltaCount > 0) proto.lineStartOffsetDeltaList else proto.lineStartOffsetList,
                 proto.firstRelevantLineIndex
             )
@@ -1439,14 +1461,20 @@ open class IrFileSerializer(
         entry: IrFileEntry,
         includeLineStartOffsets: Boolean = true,
         relevantLinesRange: IntRange? = null,
-    ): ProtoFileEntry =
-        ProtoFileEntry.newBuilder()
-            .setName(entry.matchAndNormalizeFilePath())
+    ): ProtoFileEntry {
+        val name = entry.matchAndNormalizeFilePath()
+        return ProtoFileEntry.newBuilder()
+            .apply {
+                if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3))
+                    setName(serializeString(name))
+                else
+                    setNameOld(name)
+            }
             .applyIf(includeLineStartOffsets) {
                 val firstRelevantLineIndex = relevantLinesRange?.first ?: entry.firstRelevantLineIndex
                 runIf(firstRelevantLineIndex != 0) { setFirstRelevantLineIndex(firstRelevantLineIndex) }
                 val lineOffsets = getRelevantOffsets(entry, relevantLinesRange)
-                if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_3)) {
+                if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3)) {
                     var lastOffset = 0
                     for (offset in lineOffsets) {
                         addLineStartOffsetDelta(offset - lastOffset)
@@ -1458,6 +1486,7 @@ open class IrFileSerializer(
                 this
             }
             .build()
+    }
 
     private fun getRelevantOffsets(entry: IrFileEntry, relevantLinesRange: IntRange?): List<Int> {
         return when {
@@ -1605,15 +1634,17 @@ open class IrFileSerializer(
 
     fun serializeIrFileWithPreparedInlineFunctions(preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
         val topLevelDeclarations = preparedFunctions.map { function ->
-            val byteArray = serializeDeclaration(function).toByteArray()
-            val idSig = declarationTable.signatureByDeclaration(
-                function.originalOfPreparedInlineFunctionCopy!!,
-                compatibleMode = false,
-                recordInSignatureClashDetector = false
-            )
-            val sigIndex = idSignatureSerializer.protoIdSignature(idSig)
+            inFile(function.file) {
+                val byteArray = serializeDeclaration(function).toByteArray()
+                val idSig = declarationTable.signatureByDeclaration(
+                    function.originalOfPreparedInlineFunctionCopy!!,
+                    compatibleMode = false,
+                    recordInSignatureClashDetector = false
+                )
+                val sigIndex = idSignatureSerializer.protoIdSignature(idSig)
 
-            SerializedDeclaration(sigIndex, byteArray)
+                SerializedDeclaration(sigIndex, byteArray)
+            }
         }
 
         // Memoize all preprocessed functions in `ProtoFile.declarationIdList`.

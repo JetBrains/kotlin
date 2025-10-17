@@ -41,6 +41,7 @@ enum class JvmTarget(
     JVM_22("22", Opcodes.V16 + 6),
     JVM_23("23", Opcodes.V16 + 7),
     JVM_24("24", Opcodes.V16 + 8),
+    JVM_25("25", Opcodes.V16 + 9),
     ;
 
     override fun toString() = description

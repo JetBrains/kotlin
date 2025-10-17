@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEnt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -280,27 +281,39 @@ internal sealed class LLFirTargetResolver(
      * @see doLazyResolveUnderLock
      */
     protected fun performResolve(target: FirElementWithResolveState) {
-        resolveDependencies(target)
+        val event = LLFlightRecorder.phase(target, containingDeclarations, resolverPhase)
 
-        if (doResolveWithoutLock(target)) return
+        try {
+            resolveDependencies(target)
 
-        if (requiresJumpingLock) {
-            checkThatResolvedAtLeastToPreviousPhase(target)
-            lockProvider.withJumpingLock(
-                target,
-                resolverPhase,
-                actionUnderLock = {
-                    doLazyResolveUnderLock(target)
-                    updatePhaseForDeclarationInternals(target)
-                },
-                actionOnCycle = {
-                    handleCycleInResolution(target)
-                }
-            )
-        } else {
-            performCustomResolveUnderLock(target) {
-                doLazyResolveUnderLock(target)
+            if (doResolveWithoutLock(target)) {
+                event?.notifyCompleted()
+                return
             }
+
+            if (requiresJumpingLock) {
+                checkThatResolvedAtLeastToPreviousPhase(target)
+                lockProvider.withJumpingLock(
+                    target,
+                    resolverPhase,
+                    actionUnderLock = {
+                        doLazyResolveUnderLock(target)
+                        updatePhaseForDeclarationInternals(target)
+                    },
+                    actionOnCycle = {
+                        handleCycleInResolution(target)
+                    }
+                )
+            } else {
+                performCustomResolveUnderLock(target) {
+                    doLazyResolveUnderLock(target)
+                }
+            }
+
+            event?.notifyCompleted()
+        } catch (throwable: Throwable) {
+            event?.notifyCompletedWithFailure(throwable)
+            throw throwable
         }
     }
 

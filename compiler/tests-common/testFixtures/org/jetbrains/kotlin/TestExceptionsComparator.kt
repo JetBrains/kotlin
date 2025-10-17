@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.Assert
 import java.io.File
 import java.util.regex.Matcher
@@ -100,7 +100,7 @@ class TestExceptionsComparator(wholeFile: File) {
             val exceptionsFile = File("$filePathPrefix.${e.type.postfix}.txt")
 
             try {
-                KotlinTestUtils.assertEqualsToFile(exceptionsFile, getExceptionInfo(e, casesWithExpectedException))
+                TestDataAssertions.assertEqualsToFile(exceptionsFile, getExceptionInfo(e, casesWithExpectedException))
             } catch (t: AssertionError) {
                 e.original.printStackTrace()
                 throw t

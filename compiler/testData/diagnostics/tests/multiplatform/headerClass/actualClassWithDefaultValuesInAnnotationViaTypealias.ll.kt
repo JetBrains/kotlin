@@ -11,7 +11,7 @@ expect annotation class Foo5()
 expect annotation class Foo6()
 expect annotation class Foo7()
 
-@<!UNRESOLVED_REFERENCE!>Foo1<!>
+<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>@Foo1<!>
 fun foo() {}
 
 @Foo5

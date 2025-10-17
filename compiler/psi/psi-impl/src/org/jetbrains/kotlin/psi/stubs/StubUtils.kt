@@ -30,6 +30,7 @@ object StubUtils {
     }
 
     @JvmStatic
+    @Suppress("DEPRECATION") // KT-78356
     fun createNestedClassId(parentStub: StubElement<*>, currentDeclaration: KtClassLikeDeclaration): ClassId? {
         if (currentDeclaration is KtObjectDeclaration && currentDeclaration.isObjectLiteral()) {
             return null
@@ -81,4 +82,65 @@ object StubUtils {
 
     @JvmStatic
     internal fun StubInputStream.readFqName(): FqName = FqName(readNameString()!!)
+
+    @JvmStatic
+    internal inline fun <K : Any, V : Any> StubOutputStream.writeNullableMap(
+        map: Map<K, V>?,
+        keyWriter: StubOutputStream.(K) -> Unit,
+        valueWriter: StubOutputStream.(V) -> Unit,
+    ) {
+        val nullableSize = map?.size?.plus(1) ?: 0 // +1 since 0 is reserved for null value
+        writeVarInt(nullableSize)
+
+        map?.forEach { entry ->
+            keyWriter(entry.key)
+            valueWriter(entry.value)
+        }
+    }
+
+    @JvmStatic
+    internal fun <K : Any, V : Any> StubInputStream.readNullableMap(
+        keyReader: StubInputStream.() -> K,
+        valueReader: StubInputStream.() -> V,
+    ): Map<K, V>? = when (val nullableSize = readVarInt()) {
+        0 -> null
+        else -> when (val size = nullableSize - 1) { // -1 since 0 is reserved for null value
+            0 -> emptyMap()
+            1 -> mapOf(keyReader() to valueReader())
+            else -> buildMap(size) {
+                repeat(size) {
+                    val key = keyReader()
+                    val value = valueReader()
+                    put(key, value)
+                }
+            }
+        }
+    }
+
+    @JvmStatic
+    internal inline fun <E : Any> StubOutputStream.writeNullableCollection(
+        collection: Collection<E>?,
+        elementWriter: StubOutputStream.(E) -> Unit,
+    ) {
+        val nullableSize = collection?.size?.plus(1) ?: 0 // +1 since 0 is reserved for null value
+        writeVarInt(nullableSize)
+
+        collection?.forEach { elementWriter(it) }
+    }
+
+    @JvmStatic
+    internal fun <E : Any> StubInputStream.readNullableCollection(
+        elementReader: StubInputStream.() -> E,
+    ): List<E>? = when (val nullableSize = readVarInt()) {
+        0 -> null
+        else -> when (val size = nullableSize - 1) { // -1 since 0 is reserved for null value
+            0 -> emptyList()
+            1 -> listOf(elementReader())
+            else -> buildList(size) {
+                repeat(size) {
+                    add(elementReader())
+                }
+            }
+        }
+    }
 }

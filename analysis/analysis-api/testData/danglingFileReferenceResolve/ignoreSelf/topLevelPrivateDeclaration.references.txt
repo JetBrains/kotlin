@@ -1,5 +1,6 @@
 KtNameReferenceExpression(89,92): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
     symbols:
       (in test) private fun foo(p: kotlin.Int) [topLevelPrivateDeclaration.kt]

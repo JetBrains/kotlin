@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 /**
  * Folds safe call chains to more compact forms.
  */
-@PhaseDescription(name = "JvmSafeCallChainFoldingLowering")
 internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLoweringPass {
     // Overall idea here is to represent (possibly chained) safe calls as an if-expression in the form:
     //      when {

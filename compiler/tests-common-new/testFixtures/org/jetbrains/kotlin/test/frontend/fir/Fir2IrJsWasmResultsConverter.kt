@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
     protected abstract val artifactFactory: (
         IrModuleFragment,
-        IrPluginContext,
+        IrBuiltIns,
         List<KotlinFileSerializedData>,
         BaseDiagnosticsCollector,
         Boolean,
@@ -76,7 +75,7 @@ internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices)
     ): IrBackendInput {
         return artifactFactory(
             fir2IrResult.irModuleFragment,
-            fir2IrResult.pluginContext,
+            fir2IrResult.irBuiltIns,
             compilerConfiguration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles) ?: emptyList(),
             diagnosticReporter,
             testServices.firDiagnosticCollectorService.containsErrors(inputArtifact),
@@ -89,7 +88,7 @@ internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices)
 
 @InternalFir2IrConverterAPI
 internal class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
-    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, KlibSingleFileMetadataSerializer<*>) -> IrBackendInput
+    override val artifactFactory: (IrModuleFragment, IrBuiltIns, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, KlibSingleFileMetadataSerializer<*>) -> IrBackendInput
         get() = IrBackendInput::JsIrAfterFrontendBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
@@ -103,7 +102,7 @@ internal class Fir2IrJsResultsConverter(testServices: TestServices) : Fir2IrJsWa
 
 @InternalFir2IrConverterAPI
 internal class Fir2IrWasmResultsConverter(testServices: TestServices) : Fir2IrJsWasmResultsConverter(testServices) {
-    override val artifactFactory: (IrModuleFragment, IrPluginContext, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, KlibSingleFileMetadataSerializer<*>) -> IrBackendInput.WasmAfterFrontendBackendInput
+    override val artifactFactory: (IrModuleFragment, IrBuiltIns, List<KotlinFileSerializedData>, BaseDiagnosticsCollector, Boolean, KotlinMangler.DescriptorMangler?, KotlinMangler.IrMangler, KlibSingleFileMetadataSerializer<*>) -> IrBackendInput.WasmAfterFrontendBackendInput
         get() = IrBackendInput::WasmAfterFrontendBackendInput
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {

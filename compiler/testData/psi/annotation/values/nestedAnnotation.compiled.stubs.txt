@@ -96,6 +96,10 @@ WithNested.class:
     CLASS[classId=/WithNested, fqName=WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNested, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
+          valueArguments: [
+            some -> "value"
+            nested -> Value(classId=foo/Nested, argumentsMapping={i=0, s="nested value"})
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -113,6 +117,10 @@ WithQualifiedNested.class:
     CLASS[classId=/WithQualifiedNested, fqName=WithQualifiedNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithQualifiedNested, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
+          valueArguments: [
+            some -> "value"
+            nested -> Value(classId=foo/Nested, argumentsMapping={i=1, s="nested value"})
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

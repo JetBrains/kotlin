@@ -15,8 +15,8 @@ package kotlin.time
  * This way, tests can be written deterministically by providing custom [Clock] implementations
  * to the system under test.
  */
-@SinceKotlin("2.1")
-@ExperimentalTime
+@SinceKotlin("2.3")
+@WasExperimental(ExperimentalTime::class)
 public interface Clock {
     /**
      * Returns the [Instant] corresponding to the current time, according to this clock.
@@ -64,5 +64,4 @@ public interface Clock {
     public companion object
 }
 
-@ExperimentalTime
 internal expect fun systemClockNow(): Instant

@@ -57,7 +57,8 @@ constructor(
     KotlinWasmSubTargetContainerDsl {
 
     @Deprecated(
-        message = "Internal Kotlin Gradle Plugin API. Scheduled for removal in Kotlin 2.4."
+        message = "Internal Kotlin Gradle Plugin API. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
     )
     constructor(
         project: Project,

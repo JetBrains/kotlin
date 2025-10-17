@@ -248,6 +248,7 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmStructRef -> setTag(TypeTags.STRUCT_REF)
             WasmUnreachableType -> setTag(TypeTags.UNREACHABLE_TYPE)
             WasmV128 -> setTag(TypeTags.V12)
+            WasmArrayRef -> setTag(TypeTags.ARRAY_REF)
         }
 
     private fun serializeWasmHeapType(type: WasmHeapType) =
@@ -643,8 +644,6 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralUtf16, ::serializeWasmFunction)
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralLatin1, ::serializeWasmFunction)
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralType, ::serializeWasmFunctionType)
-        serializeWasmSymbolReadOnly(wasmStringsElements.stringPoolSize, ::serializeInt)
-        serializeNullable(wasmStringsElements.stringPoolFieldInitializer, ::serializeIdSignature)
     }
 
     private fun serializeRttiElements(rttiElements: RttiElements) {

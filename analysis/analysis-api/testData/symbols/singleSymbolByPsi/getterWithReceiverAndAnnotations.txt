@@ -48,6 +48,7 @@ KaPropertyGetterSymbol:
     getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
+    importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -58,3 +59,4 @@ KaPropertyGetterSymbol:
   getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
+  importableFqName: null

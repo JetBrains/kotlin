@@ -2,6 +2,7 @@
   KDocName(88,91): 'Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.Outer) class Foo
 
@@ -9,6 +10,7 @@
   KDocName(112,121): 'Outer.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.Outer) class Foo
 
@@ -16,6 +18,7 @@
   KDocName(135,149): 'test.Outer.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.Outer) class Foo
 
@@ -23,6 +26,7 @@
   KDocName(170,178): 'test.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) class Foo
 
@@ -30,6 +34,7 @@
   KDocName(275,278): 'Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.Outer.Nested) class Foo
 
@@ -37,6 +42,7 @@
   KDocName(307,317): 'Nested.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.Outer.Nested) class Foo
 
@@ -44,6 +50,7 @@
   KDocName(335,351): 'Outer.Nested.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.Outer.Nested) class Foo
 
@@ -51,6 +58,7 @@
   KDocName(369,390): 'test.Outer.Nested.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test.Outer.Nested) class Foo
 
@@ -58,5 +66,6 @@
   KDocName(419,427): 'test.Foo'
     KDocReference:
       isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
       symbols:
         (in test) class Foo

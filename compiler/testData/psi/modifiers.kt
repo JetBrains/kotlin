@@ -1,3 +1,4 @@
+// LIBRARY_PLATFORMS: JVM, Common
 package test
 import kotlin.coroutines.*
 

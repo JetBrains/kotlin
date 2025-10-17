@@ -11,8 +11,3 @@ import org.junit.jupiter.api.DisplayName
 class Kapt4AndroidIncrementalIT : Kapt3AndroidIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
-
-@DisplayName("android with kapt4 incremental build tests with precise compilation outputs backup")
-class Kapt4AndroidIncrementalWithoutPreciseBackupIT : Kapt3AndroidIncrementalWithoutPreciseBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-}

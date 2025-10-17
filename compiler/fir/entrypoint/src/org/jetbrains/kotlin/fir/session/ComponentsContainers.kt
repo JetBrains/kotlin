@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
+import org.jetbrains.kotlin.analyzer.common.CommonDefaultImportsProvider
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.jvmDefaultMode
@@ -184,7 +184,7 @@ fun FirSession.registerJavaComponents(
     register(FirGenericArrayClassLiteralSupport::class, FirGenericArrayClassLiteralSupport.Enabled)
     register(FirDelegatedMembersFilter::class, FirJvmDelegatedMembersFilter(this))
     register(FirPlatformUpperBoundsProvider::class, FirJavaNullabilityWarningUpperBoundsProvider(this))
-    register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(FirJvmDefaultImportProvider))
+    register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(FirJvmDefaultImportsProvider))
     register(FirDeclarationNameInvalidCharsProvider::class, FirDeclarationNameInvalidCharsProvider(JvmConstants.INVALID_CHARS))
 }
 
@@ -200,7 +200,7 @@ fun FirSession.registerDefaultComponents() {
     register(FirOverridesBackwardCompatibilityHelper::class, FirDefaultOverridesBackwardCompatibilityHelper)
     register(FirDelegatedMembersFilter::class, FirDelegatedMembersFilter.Default)
     register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
-    register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(CommonPlatformAnalyzerServices))
+    register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(CommonDefaultImportsProvider))
     register(FirIdentityLessPlatformDeterminer::class, FirIdentityLessPlatformDeterminer.Default)
 }
 

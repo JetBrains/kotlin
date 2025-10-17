@@ -1300,6 +1300,12 @@ public class Fe10IdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ex
   }
 
   @Test
+  @TestMetadata("package.kt")
+  public void testPackage() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/package.kt");
+  }
+
+  @Test
   @TestMetadata("parameterDecl.kt")
   public void testParameterDecl() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/parameterDecl.kt");

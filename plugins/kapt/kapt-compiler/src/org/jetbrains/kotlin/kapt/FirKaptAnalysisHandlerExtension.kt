@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -21,12 +22,14 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
@@ -181,11 +184,14 @@ open class FirKaptAnalysisHandlerExtension(
             configuration, DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector), disposable,
         )
         val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
+
+        if (checkForSyntaxErrorsAndReport(frontendOutput, configuration)) return null
+
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Analysis)
 
         val fir2IrOutput = JvmFir2IrPipelinePhase.executePhase(
             frontendOutput.copy(
-                // Ignore all FE errors
+                // Ignore all other FE errors
                 diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
             ),
             emptyList(),
@@ -200,6 +206,25 @@ open class FirKaptAnalysisHandlerExtension(
             options, false, logger, builderFactory.compiledClasses, builderFactory.origins, generationState,
             BindingContext.EMPTY, frontendOutput.result.outputs.flatMap { it.fir },
         )
+    }
+
+    private fun checkForSyntaxErrorsAndReport(
+        frontendOutput: JvmFrontendPipelineArtifact,
+        configuration: CompilerConfiguration,
+    ): Boolean {
+        var reported = false
+        FirDiagnosticsCompilerResultsReporter.reportByFile(frontendOutput.diagnosticCollector) { diagnostic, location ->
+            if (diagnostic.factory == FirSyntaxErrors.SYNTAX) {
+                FirDiagnosticsCompilerResultsReporter.reportDiagnosticToMessageCollector(
+                    diagnostic,
+                    location,
+                    logger.messageCollector,
+                    configuration.renderDiagnosticInternalName
+                )
+                reported = true
+            }
+        }
+        return reported
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {

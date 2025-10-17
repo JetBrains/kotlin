@@ -30,7 +30,7 @@ fun foo() {
 
     <!MUST_BE_INITIALIZED!>val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>_<!><!>
     <!MUST_BE_INITIALIZED!>val _: Int<!>
-    val _: String = <!INITIALIZER_TYPE_MISMATCH!>1<!>
+    val _: String <!INITIALIZER_TYPE_MISMATCH!>=<!> 1
     val _ = 1
     val _: Int = 1
 }

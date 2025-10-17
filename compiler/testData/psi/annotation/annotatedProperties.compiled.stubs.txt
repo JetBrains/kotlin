@@ -119,6 +119,7 @@ MyAnnotation7.class:
     CLASS[classId=/MyAnnotation7, fqName=MyAnnotation7, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation7, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: [ allowedTargets -> [AnnotationTarget.VALUE_PARAMETER] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -128,6 +129,7 @@ MyAnnotation7.class:
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+          valueArguments: [ value -> AnnotationRetention.RUNTIME ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -156,6 +158,7 @@ MyAnnotation8.class:
     CLASS[classId=/MyAnnotation8, fqName=MyAnnotation8, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation8, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -189,6 +192,7 @@ Test.class:
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=bar]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation6]
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -202,11 +206,13 @@ Test.class:
         PROPERTY[fqName=Test.bar, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=bar]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation4]
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyAnnotation4]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation5]
+              valueArguments: [ ]
               ANNOTATION_TARGET[useSiteTarget=FIELD]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -220,6 +226,7 @@ Test.class:
           PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -227,6 +234,7 @@ Test.class:
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation2]
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -235,6 +243,7 @@ Test.class:
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation3]
+                    valueArguments: [ ]
                     CONSTRUCTOR_CALLEE
                       TYPE_REFERENCE
                         USER_TYPE
@@ -249,12 +258,14 @@ Test.class:
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation7]
+                valueArguments: [ ]
                 ANNOTATION_TARGET[useSiteTarget=RECEIVER]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=MyAnnotation7]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation8]
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -285,12 +296,14 @@ Test.class:
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation7]
+                valueArguments: [ ]
                 ANNOTATION_TARGET[useSiteTarget=RECEIVER]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=MyAnnotation7]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation8]
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -310,12 +323,14 @@ Test.class:
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation7]
+                valueArguments: [ ]
                 ANNOTATION_TARGET[useSiteTarget=RECEIVER]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=MyAnnotation7]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation8]
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE

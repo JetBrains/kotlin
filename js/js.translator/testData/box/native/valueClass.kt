@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// DONT_TARGET_EXACT_BACKEND: WASM_JS
 // WASM_MUTE_REASON: UNSUPPORTED_JS_INTEROP
 
 // This test file verifies the boxing rules for value classes when instances of those classes are passed

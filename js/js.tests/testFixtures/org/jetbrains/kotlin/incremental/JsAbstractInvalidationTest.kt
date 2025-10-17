@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
-import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.ModelTarget
@@ -22,16 +20,13 @@ import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.dtsExtension
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsExtension
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.engine.ScriptExecutionException
 import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest
 import org.jetbrains.kotlin.js.test.ir.JsCompilerInvocationTestConfiguration
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
@@ -253,11 +248,14 @@ abstract class JsAbstractInvalidationTest(
             dtsStrategy: TsCompilationStrategy
         ): List<String> {
             val compiledJsFiles = jsOutput.writeAll(
-                jsDir,
-                mainModuleName,
-                dtsStrategy,
-                mainModuleName,
-                projectInfo.moduleKind
+                WebArtifactConfiguration(
+                    moduleKind = projectInfo.moduleKind,
+                    moduleName = mainModuleName,
+                    outputDirectory = jsDir,
+                    outputName = mainModuleName,
+                    granularity = granularity,
+                    tsCompilationStrategy = dtsStrategy,
+                )
             ).filter {
                 it.extension == "js" || it.extension == "mjs"
             }

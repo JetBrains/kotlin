@@ -105,7 +105,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun readTypeParameterExtensions(kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter, c: ReadContext) {
         val ext = kmTypeParameter.jvm
-        for (annotation in proto.getExtension(JvmProtoBuf.typeParameterAnnotation)) {
+        for (annotation in proto.annotationList) {
             ext.annotations.add(annotation.readAnnotation(c.strings))
         }
     }
@@ -119,7 +119,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
         val ext = kmType.jvm
         ext.isRaw = proto.getExtension(JvmProtoBuf.isRaw)
-        for (annotation in proto.getExtension(JvmProtoBuf.typeAnnotation)) {
+        for (annotation in proto.annotationList) {
             ext.annotations.add(annotation.readAnnotation(c.strings))
         }
     }
@@ -235,7 +235,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter.Builder, c: WriteContext,
     ) = with(kmTypeParameter.jvm) {
         annotations.forEach { annotation ->
-            proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotation.writeAnnotation(c.strings).build())
+            proto.addAnnotation(annotation.writeAnnotation(c.strings).build())
         }
     }
 
@@ -249,7 +249,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         with(type.jvm) {
             if (isRaw) proto.setExtension(JvmProtoBuf.isRaw, true)
             annotations.forEach { annotation ->
-                proto.addExtension(JvmProtoBuf.typeAnnotation, annotation.writeAnnotation(c.strings).build())
+                proto.addAnnotation(annotation.writeAnnotation(c.strings).build())
             }
         }
 

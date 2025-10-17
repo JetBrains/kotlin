@@ -398,6 +398,17 @@ public var KmType.isNullable: Boolean by typeBooleanFlag(FlagImpl(0, 1, 1))
 
 /**
  * Indicates that the corresponding type is `suspend`.
+ *
+ * Suspend function types are represented in Kotlin metadata as function types with an arity of 1 more, with an additional continuation
+ * parameter taking the return type, and return type replaced with `Any?`. For example, the type
+ *
+ *     suspend (Int) -> String
+ *
+ * is represented in metadata as a type with classifier `kotlin/Function2`, and 3 arguments:
+ *
+ * 1) `kotlin/Int`
+ * 2) `kotlin/coroutines/Continuation<kotlin/String>`
+ * 3) `kotlin/Any?`
  */
 public var KmType.isSuspend: Boolean by typeBooleanFlag(FlagImpl(ProtoFlags.SUSPEND_TYPE.offset + 1, ProtoFlags.SUSPEND_TYPE.bitWidth, 1))
 

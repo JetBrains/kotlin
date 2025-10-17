@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.types.asCone
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -20,11 +20,11 @@ class ConeDeclaredUpperBoundConstraintPosition : DeclaredUpperBoundConstraintPos
 }
 
 class ConeSemiFixVariableConstraintPosition(variable: TypeVariableMarker) : SemiFixVariableConstraintPosition(variable) {
-    override fun toString(): String = "Fix variable ${(variable as ConeTypeVariable).typeConstructor.name}"
+    override fun toString(): String = "Fix variable ${variable.asCone().typeConstructor.name}"
 }
 
 class ConeFixVariableConstraintPosition(variable: TypeVariableMarker) : FixVariableConstraintPosition<Nothing?>(variable, null) {
-    override fun toString(): String = "Fix variable ${(variable as ConeTypeVariable).typeConstructor.name}"
+    override fun toString(): String = "Fix variable ${variable.asCone().typeConstructor.name}"
 }
 
 class ConeArgumentConstraintPosition(argument: FirElement) : RegularArgumentConstraintPosition<FirElement>(argument) {

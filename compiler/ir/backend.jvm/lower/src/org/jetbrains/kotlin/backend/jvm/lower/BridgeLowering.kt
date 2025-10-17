@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
 import org.jetbrains.kotlin.backend.common.lower.SpecialMethodWithDefaultInfo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
@@ -109,10 +109,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
  * the same signature already exists in a superclass. We only diverge from this idea to match the behavior of
  * the JVM backend in a few corner cases.
  */
-@PhaseDescription(
-    name = "Bridge",
-    prerequisite = [JvmInlineClassLowering::class, InheritedDefaultMethodsOnClassesLowering::class]
-)
+@PhasePrerequisites(JvmInlineClassLowering::class, InheritedDefaultMethodsOnClassesLowering::class)
 internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
     // Represents a synthetic bridge to `overridden` with a precomputed signature
     private class Bridge(

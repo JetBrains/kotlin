@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.*
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -124,10 +125,9 @@ fun BuildResult.assertOutputContainsExactlyTimes(
     expectedCount: Int = 1,
 ) {
     val occurrenceCount = expected.findAll(output).count()
-    assert(occurrenceCount == expectedCount) {
+    if (occurrenceCount != expectedCount) {
         printBuildOutput()
-
-        "Build output contains different number of '$expected' string occurrences - $occurrenceCount then $expectedCount"
+        assertEquals(expectedCount, occurrenceCount, "Build output contains unexpected number of '$expected' string occurrences.")
     }
 }
 
@@ -231,7 +231,11 @@ fun BuildResult.assertCompilerArgument(
 ) {
     val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
-    assert(compilerArguments.contains(expectedArgument)) {
+    assert(
+        compilerArguments.contains(expectedArgument) || (expectedArgument.contains("=") && compilerArguments.contains(
+            expectedArgument.replaceFirst("=", " ")
+        ))
+    ) {
         printBuildOutput()
 
         "$taskPath task compiler arguments don't contain $expectedArgument. Actual content: $compilerArguments"
@@ -285,6 +289,15 @@ fun BuildResult.extractTaskCompilerArguments(
     return taskOutput.lines().first {
         it.contains("Kotlin compiler args:")
     }.substringAfter("Kotlin compiler args:")
+}
+
+@Suppress("DEPRECATION")
+inline fun <reified T : CommonToolArguments> BuildResult.extractTaskCompilerArguments(
+    taskPath: String,
+    logLevel: LogLevel = LogLevel.INFO
+): T {
+    val args = extractTaskCompilerArguments(taskPath, logLevel).split(" ")
+    return parseCommandLineArguments<T>(args)
 }
 
 fun BuildResult.extractNativeCompilerTaskArguments(
