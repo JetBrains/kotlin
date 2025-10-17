@@ -9,30 +9,16 @@ KaUsualClassType:
       symbol: KaNamedClassSymbol(kotlin/collections/List)
       typeArguments: [
         KaUsualClassType:
-          abbreviation: KaUsualClassType:
-            abbreviation: null
-            annotations: []
-            classId: MyAlias
-            qualifiers: [
-              KaResolvedClassTypeQualifier:
-                name: MyAlias
-                symbol: KaTypeAliasSymbol(MyAlias)
-                typeArguments: []
-            ]
-            symbol: KaTypeAliasSymbol(MyAlias)
-            typeArguments: []
-            isMarkedNullable: false
-            isNullable: false
-            hasFlexibleNullability: false
+          abbreviation: null
           annotations: []
-          classId: B
+          classId: MyAlias
           qualifiers: [
             KaResolvedClassTypeQualifier:
-              name: B
-              symbol: KaNamedClassSymbol(B)
+              name: MyAlias
+              symbol: KaTypeAliasSymbol(MyAlias)
               typeArguments: []
           ]
-          symbol: KaNamedClassSymbol(B)
+          symbol: KaTypeAliasSymbol(MyAlias)
           typeArguments: []
           isMarkedNullable: false
           isNullable: false
@@ -42,30 +28,16 @@ KaUsualClassType:
   symbol: KaNamedClassSymbol(kotlin/collections/List)
   typeArguments: [
     KaUsualClassType:
-      abbreviation: KaUsualClassType:
-        abbreviation: null
-        annotations: []
-        classId: MyAlias
-        qualifiers: [
-          KaResolvedClassTypeQualifier:
-            name: MyAlias
-            symbol: KaTypeAliasSymbol(MyAlias)
-            typeArguments: []
-        ]
-        symbol: KaTypeAliasSymbol(MyAlias)
-        typeArguments: []
-        isMarkedNullable: false
-        isNullable: false
-        hasFlexibleNullability: false
+      abbreviation: null
       annotations: []
-      classId: B
+      classId: MyAlias
       qualifiers: [
         KaResolvedClassTypeQualifier:
-          name: B
-          symbol: KaNamedClassSymbol(B)
+          name: MyAlias
+          symbol: KaTypeAliasSymbol(MyAlias)
           typeArguments: []
       ]
-      symbol: KaNamedClassSymbol(B)
+      symbol: KaTypeAliasSymbol(MyAlias)
       typeArguments: []
       isMarkedNullable: false
       isNullable: false

@@ -2,19 +2,17 @@ KaType
 KaUsualClassType:
   abbreviation: null
   annotations: []
-  classId: A
+  classId: MyAlias
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: A
-      symbol: KaNamedClassSymbol(A)
+      name: MyAlias
+      symbol: KaTypeAliasSymbol(MyAlias)
       typeArguments: [
-        *
         *
       ]
   ]
-  symbol: KaNamedClassSymbol(A)
+  symbol: KaTypeAliasSymbol(MyAlias)
   typeArguments: [
-    *
     *
   ]
   isMarkedNullable: false
@@ -22,4 +20,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-A<*, *>
+MyAlias<*>

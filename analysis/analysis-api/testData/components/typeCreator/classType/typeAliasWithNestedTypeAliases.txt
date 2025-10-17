@@ -3,49 +3,45 @@ TYPE:
 KaUsualClassType:
   abbreviation: null
   annotations: []
-  classId: C
+  classId: MyAlias
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: C
-      symbol: KaNamedClassSymbol(C)
+      name: MyAlias
+      symbol: KaTypeAliasSymbol(MyAlias)
       typeArguments: [
-        *
         *
       ]
   ]
-  symbol: KaNamedClassSymbol(C)
+  symbol: KaTypeAliasSymbol(MyAlias)
   typeArguments: [
-    *
     *
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
 RENDERED TYPE:
-C<*, *>
+MyAlias<*> /* = C<AliasB /* = B<*> */, AliasA<*> /* = A<*> */> */
 
 CLASS_TYPE_BY_SYMBOL
 TYPE:
 KaUsualClassType:
   abbreviation: null
   annotations: []
-  classId: C
+  classId: MyAlias
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: C
-      symbol: KaNamedClassSymbol(C)
+      name: MyAlias
+      symbol: KaTypeAliasSymbol(MyAlias)
       typeArguments: [
-        *
         *
       ]
   ]
-  symbol: KaNamedClassSymbol(C)
+  symbol: KaTypeAliasSymbol(MyAlias)
   typeArguments: [
-    *
     *
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
 RENDERED TYPE:
-C<*, *>
+MyAlias<*> /* = C<AliasB /* = B<*> */, AliasA<*> /* = A<*> */> */

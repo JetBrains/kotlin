@@ -144,11 +144,11 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         }
 
         protected fun getTypeByCaret(label: String): KaType {
-            return caretToType[label] ?: error("No type for `$label`")
+            return caretToType[label]?.abbreviationOrSelf ?: error("No type for `$label`")
         }
 
         protected fun getClassLikeSymbolByCaret(label: String): KaClassLikeSymbol {
-            return caretToType[label]?.symbol ?: error("No symbol for `$label`")
+            return caretToType[label]?.abbreviationOrSelf?.symbol ?: error("No symbol for `$label`")
         }
 
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {

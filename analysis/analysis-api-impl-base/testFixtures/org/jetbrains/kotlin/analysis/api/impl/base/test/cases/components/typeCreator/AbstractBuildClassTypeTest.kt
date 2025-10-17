@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCr
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.types.abbreviationOrSelf
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -54,12 +55,13 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
         val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val targetExpression = testServices.expressionMarkerProvider
                 .getBottommostSelectedElementOfType(contextFile, KtExpression::class)
-            val expressionType = targetExpression.expressionType ?: error("Expression type is null")
+            val expressionType = targetExpression.expressionType?.abbreviationOrSelf ?: error("Expression type is null")
             val allTypesById = testServices.expressionMarkerProvider.getAllCarets(contextFile).associate { caret ->
                 val qualifier = caret.qualifier
                 val caretExpression =
                     testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtExpression>(contextFile, qualifier)
-                val expressionType = caretExpression.expressionType ?: error("Expression under $qualifier doesn't have a type")
+                val expressionType =
+                    caretExpression.expressionType?.abbreviationOrSelf ?: error("Expression under $qualifier doesn't have a type")
                 val id = caret.qualifier.toIntOrNull() ?: error("Caret qualifier $qualifier is not a number")
 
                 id to expressionType
