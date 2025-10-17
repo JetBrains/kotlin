@@ -136,14 +136,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 val check = generateTypeCheck(argument, toType)
                 val castedValue = expression.wrapWithUnsafeCast(argument())
 
-                newStatements += JsIrBuilder.buildIfElse(
-                    type = expression.type,
-                    cond = check,
-                    thenBranch = castedValue,
-                    elseBranch = failResult,
-                    thenBranchStartOffset = expression.startOffset,
-                    thenBranchEndOffset = expression.endOffset,
-                )
+                newStatements += JsIrBuilder.buildIfElse(expression.type, check, castedValue, failResult)
 
                 return expression.run {
                     IrCompositeImpl(startOffset, endOffset, expression.type, null, newStatements)
