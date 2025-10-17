@@ -151,7 +151,7 @@ class BuildReportsIT : KGPBaseTest() {
         ) {
             validateJsonReport(
                 taskName = "compileKotlinJs",
-                CustomBuildTimeMetric.createIfDoesNotExistAndReturn("JsCodeOutliningLoweringOnFirstStage", IR_PRE_LOWERING),
+                CustomBuildTimeMetric.createIfDoesNotExistAndReturn("JsCodeOutliningLowering", IR_PRE_LOWERING),
                 IR_PRE_LOWERING
             )
         }

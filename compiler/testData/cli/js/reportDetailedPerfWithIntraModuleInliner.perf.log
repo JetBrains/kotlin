@@ -4,25 +4,25 @@ Kotlin to JS compiler performance report
    TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
      IR PRE-LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (UpgradeCallableReferences)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (JsCodeOutliningLoweringOnFirstStage)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (JsCodeOutliningLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (AvoidLocalFOsInInlineFunctionsLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (VersionOverloadsLowering)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineCallCycleChecker)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineCallCycleCheckerLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (LateinitLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (SharedVariablesLowering)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (LocalClassesInInlineLambdasPhase)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (ArrayConstructor)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineOnlyPrivateFunctions)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (LocalClassesInInlineLambdasLowering)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (ArrayConstructorLowering)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (PreSerializationPrivateFunctionInlining)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineDeclarationCheckerLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (OuterThisInInlineFunctionsSpecialAccessorLowering)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (SyntheticAccessorGeneration)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (SyntheticAccessorLowering)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (IrValidationAfterInliningOnlyPrivateFunctionsPhase)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineAllFunctions)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (FunctionInlining)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineFunctionSerializationPreProcessing)
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (RedundantCastsRemoverLowering)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (IrValidationAfterInliningAllFunctionsPhase)
+       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase)
     IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
         KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
-GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
+GC time for PS MarkSweep is  $UINT>>$ ms,  $UINT>>$ collections
 GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
 JIT time is $UINT$ ms
