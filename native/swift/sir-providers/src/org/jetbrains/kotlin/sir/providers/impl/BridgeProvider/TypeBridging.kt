@@ -62,27 +62,8 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
     val customTypeBridgeWrapper = with(session.customTypeTranslator) { type.toBridge() }
     if (customTypeBridgeWrapper != null) return customTypeBridgeWrapper.bridge
     return when (val subtype = type.typeDeclaration) {
-        SirSwiftModule.void -> AsVoid
-
-        SirSwiftModule.bool -> AsIs(type, KotlinType.Boolean, CType.Bool)
-
-        SirSwiftModule.int8 -> AsIs(type, KotlinType.Byte, CType.Int8)
-        SirSwiftModule.int16 -> AsIs(type, KotlinType.Short, CType.Int16)
-        SirSwiftModule.int32 -> AsIs(type, KotlinType.Int, CType.Int32)
-        SirSwiftModule.int64 -> AsIs(type, KotlinType.Long, CType.Int64)
-
-        SirSwiftModule.uint8 -> AsIs(type, KotlinType.UByte, CType.UInt8)
-        SirSwiftModule.uint16 -> AsIs(type, KotlinType.UShort, CType.UInt16)
-        SirSwiftModule.uint32 -> AsIs(type, KotlinType.UInt, CType.UInt32)
-        SirSwiftModule.uint64 -> AsIs(type, KotlinType.ULong, CType.UInt64)
-
-        SirSwiftModule.double -> AsIs(type, KotlinType.Double, CType.Double)
-        SirSwiftModule.float -> AsIs(type, KotlinType.Float, CType.Float)
-
         SirSwiftModule.unsafeMutableRawPointer -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
         SirSwiftModule.never -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Void)
-
-        SirSwiftModule.utf16CodeUnit -> AsIs(type, KotlinType.Char, CType.UInt16)
 
         SirSwiftModule.optional -> when (val bridge = bridgeType(type.typeArguments.first())) {
             is AsObject,
@@ -208,6 +189,10 @@ internal sealed class Bridge(
      *
      */
     class AsIs(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
+        constructor(swiftDeclaration: SirScopeDefiningDeclaration, kotlinType: KotlinType, cType: CType) : this(
+            SirNominalType(swiftDeclaration), kotlinType, cType
+        )
+
         override val inKotlinSources = IdentityValueConversion
         override val inSwiftSources = object : NilableIdentityValueConversion {
             override fun renderNil(): String = "nil"

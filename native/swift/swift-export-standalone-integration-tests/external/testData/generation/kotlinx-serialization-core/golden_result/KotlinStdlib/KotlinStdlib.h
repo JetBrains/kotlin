@@ -571,6 +571,30 @@ void kotlin_Throwable_printStackTrace(void * self);
 
 NSString * kotlin_Throwable_toString(void * self);
 
+_Bool kotlin_UByte_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t kotlin_UByte_hashCode(void * self);
+
+NSString * kotlin_UByte_toString(void * self);
+
+_Bool kotlin_UInt_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t kotlin_UInt_hashCode(void * self);
+
+NSString * kotlin_UInt_toString(void * self);
+
+_Bool kotlin_ULong_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t kotlin_ULong_hashCode(void * self);
+
+NSString * kotlin_ULong_toString(void * self);
+
+_Bool kotlin_UShort_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
+
+int32_t kotlin_UShort_hashCode(void * self);
+
+NSString * kotlin_UShort_toString(void * self);
+
 uint16_t kotlin_collections_CharIterator_next(void * self);
 
 uint16_t kotlin_collections_CharIterator_nextChar(void * self);

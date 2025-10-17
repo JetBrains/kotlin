@@ -1487,22 +1487,22 @@ extension ExportedKotlinPackages.kotlinx.serialization.builtins {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotlinPackages_kotlin_String_Companion__(receiver.__externalRCRef())) as! any ExportedKotlinPackages.kotlinx.serialization.KSerializer
     }
     public static func serializer(
-        _ receiver: Swift.Never
+        _ receiver: ExportedKotlinPackages.kotlin.UByte.Companion
     ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
+        _ receiver: ExportedKotlinPackages.kotlin.UInt.Companion
     ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
+        _ receiver: ExportedKotlinPackages.kotlin.ULong.Companion
     ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
+        _ receiver: ExportedKotlinPackages.kotlin.UShort.Companion
     ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
