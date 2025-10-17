@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_SINGLE_MODULE_MODE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
@@ -143,7 +144,12 @@ class WasmSecondStageEnvironmentConfigurator(
             WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION,
             FORCE_DEBUG_FRIENDLY_COMPILATION in registeredDirectives
         )
-        configuration.put(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS, USE_SHARED_OBJECTS in registeredDirectives)
+        val useSharedObjects = USE_SHARED_OBJECTS in registeredDirectives
+        val singleModule = WASM_SINGLE_MODULE_MODE in registeredDirectives
+        if (useSharedObjects && singleModule)
+            error("Incorrect test configuration: Can't use shared objects in single module mode")
+        configuration.put(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS, useSharedObjects)
+        configuration.put(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY, singleModule)
 
         val firstPhaseConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         configuration.putIfAbsent(
