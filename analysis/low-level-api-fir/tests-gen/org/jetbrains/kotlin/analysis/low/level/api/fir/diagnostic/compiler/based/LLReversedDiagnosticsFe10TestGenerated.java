@@ -1899,6 +1899,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("RedundantInterpolationPrefixCornerCases.kt")
+    public void testRedundantInterpolationPrefixCornerCases() {
+      runTest("compiler/testData/diagnostics/tests/RedundantInterpolationPrefixCornerCases.kt");
+    }
+
+    @Test
     @TestMetadata("referenceToParameterizedFun.kt")
     public void testReferenceToParameterizedFun() {
       runTest("compiler/testData/diagnostics/tests/referenceToParameterizedFun.kt");
