@@ -79,12 +79,12 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         builder: Services.Builder,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
-        exceptActualTracer: ExpectActualTracker,
+        expectActualTracker: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
         enumWhenTracker: EnumWhenTracker,
         importTracker: ImportTracker
     ) {
-        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker, enumWhenTracker, importTracker)
+        super.makeServices(builder, incrementalCaches, lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker, importTracker)
 
         with(builder) {
             register(
