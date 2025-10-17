@@ -117,7 +117,10 @@ class BuilderInferenceSession(
             } -> true
             extensionReceiver == null && dispatchReceiver == null -> false
             dispatchReceiver?.receiver?.stableType?.containsStubType() == true -> true
-            extensionReceiver?.receiver?.stableType?.containsStubType() == true -> candidateDescriptor.hasBuilderInferenceAnnotation()
+            extensionReceiver?.receiver?.stableType?.containsStubType() == true -> (
+                candidateDescriptor.hasBuilderInferenceAnnotation() ||
+                callComponents.languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
+            )
             else -> false
         }
     }

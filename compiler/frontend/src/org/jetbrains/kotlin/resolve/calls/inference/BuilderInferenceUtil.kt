@@ -238,10 +238,14 @@ class BuilderInferenceSupport(
 
         val extensionReceiver = resultingDescriptor.extensionReceiverParameter ?: return
         val allowOnlyTrivialConstraintsForReceiver =
-            if (languageVersionSettings.supportsFeature(LanguageFeature.ExperimentalBuilderInference))
-                !resultingDescriptor.hasBuilderInferenceAnnotation()
-            else
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ExperimentalBuilderInference)) {
+                if (languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation))
+                    false
+                else
+                    !resultingDescriptor.hasBuilderInferenceAnnotation()
+            } else {
                 false
+            }
 
         resultingCall.extensionReceiver?.let { actualReceiver ->
             with(NewKotlinTypeChecker.Default) {
@@ -305,7 +309,9 @@ fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, language
         return isGoodCallForOldBuilderInference(descriptor)
     }
 
-    if (descriptor.isExtension && !descriptor.hasBuilderInferenceAnnotation()) {
+    if (descriptor.isExtension && !descriptor.hasBuilderInferenceAnnotation() &&
+        !languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
+    ) {
         return descriptor.extensionReceiverParameter?.type?.containsTypeTemplate() == false
     }
 
@@ -330,7 +336,9 @@ fun isBuilderInferenceCall(
     languageVersionSettings: LanguageVersionSettings
 ): Boolean {
     val parameterHasOptIn = if (languageVersionSettings.supportsFeature(LanguageFeature.ExperimentalBuilderInference))
-        parameterDescriptor.hasBuilderInferenceAnnotation() && parameterDescriptor.hasFunctionOrSuspendFunctionType
+        (parameterDescriptor.hasBuilderInferenceAnnotation() ||
+                languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)) &&
+                parameterDescriptor.hasFunctionOrSuspendFunctionType
     else
         parameterDescriptor.hasSuspendFunctionType
 
