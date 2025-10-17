@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
@@ -198,16 +197,7 @@ private fun copyQualifiedAccess(
         argumentList = when (val argumentListToCopy = qualifiedAccess.argumentList) {
             is FirEmptyArgumentList -> argumentListToCopy
             is FirResolvedArgumentList -> {
-                var hasNullableParameter = false
-                val newArguments = argumentListToCopy.arguments.map(::copyArgument)
-                val newMapping = LinkedHashMap<FirExpression, FirValueParameter?>(newArguments.size)
-                for (newArgument in newArguments) {
-                    val parameter = argumentListToCopy.mapping[newArgument]
-                    newMapping[newArgument] = parameter
-                    if (parameter == null) {
-                        hasNullableParameter = true
-                    }
-                }
+                val newMapping = argumentListToCopy.mapping.mapKeysTo(LinkedHashMap()) { copyArgument(it.key) }
 
                 /**
                  * Arguments from the original argument list are used, so it has to be copied as well.
@@ -223,16 +213,10 @@ private fun copyQualifiedAccess(
                     null
                 }
 
-                if (hasNullableParameter && newOriginalList != null) {
-                    buildArgumentListForErrorCall(original = newOriginalList, mapping = newMapping)
-                } else {
-                    @Suppress("UNCHECKED_CAST") // The mapping is guaranteed to be of the correct type by `hasNullableParameter`
-                    buildResolvedArgumentList(
-                        original = newOriginalList,
-                        mapping = newMapping as LinkedHashMap<FirExpression, FirValueParameter>,
-                    )
-                }
-
+                buildResolvedArgumentList(
+                    original = newOriginalList,
+                    mapping = newMapping,
+                )
             }
 
             else -> {
