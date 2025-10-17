@@ -857,16 +857,9 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             }
         }.resolveIdeDependencies { dependencies ->
             dependencies["commonMain"].assertMatches(
+                // no coroutines!
                 kotlinStdlibDependencies,
                 regularSourceDependency(":lib/commonMain"),
-                // Unexpected dependencies due to dependencies scopes mismatch bug
-                // i.e. commonMain sees them, but JVM/JS/Wasm compilations would fail
-                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:commonMain:1.10.2"),
-                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:concurrentMain:1.10.2"),
-                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:nativeMain:1.10.2"),
-                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:nativeOtherMain:1.10.2"),
-                binaryCoordinates("org.jetbrains.kotlinx:atomicfu:commonMain:0.23.1"),
-                binaryCoordinates("org.jetbrains.kotlinx:atomicfu:nativeMain:0.23.1"),
             )
             dependencies["linuxMain"].assertMatches(
                 kotlinNativeDistributionDependencies,
@@ -875,7 +868,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 regularSourceDependency(":lib/nativeMain"),
                 regularSourceDependency(":lib/linuxMain"),
 
-                // In linuxMain all these dependencies are expected
+                // In linuxMain coroutines + atomicfu is expected
                 binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:commonMain:1.10.2"),
                 binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:concurrentMain:1.10.2"),
                 binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core:nativeMain:1.10.2"),

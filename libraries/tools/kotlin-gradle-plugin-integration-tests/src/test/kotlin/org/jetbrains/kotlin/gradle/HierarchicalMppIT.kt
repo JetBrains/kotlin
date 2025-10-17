@@ -115,7 +115,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 it["commonMain"].assertMatches(
                     kotlinStdlibDependencies,
                     unresolvedDependenciesDiagnosticMatcher(dependencyName = "com.example.thirdparty:third-party-lib"),
-                    binaryCoordinates("com.example.thirdparty:third-party-lib:commonMain:1.0"),
                 )
                 it["jvmAndJsMain"].assertMatches(
                     kotlinStdlibDependencies,
