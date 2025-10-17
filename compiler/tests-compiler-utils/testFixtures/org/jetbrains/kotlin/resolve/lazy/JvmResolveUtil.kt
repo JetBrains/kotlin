@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.skipBodies
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -69,7 +70,10 @@ object JvmResolveUtil {
         @Suppress("DEPRECATION")
         return analyze(project, files, configuration, packagePartProvider, trace, klibList).apply {
             try {
-                AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+                // Do not report UNRESOLVED_REFERENCE in KAPT mode
+                if (!configuration.skipBodies) {
+                    AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+                }
             } catch (e: Exception) {
                 throw TestsCompiletimeError(e)
             }

@@ -1,0 +1,89 @@
+package kaptk2.b451982470;
+
+/**
+ * public abstract class kaptk2/b451982470/Paper : kaptk2/b451982470/Scissors {
+ *
+ *   // signature: <init>(Lerror/NonExistentClass;)V
+ *   public constructor(piedra: error/NonExistentClass)
+ *
+ *   // field: piedra:Lerror/NonExistentClass;
+ *   // getter: getPiedra()Lerror/NonExistentClass;
+ *   public final val piedra: error/NonExistentClass
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class Paper implements kaptk2.b451982470.Scissors {
+    @org.jetbrains.annotations.NotNull()
+    private final error.NonExistentClass piedra = null;
+
+    public Paper(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass piedra) {
+        super();
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass getPiedra() {
+        return null;
+    }
+}
+
+////////////////////
+
+package kaptk2.b451982470;
+
+/**
+ * public final class kaptk2/b451982470/Rock : kaptk2/b451982470/Paper, kaptk2/b451982470/Scissors {
+ *
+ *   // signature: <init>(Lerror/NonExistentClass;)V
+ *   public constructor(piedra: error/NonExistentClass)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Rock extends kaptk2.b451982470.Paper implements kaptk2.b451982470.Scissors {
+
+    public Rock(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass piedra) {
+        super(null);
+    }
+}
+
+////////////////////
+
+package kaptk2.b451982470;
+
+/**
+ * public abstract interface kaptk2/b451982470/Scissors : kotlin/Any {
+ *
+ *   // getter: getPiedra()Lerror/NonExistentClass;
+ *   public abstract val piedra: error/NonExistentClass
+ *     public abstract get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Scissors {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract error.NonExistentClass getPiedra();
+}
+
+////////////////////
+
+package kaptk2.b451982470.lib;
+
+/**
+ * public abstract interface kaptk2/b451982470/lib/Piedra : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Piedra {
+}

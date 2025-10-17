@@ -83,9 +83,8 @@ class KaptEnvironmentConfigurator(
         configuration.addJvmClasspathRoot(runtimeLibrary)
         configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
 
+        configuration.put(JVMConfigurationKeys.SKIP_BODIES, true)
         if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) {
-            configuration.put(JVMConfigurationKeys.SKIP_BODIES, true)
-
             val moduleBuilder = ModuleBuilder(module.name, "", "test-module")
             configuration.put(JVMConfigurationKeys.MODULES, listOf(moduleBuilder))
         }

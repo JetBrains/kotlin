@@ -613,6 +613,12 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
+  @TestMetadata("kt81691.kt")
+  public void testKt81691() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/kt81691.kt");
+  }
+
+  @Test
   @TestMetadata("lazyProperty.kt")
   public void testLazyProperty() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/lazyProperty.kt");
