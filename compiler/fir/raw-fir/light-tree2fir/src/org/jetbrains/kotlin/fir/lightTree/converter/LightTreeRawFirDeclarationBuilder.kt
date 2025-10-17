@@ -140,13 +140,9 @@ class LightTreeRawFirDeclarationBuilder(
     fun convertBlockExpressionWithoutBuilding(block: LighterASTNode, kind: KtFakeSourceElementKind? = null): FirBlockBuilder {
         val firStatements = block.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
-                CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
-                FUN -> container += convertFunctionDeclaration(node)
-                KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
-                DESTRUCTURING_DECLARATION -> container +=
-                    convertDestructingDeclaration(node).toFirDestructingDeclaration(this, baseModuleData)
-                TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
                 CLASS_INITIALIZER -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
+                CLASS, OBJECT_DECLARATION, TYPEALIAS, KtNodeTypes.PROPERTY, DESTRUCTURING_DECLARATION, FUN ->
+                    container += expressionConverter.getAsFirStatement(node)
                 else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
             }
         }
@@ -456,7 +452,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      */
-    fun convertClass(classNode: LighterASTNode): FirDeclaration {
+    fun convertClass(classNode: LighterASTNode): FirRegularClass {
         var modifiers: ModifierList? = null
         var classKind: ClassKind = ClassKind.CLASS
         var identifier: String? = null
@@ -699,7 +695,7 @@ class LightTreeRawFirDeclarationBuilder(
      *
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseObjectLiteral
      */
-    fun convertObjectLiteral(objectLiteral: LighterASTNode): FirElement {
+    fun convertObjectLiteral(objectLiteral: LighterASTNode): FirExpression {
         return withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
             var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
             buildAnonymousObjectExpression {
@@ -1307,7 +1303,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeAlias
      */
-    fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration {
+    fun convertTypeAlias(typeAlias: LighterASTNode): FirTypeAlias {
         var modifiers: ModifierList? = null
         var identifier: String? = null
         lateinit var typeRefNode: LighterASTNode
@@ -1365,7 +1361,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
-    fun convertPropertyDeclaration(property: LighterASTNode, classWrapper: ClassWrapper? = null): FirDeclaration {
+    fun convertPropertyDeclaration(property: LighterASTNode, classWrapper: ClassWrapper? = null): FirProperty {
         var modifiers: ModifierList? = null
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -1855,16 +1851,16 @@ class LightTreeRawFirDeclarationBuilder(
             when (it.tokenType) {
                 CONTRACT_EFFECT -> {
                     val effect = it.getFirstChild()
-                    if (effect == null) {
-                        val errorExpression = buildErrorExpression(
+                    val expression = if (effect == null) {
+                        buildErrorExpression(
                             rawContractDescription.toFirSourceElement(),
                             ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
                         )
-                        destination.add(errorExpression)
                     } else {
-                        val expression = expressionConverter.convertExpression(effect, errorReason)
-                        destination.add(expression as FirExpression)
+                        expressionConverter.getAsFirExpression<FirExpression>(effect, errorReason)
                     }
+
+                    destination.add(expression)
                 }
                 else -> Unit
             }

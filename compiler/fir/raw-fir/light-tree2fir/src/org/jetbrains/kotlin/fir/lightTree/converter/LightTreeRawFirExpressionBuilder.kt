@@ -79,7 +79,7 @@ class LightTreeRawFirExpressionBuilder(
         sourceWhenInvalidExpression: LighterASTNode,
         isValidExpression: (R) -> Boolean = { !it.isStatementLikeExpression },
     ): R {
-        val converted = expression?.let { convertExpression(it, errorReason) }
+        val converted = expression?.let { getAsFirStatement(it, errorReason) }
 
         return wrapExpressionIfNeeded(expression, converted, isValidExpression, sourceWhenInvalidExpression, errorReason)
     }
@@ -116,26 +116,13 @@ class LightTreeRawFirExpressionBuilder(
         } as R
     }
 
-    fun getAsFirStatement(expression: LighterASTNode, errorReason: String = ""): FirStatement {
-        return when (val converted = convertExpression(expression, errorReason)) {
-            is FirStatement -> converted
-            else -> buildErrorExpression(
-                expression.toFirSourceElement(),
-                ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
-                converted,
-            )
-        }
-    }
-
     /*****    EXPRESSIONS    *****/
-    fun convertExpression(expression: LighterASTNode, errorReason: String): FirElement {
+    fun getAsFirStatement(expression: LighterASTNode, errorReason: String = ""): FirStatement {
         return when (val tokenType = expression.tokenType) {
+            // Always FirExpression
             LAMBDA_EXPRESSION -> convertLambdaExpression(expression)
-            BINARY_EXPRESSION -> convertBinaryExpression(expression)
             BINARY_WITH_TYPE, IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression)
-            LABELED_EXPRESSION -> convertLabeledExpression(expression)
             PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
-            ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
             CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(expression)
             CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(expression)
             in QUALIFIED_ACCESS -> convertQualifiedExpression(expression)
@@ -146,9 +133,7 @@ class LightTreeRawFirExpressionBuilder(
             STRING_TEMPLATE -> convertStringTemplate(expression)
             is KtConstantExpressionElementType -> convertConstantExpression(expression)
             REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
-            DO_WHILE -> convertDoWhile(expression)
-            WHILE -> convertWhile(expression)
-            FOR -> convertFor(expression)
+            FOR -> convertFor(expression) // FirBlock
             TRY -> convertTryExpression(expression)
             IF -> convertIfExpression(expression)
             BREAK, CONTINUE -> convertLoopJump(expression)
@@ -163,26 +148,27 @@ class LightTreeRawFirExpressionBuilder(
                 getAsFirExpression(expression.getChildExpression(), errorReason, sourceWhenInvalidExpression = expression)
             THIS_EXPRESSION -> convertThisExpression(expression)
             SUPER_EXPRESSION -> convertSuperExpression(expression)
-
             OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(expression)
-            FUN -> declarationBuilder.convertFunctionDeclaration(expression)
             DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression)
-                .toFirDestructingDeclaration(this, baseModuleData)
-            else -> {
-                val nonExpressionElement = when (tokenType) {
-                    CLASS, OBJECT_DECLARATION -> declarationBuilder.convertClass(expression)
-                    TYPEALIAS -> declarationBuilder.convertTypeAlias(expression)
-                    else -> null
-                }
-                val source = nonExpressionElement?.run {
-                    source?.realElement() ?: expression.toFirSourceElement()
-                } ?: expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef)
-                buildErrorExpression(
-                    source,
-                    ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
-                    element = nonExpressionElement,
-                )
-            }
+                .toFirDestructingDeclaration(this, baseModuleData) // FirBlock
+
+            // Sometimes non-expression FirStatement
+            BINARY_EXPRESSION -> convertBinaryExpression(expression)
+            LABELED_EXPRESSION -> convertLabeledExpression(expression)
+            ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
+            FUN -> declarationBuilder.convertFunctionDeclaration(expression)
+
+            // Always non-expression FirStatement
+            DO_WHILE -> convertDoWhile(expression)
+            WHILE -> convertWhile(expression)
+            PROPERTY -> declarationBuilder.convertPropertyDeclaration(expression)
+            CLASS, OBJECT_DECLARATION -> declarationBuilder.convertClass(expression)
+            TYPEALIAS -> declarationBuilder.convertTypeAlias(expression)
+
+            else -> buildErrorExpression(
+                expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef),
+                ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
+            )
         }
     }
 
@@ -309,10 +295,10 @@ class LightTreeRawFirExpressionBuilder(
      * the expression into a unified string concatenation call. The method handles nested expressions by pushing
      * nodes onto an input stack and processing them iteratively.
      *
-     * @return A `FirStatement` representing a single string concatenation call if the folding was successful;
+     * @return A `FirExpression` representing a single string concatenation call if the folding was successful;
      * `null` if the binary expression could not be folded.
      */
-    private fun tryFoldStringConcatenation(binaryExpression: LighterASTNode): FirStatement? {
+    private fun tryFoldStringConcatenation(binaryExpression: LighterASTNode): FirExpression? {
         val input = mutableListOf<LighterASTNode?>()
         val output = mutableListOf<LighterASTNode?>()
         input.add(binaryExpression)
@@ -486,8 +472,8 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseLabeledExpression
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitLabeledExpression
      */
-    private fun convertLabeledExpression(labeledExpression: LighterASTNode): FirElement {
-        var firExpression: FirElement? = null
+    private fun convertLabeledExpression(labeledExpression: LighterASTNode): FirStatement {
+        var firExpression: FirStatement? = null
         var labelSource: KtSourceElement? = null
         var forbiddenLabelKind: ForbiddenLabelKind? = null
 
@@ -510,7 +496,13 @@ class LightTreeRawFirExpressionBuilder(
 
         context.dropLastLabel()
 
-        return buildExpressionHandlingLabelErrors(firExpression, labeledExpression.toFirSourceElement(), forbiddenLabelKind, labelSource)
+        // Cast is safe because firExpression is FirStatement?
+        return buildExpressionHandlingLabelErrors(
+            firExpression,
+            labeledExpression.toFirSourceElement(),
+            forbiddenLabelKind,
+            labelSource,
+        ) as FirStatement
     }
 
     /**
@@ -576,8 +568,8 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parsePrefixExpression
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitAnnotatedExpression
      */
-    private fun convertAnnotatedExpression(annotatedExpression: LighterASTNode): FirElement {
-        var firExpression: FirElement? = null
+    private fun convertAnnotatedExpression(annotatedExpression: LighterASTNode): FirStatement {
+        var firExpression: FirStatement? = null
         val firAnnotationList = mutableListOf<FirAnnotation>()
         annotatedExpression.forEachChildren {
             when (it.tokenType) {
@@ -592,7 +584,6 @@ class LightTreeRawFirExpressionBuilder(
         }
 
         val result = firExpression ?: buildErrorExpression(annotatedExpression.toFirSourceElement(), ConeNotAnnotationContainer("???"))
-        require(result is FirAnnotationContainer)
         result.replaceAnnotations(result.annotations.smartPlus(firAnnotationList))
         return result
     }
@@ -1224,7 +1215,7 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseDoWhile
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitDoWhileExpression
      */
-    private fun convertDoWhile(doWhileLoop: LighterASTNode): FirElement {
+    private fun convertDoWhile(doWhileLoop: LighterASTNode): FirLoop {
         var block: LighterASTNode? = null
         var firCondition: FirExpression? = null
 
@@ -1250,7 +1241,7 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseWhile
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitWhileExpression
      */
-    private fun convertWhile(whileLoop: LighterASTNode): FirElement {
+    private fun convertWhile(whileLoop: LighterASTNode): FirLoop {
         var block: LighterASTNode? = null
         var firCondition: FirExpression? = null
         whileLoop.forEachChildren {
@@ -1275,7 +1266,7 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseFor
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitForExpression
      */
-    private fun convertFor(forLoop: LighterASTNode): FirElement {
+    private fun convertFor(forLoop: LighterASTNode): FirExpression {
         var parameter: ValueParameter? = null
         var rangeExpression: FirExpression? = null
         var blockNode: LighterASTNode? = null
@@ -1684,8 +1675,6 @@ class LightTreeRawFirExpressionBuilder(
             when (it.tokenType) {
                 VALUE_ARGUMENT_NAME -> identifier = it.asText
                 MUL -> isSpread = true
-                STRING_TEMPLATE -> firExpression = convertStringTemplate(it)
-                is KtConstantExpressionElementType -> firExpression = convertConstantExpression(it)
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "Argument is absent")
             }
         }
