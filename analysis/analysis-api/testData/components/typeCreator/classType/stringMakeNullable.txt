@@ -1,4 +1,39 @@
 CLASS_TYPE_BY_CLASS_ID
-   KaType: kotlin.String?
+TYPE:
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/String
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: String
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/String)
+  typeArguments: []
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+RENDERED TYPE:
+kotlin.String?
+
 CLASS_TYPE_BY_SYMBOL
-   KaType: kotlin.String?
+TYPE:
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/String
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: String
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/String)
+  typeArguments: []
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+RENDERED TYPE:
+kotlin.String?
