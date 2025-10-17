@@ -35,6 +35,7 @@ dependencies {
     implementation(project(":compiler:ir.serialization.common"))
 
     testImplementation(kotlinTest("junit"))
+    testImplementation(testFixtures(project(":kotlin-util-klib")))
     testCppRuntime(project(":kotlin-native:libclangInterop"))
     testCppRuntime(project(":kotlin-native:Interop:Runtime"))
 }
