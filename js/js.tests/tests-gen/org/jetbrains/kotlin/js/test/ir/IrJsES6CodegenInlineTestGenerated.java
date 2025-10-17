@@ -3382,6 +3382,12 @@ public class IrJsES6CodegenInlineTestGenerated extends AbstractIrJsES6CodegenInl
     }
 
     @Test
+    @TestMetadata("notInlinedFunFromKlib.kt")
+    public void testNotInlinedFunFromKlib() {
+      runTest("compiler/testData/codegen/boxInline/multiModule/notInlinedFunFromKlib.kt");
+    }
+
+    @Test
     @TestMetadata("tryCatchWithRecursiveInline.kt")
     public void testTryCatchWithRecursiveInline() {
       runTest("compiler/testData/codegen/boxInline/multiModule/tryCatchWithRecursiveInline.kt");
