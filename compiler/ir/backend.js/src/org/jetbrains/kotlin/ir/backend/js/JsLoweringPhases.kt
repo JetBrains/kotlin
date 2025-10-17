@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
@@ -849,9 +848,7 @@ fun jsLoweringsOfTheFirstPhase(
     return createModulePhases(*phases.toTypedArray())
 }
 
-fun getJsLowerings(
-    configuration: CompilerConfiguration
-): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> {
+fun getJsLowerings(): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> {
     val phases = listOfNotNull<(JsIrBackendContext) -> ModuleLoweringPass>(
         // BEGIN: Common Native/JS/Wasm prefix.
         ::KlibIrValidationBeforeLoweringPhase,

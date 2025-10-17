@@ -109,7 +109,7 @@ fun lowerPreservingTags(
     controller.currentStage = 0
 
     val phaserState = PhaserState()
-    val jsLowerings = getJsLowerings(context.configuration)
+    val jsLowerings = getJsLowerings()
 
     jsLowerings.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1
