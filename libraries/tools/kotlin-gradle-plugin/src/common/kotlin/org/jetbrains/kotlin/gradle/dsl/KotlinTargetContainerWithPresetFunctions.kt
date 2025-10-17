@@ -41,28 +41,28 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun jvm(configure: Action<KotlinJvmTarget>) = jvm { configure.execute(this) }
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
+    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to the new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
     fun androidTarget(
         name: String = "android",
         configure: KotlinAndroidTarget.() -> Unit = { }
     ): KotlinAndroidTarget
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
+    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to the new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
     @Suppress("DEPRECATION")
     fun androidTarget() = androidTarget("android") { }
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
+    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to the new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
     @Suppress("DEPRECATION")
     fun androidTarget(name: String) = androidTarget(name) { }
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
+    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to the new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
     @Suppress("DEPRECATION")
     fun androidTarget(
         name: String,
         configure: Action<KotlinAndroidTarget>
     ) = androidTarget(name) { configure.execute(this) }
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
+    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to the new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
     @Suppress("DEPRECATION")
     fun androidTarget(configure: Action<KotlinAndroidTarget>) = androidTarget { configure.execute(this) }
 
@@ -435,7 +435,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             configure
         )
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
+    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with Android Gradle plugins except 'com.android.kotlin.multiplatform.library' plugin. Please migrate to the new plugin: https://kotl.in/gradle/agp-new-kmp", level = DeprecationLevel.WARNING)
     override fun androidTarget(
         name: String,
         configure: KotlinAndroidTarget.() -> Unit
