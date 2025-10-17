@@ -39,6 +39,7 @@ private val lastCharExclusions = listOf(
     FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED.name,
     FirErrors.ERROR_SUPPRESSION.name,
     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION.name,
+    FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR.name,
 )
 
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: KtDiagnosticFactoryN, property: KProperty<*>) = buildList {
