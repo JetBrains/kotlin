@@ -2,6 +2,7 @@
 // ISSUE: KT-55057
 // CHECK_TYPE_WITH_EXACT
 // WITH_STDLIB
+// API_VERSION: 1.9
 
 import kotlin.experimental.ExperimentalTypeInference
 

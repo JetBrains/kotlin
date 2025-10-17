@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
+// API_VERSION: 1.9
 package some
 
 import kotlin.experimental.ExperimentalTypeInference

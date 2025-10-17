@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 fun test_1() {
     val list = buildList {
         add("")
@@ -13,7 +13,7 @@ fun test_2() {
     takeList(list)
 }
 
-fun <E> myBuildList(@<!OPT_IN_USAGE_ERROR!>BuilderInference<!> builderAction: MutableList<E>.() -> Unit): List<E> {
+fun <E> myBuildList(builderAction: MutableList<E>.() -> Unit): List<E> {
     return ArrayList<E>().apply(builderAction)
 }
 

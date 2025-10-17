@@ -1,9 +1,9 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 interface KtScope {
     fun getAllNames(): Set<String>
 }
 
-inline fun <E> buildSet(@<!OPT_IN_USAGE_ERROR!>BuilderInference<!> builderAction: MutableSet<E>.() -> Unit): Set<E> {
+inline fun <E> buildSet(builderAction: MutableSet<E>.() -> Unit): Set<E> {
     return null!!
 }
 
