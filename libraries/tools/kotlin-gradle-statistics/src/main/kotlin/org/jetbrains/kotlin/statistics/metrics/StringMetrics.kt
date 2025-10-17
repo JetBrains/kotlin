@@ -90,6 +90,6 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
 
     companion object {
-        const val VERSION = 6
+        const val VERSION = 7
     }
 }
