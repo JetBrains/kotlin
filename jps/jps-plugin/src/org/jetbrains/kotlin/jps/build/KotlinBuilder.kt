@@ -209,13 +209,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         buildLogger?.afterChunkBuildStarted(context, chunk)
     }
 
-    /**
-     * Invalidate usages of removed classes.
-     * See KT-13677 for more details.
-     *
-     * todo(1.2.80): move to KotlinChunk
-     * todo(1.2.80): got rid of jpsGlobalContext usages (replace with KotlinCompileContext)
-     */
     private fun markAdditionalFilesForInitialRound(
         kotlinChunk: KotlinChunk,
         chunk: ModuleChunk,
@@ -243,11 +236,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             kotlinContext.jpsContext,
             representativeTarget,
             incrementalCaches,
-            LookupTracker.DO_NOTHING,
-            ExpectActualTracker.DoNothing,
-            InlineConstTracker.DoNothing,
-            EnumWhenTracker.DoNothing,
-            ImportTracker.DoNothing,
+            false,
             chunk,
             messageCollector
         ) ?: return
@@ -432,23 +421,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return ABORT
         }
 
-        val project = projectDescriptor.project
-        val lookupTracker = getLookupTracker(project, representativeTarget)
-        val exceptActualTracker = ExpectActualTrackerImpl()
         val incrementalCaches = kotlinChunk.loadCaches()
-        val inlineConstTracker = InlineConstTrackerImpl()
-        val enumWhenTracker = EnumWhenTrackerImpl()
-        val importTracker = ImportTrackerImpl()
-
         val environment = createCompileEnvironment(
             context,
             representativeTarget,
             incrementalCaches,
-            lookupTracker,
-            exceptActualTracker,
-            inlineConstTracker,
-            enumWhenTracker,
-            importTracker,
+            true,
             chunk,
             messageCollector
         ) ?: return ABORT
@@ -461,7 +439,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val reportService = JpsStatisticsReportService.getFromContext(context)
         reportService.reportCompilerArguments(chunk, kotlinChunk)
         val start = System.nanoTime()
-        val outputItemCollector = doCompileModuleChunk(
+        val isDoneSomething = doCompileModuleChunk(
             kotlinChunk,
             representativeTarget,
             kotlinChunk.compilerArguments,
@@ -475,7 +453,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         statisticsLogger.registerStatistic(chunk, System.nanoTime() - start)
 
-        if (outputItemCollector == null) {
+        if (!isDoneSomething) {
             return NOTHING_DONE
         }
 
@@ -489,7 +467,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.info("Compiled successfully")
         }
 
-        val generatedFiles = getGeneratedFiles(context, chunk, environment.outputItemsCollector)
+        val generatedFiles = getGeneratedFiles(context, chunk, environment.outputItemsCollector as OutputItemsCollectorImpl)
 
         if (!isKotlinBuilderInDumbMode) markDirtyComplementaryMultifileClasses(generatedFiles, kotlinContext, incrementalCaches, fsOperations)
 
@@ -545,7 +523,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
 
             if (!isKotlinBuilderInDumbMode || enableLookupStorageFillingInDumbMode) {
-                updateLookupStorage(lookupTracker, kotlinContext.lookupStorageManager, kotlinDirtyFilesHolder)
+                updateLookupStorage(environment, kotlinContext.lookupStorageManager, kotlinDirtyFilesHolder)
             }
 
             if (!isKotlinBuilderInDumbMode && !isChunkRebuilding) {
@@ -561,8 +539,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         return OK
     }
 
-    // todo(1.2.80): got rid of ModuleChunk (replace with KotlinChunk)
-    // todo(1.2.80): introduce KotlinRoundCompileContext, move dirtyFilesHolder, fsOperations, environment to it
     private fun doCompileModuleChunk(
         kotlinChunk: KotlinChunk,
         representativeTarget: KotlinModuleBuildTarget<*>,
@@ -573,7 +549,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         environment: JpsCompilerEnvironment,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         buildMetricReporter: JpsBuilderMetricReporter?,
-    ): OutputItemsCollector? {
+    ): Boolean {
         kotlinChunk.targets.forEach {
             it.nextRound(context)
         }
@@ -598,7 +574,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         registerFilesToCompile(dirtyFilesHolder, context)
         val isDoneSomething = representativeTarget.compileModuleChunk(commonArguments, dirtyFilesHolder, environment, buildMetricReporter)
 
-        return if (isDoneSomething) environment.outputItemsCollector else null
+        return isDoneSomething
     }
 
     private fun registerFilesToCompile(
@@ -616,26 +592,24 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         context: CompileContext,
         kotlinModuleBuilderTarget: KotlinModuleBuildTarget<*>,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
-        lookupTracker: LookupTracker,
-        exceptActualTracer: ExpectActualTracker,
-        inlineConstTracker: InlineConstTracker,
-        enumWhenTracker: EnumWhenTracker,
-        importTracker: ImportTracker,
+        enableTrackers: Boolean,
         chunk: ModuleChunk,
-        messageCollector: MessageCollectorAdapter
+        messageCollector: MessageCollectorAdapter,
     ): JpsCompilerEnvironment? {
-        val compilerServices = with(Services.Builder()) {
-            kotlinModuleBuilderTarget.makeServices(
-                this,
-                incrementalCaches,
-                lookupTracker,
-                exceptActualTracer,
-                inlineConstTracker,
-                enumWhenTracker,
-                importTracker
-            )
-            build()
-        }
+        val compilerServices = if (enableTrackers) {
+            with(Services.Builder()) {
+                kotlinModuleBuilderTarget.makeServices(
+                    this,
+                    incrementalCaches,
+                    getLookupTracker(context.projectDescriptor.project, kotlinModuleBuilderTarget),
+                    ExpectActualTrackerImpl(),
+                    InlineConstTrackerImpl(),
+                    EnumWhenTrackerImpl(),
+                    ImportTrackerImpl()
+                )
+                build()
+            }
+        } else Services.EMPTY
 
         return JpsCompilerEnvironment(
             computeKotlinPathsForJpsPlugin(messageCollector) ?: return null,
@@ -699,10 +673,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     }
 
     private fun updateLookupStorage(
-        lookupTracker: LookupTracker,
+        environment: JpsCompilerEnvironment,
         lookupStorageManager: JpsLookupStorageManager,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder
     ) {
+        val lookupTracker = environment.services[LookupTracker::class.java]!!
         if (lookupTracker !is LookupTrackerImpl)
             throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
 

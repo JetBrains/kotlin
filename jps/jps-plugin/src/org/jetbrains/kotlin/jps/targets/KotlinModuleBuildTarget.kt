@@ -270,14 +270,14 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         builder: Services.Builder,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
         lookupTracker: LookupTracker,
-        exceptActualTracer: ExpectActualTracker,
+        expectActualTracker: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
         enumWhenTracker: EnumWhenTracker,
         importTracker: ImportTracker
     ) {
         with(builder) {
             register(LookupTracker::class.java, lookupTracker)
-            register(ExpectActualTracker::class.java, exceptActualTracer)
+            register(ExpectActualTracker::class.java, expectActualTracker)
             register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
                 override fun checkCanceled() {
                     if (jpsGlobalContext.cancelStatus.isCanceled) throw CompilationCanceledException()

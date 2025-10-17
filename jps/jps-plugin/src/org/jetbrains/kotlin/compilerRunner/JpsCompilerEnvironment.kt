@@ -28,7 +28,4 @@ class JpsCompilerEnvironment(
     messageCollector: MessageCollector,
     outputItemsCollector: OutputItemsCollectorImpl,
     val progressReporter: ProgressReporter
-) : CompilerEnvironment(services, messageCollector, outputItemsCollector) {
-    override val outputItemsCollector: OutputItemsCollectorImpl
-        get() = super.outputItemsCollector as OutputItemsCollectorImpl
-}
+) : CompilerEnvironment(services, messageCollector, outputItemsCollector)
