@@ -1661,6 +1661,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/legacySmartCastsAfterTry.args");
     }
 
+    @TestMetadata("localTypeAliasesEnabled.args")
+    public void testLocalTypeAliasesEnabled() {
+      runTest("compiler/testData/cli/jvm/localTypeAliasesEnabled.args");
+    }
+
+    @TestMetadata("localTypeAliasesError.args")
+    public void testLocalTypeAliasesError() {
+      runTest("compiler/testData/cli/jvm/localTypeAliasesError.args");
+    }
+
     @TestMetadata("modulesWithDependencyCycle.args")
     public void testModulesWithDependencyCycle() {
       runTest("compiler/testData/cli/jvm/modulesWithDependencyCycle.args");
