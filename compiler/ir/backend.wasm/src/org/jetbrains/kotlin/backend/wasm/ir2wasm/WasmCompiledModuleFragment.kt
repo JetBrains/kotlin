@@ -256,8 +256,8 @@ class WasmCompiledModuleFragment(
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
         val contTypes = wasmCompiledFileFragments.flatMap { it.contTypes.elements }
-        additionalTypes.addAll(contTypes)
         additionalTypes.addAll(contTypes.map { it.funType })
+        additionalTypes.addAll(contTypes)
 
         val elements = mutableListOf<WasmElement>()
         createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, elements, exports, globals)

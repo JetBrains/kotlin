@@ -349,7 +349,7 @@ class WasmIrToText(
         newLineList("type") {
             appendModuleFieldReference(contType)
             sameLineList("cont") {
-                appendFunctionTypeDeclaration(contType.funType)
+                appendHeapType(WasmHeapType.Type(WasmSymbol(contType.funType)))
             }
         }
     }
