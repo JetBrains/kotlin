@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irFlag
@@ -24,6 +26,11 @@ var IrFunction.shouldBeCompiledAsGenerator by irFlag(copyByDefault = true)
 class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val jsYieldFunctionSymbol = context.symbols.jsYieldFunctionSymbol
     private val jsYieldStarFunctionSymbol = context.symbols.jsYieldStarFunctionSymbol
+
+    override fun lower(irModule: IrModuleFragment) {
+        if (!context.compileSuspendAsJsGenerator) return
+        super.lower(irModule)
+    }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrSimpleFunction && declaration.isSuspend) {
