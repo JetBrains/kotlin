@@ -50,6 +50,7 @@ private val jvmFilePhases = createFilePhases(
     ::PropertyReferenceDelegationLowering,
     ::SingletonOrConstantDelegationLowering,
     ::PropertyReferenceLowering,
+    ::JvmUpgradeCallableReferences,
     ::ArrayConstructorLowering,
 
     // TODO: merge the next three phases together, as visitors behave incorrectly between them
@@ -65,7 +66,6 @@ private val jvmFilePhases = createFilePhases(
     ::ForLoopsLowering,
     ::CollectionStubMethodLowering,
     ::JvmSingleAbstractMethodLowering,
-    ::JvmUpgradeCallableReferences,
     ::JvmMultiFieldValueClassLowering,
     ::JvmInlineClassLowering,
     ::JvmTailrecLowering,
