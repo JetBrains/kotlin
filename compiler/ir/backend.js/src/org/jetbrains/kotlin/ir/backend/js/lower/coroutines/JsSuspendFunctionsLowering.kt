@@ -357,7 +357,8 @@ internal fun getSuspendFunctionKind(
     context: CommonBackendContext,
     function: IrSimpleFunction,
     body: IrBody,
-    includeSuspendLambda: Boolean = true
+    includeSuspendLambda: Boolean = true,
+    suspensionIntrinsic: IrSimpleFunctionSymbol? = null
 ): SuspendFunctionKind {
 
     fun IrSimpleFunction.isSuspendLambda() =
@@ -374,7 +375,7 @@ internal fun getSuspendFunctionKind(
 
         override fun visitCall(expression: IrCall) {
             expression.acceptChildrenVoid(this)
-            if (expression.isSuspend)
+            if (expression.isSuspend || expression.symbol == suspensionIntrinsic)
                 ++numberOfSuspendCalls
         }
     })

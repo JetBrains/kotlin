@@ -246,7 +246,7 @@ internal inline fun <T> startCoroutineFromGeneratorFunction(
     val continuation = GeneratorCoroutineImpl(completion.unsafeCast<Continuation<Any?>>())
     val generator = generatorFunction(continuation)
     continuation.generator = generator
-    return generator.next().value
+    return continuation.runGenerator()
 }
 
 @UsedFromCompilerGeneratedCode
