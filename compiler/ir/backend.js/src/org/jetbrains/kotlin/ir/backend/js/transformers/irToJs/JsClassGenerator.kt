@@ -577,9 +577,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 }
 
 fun JsFunction.escapedIfNeed(): JsFunction {
-    if (computedName == null && name?.ident?.isValidES5Identifier() == false) {
+    val identifier = name?.ident
+    if (computedName == null && identifier?.isValidES5Identifier() == false) {
         name = null
-        computedName = JsStringLiteral(name?.ident)
+        computedName = JsStringLiteral(identifier)
     }
     return this
 
