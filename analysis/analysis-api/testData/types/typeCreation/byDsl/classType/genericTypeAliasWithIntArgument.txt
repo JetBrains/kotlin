@@ -2,11 +2,11 @@ KaType
 KaUsualClassType:
   abbreviation: null
   annotations: []
-  classId: A
+  classId: MyAlias
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: A
-      symbol: KaNamedClassSymbol(A)
+      name: MyAlias
+      symbol: KaTypeAliasSymbol(MyAlias)
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
@@ -23,10 +23,9 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
-        *
       ]
   ]
-  symbol: KaNamedClassSymbol(A)
+  symbol: KaTypeAliasSymbol(MyAlias)
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
@@ -43,11 +42,10 @@ KaUsualClassType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
-    *
   ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
 
 Rendered type:
-A<kotlin.Int, *>
+MyAlias<kotlin.Int>

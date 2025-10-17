@@ -3,45 +3,37 @@ TYPE:
 KaUsualClassType:
   abbreviation: null
   annotations: []
-  classId: A
+  classId: Alias
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: A
-      symbol: KaNamedClassSymbol(A)
-      typeArguments: [
-        *
-      ]
+      name: Alias
+      symbol: KaTypeAliasSymbol(Alias)
+      typeArguments: []
   ]
-  symbol: KaNamedClassSymbol(A)
-  typeArguments: [
-    *
-  ]
+  symbol: KaTypeAliasSymbol(Alias)
+  typeArguments: []
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
 RENDERED TYPE:
-A<*>
+Alias /* = A<ERROR_TYPE(Symbol not found for T)> */
 
 CLASS_TYPE_BY_SYMBOL
 TYPE:
 KaUsualClassType:
   abbreviation: null
   annotations: []
-  classId: A
+  classId: Alias
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: A
-      symbol: KaNamedClassSymbol(A)
-      typeArguments: [
-        *
-      ]
+      name: Alias
+      symbol: KaTypeAliasSymbol(Alias)
+      typeArguments: []
   ]
-  symbol: KaNamedClassSymbol(A)
-  typeArguments: [
-    *
-  ]
+  symbol: KaTypeAliasSymbol(Alias)
+  typeArguments: []
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
 RENDERED TYPE:
-A<*>
+Alias /* = A<ERROR_TYPE(Symbol not found for T)> */

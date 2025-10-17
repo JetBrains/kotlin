@@ -48,7 +48,7 @@ KaUsualClassType:
   isNullable: false
   hasFlexibleNullability: false
 RENDERED TYPE:
-A<MyAlias /* = B */>
+A<MyAlias /* = MyAlias */>
 
 CLASS_TYPE_BY_SYMBOL
 TYPE:
@@ -100,4 +100,4 @@ KaUsualClassType:
   isNullable: false
   hasFlexibleNullability: false
 RENDERED TYPE:
-A<MyAlias /* = B */>
+A<MyAlias /* = MyAlias */>

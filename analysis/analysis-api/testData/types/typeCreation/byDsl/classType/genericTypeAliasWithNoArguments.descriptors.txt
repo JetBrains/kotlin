@@ -1,16 +1,15 @@
 KaType
-KaUsualClassType:
+KaClassErrorType:
   abbreviation: null
   annotations: []
-  classId: MyAlias
+  candidateSymbols: []
+  errorMessage: Unresolved class MyAlias
+  presentableText: MyAlias
   qualifiers: [
-    KaResolvedClassTypeQualifier:
+    KaUnresolvedClassTypeQualifier:
       name: MyAlias
-      symbol: KaTypeAliasSymbol(MyAlias)
       typeArguments: []
   ]
-  symbol: KaTypeAliasSymbol(MyAlias)
-  typeArguments: []
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
