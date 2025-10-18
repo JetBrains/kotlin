@@ -1032,6 +1032,16 @@ public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
 }
 
 /**
+ * Returns the first transformed element matching specified type parameter R, or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.findIs
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Array<*>.findIs(): R? {
+    return find { element -> element is R } as R?
+}
+
+/**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  * 
  * @sample samples.collections.Collections.Elements.find
@@ -1299,6 +1309,16 @@ public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean {
 public inline fun CharArray.first(predicate: (Char) -> Boolean): Char {
     for (element in this) if (predicate(element)) return element
     throw NoSuchElementException("Array contains no element matching the predicate.")
+}
+
+/**
+ * Returns the first element matching the specified type R.
+ * @throws [NoSuchElementException] if no such element of specified type R is found.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Array<*>.firstIs(): R? {
+    for (element in this) if (element is R) return element
+    throw NoSuchElementException("Array contains no element matching the specified type ${R::class.simpleName}.")
 }
 
 /**

@@ -176,6 +176,16 @@ public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
 }
 
 /**
+ * Returns the first transformed element matching specified type parameter R, or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.findIs
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Iterable<*>.findIs(): R? {
+    return find { element -> element is R } as R?
+}
+
+/**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  * 
  * @sample samples.collections.Collections.Elements.find
@@ -230,6 +240,16 @@ public fun <T> List<T>.first(): T {
 public inline fun <T> Iterable<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
     throw NoSuchElementException("Collection contains no element matching the predicate.")
+}
+
+/**
+ * Returns the first element matching the specified type R.
+ * @throws [NoSuchElementException] if no such element of specified type R is found.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Iterable<*>.firstIs(): R? {
+    for (element in this) if (element is R) return element
+    throw NoSuchElementException("Collection contains no element matching the specified type ${R::class.simpleName}.")
 }
 
 /**
