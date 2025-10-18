@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     application
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -10,13 +11,13 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 application {

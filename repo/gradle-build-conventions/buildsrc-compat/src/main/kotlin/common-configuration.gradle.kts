@@ -292,19 +292,6 @@ fun Project.configureArtifacts() {
 }
 
 fun Project.configureTests() {
-    val projectsUsingTcMutes = listOf(
-        ":native",
-        ":kotlin-native",
-    )
-    if (projectsUsingTcMutes.any { project.path.startsWith(it) }) {
-        val ignoreTestFailures: Boolean by rootProject.extra
-        tasks.configureEach {
-            if (this is VerificationTask) {
-                ignoreFailures = ignoreTestFailures
-            }
-        }
-    }
-
     val concurrencyLimitService = project.gradle.sharedServices.registerIfAbsent(
         "concurrencyLimitService",
         ConcurrencyLimitService::class
@@ -313,8 +300,135 @@ fun Project.configureTests() {
     }
 
     tasks.withType<Test>().configureEach {
-        if (!plugins.hasPlugin("test-inputs-check")) {
+        val hasPlugin = !plugins.hasPlugin("test-inputs-check")
+        val notCacheableTestProjects: List<String> = listOf(
+            ":kotlin-gradle-plugin-idea-proto",
+            ":kotlin-gradle-statistics",
+            ":kotlin-metadata-jvm",
+            ":kotlin-scripting-common",
+            ":kotlin-scripting-dependencies",
+            ":kotlin-scripting-dependencies-maven",
+            ":kotlin-scripting-dependencies-maven-all",
+            ":kotlin-scripting-jvm",
+            ":kotlin-tooling-core",
+            ":kotlin-tooling-metadata",
+            ":kotlin-util-io",
+            ":kotlin-annotation-processing-base",
+            ":kotlin-util-klib",
+            ":kotlinx-metadata-klib",
+            ":jps:jps-common",":kotlin-daemon-client",
+            ":kotlin-stdlib:samples",
+            ":native:kotlin-native-utils",
+            ":compiler:test-infrastructure-utils",
+            ":kotlin-compiler-client-embeddable",
+            ":kotlin-compiler-embeddable",
+            ":kotlin-allopen-compiler-plugin",
+            ":kotlin-annotation-processing-cli",
+            ":kotlin-annotation-processing",
+            ":kotlin-daemon-tests",
+            ":kotlin-build-common",
+            ":kotlin-lombok-compiler-plugin",
+            ":kotlin-main-kts",
+            ":compiler",
+            ":kotlin-scripting-compiler",
+            ":kotlin-main-kts-test",
+            ":kotlin-sam-with-receiver-compiler-plugin",
+            ":kotlin-atomicfu-compiler-plugin",
+            ":kotlin-scripting-ide-services-test",
+            ":kotlin-scripting-jsr223-test",
+            ":kotlin-scripting-jvm-host-test",
+            ":kotlin-dataframe-compiler-plugin",
+            ":analysis:analysis-api",
+            ":analysis:analysis-api-fe10",
+            ":kotlinx-serialization-compiler-plugin",
+            ":analysis:analysis-api-standalone",
+            ":analysis:analysis-api-fir",
+            ":analysis:symbol-light-classes",
+            ":compiler:incremental-compilation-impl",
+            ":generators",
+            ":compiler:android-tests",
+            ":analysis:low-level-api-fir",
+            ":compiler:arguments",
+            ":compiler:ir.backend.common",
+            ":kotlin-gradle-plugin-dsl-codegen",
+            ":analysis:stubs",
+            ":compiler:tests-integration",
+            ":examples:scripting-jvm-embeddable-host",
+            ":examples:scripting-jvm-simple-script-host",
+            ":examples:scripting-jvm-maven-deps-host",
+            ":compiler:tests-different-jdk",
+            ":jps:jps-plugin",
+            ":kotlin-native:libclangInterop",
+            ":kotlin-native:llvmInterop",
+            ":native:kotlin-klib-commonizer",
+            ":compose-compiler-gradle-plugin",
+            ":native:kotlin-klib-commonizer-api",
+            ":plugins:plugin-sandbox",
+            ":plugins:plugins-interactions-testing",
+            ":tools:jdk-api-validator",
+            ":tools:ide-plugin-dependencies-validator",
+            ":repo:codebase-tests",
+            ":wasm:wasm.ir",
+            ":compiler:build-tools:kotlin-build-tools-options-generator",
+            ":analysis:low-level-api-fir:low-level-api-fir-native",
+            ":compiler:build-tools:kotlin-build-tools-compat",
+            ":compiler:build-tools:kotlin-build-tools-api",
+            ":compiler:psi:psi-api",
+            ":generators:analysis-api-generator:generator-kotlin-native",
+            ":kotlin-native:common:env",
+            ":kotlin-native:common:files",
+            ":js:js.tests",
+            ":tools:binary-compatibility-validator",
+            ":compiler:fir:modularized-tests",
+            ":kotlin-native:Interop:Indexer",
+            ":kotlin-native:Interop:StubGenerator",
+            ":kotlin-native:Interop:StubGeneratorConsistencyCheck",
+            ":kotlin-native:tools:kdumputil",
+            ":libraries:tools:analysis-api-based-klib-reader",
+            ":native:native.tests",
+            ":native:objcexport-header-generator-analysis-api",
+            ":native:objcexport-header-generator-k1",
+            ":analysis:analysis-api-standalone:analysis-api-standalone-native",
+            ":plugins:jvm-abi-gen",
+            ":repo:artifacts-tests",
+            ":native:swift:sir-printer",
+            ":plugins:plugin-sandbox:plugin-sandbox-ic-test",
+            ":plugins:scripting:scripting-tests",
+            ":plugins:compose-compiler-plugin:compiler-hosted",
+            ":plugins:js-plain-objects:compiler-plugin",
+            ":libraries:tools:abi-validation:abi-tools-api",
+            ":compiler:fir:raw-fir:light-tree2fir",
+            ":compiler:fir:raw-fir:psi2fir",
+            ":libraries:tools:abi-validation:abi-tools",
+            ":kotlin-gradle-plugin",
+            ":kotlin-gradle-plugin-idea",
+            ":native:native.tests:cli-tests",
+            ":native:native.tests:driver",
+            ":native:native.tests:gc-fuzzing-tests",
+            ":native:native.tests:litmus-tests",
+            ":native:swift:sir-light-classes",
+            ":native:swift:swift-export-ide",
+            ":native:native.tests:gc-fuzzing-tests:engine",
+            ":native:swift:swift-export-standalone-integration-tests:coroutines",
+            ":native:swift:swift-export-standalone-integration-tests:external",
+            ":native:swift:swift-export-standalone-integration-tests:simple",
+            ":libraries:tools:abi-validation:kgp-integration-tests",
+        )
+        val projectPath = project.path
+        if (!hasPlugin) {
             outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
+        }
+        doFirst {
+            if (hasPlugin) {
+                if (projectPath !in notCacheableTestProjects) {
+                    throw GradleException("Tests are not cacheable in: ${projectPath}")
+                }
+            } else {
+                if (projectPath in notCacheableTestProjects) {
+                    throw GradleException("Tests are cacheable in: ${projectPath}, but we listed it in `notCacheableTestProjects`")
+                }
+            }
+            throw StopExecutionException("Cacheability check")
         }
         if (project.kotlinBuildProperties.limitTestTasksConcurrency) {
             usesService(concurrencyLimitService)
