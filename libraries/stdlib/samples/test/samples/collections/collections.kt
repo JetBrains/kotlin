@@ -1234,6 +1234,22 @@ class Collections {
         }
 
         @Sample
+        fun findIs() {
+            val objects = listOf<Any?>("one", 1, true, null)
+            val string = objects.findIs<String>()
+            val boolean = objects.findIs<Boolean>()
+            val number = objects.findIs<Number>()
+            val int = objects.findIs<Int>()
+            val long = objects.findIs<Long>()
+
+            assertPrints(string, "one")
+            assertEquals(number, 1)
+            assertEquals(int, 1)
+            assertTrue { boolean == true }
+            assertNull(long)
+        }
+
+        @Sample
         fun getOrElse() {
             val list = listOf(1, 2, 3)
             assertPrints(list.getOrElse(0) { 42 }, "1")

@@ -631,6 +631,26 @@ object Elements : TemplateGroupBase() {
         body { "return firstOrNull(predicate)"}
     }
 
+    val f_findIs = fn("findIs()") {
+        include(Iterables, Sequences, ArraysOfObjects)
+    } builder {
+        inlineOnly()
+        genericStarProjection = true
+        typeParam("reified R")
+        returns("R?")
+
+        sample("samples.collections.Collections.Elements.findIs")
+
+        doc {
+            "Returns the first transformed ${f.element} matching specified type parameter R, or `null` if no such ${f.element} was found."
+        }
+        body {
+            """
+            return find { element -> element is R } as R?
+            """
+        }
+    }
+
     private val Family.sampleClass: String
         get() = when (this) {
             Strings, CharSequences -> "samples.text.Strings"

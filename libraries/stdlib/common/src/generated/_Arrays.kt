@@ -1032,6 +1032,16 @@ public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
 }
 
 /**
+ * Returns the first transformed element matching specified type parameter R, or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.findIs
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Array<*>.findIs(): R? {
+    return find { element -> element is R } as R?
+}
+
+/**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  * 
  * @sample samples.collections.Collections.Elements.find
