@@ -8,6 +8,6 @@ fun box(): String {
         .group { a and b }.into("d")
         .move { d.a }.into("renamedA")
     df.renamedA
-    df.compareSchemas(strict = true)
+    df.checkCompileTimeSchemaEqualsRuntime()
     return "OK"
 }

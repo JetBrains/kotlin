@@ -11,4 +11,4 @@ abstract class A {
 
 class B(override val y: Int): A()
 
-// LINES(JS_IR): 1 1 7 7 2 2 2 12 12 12 12 12 12 12 12
+// LINES: 1 1 7 7 2 2 2 12 12 12 12 12 12 12 12

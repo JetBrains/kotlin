@@ -55,6 +55,7 @@ internal abstract class JvmValueClassAbstractLowering(
                     } else {
                         function
                     }
+                    constructorWithPotentialMarker.transformChildrenVoid()
                     return listOfNotNull(constructorWithPotentialMarker, createExposedConstructor(constructorWithPotentialMarker))
                 }
             }

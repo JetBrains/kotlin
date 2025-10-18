@@ -16,8 +16,8 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
@@ -121,8 +121,8 @@ internal abstract class CInteropCommonizerTask
         )
 
     @get:Internal
-    internal val metrics: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = objectFactory
-        .property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>(GradleBuildMetricsReporter())
+    internal val metrics: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = objectFactory
+        .property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>(GradleBuildMetricsReporter())
         .chainedDisallowChanges()
 
     @get:Classpath

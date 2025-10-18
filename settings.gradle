@@ -229,6 +229,7 @@ include ":benchmarks",
         ":dependencies:bootstrap:kotlin-build-tools-api-bootstrap",
         ":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap",
         ":dependencies:bootstrap:kotlin-build-tools-compat-bootstrap",
+        ":dependencies:bootstrap:kotlin-build-tools-cri-impl-bootstrap",
         ":dependencies:bootstrap:kotlin-script-runtime-bootstrap",
         ":dependencies:bootstrap:kotlin-scripting-common-bootstrap",
         ":dependencies:bootstrap:kotlin-scripting-jvm-bootstrap",
@@ -539,7 +540,8 @@ include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-api-tests",
         ":compiler:build-tools:kotlin-build-tools-jdk-utils",
         ":compiler:build-tools:kotlin-build-tools-options-generator",
-        ":compiler:build-tools:util-kotlinpoet"
+        ":compiler:build-tools:util-kotlinpoet",
+        ":compiler:build-tools:kotlin-build-tools-cri-impl"
 
 if (!buildProperties.inJpsBuildIdeaSync) {
     include ":plugins:compose-compiler-plugin",

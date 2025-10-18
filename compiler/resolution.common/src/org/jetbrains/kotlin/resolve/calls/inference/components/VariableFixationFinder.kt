@@ -10,17 +10,13 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogRecord
+import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.IncorporationConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
-import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogRecord
 
 class VariableFixationFinder(
     private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
@@ -308,9 +304,29 @@ class VariableFixationFinder(
     context(c: Context)
     private fun TypeConstructorMarker.hasProperArgumentConstraints(): Boolean {
         val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
+        val anyProperConstraint = constraints.any { it.isProperArgumentConstraint() }
+        if (!anyProperConstraint) return false
+
         // temporary hack to fail calls which contain callable references resolved though OI with uninferred type parameters
         val areThereConstraintsWithUninferredTypeParameter = constraints.any { c -> c.type.contains { it.isUninferredParameter() } }
-        return constraints.any { it.isProperArgumentConstraint() } && !areThereConstraintsWithUninferredTypeParameter
+        if (areThereConstraintsWithUninferredTypeParameter) return false
+
+        // The code below is only relevant to [FirInferenceSession.semiFixTypeVariablesAllowingFixationToOtherOnes] case,
+        // which is expected to be used only for semi-fixation of input types for input types for OverloadResolutionByLambdaReturnType.
+        if (!c.allowSemiFixationToOtherTypeVariables) return true
+
+        val properConstraints = constraints.filter { it.isProperArgumentConstraint() }
+        if (properConstraints.any { it.kind != ConstraintKind.LOWER }) return true
+
+        // NB: All proper constraints are LOWER here.
+        // As a resulting type for such a type variable is the common supertype of all lower constraints, which is undefined
+        // for a case when all the constraints are type variables _and_ there are more than one of them.
+        // For details, see [NewCommonSuperTypeCalculator.commonSuperTypeForNotNullTypes]
+        val commonSupertypeIsUndefined = properConstraints.size > 1 && properConstraints.all {
+            it.type.typeConstructor() in c.notFixedTypeVariables
+        }
+
+        return !commonSupertypeIsUndefined
     }
 
     context(c: Context)

@@ -965,6 +965,7 @@ tasks {
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn(":compiler:arguments:test")
         dependsOn(":compiler:fir:modularized-tests:modelDumpTest")
+        dependsOn(":compiler:multiplatform-parsing:jvmTest")
     }
 
     register("miscTest") {
@@ -1013,6 +1014,7 @@ tasks {
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
         dependsOn(":tools:ide-plugin-dependencies-validator:test")
+        dependsOn(":tools:stats-analyser:test")
     }
 
     register("examplesTest") {

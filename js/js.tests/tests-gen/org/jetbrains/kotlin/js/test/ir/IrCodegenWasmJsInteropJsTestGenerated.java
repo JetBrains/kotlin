@@ -442,6 +442,12 @@ public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasm
   }
 
   @Test
+  @TestMetadata("nativeInvoke.kt")
+  public void testNativeInvoke() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nativeInvoke.kt");
+  }
+
+  @Test
   @TestMetadata("noExceptions.kt")
   public void testNoExceptions() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/noExceptions.kt");

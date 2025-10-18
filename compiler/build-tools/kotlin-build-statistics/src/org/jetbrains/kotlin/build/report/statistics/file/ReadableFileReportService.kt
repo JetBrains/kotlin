@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
 import java.io.File
 
-data class ReadableFileReportData<B : BuildTime, P : BuildPerformanceMetric>(
+data class ReadableFileReportData<B : BuildTimeMetric, P : BuildPerformanceMetric>(
     val statisticsData: List<CompileStatisticsData<B, P>>,
     val startParameters: BuildStartParameters,
     val failureMessages: List<String> = emptyList(),
     val version: Int = 1
 )
 
-open class ReadableFileReportService<B : BuildTime, P : BuildPerformanceMetric>(
+open class ReadableFileReportService<B : BuildTimeMetric, P : BuildPerformanceMetric>(
     buildReportDir: File,
     projectName: String,
     private val printMetrics: Boolean,

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.util.nanosInSecond
 import org.jetbrains.kotlin.util.phaseSideTypeName
 import org.jetbrains.kotlin.util.phaseTypeName
 import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
@@ -170,7 +172,9 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
         }
     }
 
-    private val dateTimeFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    private val dateTimeFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
 }
 
 class MarkdownTableRenderer(val columnsCount: Int, val nameColumnWidth: Int, val valueColumnWidth: Int) {

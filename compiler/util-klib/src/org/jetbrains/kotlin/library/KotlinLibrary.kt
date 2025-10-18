@@ -108,7 +108,6 @@ interface IrLibrary {
     val inlinableFunsIr: IrDirectory
 
     interface IrDirectory {
-        val hasFileEntriesTable: Boolean
         fun irDeclaration(index: Int, fileIndex: Int): ByteArray
         fun type(index: Int, fileIndex: Int): ByteArray
         fun signature(index: Int, fileIndex: Int): ByteArray

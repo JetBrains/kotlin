@@ -347,6 +347,16 @@ class ResultTypeResolver(
         val lowerConstraintTypes = prepareLowerConstraints(constraints)
 
         if (lowerConstraintTypes.isNotEmpty()) {
+            // CST for a set of type variables is not defined
+            if (lowerConstraintTypes.size > 1 &&
+                lowerConstraintTypes.all { it.unwrapToSimpleTypeUsingLowerBound().isStubTypeForVariableInSubtypingOrCaptured() }
+            ) {
+                // This situation is only allowed to happen when semi-fixing for input types for OverloadResolutionByLambdaReturnType
+                check(c.allowSemiFixationToOtherTypeVariables) {
+                    "Only type-variable built constraints $lowerConstraintTypes found for $typeVariable"
+                }
+                return null
+            }
             val types = sinkIntegerLiteralTypes(lowerConstraintTypes)
             var commonSuperType = NewCommonSuperTypeCalculator.commonSuperType(types)
 

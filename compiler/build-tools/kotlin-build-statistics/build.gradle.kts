@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("gradle-plugin-published-compiler-dependency-configuration")
-    id("project-tests-convention")
 }
 
 dependencies {
@@ -17,15 +16,11 @@ dependencies {
     compileOnly(intellijCore())
     implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
     implementation(commonDependency("com.google.code.gson:gson"))
-    testApi(kotlinStdlib())
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
-}
-projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    "test" { none() }
 }
 
 publish()

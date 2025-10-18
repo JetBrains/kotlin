@@ -73,6 +73,7 @@ internal class KaFirFunctionType(
     override val isReflectType: Boolean
         get() = withValidityAssertion { coneType.functionTypeKind(builder.rootSession)?.isReflectType == true }
 
+    @Deprecated("Use `parameters.size` instead. See KT-80545", replaceWith = ReplaceWith("parameters.size"))
     override val arity: Int get() = withValidityAssertion { parameterTypes.size }
 
     @KaExperimentalApi

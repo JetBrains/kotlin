@@ -2,7 +2,6 @@ KaType
 KaFunctionType:
   abbreviation: null
   annotations: []
-  arity: 0
   classId: kotlin/reflect/KFunction0
   contextReceivers: []
   hasContextReceivers: false

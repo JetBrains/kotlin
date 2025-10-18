@@ -252,7 +252,7 @@ private fun Settings.applyBootstrapConfiguration(
                 exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
             }
 
-            // Overriding built tools API classpath
+            // Overriding build tools API classpath
             if (name == "kotlinBuildToolsApiClasspath") {
                 if (path == ":compiler:build-tools:kotlin-build-tools-api") {
                     resolutionStrategy.dependencySubstitution {
@@ -288,6 +288,11 @@ private fun Settings.applyBootstrapConfiguration(
                     resolutionStrategy.dependencySubstitution {
                         substitute(module("org.jetbrains.kotlin:kotlin-build-tools-compat"))
                             .using(project(":dependencies:bootstrap:kotlin-build-tools-compat-bootstrap"))
+                    }
+                } else if (path == ":compiler:build-tools:kotlin-build-tools-cri-impl") {
+                    resolutionStrategy.dependencySubstitution {
+                        substitute(module("org.jetbrains.kotlin:kotlin-build-tools-cri-impl"))
+                            .using(project(":dependencies:bootstrap:kotlin-build-tools-cri-impl-bootstrap"))
                     }
                 } else if (path == ":kotlin-compiler-runner") {
                     resolutionStrategy.dependencySubstitution {

@@ -75,7 +75,13 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
             return if (parameters.isNotEmpty()) KTypeSubstitutor(parameters.zip(type.arguments).toMap()) else EMPTY
         }
 
-        fun create(klass: KClass<*>, arguments: List<KTypeProjection>): KTypeSubstitutor =
-            KTypeSubstitutor(klass.allTypeParameters().zip(arguments).toMap())
+        fun create(klass: KClass<*>, arguments: List<KTypeProjection>, isSuspendFunctionType: Boolean): KTypeSubstitutor {
+            val typeParameters = klass.allTypeParameters().run {
+                // For a type `suspend () -> String` (also known as `SuspendFunction0<String>`), the classifier will be `Function1` because
+                // suspend functions are mapped to normal functions (with +1 arity) on JVM.
+                if (isSuspendFunctionType) drop(1) else this
+            }
+            return KTypeSubstitutor(typeParameters.zip(arguments).toMap())
+        }
     }
 }

@@ -7,11 +7,25 @@ import org.jetbrains.kotlinx.dataframe.schema.*
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSubtypeOf
 
+inline fun <reified T> DataFrame<T>.checkCompileTimeSchemaEqualsRuntime() {
+    val schema = schema()
+    val compileTimeSchema = compileTimeSchema()
+    require(schema == compileTimeSchema) {
+        buildString {
+            appendLine("Runtime schema is not equal to compile time schema.")
+            appendLine("Runtime:")
+            appendLine(schema.toString())
+            appendLine("Compile:")
+            appendLine(compileTimeSchema.toString())
+        }
+    }
+}
+
 inline fun <reified T> DataFrame<T>.compareSchemas(strict: Boolean = false) {
     val schema = schema()
     val compileTimeSchema = compileTimeSchema()
     val compare = compileTimeSchema.compare(schema)
-    require(if (strict) compare.isEqual() else compare.isSuperOrEqual()) {
+    require(if (strict) compare.matches() else compare.isSuperOrMatches()) {
         buildString {
             appendLine("Comparison result: $compare")
             appendLine("Runtime:")
@@ -49,7 +63,10 @@ inline fun <reified T1, reified T2, reified T3, reified T4> compareSchemas(df1: 
 fun compare(runtime: DataFrameSchema, schemas: List<DataFrameSchema>, strict: Boolean) {
     val schema = schemas.first()
     val compare = runtime.compare(schema)
-    require(schemas.zipWithNext().all { (a, b) -> a.compare(b).isEqual() } && if (strict) compare.isEqual() else compare.isSuperOrEqual()) {
+    require(
+        schemas.zipWithNext().all { (a, b) -> a.compare(b).matches() } &&
+                if (strict) compare.matches() else compare.isSuperOrMatches(),
+    ) {
         buildString {
             appendLine("Comparison result: $compare")
             appendLine("Runtime:")
@@ -75,7 +92,7 @@ inline fun <reified T> DataFrame<T>.assert(print: Boolean = false): List<Mismatc
     equals(compileTimeSchema(), schema(), mismatches, pathOf())
     if (print) {
         println(mismatches.joinToString("\n"))
-    } else if (mismatches.any { it is  ErrorMismatch}) {
+    } else if (mismatches.any { it is ErrorMismatch }) {
         error(mismatches.joinToString("\n"))
     }
     return mismatches

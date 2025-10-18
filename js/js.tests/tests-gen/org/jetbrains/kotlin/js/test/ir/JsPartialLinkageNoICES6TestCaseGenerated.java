@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/partial-linkage")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("legacy-frontend")
 @Tag("es6")
 public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialLinkageNoICES6TestCase {
   @Test

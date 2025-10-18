@@ -74,13 +74,6 @@ fun KotlinType.isNullableUnderlyingType(): Boolean {
     return TypeUtils.isNullableType(underlyingType)
 }
 
-fun CallableDescriptor.isGetterOfUnderlyingPropertyOfValueClass() =
-    this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfValueClass()
-
 fun VariableDescriptor.isUnderlyingPropertyOfInlineClass(): Boolean =
-    extensionReceiverParameter == null &&
+    extensionReceiverParameter == null && contextReceiverParameters.isEmpty() &&
             (containingDeclaration as? ClassDescriptor)?.inlineClassRepresentation?.underlyingPropertyName == this.name
-
-fun VariableDescriptor.isUnderlyingPropertyOfValueClass(): Boolean =
-    extensionReceiverParameter == null &&
-            (containingDeclaration as? ClassDescriptor)?.valueClassRepresentation?.containsPropertyWithName(this.name) == true

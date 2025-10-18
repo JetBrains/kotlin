@@ -27,6 +27,7 @@ import kotlin.reflect.jvm.internal.DescriptorKFunction
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
+import kotlin.reflect.jvm.internal.types.AbstractKType
 
 /**
  * Returns the primary constructor of this class, or `null` if this class has no primary constructor.
@@ -199,7 +200,7 @@ val KClass<*>.allSupertypes: Collection<KType>
             if (current.arguments.isEmpty()) {
                 supertypes
             } else {
-                val substitutor = KTypeSubstitutor.create(klass, current.arguments)
+                val substitutor = KTypeSubstitutor.create(klass, current.arguments, (current as AbstractKType).isSuspendFunctionType)
                 supertypes.map {
                     substitutor.substitute(it).type ?: throw KotlinReflectionInternalError("Incorrect type substitution: $it")
                 }

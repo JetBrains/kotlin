@@ -7,6 +7,6 @@ fun box(): String {
     val df = dataFrameOf("a", "b")(1, 2).group { a and b }.into("c").move { c.a }.toTop()
     df.a
     df.c.b
-    df.compareSchemas()
+    df.checkCompileTimeSchemaEqualsRuntime()
     return "OK"
 }

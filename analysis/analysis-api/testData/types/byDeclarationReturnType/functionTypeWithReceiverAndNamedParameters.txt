@@ -1,7 +1,6 @@
 KaFunctionType:
   abbreviation: null
   annotations: []
-  arity: 2
   classId: kotlin/Function3
   contextReceivers: []
   hasContextReceivers: false

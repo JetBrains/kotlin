@@ -5,7 +5,6 @@ KaFunctionType:
     MyAnno()
       psi: null
   ]
-  arity: 0
   classId: kotlin/Function2
   contextReceivers: [
     KaContextReceiver:

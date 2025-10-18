@@ -17,7 +17,7 @@ public annotation class nativeSetter
 
 @Target(FUNCTION)
 @Deprecated("Use inline extension function with body using dynamic")
-public annotation class nativeInvoke
+public actual annotation class nativeInvoke
 
 @Target(CLASS, FUNCTION, PROPERTY)
 internal annotation class library(public val name: String = "")

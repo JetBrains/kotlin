@@ -52,7 +52,7 @@ internal fun captureKTypeFromArguments(type: KType): KType? {
         KTypeProjection.invariant(CapturedKType(lowerType, CapturedKTypeConstructor(projection), isMarkedNullable = false))
     }
 
-    val substitutor = KTypeSubstitutor.create(klass, capturedArguments)
+    val substitutor = KTypeSubstitutor.create(klass, capturedArguments, isSuspendFunctionType = false)
 
     for (index in arguments.indices) {
         val oldProjection = arguments[index]

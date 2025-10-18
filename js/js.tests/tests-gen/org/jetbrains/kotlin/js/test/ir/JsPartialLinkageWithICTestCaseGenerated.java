@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.test.ir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/partial-linkage")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("legacy-frontend")
 public class JsPartialLinkageWithICTestCaseGenerated extends AbstractJsPartialLinkageWithICTestCase {
   @Test
   @TestMetadata("addEnumEntry")

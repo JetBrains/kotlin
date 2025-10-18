@@ -32705,6 +32705,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/secondaryConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/simple.kt");
@@ -53745,6 +53751,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
           }
 
           @Test
+          @TestMetadata("contextPropertyWithSameNameAsPrimary.kt")
+          public void testContextPropertyWithSameNameAsPrimary() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/contextPropertyWithSameNameAsPrimary.kt");
+          }
+
+          @Test
           @TestMetadata("inlineClassConstructor.kt")
           public void testInlineClassConstructor() {
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/inlineClassConstructor.kt");
@@ -53794,6 +53806,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
             @TestMetadata("constructorWithInlineClassParameters.kt")
             public void testConstructorWithInlineClassParameters() {
               runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/constructorWithInlineClassParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("contextParameters.kt")
+            public void testContextParameters() {
+              runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/contextParameters.kt");
             }
 
             @Test
@@ -53874,6 +53892,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
             }
 
             @Test
+            @TestMetadata("contextParameters.kt")
+            public void testContextParameters() {
+              runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/contextParameters.kt");
+            }
+
+            @Test
             @TestMetadata("fieldAccessors.kt")
             public void testFieldAccessors() {
               runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/fieldAccessors.kt");
@@ -53948,6 +53972,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
             @TestMetadata("constructorWithInlineClassParameters.kt")
             public void testConstructorWithInlineClassParameters() {
               runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/constructorWithInlineClassParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("contextParameters.kt")
+            public void testContextParameters() {
+              runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/contextParameters.kt");
             }
 
             @Test
@@ -56712,6 +56742,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("functionSupertype.kt")
+        public void testFunctionSupertype() {
+          runTest("compiler/testData/codegen/box/reflection/supertypes/functionSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("genericSubstitution.kt")
         public void testGenericSubstitution() {
           runTest("compiler/testData/codegen/box/reflection/supertypes/genericSubstitution.kt");
@@ -56751,6 +56787,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         @TestMetadata("simpleSupertypes.kt")
         public void testSimpleSupertypes() {
           runTest("compiler/testData/codegen/box/reflection/supertypes/simpleSupertypes.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionSupertype.kt")
+        public void testSuspendFunctionSupertype() {
+          runTest("compiler/testData/codegen/box/reflection/supertypes/suspendFunctionSupertype.kt");
         }
       }
 
@@ -57251,6 +57293,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("functionClasses.kt")
+        public void testFunctionClasses() {
+          runTest("compiler/testData/codegen/box/reflection/typeParameters/functionClasses.kt");
+        }
+
+        @Test
         @TestMetadata("innerGeneric.kt")
         public void testInnerGeneric() {
           runTest("compiler/testData/codegen/box/reflection/typeParameters/innerGeneric.kt");
@@ -57551,6 +57599,18 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       @TestMetadata("commonSupertypeContravariant2.kt")
       public void testCommonSupertypeContravariant2() {
         runTest("compiler/testData/codegen/box/regressions/commonSupertypeContravariant2.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassInInlineFunctionWithTypeParameters.kt")
+      public void testDataClassInInlineFunctionWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/regressions/dataClassInInlineFunctionWithTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassInRegularFunctionWithTypeParameters.kt")
+      public void testDataClassInRegularFunctionWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/regressions/dataClassInRegularFunctionWithTypeParameters.kt");
       }
 
       @Test

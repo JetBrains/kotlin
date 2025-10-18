@@ -255,10 +255,8 @@
 /kotlin-js-store/ ilya.goncharov@jetbrains.com
 
 /kotlin-native/ @JetBrains/kotlin-native
-/kotlin-native/runtime/ alexander.shabalin@jetbrains.com aleksei.glushko@jetbrains.com
 /kotlin-native/runtime/src/main/kotlin/ @JetBrains/kotlin-native vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
 /kotlin-native/runtime/test @JetBrains/kotlin-native vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
-/kotlin-native/runtime/**/*.mm alexander.shabalin@jetbrains.com aleksei.glushko@jetbrains.com sergey.bogolepov@jetbrains.com svyatoslav.scherbina@jetbrains.com
 /kotlin-native/licenses/ @JetBrains/kotlin-build-infrastructure
 /kotlin-native/klib/ @JetBrains/kotlin-common-backend
 /kotlin-native/tools/benchmarks @JetBrains/kotlin-native @JetBrains/kotlin-performance-qa

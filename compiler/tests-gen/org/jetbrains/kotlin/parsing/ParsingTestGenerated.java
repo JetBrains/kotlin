@@ -3501,6 +3501,39 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/recovery/WithWithoutInAndMultideclaration.kt");
       }
 
+      @TestMetadata("compiler/testData/psi/recovery/binaryExpression")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class BinaryExpression extends AbstractParsingTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInBinaryExpression() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/binaryExpression"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+        }
+
+        @TestMetadata("IsAndSubsequentExpressions.kt")
+        public void testIsAndSubsequentExpressions() {
+          runTest("compiler/testData/psi/recovery/binaryExpression/IsAndSubsequentExpressions.kt");
+        }
+
+        @TestMetadata("IsExpressionComplex.kt")
+        public void testIsExpressionComplex() {
+          runTest("compiler/testData/psi/recovery/binaryExpression/IsExpressionComplex.kt");
+        }
+
+        @TestMetadata("NoHigherPrecedenceAfterIs.kt")
+        public void testNoHigherPrecedenceAfterIs() {
+          runTest("compiler/testData/psi/recovery/binaryExpression/NoHigherPrecedenceAfterIs.kt");
+        }
+
+        @TestMetadata("SoftModifierAsInfixFunction.kt")
+        public void testSoftModifierAsInfixFunction() {
+          runTest("compiler/testData/psi/recovery/binaryExpression/SoftModifierAsInfixFunction.kt");
+        }
+      }
+
       @TestMetadata("compiler/testData/psi/recovery/objects")
       @TestDataPath("$PROJECT_ROOT")
       @RunWith(JUnit3RunnerWithInners.class)

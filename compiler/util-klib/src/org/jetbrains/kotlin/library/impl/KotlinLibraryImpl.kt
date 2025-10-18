@@ -100,12 +100,6 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
     override val inlinableFunsIr = IrDirectory { inlineableFunsIr }
 
     inner class IrDirectory(private val selectIrDir: IrKotlinLibraryLayout.() -> IrKotlinLibraryLayout.IrDirectory) : IrLibrary.IrDirectory {
-        override val hasFileEntriesTable: Boolean by lazy {
-            access.inPlace { it: IrKotlinLibraryLayout ->
-                it.selectIrDir().irFileEntries.exists
-            }
-        }
-
         override fun fileCount(): Int = files.entryCount()
 
         override fun irDeclaration(index: Int, fileIndex: Int) = loadIrDeclaration(index, fileIndex)

@@ -14,6 +14,7 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.coroutines.Continuation
 import kotlin.metadata.*
 import kotlin.metadata.jvm.annotations
 import kotlin.reflect.*
@@ -102,7 +103,7 @@ internal fun KmType.toKType(
         }
         .toList()
     val kClassifier = classifier.toClassifier(classLoader, typeParameterTable, arguments)
-    return SimpleKType(
+    result = SimpleKType(
         kClassifier,
         arguments,
         isNullable,
@@ -113,10 +114,32 @@ internal fun KmType.toKType(
         isSuspend,
         classifier.toMutableCollectionKClass(kClassifier),
         computeJavaType,
-    ).also {
-        @Suppress("AssignedValueIsNeverRead") // KTIJ-34162
-        result = it
+    )
+    if (isSuspend) {
+        // Suspend function types are represented in metadata in a non-trivial way, see kdoc on [KmType.isSuspend].
+        result = unwrapSuspendFunctionType(result, computeJavaType)
+            ?: throw KotlinReflectionInternalError("Invalid suspend function type: $result")
     }
+    return result
+}
+
+private fun unwrapSuspendFunctionType(type: SimpleKType, computeJavaType: (() -> Type)?): SimpleKType? {
+    require(type.isSuspendFunctionType) { "Not a suspend function type: $type" }
+    val continuationArgument = type.arguments.getOrNull(type.arguments.size - 2)?.type ?: return null
+    if (continuationArgument.classifier != Continuation::class) return null
+    val returnType = continuationArgument.arguments.singleOrNull()?.type ?: return null
+    return SimpleKType(
+        type.classifier,
+        type.arguments.dropLast(2) + KTypeProjection.invariant(returnType),
+        type.isMarkedNullable,
+        type.annotations,
+        type.abbreviation,
+        type.isDefinitelyNotNullType,
+        type.isNothingType,
+        isSuspendFunctionType = true,
+        type.mutableCollectionClass,
+        computeJavaType,
+    )
 }
 
 internal fun convertTypeArgumentToJavaType(computeType: () -> AbstractKType, index: Int): () -> Type = {

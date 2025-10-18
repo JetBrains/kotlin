@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -29,13 +28,13 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
-            testClass<AbstractJsPartialLinkageWithICTestCase>(annotations = listOf(*legacyFrontend())) {
+            testClass<AbstractJsPartialLinkageWithICTestCase> {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
-            testClass<AbstractJsPartialLinkageNoICTestCase>(annotations = listOf(*legacyFrontend())) {
+            testClass<AbstractJsPartialLinkageNoICTestCase> {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
-            testClass<AbstractJsPartialLinkageNoICES6TestCase>(annotations = listOf(*legacyFrontend(), *es6())) {
+            testClass<AbstractJsPartialLinkageNoICES6TestCase>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
         }
@@ -78,9 +77,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/sourcemap", testRunnerMethodName = "runTest0") {
-            testClass<AbstractSourceMapGenerationSmokeTest>(annotations = listOf(*legacyFrontend())) {
-                model()
-            }
             testClass<AbstractFirSourceMapGenerationSmokeTest> {
                 model()
             }
@@ -139,21 +135,11 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/webDemoExamples", testRunnerMethodName = "runTest0") {
-            testClass<AbstractWebDemoExamplesTest>(annotations = listOf(*legacyFrontend())) {
-                model()
-            }
-        }
-
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/lineNumbers", testRunnerMethodName = "runTest0") {
-            testClass<AbstractJsIrLineNumberTest>(annotations = listOf(*legacyFrontend())) {
+            testClass<AbstractJsLineNumberTest> {
                 model()
             }
-
-            testClass<AbstractFirJsLineNumberTest> {
-                model()
-            }
-            testClass<AbstractFirJsLineNumberWithInlinedFunInKlibTest> {
+            testClass<AbstractJsLineNumberWithInlinedFunInKlibTest> {
                 model()
             }
         }
@@ -237,31 +223,20 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/debug", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirJsSteppingTest> {
+            testClass<AbstractJsSteppingTest> {
                 model("stepping")
             }
 
-            testClass<AbstractFirJsSteppingWithInlinedFunInKlibTest> {
+            testClass<AbstractJsSteppingWithInlinedFunInKlibTest> {
                 model("stepping")
             }
 
-            testClass<AbstractFirJsSteppingSplitTest> {
+            testClass<AbstractJsSteppingSplitTest> {
                 model("stepping")
             }
 
-            testClass<AbstractFirJsSteppingSplitWithInlinedFunInKlibTest> {
+            testClass<AbstractJsSteppingSplitWithInlinedFunInKlibTest> {
                 model("stepping")
-            }
-
-            testClass<AbstractIrJsLocalVariableTest>(
-                annotations = listOf(
-                    *legacyFrontend(),
-                    annotation(Disabled::class.java, "value" to "flaky, see KTI-1959"),
-                )
-            ) {
-                // The tests in the 'inlineScopes' directory are meant to test a JVM backend
-                // specific feature, so there is no reason to enable them for JS.
-                model("localVariables", excludeDirs = listOf("inlineScopes"))
             }
         }
 
