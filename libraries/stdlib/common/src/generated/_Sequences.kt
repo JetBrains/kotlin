@@ -142,6 +142,18 @@ public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
 }
 
 /**
+ * Returns the first element matching the specified type R.
+ * @throws [NoSuchElementException] if no such element of specified type R is found.
+ *
+ * The operation is _terminal_.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Sequence<*>.firstIs(): R? {
+    for (element in this) if (element is R) return element
+    throw NoSuchElementException("Sequence contains no element matching the specified type ${R::class.simpleName}.")
+}
+
+/**
  * Returns the first non-null value produced by [transform] function being applied to elements of this sequence in iteration order,
  * or throws [NoSuchElementException] if no non-null value was produced.
  *
