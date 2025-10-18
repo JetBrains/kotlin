@@ -181,6 +181,40 @@ fun checkUpperBoundViolated(
     }
 }
 
+fun checkUpperBoundViolatedNoReport(
+    typeParameters: List<FirTypeParameterSymbol>,
+    typeArguments: List<ConeTypeProjection>,
+    session: FirSession,
+): Boolean {
+    val substitution = typeParameters.zip(typeArguments).toMap()
+    val substitutor = FE10LikeConeSubstitutor(substitution, session)
+
+    val count = minOf(typeParameters.size, typeArguments.size)
+    val typeSystemContext = session.typeContext
+
+    for (index in 0 until count) {
+        val argument = typeArguments[index]
+        val argumentType = argument.type
+        if (argumentType != null) {
+            if (argumentType.typeArguments.isEmpty() && argumentType !is ConeTypeParameterType) {
+                val intersection =
+                    typeSystemContext.intersectTypes(typeParameters[index].resolvedBounds.map { it.coneType })
+                val upperBound = substitutor.substituteOrSelf(intersection)
+                if (!AbstractTypeChecker.isSubtypeOf(
+                        typeSystemContext,
+                        argumentType,
+                        upperBound,
+                        stubTypesEqualToAnything = true
+                    )
+                ) {
+                    return true
+                }
+            }
+        }
+    }
+    return false
+}
+
 context(context: CheckerContext, reporter: DiagnosticReporter)
 private fun reportUpperBoundViolationWarningIfNecessary(
     additionalUpperBoundsProvider: FirPlatformUpperBoundsProvider?,
