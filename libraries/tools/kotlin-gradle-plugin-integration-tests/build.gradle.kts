@@ -130,6 +130,8 @@ dependencies {
     testApi(project(":compiler:tests-mutes:mutes-junit5"))
 
     testCompileOnly(libs.intellij.asm)
+
+    testImplementation(project(":compose-compiler-gradle-plugin"))
 }
 
 tasks.register<Delete>("cleanTestKitCache") {

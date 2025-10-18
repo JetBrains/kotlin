@@ -26,6 +26,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import java.security.MessageDigest
 import java.util.Locale.getDefault
@@ -33,7 +34,7 @@ import java.util.zip.ZipFile
 import javax.inject.Inject
 
 
-internal fun Project.configureComposeMappingFile() {
+internal fun Project.configureComposeMappingFile(composeExtension: ComposeCompilerGradlePluginExtension) {
     plugins.withId("com.android.application") {
         val configuration = configurations.maybeCreate("composeMappingProducerClasspath")
             .also {
@@ -46,6 +47,7 @@ internal fun Project.configureComposeMappingFile() {
             }
 
         extensions.findByType<ApplicationAndroidComponentsExtension>()?.onVariants { variant ->
+            if (!composeExtension.includeComposeMappingFile.get()) return@onVariants
             if (!variant.isMinifyEnabled) return@onVariants
 
             val name = variant.name.capitalize()
