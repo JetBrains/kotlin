@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.library.abi
 
+import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.*
+import org.jetbrains.kotlin.library.abi.parser.KlibDumpParser
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -32,6 +35,9 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
+import java.nio.file.Paths
+import kotlin.io.path.readText
+import kotlin.test.assertNotNull
 
 /**
  * This test class can potentially be re-used in the future for other backends.
@@ -145,4 +151,17 @@ open class AbstractClassicJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTes
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::ClassicJsKlibSerializerFacade
+}
+
+abstract class AbstractKlibDumpParserTest {
+    @OptIn(ExperimentalLibraryAbiReader::class)
+    fun runTest(@TestDataFile filePath: String) {
+        require(filePath.endsWith(".kt"))
+
+        val dumpFileName = filePath.dropLast(2) + "klib_abi.txt"
+        val rawDump = ForTestCompileRuntime.transformTestDataPath(dumpFileName).readText()
+        val parsedDump = KlibDumpParser(rawDump).parse()
+        // parse errors will throw and fail the test
+        assertNotNull(parsedDump)
+    }
 }
