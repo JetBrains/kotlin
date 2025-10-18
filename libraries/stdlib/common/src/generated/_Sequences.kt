@@ -93,6 +93,18 @@ public inline fun <T> Sequence<T>.find(predicate: (T) -> Boolean): T? {
 }
 
 /**
+ * Returns the first transformed element matching specified type parameter R, or `null` if no such element was found.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.findIs
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Sequence<*>.findIs(): R? {
+    return find { element -> element is R } as R?
+}
+
+/**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  *
  * The operation is _terminal_.

@@ -176,6 +176,16 @@ public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
 }
 
 /**
+ * Returns the first transformed element matching specified type parameter R, or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.findIs
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Iterable<*>.findIs(): R? {
+    return find { element -> element is R } as R?
+}
+
+/**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  * 
  * @sample samples.collections.Collections.Elements.find
