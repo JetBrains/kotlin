@@ -620,6 +620,25 @@ object Elements : TemplateGroupBase() {
         }
     }
 
+    val f_firstIs = fn("firstIs()") {
+        include(Iterables, Sequences, ArraysOfObjects)
+    } builder {
+        inlineOnly()
+        genericStarProjection = true
+        typeParam("reified R")
+        returns("R?")
+
+        doc { """Returns the first ${f.element} matching the specified type R.
+        @throws [NoSuchElementException] if no such ${f.element} of specified type R is found.""" }
+
+        body {
+            """
+            for (element in this) if (element is R) return element
+            throw NoSuchElementException("${f.doc.collection.capitalize()} contains no ${f.doc.element} matching the specified type ${"$"}{R::class.simpleName}.")
+            """
+        }
+    }
+
     val f_find = fn("find(predicate: (T) -> Boolean)") {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)

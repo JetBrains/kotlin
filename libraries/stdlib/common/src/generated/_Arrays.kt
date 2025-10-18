@@ -1312,6 +1312,16 @@ public inline fun CharArray.first(predicate: (Char) -> Boolean): Char {
 }
 
 /**
+ * Returns the first element matching the specified type R.
+ * @throws [NoSuchElementException] if no such element of specified type R is found.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified R> Array<*>.firstIs(): R? {
+    for (element in this) if (element is R) return element
+    throw NoSuchElementException("Array contains no element matching the specified type ${R::class.simpleName}.")
+}
+
+/**
  * Returns the first non-null value produced by [transform] function being applied to elements of this array in iteration order,
  * or throws [NoSuchElementException] if no non-null value was produced.
  * 

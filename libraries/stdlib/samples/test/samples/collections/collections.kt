@@ -1250,6 +1250,27 @@ class Collections {
         }
 
         @Sample
+        fun firstIs() {
+            val objects = listOf<Any?>("one", 1, true, null)
+            val string = objects.firstIs<String>()
+            val boolean = objects.firstIs<Boolean>()
+            val number = objects.firstIs<Number>()
+            val int = objects.firstIs<Int>()
+
+            assertPrints(string, "one")
+            assertEquals(number, 1)
+            assertEquals(int, 1)
+            assertTrue { boolean == true }
+
+            val exception = assertFails {
+                objects.firstIs<Long>()
+            }
+
+            assertIs<NoSuchElementException>(exception)
+            assertEquals("Collection contains no element matching the specified type Long.", exception.message)
+        }
+
+        @Sample
         fun getOrElse() {
             val list = listOf(1, 2, 3)
             assertPrints(list.getOrElse(0) { 42 }, "1")
