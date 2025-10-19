@@ -126,7 +126,7 @@ internal abstract class SymbolLightMethodBase(
     protected fun computeJvmExposeBoxedMethodName(
         symbol: KaCallableSymbol,
         defaultName: String,
-    ): String = symbol.getJvmExposeBoxedNameFromAnnotation() ?: symbol.getJvmNameFromAnnotation() ?: defaultName
+    ): String = symbol.getJvmExposeBoxedNameFromAnnotation() ?: defaultName
 
     abstract fun isOverride(): Boolean
 

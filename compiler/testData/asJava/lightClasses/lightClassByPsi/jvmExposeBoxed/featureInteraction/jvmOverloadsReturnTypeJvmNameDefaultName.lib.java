@@ -1,18 +1,18 @@
 public final class Baz /* Baz*/ {
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "jvmMemberLevel")
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "memberLevel")
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
-  public final IntWrapper jvmMemberLevel();//  jvmMemberLevel()
+  public final IntWrapper memberLevel();//  memberLevel()
 
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "jvmMemberLevel")
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "memberLevel")
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
-  public final IntWrapper jvmMemberLevel(int);//  jvmMemberLevel(int)
+  public final IntWrapper memberLevel(int);//  memberLevel(int)
 
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "jvmMemberLevel")
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "memberLevel")
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
-  public final IntWrapper jvmMemberLevel(int, int);//  jvmMemberLevel(int, int)
+  public final IntWrapper memberLevel(int, int);//  memberLevel(int, int)
 
   @kotlin.jvm.JvmName(name = "jvmMemberLevel")
   @kotlin.jvm.JvmOverloads()

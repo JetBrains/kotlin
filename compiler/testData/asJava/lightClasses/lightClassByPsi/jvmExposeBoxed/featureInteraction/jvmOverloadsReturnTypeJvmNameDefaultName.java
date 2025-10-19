@@ -3,19 +3,19 @@ public final class Baz /* Baz*/ {
   @kotlin.jvm.JvmExposeBoxed()
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() IntWrapper jvmMemberLevel();//  jvmMemberLevel()
+  public final @org.jetbrains.annotations.NotNull() IntWrapper memberLevel();//  memberLevel()
 
   @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
   @kotlin.jvm.JvmExposeBoxed()
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() IntWrapper jvmMemberLevel(int);//  jvmMemberLevel(int)
+  public final @org.jetbrains.annotations.NotNull() IntWrapper memberLevel(int);//  memberLevel(int)
 
   @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
   @kotlin.jvm.JvmExposeBoxed()
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() IntWrapper jvmMemberLevel(int, int);//  jvmMemberLevel(int, int)
+  public final @org.jetbrains.annotations.NotNull() IntWrapper memberLevel(int, int);//  memberLevel(int, int)
 
   @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
   @kotlin.jvm.JvmName(name = "jvmMemberLevel")
