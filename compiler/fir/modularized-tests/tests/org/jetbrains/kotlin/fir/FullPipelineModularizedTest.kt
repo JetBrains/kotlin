@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.LanguageVersion
+import java.lang.management.ManagementFactory
 
 // This is used for API version configuration for both frontends
 // TODO: Deprecated and only used in old FP tests
@@ -49,6 +50,8 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     }
 
     fun testTotalKotlin() {
+        val runtimeBean = ManagementFactory.getRuntimeMXBean()
+        runtimeBean.inputArguments.forEach { println(it) }
         pinCurrentThreadToIsolatedCpu()
         for (i in 0 until PASSES) {
             println("Pass $i")

@@ -116,12 +116,12 @@ object PathUtil {
 
     @JvmStatic
     val kotlinPathsForCompiler: KotlinPaths
-        get() = if (!pathUtilJar.isFile || !pathUtilJar.name.startsWith(KOTLIN_COMPILER_NAME)) {
+        get() = //if (!pathUtilJar.isFile || !pathUtilJar.name.startsWith(KOTLIN_COMPILER_NAME)) {
             // PathUtil.class is located not in the kotlin-compiler*.jar, so it must be a test and we'll take KotlinPaths from "dist/"
             // (when running tests, PathUtil.class is in its containing module's artifact, i.e. util-{version}.jar)
             kotlinPathsForDistDirectory
-        }
-        else KotlinPathsFromHomeDir(compilerPathForCompilerJar)
+       // }
+        //else KotlinPathsFromHomeDir(compilerPathForCompilerJar)
 
     @JvmStatic
     val kotlinPathsForDistDirectory: KotlinPaths
