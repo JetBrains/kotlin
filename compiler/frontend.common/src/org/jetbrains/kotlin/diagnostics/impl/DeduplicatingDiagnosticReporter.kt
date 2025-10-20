@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
 
 class DeduplicatingDiagnosticReporter(private val inner: DiagnosticReporter) : DiagnosticReporter() {
 
+    override val hasErrors: Boolean get() = inner.hasErrors
+
     private val reported = mutableSetOf<Triple<String?, AbstractKtSourceElement, KtDiagnosticFactoryN>>()
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
     abstract val diagnostics: List<KtDiagnostic>
     abstract val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
-    abstract val hasErrors: Boolean
 
     abstract val rawReporter: RawReporter
 
