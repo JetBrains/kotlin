@@ -428,37 +428,19 @@ private val generateMainFunctionWrappersPhase = makeIrModulePhase(
     name = "GenerateMainFunctionWrappers",
 )
 
-private fun createDefaultArgumentStubGeneratorPhase(context: CommonBackendContext): DefaultArgumentStubGenerator<*> {
-    return DefaultArgumentStubGenerator(
-        context,
-        MaskedDefaultArgumentFunctionFactory(context, copyOriginalFunctionLocation = false),
-        skipExternalMethods = true
-    )
-}
-
-private val defaultArgumentStubGeneratorPhase = makeIrModulePhase<WasmBackendContext>(
-    { context ->
-        DefaultArgumentStubGenerator(
-            context,
-            MaskedDefaultArgumentFunctionFactory(context, copyOriginalFunctionLocation = false),
-            skipExternalMethods = true
-        )
-    },
+private val defaultArgumentStubGeneratorPhase = makeIrModulePhase(
+    ::WasmDefaultArgumentStubGenerator,
     name = "DefaultArgumentStubGenerator",
 )
 
 private val defaultArgumentPatchOverridesPhase = makeIrModulePhase(
-    ::DefaultParameterPatchOverridenSymbolsLowering,
+    ::WasmDefaultParameterPatchOverridenSymbolsLowering,
     name = "DefaultArgumentsPatchOverrides",
     prerequisite = setOf(defaultArgumentStubGeneratorPhase)
 )
 
-private fun createDefaultParameterInjectorPhase(context: CommonBackendContext): DefaultParameterInjector<*> {
-    return DefaultParameterInjector(context, MaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true)
-}
-
 private val defaultParameterInjectorPhase = makeIrModulePhase(
-    { context -> DefaultParameterInjector(context, MaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true) },
+    ::WasmDefaultParameterInjector,
     name = "DefaultParameterInjector",
     prerequisite = setOf(innerClassesLoweringPhase)
 )
@@ -489,17 +471,13 @@ private val delegateToPrimaryConstructorLoweringPhase = makeIrModulePhase(
 )
 
 private val initializersLoweringPhase = makeIrModulePhase(
-    ::InitializersLowering,
+    ::WasmInitializersLowering,
     name = "InitializersLowering",
     prerequisite = setOf(primaryConstructorLoweringPhase, localDeclarationExtractionPhase)
 )
 
-private fun createInitializersCleanupLoweringPhase(context: CommonBackendContext): InitializersCleanupLowering {
-    return InitializersCleanupLowering(context)
-}
-
 private val initializersCleanupLoweringPhase = makeIrModulePhase(
-    ::InitializersCleanupLowering,
+    ::WasmInitializersCleanupLowering,
     name = "InitializersCleanupLowering",
     prerequisite = setOf(initializersLoweringPhase)
 )
@@ -782,8 +760,8 @@ fun getWasmLowerings(
         ::EnumClassRemoveEntriesLowering,
 
         ::JsSuspendFunctionsLowering,
-        ::InitializersLowering,
-        ::createInitializersCleanupLoweringPhase,
+        ::WasmInitializersLowering,
+        ::WasmInitializersCleanupLowering,
 
         ::AddContinuationToNonLocalSuspendFunctionsLowering,
         ::AddContinuationToFunctionCallsLowering,
@@ -810,9 +788,9 @@ fun getWasmLowerings(
 
         ::WasmStringConcatenationLowering,
 
-        ::createDefaultArgumentStubGeneratorPhase,
-        ::DefaultParameterPatchOverridenSymbolsLowering,
-        ::createDefaultParameterInjectorPhase,
+        ::WasmDefaultArgumentStubGenerator,
+        ::WasmDefaultParameterPatchOverridenSymbolsLowering,
+        ::WasmDefaultParameterInjector,
         ::createDefaultParameterCleanerPhase,
 
 //            TODO:
