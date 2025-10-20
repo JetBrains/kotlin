@@ -6,19 +6,15 @@ plugins {
 group = "org.jetbrains.kotlin.sample.native"
 version = "1.0"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
-    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     cocoapods {
         summary = "Some description for the Shared Module"
         homepage = "Link to the Shared Module homepage"
         version = "1.0"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = "15"
         framework {
             baseName = "shared"
         }

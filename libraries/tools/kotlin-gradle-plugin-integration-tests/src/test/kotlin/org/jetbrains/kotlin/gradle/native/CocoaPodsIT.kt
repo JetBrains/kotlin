@@ -148,7 +148,7 @@ class CocoaPodsIT : KGPBaseTest() {
         val buildOptions = defaultBuildOptions.copy(
             nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 cocoapodsPlatform = "iphonesimulator",
-                cocoapodsArchs = "x86_64",
+                cocoapodsArchs = "arm64",
                 cocoapodsConfiguration = "Debug"
             )
         )
@@ -204,7 +204,7 @@ class CocoaPodsIT : KGPBaseTest() {
         val buildOptions = defaultBuildOptions.copy(
             nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 cocoapodsPlatform = "iphonesimulator",
-                cocoapodsArchs = "x86_64",
+                cocoapodsArchs = "arm64",
                 cocoapodsConfiguration = "Debug"
             )
         )
@@ -243,7 +243,7 @@ class CocoaPodsIT : KGPBaseTest() {
         val buildOptions = defaultBuildOptions.copy(
             nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 cocoapodsPlatform = "iphonesimulator",
-                cocoapodsArchs = "x86_64",
+                cocoapodsArchs = "arm64",
                 cocoapodsConfiguration = "Debug"
             )
         )
@@ -337,17 +337,17 @@ class CocoaPodsIT : KGPBaseTest() {
             buildGradleKts.addCocoapodsBlock(podDeclaration)
 
             buildWithCocoapodsWrapper(podImportTaskName) {
-                assertTasksExecuted(":cinteropBase64IOS")
+                assertTasksExecuted(":cinteropBase64IosArm64")
             }
 
             buildWithCocoapodsWrapper(podImportTaskName) {
-                assertTasksUpToDate(":cinteropBase64IOS")
+                assertTasksUpToDate(":cinteropBase64IosArm64")
             }
 
             buildGradleKts.replaceText(podDeclaration, """pod("Base64", version = "1.1.2")""")
 
             buildWithCocoapodsWrapper(podImportTaskName) {
-                assertTasksExecuted(":cinteropBase64IOS")
+                assertTasksExecuted(":cinteropBase64IosArm64")
             }
         }
     }
@@ -392,7 +392,7 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testCinteropExtraOpts(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
             buildGradleKts.addPod("Base64", "extraOpts = listOf(\"-help\")")
-            buildWithCocoapodsWrapper("cinteropBase64IOS") {
+            buildWithCocoapodsWrapper("cinteropBase64IosArm64") {
                 assertOutputContains("Usage: cinterop options_list")
                 assertOutputContains("-compiler-option -fmodules")
             }
@@ -404,7 +404,7 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testCinteropExplicitHeaderAndFmodules(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
             buildGradleKts.addPod("AFNetworking", "headers = \"AFNetworking.h\"")
-            buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
+            buildWithCocoapodsWrapper("cinteropAFNetworkingIosArm64") {
                 assertOutputDoesNotContain("-compiler-option -fmodules")
             }
         }
@@ -427,12 +427,12 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "Debug"
                 )
             )
             build("syncFramework", buildOptions = buildOptions) {
-                assertTasksExecuted(":linkPodDebugFrameworkIOS")
+                assertTasksExecuted(":linkPodDebugFrameworkIosSimulatorArm64")
                 assertFileInProjectExists("build/cocoapods/framework/cocoapods.framework/cocoapods")
             }
         }
@@ -446,12 +446,12 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "CUSTOM"
                 )
             )
             build("syncFramework", buildOptions = buildOptions) {
-                assertTasksExecuted(":linkPodDebugFrameworkIOS")
+                assertTasksExecuted(":linkPodDebugFrameworkIosSimulatorArm64")
                 assertFileInProjectExists(("build/cocoapods/framework/cocoapods.framework/cocoapods"))
             }
         }
@@ -502,6 +502,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 """
                     |
                     |kotlin {
+                    |    iosX64()
                     |    iosSimulatorArm64()
                     |    cocoapods {
                     |       framework {
@@ -553,7 +554,7 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "Debug"
                 ),
             )
@@ -574,7 +575,7 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "Debug",
                 ),
             )
@@ -593,11 +594,11 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "Debug"
                 ),
             )
-            buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
+            buildAndFail("linkPodDebugFrameworkIosSimulatorArm64", buildOptions = buildOptions) {
                 assertOutputContains("e: file:///")
                 assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2 Syntax error: Expecting a top level declaration")
                 assertOutputDoesNotContain("error: Compilation finished with errors")
@@ -616,12 +617,12 @@ class CocoaPodsIT : KGPBaseTest() {
             val buildOptions = this.buildOptions.copy(
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
-                    cocoapodsArchs = "x86_64",
+                    cocoapodsArchs = "arm64",
                     cocoapodsConfiguration = "Debug",
                     useXcodeMessageStyle = true
                 ),
             )
-            buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
+            buildAndFail("linkPodDebugFrameworkIosArm64", buildOptions = buildOptions) {
                 assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Syntax error: Expecting a top level declaration")
                 assertOutputContains("error: Compilation finished with errors")
             }
@@ -632,7 +633,7 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testPodDependencyInUnitTests(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsTestsProjectName, gradleVersion) {
-            buildWithCocoapodsWrapper(":iosX64Test")
+            buildWithCocoapodsWrapper(":iosSimulatorArm64Test")
         }
     }
 
@@ -644,7 +645,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksAreNotInTaskGraph(
                     ":cinteropBase64IosArm64",
-                    ":cinteropBase64IosX64",
+                    ":cinteropBase64IosSimulatorArm64",
                     ":commonizeCInterop",
                 )
             }
@@ -671,7 +672,7 @@ class CocoaPodsIT : KGPBaseTest() {
             buildWithCocoapodsWrapper(":commonize", *buildArguments) {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksExecuted(":cinteropBase64IosArm64")
-                assertTasksExecuted(":cinteropBase64IosX64")
+                assertTasksExecuted(":cinteropBase64IosSimulatorArm64")
                 assertTasksExecuted(":commonizeCInterop")
             }
         }
@@ -769,9 +770,9 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testCinteropKlibsProvideLinkerOptsToFramework(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
             buildGradleKts.addPod("Base64")
-            buildWithCocoapodsWrapper("cinteropBase64IOS") {
+            buildWithCocoapodsWrapper("cinteropBase64IosArm64") {
                 val cinteropManifest =
-                    projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-Base64/default/manifest")
+                    projectPath.resolve("build/classes/kotlin/iosArm64/main/cinterop/cocoapods-cinterop-Base64/default/manifest")
                         .inputStream()
                         .useToLoadProperties()
 
@@ -794,7 +795,7 @@ class CocoaPodsIT : KGPBaseTest() {
             )
 
             buildAndAssertAllTasks(
-                notRegisteredTasks = listOf(":cinteropBase64IOS", ":cinteropSSZipArchiveIOS"),
+                notRegisteredTasks = listOf(":cinteropBase64IosArm64", ":cinteropSDWebImageIosArm64"),
                 buildOptions = this.buildOptions.copy(
                     nativeOptions = this.buildOptions.nativeOptions.copy(
                         cocoapodsGenerateWrapper = true
@@ -802,14 +803,14 @@ class CocoaPodsIT : KGPBaseTest() {
                 )
             )
 
-            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
-                assertTasksExecuted(":podBuildBase64IosSimulator")
-                assertTasksExecuted(":podBuildSDWebImageIosSimulator")
-                assertTasksExecuted(":podBuildSSZipArchiveIosSimulator")
+            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIosArm64") {
+                assertTasksExecuted(":podBuildBase64Ios")
+                assertTasksExecuted(":podBuildSDWebImageIos")
+                assertTasksExecuted(":podBuildSSZipArchiveIos")
 
-                assertTasksExecuted(":cinteropSDWebImageIOS")
+                assertTasksExecuted(":cinteropSDWebImageIosArm64")
 
-                extractNativeTasksCommandLineArgumentsFromOutput(":linkPodDebugFrameworkIOS") {
+                extractNativeTasksCommandLineArgumentsFromOutput(":linkPodDebugFrameworkIosArm64") {
                     assertCommandLineArgumentsContainSequentially("-linker-option", "-framework", "-linker-option", "Base64")
                     assertCommandLineArgumentsContainSequentially("-linker-option", "-framework", "-linker-option", "SSZipArchive")
                 }
@@ -830,7 +831,7 @@ class CocoaPodsIT : KGPBaseTest() {
                     pod("Base64") { linkOnly = true }
                 """.trimIndent()
             )
-            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
+            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIosArm64") {
                 assertHasDiagnostic(CocoapodsPluginDiagnostics.LinkOnlyUsedWithStaticFramework)
             }
         }
@@ -847,7 +848,7 @@ class CocoaPodsIT : KGPBaseTest() {
                     pod("Base64", version = "1.1.2")
                 """.trimIndent()
             )
-            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
+            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIosArm64") {
                 assertFileInProjectNotExists("cocoapods.podspec")
             }
         }
@@ -857,7 +858,7 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testHierarchyOfDependantPodsCompilesSuccessfully(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsDependantPodsProjectName, gradleVersion) {
-            buildWithCocoapodsWrapper(":compileKotlinIosX64")
+            buildWithCocoapodsWrapper(":compileKotlinIosArm64")
         }
     }
 
@@ -935,7 +936,7 @@ class CocoaPodsIT : KGPBaseTest() {
             nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 cocoapodsGenerateWrapper = true,
                 cocoapodsPlatform = "iphonesimulator",
-                cocoapodsArchs = "x86_64",
+                cocoapodsArchs = "arm64",
                 cocoapodsConfiguration = "Debug"
             ),
         )
@@ -958,7 +959,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 executedTaskNames = listOf(
                     ":podPublishDebugXCFramework",
                     ":podPublishReleaseXCFramework",
-                    ":linkPodDebugFrameworkIOS",
+                    ":linkPodDebugFrameworkIosArm64",
                 )
             )
         }
@@ -1224,7 +1225,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 spec.summary                  = 'CocoaPods test library'
                 spec.vendored_frameworks      = 'cocoapods.xcframework'
                 spec.libraries                = 'c++'
-                spec.ios.deployment_target    = '13.5'
+                spec.ios.deployment_target    = '15'
             end
         """.trimIndent()
 
@@ -1238,7 +1239,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 spec.authors                  = { 'Kotlin Dev' => 'kotlin.dev@jetbrains.com' }
                 spec.license                  = 'MIT'
                 spec.summary                  = 'CocoaPods test library'
-                spec.ios.deployment_target    = '13.5'
+                spec.ios.deployment_target    = '15'
                 spec.dependency 'Base64'
                 spec.social_media_url = 'https://twitter.com/kotlin'
                 spec.vendored_frameworks = 'CustomFramework.xcframework'
