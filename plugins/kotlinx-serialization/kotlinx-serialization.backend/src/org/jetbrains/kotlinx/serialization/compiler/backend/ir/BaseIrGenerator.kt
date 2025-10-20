@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.irGetObject
@@ -23,8 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -34,39 +30,33 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.CommonVersionReader
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.objectSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.polymorphicSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.sealedSerializerId
 
 abstract class BaseIrGenerator(private val currentClass: IrClass, final override val compilerContext: SerializationPluginContext) :
     IrBuilderWithPluginContext {
+
+    internal fun runtimeTooLowError(): Nothing {
+        val runtimeVer = CommonVersionReader.computeRuntimeVersions(compilerContext.kSerializerClass?.source)?.implementationVersion
+        val runtimeVerStr = runtimeVer?.let { " ($it)" } ?: ""
+        error("Your serialization runtime$runtimeVerStr is lower than minimal supported version (1.3.0). Please update your runtime.")
+    }
 
     private val throwMissedFieldExceptionFunc = compilerContext.referenceFunctions(
         CallableId(
             SerializationPackages.internalPackageFqName,
             SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_NAME
         )
-    ).singleOrNull()
+    ).singleOrNull() ?: runtimeTooLowError()
 
     private val throwMissedFieldExceptionArrayFunc = compilerContext.referenceFunctions(
         CallableId(
             SerializationPackages.internalPackageFqName,
             SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_NAME
         )
-    ).singleOrNull()
-
-    private val enumSerializerFactoryFunc = compilerContext.enumSerializerFactoryFunc
-
-    private val annotatedEnumSerializerFactoryFunc = compilerContext.annotatedEnumSerializerFactoryFunc
-
-    fun useFieldMissingOptimization(): Boolean {
-        return throwMissedFieldExceptionFunc != null && throwMissedFieldExceptionArrayFunc != null
-    }
+    ).singleOrNull() ?: runtimeTooLowError()
 
     fun IrDeclaration.excludeFromJsExport() {
         if (!compilerContext.platform.isJs()) {
@@ -130,7 +120,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
 
             throwErrorExpr = irInvoke(
-                throwMissedFieldExceptionFunc!!,
+                throwMissedFieldExceptionFunc,
                 irGet(seenVars[0]),
                 irInt(goldenMask),
                 serialDescriptor,
@@ -174,7 +164,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
             throwErrorExpr = irBlock {
                 +irInvoke(
-                    throwMissedFieldExceptionArrayFunc!!,
+                    throwMissedFieldExceptionArrayFunc,
                     createIntArrayOfExpression(goldenMaskList.indices.map { irGet(seenVars[it]) }),
                     createIntArrayOfExpression(goldenMaskList.map { irInt(it) }),
                     serialDescriptor,

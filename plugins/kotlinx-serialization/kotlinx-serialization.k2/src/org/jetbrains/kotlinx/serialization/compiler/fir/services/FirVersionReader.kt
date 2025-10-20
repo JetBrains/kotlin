@@ -20,11 +20,6 @@ class FirVersionReader(session: FirSession) : FirExtensionSessionComponent(sessi
         val markerClass = session.symbolProvider.getClassLikeSymbolByClassId(SerialEntityNames.KSERIALIZER_CLASS_ID) ?: return@lazy null
         CommonVersionReader.computeRuntimeVersions(markerClass.sourceElement)
     }
-
-    val canSupportInlineClasses by session.firCachesFactory.createLazyValue lazy@{
-        CommonVersionReader.canSupportInlineClasses(runtimeVersions)
-    }
 }
 
 val FirSession.versionReader: FirVersionReader by FirSession.sessionComponentAccessor()
-

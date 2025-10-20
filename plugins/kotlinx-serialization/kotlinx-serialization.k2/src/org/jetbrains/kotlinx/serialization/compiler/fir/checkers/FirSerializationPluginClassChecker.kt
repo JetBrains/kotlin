@@ -254,8 +254,8 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             reporter.reportOn(
                 classSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.PROVIDED_RUNTIME_TOO_LOW,
-                KotlinCompilerVersion.getVersion() ?: TOO_LOW,
                 currentVersions.implementationVersion?.toString() ?: UNKNOWN,
+                KotlinCompilerVersion.getVersion() ?: TOO_LOW,
                 RuntimeVersions.MINIMAL_SUPPORTED_VERSION.toString()
             )
         }
@@ -410,16 +410,6 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (classSymbol.isInner) {
             reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.INNER_CLASSES_NOT_SUPPORTED)
-            return false
-        }
-
-        if (classSymbol.isInlineOrValue && !session.versionReader.canSupportInlineClasses) {
-            reporter.reportOn(
-                classSymbol.serializableOrMetaAnnotationSource(session),
-                FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
-                RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                session.versionReader.runtimeVersions?.implementationVersion.toString()
-            )
             return false
         }
 
@@ -665,23 +655,11 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         return result
     }
 
-    private fun CheckerContext.canSupportInlineClasses(): Boolean {
-        return session.versionReader.canSupportInlineClasses
-    }
-
     private fun ConeKotlinType.isUnsupportedInlineType(session: FirSession): Boolean = isSingleFieldValueClass(session) && !isPrimitiveOrNullablePrimitive
 
     private fun CheckerContext.checkType(typeRef: FirTypeRef, typeSource: KtSourceElement?, reporter: DiagnosticReporter) {
         val type = typeRef.coneType.fullyExpandedType()
         if (type.lowerBoundIfFlexible().isTypeParameter) return // type parameters always have serializer stored in class' field
-        if (type.isUnsupportedInlineType(session) && !canSupportInlineClasses()) {
-            reporter.reportOn(
-                typeRef.source ?: typeSource,
-                FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
-                RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                session.versionReader.runtimeVersions?.implementationVersion.toString()
-            )
-        }
 
         val serializer = findTypeSerializerOrContextUnchecked(type, this)
         if (serializer != null) {
