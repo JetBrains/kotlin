@@ -1,0 +1,8 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationAsFunctionBody.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun foo(): <implicit> { LAZY_BLOCK }

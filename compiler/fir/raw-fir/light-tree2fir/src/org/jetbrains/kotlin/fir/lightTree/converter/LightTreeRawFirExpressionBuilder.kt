@@ -161,6 +161,9 @@ class LightTreeRawFirExpressionBuilder(
             // Always non-expression FirStatement
             DO_WHILE -> convertDoWhile(expression)
             WHILE -> convertWhile(expression)
+            PROPERTY -> declarationBuilder.convertPropertyDeclaration(expression)
+            CLASS, OBJECT_DECLARATION -> declarationBuilder.convertClass(expression)
+            TYPEALIAS -> declarationBuilder.convertTypeAlias(expression)
 
             else -> buildErrorExpression(
                 expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef),

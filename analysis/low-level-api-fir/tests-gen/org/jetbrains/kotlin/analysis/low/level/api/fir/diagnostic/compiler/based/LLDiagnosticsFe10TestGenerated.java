@@ -17912,6 +17912,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("classesAndPropertiesAsExpressions.kt")
+      public void testClassesAndPropertiesAsExpressions() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/classesAndPropertiesAsExpressions.kt");
+      }
+
+      @Test
       @TestMetadata("controlStructuresErrors.kt")
       public void testControlStructuresErrors() {
         runTest("compiler/testData/diagnostics/tests/incompleteCode/controlStructuresErrors.kt");
