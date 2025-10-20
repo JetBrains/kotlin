@@ -218,6 +218,9 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             .mapNotNull { it.name }
             .toSet()
 
+
+        // TODO filter out equals/hashcode (or all overrides?)
+        javaBaseClass.methods
         return javaBaseClass.methods.flatMap { method -> methodWrappers(method, javaBaseClass, kotlinNames, substitutor) }
     }
 
@@ -570,7 +573,8 @@ private class KtLightMethodWrapper(
 
     override fun hasModifierProperty(name: String) =
         when (name) {
-            PsiModifier.DEFAULT -> hasImplementation
+            // TODO PsiClassRenderer renders `abstract` everywhere
+//            PsiModifier.DEFAULT -> hasImplementation
             PsiModifier.ABSTRACT -> !hasImplementation
             PsiModifier.FINAL -> isFinal
             else -> baseMethod.hasModifierProperty(name)
