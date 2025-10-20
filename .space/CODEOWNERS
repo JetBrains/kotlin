@@ -20,7 +20,7 @@
 # OWNER_LIST: "Kotlin Analysis API"
 # OWNER_LIST: "Kotlin Release"
 # OWNER_LIST: "Kotlin Language Evolution"
-# OWNER_LIST: "Compose"
+# OWNER_LIST: "Google Compose"
 # OWNER_LIST: "Parcelize"
 # OWNER_LIST: mikhail.glukhikh@jetbrains.com dmitriy.novozhilov@jetbrains.com kirill.rakhman@jetbrains.com
 # OWNER_LIST: yan.zhulanow@jetbrains.com
@@ -420,7 +420,7 @@
 /plugins/allopen/ "Kotlin Frontend"
 /plugins/assign-plugin/ "Kotlin Frontend"
 /plugins/atomicfu/ "Kotlin Libraries"
-/plugins/compose/ "Compose"
+/plugins/compose/ "Google Compose"
 /plugins/plugin-sandbox/ "Kotlin Frontend"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
 /plugins/kapt/ "Kotlin JVM"
