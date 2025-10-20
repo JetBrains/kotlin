@@ -204,6 +204,7 @@ fun Project.kotlinxCollectionsImmutable() =
 val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
 
 val Project.nodejsVersion: String get() = property("versions.nodejs") as String
+val Project.nodejsLtsVersion: String get() = property("versions.nodejs.lts") as String
 val Project.nodejsVersionForBuildingWasmDebugBrowsers: String get() = property("versions.nodejs.for.building.wasm.debug.browsers") as String
 
 fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())

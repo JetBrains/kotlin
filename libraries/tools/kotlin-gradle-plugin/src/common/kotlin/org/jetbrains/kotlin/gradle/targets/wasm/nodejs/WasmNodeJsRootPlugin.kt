@@ -57,6 +57,10 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
         nodeJsRootPluginApplier.apply(target)
 
         val nodeJsRoot = target.extensions.getByName(WasmNodeJsRootExtension.EXTENSION_NAME) as WasmNodeJsRootExtension
+
+        @Suppress("DEPRECATION_ERROR")
+        nodeJsRoot.version = "25.0.0"
+
         val nodeJs = target.extensions.getByName(WasmNodeJsEnvSpec.EXTENSION_NAME) as WasmNodeJsEnvSpec
 
         val packageManagerName = nodeJsRoot.packageManagerExtension.map { it.name }
