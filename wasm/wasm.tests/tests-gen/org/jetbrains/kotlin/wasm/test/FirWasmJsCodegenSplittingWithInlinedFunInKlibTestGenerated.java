@@ -42167,6 +42167,18 @@ public class FirWasmJsCodegenSplittingWithInlinedFunInKlibTestGenerated extends 
           }
 
           @Test
+          @TestMetadata("nameBasedDestructuringFullForm.kt")
+          public void testNameBasedDestructuringFullForm() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nameBasedDestructuringFullForm.kt");
+          }
+
+          @Test
+          @TestMetadata("nameBasedDestructuringShortForm.kt")
+          public void testNameBasedDestructuringShortForm() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nameBasedDestructuringShortForm.kt");
+          }
+
+          @Test
           @TestMetadata("noArgActualConstructor.kt")
           public void testNoArgActualConstructor() {
             runTest("compiler/testData/codegen/box/multiplatform/k2/basic/noArgActualConstructor.kt");
@@ -42864,6 +42876,76 @@ public class FirWasmJsCodegenSplittingWithInlinedFunInKlibTestGenerated extends 
             runTest("compiler/testData/codegen/box/multiplatform/k2/multiModule/stdlibClassRedefine.kt");
           }
         }
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/nameBasedDestructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NameBasedDestructuring {
+      @Test
+      public void testAllFilesPresentInNameBasedDestructuring() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nameBasedDestructuring"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("fullForm.kt")
+      public void testFullForm() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormExtraPropType.kt")
+      public void testFullFormExtraPropType() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormExtraPropType.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormFromSmartCast.kt")
+      public void testFullFormFromSmartCast() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormFromSmartCast.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormGenericBounds.kt")
+      public void testFullFormGenericBounds() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormGenericBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("fullFormLoopsAndLambdas.kt")
+      public void testFullFormLoopsAndLambdas() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/fullFormLoopsAndLambdas.kt");
+      }
+
+      @Test
+      @TestMetadata("shortForm.kt")
+      public void testShortForm() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortForm.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormExtraPropType.kt")
+      public void testShortFormExtraPropType() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormExtraPropType.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormFromSmartCast.kt")
+      public void testShortFormFromSmartCast() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormFromSmartCast.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormGenericBounds.kt")
+      public void testShortFormGenericBounds() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormGenericBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("shortFormLoopsAndLambdas.kt")
+      public void testShortFormLoopsAndLambdas() {
+        runTest("compiler/testData/codegen/box/nameBasedDestructuring/shortFormLoopsAndLambdas.kt");
       }
     }
 
