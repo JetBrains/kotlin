@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 @PhasePrerequisites(
     ArrayConstructorLowering::class,
 //    OuterThisInInlineFunctionsSpecialAccessorLowering::class // for public inline only
+//    InlineCallCycleCheckerLowering::class // only on the first stage
 )
 class FunctionInlining(
     val context: LoweringContext,
