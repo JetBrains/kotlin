@@ -5,7 +5,6 @@
 // MODULE: JS_TESTS
 // WITH_STDLIB
 // LANGUAGE: +ContextParameters
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 // FILE: functions.kt
 
 package foo
