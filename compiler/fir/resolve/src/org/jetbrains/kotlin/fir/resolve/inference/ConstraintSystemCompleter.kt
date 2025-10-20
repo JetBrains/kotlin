@@ -69,16 +69,19 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             }
 
             // TODO: This is very slow, KT-59680
+            // +
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
 
             if (completionMode.isUntilFirstLambda() && hasLambdaToAnalyze(postponedArguments)) return
 
+            // +
             // Stage 1: analyze postponed arguments with fixed parameter types
             if (analyzeArgumentWithFixedParameterTypes(postponedArguments) {
                     analyzer.analyze(it, withPCLASession = false)
                 }
             ) continue
 
+            // +
             val variableForFixation = findFirstVariableForFixation(
                 topLevelAtoms,
                 postponedArguments,
@@ -103,6 +106,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
              */
             val postponedArgumentsWithRevisableType = postponedArguments.filterIsInstance<PostponedAtomWithRevisableExpectedType>()
             val dependencyProvider =
+                // ++++
                 TypeVariableDependencyInformationProvider(
                     notFixedTypeVariables, postponedArguments, topLevelType, this,
                     languageVersionSettings,
@@ -124,6 +128,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             if (completionMode.allLambdasShouldBeAnalyzed) {
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedAtomsDependingOnFunctionType) {
+                    // ++
                     val variableWasFixed = postponedArgumentsInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
                         argument,
                         postponedArguments,

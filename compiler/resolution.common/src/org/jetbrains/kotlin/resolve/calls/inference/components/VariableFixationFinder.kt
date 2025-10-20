@@ -223,6 +223,7 @@ class VariableFixationFinder(
     ): VariableForFixation? {
         if (allTypeVariables.isEmpty()) return null
 
+        // +
         val dependencyProvider = TypeVariableDependencyInformationProvider(
             c.notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, c,
             languageVersionSettings,
