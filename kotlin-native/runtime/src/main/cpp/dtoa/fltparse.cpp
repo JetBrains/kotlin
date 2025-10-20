@@ -25,7 +25,7 @@
 #include "../KString.h"
 #include "../Natives.h"
 #include "../Porting.h"
-#include "../utf8.h"
+#include "utf8.h"
 
 using namespace kotlin;
 
