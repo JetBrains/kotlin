@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.*
 /**
  * Invokes companion object's initializers from companion object in object constructor.
  */
+@PhasePrerequisites(ObjectDeclarationLowering::class)
 class InvokeStaticInitializersLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container !is IrConstructor) return

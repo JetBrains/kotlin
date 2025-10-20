@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -315,6 +316,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
     }
 }
 
+@PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class)
 class ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall(private val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrSimpleFunction && container.origin == PrepareSuspendFunctionsForExportLowering.EXPORTED_SUSPEND_FUNCTION_BRIDGE) return
@@ -339,6 +341,7 @@ class ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall(private val contex
  *
  * If we do this to early (during the first lowering, as an example) the [isExportedSuspendFunction] will always return `false`
  **/
+@PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class, ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall::class)
 class IgnoreOriginalSuspendFunctionsThatWereExportedLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val jsExportIgnoreAnnotation = context.symbols.jsExportIgnoreAnnotationSymbol.owner.constructors.single()
 
