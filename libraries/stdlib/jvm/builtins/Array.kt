@@ -35,6 +35,14 @@ public actual class Array<T> {
     @Suppress("WRONG_MODIFIER_TARGET")
     public actual inline constructor(size: Int, init: (Int) -> T)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified elements. */
+        @ExperimentalStdlibApi
+        public actual inline operator fun <reified T> of(vararg elements: T): Array<T>
+    }
+
     /**
      * Returns the array element at the given [index].
      *
