@@ -38,6 +38,30 @@ package kotlin.collections
  * @param E the type of elements contained in the set. The set is covariant in its element type.
  */
 public actual interface Set<out E> : Collection<E> {
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /**
+         * Returns an empty read-only set.  The returned set is serializable (JVM).
+         */
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(): Set<T> = setOf()
+
+        /**
+         * Returns a new read-only set containing only the specified object [element].
+         *
+         * The returned set is serializable (JVM).
+         */
+        public actual operator fun <T> of(element: T): Set<T> = setOf(element)
+
+        /**
+         * Returns a new read-only set with the given elements.
+         * Elements of the set are iterated in the order they were specified.
+         * The returned set is serializable (JVM).
+         */
+        public actual operator fun <T> of(vararg elements: T): Set<T> = setOf(*elements)
+    }
+
     // Query Operations
     actual override val size: Int
 
@@ -66,6 +90,29 @@ public actual interface Set<out E> : Collection<E> {
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
 public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /**
+         * Returns an empty new [MutableSet].
+         *
+         * The returned set preserves the element iteration order.
+         */
+        @kotlin.internal.InlineOnly
+        public actual inline operator fun <T> of(): MutableSet<T> = mutableSetOf()
+
+        /**
+         * Returns a new [MutableSet] containing only the specified object [element].
+         */
+        public actual operator fun <T> of(element: T): MutableSet<T> = mutableSetOf(element)
+
+        /**
+         * Returns a new [MutableSet] with the given elements.
+         * Elements of the set are iterated in the order they were specified.
+         */
+        public actual operator fun <T> of(vararg elements: T): MutableSet<T> = mutableSetOf(*elements)
+    }
+
     // Query Operations
     actual override fun iterator(): MutableIterator<E>
 
