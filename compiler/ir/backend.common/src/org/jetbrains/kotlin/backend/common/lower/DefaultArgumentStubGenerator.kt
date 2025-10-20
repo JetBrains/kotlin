@@ -471,7 +471,7 @@ open class DefaultParameterCleaner(
 /**
  * Patch overrides for fake override dispatch functions. Should be used in case `forceSetOverrideSymbols = false`.
  */
-class DefaultParameterPatchOverridenSymbolsLowering(
+open class DefaultParameterPatchOverridenSymbolsLowering(
     val context: CommonBackendContext
 ) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
