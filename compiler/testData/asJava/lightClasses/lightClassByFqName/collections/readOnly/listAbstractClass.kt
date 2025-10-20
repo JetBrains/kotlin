@@ -3,4 +3,4 @@
 
 package test
 
-abstract class CList<Elem> : List<Elem> by emptyList<Elem>()
+abstract class CList<Elem> : List<Elem>
