@@ -191,7 +191,7 @@ val FirPropertySymbol.hasBackingField: Boolean
 fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstraint> {
     return when (this) {
         is FirRegularClass -> danglingTypeConstraints
-        is FirSimpleFunction -> danglingTypeConstraints
+        is FirNamedFunction -> danglingTypeConstraints
         is FirAnonymousFunction -> danglingTypeConstraints
         is FirProperty -> danglingTypeConstraints
         else -> null

@@ -120,9 +120,9 @@ context(context: CheckerContext)
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutionOverrideFunction
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutedData
  */
-private fun FirSimpleFunction.substituteOrNull(
+private fun FirNamedFunction.substituteOrNull(
     substitutor: EnhancedForWarningConeSubstitutor,
-): FirSimpleFunction? {
+): FirNamedFunction? {
     symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
     var isEnhanced = false
 

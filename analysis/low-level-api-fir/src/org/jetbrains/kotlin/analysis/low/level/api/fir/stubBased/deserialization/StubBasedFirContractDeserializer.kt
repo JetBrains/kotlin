@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
 
 internal class StubBasedFirContractDeserializer(
-    private val simpleFunction: FirSimpleFunction,
+    private val simpleFunction: FirNamedFunction,
     private val typeDeserializer: StubBasedFirTypeDeserializer,
 ) {
     fun loadContract(function: KtNamedFunction): FirContractDescription? {

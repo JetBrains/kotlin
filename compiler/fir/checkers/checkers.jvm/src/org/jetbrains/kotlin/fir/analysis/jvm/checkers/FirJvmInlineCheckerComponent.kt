@@ -42,7 +42,7 @@ class FirJvmInlineCheckerComponent : FirInlineCheckerPlatformSpecificComponent()
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkFunctionalParametersWithInheritedDefaultValues(
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
     ) {
         val paramsWithDefaults = overriddenSymbols.flatMap {

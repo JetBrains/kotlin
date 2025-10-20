@@ -310,7 +310,7 @@ internal class KaFirExpressionTypeProvider(
             val substitutor = (firCall as? FirQualifiedAccessExpression)
                 ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = true)
                 ?: ConeSubstitutor.Empty
-            return substitutor.substituteOrSelf((callee.fir as FirSimpleFunction).returnTypeRef.coneType).asKaType()
+            return substitutor.substituteOrSelf((callee.fir as FirNamedFunction).returnTypeRef.coneType).asKaType()
         }
 
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null

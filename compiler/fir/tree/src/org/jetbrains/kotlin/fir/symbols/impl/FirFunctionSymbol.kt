@@ -59,7 +59,7 @@ sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: Cal
 
 // ------------------------ named ------------------------
 
-open class FirNamedFunctionSymbol(callableId: CallableId) : FirFunctionSymbol<FirSimpleFunction>(callableId), SimpleFunctionSymbolMarker {
+open class FirNamedFunctionSymbol(callableId: CallableId) : FirFunctionSymbol<FirNamedFunction>(callableId), SimpleFunctionSymbolMarker {
     val isSynthetic: Boolean get() = fir.isSynthetic
 }
 

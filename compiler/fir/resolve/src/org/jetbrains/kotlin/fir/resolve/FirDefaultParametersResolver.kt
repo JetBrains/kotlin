@@ -22,7 +22,7 @@ class FirDefaultParametersResolver : FirSessionComponent {
         index: Int,
     ): Boolean {
         if (function.itOrExpectHasDefaultParameterValue(index)) return true
-        if (function !is FirSimpleFunction) return false
+        if (function !is FirNamedFunction) return false
         val symbol = function.symbol
         val typeScope = when (originScope) {
             is FirTypeScope -> originScope

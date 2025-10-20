@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirScript
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -161,7 +161,7 @@ internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
         function.valueParameters.forEach { it.accept(this, data) }
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: T) {
+    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: T) {
         visitFunction(simpleFunction, data)
     }
 

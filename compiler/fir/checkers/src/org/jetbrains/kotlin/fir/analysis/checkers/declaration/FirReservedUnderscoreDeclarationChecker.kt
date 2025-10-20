@@ -30,7 +30,7 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker(MppC
                 checkTypeRefForUnderscore(it)
             }
         } else if (declaration is FirFunction) {
-            if (declaration is FirSimpleFunction) {
+            if (declaration is FirNamedFunction) {
                 reportIfUnderscore(declaration)
             }
 

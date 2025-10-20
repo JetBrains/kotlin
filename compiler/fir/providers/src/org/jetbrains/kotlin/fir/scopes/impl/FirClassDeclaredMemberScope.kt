@@ -57,7 +57,7 @@ class FirClassDeclaredMemberScopeImpl(
                     else -> declaration.name
                 }
 
-                is FirSimpleFunction -> declaration.name
+                is FirNamedFunction -> declaration.name
                 else -> continue
             }
 

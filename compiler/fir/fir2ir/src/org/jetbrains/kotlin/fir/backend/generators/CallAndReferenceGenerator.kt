@@ -221,7 +221,7 @@ class CallAndReferenceGenerator(
     private fun FirQualifiedAccessExpression.tryConvertToSamConstructorCall(type: IrType): IrTypeOperatorCall? {
         val calleeReference = calleeReference as? FirResolvedNamedReference ?: return null
         val fir = calleeReference.resolvedSymbol.fir
-        if (this is FirFunctionCall && fir is FirSimpleFunction && fir.origin == FirDeclarationOrigin.SamConstructor) {
+        if (this is FirFunctionCall && fir is FirNamedFunction && fir.origin == FirDeclarationOrigin.SamConstructor) {
             val (_, _, substitutor) = extractArgumentsMapping(this)
             val irArgument = convertArgument(argument, fir.valueParameters.first(), substitutor)
             return convertWithOffsets { startOffset, endOffset ->

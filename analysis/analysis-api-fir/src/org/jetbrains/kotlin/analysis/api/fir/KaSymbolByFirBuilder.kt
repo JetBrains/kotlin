@@ -659,7 +659,7 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
             element.acceptChildren(this)
         }
 
-        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+        override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
             simpleFunction.typeParameters.forEach { it.accept(this) }
 
             simpleFunction.receiverParameter?.accept(this)

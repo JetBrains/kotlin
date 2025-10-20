@@ -884,7 +884,7 @@ internal object CheckLowPriorityInOverloadResolution : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
     override suspend fun check(candidate: Candidate) {
         val annotations = when (val fir = candidate.symbol.fir) {
-            is FirSimpleFunction -> fir.annotations
+            is FirNamedFunction -> fir.annotations
             is FirProperty -> fir.annotations
             is FirConstructor -> fir.annotations
             else -> return

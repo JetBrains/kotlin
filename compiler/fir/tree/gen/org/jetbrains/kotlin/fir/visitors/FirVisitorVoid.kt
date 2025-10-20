@@ -515,11 +515,11 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(outerClassTypeParameterRef)
     }
 
-    final override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
+    final override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: Nothing?) {
         visitSimpleFunction(simpleFunction)
     }
 
-    open fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+    open fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
         visitElement(simpleFunction)
     }
 

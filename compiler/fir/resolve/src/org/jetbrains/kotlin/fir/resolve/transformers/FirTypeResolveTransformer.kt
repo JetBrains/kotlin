@@ -275,9 +275,9 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+        simpleFunction: FirNamedFunction,
         data: Any?,
-    ): FirSimpleFunction = whileAnalysing(session, simpleFunction) {
+    ): FirNamedFunction = whileAnalysing(session, simpleFunction) {
         withScopeCleanup {
             withDeclaration(simpleFunction) {
                 addTypeParametersScope(simpleFunction)
@@ -286,7 +286,7 @@ open class FirTypeResolveTransformer(
                 }
 
                 if (result.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers &&
-                    result is FirSimpleFunction &&
+                    result is FirNamedFunction &&
                     result.name == StandardNames.DATA_CLASS_COPY
                 ) {
                     for (valueParameter in result.valueParameters) {
@@ -296,7 +296,7 @@ open class FirTypeResolveTransformer(
 
                 result
             }
-        } as FirSimpleFunction
+        } as FirNamedFunction
     }
 
     private fun unboundCyclesInTypeParametersSupertypes(typeParametersOwner: FirTypeParameterRefsOwner) {

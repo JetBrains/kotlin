@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @OptIn(FirImplementationDetail::class, ResolveStateAccess::class)
-internal class FirSimpleFunctionImpl(
+internal class FirNamedFunctionImpl(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
     override val moduleData: FirModuleData,
@@ -50,7 +50,7 @@ internal class FirSimpleFunctionImpl(
     override val symbol: FirNamedFunctionSymbol,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameter>,
-) : FirSimpleFunction() {
+) : FirNamedFunction() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
@@ -73,7 +73,7 @@ internal class FirSimpleFunctionImpl(
         typeParameters.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverParameter(transformer, data)
@@ -87,47 +87,47 @@ internal class FirSimpleFunctionImpl(
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         receiverParameter = receiverParameter?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         contextParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         valueParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         body = body?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         contractDescription = contractDescription?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirNamedFunctionImpl {
         typeParameters.transformInplace(transformer, data)
         return this
     }

@@ -272,7 +272,7 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
                         }
                     }
                 } else {
-                    declaration is FirSimpleFunction && declaration.isAllowedToBeAccessedFromOutside()
+                    declaration is FirNamedFunction && declaration.isAllowedToBeAccessedFromOutside()
                 }
             }
 
@@ -456,7 +456,7 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
 
     // monitorEnter/monitorExit are the only functions which are accessed "illegally" (see kotlin/util/Synchronized.kt).
     // Since they are intrinsified in the codegen, FIR should treat it as visible.
-    private fun FirSimpleFunction.isAllowedToBeAccessedFromOutside(): Boolean {
+    private fun FirNamedFunction.isAllowedToBeAccessedFromOutside(): Boolean {
         if (!isFromLibrary) return false
         val packageName = symbol.callableId.packageName.asString()
         val name = name.asString()

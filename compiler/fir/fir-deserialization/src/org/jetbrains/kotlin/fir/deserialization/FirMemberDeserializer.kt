@@ -617,7 +617,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         classSymbol: FirClassSymbol<*>? = null,
         // TODO: introduce the similar changes for the other deserialized entities
         deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
         val receiverAnnotations = if (proto.hasReceiver()) {

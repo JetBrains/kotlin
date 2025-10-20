@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.psi
  * @return **false** if it is not in-block modification
  */
 internal fun invalidateAfterInBlockModification(declaration: FirDeclaration): Boolean = when (declaration) {
-    is FirSimpleFunction -> declaration.inBodyInvalidation()
+    is FirNamedFunction -> declaration.inBodyInvalidation()
     is FirPropertyAccessor -> declaration.inBodyInvalidation()
     is FirProperty -> declaration.inBodyInvalidation()
     is FirCodeFragment -> declaration.inBodyInvalidation()
@@ -47,7 +47,7 @@ internal fun invalidateAfterInBlockModification(declaration: FirDeclaration): Bo
  *
  * @return **false** if it is an out-of-block change
  */
-private fun FirSimpleFunction.inBodyInvalidation(): Boolean {
+private fun FirNamedFunction.inBodyInvalidation(): Boolean {
     val body = body ?: return false
     invalidateBody(body)
     return true

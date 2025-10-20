@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
 import org.jetbrains.kotlin.fir.scopes.firOverrideChecker
@@ -32,7 +32,7 @@ class JavaOverridabilityRules(private val session: FirSession) : PlatformSpecifi
 
     private val standardOverrideChecker = session.firOverrideChecker
 
-    override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean? {
+    override fun isOverriddenFunction(overrideCandidate: FirNamedFunction, baseDeclaration: FirNamedFunction): Boolean? {
         return if (shouldApplyJavaChecker(overrideCandidate, baseDeclaration)) {
             when {
                 // Only returning the negative result is questionable here (JavaOverrideChecker can forbid overriding, but it cannot allow it on own behalf)
@@ -53,7 +53,7 @@ class JavaOverridabilityRules(private val session: FirSession) : PlatformSpecifi
      *
      * See compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameter.kt
      */
-    private fun shouldDoReverseCheck(overrideCandidate: FirSimpleFunction): Boolean {
+    private fun shouldDoReverseCheck(overrideCandidate: FirNamedFunction): Boolean {
         return !session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible) &&
                 overrideCandidate.typeParameters.isNotEmpty()
     }

@@ -18,7 +18,7 @@ object FirJvmInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker(M
         val source = declaration.source
         when (declaration) {
             is FirRegularClass -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
-            is FirSimpleFunction -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirNamedFunction -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
             is FirTypeParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
             is FirProperty -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
             is FirTypeAlias -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)

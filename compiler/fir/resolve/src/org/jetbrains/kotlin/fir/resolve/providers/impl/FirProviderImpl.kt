@@ -184,7 +184,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             registerCallable(symbol, data, data.state.constructorMap)
         }
 
-        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: FirRecorderData) {
+        override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: FirRecorderData) {
             val symbol = simpleFunction.symbol
             registerCallable(symbol, data, data.state.functionMap)
         }

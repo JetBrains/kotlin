@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.scriptConfigurators
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
@@ -37,7 +37,7 @@ class FirScriptingSamWithReceiverExtensionRegistrar() : FirExtensionRegistrar() 
             }
         }
 
-        override fun getCustomFunctionTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType? {
+        override fun getCustomFunctionTypeForSamConversion(function: FirNamedFunction): ConeLookupTagBasedType? {
             val containingClassSymbol = function.containingClassLookupTag()?.toRegularClassSymbol(session) ?: return null
             return runIf(containingClassSymbol.resolvedAnnotationClassIds.any { it.asSingleFqName().asString() in knownAnnotations }) {
                 val parameterTypes = function.valueParameters.map { it.returnTypeRef.coneType }

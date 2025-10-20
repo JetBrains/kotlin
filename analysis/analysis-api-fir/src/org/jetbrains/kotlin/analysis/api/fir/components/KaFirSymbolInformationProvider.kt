@@ -73,7 +73,7 @@ internal class KaFirSymbolInformationProvider(
 
     override val KaNamedFunctionSymbol.canBeOperator: Boolean
         get() = withValidityAssertion {
-            val functionFir = this@canBeOperator.firSymbol.fir as? FirSimpleFunction ?: return false
+            val functionFir = this@canBeOperator.firSymbol.fir as? FirNamedFunction ?: return false
             return OperatorFunctionChecks.isOperator(
                 functionFir,
                 analysisSession.firSession,

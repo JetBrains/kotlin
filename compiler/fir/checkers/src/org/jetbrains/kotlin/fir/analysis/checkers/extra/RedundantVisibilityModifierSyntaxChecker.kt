@@ -235,7 +235,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
                 }
             }
 
-            this is FirSimpleFunction
+            this is FirNamedFunction
                     && context.containingDeclarations.last() is FirClassSymbol
                     && this.isOverride -> findFunctionVisibility(this)
 
@@ -283,7 +283,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
     }
 
     context(context: CheckerContext)
-    private fun findFunctionVisibility(function: FirSimpleFunction): Visibility {
+    private fun findFunctionVisibility(function: FirNamedFunction): Visibility {
         return findBiggestVisibility {
             function.symbol.processOverriddenFunctionsWithActionSafe(it)
         }

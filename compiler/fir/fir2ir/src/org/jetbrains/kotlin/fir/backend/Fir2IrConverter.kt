@@ -503,7 +503,7 @@ class Fir2IrConverter(
                 addDeclarationToParentIfNeeded(irSnippet)
                 irSnippet.parent = parent
             }
-            is FirSimpleFunction -> {
+            is FirNamedFunction -> {
                 declarationStorage.createAndCacheIrFunction(declaration, parent, isLocal = isInLocalClass)
             }
             is FirProperty -> {
@@ -596,7 +596,7 @@ class Fir2IrConverter(
                                     scriptDeclaration.destructuringDeclarationContainerVariable == null)
                 }
                 is FirClassLikeDeclaration -> !scriptDeclaration.isLocal
-                is FirSimpleFunction -> !scriptDeclaration.isLocal
+                is FirNamedFunction -> !scriptDeclaration.isLocal
                 else -> true
             }
             if (needProcessMember) {

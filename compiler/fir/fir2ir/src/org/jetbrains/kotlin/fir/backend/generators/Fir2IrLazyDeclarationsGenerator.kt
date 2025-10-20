@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
     internal fun createIrLazyFunction(
-        fir: FirSimpleFunction,
+        fir: FirNamedFunction,
         symbol: IrSimpleFunctionSymbol,
         lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin,

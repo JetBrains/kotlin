@@ -1379,7 +1379,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     toFirSource: (TBase?, KtFakeSourceElementKind) -> KtSourceElement?,
     addValueParameterAnnotations: FirValueParameterBuilder.(TParameter) -> Unit,
     isVararg: (TParameter) -> Boolean,
-): FirSimpleFunction {
+): FirNamedFunction {
     fun generateComponentAccess(
         parameterSource: KtSourceElement?,
         firProperty: FirProperty,

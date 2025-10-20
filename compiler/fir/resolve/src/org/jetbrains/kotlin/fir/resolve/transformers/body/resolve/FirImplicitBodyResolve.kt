@@ -147,9 +147,9 @@ open class FirImplicitAwareBodyResolveTransformer(
     }
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+        simpleFunction: FirNamedFunction,
         data: ResolutionMode
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         return computeCachedTransformationResult(simpleFunction) {
             super.transformSimpleFunction(simpleFunction, data)
         }
@@ -214,7 +214,7 @@ open class ReturnTypeCalculatorWithJump(
             )
         }
 
-        if (declaration is FirSimpleFunction) {
+        if (declaration is FirNamedFunction) {
             // Effectively this logic is redundant now, because all methods of Int have an explicit return type,
             // so explicit call here just to be sure (probably some method from Int will have an implicit type)
             declaration.originalForWrappedIntegerOperator?.let {
@@ -258,7 +258,7 @@ open class ReturnTypeCalculatorWithJump(
     private fun resolvedToContractsIfNecessary(declaration: FirCallableDeclaration) {
         val canHaveContracts = when {
             declaration is FirProperty && !declaration.isLocal -> true
-            declaration is FirSimpleFunction && !declaration.isLocal -> true
+            declaration is FirNamedFunction && !declaration.isLocal -> true
             else -> false
         }
 

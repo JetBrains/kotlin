@@ -38,7 +38,7 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
 
         fun isJsCodeDeclaration(): Boolean {
             return when (declaration) {
-                is FirSimpleFunction -> declaration.hasValidJsCodeBody()
+                is FirNamedFunction -> declaration.hasValidJsCodeBody()
                 is FirProperty -> declaration.hasValidJsCodeBody()
                 else -> false
             }

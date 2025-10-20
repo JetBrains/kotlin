@@ -66,7 +66,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
                 condition = { it.isVisible() && !it.isExtension },
                 processMembers = { scope.processPropertiesByName(declaration.name, it) },
             )
-            is FirSimpleFunction -> findFirstSymbolByCondition<FirNamedFunctionSymbol>(
+            is FirNamedFunction -> findFirstSymbolByCondition<FirNamedFunctionSymbol>(
                 condition = { it.isVisible() && it.shadows(declaration.symbol) },
                 processMembers = { scope.processFunctionsByName(declaration.name, it) },
             )
@@ -82,7 +82,7 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
             }
         }
 
-        if (declaration !is FirSimpleFunction) {
+        if (declaration !is FirNamedFunction) {
             return
         }
 

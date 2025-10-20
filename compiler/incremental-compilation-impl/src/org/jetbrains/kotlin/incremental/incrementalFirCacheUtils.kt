@@ -80,7 +80,7 @@ internal fun collectNewDirtySources(
                     }
                 }
 
-                override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableList<MetadataSerializer>) {
+                override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: MutableList<MetadataSerializer>) {
                     data.firstOrNull()?.let { serializer ->
                         super.visitFunction(simpleFunction, data)
                         serializer.bindMethodMetadata(

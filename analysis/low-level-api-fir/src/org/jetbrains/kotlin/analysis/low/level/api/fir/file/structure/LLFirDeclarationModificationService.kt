@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
@@ -271,7 +271,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
          */
         internal fun bodyResolved(element: FirElementWithResolveState, phase: FirResolvePhase) {
             when (element) {
-                is FirSimpleFunction -> {
+                is FirNamedFunction -> {
                     // in-block modifications only applicable to functions with an explicit type,
                     // so we mark only fully resolved functions
                     if (phase != FirResolvePhase.BODY_RESOLVE) return

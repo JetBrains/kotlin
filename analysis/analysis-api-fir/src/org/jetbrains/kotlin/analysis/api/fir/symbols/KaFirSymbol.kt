@@ -101,7 +101,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     }
 
     FirDeclarationOrigin.WrappedIntegerOperator -> {
-        val original = (this as FirSimpleFunction).originalForWrappedIntegerOperator?.fir
+        val original = (this as FirNamedFunction).originalForWrappedIntegerOperator?.fir
             ?: errorWithFirSpecificEntries(
                 "Declaration has WrappedIntegerOperator origin, but no originalForWrappedIntegerOperator present",
                 fir = this

@@ -128,7 +128,7 @@ class FirSamResolver(
         return functionType.withNullabilityOf(type, session.typeContext)
     }
 
-    fun getSamConstructor(firClassOrTypeAlias: FirClassLikeDeclaration): FirSimpleFunction? {
+    fun getSamConstructor(firClassOrTypeAlias: FirClassLikeDeclaration): FirNamedFunction? {
         if (firClassOrTypeAlias is FirTypeAlias) {
             // Precompute the constructor for the base type to avoid deadlocks in the IDE.
             firClassOrTypeAlias.symbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()
@@ -341,7 +341,7 @@ private fun ConeKotlinType.containsReferenceToOtherTypeParameter(owner: FirTypeP
 private fun FirRegularClass.getSingleAbstractMethodOrNull(
     session: FirSession,
     scopeSession: ScopeSession,
-): FirSimpleFunction? {
+): FirNamedFunction? {
     if (classKind != ClassKind.INTERFACE || hasMoreThenOneAbstractFunctionOrHasAbstractProperty()) return null
 
     val samCandidateNames = computeSamCandidateNames(session)
@@ -363,7 +363,7 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
                 is FirProperty -> if (declaration.resolvedIsAbstract) {
                     samCandidateNames.add(declaration.name)
                 }
-                is FirSimpleFunction -> if (declaration.resolvedIsAbstract) {
+                is FirNamedFunction -> if (declaration.resolvedIsAbstract) {
                     samCandidateNames.add(declaration.name)
                 }
                 else -> {}
@@ -378,8 +378,8 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
     session: FirSession,
     scopeSession: ScopeSession,
     samCandidateNames: Set<Name>,
-): FirSimpleFunction? {
-    var resultMethod: FirSimpleFunction? = null
+): FirNamedFunction? {
+    var resultMethod: FirNamedFunction? = null
     var metIncorrectMember = false
 
     val classUseSiteMemberScope = this.unsubstitutedScope(
@@ -423,7 +423,7 @@ private fun FirRegularClass.hasMoreThenOneAbstractFunctionOrHasAbstractProperty(
     var wasAbstractFunction = false
     for (declaration in declarations) {
         if (declaration is FirProperty && declaration.resolvedIsAbstract) return true
-        if (declaration is FirSimpleFunction && declaration.resolvedIsAbstract &&
+        if (declaration is FirNamedFunction && declaration.resolvedIsAbstract &&
             !declaration.isPublicInObject(checkOnlyName = true)
         ) {
             if (wasAbstractFunction) return true
@@ -449,7 +449,7 @@ private val FirCallableDeclaration.resolvedIsAbstract: Boolean
  *
  * For K1 compatibility, this only applies to members declared in Java, see KT-67283.
  */
-private fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
+private fun FirNamedFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
     if (!isJavaOrEnhancement) return false
     if (name.asString() !in PUBLIC_METHOD_NAMES_IN_OBJECT) return false
     if (checkOnlyName) return true
@@ -472,7 +472,7 @@ private fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean 
 
 private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")
 
-private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(session: FirSession): ConeLookupTagBasedType {
+private fun FirNamedFunction.getFunctionTypeForAbstractMethod(session: FirSession): ConeLookupTagBasedType {
     val parameterTypes = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(ConeIntermediateDiagnostic("No type for parameter $it"))
     }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.hasValidJsCodeBody
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
@@ -38,7 +38,7 @@ object FirWasmExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
             reporter.reportOn(declaration.source, FirWasmErrors.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION)
         }
 
-        if (declaration is FirSimpleFunction) {
+        if (declaration is FirNamedFunction) {
             if (declaration.symbol.isEffectivelyExternal(context.session) || declaration.hasValidJsCodeBody()) {
                 reporter.reportOn(annotation.source, FirWasmErrors.WASM_EXPORT_ON_EXTERNAL_DECLARATION)
             }

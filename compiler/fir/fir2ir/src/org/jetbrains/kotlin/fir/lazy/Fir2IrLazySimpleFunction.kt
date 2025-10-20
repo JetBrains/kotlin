@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.lazyMappedFunctionListVar
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -27,12 +27,12 @@ class Fir2IrLazySimpleFunction(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
-    override val fir: FirSimpleFunction,
+    override val fir: FirNamedFunction,
     private val firParent: FirRegularClass?,
     symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     isFakeOverride: Boolean
-) : AbstractFir2IrLazyFunction<FirSimpleFunction>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
+) : AbstractFir2IrLazyFunction<FirNamedFunction>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)

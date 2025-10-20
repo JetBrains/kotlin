@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -147,8 +147,8 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
         }
 
         return when (aFir) {
-            is FirSimpleFunction -> {
-                require(bFir is FirSimpleFunction) { "b is " + bFir.javaClass }
+            is FirNamedFunction -> {
+                require(bFir is FirNamedFunction) { "b is " + bFir.javaClass }
                 byVisibilityAndType
             }
 

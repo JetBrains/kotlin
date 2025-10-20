@@ -571,9 +571,9 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     )
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+        simpleFunction: FirNamedFunction,
         data: ResolutionMode,
-    ): FirSimpleFunction = declarationTransformation(
+    ): FirNamedFunction = declarationTransformation(
         simpleFunction,
         data,
         FirDeclarationsResolveTransformer::transformSimpleFunction,

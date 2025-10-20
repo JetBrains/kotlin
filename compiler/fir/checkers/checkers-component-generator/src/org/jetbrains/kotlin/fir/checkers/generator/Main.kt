@@ -194,7 +194,7 @@ fun main(args: Array<String>) {
                 visitAlso<FirErrorProperty>(it)
             }
             alias<FirFunction>("FunctionChecker", false)
-            alias<FirSimpleFunction>("SimpleFunctionChecker")
+            alias<FirNamedFunction>("SimpleFunctionChecker")
             alias<FirProperty>("PropertyChecker")
             alias<FirClassLikeDeclaration>("ClassLikeChecker", false)
             alias<FirClass>("ClassChecker")

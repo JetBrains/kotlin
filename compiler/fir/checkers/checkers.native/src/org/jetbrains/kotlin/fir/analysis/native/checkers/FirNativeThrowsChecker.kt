@@ -96,7 +96,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         declaration: FirDeclaration,
         throwsAnnotation: FirAnnotation?,
     ): Boolean {
-        if (declaration !is FirSimpleFunction) return true
+        if (declaration !is FirNamedFunction) return true
 
         val inherited = getInheritedThrows(declaration, throwsAnnotation).entries.distinctBy { it.value }
 
@@ -124,7 +124,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
 
     context(context: CheckerContext)
     private fun getInheritedThrows(
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         throwsAnnotation: FirAnnotation?
     ): Map<FirNamedFunctionSymbol, ThrowsFilter> {
         val visited = mutableSetOf<FirNamedFunctionSymbol>()

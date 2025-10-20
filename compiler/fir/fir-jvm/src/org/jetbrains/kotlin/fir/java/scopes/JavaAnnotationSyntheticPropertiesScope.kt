@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
@@ -32,7 +32,7 @@ class JavaAnnotationSyntheticPropertiesScope(
     private val delegateScope: JavaClassMembersEnhancementScope
 ) : FirDelegatingTypeScope(delegateScope) {
     private val classId: ClassId = owner.classId
-    private val names: Set<Name> = owner.fir.declarations.mapNotNullTo(mutableSetOf()) { (it as? FirSimpleFunction)?.name }
+    private val names: Set<Name> = owner.fir.declarations.mapNotNullTo(mutableSetOf()) { (it as? FirNamedFunction)?.name }
     private val syntheticPropertiesCache = hashMapOf<FirNamedFunctionSymbol, FirVariableSymbol<*>>()
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {

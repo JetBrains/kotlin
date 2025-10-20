@@ -348,7 +348,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
         fun mappingName(declaration: FirDeclaration): Name = when (declaration) {
             is FirScript -> declaration.name
             is FirRegularClass -> declaration.name
-            is FirSimpleFunction -> declaration.name
+            is FirNamedFunction -> declaration.name
             is FirVariable -> declaration.name
             is FirConstructor -> SpecialNames.INIT
             is FirAnonymousInitializer -> SpecialNames.ANONYMOUS

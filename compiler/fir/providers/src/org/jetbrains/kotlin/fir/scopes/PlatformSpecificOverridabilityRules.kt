@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 abstract class PlatformSpecificOverridabilityRules : FirComposableSessionComponent<PlatformSpecificOverridabilityRules> {
     // Thus functions return "null" in case the status should be defined via standard platform-independent rules
     abstract fun isOverriddenFunction(
-        overrideCandidate: FirSimpleFunction,
-        baseDeclaration: FirSimpleFunction
+        overrideCandidate: FirNamedFunction,
+        baseDeclaration: FirNamedFunction
     ): Boolean?
 
     abstract fun isOverriddenProperty(
@@ -41,8 +41,8 @@ abstract class PlatformSpecificOverridabilityRules : FirComposableSessionCompone
         override val components: List<PlatformSpecificOverridabilityRules>
     ) : PlatformSpecificOverridabilityRules(), FirComposableSessionComponent.Composed<PlatformSpecificOverridabilityRules> {
         override fun isOverriddenFunction(
-            overrideCandidate: FirSimpleFunction,
-            baseDeclaration: FirSimpleFunction,
+            overrideCandidate: FirNamedFunction,
+            baseDeclaration: FirNamedFunction,
         ): Boolean? {
             return components.firstNotNullOfOrNull { it.isOverriddenFunction(overrideCandidate, baseDeclaration) }
         }

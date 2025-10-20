@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChecker {
     private val standardOverrideChecker = FirStandardOverrideChecker(session)
 
-    override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean =
+    override fun isOverriddenFunction(overrideCandidate: FirNamedFunction, baseDeclaration: FirNamedFunction): Boolean =
             overrideCandidate.isPlatformOverriddenFunction(session, baseDeclaration)
                     ?: standardOverrideChecker.isOverriddenFunction(overrideCandidate, baseDeclaration)
 
@@ -49,7 +49,7 @@ class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChe
     /**
      * mimics ObjCOverridabilityCondition.isOverridable
      */
-    private fun FirSimpleFunction.isPlatformOverriddenFunction(session: FirSession, baseDeclaration: FirSimpleFunction): Boolean? {
+    private fun FirNamedFunction.isPlatformOverriddenFunction(session: FirSession, baseDeclaration: FirNamedFunction): Boolean? {
         if (this.name != baseDeclaration.name) {
             return null
         }
@@ -68,7 +68,7 @@ class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChe
     /**
      * mimics ObjCInteropKt.parameterNamesMatch
      */
-    private fun parameterNamesMatch(first: FirSimpleFunction, second: FirSimpleFunction): Boolean {
+    private fun parameterNamesMatch(first: FirNamedFunction, second: FirNamedFunction): Boolean {
         // The original Objective-C method selector is represented as
         // function name and parameter names (except first).
 

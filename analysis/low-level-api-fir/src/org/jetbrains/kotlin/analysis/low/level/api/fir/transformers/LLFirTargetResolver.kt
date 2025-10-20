@@ -154,7 +154,7 @@ internal sealed class LLFirTargetResolver(
                 target.destructuringDeclarationContainerVariable?.lazyResolveToPhase(resolverPhase)
             }
 
-            target is FirSimpleFunction && target.origin == FirDeclarationOrigin.Synthetic.DataClassMember -> {
+            target is FirNamedFunction && target.origin == FirDeclarationOrigin.Synthetic.DataClassMember -> {
                 resolveDataClassMemberDependencies(target)
             }
 
@@ -169,7 +169,7 @@ internal sealed class LLFirTargetResolver(
         }
     }
 
-    private fun resolveDataClassMemberDependencies(function: FirSimpleFunction) {
+    private fun resolveDataClassMemberDependencies(function: FirNamedFunction) {
         when {
             /**
              * componentN method shares the return type with the corresponding property

@@ -54,7 +54,7 @@ class MissingOverrideStatusTransformer(session: FirSession) : FirStatusTransform
 
     override fun transformStatus(
         status: FirDeclarationStatus,
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean,
     ): FirDeclarationStatus {

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
@@ -143,7 +143,7 @@ class FirClassAnySynthesizedMemberScope(
             else -> shouldNotBeCalled()
         }.symbol
 
-    private fun generateEqualsFunction(): FirSimpleFunction =
+    private fun generateEqualsFunction(): FirNamedFunction =
         buildSimpleFunction {
             generateSyntheticFunction(OperatorNameConventions.EQUALS, isOperator = true)
             returnTypeRef = FirImplicitBooleanTypeRef(source)
@@ -162,13 +162,13 @@ class FirClassAnySynthesizedMemberScope(
             )
         }
 
-    private fun generateHashCodeFunction(): FirSimpleFunction =
+    private fun generateHashCodeFunction(): FirNamedFunction =
         buildSimpleFunction {
             generateSyntheticFunction(OperatorNameConventions.HASH_CODE)
             returnTypeRef = FirImplicitIntTypeRef(source)
         }
 
-    private fun generateToStringFunction(): FirSimpleFunction =
+    private fun generateToStringFunction(): FirNamedFunction =
         buildSimpleFunction {
             generateSyntheticFunction(OperatorNameConventions.TO_STRING)
             returnTypeRef = FirImplicitStringTypeRef(source)

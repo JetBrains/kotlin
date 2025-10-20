@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCallableDeclara
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
@@ -40,7 +40,7 @@ sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCall
         declaration: FirCallableDeclaration,
         containingClass: FirClassSymbol<*>,
     ) {
-        if (declaration !is FirSimpleFunction && declaration !is FirProperty) return
+        if (declaration !is FirNamedFunction && declaration !is FirProperty) return
         val firTypeScope = containingClass.unsubstitutedScope()
         FirNativeObjCNameUtilities.checkCallableMember(firTypeScope, declaration.symbol, declaration)
     }

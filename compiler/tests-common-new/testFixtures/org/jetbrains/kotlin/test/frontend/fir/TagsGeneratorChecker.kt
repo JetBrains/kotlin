@@ -281,7 +281,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         checkRegularClassStatus(regularClass.status)
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+    override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
         if (skipSyntheticDeclaration(simpleFunction.source)) return
         visitElement(simpleFunction)
         tags += FirTags.FUNCTION

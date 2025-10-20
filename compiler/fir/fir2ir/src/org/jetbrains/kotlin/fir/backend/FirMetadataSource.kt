@@ -23,7 +23,7 @@ sealed class FirMetadataSource : MetadataSource {
     override val name: Name?
         get() = when (val fir = fir) {
             is FirConstructor -> SpecialNames.INIT
-            is FirSimpleFunction -> fir.name
+            is FirNamedFunction -> fir.name
             is FirRegularClass -> fir.name
             is FirProperty -> fir.name
             else -> null

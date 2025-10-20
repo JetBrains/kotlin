@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.Name
@@ -18,14 +18,14 @@ class FirSyntheticPropertyBuilder {
     lateinit var moduleData: FirModuleData
     lateinit var name: Name
     lateinit var symbol: FirSyntheticPropertySymbol
-    lateinit var delegateGetter: FirSimpleFunction
+    lateinit var delegateGetter: FirNamedFunction
     lateinit var deprecationsProvider: DeprecationsProvider
 
     /**
      * The values should be `null` for cases where [delegateGetter] values should be reused.
      */
     var customStatus: FirDeclarationStatus? = null
-    var delegateSetter: FirSimpleFunction? = null
+    var delegateSetter: FirNamedFunction? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
 
 

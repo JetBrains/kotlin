@@ -79,9 +79,9 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
     protected open inner class FirDeclarationsContractResolveTransformer :
         FirDeclarationsResolveTransformer(this@FirAbstractContractResolveTransformerDispatcher) {
         override fun transformSimpleFunction(
-            simpleFunction: FirSimpleFunction,
+            simpleFunction: FirNamedFunction,
             data: ResolutionMode
-        ): FirSimpleFunction {
+        ): FirNamedFunction {
             if (!simpleFunction.hasContractToResolve) return simpleFunction
 
             return context.withSimpleFunction(simpleFunction, session) {

@@ -46,8 +46,8 @@ internal fun FirOverrideChecker.similarFunctionsOrBothProperties(
 ): Boolean {
     return when {
         overrideCandidate.origin == FirDeclarationOrigin.DynamicScope -> false
-        overrideCandidate is FirSimpleFunction -> when (baseDeclaration) {
-            is FirSimpleFunction -> isOverriddenFunction(overrideCandidate, baseDeclaration)
+        overrideCandidate is FirNamedFunction -> when (baseDeclaration) {
+            is FirNamedFunction -> isOverriddenFunction(overrideCandidate, baseDeclaration)
             is FirProperty -> isOverriddenProperty(overrideCandidate, baseDeclaration)
             else -> false
         }

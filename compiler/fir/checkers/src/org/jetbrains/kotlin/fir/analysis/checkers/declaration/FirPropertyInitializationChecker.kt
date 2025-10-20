@@ -29,7 +29,7 @@ object FirPropertyInitializationChecker : FirClassChecker(MppCheckerKind.Common)
 
             override fun visitConstructor(constructor: FirConstructor) {}
 
-            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {}
+            override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {}
 
             override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {}
 

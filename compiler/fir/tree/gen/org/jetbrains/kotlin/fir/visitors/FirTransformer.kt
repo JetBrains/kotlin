@@ -515,11 +515,11 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformOuterClassTypeParameterRef(outerClassTypeParameterRef, data)
     }
 
-    open fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: D): FirStatement {
+    open fun transformSimpleFunction(simpleFunction: FirNamedFunction, data: D): FirStatement {
         return transformElement(simpleFunction, data)
     }
 
-    final override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: D): FirStatement {
+    final override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: D): FirStatement {
         return transformSimpleFunction(simpleFunction, data)
     }
 

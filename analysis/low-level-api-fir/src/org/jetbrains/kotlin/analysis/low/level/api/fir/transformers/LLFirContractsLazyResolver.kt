@@ -60,7 +60,7 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
                 // No contracts here
             }
 
-            is FirSimpleFunction -> {
+            is FirNamedFunction -> {
                 if (target.contractDescription != null) {
                     resolveContracts(target, ContractStateKeepers.SIMPLE_FUNCTION)
                 }
@@ -110,7 +110,7 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
 
     private fun dropRedundantContractDescription(target: FirElementWithResolveState) {
         when (target) {
-            is FirSimpleFunction, is FirConstructor -> dropRedundantContractDescriptionForFunction(target)
+            is FirNamedFunction, is FirConstructor -> dropRedundantContractDescriptionForFunction(target)
             is FirProperty -> {
                 target.getter?.let(::dropRedundantContractDescriptionForFunction)
                 target.setter?.let(::dropRedundantContractDescriptionForFunction)
@@ -160,7 +160,7 @@ private object ContractStateKeepers {
         }
     }
 
-    val SIMPLE_FUNCTION: StateKeeper<FirSimpleFunction, FirDesignation> = stateKeeper { builder, _, designation ->
+    val SIMPLE_FUNCTION: StateKeeper<FirNamedFunction, FirDesignation> = stateKeeper { builder, _, designation ->
         builder.add(CONTRACT_DESCRIPTION_OWNER, designation)
         builder.add(BODY_OWNER, designation)
     }

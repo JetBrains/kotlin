@@ -151,7 +151,7 @@ abstract class FirAbstractImportingScope(
     abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirAbstractImportingScope
 }
 
-internal fun FirSimpleFunction.buildImportedVersion(importedClassId: ClassId): FirSimpleFunction {
+internal fun FirNamedFunction.buildImportedVersion(importedClassId: ClassId): FirNamedFunction {
     return buildSimpleFunctionCopy(this) {
         origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
         this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))

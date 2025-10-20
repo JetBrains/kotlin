@@ -31,7 +31,7 @@ class FirScriptDeclarationsScope(
 
             val name = when (statement) {
                 is FirVariable -> if (statement.isSynthetic) continue else statement.name
-                is FirSimpleFunction -> statement.name
+                is FirNamedFunction -> statement.name
                 // TODO: destructuring decl
                 else -> continue
             }

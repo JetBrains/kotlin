@@ -52,7 +52,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     val annotationList: FirJavaAnnotationList,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     val containingClassSymbol: FirClassSymbol<*>,
-) : FirSimpleFunction() {
+) : FirNamedFunction() {
     init {
         @OptIn(FirImplementationDetail::class)
         symbol.bind(this)
@@ -108,7 +108,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
         typeParameters.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         transformReturnTypeRef(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         transformValueParameters(transformer, data)
@@ -116,33 +116,33 @@ class FirJavaMethod @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         return this
     }
 
-    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         return this
     }
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         valueParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         return this
     }
 
-    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         return this
     }
 
@@ -150,11 +150,11 @@ class FirJavaMethod @FirImplementationDetail constructor(
         shouldNotBeCalled(::replaceAnnotations, ::annotations)
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         return this
     }
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirNamedFunction {
         typeParameters.transformInplace(transformer, data)
         return this
     }

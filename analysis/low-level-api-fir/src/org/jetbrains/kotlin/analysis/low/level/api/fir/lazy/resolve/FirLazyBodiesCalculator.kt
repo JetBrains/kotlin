@@ -178,10 +178,10 @@ private fun replaceLazyDelegate(target: FirVariable, copy: FirVariable) {
 private val FirCallableDeclaration.originalPsi: PsiElement? get() = unwrapFakeOverridesOrDelegated().psi
 
 private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
-    val simpleFunction = designation.target as FirSimpleFunction
+    val simpleFunction = designation.target as FirNamedFunction
     require(needCalculatingLazyBodyForFunction(simpleFunction))
 
-    val newSimpleFunction = revive<FirSimpleFunction>(designation, simpleFunction.originalPsi)
+    val newSimpleFunction = revive<FirNamedFunction>(designation, simpleFunction.originalPsi)
 
     replaceLazyBody(simpleFunction, newSimpleFunction)
     replaceLazyValueParameters(simpleFunction, newSimpleFunction)
@@ -683,9 +683,9 @@ private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<Persist
     }
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+        simpleFunction: FirNamedFunction,
         data: PersistentList<FirDeclaration>,
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         if (needCalculatingLazyBodyForFunction(simpleFunction)) {
             val designation = FirDesignation(data, simpleFunction)
             calculateLazyBodiesForFunction(designation)
@@ -840,9 +840,9 @@ private sealed class FirLazyContractsCalculatorTransformer : FirTransformer<Pers
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E = element
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+        simpleFunction: FirNamedFunction,
         data: PersistentList<FirDeclaration>,
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         if (needCalculatingLazyContractsForFunction(simpleFunction)) {
             val designation = FirDesignation(data, simpleFunction)
             calculateLazyContractsForFunction(designation)

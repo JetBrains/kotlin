@@ -392,7 +392,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
                     visitElement(valueParameter)
                 }
 
-                override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+                override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
                     indexDeclaration(simpleFunction)
                     visitElement(simpleFunction)
                 }
@@ -925,7 +925,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         when (memberDeclaration) {
             is FirEnumEntry -> generate(memberDeclaration)
             is FirRegularClass -> generate(memberDeclaration)
-            is FirSimpleFunction -> generate(memberDeclaration)
+            is FirNamedFunction -> generate(memberDeclaration)
             is FirProperty -> if (memberDeclaration.isLocal) generate(memberDeclaration as FirVariable) else generate(memberDeclaration)
             is FirConstructor -> generate(memberDeclaration)
             is FirTypeAlias -> generate(memberDeclaration)
@@ -1047,7 +1047,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(statement: FirStatement) {
         when (statement) {
-            is FirSimpleFunction -> generate(statement)
+            is FirNamedFunction -> generate(statement)
             is FirAnonymousObject -> generate(statement, isStatement = true)
             is FirAnonymousFunction -> generate(statement, isStatement = true)
             is FirWhileLoop -> generate(statement)
@@ -1180,7 +1180,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 }
             is FirCallableSymbol<*> -> {
                 when (val fir = symbol.fir) {
-                    is FirSimpleFunction -> {
+                    is FirNamedFunction -> {
                         declarationStatus(fir.status)
                         keyword("fun ")
                         describeVerbose(symbol, fir)
@@ -1723,7 +1723,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generate(function: FirSimpleFunction) {
+    private fun FlowContent.generate(function: FirNamedFunction) {
         generateMultiLineExpression(isStatement = true) {
             iline {
                 declarationStatus(function.status)

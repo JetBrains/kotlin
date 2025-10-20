@@ -190,7 +190,7 @@ class FirKotlinScopeProvider(
 }
 
 object FirPlatformDeclarationFilter {
-    fun isNotPlatformDependent(function: FirSimpleFunction, session: FirSession): Boolean {
+    fun isNotPlatformDependent(function: FirNamedFunction, session: FirSession): Boolean {
         // Optimization: only check the annotations for specially named functions
         // as only those in List and Map are annotated as `@PlatformIndependent`.
         // This also allows optimizing more heavyweight FirJvmPlatformDeclarationFilter as it uses this function

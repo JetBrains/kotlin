@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -61,7 +61,7 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
 }
 
 context(c: Fir2IrComponents)
-internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
+internal fun FirNamedFunction.processOverriddenFunctionSymbols(
     containingClass: FirClass,
     processor: (FirNamedFunctionSymbol) -> Unit
 ) {

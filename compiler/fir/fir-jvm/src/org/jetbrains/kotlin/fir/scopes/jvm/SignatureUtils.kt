@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
@@ -38,7 +38,7 @@ fun FirFunction.computeJvmDescriptor(
     if (customName != null) {
         append(customName)
     } else {
-        if (this@computeJvmDescriptor is FirSimpleFunction) {
+        if (this@computeJvmDescriptor is FirNamedFunction) {
             append(name.asString())
         } else {
             append("<init>")
@@ -70,7 +70,7 @@ fun FirFunction.computeJvmDescriptor(
     append(")")
 
     if (includeReturnType) {
-        if (this@computeJvmDescriptor !is FirSimpleFunction || returnTypeRef.isVoid()) {
+        if (this@computeJvmDescriptor !is FirNamedFunction || returnTypeRef.isVoid()) {
             append("V")
         } else {
             typeConversion(returnTypeRef)?.let { appendConeType(it, typeConversion, mutableSetOf()) }

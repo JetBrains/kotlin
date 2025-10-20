@@ -35,7 +35,7 @@ object FirOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_INTERFACE)
             declaration.isAbstract ->
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_ABSTRACT)
-            (declaration is FirSimpleFunction && declaration.isLocal) ||
+            (declaration is FirNamedFunction && declaration.isLocal) ||
                     context.containingDeclarations.any { it.isLocalClassLike } ->
                 reporter.reportOn(annotation.source, FirJvmErrors.OVERLOADS_LOCAL)
             declaration is FirConstructor && containingDeclaration?.classKind == ClassKind.ANNOTATION_CLASS ->

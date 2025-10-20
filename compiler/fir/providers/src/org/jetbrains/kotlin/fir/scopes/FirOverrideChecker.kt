@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 interface FirOverrideChecker : FirSessionComponent {
     fun isOverriddenFunction(
-        overrideCandidate: FirSimpleFunction,
-        baseDeclaration: FirSimpleFunction
+        overrideCandidate: FirNamedFunction,
+        baseDeclaration: FirNamedFunction
     ): Boolean
 
     fun isOverriddenProperty(

@@ -36,7 +36,7 @@ sealed class CheckResult(val isSuccess: Boolean) {
 
 object OperatorFunctionChecks {
     fun isOperator(function: FirFunction, session: FirSession, scopeSession: ScopeSession?): CheckResult {
-        if (function !is FirSimpleFunction) {
+        if (function !is FirNamedFunction) {
             return CheckResult.AnonymousOperatorFunction
         }
 
@@ -112,7 +112,7 @@ object OperatorFunctionChecks {
             OperatorNameConventions.EQUALS,
             Checks.member,
             object : Check() {
-                override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? {
+                override fun check(function: FirNamedFunction, session: FirSession, scopeSession: ScopeSession?): String? {
                     if (scopeSession == null) return null
                     val containingClassSymbol = function.containingClassLookupTag()?.toRegularClassSymbol(session) ?: return null
                     val customEqualsSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
@@ -188,21 +188,21 @@ object OperatorFunctionChecks {
 private abstract class Check {
     open val feature: LanguageFeature? = null
 
-    abstract fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String?
+    abstract fun check(function: FirNamedFunction, session: FirSession, scopeSession: ScopeSession?): String?
 }
 
 private object Checks {
     fun simple(
         message: String,
         feature: LanguageFeature? = null,
-        requiredResolvePhase: ((FirSimpleFunction) -> FirResolvePhase?)? = null,
-        predicate: (FirSimpleFunction, FirSession) -> Boolean,
+        requiredResolvePhase: ((FirNamedFunction) -> FirResolvePhase?)? = null,
+        predicate: (FirNamedFunction, FirSession) -> Boolean,
     ) =
         object : Check() {
             override val feature: LanguageFeature?
                 get() = feature
 
-            override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? =
+            override fun check(function: FirNamedFunction, session: FirSession, scopeSession: ScopeSession?): String? =
                 message.takeIf {
                     requiredResolvePhase?.invoke(function)?.let { function.lazyResolveToPhase(it) }
                     !predicate(function, session)
@@ -211,11 +211,11 @@ private object Checks {
 
     fun full(
         message: String,
-        requiredResolvePhase: ((FirSimpleFunction) -> FirResolvePhase?)? = null,
-        predicate: (FirSession, FirSimpleFunction) -> Boolean,
+        requiredResolvePhase: ((FirNamedFunction) -> FirResolvePhase?)? = null,
+        predicate: (FirSession, FirNamedFunction) -> Boolean,
     ) =
         object : Check() {
-            override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? =
+            override fun check(function: FirNamedFunction, session: FirSession, scopeSession: ScopeSession?): String? =
                 message.takeIf {
                     requiredResolvePhase?.invoke(function)?.let { function.lazyResolveToPhase(it) }
                     !predicate(session, function)
@@ -277,7 +277,7 @@ private object Checks {
     }
 
     object Returns {
-        fun returnsCheck(message: String, predicate: (FirSimpleFunction, FirSession) -> Boolean): Check =
+        fun returnsCheck(message: String, predicate: (FirNamedFunction, FirSession) -> Boolean): Check =
             simple(
                 message,
                 feature = null,

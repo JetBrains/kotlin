@@ -38,7 +38,7 @@ open class FirDeclarationRenderer(
                 is FirRegularClass -> declaration.classKind.name.toLowerCaseAsciiOnly().replace("_", " ")
                 is FirTypeAlias -> "typealias"
                 is FirAnonymousFunction -> (declaration.label?.let { "${it.name}@" } ?: "") + "fun"
-                is FirSimpleFunction -> "fun"
+                is FirNamedFunction -> "fun"
                 is FirProperty -> {
                     if (declaration.isCatchParameter == true) {
                         ""

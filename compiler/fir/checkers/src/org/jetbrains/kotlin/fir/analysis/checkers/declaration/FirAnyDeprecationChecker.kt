@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationClassForOptInMarker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 
 object FirAnyDeprecationChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirSimpleFunction) {
+    override fun check(declaration: FirNamedFunction) {
         if (!declaration.isOverride || !declaration.symbol.isMethodOfAny) return
         val deprecationAnnotations =
             context.session.annotationPlatformSupport.deprecationAnnotationsWithOverridesPropagation

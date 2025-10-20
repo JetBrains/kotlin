@@ -261,13 +261,13 @@ class ControlFlowGraphBuilder private constructor(
     fun enterFunction(function: FirFunction): Pair<LocalFunctionDeclarationNode?, FunctionEnterNode> {
         require(function !is FirAnonymousFunction)
         val name = when (function) {
-            is FirSimpleFunction -> function.name.asString()
+            is FirNamedFunction -> function.name.asString()
             is FirPropertyAccessor -> if (function.isGetter) "<getter>" else "<setter>"
             is FirConstructor -> "<init>"
             else -> throw IllegalArgumentException("Unknown function: ${function.render()}")
         }
 
-        val localFunctionNode = runIf(function is FirSimpleFunction && function.isLocal && bodyBuildingMode) {
+        val localFunctionNode = runIf(function is FirNamedFunction && function.isLocal && bodyBuildingMode) {
             createLocalFunctionDeclarationNode(function).also { addNewSimpleNode(it) }
         }
         val kind = when {

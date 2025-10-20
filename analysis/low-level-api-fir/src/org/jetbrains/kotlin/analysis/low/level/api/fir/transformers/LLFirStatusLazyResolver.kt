@@ -260,7 +260,7 @@ private class LLFirStatusTargetResolver(
             true
         }
 
-        is FirSimpleFunction -> {
+        is FirNamedFunction -> {
             performResolveWithOverriddenCallables(
                 target,
                 { transformer.statusResolver.getOverriddenFunctions(it, transformer.containingClass) },

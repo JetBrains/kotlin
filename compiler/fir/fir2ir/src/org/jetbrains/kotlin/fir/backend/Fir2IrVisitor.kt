@@ -488,7 +488,7 @@ class Fir2IrVisitor(
         return irAnonymousInitializer
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement = whileAnalysing(session, simpleFunction) {
+    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: Any?): IrElement = whileAnalysing(session, simpleFunction) {
         val irFunction = if (simpleFunction.visibility == Visibilities.Local) {
             declarationStorage.createAndCacheIrFunction(
                 simpleFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION, isLocal = true

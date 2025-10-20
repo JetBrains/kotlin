@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 internal object FirSyntheticFunctionInterfaceSourceProvider {
     fun findPsi(fir: FirDeclaration, scope: GlobalSearchScope): PsiElement? {
         return when (fir) {
-            is FirSimpleFunction -> provideSourceForInvokeFunction(fir, scope)
+            is FirNamedFunction -> provideSourceForInvokeFunction(fir, scope)
             is FirClass -> provideSourceForFunctionClass(fir, scope)
             else -> null
         }
     }
 
-    private fun provideSourceForInvokeFunction(function: FirSimpleFunction, scope: GlobalSearchScope): PsiElement? {
+    private fun provideSourceForInvokeFunction(function: FirNamedFunction, scope: GlobalSearchScope): PsiElement? {
         val classId = function.containingClassLookupTag()?.classId ?: return null
         val classOrObject = classByClassId(classId, scope, function.llFirSession.ktModule) ?: return null
         return classOrObject.declarations.singleOrNull()

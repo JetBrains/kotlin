@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
 
@@ -27,7 +27,7 @@ internal class KaFirMemberFunctionSymbolPointer(
         candidates: FirScope,
         firSession: FirSession
     ): KaNamedFunctionSymbol? {
-        val firFunction = candidates.findDeclarationWithSignature<FirSimpleFunction>(signature) {
+        val firFunction = candidates.findDeclarationWithSignature<FirNamedFunction>(signature) {
             processFunctionsByName(name, it)
         } ?: return null
         return firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firFunction.symbol)

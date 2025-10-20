@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers
 
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 @OptIn(SymbolInternals::class)
 fun FirNamedFunctionSymbol.hasValidJsCodeBody(): Boolean = fir.hasValidJsCodeBody()
 
-fun FirSimpleFunction.hasValidJsCodeBody(): Boolean =
+fun FirNamedFunction.hasValidJsCodeBody(): Boolean =
     body?.isValidJsCodeBody() == true
 
 @OptIn(SymbolInternals::class)

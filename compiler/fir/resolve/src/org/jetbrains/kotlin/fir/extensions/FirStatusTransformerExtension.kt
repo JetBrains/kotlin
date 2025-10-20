@@ -43,7 +43,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
 
     open fun transformStatus(
         status: FirDeclarationStatus,
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {

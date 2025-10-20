@@ -66,7 +66,7 @@ fun generateValuesFunction(
     classFqName: FqName,
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
-): FirSimpleFunction {
+): FirNamedFunction {
     val sourceElement = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     return buildSimpleFunction {
         source = sourceElement
@@ -133,7 +133,7 @@ fun generateValueOfFunction(
     classFqName: FqName,
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
-): FirSimpleFunction {
+): FirNamedFunction {
     val sourceElement = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     return buildSimpleFunction {
         source = sourceElement

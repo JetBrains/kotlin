@@ -263,7 +263,7 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
 internal val FirElementWithResolveState.isPartialBodyResolvable: Boolean
     get() = when (this) {
         is FirConstructor -> !isPrimary
-        is FirSimpleFunction, is FirAnonymousInitializer -> true
+        is FirNamedFunction, is FirAnonymousInitializer -> true
         else -> false
     }
 
@@ -326,7 +326,7 @@ internal fun <T : PsiElement> T.unwrapCopy(containingFile: PsiFile = this.contai
 fun findStringPlusSymbol(session: FirSession): FirNamedFunctionSymbol? {
     val stringClassSymbol = session.builtinTypes.stringType.toRegularClassSymbol(session)
     return stringClassSymbol?.fir?.declarations?.singleOrNull {
-        it is FirSimpleFunction && it.name == OperatorNameConventions.PLUS
+        it is FirNamedFunction && it.name == OperatorNameConventions.PLUS
     }?.symbol as? FirNamedFunctionSymbol
 }
 

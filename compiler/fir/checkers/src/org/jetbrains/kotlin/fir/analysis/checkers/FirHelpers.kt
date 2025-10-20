@@ -226,7 +226,7 @@ fun FirMemberDeclaration.redundantModalities(defaultModality: Modality): Set<Mod
 }
 
 private fun FirDeclaration.hasBody(): Boolean = when (this) {
-    is FirSimpleFunction -> this.body != null && this.body !is FirEmptyExpressionBlock
+    is FirNamedFunction -> this.body != null && this.body !is FirEmptyExpressionBlock
     is FirProperty -> this.setter?.body !is FirEmptyExpressionBlock? || this.getter?.body !is FirEmptyExpressionBlock?
     else -> false
 }
@@ -712,7 +712,7 @@ fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList
         is FirAnonymousFunction -> {
             TargetLists.T_FUNCTION_EXPRESSION
         }
-        is FirSimpleFunction -> {
+        is FirNamedFunction -> {
             when {
                 annotated.isLocal -> TargetLists.T_LOCAL_FUNCTION
                 annotated.isMember -> TargetLists.T_MEMBER_FUNCTION

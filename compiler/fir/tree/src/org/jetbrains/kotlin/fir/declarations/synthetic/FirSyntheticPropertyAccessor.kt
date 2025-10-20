@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor(
-    val delegate: FirSimpleFunction,
+    val delegate: FirNamedFunction,
     override val isGetter: Boolean,
     override val propertySymbol: FirPropertySymbol,
 ) : FirPropertyAccessor() {

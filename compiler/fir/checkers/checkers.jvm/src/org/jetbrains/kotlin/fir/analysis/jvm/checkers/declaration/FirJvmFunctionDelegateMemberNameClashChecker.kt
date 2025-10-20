@@ -29,7 +29,7 @@ object FirJvmFunctionDelegateMemberNameClashChecker : FirBasicDeclarationChecker
         if (!containingClassSymbol.isFun) return
         if (declaration.symbol.isExtension || (declaration as? FirFunction)?.valueParameters?.isNotEmpty() == true) return
 
-        if (declaration is FirSimpleFunction && declaration.name == getFunctionDelegateName ||
+        if (declaration is FirNamedFunction && declaration.name == getFunctionDelegateName ||
             declaration is FirProperty && declaration.name == functionDelegateName
         ) {
             reporter.reportOn(declaration.source, FirJvmErrors.FUNCTION_DELEGATE_MEMBER_NAME_CLASH)

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteral
@@ -76,7 +76,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
         fun FirFunctionCall.isArrayOfCall(session: FirSession): Boolean {
             val function: FirCallableDeclaration = getOriginalFunction() ?: return false
             val returnTypeRef = function.returnTypeRef
-            return function is FirSimpleFunction &&
+            return function is FirNamedFunction &&
                     returnTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.isArrayType == true &&
                     isArrayOf(function, arguments) &&
                     function.receiverParameter == null
@@ -88,7 +88,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
                     "ubyte", "uint", "ulong", "ushort"
                 ).map { "kotlin/" + it + "ArrayOf" }
 
-        private fun isArrayOf(function: FirSimpleFunction, arguments: List<FirExpression>): Boolean =
+        private fun isArrayOf(function: FirNamedFunction, arguments: List<FirExpression>): Boolean =
             when (function.symbol.callableId.toString()) {
                 "kotlin/emptyArray" -> function.valueParameters.isEmpty() && arguments.isEmpty()
                 in arrayOfNames -> function.valueParameters.size == 1 && function.valueParameters[0].isVararg && arguments.size <= 1

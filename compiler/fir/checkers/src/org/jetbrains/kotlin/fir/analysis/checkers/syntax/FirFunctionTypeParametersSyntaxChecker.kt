@@ -15,17 +15,17 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.diagnostics.typeParametersList
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirSimpleFunction, KtFunction>() {
-    override fun isApplicable(element: FirSimpleFunction, source: KtSourceElement): Boolean =
+object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirNamedFunction, KtFunction>() {
+    override fun isApplicable(element: FirNamedFunction, source: KtSourceElement): Boolean =
         source.kind !is KtFakeSourceElementKind
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
-        element: FirSimpleFunction,
+        element: FirNamedFunction,
         source: KtPsiSourceElement,
         psi: KtFunction,
     ) {
@@ -42,7 +42,7 @@ object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirS
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(
-        element: FirSimpleFunction,
+        element: FirNamedFunction,
         source: KtLightSourceElement,
     ) {
         val typeParamsNode = source.treeStructure.typeParametersList(source.lighterASTNode)

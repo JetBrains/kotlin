@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.scopes.FirPlatformDeclarationFilter
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 
 internal object FirJvmPlatformDeclarationFilter {
-    fun isFunctionAvailable(function: FirSimpleFunction, javaClassScope: FirTypeScope, session: FirSession): Boolean {
+    fun isFunctionAvailable(function: FirNamedFunction, javaClassScope: FirTypeScope, session: FirSession): Boolean {
         if (FirPlatformDeclarationFilter.isNotPlatformDependent(function, session)) return true
 
         var isFunctionPresentInJavaAnalogue = false

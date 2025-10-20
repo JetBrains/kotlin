@@ -129,7 +129,7 @@ private fun buildResultingTypeAndAdaptation(
             val returnType = if (callableReferenceAdaptation == null) {
                 returnTypeWithoutCoercion.also {
                     fir.valueParameters.mapTo(parameters) {
-                        if ((fir is FirSimpleFunction || fir is FirConstructor) && fir.origin != FirDeclarationOrigin.SamConstructor) {
+                        if ((fir is FirNamedFunction || fir is FirConstructor) && fir.origin != FirDeclarationOrigin.SamConstructor) {
                             it.returnTypeRef.coneType.withParameterNameAnnotation(it)
                         } else {
                             it.returnTypeRef.coneType

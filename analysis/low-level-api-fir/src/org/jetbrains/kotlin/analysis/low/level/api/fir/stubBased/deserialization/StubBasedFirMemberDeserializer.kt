@@ -529,7 +529,7 @@ internal class StubBasedFirMemberDeserializer(
         classSymbol: FirClassSymbol<*>? = null,
         session: FirSession,
         existingSymbol: FirNamedFunctionSymbol? = null,
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         val callableName = function.nameAsSafeName
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
         val symbol = existingSymbol ?: FirNamedFunctionSymbol(callableId)

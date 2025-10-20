@@ -41,7 +41,7 @@ fun AbstractKtSourceElement?.startOffsetSkippingComments(keywordTokens: TokenSet
 
 internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     val tokenSet = when (this) {
-        is FirSimpleFunction -> FUNCTION_KEYWORD_TOKENS
+        is FirNamedFunction -> FUNCTION_KEYWORD_TOKENS
         is FirConstructor -> CONSTRUCTOR_KEYWORD_TOKENS
         is FirVariable -> VAL_VAR
         else -> null

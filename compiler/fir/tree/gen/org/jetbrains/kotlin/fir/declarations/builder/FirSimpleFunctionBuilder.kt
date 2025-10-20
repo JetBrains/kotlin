@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirNamedFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -49,8 +49,8 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
-    override fun build(): FirSimpleFunction {
-        return FirSimpleFunctionImpl(
+    override fun build(): FirNamedFunction {
+        return FirNamedFunctionImpl(
             source,
             resolvePhase,
             moduleData,
@@ -76,7 +76,7 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildSimpleFunction(init: FirSimpleFunctionBuilder.() -> Unit): FirSimpleFunction {
+inline fun buildSimpleFunction(init: FirSimpleFunctionBuilder.() -> Unit): FirNamedFunction {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
@@ -84,7 +84,7 @@ inline fun buildSimpleFunction(init: FirSimpleFunctionBuilder.() -> Unit): FirSi
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleFunctionBuilder.() -> Unit): FirSimpleFunction {
+inline fun buildSimpleFunctionCopy(original: FirNamedFunction, init: FirSimpleFunctionBuilder.() -> Unit): FirNamedFunction {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

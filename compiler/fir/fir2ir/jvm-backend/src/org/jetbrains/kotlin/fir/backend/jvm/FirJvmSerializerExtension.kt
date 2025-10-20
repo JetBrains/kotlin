@@ -254,7 +254,7 @@ open class FirJvmSerializerExtension(
     ) {
         val method = getBinding(METHOD_FOR_FIR_FUNCTION, function)
         if (method != null) {
-            val signature = signatureSerializer.methodSignature(function, (function as? FirSimpleFunction)?.name, method)
+            val signature = signatureSerializer.methodSignature(function, (function as? FirNamedFunction)?.name, method)
             if (signature != null) {
                 proto.setExtension(JvmProtoBuf.methodSignature, signature)
             }
@@ -277,7 +277,7 @@ open class FirJvmSerializerExtension(
     }
 
     private fun FirFunction.needsInlineParameterNullCheckRequirement(): Boolean =
-        this is FirSimpleFunction && isInline && !isSuspend && !isParamAssertionsDisabled &&
+        this is FirNamedFunction && isInline && !isSuspend && !isParamAssertionsDisabled &&
                 !Visibilities.isPrivate(visibility) &&
                 (valueParameters.any { it.returnTypeRef.coneType.isSomeFunctionType(session) } ||
                         receiverParameter?.typeRef?.coneType?.isSomeFunctionType(session) == true)

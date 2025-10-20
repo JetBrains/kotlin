@@ -78,7 +78,7 @@ private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when (thi
     is FirEnumEntry -> true
     is FirProperty -> true
     is FirConstructor -> true
-    is FirSimpleFunction -> true
+    is FirNamedFunction -> true
     is FirRegularClass -> true
     is FirTypeAlias -> true
     else -> false

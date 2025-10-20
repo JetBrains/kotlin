@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionPointName
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
@@ -23,7 +23,7 @@ abstract class FirSamConversionTransformerExtension(session: FirSession) : FirEx
 
     final override val extensionType: KClass<out FirExtension> = FirSamConversionTransformerExtension::class
 
-    abstract fun getCustomFunctionTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType?
+    abstract fun getCustomFunctionTypeForSamConversion(function: FirNamedFunction): ConeLookupTagBasedType?
 
     fun interface Factory : FirExtension.Factory<FirSamConversionTransformerExtension>
 }

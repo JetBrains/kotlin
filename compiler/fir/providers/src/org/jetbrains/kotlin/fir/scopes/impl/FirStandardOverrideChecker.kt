@@ -111,11 +111,11 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         }
     }
 
-    override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
+    override fun isOverriddenFunction(overrideCandidate: FirNamedFunction, baseDeclaration: FirNamedFunction): Boolean {
         return isOverriddenFunction(overrideCandidate, baseDeclaration, ignoreVisibility = false)
     }
 
-    fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction, ignoreVisibility: Boolean): Boolean {
+    fun isOverriddenFunction(overrideCandidate: FirNamedFunction, baseDeclaration: FirNamedFunction, ignoreVisibility: Boolean): Boolean {
         if (overrideCandidate.valueParameters.size != baseDeclaration.valueParameters.size) return false
         if (baseDeclaration.isHiddenToOvercomeSignatureClash == true) return false
 

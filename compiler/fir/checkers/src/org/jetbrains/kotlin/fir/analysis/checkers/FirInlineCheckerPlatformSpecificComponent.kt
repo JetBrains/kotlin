@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
@@ -28,7 +28,7 @@ abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionC
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     open fun checkFunctionalParametersWithInheritedDefaultValues(
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
     ) {
     }
@@ -48,7 +48,7 @@ abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionC
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun checkFunctionalParametersWithInheritedDefaultValues(
-            function: FirSimpleFunction,
+            function: FirNamedFunction,
             overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
         ) {
             components.forEach { it.checkFunctionalParametersWithInheritedDefaultValues(function, overriddenSymbols) }

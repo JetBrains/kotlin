@@ -74,7 +74,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
         allowLazyDeclarationsCreation: Boolean
     ): IrSimpleFunction = convertCatching(function) {
-        val simpleFunction = function as? FirSimpleFunction
+        val simpleFunction = function as? FirNamedFunction
         val isLambda = function is FirAnonymousFunction && function.isLambda
         val isBaseInvokeFunction = function.symbol.callableId
             .run { isFunctionInvoke() || isSuspendFunctionInvoke() || isKFunctionInvoke() || isKSuspendFunctionInvoke() }
@@ -101,7 +101,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 updatedOrigin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER ||
                 updatedOrigin == IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
         if (irParent.isExternalParent()) {
-            require(function is FirSimpleFunction)
+            require(function is FirNamedFunction)
             if (!allowLazyDeclarationsCreation) {
                 error("Lazy functions should be processed in Fir2IrDeclarationStorage: ${function.render()}")
             }
@@ -652,14 +652,14 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     ) {
         val containingClass = computeContainingClass(irParent)
         val parent = this
-        if (function is FirSimpleFunction || function is FirConstructor) {
+        if (function is FirNamedFunction || function is FirConstructor) {
             classifiersGenerator.setTypeParameters(this, function)
         }
         parameters = buildList {
             // dispatch receiver
             if (function !is FirConstructor) {
                 // See [LocalDeclarationsLowering]: "local function must not have dispatch receiver."
-                val isLocal = function is FirSimpleFunction && function.isLocal
+                val isLocal = function is FirNamedFunction && function.isLocal
                 if (function !is FirAnonymousFunction && dispatchReceiverType != null && !isStatic && !isLocal) {
                     this += declareThisReceiverParameter(
                         thisType = dispatchReceiverType,

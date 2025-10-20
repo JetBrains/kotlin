@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -47,7 +47,7 @@ class FirLocalScope private constructor(
         )
     }
 
-    fun storeFunction(function: FirSimpleFunction, session: FirSession): FirLocalScope {
+    fun storeFunction(function: FirNamedFunction, session: FirSession): FirLocalScope {
         return FirLocalScope(
             properties, functions.put(function.name, function.symbol), classLikeSymbols, session
         )

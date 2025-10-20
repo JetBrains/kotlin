@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.plugin.*
@@ -221,7 +221,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     private fun generateSerializerFactoryVararg(
         owner: FirClassSymbol<*>,
         callableId: CallableId,
-        original: FirSimpleFunction
+        original: FirNamedFunction
     ): FirNamedFunctionSymbol =
         createMemberFunction(owner, SerializationPluginKey, callableId.callableName, original.returnTypeRef.coneType) {
             val vpo = original.valueParameters.single()

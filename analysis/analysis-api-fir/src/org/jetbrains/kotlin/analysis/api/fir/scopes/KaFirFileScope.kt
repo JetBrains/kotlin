@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.name.Name
 
@@ -40,7 +40,7 @@ internal class KaFirFileScope(
         owner.firSymbol.fir.declarations
             .mapNotNullTo(result) { firDeclaration ->
                 when (firDeclaration) {
-                    is FirSimpleFunction -> firDeclaration.name
+                    is FirNamedFunction -> firDeclaration.name
                     is FirProperty -> firDeclaration.name
                     else -> null
                 }
@@ -69,7 +69,7 @@ internal class KaFirFileScope(
         sequence {
             owner.firSymbol.fir.declarations.forEach { firDeclaration ->
                 val callableDeclaration = when (firDeclaration) {
-                    is FirSimpleFunction -> firDeclaration.takeIf { nameFilter(firDeclaration.name) }
+                    is FirNamedFunction -> firDeclaration.takeIf { nameFilter(firDeclaration.name) }
                     is FirProperty -> firDeclaration.takeIf { nameFilter(firDeclaration.name) }
                     else -> null
                 }

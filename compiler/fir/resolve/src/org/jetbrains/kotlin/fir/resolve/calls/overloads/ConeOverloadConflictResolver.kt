@@ -475,7 +475,7 @@ class ConeOverloadConflictResolver(
 
     private fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
         return when (val declaration = call.symbol.fir) {
-            is FirSimpleFunction -> createFlatSignature(call, declaration)
+            is FirNamedFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
             is FirVariable -> createFlatSignature(call, declaration)
             is FirClass -> createFlatSignature(call, declaration)
@@ -517,7 +517,7 @@ class ConeOverloadConflictResolver(
         )
     }
 
-    private fun createFlatSignature(call: Candidate, function: FirSimpleFunction): FlatSignature<Candidate> {
+    private fun createFlatSignature(call: Candidate, function: FirNamedFunction): FlatSignature<Candidate> {
         return FlatSignature(
             origin = call,
             typeParameters = function.typeParameters.map { it.symbol.toLookupTag() },

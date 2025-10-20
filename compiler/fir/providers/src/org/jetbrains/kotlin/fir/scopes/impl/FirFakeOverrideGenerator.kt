@@ -38,7 +38,7 @@ object FirFakeOverrideGenerator {
     fun createSubstitutionOverrideFunction(
         session: FirSession,
         symbolForSubstitutionOverride: FirNamedFunctionSymbol,
-        baseFunction: FirSimpleFunction,
+        baseFunction: FirNamedFunction,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         origin: FirDeclarationOrigin.SubstitutionOverride,
@@ -70,7 +70,7 @@ object FirFakeOverrideGenerator {
     private fun createSubstitutionOverrideFunction(
         fakeOverrideSymbol: FirNamedFunctionSymbol,
         session: FirSession,
-        baseFunction: FirSimpleFunction,
+        baseFunction: FirNamedFunction,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType?,
@@ -81,7 +81,7 @@ object FirFakeOverrideGenerator {
         isExpect: Boolean = baseFunction.isExpect,
         callableCopySubstitutionForTypeUpdater: DeferredCallableCopyReturnType?,
         origin: FirDeclarationOrigin.SubstitutionOverride,
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return createCopyForFirFunction(
@@ -106,7 +106,7 @@ object FirFakeOverrideGenerator {
 
     fun createCopyForFirFunction(
         newSymbol: FirNamedFunctionSymbol,
-        baseFunction: FirSimpleFunction,
+        baseFunction: FirNamedFunction,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         session: FirSession,
         origin: FirDeclarationOrigin,
@@ -122,7 +122,7 @@ object FirFakeOverrideGenerator {
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType? = null,
         newSource: KtSourceElement? = derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source,
         markAsOverride: Boolean,
-    ): FirSimpleFunction = buildSimpleFunction {
+    ): FirNamedFunction = buildSimpleFunction {
         source = newSource
         moduleData = session.nullableModuleData ?: baseFunction.moduleData
         this.origin = origin

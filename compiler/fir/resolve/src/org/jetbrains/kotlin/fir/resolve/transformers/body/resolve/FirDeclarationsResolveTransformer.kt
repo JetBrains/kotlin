@@ -964,9 +964,9 @@ open class FirDeclarationsResolveTransformer(
     }
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+        simpleFunction: FirNamedFunction,
         data: ResolutionMode
-    ): FirSimpleFunction = whileAnalysing(session, simpleFunction) {
+    ): FirNamedFunction = whileAnalysing(session, simpleFunction) {
         val shouldResolveEverything = !implicitTypeOnly
         val returnTypeRef = simpleFunction.returnTypeRef
         if ((returnTypeRef !is FirImplicitTypeRef) && implicitTypeOnly) {
@@ -1009,7 +1009,7 @@ open class FirDeclarationsResolveTransformer(
 
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {
-            val simpleFunction = function as? FirSimpleFunction
+            val simpleFunction = function as? FirNamedFunction
             val returnExpression = (body?.statements?.singleOrNull() as? FirReturnExpression)?.result
             val expressionType = returnExpression?.resolvedType
             val newSource = result.returnTypeRef.source

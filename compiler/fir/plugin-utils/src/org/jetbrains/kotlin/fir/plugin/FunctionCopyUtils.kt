@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.origin
@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.name.CallableId
  * [origin] of the generated function as [origin] of [key]. It runs [extraInit] to support the additional custom initialization.
  */
 public fun copyFirFunctionWithResolvePhase(
-    original: FirSimpleFunction,
+    original: FirNamedFunction,
     callableId: CallableId,
     key: GeneratedDeclarationKey,
     firResolvePhase: FirResolvePhase,
     extraInit: FirSimpleFunctionBuilder.() -> Unit
-): FirSimpleFunction = buildSimpleFunctionCopy(original) {
+): FirNamedFunction = buildSimpleFunctionCopy(original) {
     symbol = FirNamedFunctionSymbol(callableId)
     origin = key.origin
     resolvePhase = firResolvePhase

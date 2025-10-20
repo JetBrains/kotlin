@@ -156,7 +156,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private fun checkParameterNameChangedOnOverride(
         function: FirFunction,
     ) {
-        if (function !is FirSimpleFunction || !function.isOverride || !function.hasStableParameterNames) return
+        if (function !is FirNamedFunction || !function.isOverride || !function.hasStableParameterNames) return
         for (overriddenFunctionSymbol in function.symbol.directOverriddenFunctionsSafe()) {
             if (!overriddenFunctionSymbol.resolvedStatus.hasStableParameterNames) continue
             function.symbol.checkValueParameterNamesWith(overriddenFunctionSymbol) { currentParameter, overriddenParameter, _ ->

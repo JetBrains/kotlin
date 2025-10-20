@@ -116,7 +116,7 @@ class Fir2IrDeclarationStorage(
          * That's why, we are using original java function as a key in that case.
          */
         data class SyntheticPropertyKey(
-            val originalFunction: FirSimpleFunction,
+            val originalFunction: FirNamedFunction,
             val dispatchReceiverLookupTag: ConeClassLikeLookupTag?,
         )
 
@@ -308,12 +308,12 @@ class Fir2IrDeclarationStorage(
         function: FirFunction,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
     ): IrSimpleFunctionSymbol? {
-        return if (function is FirSimpleFunction) getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)
+        return if (function is FirNamedFunction) getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)
         else localStorage.getLocalFunctionSymbol(function)
     }
 
     fun getCachedIrFunctionSymbol(
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
     ): IrSimpleFunctionSymbol? {
         if (function.visibility == Visibilities.Local) {
@@ -372,7 +372,7 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunctionSymbol {
         if (
             parentIsExternal ||
-            function !is FirSimpleFunction ||
+            function !is FirNamedFunction ||
             !function.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag)
         ) {
             return createFunctionSymbol()
@@ -464,7 +464,7 @@ class Fir2IrDeclarationStorage(
         return this
     }
 
-    internal fun cacheGeneratedFunction(firFunction: FirSimpleFunction, irFunction: IrSimpleFunction) {
+    internal fun cacheGeneratedFunction(firFunction: FirNamedFunction, irFunction: IrSimpleFunction) {
         val containingClass = firFunction.getContainingClass()!!
         val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
         val irSymbol = irFunction.symbol
@@ -553,8 +553,8 @@ class Fir2IrDeclarationStorage(
      */
     @Suppress("KDocUnresolvedReference")
     private data class FirSyntheticPropertyKey(
-        val originalForGetter: FirSimpleFunction,
-        val originalForSetter: FirSimpleFunction?,
+        val originalForGetter: FirNamedFunction,
+        val originalForSetter: FirNamedFunction?,
     ) {
         constructor(property: FirSyntheticProperty) : this(property.getter.delegate, property.setter?.delegate)
     }
@@ -1129,7 +1129,7 @@ class Fir2IrDeclarationStorage(
         }
 
         getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)?.let { return it }
-        if (function is FirSimpleFunction && !isLocal) {
+        if (function is FirNamedFunction && !isLocal) {
             val irParent = findIrParent(function, fakeOverrideOwnerLookupTag)
             if (irParent?.isExternalParent() == true) {
                 val symbol = createMemberFunctionSymbol(function, fakeOverrideOwnerLookupTag, parentIsExternal = true)

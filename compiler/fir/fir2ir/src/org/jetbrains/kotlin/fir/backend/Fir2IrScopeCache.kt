@@ -67,7 +67,7 @@ class Fir2IrScopeCache() {
     }
 
     fun putLocalFunction(localFunction: FirFunction, irFunctionSymbol: IrSimpleFunctionSymbol) {
-        require(localFunction !is FirSimpleFunction || localFunction.visibility == Visibilities.Local) {
+        require(localFunction !is FirNamedFunction || localFunction.visibility == Visibilities.Local) {
             "Function is not local: ${localFunction.render()}"
         }
         localFunctionCache[localFunction] = irFunctionSymbol

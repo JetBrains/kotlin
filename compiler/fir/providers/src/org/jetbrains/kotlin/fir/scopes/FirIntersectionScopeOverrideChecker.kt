@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
@@ -25,7 +25,7 @@ class FirIntersectionScopeOverrideChecker(session: FirSession) : FirOverrideChec
     private val standardOverrideChecker = session.firOverrideChecker
     private val platformSpecificOverridabilityRules = session.platformSpecificOverridabilityRules
 
-    override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
+    override fun isOverriddenFunction(overrideCandidate: FirNamedFunction, baseDeclaration: FirNamedFunction): Boolean {
         platformSpecificOverridabilityRules?.isOverriddenFunction(overrideCandidate, baseDeclaration)?.let { return it }
         return standardOverrideChecker.isOverriddenFunction(overrideCandidate, baseDeclaration)
     }

@@ -112,7 +112,7 @@ private fun groupTopLevelByName(declarations: List<FirDeclaration>): Map<Name, D
         if (!declaration.symbol.isCollectable()) continue
 
         when (declaration) {
-            is FirSimpleFunction ->
+            is FirNamedFunction ->
                 groups.getOrPut(declaration.name, ::DeclarationBuckets).simpleFunctions +=
                     declaration.symbol to FirRedeclarationPresenter.represent(declaration.symbol)
             is FirProperty -> {
@@ -262,7 +262,7 @@ fun collectConflictingLocalFunctionsFrom(
 ): FirDeclarationCollector<FirFunctionSymbol<*>>? {
     val collectables =
         block.statements.filter {
-            (it is FirSimpleFunction || it is FirRegularClass) && (it as FirDeclaration).symbol.isCollectable()
+            (it is FirNamedFunction || it is FirRegularClass) && (it as FirDeclaration).symbol.isCollectable()
         }
 
     if (collectables.isEmpty()) return null
@@ -272,7 +272,7 @@ fun collectConflictingLocalFunctionsFrom(
 
     for (collectable in collectables) {
         when (collectable) {
-            is FirSimpleFunction ->
+            is FirNamedFunction ->
                 inspector.collect(collectable.symbol, FirRedeclarationPresenter.represent(collectable.symbol), functionDeclarations)
             is FirClassLikeDeclaration -> {
                 collectable.symbol.expandedClassWithConstructorsScope()?.let { (_, scopeWithConstructors) ->

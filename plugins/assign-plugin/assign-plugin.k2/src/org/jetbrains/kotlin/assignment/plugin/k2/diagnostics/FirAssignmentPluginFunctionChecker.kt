@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 object FirAssignmentPluginFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirSimpleFunction) {
+    override fun check(declaration: FirNamedFunction) {
         if (declaration.origin != FirDeclarationOrigin.Source) return
         if (!declaration.isAssignMethod()) return
 
@@ -39,7 +39,7 @@ object FirAssignmentPluginFunctionChecker : FirSimpleFunctionChecker(MppCheckerK
         }
     }
 
-    private fun FirSimpleFunction.isAssignMethod(): Boolean {
+    private fun FirNamedFunction.isAssignMethod(): Boolean {
         return valueParameters.size == 1 && this.name == ASSIGN_METHOD
     }
 }

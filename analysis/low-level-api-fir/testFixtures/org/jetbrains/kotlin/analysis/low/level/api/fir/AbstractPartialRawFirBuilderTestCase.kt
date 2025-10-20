@@ -70,7 +70,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractAnalysisApiBasedTe
         override fun visitElement(element: FirElement) {
             if (resultDesignation != null) return
             when (element) {
-                is FirSimpleFunction, is FirProperty -> {
+                is FirNamedFunction, is FirProperty -> {
                     if (element.psi == elementToBuild) {
                         val originalDeclaration = element as FirDeclaration
                         resultDesignation = FirDesignation(path, originalDeclaration)

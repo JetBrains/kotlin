@@ -138,7 +138,7 @@ class FirElementSerializer private constructor(
             if (!declaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)) return
             when (declaration) {
                 is FirProperty -> propertyProto(declaration)?.let { this.addProperty(it) }
-                is FirSimpleFunction -> functionProto(declaration)?.let { this.addFunction(it) }
+                is FirNamedFunction -> functionProto(declaration)?.let { this.addFunction(it) }
                 is FirTypeAlias -> typeAliasProto(declaration)?.let { this.addTypeAlias(it) }
                 else -> onUnsupportedDeclaration(declaration)
             }
@@ -265,7 +265,7 @@ class FirElementSerializer private constructor(
             }
             when (declaration) {
                 is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
-                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                is FirNamedFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
                 is FirEnumEntry -> enumEntryProto(declaration).let { builder.addEnumEntry(it) }
                 else -> {}
             }
@@ -404,7 +404,7 @@ class FirElementSerializer private constructor(
                         propertyProto(declaration)?.let { builder.addProperty(it) }
                     }
                 }
-                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                is FirNamedFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
                 else -> {}
             }
         }
@@ -467,7 +467,7 @@ class FirElementSerializer private constructor(
             val declaration = statement as? FirDeclaration ?: continue
             when (declaration) {
                 is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
-                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                is FirNamedFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
                 is FirRegularClass -> builder.addNestedClassName(getSimpleNameIndex(declaration.name))
                 is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
                 else -> {}
@@ -721,7 +721,7 @@ class FirElementSerializer private constructor(
 
     fun functionProto(function: FirFunction): ProtoBuf.Function.Builder? = whileAnalysing(session, function) {
         val builder = ProtoBuf.Function.newBuilder()
-        val simpleFunction = function as? FirSimpleFunction
+        val simpleFunction = function as? FirNamedFunction
 
         val local = createChildSerializer(function)
 
@@ -746,7 +746,7 @@ class FirElementSerializer private constructor(
         }
 
         val name = when (function) {
-            is FirSimpleFunction -> {
+            is FirNamedFunction -> {
                 function.name
             }
             is FirAnonymousFunction -> {

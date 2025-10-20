@@ -59,12 +59,12 @@ All node types (including leaf nodes) accessible from plugins are abstract and t
 node you need to use special builder functions (one exist for every node) instead of calling a constructor of implementation:
 
 ```kotlin
-val myFunction = buildSimpleFunction {
+val myFunction = buildNamedFunction {
     name = Name.identifier("myFunction")
     ...
 }
 // instead of
-val myFunction = FirSimpleFunctionImpl(
+val myFunction = FirNamedFunctionImpl(
     name = Name.identifier("myFunction"),
     ...
 )

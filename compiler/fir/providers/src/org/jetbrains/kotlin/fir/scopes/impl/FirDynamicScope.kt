@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
@@ -126,7 +126,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
 
     fun getDynamicScopeFor(scopeSession: ScopeSession): FirDynamicScope = dynamicScopeCacheByScope.getValue(scopeSession, null)
 
-    val functionsCacheByName: FirCache<Name, FirSimpleFunction, Nothing?> =
+    val functionsCacheByName: FirCache<Name, FirNamedFunction, Nothing?> =
         cachesFactory.createCache { name -> buildPseudoFunctionByName(name) }
 
     val propertiesCacheByName: FirCache<Name, FirProperty, Nothing?> =
@@ -144,7 +144,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         )
     }
 
-    private fun buildPseudoFunctionByName(name: Name): FirSimpleFunction = buildSimpleFunction {
+    private fun buildPseudoFunctionByName(name: Name): FirNamedFunction = buildSimpleFunction {
         status = FirResolvedDeclarationStatusImpl(
             Visibilities.Public,
             Modality.FINAL,

@@ -106,7 +106,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
+    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: Nothing?) {
         withAnnotationContainer(simpleFunction) {
             withInlineFunctionBodyIfApplicable(simpleFunction, simpleFunction.isInline) {
                 visitWithDeclaration(simpleFunction)

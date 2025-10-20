@@ -1163,7 +1163,7 @@ abstract class FirDataFlowAnalyzer(
         if (!components.transformer.baseTransformerPhase.isBodyResolve) return
 
         val callee: FirFunction = when (qualifiedAccess) {
-            is FirFunctionCall -> qualifiedAccess.calleeReference.symbol?.fir as? FirSimpleFunction
+            is FirFunctionCall -> qualifiedAccess.calleeReference.symbol?.fir as? FirNamedFunction
             is FirQualifiedAccessExpression -> qualifiedAccess.calleeReference.symbol?.let { it.fir as? FirProperty }?.getter
             is FirVariableAssignment -> qualifiedAccess.calleeReference?.symbol?.let { it.fir as? FirProperty }?.setter
             else -> null

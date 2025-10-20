@@ -229,7 +229,7 @@ fun FirExpression.isImplicitUnitForEmptyLambda(): Boolean =
  */
 fun FirFunction.constructFunctionType(kind: FunctionTypeKind? = null): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
-        is FirSimpleFunction -> receiverParameter
+        is FirNamedFunction -> receiverParameter
         is FirAnonymousFunction -> receiverParameter
         else -> null
     }?.typeRef

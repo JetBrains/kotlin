@@ -321,7 +321,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         return findSingleSubstitutedSymbolWithOriginal(original.symbol) { processor ->
             when (original) {
-                is FirSimpleFunction -> scope.processFunctionsByName(original.name, processor)
+                is FirNamedFunction -> scope.processFunctionsByName(original.name, processor)
                 is FirProperty -> scope.processPropertiesByName(original.name, processor)
                 is FirConstructor -> scope.processDeclaredConstructors(processor)
                 else -> error("Unexpected declaration kind ${original.render()}")
@@ -1288,7 +1288,7 @@ class FirCallCompletionResultsWriterTransformer(
         data: ExpectedArgumentType?,
     ): D where D : FirResolvable, D : FirExpression {
         val calleeReference = syntheticCall.calleeReference as? FirNamedReferenceWithCandidate
-        val declaration = calleeReference?.candidate?.symbol?.fir as? FirSimpleFunction
+        val declaration = calleeReference?.candidate?.symbol?.fir as? FirNamedFunction
 
         if (calleeReference == null || declaration == null) {
             transformSyntheticCallChildren(syntheticCall, data)

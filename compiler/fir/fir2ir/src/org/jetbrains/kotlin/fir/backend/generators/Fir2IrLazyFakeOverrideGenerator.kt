@@ -242,9 +242,9 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
      *   on the unique FIR declaration
      */
     internal fun createFirFunctionFakeOverrideIfNeeded(
-        originalFunction: FirSimpleFunction,
+        originalFunction: FirNamedFunction,
         dispatchReceiverLookupTag: ConeClassLikeLookupTag,
-    ): FirSimpleFunction? {
+    ): FirNamedFunction? {
         val originalSymbol = originalFunction.symbol
         return createFirFakeOverrideIfNeeded(
             dispatchReceiverLookupTag, originalSymbol

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -97,7 +97,7 @@ class FirParcelizeDeclarationGenerator(
         name: Name,
         returnType: ConeKotlinType,
         crossinline init: SimpleFunctionBuildingContext.() -> Unit = {}
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         return createMemberFunction(owner, key, name, returnType) {
             modality = if (owner.modality == Modality.FINAL) Modality.FINAL else Modality.OPEN
             init()

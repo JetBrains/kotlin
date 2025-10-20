@@ -23,7 +23,7 @@ fun FirFunctionCall.replaceLambdaArgumentEffects(session: FirSession) {
     val calleeReference = calleeReference as? FirNamedReferenceWithCandidate ?: return
     val argumentMapping = calleeReference.candidate.argumentMapping
     val symbol = calleeReference.candidate.symbol
-    val function = (symbol.fir as? FirSimpleFunction) ?: (symbol.fir as? FirConstructor) ?: return
+    val function = (symbol.fir as? FirNamedFunction) ?: (symbol.fir as? FirConstructor) ?: return
     val isInline = function.isInline || symbol.isArrayConstructorWithLambda
 
     // Candidate could be a substitution or intersection fake override; unwrap and get the effects of the base function.

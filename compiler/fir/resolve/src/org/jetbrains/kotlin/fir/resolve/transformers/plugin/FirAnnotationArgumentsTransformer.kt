@@ -223,9 +223,9 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
     }
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+        simpleFunction: FirNamedFunction,
         data: ResolutionMode
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         context.withSimpleFunction(simpleFunction, session) {
             simpleFunction
                 .transformTypeParameters(transformer, data)

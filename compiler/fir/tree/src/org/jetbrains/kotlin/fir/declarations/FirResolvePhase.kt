@@ -161,7 +161,7 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
      * The compiler resolves a [contract][org.jetbrains.kotlin.fir.contracts.FirContractDescription] definition in [contract owners][FirContractDescriptionOwner]:
      *
      * - [property accessors][FirPropertyAccessor]
-     * - [functions][FirSimpleFunction]
+     * - [functions][FirNamedFunction]
      * - [constructors][FirConstructor]
      */
     CONTRACTS,

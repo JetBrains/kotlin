@@ -137,7 +137,7 @@ private fun tryCollectDesignation(providedFile: FirFile?, target: FirElementWith
         is FirReceiverParameter,
             -> null
 
-        is FirSimpleFunction,
+        is FirNamedFunction,
         is FirProperty,
         is FirField,
         is FirConstructor,

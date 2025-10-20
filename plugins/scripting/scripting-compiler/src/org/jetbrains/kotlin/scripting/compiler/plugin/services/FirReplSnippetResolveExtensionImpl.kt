@@ -84,7 +84,7 @@ class FirReplSnippetResolveExtensionImpl(
                     it.originalReplSnippetSymbol = snippet
                     when (it) {
                         is FirProperty -> properties.getOrPut(it.name, { ArrayList() }).add(it.createCopyForState(snippet).symbol)
-                        is FirSimpleFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)
+                        is FirNamedFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)
                         is FirRegularClass -> classLikes.put(it.name, it.symbol)
                         is FirTypeAlias -> classLikes.put(it.name, it.symbol)
                         else -> {}

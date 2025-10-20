@@ -78,7 +78,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
     }
 
     private fun FirTypeScope.processCallableByName(declaration: FirDeclaration) = when (declaration) {
-        is FirSimpleFunction -> processFunctionsByName(declaration.name) { }
+        is FirNamedFunction -> processFunctionsByName(declaration.name) { }
         is FirProperty -> processPropertiesByName(declaration.name) { }
         else -> Unit
     }
@@ -88,7 +88,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         declaration: FirDeclaration,
         processor: (FirCallableDeclaration) -> Unit,
     ) = when (declaration) {
-        is FirSimpleFunction -> processOverriddenFunctions(declaration.symbol) { symbol ->
+        is FirNamedFunction -> processOverriddenFunctions(declaration.symbol) { symbol ->
             processor.invoke(symbol.fir)
             ProcessorAction.NEXT
         }
@@ -103,7 +103,7 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         declaration: FirDeclaration,
         processor: (FirCallableDeclaration) -> Unit,
     ) = when (declaration) {
-        is FirSimpleFunction -> processDirectOverriddenFunctionsWithBaseScope(declaration.symbol) { symbol, _ ->
+        is FirNamedFunction -> processDirectOverriddenFunctionsWithBaseScope(declaration.symbol) { symbol, _ ->
             processor.invoke(symbol.fir)
             ProcessorAction.NEXT
         }

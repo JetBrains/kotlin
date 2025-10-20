@@ -617,9 +617,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+        simpleFunction: FirNamedFunction,
         data: Nothing?
-    ): FirSimpleFunction = transformFunctionDeclarationForDeprecations(simpleFunction, data)
+    ): FirNamedFunction = transformFunctionDeclarationForDeprecations(simpleFunction, data)
 
     override fun transformConstructor(
         constructor: FirConstructor,

@@ -94,7 +94,7 @@ fun BodyResolveComponents.mapArguments(
     // If this is an indexed access set operator, it could have default values or a vararg parameter in the middle.
     // For proper argument mapping, wrap the last one, which is supposed to be the updated value, as a named argument.
     val isIndexedSetOperator = callSiteIsOperatorCall
-            && function is FirSimpleFunction
+            && function is FirNamedFunction
             && function.isOperator
             && function.name == OperatorNameConventions.SET
             && function.origin !is FirDeclarationOrigin.DynamicScope

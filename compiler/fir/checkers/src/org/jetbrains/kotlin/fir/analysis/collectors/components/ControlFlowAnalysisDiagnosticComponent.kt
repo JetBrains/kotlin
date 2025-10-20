@@ -89,7 +89,7 @@ class ControlFlowAnalysisDiagnosticComponent(
         analyze(function, data)
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
+    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: CheckerContext) {
         analyze(simpleFunction, data)
     }
 

@@ -133,7 +133,7 @@ class FirSyntheticPropertiesScope private constructor(
         val getterReturnTypeForUnitCheck = originalJavaGetter?.fir?.returnTypeRef?.coneType ?: getterReturnType
         if (getterReturnTypeForUnitCheck?.isUnit == true && !getterReturnTypeForUnitCheck.hasEnhancedNullability) return
 
-        var matchingSetter: FirSimpleFunction? = null
+        var matchingSetter: FirNamedFunction? = null
         if (needCheckForSetter && getterReturnType != null) {
             val setterName = syntheticNamesProvider.setterNameByGetterName(getterName)
             baseScope.processFunctionsByName(setterName, fun(setterSymbol: FirNamedFunctionSymbol) {
@@ -170,8 +170,8 @@ class FirSyntheticPropertiesScope private constructor(
 
     private fun buildSyntheticProperty(
         propertyName: Name,
-        getter: FirSimpleFunction,
-        setter: FirSimpleFunction?,
+        getter: FirNamedFunction,
+        setter: FirNamedFunction?,
         getterCompatibility: SyntheticGetterCompatibility,
         deprecatedOverrideOfHidden: Boolean,
     ): FirSyntheticProperty {

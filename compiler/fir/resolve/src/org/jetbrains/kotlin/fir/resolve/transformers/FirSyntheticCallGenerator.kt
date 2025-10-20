@@ -69,11 +69,11 @@ class FirSyntheticCallGenerator(
 ) {
     private val session = components.session
 
-    private val whenSelectFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
-    private val trySelectFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
-    private val idFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
-    private val checkNotNullFunction: FirSimpleFunction = generateSyntheticCheckNotNullFunction()
-    private val elvisFunction: FirSimpleFunction = generateSyntheticElvisFunction()
+    private val whenSelectFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
+    private val trySelectFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
+    private val idFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
+    private val checkNotNullFunction: FirNamedFunction = generateSyntheticCheckNotNullFunction()
+    private val elvisFunction: FirNamedFunction = generateSyntheticElvisFunction()
     private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> = session.firCachesFactory.createCache(::getArrayOfSymbol)
 
     private fun assertSyntheticResolvableReferenceIsNotResolved(resolvable: FirResolvable) {
@@ -561,7 +561,7 @@ class FirSyntheticCallGenerator(
 
     private fun generateCalleeReferenceWithCandidate(
         callSite: FirExpression,
-        function: FirSimpleFunction,
+        function: FirNamedFunction,
         argumentList: FirArgumentList,
         name: Name,
         callKind: CallKind = CallKind.SyntheticSelect,
@@ -585,7 +585,7 @@ class FirSyntheticCallGenerator(
         return FirNamedReferenceWithCandidate(source, name, candidate)
     }
 
-    private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate {
+    private fun generateCandidate(callInfo: CallInfo, function: FirNamedFunction, context: ResolutionContext): Candidate {
         val candidateFactory = CandidateFactory(context, callInfo)
         return candidateFactory.createCandidate(
             callInfo,
@@ -644,7 +644,7 @@ class FirSyntheticCallGenerator(
     }
 
 
-    private fun generateSyntheticSelectFunction(callableId: CallableId): FirSimpleFunction {
+    private fun generateSyntheticSelectFunction(callableId: CallableId): FirNamedFunction {
         // Synthetic function signature:
         //   fun <K> select(vararg values: K): K
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
@@ -662,7 +662,7 @@ class FirSyntheticCallGenerator(
         }.build()
     }
 
-    private fun generateSyntheticCheckNotNullFunction(): FirSimpleFunction {
+    private fun generateSyntheticCheckNotNullFunction(): FirNamedFunction {
         // Synthetic function signature:
         //   fun <K> checkNotNull(arg: K?): K & Any
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
@@ -684,7 +684,7 @@ class FirSyntheticCallGenerator(
         }.build()
     }
 
-    private fun generateSyntheticElvisFunction(): FirSimpleFunction {
+    private fun generateSyntheticElvisFunction(): FirNamedFunction {
         // Synthetic function signature:
         //   fun <K> checkNotNull(x: K?, y: K): @Exact K
         //

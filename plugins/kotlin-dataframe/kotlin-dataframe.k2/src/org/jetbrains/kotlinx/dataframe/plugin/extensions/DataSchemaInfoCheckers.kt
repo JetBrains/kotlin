@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessEx
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -126,7 +126,7 @@ private data object PropertySchemaReporter : FirPropertyChecker(mppKind = MppChe
 
 private data object FunctionDeclarationSchemaReporter : FirSimpleFunctionChecker(mppKind = MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirSimpleFunction) {
+    override fun check(declaration: FirNamedFunction) {
         val type = declaration.returnTypeRef.coneType
         context.sessionContext {
             reportSchema(reporter, declaration.source, SchemaInfoDiagnostics.FUNCTION_SCHEMA, type, context)

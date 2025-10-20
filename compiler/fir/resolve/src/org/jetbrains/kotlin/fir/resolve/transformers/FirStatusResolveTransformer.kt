@@ -407,7 +407,7 @@ abstract class AbstractFirStatusResolveTransformer(
     ): FirStatement = transformConstructor(errorPrimaryConstructor, data)
 
     override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+        simpleFunction: FirNamedFunction,
         data: FirResolvedDeclarationStatus?,
     ): FirStatement = whileAnalysing(session, simpleFunction) {
         val overriddenFunctions = statusResolver.getOverriddenFunctions(simpleFunction, containingClass)
@@ -416,8 +416,8 @@ abstract class AbstractFirStatusResolveTransformer(
     }
 
     fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
-        overriddenFunctions: List<FirSimpleFunction>,
+        simpleFunction: FirNamedFunction,
+        overriddenFunctions: List<FirNamedFunction>,
         data: FirResolvedDeclarationStatus? = null,
     ) {
         val resolvedStatus = statusResolver.resolveStatus(

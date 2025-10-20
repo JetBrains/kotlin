@@ -761,7 +761,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = withProcessor(simpleFunction) {
+    override fun visitSimpleFunction(simpleFunction: FirNamedFunction) = withProcessor(simpleFunction) {
         dumpContext(simpleFunction, ContextKind.SELF)
 
         processAnnotations(simpleFunction)

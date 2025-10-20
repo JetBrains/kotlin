@@ -69,7 +69,7 @@ private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
         currentPath.removeAt(currentPath.size - 1)
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) {
+    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: Any?) {
         visitCallableDeclaration(simpleFunction, null)
     }
 
