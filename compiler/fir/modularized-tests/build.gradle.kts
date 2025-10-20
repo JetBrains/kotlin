@@ -47,7 +47,7 @@ dependencies {
 
     embedded(intellijCore())
     embedded(libs.xerces)
-    embedded(commonDependency("commons-lang:commons-lang"))
+    //embedded(commonDependency("commons-lang:commons-lang"))
 
     embedded(libs.junit4)
     embedded(kotlinTest("junit"))
@@ -60,6 +60,10 @@ dependencies {
     embedded(project(":compiler:fir:semantics"))
     embedded(project(":compiler:fir:dump"))
     embedded(project(":compiler:fir:plugin-utils"))
+
+    testRuntimeOnly(project(":kotlinx-serialization-compiler-plugin.cli"))
+    testRuntimeOnly(project(":kotlinx-serialization-compiler-plugin.k2"))
+    testRuntimeOnly(project(":kotlinx-serialization-compiler-plugin"))
 
 }
 
@@ -100,7 +104,7 @@ projectTests {
         }
     }
 
-    jvmArgs("-XX:CompileCommand=option,java.lang.*::*,DumpReplay")
+    //jvmArgs("-XX:CompileCommand=option,java.lang.*::*,DumpReplay")
 
 
 }
