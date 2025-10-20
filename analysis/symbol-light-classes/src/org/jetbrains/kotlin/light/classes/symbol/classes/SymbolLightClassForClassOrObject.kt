@@ -628,6 +628,37 @@ private class KtLightMethodWrapper(
     override fun isDeprecated() = baseMethod.isDeprecated
     override fun setName(name: String) = cannotModify()
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KtLightMethodWrapper) return false
+
+        if (name != other.name) return false
+        if (isFinal != other.isFinal) return false
+        if (hasImplementation != other.hasImplementation) return false
+        if (providedSignature != other.providedSignature) return false
+        if (returnType != other.returnType) return false
+        if (substitutor != other.substitutor) return false
+        if (substituteObjectWith != other.substituteObjectWith) return false
+        if (baseMethod != other.baseMethod) return false
+        if (containingClass != other.containingClass) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + isFinal.hashCode()
+        result = 31 * result + hasImplementation.hashCode()
+        result = 31 * result + (providedSignature?.hashCode() ?: 0)
+        result = 31 * result + (returnType?.hashCode() ?: 0)
+        result = 31 * result + substitutor.hashCode()
+        result = 31 * result + (substituteObjectWith?.hashCode() ?: 0)
+        result = 31 * result + baseMethod.hashCode()
+        result = 31 * result + containingClass.hashCode()
+        return result
+    }
+
+    // TODO remove PSI access
     override fun toString(): String {
         return "$javaClass:$name${parameterList.parameters.map { it.type }.joinToString(prefix = "(", postfix = ")", separator = ", ")}"
     }
