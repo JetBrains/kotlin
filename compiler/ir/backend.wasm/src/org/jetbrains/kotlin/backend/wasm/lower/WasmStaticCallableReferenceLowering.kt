@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering.Companion.FUNCTION_REFERENCE_IMPL
 import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering.Companion.LAMBDA_IMPL
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 /**
  * Turns static callable references into singletons.
  */
+@PhasePrerequisites(WasmCallableReferenceLowering::class, LocalDeclarationPopupLowering::class)
 class WasmStaticCallableReferenceLowering(val context: WasmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {

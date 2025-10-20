@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.associatedObject
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  *         return null
  *     }
  */
+@PhasePrerequisites(LocalDeclarationPopupLowering::class)
 class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringPass {
     lateinit var currentFile: IrFile
 
