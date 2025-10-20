@@ -3,4 +3,4 @@
 
 package test
 
-abstract class CIterator<Elem> : Iterator<Elem> by emptyList<Elem>().iterator()
+abstract class CIterator<Elem> : Iterator<Elem>
