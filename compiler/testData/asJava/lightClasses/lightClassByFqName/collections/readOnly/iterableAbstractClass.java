@@ -1,7 +1,3 @@
-public abstract class CIterable /* test.CIterable*/<Elem>  implements java.lang.Iterable<Elem>, kotlin.collections.Iterable<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
-  @java.lang.Override()
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
-
+public abstract class CIterable /* test.CIterable*/<Elem>  implements java.lang.Iterable<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   public  CIterable();//  .ctor()
 }
