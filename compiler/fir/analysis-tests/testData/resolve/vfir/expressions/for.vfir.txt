@@ -1,7 +1,7 @@
 FirFileImpl
  FirControlFlowGraphReferenceImpl
  FirPackageDirectiveImpl
- FirSimpleFunctionImpl
+ FirNamedFunctionImpl
   FirResolvedDeclarationStatusImpl
   FirImplicitUnitTypeRef
   FirControlFlowGraphReferenceImpl

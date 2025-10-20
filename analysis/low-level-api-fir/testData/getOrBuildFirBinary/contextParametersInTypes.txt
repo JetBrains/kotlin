@@ -1,7 +1,7 @@
 KT element: KtNamedFunction
 KT element text:
 context(_: T1) public suspend fun <T1, T2, R> myContext(p1: context(lib.A, lib.B) kotlin.Int.(kotlin.Int) -> kotlin.Int, p2: @lib.MyAnnotation context(lib.A, lib.B) kotlin.Int.(kotlin.Int) -> kotlin.Int, p3: (context(lib.A, lib.B) kotlin.Int.(kotlin.Int) -> kotlin.Int)?, p4: suspend context(lib.A, lib.B) kotlin.Int.(kotlin.Int) -> kotlin.Int, block: context(T2) () -> R): R { /* compiled code */ }
-FIR element: FirSimpleFunctionImpl
+FIR element: FirNamedFunctionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:

@@ -1,7 +1,7 @@
 KT element: KtNamedFunction
 KT element text:
 public fun baz(num: kotlin.Int?, element: MyElement, block: () -> kotlin.Unit): kotlin.Int { /* compiled code */ }
-FIR element: FirSimpleFunctionImpl
+FIR element: FirNamedFunctionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
