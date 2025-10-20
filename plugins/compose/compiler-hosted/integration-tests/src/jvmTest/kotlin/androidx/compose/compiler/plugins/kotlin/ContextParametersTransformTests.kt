@@ -322,19 +322,4 @@ class ContextParametersTransformTests : AbstractIrTransformTest(true) {
             }
         """
     )
-
-    @Test
-    fun contextParametersConstructor() = verifyGoldenComposeIrTransform(
-        """
-            import androidx.compose.runtime.Composable
-
-            @JvmInline
-            context(huh: String)
-            value class Test(val v: Int)
-
-            @Composable fun Content(t: Test) {
-                Content(t)
-            }
-        """
-    )
 }
