@@ -963,37 +963,37 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    override fun transformSimpleFunction(
-        simpleFunction: FirNamedFunction,
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
         data: ResolutionMode
-    ): FirNamedFunction = whileAnalysing(session, simpleFunction) {
+    ): FirNamedFunction = whileAnalysing(session, namedFunction) {
         val shouldResolveEverything = !implicitTypeOnly
-        val returnTypeRef = simpleFunction.returnTypeRef
+        val returnTypeRef = namedFunction.returnTypeRef
         if ((returnTypeRef !is FirImplicitTypeRef) && implicitTypeOnly) {
-            return simpleFunction
+            return namedFunction
         }
 
         val containingDeclaration = context.containerIfAny
-        return context.withSimpleFunction(simpleFunction, session) {
+        return context.withSimpleFunction(namedFunction, session) {
             // this is required to resolve annotations on functions of local classes
             if (shouldResolveEverything) {
-                simpleFunction.transformReceiverParameter(this, data)
-                doTransformTypeParameters(simpleFunction)
+                namedFunction.transformReceiverParameter(this, data)
+                doTransformTypeParameters(namedFunction)
             }
 
-            if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || simpleFunction.isLocal)) {
+            if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || namedFunction.isLocal)) {
                 // For class members everything should be already prepared
-                prepareSignatureForBodyResolve(simpleFunction)
-                simpleFunction.transformStatus(this, simpleFunction.resolveStatus().mode())
+                prepareSignatureForBodyResolve(namedFunction)
+                namedFunction.transformStatus(this, namedFunction.resolveStatus().mode())
 
-                if (simpleFunction.contractDescription != null) {
-                    simpleFunction.runContractResolveForFunction(session, scopeSession, context)
+                if (namedFunction.contractDescription != null) {
+                    namedFunction.runContractResolveForFunction(session, scopeSession, context)
                 }
             }
 
-            context.forFunctionBody(simpleFunction, components) {
+            context.forFunctionBody(namedFunction, components) {
                 withFullBodyResolve {
-                    transformFunctionWithGivenSignature(simpleFunction, shouldResolveEverything = shouldResolveEverything)
+                    transformFunctionWithGivenSignature(namedFunction, shouldResolveEverything = shouldResolveEverything)
                 }
             }
         }

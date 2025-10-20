@@ -48,11 +48,11 @@ abstract class FirNamedFunction : FirFunction(), FirContractDescriptionOwner, Fi
     abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitSimpleFunction(this, data)
+        visitor.visitNamedFunction(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformSimpleFunction(this, data) as E
+        transformer.transformNamedFunction(this, data) as E
 
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 

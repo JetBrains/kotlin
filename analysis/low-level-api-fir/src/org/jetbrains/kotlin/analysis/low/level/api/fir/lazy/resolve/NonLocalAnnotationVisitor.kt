@@ -161,8 +161,8 @@ internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
         function.valueParameters.forEach { it.accept(this, data) }
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: T) {
-        visitFunction(simpleFunction, data)
+    override fun visitNamedFunction(namedFunction: FirNamedFunction, data: T) {
+        visitFunction(namedFunction, data)
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: T) {

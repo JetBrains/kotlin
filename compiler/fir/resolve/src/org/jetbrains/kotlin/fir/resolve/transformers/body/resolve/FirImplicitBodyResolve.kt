@@ -146,12 +146,12 @@ open class FirImplicitAwareBodyResolveTransformer(
         super.transformDeclarationContent(declaration, data)
     }
 
-    override fun transformSimpleFunction(
-        simpleFunction: FirNamedFunction,
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
         data: ResolutionMode
     ): FirNamedFunction {
-        return computeCachedTransformationResult(simpleFunction) {
-            super.transformSimpleFunction(simpleFunction, data)
+        return computeCachedTransformationResult(namedFunction) {
+            super.transformNamedFunction(namedFunction, data)
         }
     }
 

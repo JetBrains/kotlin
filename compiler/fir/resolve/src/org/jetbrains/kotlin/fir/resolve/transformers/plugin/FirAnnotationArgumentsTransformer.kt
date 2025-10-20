@@ -222,12 +222,12 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
         return anonymousInitializer
     }
 
-    override fun transformSimpleFunction(
-        simpleFunction: FirNamedFunction,
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
         data: ResolutionMode
     ): FirNamedFunction {
-        context.withSimpleFunction(simpleFunction, session) {
-            simpleFunction
+        context.withSimpleFunction(namedFunction, session) {
+            namedFunction
                 .transformTypeParameters(transformer, data)
                 .transformReturnTypeRef(transformer, data)
                 .transformReceiverParameter(transformer, data)
@@ -238,7 +238,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
                 }
         }
 
-        return simpleFunction
+        return namedFunction
     }
 
     override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {

@@ -281,16 +281,16 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         checkRegularClassStatus(regularClass.status)
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
-        if (skipSyntheticDeclaration(simpleFunction.source)) return
-        visitElement(simpleFunction)
+    override fun visitNamedFunction(namedFunction: FirNamedFunction) {
+        if (skipSyntheticDeclaration(namedFunction.source)) return
+        visitElement(namedFunction)
         tags += FirTags.FUNCTION
 
-        if (simpleFunction.receiverParameter != null) tags += FirTags.FUN_WITH_EXTENSION_RECEIVER
-        if (simpleFunction.contextParameters.isNotEmpty()) tags += FirTags.FUNCTION_WITH_CONTEXT
-        if (simpleFunction.symbol.isLocal) tags += FirTags.LOCAL_FUNCTION
+        if (namedFunction.receiverParameter != null) tags += FirTags.FUN_WITH_EXTENSION_RECEIVER
+        if (namedFunction.contextParameters.isNotEmpty()) tags += FirTags.FUNCTION_WITH_CONTEXT
+        if (namedFunction.symbol.isLocal) tags += FirTags.LOCAL_FUNCTION
 
-        checkSimpleFunctionStatus(simpleFunction.status)
+        checkSimpleFunctionStatus(namedFunction.status)
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry) {

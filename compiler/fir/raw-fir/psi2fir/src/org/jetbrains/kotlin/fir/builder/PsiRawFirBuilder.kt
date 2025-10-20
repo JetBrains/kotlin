@@ -3672,8 +3672,8 @@ private val snippetDeclarationVisitor: FirVisitorVoid = object : FirVisitorVoid(
         }
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
-        simpleFunction.isReplSnippetDeclaration = true
+    override fun visitNamedFunction(namedFunction: FirNamedFunction) {
+        namedFunction.isReplSnippetDeclaration = true
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {

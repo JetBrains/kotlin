@@ -274,14 +274,14 @@ open class FirTypeResolveTransformer(
         super.transformBackingField(backingField, data)
     }
 
-    override fun transformSimpleFunction(
-        simpleFunction: FirNamedFunction,
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
         data: Any?,
-    ): FirNamedFunction = whileAnalysing(session, simpleFunction) {
+    ): FirNamedFunction = whileAnalysing(session, namedFunction) {
         withScopeCleanup {
-            withDeclaration(simpleFunction) {
-                addTypeParametersScope(simpleFunction)
-                val result = transformDeclaration(simpleFunction, data).also {
+            withDeclaration(namedFunction) {
+                addTypeParametersScope(namedFunction)
+                val result = transformDeclaration(namedFunction, data).also {
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                 }
 

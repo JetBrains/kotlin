@@ -392,9 +392,9 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
                     visitElement(valueParameter)
                 }
 
-                override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
-                    indexDeclaration(simpleFunction)
-                    visitElement(simpleFunction)
+                override fun visitNamedFunction(namedFunction: FirNamedFunction) {
+                    indexDeclaration(namedFunction)
+                    visitElement(namedFunction)
                 }
 
                 override fun visitTypeParameter(typeParameter: FirTypeParameter) {

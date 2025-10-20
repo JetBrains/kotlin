@@ -410,8 +410,8 @@ class FirRenderer(
             receiverParameter.typeRef.accept(this)
         }
 
-        override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
-            visitFunction(simpleFunction)
+        override fun visitNamedFunction(namedFunction: FirNamedFunction) {
+            visitFunction(namedFunction)
         }
 
         override fun visitConstructor(constructor: FirConstructor) {

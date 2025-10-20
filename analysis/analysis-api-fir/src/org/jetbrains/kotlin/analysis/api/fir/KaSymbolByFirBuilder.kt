@@ -659,12 +659,12 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
             element.acceptChildren(this)
         }
 
-        override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
-            simpleFunction.typeParameters.forEach { it.accept(this) }
+        override fun visitNamedFunction(namedFunction: FirNamedFunction) {
+            namedFunction.typeParameters.forEach { it.accept(this) }
 
-            simpleFunction.receiverParameter?.accept(this)
-            simpleFunction.valueParameters.forEach { it.returnTypeRef.accept(this) }
-            simpleFunction.returnTypeRef.accept(this)
+            namedFunction.receiverParameter?.accept(this)
+            namedFunction.valueParameters.forEach { it.returnTypeRef.accept(this) }
+            namedFunction.returnTypeRef.accept(this)
         }
 
         override fun visitProperty(property: FirProperty) {

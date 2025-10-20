@@ -488,21 +488,21 @@ class Fir2IrVisitor(
         return irAnonymousInitializer
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: Any?): IrElement = whileAnalysing(session, simpleFunction) {
-        val irFunction = if (simpleFunction.visibility == Visibilities.Local) {
+    override fun visitNamedFunction(namedFunction: FirNamedFunction, data: Any?): IrElement = whileAnalysing(session, namedFunction) {
+        val irFunction = if (namedFunction.visibility == Visibilities.Local) {
             declarationStorage.createAndCacheIrFunction(
-                simpleFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION, isLocal = true
+                namedFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION, isLocal = true
             )
         } else {
             @OptIn(UnsafeDuringIrConstructionAPI::class)
-            declarationStorage.getCachedIrFunctionSymbol(simpleFunction)!!.owner
+            declarationStorage.getCachedIrFunctionSymbol(namedFunction)!!.owner
         }
         return conversionScope.withFunction(irFunction) {
             memberGenerator.convertFunctionContent(
-                irFunction, simpleFunction, containingClass = conversionScope.containerFirClass()
+                irFunction, namedFunction, containingClass = conversionScope.containerFirClass()
             )
         }.also {
-            cleaner.cleanSimpleFunction(simpleFunction)
+            cleaner.cleanSimpleFunction(namedFunction)
         }
     }
 

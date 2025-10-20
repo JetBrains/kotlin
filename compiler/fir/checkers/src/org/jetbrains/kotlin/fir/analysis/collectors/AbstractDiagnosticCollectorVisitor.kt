@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.shouldSuppressInlineContextAt
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -106,10 +105,10 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: Nothing?) {
-        withAnnotationContainer(simpleFunction) {
-            withInlineFunctionBodyIfApplicable(simpleFunction, simpleFunction.isInline) {
-                visitWithDeclaration(simpleFunction)
+    override fun visitNamedFunction(namedFunction: FirNamedFunction, data: Nothing?) {
+        withAnnotationContainer(namedFunction) {
+            withInlineFunctionBodyIfApplicable(namedFunction, namedFunction.isInline) {
+                visitWithDeclaration(namedFunction)
             }
         }
     }

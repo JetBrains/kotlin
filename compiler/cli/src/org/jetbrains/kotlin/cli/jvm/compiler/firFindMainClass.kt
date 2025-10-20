@@ -70,9 +70,9 @@ private class FirMainClassFinder(
         }
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, parents: Pair<FirDeclaration, FirRegularClass?>) {
+    override fun visitNamedFunction(namedFunction: FirNamedFunction, parents: Pair<FirDeclaration, FirRegularClass?>) {
 
-        if (!simpleFunction.isMaybeMainFunction(
+        if (!namedFunction.isMaybeMainFunction(
                 getPlatformName = { findJvmNameValue() },
                 isPlatformStatic = { findJvmStaticAnnotation() != null },
             )
@@ -81,6 +81,6 @@ private class FirMainClassFinder(
         val (parent, grandparent) = parents
         if (parent is FirRegularClass && parent.classKind != ClassKind.OBJECT) return
 
-        groupedMainFunctions.getOrPut(grandparent ?: parent, defaultValue = { mutableListOf() }).add(simpleFunction)
+        groupedMainFunctions.getOrPut(grandparent ?: parent, defaultValue = { mutableListOf() }).add(namedFunction)
     }
 }

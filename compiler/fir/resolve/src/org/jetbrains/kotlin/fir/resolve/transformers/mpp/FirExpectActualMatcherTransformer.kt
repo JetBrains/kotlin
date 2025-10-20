@@ -80,9 +80,9 @@ open class FirExpectActualMatcherTransformer(
     override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?): FirStatement =
         transformConstructor(errorPrimaryConstructor, data)
 
-    override fun transformSimpleFunction(simpleFunction: FirNamedFunction, data: Nothing?): FirStatement {
-        transformMemberDeclaration(simpleFunction)
-        return simpleFunction
+    override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): FirStatement {
+        transformMemberDeclaration(namedFunction)
+        return namedFunction
     }
 
     // --------------------------- other ---------------------------

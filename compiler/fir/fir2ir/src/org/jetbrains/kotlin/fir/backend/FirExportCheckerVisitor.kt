@@ -45,8 +45,8 @@ abstract class FirExportCheckerVisitor : FirVisitor<Boolean, SpecialDeclarationT
                 containingDeclaration.accept(this@FirExportCheckerVisitor, SpecialDeclarationType.REGULAR)
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: SpecialDeclarationType): Boolean =
-        !simpleFunction.name.isAnonymous && simpleFunction.isExported()
+    override fun visitNamedFunction(namedFunction: FirNamedFunction, data: SpecialDeclarationType): Boolean =
+        !namedFunction.name.isAnonymous && namedFunction.isExported()
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: SpecialDeclarationType): Boolean {
         if (data == SpecialDeclarationType.ANON_INIT) return false

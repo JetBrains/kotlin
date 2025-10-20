@@ -187,11 +187,11 @@ private class CompilationPeerCollectingVisitor(
         super.visitConstructor(constructor)
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirNamedFunction) {
-        simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+    override fun visitNamedFunction(namedFunction: FirNamedFunction) {
+        namedFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-        withInlineFunctionContext(simpleFunction) {
-            super.visitFunction(simpleFunction)
+        withInlineFunctionContext(namedFunction) {
+            super.visitFunction(namedFunction)
         }
     }
 

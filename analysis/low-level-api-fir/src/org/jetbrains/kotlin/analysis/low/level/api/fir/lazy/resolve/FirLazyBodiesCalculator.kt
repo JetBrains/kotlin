@@ -682,16 +682,16 @@ private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<Persist
         return field
     }
 
-    override fun transformSimpleFunction(
-        simpleFunction: FirNamedFunction,
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
         data: PersistentList<FirDeclaration>,
     ): FirNamedFunction {
-        if (needCalculatingLazyBodyForFunction(simpleFunction)) {
-            val designation = FirDesignation(data, simpleFunction)
+        if (needCalculatingLazyBodyForFunction(namedFunction)) {
+            val designation = FirDesignation(data, namedFunction)
             calculateLazyBodiesForFunction(designation)
         }
 
-        return simpleFunction
+        return namedFunction
     }
 
     override fun transformConstructor(
@@ -839,16 +839,16 @@ private object FirTargetLazyContractsCalculatorTransformer : FirLazyContractsCal
 private sealed class FirLazyContractsCalculatorTransformer : FirTransformer<PersistentList<FirDeclaration>>() {
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E = element
 
-    override fun transformSimpleFunction(
-        simpleFunction: FirNamedFunction,
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
         data: PersistentList<FirDeclaration>,
     ): FirNamedFunction {
-        if (needCalculatingLazyContractsForFunction(simpleFunction)) {
-            val designation = FirDesignation(data, simpleFunction)
+        if (needCalculatingLazyContractsForFunction(namedFunction)) {
+            val designation = FirDesignation(data, namedFunction)
             calculateLazyContractsForFunction(designation)
         }
 
-        return simpleFunction
+        return namedFunction
     }
 
     override fun transformConstructor(

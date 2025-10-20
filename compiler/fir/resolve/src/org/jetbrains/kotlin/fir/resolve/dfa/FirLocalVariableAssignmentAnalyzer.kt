@@ -492,8 +492,8 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
             override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData) =
                 visitLocalDeclaration(anonymousFunction, data)
 
-            override fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: MiniCfgData) =
-                visitLocalDeclaration(simpleFunction, data)
+            override fun visitNamedFunction(namedFunction: FirNamedFunction, data: MiniCfgData) =
+                visitLocalDeclaration(namedFunction, data)
 
             override fun visitRegularClass(regularClass: FirRegularClass, data: MiniCfgData) =
                 visitLocalDeclaration(regularClass, data)

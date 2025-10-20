@@ -206,8 +206,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: D): R =
         visitElement(outerClassTypeParameterRef, data)
 
-    open fun visitSimpleFunction(simpleFunction: FirNamedFunction, data: D): R =
-        visitElement(simpleFunction, data)
+    open fun visitNamedFunction(namedFunction: FirNamedFunction, data: D): R =
+        visitElement(namedFunction, data)
 
     open fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: D): R =
         visitElement(contractDescriptionOwner, data)

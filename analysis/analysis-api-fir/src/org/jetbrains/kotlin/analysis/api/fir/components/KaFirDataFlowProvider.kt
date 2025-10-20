@@ -538,7 +538,7 @@ internal class KaFirDataFlowProvider(
 
         override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) = visitFunction(anonymousFunction)
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = visitFunction(propertyAccessor)
-        override fun visitSimpleFunction(simpleFunction: FirNamedFunction) = visitFunction(simpleFunction)
+        override fun visitNamedFunction(namedFunction: FirNamedFunction) = visitFunction(namedFunction)
         override fun visitErrorFunction(errorFunction: FirErrorFunction) = visitFunction(errorFunction)
         override fun visitConstructor(constructor: FirConstructor) = visitFunction(constructor)
         override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) =
