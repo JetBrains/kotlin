@@ -123,9 +123,9 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
         class Spec(val property: String, val major: Int, val minor: Int)
 
         val minDeploymentTargetSpec = when (family) {
-            Family.IOS -> Spec("IPHONEOS_DEPLOYMENT_TARGET", 11, 0)
+            Family.IOS -> Spec("IPHONEOS_DEPLOYMENT_TARGET", 12, 0)
             Family.OSX -> Spec("MACOSX_DEPLOYMENT_TARGET", 10, 13)
-            Family.TVOS -> Spec("TVOS_DEPLOYMENT_TARGET", 11, 0)
+            Family.TVOS -> Spec("TVOS_DEPLOYMENT_TARGET", 12, 0)
             Family.WATCHOS -> Spec("WATCHOS_DEPLOYMENT_TARGET", 4, 0)
             else -> error("Family $family is not an Apple platform")
         }
