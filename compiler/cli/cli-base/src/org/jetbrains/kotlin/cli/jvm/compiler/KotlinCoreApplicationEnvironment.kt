@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.IdeaExtensionPoints.registerVersionSpecificAppExtensionPoints
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.util.Condition
 
 sealed interface KotlinCoreApplicationEnvironmentMode {
     object Production : KotlinCoreApplicationEnvironmentMode
@@ -66,7 +68,7 @@ class KotlinCoreApplicationEnvironment private constructor(
         return if (mock.isUnitTestMode) {
             KotlinCoreUnitTestApplication(parentDisposable)
         } else {
-            mock
+            MockApplicationWithoutInvokeLater(parentDisposable)
         }
     }
 
@@ -159,6 +161,25 @@ private class KotlinCoreUnitTestApplication(parentDisposable: Disposable) : Mock
         withWriteAccessAllowedInThread { computation.compute() }
 
     private inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A = PlatformWriteAccessSupport.withWriteAccessAllowedInThread(action)
+}
+
+
+private class MockApplicationWithoutInvokeLater(parentDisposable: Disposable) : MockApplication(parentDisposable) {
+    override fun invokeLater(runnable: Runnable, expired: Condition<*>) {
+        runnable.run()
+    }
+
+    override fun invokeLater(runnable: Runnable, state: ModalityState, expired: Condition<*>) {
+        runnable.run()
+    }
+
+    override fun invokeLater(runnable: Runnable) {
+        runnable.run()
+    }
+
+    override fun invokeLater(runnable: Runnable, state: ModalityState) {
+        runnable.run()
+    }
 }
 
 /**
