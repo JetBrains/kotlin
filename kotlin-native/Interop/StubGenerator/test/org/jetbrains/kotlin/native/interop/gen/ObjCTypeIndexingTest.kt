@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.native.interop.indexer.*
-import org.junit.Assume
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class ObjCTypeIndexingTest : IndexerTestsBase() {
-    @Before
+    @BeforeEach
     fun onlyOnMac() {
-        Assume.assumeTrue(HostManager.hostIsMac)
+        Assumptions.assumeTrue(HostManager.hostIsMac)
     }
 
     private fun type(type: String, typeDeclarations: String = ""): Type {

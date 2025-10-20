@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.native.interop.indexer.StructDef
 import org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class StructRenderingTests : InteropTestsBase() {

@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Test
 import kotlin.test.*
 
 // Note: A better place for these tests would be Indexer module.
@@ -22,7 +23,7 @@ class IncludeCategoriesTests : InteropTestsBase() {
 
     @BeforeTest
     fun checkPlatform() {
-        Assume.assumeTrue(HostManager.hostIsMac)
+        assumeTrue(HostManager.hostIsMac)
     }
 
     @Test

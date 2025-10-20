@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm")
     application
     id("native-dependencies")
+    id("project-tests-convention")
 }
 
 application {
@@ -34,8 +35,10 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:ir.serialization.common"))
 
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":kotlin-util-klib")))
+    testRuntimeOnly(libs.junit.jupiter.engine)
+
     testCppRuntime(project(":kotlin-native:libclangInterop"))
     testCppRuntime(project(":kotlin-native:Interop:Runtime"))
 }
@@ -58,9 +61,9 @@ open class TestArgumentProvider @Inject constructor(
     )
 }
 
-tasks {
-    // Copy-pasted from Indexer build.gradle.kts.
-    withType<Test>().configureEach {
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        // Copy-pasted from Indexer build.gradle.kts.
         dependsOn(nativeDependencies.llvmDependency)
         jvmArgumentProviders.add(objects.newInstance<TestArgumentProvider>().apply {
             nativeLibraries.from(testCppRuntime)

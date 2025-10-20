@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.native.interop.indexer.getHeaderPaths
-import kotlin.test.*
+import org.junit.jupiter.api.Test
+import kotlin.test.assertContains
+import kotlin.test.assertFalse
 
 class ExcludeFilterTests : InteropTestsBase() {
     @Test

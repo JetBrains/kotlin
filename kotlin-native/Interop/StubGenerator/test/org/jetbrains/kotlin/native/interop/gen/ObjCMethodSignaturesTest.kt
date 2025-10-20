@@ -7,18 +7,17 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex
-import org.junit.Assume
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeAll
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class ObjCMethodSignaturesTest : InteropTestsBase() {
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun assumeMacOS() {
-            Assume.assumeTrue(HostManager.hostIsMac)
+            assumeTrue(HostManager.hostIsMac)
         }
     }
 

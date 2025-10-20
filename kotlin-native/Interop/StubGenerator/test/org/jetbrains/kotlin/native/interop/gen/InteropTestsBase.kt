@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.native.interop.gen
 import kotlinx.cinterop.JvmCInteropCallbacks
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DefFile
-import org.jetbrains.kotlin.utils.NativeMemoryAllocator
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.gen.jvm.buildNativeLibrary
 import org.jetbrains.kotlin.native.interop.gen.jvm.prepareTool
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.CInteropArguments
-import org.junit.Rule
-import kotlin.test.*
+import org.jetbrains.kotlin.utils.NativeMemoryAllocator
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.nio.file.Paths
+import kotlin.test.*
 
 abstract class InteropTestsBase {
     init {
@@ -32,9 +32,12 @@ abstract class InteropTestsBase {
         }
     }
 
-    @Rule
-    @JvmField
-    val testFilesFactory = TestFilesFactory()
+    private lateinit var testFilesFactory: TestFilesFactory
+
+    @BeforeTest
+    fun setUp(testInfo: TestInfo) {
+        testFilesFactory = TestFilesFactory(testInfo)
+    }
 
     fun testFiles() = testFilesFactory.tempFiles()
 

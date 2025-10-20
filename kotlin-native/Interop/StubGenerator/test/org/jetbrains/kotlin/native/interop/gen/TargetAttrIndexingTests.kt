@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -85,7 +85,7 @@ class TargetAttrIndexingTests : IndexerTestsBase() {
     @Test
     fun `target nonsense function`() {
         // When compiling for aarch64, target attribute seems to accept any nonsense.
-        Assume.assumeFalse(HostManager.hostArch() == "aarch64")
+        assumeFalse(HostManager.hostArch() == "aarch64")
 
         val function = indexFunction("""
             __attribute__((target("nonsense")))
@@ -98,7 +98,7 @@ class TargetAttrIndexingTests : IndexerTestsBase() {
     @Test
     fun `__target__ nonsense function`() {
         // When compiling for aarch64, target attribute seems to accept any nonsense.
-        Assume.assumeFalse(HostManager.hostArch() == "aarch64")
+        assumeFalse(HostManager.hostArch() == "aarch64")
 
         val function = indexFunction("""
             __attribute__((__target__("nonsense")))

@@ -24,9 +24,8 @@ import org.jetbrains.kotlin.library.metadata
 import org.jetbrains.kotlin.library.resources
 import org.jetbrains.kotlin.native.interop.gen.jvm.createInteropLibrary
 import org.jetbrains.kotlin.util.toCInteropKlibMetadataVersion
-import org.junit.Rule
-import org.junit.Test
-import org.junit.Assert.fail
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.util.Properties
 import java.util.UUID
@@ -34,18 +33,15 @@ import kotlin.collections.forEach
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
+import kotlin.test.fail
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 class CInteropKlibWritingTest {
-    @Rule
-    @JvmField
-    val testFilesFactory = TestFilesFactory()
-
     private lateinit var tmpDir: File
 
     @BeforeTest
-    fun setUp() {
-        tmpDir = testFilesFactory.tempFiles().directory
+    fun setUp(testInfo: TestInfo) {
+        tmpDir = TestFilesFactory(testInfo).tempFiles().directory
     }
 
     @AfterTest
