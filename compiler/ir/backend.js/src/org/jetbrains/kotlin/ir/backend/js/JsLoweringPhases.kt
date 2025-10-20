@@ -714,6 +714,9 @@ private val inlineClassDeclarationLoweringPhase = makeIrModulePhase<JsIrBackendC
     name = "InlineClassDeclarationLowering",
 )
 
+// Const lowering generates inline class constructors for unsigned integers which should be lowered by this lowering
+// This annotation must be placed on `inlineClassUsageLowering` but it is hard to achieve because this lowering is inner inside class in the common module
+//@PhasePrerequisites(ConstLowering::class)
 private fun createInlineClassUsageLoweringPhase(context: CommonBackendContext): InlineClassLowering.InlineClassUsageLowering {
     return InlineClassLowering(context).inlineClassUsageLowering
 }

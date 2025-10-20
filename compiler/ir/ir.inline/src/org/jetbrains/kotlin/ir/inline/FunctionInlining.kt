@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
+import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.resolve.ContractsDslNames
 import org.jetbrains.kotlin.ir.IrElement
@@ -32,6 +34,10 @@ import org.jetbrains.kotlin.name.Name.identifier
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
+@PhasePrerequisites(
+    ArrayConstructorLowering::class,
+//    OuterThisInInlineFunctionsSpecialAccessorLowering::class // for public inline only
+)
 class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,

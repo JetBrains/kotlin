@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -29,6 +30,7 @@ val IrDeclaration.isSyntheticPrimaryConstructor: Boolean
 /**
  * Creates a primary constructor if it doesn't exist.
  */
+@PhasePrerequisites(EnumClassConstructorLowering::class)
 class PrimaryConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass && declaration.kind != ClassKind.INTERFACE) {
@@ -66,6 +68,7 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
 /**
  * Generates a delegating constructor to the synthetic primary constructor.
  */
+@PhasePrerequisites(PrimaryConstructorLowering::class)
 class DelegateToSyntheticPrimaryConstructor(context: JsCommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrConstructor && !container.isPrimary) {

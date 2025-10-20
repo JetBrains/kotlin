@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isInlineFunWithReifiedParameter
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
 @Suppress("UNUSED_PARAMETER")
+@PhasePrerequisites(FunctionInlining::class)
 class RemoveInlineDeclarationsWithReifiedTypeParametersLowering(context: LoweringContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -27,6 +30,7 @@ class RemoveInlineDeclarationsWithReifiedTypeParametersLowering(context: Lowerin
     }
 }
 
+@PhasePrerequisites(FunctionInlining::class)
 class CopyInlineFunctionBodyLowering(val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrFunction && declaration.isInline) {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 /**
  * Generates a special private member accessor for outer@this implicit value parameter in inline functions.
  */
+@PhasePrerequisites(FunctionInlining::class) // private inline only
 class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext) : FileLoweringPass {
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
