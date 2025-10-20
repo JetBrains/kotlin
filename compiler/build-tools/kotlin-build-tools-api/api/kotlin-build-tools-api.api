@@ -460,7 +460,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/FileIdTo
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/LookupEntry {
 	public abstract fun getFileIds ()Ljava/util/Collection;
-	public abstract fun getKey ()Ljava/lang/Long;
+	public abstract fun getFqNameHashCode ()Ljava/lang/Integer;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/SubtypeEntry {

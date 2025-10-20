@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 // TODO (KT-81585): once the CRI schema is stable, document public interfaces
 @ExperimentalBuildToolsApi
 public interface LookupEntry {
-    public val key: Long?
+    public val fqNameHashCode: Int?
     public val fileIds: Collection<Int>
 }
