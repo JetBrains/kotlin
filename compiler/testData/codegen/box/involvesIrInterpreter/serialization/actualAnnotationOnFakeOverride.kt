@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-72356
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 
 // MODULE: common
 // FILE: A.kt

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
-
 class It {
     var hasNext = true
     operator fun hasNext() = if (hasNext) {hasNext = false; true} else false

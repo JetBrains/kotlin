@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: WASM, JS_IR, JS_IR_ES6
 // WITH_STDLIB
 
 import kotlin.test.*
