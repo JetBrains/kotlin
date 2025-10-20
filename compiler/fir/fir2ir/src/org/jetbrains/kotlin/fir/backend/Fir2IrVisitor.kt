@@ -281,15 +281,15 @@ class Fir2IrVisitor(
                 val destructComposites = mutableMapOf<FirVariableSymbol<*>, IrComposite>()
                 for (statement in script.declarations) {
                     if (statement !is FirAnonymousInitializer) {
-                        val irStatement = when {
-                            statement is FirProperty && statement.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> {
+                        val irStatement = when (statement) {
+                            is FirProperty if statement.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> {
                                 val convertedInitializer = when {
                                     statement.isUnnamedLocalVariable -> statement.initializer?.accept(this@Fir2IrVisitor, null)
                                     else -> null
                                 }
                                 convertedInitializer as? IrStatement ?: continue
                             }
-                            statement is FirProperty && statement.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
+                            is FirProperty if statement.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
                                 // Generating the result property only for expressions with a meaningful result type
                                 // otherwise skip the property and convert the expression into the statement
                                 if (statement.returnTypeRef.let { (it.isUnit || it.isNothing || it.isNullableNothing) }) {
@@ -300,7 +300,7 @@ class Fir2IrVisitor(
                                     }
                                 }
                             }
-                            statement is FirVariable && statement.isDestructuringDeclarationContainerVariable == true -> {
+                            is FirVariable if statement.isDestructuringDeclarationContainerVariable == true -> {
                                 statement.convertWithOffsets { startOffset, endOffset ->
                                     IrCompositeImpl(
                                         startOffset, endOffset,
@@ -315,7 +315,7 @@ class Fir2IrVisitor(
                                     }
                                 }
                             }
-                            statement is FirProperty && statement.destructuringDeclarationContainerVariable != null -> {
+                            is FirProperty if statement.destructuringDeclarationContainerVariable != null -> {
                                 (statement.accept(this@Fir2IrVisitor, null) as IrProperty).also {
                                     val irComponentInitializer = IrSetFieldImpl(
                                         it.startOffset, it.endOffset,
@@ -331,7 +331,7 @@ class Fir2IrVisitor(
                                     it.backingField!!.initializer = null
                                 }
                             }
-                            statement is FirClass -> {
+                            is FirClass -> {
                                 statement.accept(this@Fir2IrVisitor, null) as IrClass
                             }
                             else -> {
