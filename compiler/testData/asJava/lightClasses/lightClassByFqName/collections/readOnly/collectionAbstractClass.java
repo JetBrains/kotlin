@@ -3,9 +3,9 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements java.u
 
   public abstract <T> T[] toArray(T[]);// <T>  toArray(T[])
 
-  public abstract boolean add(E);//  add(E)
+  public abstract boolean add(Elem);//  add(Elem)
 
-  public abstract boolean addAll(java.util.Collection<? extends E>);//  addAll(java.util.Collection<? extends E>)
+  public abstract boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
 
   public abstract boolean equals(java.lang.Object);//  equals(java.lang.Object)
 
