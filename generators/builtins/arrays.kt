@@ -28,6 +28,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
     ) {
         protected val arrayClassName = "${kind?.capitalized ?: ""}Array"
         protected val arrayTypeName = arrayClassName + if (kind == null) "<T>" else ""
+        protected val arrayOfFunctionName = "${arrayClassName.replaceFirstChar { it.lowercase() }}Of"
         protected val elementTypeName = kind?.capitalized ?: "T"
         protected val iteratorClassName = "${kind?.capitalized ?: ""}Iterator"
         protected val arrayIteratorImplClassName = "${kind?.capitalized ?: ""}ArrayIterator"
@@ -67,6 +68,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                 appendDoc("See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)")
                 appendDoc("for more information on arrays.")
 
+                generateCompanionObject()
                 generatePropertiesAndInit()
                 generateSecondaryConstructor()
                 generateGetSet()
@@ -101,6 +103,39 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
         }
 
         protected open fun ClassBuilder.generatePropertiesAndInit() {}
+
+        protected open fun ClassBuilder.generateCompanionObject() {
+            companionObject {
+                val suppress =
+                    listOfNotNull("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE".takeIf { kind != null }).joinToString(
+                        prefix = "Suppress(",
+                        postfix = ")",
+                        separator = ", ",
+                        transform = { "\"$it\"" }
+                    )
+                annotations += suppress
+                annotations += "ExperimentalStdlibApi"
+
+                method {
+                    annotations += "ExperimentalStdlibApi"
+                    signature {
+                        isOperator = true
+                        returnType = arrayTypeName
+                        methodName = "of"
+                        if (kind == null) {
+                            isInline = true
+                            typeParameter(elementTypeName, isReified = true)
+                        }
+                        parameter {
+                            name = "elements"
+                            type = elementTypeName
+                            isVararg = true
+                        }
+                    }
+                    appendDoc("Returns an array containing the specified ${if (kind != null) "`$elementTypeName` " else ""}elements.")
+                }.modifyOfOperator()
+            }
+        }
 
         private fun ClassBuilder.generateSecondaryConstructor() {
             secondaryConstructor {
@@ -190,6 +225,10 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
             }.modifyIterator()
         }
 
+        protected fun MethodBuilder.defaultOperatorOfImplementation() {
+            "$arrayOfFunctionName(*$parameterName)".setAsExpressionBody()
+        }
+
         protected open fun ClassBuilder.modifyGeneratedClass() {}
         protected open fun PrimaryConstructorBuilder.modifyPrimaryConstructor() {}
         protected open fun FileBuilder.modifyGeneratedFileAfterClass() {}
@@ -198,6 +237,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
         protected open fun MethodBuilder.modifySetOperator() {}
         protected open fun PropertyBuilder.modifySizeProperty() {}
         protected open fun MethodBuilder.modifyIterator() {}
+        protected open fun MethodBuilder.modifyOfOperator() {}
     }
 
     internal abstract fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder
@@ -276,6 +316,10 @@ class GenerateJsArrays(writer: PrintWriter, primitiveArrays: Boolean) : Generate
         }
 
         override fun MethodBuilder.modifyIterator() {
+            annotations += """Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")"""
+        }
+
+        override fun MethodBuilder.modifyOfOperator() {
             annotations += """Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")"""
         }
     }
@@ -381,6 +425,10 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
                 }
             }
         }
+
+        override fun MethodBuilder.modifyOfOperator() {
+            defaultOperatorOfImplementation()
+        }
     }
 }
 
@@ -472,6 +520,10 @@ class GenerateNativeArrays(writer: PrintWriter, primitiveArrays: Boolean) : Gene
 
         override fun MethodBuilder.modifyIterator() {
             "$arrayIteratorImplClassName(this)".setAsExpressionBody()
+        }
+
+        override fun MethodBuilder.modifyOfOperator() {
+            defaultOperatorOfImplementation()
         }
     }
 }

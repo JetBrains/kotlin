@@ -36,6 +36,15 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Byte) : this(size)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Byte` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Byte): ByteArray =
+            byteArrayOf(*elements)
+    }
+
     internal val storage: WasmByteArray
 
     init {
@@ -121,6 +130,15 @@ public actual constructor(size: Int) {
      */
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Char) : this(size)
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Char` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Char): CharArray =
+            charArrayOf(*elements)
+    }
 
     internal val storage: WasmCharArray
 
@@ -208,6 +226,15 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Short) : this(size)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Short` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Short): ShortArray =
+            shortArrayOf(*elements)
+    }
+
     internal val storage: WasmShortArray
 
     init {
@@ -293,6 +320,15 @@ public actual constructor(size: Int) {
      */
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Int) : this(size)
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Int` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Int): IntArray =
+            intArrayOf(*elements)
+    }
 
     internal val storage: WasmIntArray
 
@@ -380,6 +416,15 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Long) : this(size)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Long` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Long): LongArray =
+            longArrayOf(*elements)
+    }
+
     internal val storage: WasmLongArray
 
     init {
@@ -465,6 +510,15 @@ public actual constructor(size: Int) {
      */
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Float) : this(size)
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Float` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Float): FloatArray =
+            floatArrayOf(*elements)
+    }
 
     internal val storage: WasmFloatArray
 
@@ -552,6 +606,15 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Double) : this(size)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Double` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Double): DoubleArray =
+            doubleArrayOf(*elements)
+    }
+
     internal val storage: WasmDoubleArray
 
     init {
@@ -637,6 +700,15 @@ public actual constructor(size: Int) {
      */
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Boolean) : this(size)
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Boolean` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Boolean): BooleanArray =
+            booleanArrayOf(*elements)
+    }
 
     internal val storage: WasmByteArray
 

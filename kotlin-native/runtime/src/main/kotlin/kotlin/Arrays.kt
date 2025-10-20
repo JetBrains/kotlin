@@ -41,6 +41,15 @@ public actual constructor(size: Int) {
         }
     }
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Byte` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Byte): ByteArray =
+            byteArrayOf(*elements)
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -118,6 +127,15 @@ public actual constructor(size: Int) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
+    }
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Char` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Char): CharArray =
+            charArrayOf(*elements)
     }
 
     /**
@@ -199,6 +217,15 @@ public actual constructor(size: Int) {
         }
     }
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Short` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Short): ShortArray =
+            shortArrayOf(*elements)
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -276,6 +303,15 @@ public actual constructor(size: Int) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
+    }
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Int` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Int): IntArray =
+            intArrayOf(*elements)
     }
 
     /**
@@ -357,6 +393,15 @@ public actual constructor(size: Int) {
         }
     }
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Long` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Long): LongArray =
+            longArrayOf(*elements)
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -434,6 +479,15 @@ public actual constructor(size: Int) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
+    }
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Float` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Float): FloatArray =
+            floatArrayOf(*elements)
     }
 
     /**
@@ -515,6 +569,15 @@ public actual constructor(size: Int) {
         }
     }
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Double` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Double): DoubleArray =
+            doubleArrayOf(*elements)
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -592,6 +655,15 @@ public actual constructor(size: Int) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
+    }
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified `Boolean` elements. */
+        @ExperimentalStdlibApi
+        public actual operator fun of(vararg elements: Boolean): BooleanArray =
+            booleanArrayOf(*elements)
     }
 
     /**
