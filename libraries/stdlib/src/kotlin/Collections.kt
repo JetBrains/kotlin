@@ -216,6 +216,30 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
  * @param E the type of elements contained in the list. The list is covariant in its element type.
  */
 public expect interface List<out E> : Collection<E> {
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public companion object {
+        /**
+         * Returns an empty read-only list. The returned list is serializable (JVM).
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(): List<T>
+
+        /**
+         * Returns a new read-only list containing only the specified object [element].
+         *
+         * The returned list is serializable (JVM).
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(element: T): List<T>
+
+        /**
+         * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(vararg elements: T): List<T>
+    }
+
     // Query Operations
 
     override val size: Int
@@ -304,6 +328,28 @@ public expect interface List<out E> : Collection<E> {
  * @param E the type of elements contained in the list. The mutable list is invariant in its element type.
  */
 public expect interface MutableList<E> : List<E>, MutableCollection<E> {
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public companion object {
+        /**
+         * Returns an empty new [MutableList].
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(): MutableList<T>
+
+        /**
+         * Returns a new [MutableList] containing only the specified object [element].
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(element: T): MutableList<T>
+
+        /**
+         * Returns a new [MutableList] with the given elements.
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(vararg elements: T): MutableList<T>
+    }
+
     // Modification Operations
     /**
      * Adds the specified element to the end of this list.
@@ -449,6 +495,32 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
  * @param E the type of elements contained in the set. The set is covariant in its element type.
  */
 public expect interface Set<out E> : Collection<E> {
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public companion object {
+        /**
+         * Returns an empty read-only set.  The returned set is serializable (JVM).
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(): Set<T>
+
+        /**
+         * Returns a new read-only set containing only the specified object [element].
+         *
+         * The returned set is serializable (JVM).
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(element: T): Set<T>
+
+        /**
+         * Returns a new read-only set with the given elements.
+         * Elements of the set are iterated in the order they were specified.
+         * The returned set is serializable (JVM).
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(vararg elements: T): Set<T>
+    }
+
     // Query Operations
 
     override val size: Int
@@ -478,6 +550,31 @@ public expect interface Set<out E> : Collection<E> {
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
 public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public companion object {
+        /**
+         * Returns an empty new [MutableSet].
+         *
+         * The returned set preserves the element iteration order.
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(): MutableSet<T>
+
+        /**
+         * Returns a new [MutableSet] containing only the specified object [element].
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(element: T): MutableSet<T>
+
+        /**
+         * Returns a new [MutableSet] with the given elements.
+         * Elements of the set are iterated in the order they were specified.
+         */
+        @ExperimentalStdlibApi
+        public operator fun <T> of(vararg elements: T): MutableSet<T>
+    }
+
     // Query Operations
     override fun iterator(): MutableIterator<E>
 
