@@ -190,7 +190,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mode: ImportMode,
         iosAppLocation: String?,
         subprojectsToFrameworkNamesMap: Map<String, String?>,
-        arch: String = "x86_64",
+        arch: String = "arm64",
         podInstall: (taskPrefix: String, iosAppPath: Path) -> Unit = ::gradlePodInstall,
     ) {
 
