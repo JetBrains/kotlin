@@ -39,6 +39,7 @@ import java.util.ArrayDeque
 @PhasePrerequisites(
     ArrayConstructorLowering::class,
 //    OuterThisInInlineFunctionsSpecialAccessorLowering::class // for public inline only
+//    InlineCallCycleCheckerLowering::class // only on the first stage
 )
 abstract class FunctionInlining(
     val context: LoweringContext,
