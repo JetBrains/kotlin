@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
-// ^^^ Context parameters aren't going to be supported in K1.
 // LANGUAGE: +ContextParameters
 // MODULE: properties_with_context_parameters
 
