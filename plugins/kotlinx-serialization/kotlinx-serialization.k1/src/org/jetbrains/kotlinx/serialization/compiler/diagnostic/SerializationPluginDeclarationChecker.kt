@@ -280,19 +280,6 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             return false
         }
 
-        if (descriptor.isInlineClass() && !canSupportInlineClasses(descriptor.module, trace)) {
-            descriptor.onSerializableOrMetaAnnotation {
-                trace.report(
-                    SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(
-                        it,
-                        RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                        VersionReader.getVersionsForCurrentModuleFromTrace(descriptor.module, trace)?.implementationVersion.toString()
-                    )
-                )
-            }
-            return false
-        }
-
         if (!descriptor.hasSerializableOrMetaAnnotationWithoutArgs) {
             // defined custom serializer
             checkClassWithCustomSerializer(descriptor, declaration, trace)
@@ -594,11 +581,6 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
     private fun KotlinType.isUnsupportedInlineType() = isInlineClassType() && !KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(this)
 
-    private fun canSupportInlineClasses(module: ModuleDescriptor, trace: BindingTrace): Boolean {
-        if (isIde) return true // do not get version from jar manifest in ide
-        return VersionReader.canSupportInlineClasses(module, trace)
-    }
-
     private fun SerializationContextInFile.checkType(
         module: ModuleDescriptor,
         type: KotlinType,
@@ -608,15 +590,6 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     ) {
         if (type.genericIndex != null) return // type arguments always have serializer stored in class' field
         val element = ktType?.typeElement
-        if (type.isUnsupportedInlineType() && !canSupportInlineClasses(module, trace)) {
-            trace.report(
-                SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(
-                    element ?: fallbackElement,
-                    RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES.toString(),
-                    VersionReader.getVersionsForCurrentModuleFromTrace(module, trace)?.implementationVersion.toString()
-                )
-            )
-        }
         val serializer = findTypeSerializerOrContextUnchecked(module, type)
         if (serializer != null) {
             val hasParameters = type.annotations.serializableWith(module)?.let {

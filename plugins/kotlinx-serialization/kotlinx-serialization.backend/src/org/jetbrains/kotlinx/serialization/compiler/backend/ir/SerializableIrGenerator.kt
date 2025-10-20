@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.lower.isJvmOptimizableDelegate
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -18,20 +17,21 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
-import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.CACHED_DESCRIPTOR_FIELD_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LOAD
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SAVE
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD
 
@@ -104,12 +104,6 @@ class SerializableIrGenerator(
                 }
             }
 
-            // Missing field exception parts
-            val exceptionCtorRef =
-                compilerContext.referenceConstructors(ClassId(SerializationPackages.packageFqName, Name.identifier(MISSING_FIELD_EXC)))
-                    .single { it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.stringType)) }
-            val exceptionType = exceptionCtorRef.owner.returnType
-
             val seenVarsOffset = serializableProperties.bitMaskSlotCount()
             val seenVars = (0 until seenVarsOffset).map { ctor.parameters[it] }
 
@@ -118,10 +112,7 @@ class SerializableIrGenerator(
             var startPropOffset: Int = 0
 
 
-            if (useFieldMissingOptimization() &&
-                // for abstract classes fields MUST BE checked in child classes
-                !irClass.isAbstractOrSealedSerializableClass
-            ) {
+            if (!irClass.isAbstractOrSealedSerializableClass) {
                 val getDescriptorExpr = if (irClass.isStaticSerializable) {
                     getStaticSerialDescriptorExprForConstructor()
                 } else {
@@ -154,14 +145,10 @@ class SerializableIrGenerator(
                     irSetField(irGet(thiz), backingFieldToAssign, initializerBody)
                 } else {
                     // property required
-                    if (useFieldMissingOptimization()) {
-                        // field definitely not empty as it's checked before - no need another IF, only assign property from param
-                        +assignParamExpr
-                        statementsAfterSerializableProperty[prop.ir]?.forEach { +it }
-                        continue
-                    } else {
-                        irThrow(irInvoke(exceptionCtorRef, irString(prop.name), returnTypeHint = exceptionType))
-                    }
+                    // field definitely not empty as it's checked before - no need another IF, only assign property from param
+                    +assignParamExpr
+                    statementsAfterSerializableProperty[prop.ir]?.forEach { +it }
+                    continue
                 }
 
                 val propNotSeenTest =

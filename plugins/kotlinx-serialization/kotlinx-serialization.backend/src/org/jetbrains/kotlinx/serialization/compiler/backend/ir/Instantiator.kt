@@ -159,7 +159,7 @@ internal class Instantiator(
             constructors.single { it.owner.isPrimary }
         } else {
             constructors.find { it.owner.lastArgumentIsAnnotationArray() }
-                ?: error("Your serialization runtime is lower than minimal supported version (1.3.0). Please update your runtime.")
+                ?: generator.runtimeTooLowError()
         }
     }
 

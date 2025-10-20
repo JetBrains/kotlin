@@ -36,11 +36,6 @@ object VersionReader {
         return CommonVersionReader.computeRuntimeVersions(markerClass.source)
     }
 
-    fun canSupportInlineClasses(module: ModuleDescriptor, trace: BindingTrace): Boolean {
-        // Klibs do not have manifest file, unfortunately, so we hope for the better
-        return CommonVersionReader.canSupportInlineClasses(getVersionsForCurrentModuleFromTrace(module, trace))
-    }
-
     // This method is needed to keep compatibility with IDE plugin
     fun getVersionsFromManifest(runtimeLibraryPath: File): RuntimeVersions {
         return CommonVersionReader.getVersionsFromManifest(runtimeLibraryPath)
