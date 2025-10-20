@@ -72,6 +72,7 @@ org-jetbrains-syntax-api = "0.3.340"
 org-jetbrains-annotations = "26.0.2"
 schema-kenerator = "2.1.2"
 kotlinpoet = "2.2.0"
+antlr = "4.13.2"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -175,6 +176,9 @@ schema-kenerator-serialization = { module = "io.github.smiley4:schema-kenerator-
 schema-kenerator-jsonschema = { module = "io.github.smiley4:schema-kenerator-jsonschema", version.ref="schema-kenerator" }
 
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+
+antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
+antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
