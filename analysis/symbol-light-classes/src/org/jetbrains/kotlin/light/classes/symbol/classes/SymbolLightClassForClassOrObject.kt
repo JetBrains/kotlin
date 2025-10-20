@@ -218,9 +218,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             .mapNotNull { it.name }
             .toSet()
 
-
-        // TODO filter out equals/hashcode (or all overrides?)
-        javaBaseClass.methods
         return javaBaseClass.methods.flatMap { method -> methodWrappers(method, javaBaseClass, kotlinNames, substitutor) }
     }
 
@@ -250,6 +247,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             val finalBridgeForJava = method.finalBridge(substitutor)
             val abstractKotlinGetter = method.wrap(substitutor, name = kotlinName)
             return listOf(finalBridgeForJava, abstractKotlinGetter)
+        }
+
+        // TODO filter out all overrides?
+        if (methodName == "equals" || methodName == "hashCode" || methodName == "toString") {
+            return emptyList()
         }
 
         if (!method.isInKotlinInterface(javaBaseClass, kotlinNames)) {

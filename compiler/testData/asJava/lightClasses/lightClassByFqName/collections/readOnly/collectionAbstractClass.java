@@ -9,8 +9,6 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements java.u
 
   public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
 
-  public boolean equals(java.lang.Object);//  equals(java.lang.Object)
-
   public boolean remove(java.lang.Object);//  remove(java.lang.Object)
 
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
@@ -18,8 +16,6 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements java.u
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   public final int size();//  size()
-
-  public int hashCode();//  hashCode()
 
   public java.lang.Object[] toArray();//  toArray()
 
