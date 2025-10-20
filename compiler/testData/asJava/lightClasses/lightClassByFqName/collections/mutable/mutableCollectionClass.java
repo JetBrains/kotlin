@@ -11,15 +11,11 @@ public abstract class CMutableCollection /* test.CMutableCollection*/<Elem>  imp
 
   public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
 
-  public boolean equals(java.lang.Object);//  equals(java.lang.Object)
-
   public boolean isEmpty();//  isEmpty()
 
   public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
 
   public final int size();//  size()
-
-  public int hashCode();//  hashCode()
 
   public java.lang.Object[] toArray();//  toArray()
 }
