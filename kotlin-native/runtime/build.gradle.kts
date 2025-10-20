@@ -60,7 +60,7 @@ val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 bitcode {
     allTargets {
         module("main") {
-            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", "src/crashHandler/common/cpp")
+            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", "src/crashHandler/common/cpp", "src/utfcpp/cpp")
             sourceSets {
                 main {
                     // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
@@ -82,6 +82,11 @@ bitcode {
         // Headers from here get reused by Swift Export, so this module should not depend on anything in the runtime
         module("objcExport") {
             // There must not be any implementation files, only headers.
+            sourceSets {}
+        }
+
+        module("utfcpp") {
+            // Header-only library
             sourceSets {}
         }
 
