@@ -213,7 +213,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         substitutor: PsiSubstitutor,
     ): List<PsiMethod> {
 
-        val kotlinNames = kotlinCollectionSymbol.declaredMemberScope.callables
+        val kotlinNames = kotlinCollectionSymbol.memberScope.callables
             .filter { it is KaNamedFunctionSymbol }
             .mapNotNull { it.name }
             .toSet()
@@ -259,7 +259,10 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             return listOf(method.openBridge(substitutor))
         }
 
-        return methodsWithSpecializedSignature(method, javaBaseClass, substitutor)
+        return emptyList()
+
+        // TODO
+        //   return methodsWithSpecializedSignature(method, javaBaseClass, substitutor)
     }
 
     private fun PsiMethod.isInKotlinInterface(javaBaseClass: PsiClass, kotlinNames: Set<Name>): Boolean {
@@ -271,9 +274,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         return Name.identifier(name) in kotlinNames
     }
 
-    // TODO recheck toArray
-    //  public abstract <T> T[] toArray(T[]);// <T>  toArray(T[])
-    //
     // TODO difference with backend in `iterator`
     //  it is de-facto required to implement in `J`, because our backend just throws an Exception (probably a backend bug)
     private fun methodsWithSpecializedSignature(method: PsiMethod, javaBaseClass: PsiClass, substitutor: PsiSubstitutor): List<PsiMethod> {
