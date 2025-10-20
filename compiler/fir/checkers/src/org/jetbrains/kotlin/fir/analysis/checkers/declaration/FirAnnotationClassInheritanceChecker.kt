@@ -12,20 +12,40 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.resolve.getSuperTypes
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
+import org.jetbrains.kotlin.fir.resolve.forEachSupertypeWithInheritor
+import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.coneType
 
 object FirAnnotationClassInheritanceChecker : FirClassChecker(MppCheckerKind.Common) {
     @SymbolInternals
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        val superAnnotations = declaration.symbol.getSuperTypes(context.session)
-            .mapNotNull { it.toRegularClassSymbol() }
-            .filter { it.classKind == ClassKind.ANNOTATION_CLASS }
+        val originatingImmediateSupertypeSource = declaration.superTypeRefs
+            .mapNotNull { it.coneType.toClassLikeSymbol()?.to(it.source) }
+            .toMap().toMutableMap()
 
-        for (anno in superAnnotations) {
-            reporter.reportOn(declaration.source, FirErrors.EXTENDING_AN_ANNOTATION_CLASS, anno)
+        declaration.symbol.forEachSupertypeWithInheritor(
+            deep = true,
+            lookupInterfaces = true,
+            substituteSuperTypes = true,
+            supertypeSupplier = SupertypeSupplier.Default,
+            useSiteSession = context.session,
+        ) { supertype, inheritor ->
+            val superSymbol = supertype.toClassLikeSymbol()
+                ?: return@forEachSupertypeWithInheritor
+            originatingImmediateSupertypeSource.putIfAbsent(superSymbol, originatingImmediateSupertypeSource[inheritor])
+
+            if (superSymbol !is FirRegularClassSymbol || superSymbol.classKind != ClassKind.ANNOTATION_CLASS) {
+                return@forEachSupertypeWithInheritor
+            }
+            val source = when {
+                inheritor == declaration.symbol -> originatingImmediateSupertypeSource[superSymbol]
+                else -> declaration.source
+            }
+            reporter.reportOn(source, FirErrors.EXTENDING_AN_ANNOTATION_CLASS, superSymbol)
         }
     }
 }

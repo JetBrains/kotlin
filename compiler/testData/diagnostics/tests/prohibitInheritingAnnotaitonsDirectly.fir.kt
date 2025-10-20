@@ -11,9 +11,9 @@ public @interface JavaNonEmptyAnno {
 }
 
 // FILE: KotlinAnnoClasses.kt
-class <!EXTENDING_AN_ANNOTATION_CLASS_ERROR!>KotlinEmptyAnnoRaw<!> : <!FINAL_SUPERTYPE!>JavaEmptyAnno<!>
+class KotlinEmptyAnnoRaw : <!EXTENDING_AN_ANNOTATION_CLASS_ERROR, FINAL_SUPERTYPE!>JavaEmptyAnno<!>
 
-class <!EXTENDING_AN_ANNOTATION_CLASS_ERROR!>KotlinNonEmptyAnnoRaw<!> : <!FINAL_SUPERTYPE!>JavaNonEmptyAnno<!>
+class KotlinNonEmptyAnnoRaw : <!EXTENDING_AN_ANNOTATION_CLASS_ERROR, FINAL_SUPERTYPE!>JavaNonEmptyAnno<!>
 
 fun main() {
     KotlinEmptyAnnoRaw()
