@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.TASKS_GROUP_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask.Companion.NPM_TOOLING_DIR_NAME
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NodeJsRootPluginApplier
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.configureNodeJsEnvironmentTasks
@@ -57,6 +57,10 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
         nodeJsRootPluginApplier.apply(target)
 
         val nodeJsRoot = target.extensions.getByName(WasmNodeJsRootExtension.EXTENSION_NAME) as WasmNodeJsRootExtension
+
+        @Suppress("DEPRECATION_ERROR")
+        nodeJsRoot.version = "25.0.0"
+
         val nodeJs = target.extensions.getByName(WasmNodeJsEnvSpec.EXTENSION_NAME) as WasmNodeJsEnvSpec
 
         val packageManagerName = nodeJsRoot.packageManagerExtension.map { it.name }

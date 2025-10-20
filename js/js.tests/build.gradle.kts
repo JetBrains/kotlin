@@ -19,7 +19,7 @@ val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?
 
 node {
     download.set(true)
-    version.set(nodejsVersion)
+    version.set(nodejsLtsVersion)
     nodeProjectDir.set(layout.buildDirectory.dir("node"))
     if (cacheRedirectorEnabled) {
         distBaseUrl.set("https://cache-redirector.jetbrains.com/nodejs.org/dist")
@@ -94,6 +94,11 @@ dependencies {
     testRuntimeOnly(libs.ktor.client.cio)
     testRuntimeOnly(libs.ktor.client.core)
     testRuntimeOnly(libs.ktor.client.websockets)
+
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:win-x64@zip")
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:linux-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:darwin-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsLtsVersion:darwin-arm64@tar.gz")
 }
 
 optInToExperimentalCompilerApi()
