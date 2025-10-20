@@ -670,7 +670,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("valueParameterKind", "FirValueParameterKind.Regular", withGetter = true)
         }
 
-        impl(simpleFunction)
+        impl(namedFunction)
 
         impl(safeCallExpression) {
             additionalImports(checkedSafeCallSubject)

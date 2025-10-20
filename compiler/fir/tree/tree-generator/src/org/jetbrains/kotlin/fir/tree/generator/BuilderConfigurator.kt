@@ -371,7 +371,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(valueParameter, type = "FirDefaultSetterValueParameter") {
         }
 
-        builder(simpleFunction) {
+        builder(namedFunction) {
             parents += functionBuilder
             parents += typeParametersOwnerBuilder
             defaultNull("body", "contractDescription")

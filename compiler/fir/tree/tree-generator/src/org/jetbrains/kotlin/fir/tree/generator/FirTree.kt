@@ -502,7 +502,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(typeParameterRef)
     }
 
-    val simpleFunction: Element by element(Declaration) {
+    val namedFunction: Element by element(Declaration) {
         parent(function)
         parent(contractDescriptionOwner)
         parent(typeParametersOwner)
