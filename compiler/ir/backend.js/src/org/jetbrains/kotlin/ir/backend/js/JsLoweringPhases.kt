@@ -567,7 +567,7 @@ private val defaultArgumentStubGeneratorPhase = makeIrModulePhase(
 )
 
 private val defaultArgumentPatchOverridesPhase = makeIrModulePhase(
-    ::DefaultParameterPatchOverridenSymbolsLowering,
+    ::JsDefaultParameterPatchOverridenSymbolsLowering,
     name = "DefaultArgumentsPatchOverrides",
     prerequisite = setOf(defaultArgumentStubGeneratorPhase)
 )
@@ -616,19 +616,15 @@ private val annotationConstructorLowering = makeIrModulePhase(
 )
 
 private val initializersLoweringPhase = makeIrModulePhase(
-    ::InitializersLowering,
+    ::JsInitializersLowering,
     name = "InitializersLowering",
     prerequisite = setOf(
         enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering, localDeclarationExtractionPhase
     )
 )
 
-private fun createInitializersCleanupLoweringPhase(context: CommonBackendContext): InitializersCleanupLowering {
-    return InitializersCleanupLowering(context)
-}
-
 private val initializersCleanupLoweringPhase = makeIrModulePhase(
-    ::InitializersCleanupLowering,
+    ::JsInitializersCleanupLowering,
     name = "InitializersCleanupLowering",
     prerequisite = setOf(initializersLoweringPhase)
 )
@@ -909,8 +905,8 @@ fun getJsLowerings(): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragme
         ::PrimaryConstructorLowering,
         ::DelegateToSyntheticPrimaryConstructor,
         ::AnnotationConstructorLowering,
-        ::InitializersLowering,
-        ::createInitializersCleanupLoweringPhase,
+        ::JsInitializersLowering,
+        ::JsInitializersCleanupLowering,
         ::createKotlinNothingValueExceptionPhase,
         ::CollectClassDefaultConstructorsLowering,
         ::EnumWhenLowering,
@@ -942,7 +938,7 @@ fun getJsLowerings(): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragme
         ::PrivateMembersLowering,
         ::PrivateMemberBodiesLowering,
         ::JsDefaultArgumentStubGenerator,
-        ::DefaultParameterPatchOverridenSymbolsLowering,
+        ::JsDefaultParameterPatchOverridenSymbolsLowering,
         ::JsDefaultParameterInjector,
         ::createDefaultParameterCleanerPhase,
         ::CaptureStackTraceInThrowables,
