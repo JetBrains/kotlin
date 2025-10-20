@@ -13860,6 +13860,24 @@ final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.co
 // Targets: [js, wasmJs, wasmWasi]
 final inline fun <#A: kotlin/Any?> kotlin/emptyArray(): kotlin/Array<#A> // kotlin/emptyArray|emptyArray(){0§<kotlin.Any?>}[0]
 
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/findIs(): #A? // kotlin.collections/findIs|findIs@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/firstIs(): #A? // kotlin.collections/firstIs|firstIs@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/findIs(): #A? // kotlin.sequences/findIs|findIs@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/firstIs(): #A? // kotlin.sequences/firstIs|firstIs@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/findIs(): #A? // kotlin.collections/findIs|findIs@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/firstIs(): #A? // kotlin.collections/firstIs|firstIs@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
+
 // Targets: [js, wasmJs]
 open annotation class kotlin.js/ExperimentalWasmJsInterop : kotlin/Annotation { // kotlin.js/ExperimentalWasmJsInterop|null[0]
     constructor <init>() // kotlin.js/ExperimentalWasmJsInterop.<init>|<init>(){}[0]
