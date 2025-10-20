@@ -634,7 +634,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val local = c.childContext(proto.typeParameterList, containingDeclarationSymbol = symbol)
 
         val versionRequirements = VersionRequirement.create(proto, c)
-        val simpleFunction = buildNamedFunction {
+        val namedFunction = buildNamedFunction {
             moduleData = c.moduleData
             origin = deserializationOrigin
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
@@ -703,12 +703,12 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
         if (proto.hasContract()) {
             val contractDeserializer = if (proto.typeParameterList.isEmpty()) this.contractDeserializer else FirContractDeserializer(local)
-            val contractDescription = contractDeserializer.loadContract(proto.contract, simpleFunction)
+            val contractDescription = contractDeserializer.loadContract(proto.contract, namedFunction)
             if (contractDescription != null) {
-                simpleFunction.replaceContractDescription(contractDescription)
+                namedFunction.replaceContractDescription(contractDescription)
             }
         }
-        return simpleFunction
+        return namedFunction
     }
 
     fun loadConstructor(

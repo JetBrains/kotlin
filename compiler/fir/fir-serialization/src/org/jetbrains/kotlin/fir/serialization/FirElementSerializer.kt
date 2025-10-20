@@ -721,24 +721,24 @@ class FirElementSerializer private constructor(
 
     fun functionProto(function: FirFunction): ProtoBuf.Function.Builder? = whileAnalysing(session, function) {
         val builder = ProtoBuf.Function.newBuilder()
-        val simpleFunction = function as? FirNamedFunction
+        val namedFunction = function as? FirNamedFunction
 
         val local = createChildSerializer(function)
 
         val flags = Flags.getFunctionFlags(
             function.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(function),
-            ProtoEnumFlags.visibility(simpleFunction?.let { normalizeVisibility(it) } ?: Visibilities.Local),
-            ProtoEnumFlags.modality(simpleFunction?.modality ?: Modality.FINAL),
+            ProtoEnumFlags.visibility(namedFunction?.let { normalizeVisibility(it) } ?: Visibilities.Local),
+            ProtoEnumFlags.modality(namedFunction?.modality ?: Modality.FINAL),
             function.memberKind(),
-            simpleFunction?.isOperator == true,
-            simpleFunction?.isInfix == true,
-            simpleFunction?.isInline == true,
-            simpleFunction?.isTailRec == true,
-            simpleFunction?.isExternal == true,
+            namedFunction?.isOperator == true,
+            namedFunction?.isInfix == true,
+            namedFunction?.isInline == true,
+            namedFunction?.isTailRec == true,
+            namedFunction?.isExternal == true,
             function.isSuspend,
-            simpleFunction?.isExpect == true,
+            namedFunction?.isExpect == true,
             shouldSetStableParameterNames(function),
-            ProtoEnumFlags.returnValueStatus(simpleFunction?.status?.returnValueStatus),
+            ProtoEnumFlags.returnValueStatus(namedFunction?.status?.returnValueStatus),
         )
 
         if (flags != builder.flags) {

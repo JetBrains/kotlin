@@ -771,7 +771,7 @@ private class ContextCollectorVisitor(
 
             val holder = getSessionHolder(namedFunction)
 
-            context.withSimpleFunction(namedFunction, holder.session) {
+            context.withNamedFunction(namedFunction, holder.session) {
                 processList(namedFunction.typeParameters)
                 process(namedFunction.receiverParameter)
 

@@ -974,7 +974,7 @@ open class FirDeclarationsResolveTransformer(
         }
 
         val containingDeclaration = context.containerIfAny
-        return context.withSimpleFunction(namedFunction, session) {
+        return context.withNamedFunction(namedFunction, session) {
             // this is required to resolve annotations on functions of local classes
             if (shouldResolveEverything) {
                 namedFunction.transformReceiverParameter(this, data)
@@ -1009,7 +1009,7 @@ open class FirDeclarationsResolveTransformer(
 
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {
-            val simpleFunction = function as? FirNamedFunction
+            val namedFunction = function as? FirNamedFunction
             val returnExpression = (body?.statements?.singleOrNull() as? FirReturnExpression)?.result
             val expressionType = returnExpression?.resolvedType
             val newSource = result.returnTypeRef.source
@@ -1021,15 +1021,15 @@ open class FirDeclarationsResolveTransformer(
                     if (context.containers.getOrNull(context.containers.size - 2) is FirReplSnippet)
                         approximateDeclarationType(
                             session,
-                            simpleFunction?.visibilityForApproximation(),
-                            isLocal = false, isInlineFunction = simpleFunction?.isInline == true
+                            namedFunction?.visibilityForApproximation(),
+                            isLocal = false, isInlineFunction = namedFunction?.isInline == true
                         )
                     else
                         approximateDeclarationType(
                             session,
-                            simpleFunction?.visibilityForApproximation(),
-                            isLocal = simpleFunction?.isLocal == true,
-                            isInlineFunction = simpleFunction?.isInline == true
+                            namedFunction?.visibilityForApproximation(),
+                            isLocal = namedFunction?.isLocal == true,
+                            isInlineFunction = namedFunction?.isInline == true
                         )
                 }
                 ?: buildErrorTypeRef {

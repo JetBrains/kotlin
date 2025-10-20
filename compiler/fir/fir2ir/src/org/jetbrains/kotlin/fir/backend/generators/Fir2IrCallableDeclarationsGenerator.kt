@@ -74,7 +74,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
         allowLazyDeclarationsCreation: Boolean
     ): IrSimpleFunction = convertCatching(function) {
-        val simpleFunction = function as? FirNamedFunction
+        val namedFunction = function as? FirNamedFunction
         val isLambda = function is FirAnonymousFunction && function.isLambda
         val isBaseInvokeFunction = function.symbol.callableId
             .run { isFunctionInvoke() || isSuspendFunctionInvoke() || isKFunctionInvoke() || isKSuspendFunctionInvoke() }
@@ -82,8 +82,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             isBaseInvokeFunction -> IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
             !predefinedOrigin.isExternal && // we should preserve origin for external enums
-                    simpleFunction?.isStatic == true &&
-                    simpleFunction.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
+                    namedFunction?.isStatic == true &&
+                    namedFunction.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES
             -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
 
             // Kotlin built-in class and Java originated method (Collection.forEach, etc.)
@@ -109,9 +109,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             if (symbol.isBound) return symbol.owner
             return lazyDeclarationsGenerator.createIrLazyFunction(function, symbol, irParent, updatedOrigin, isSynthetic)
         }
-        val name = simpleFunction?.name
+        val name = namedFunction?.name
             ?: if (isLambda) SpecialNames.ANONYMOUS else SpecialNames.NO_NAME_PROVIDED
-        val visibility = simpleFunction?.visibility ?: Visibilities.Local
+        val visibility = namedFunction?.visibility ?: Visibilities.Local
         val isSuspend =
             if (isLambda) (function.typeRef as? FirResolvedTypeRef)?.coneType?.isSuspendOrKSuspendFunctionType(session) == true
             else function.isSuspend
@@ -123,17 +123,17 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 origin = updatedOrigin,
                 name = name,
                 visibility = c.visibilityConverter.convertToDescriptorVisibility(visibility),
-                isInline = simpleFunction?.isInline == true,
-                isExpect = simpleFunction?.isExpect == true,
+                isInline = namedFunction?.isInline == true,
+                isExpect = namedFunction?.isExpect == true,
                 returnType = function.returnTypeRef.toIrType(),
-                modality = simpleFunction?.modality ?: Modality.FINAL,
+                modality = namedFunction?.modality ?: Modality.FINAL,
                 symbol = symbol,
-                isTailrec = simpleFunction?.isTailRec == true,
+                isTailrec = namedFunction?.isTailRec == true,
                 isSuspend = isSuspend,
-                isOperator = simpleFunction?.isOperator == true,
-                isInfix = simpleFunction?.isInfix == true,
-                isExternal = isEffectivelyExternal(simpleFunction, irParent),
-                containerSource = simpleFunction?.containerSource,
+                isOperator = namedFunction?.isOperator == true,
+                isInfix = namedFunction?.isInfix == true,
+                isExternal = isEffectivelyExternal(namedFunction, irParent),
+                containerSource = namedFunction?.containerSource,
             ).apply {
                 metadata = FirMetadataSource.Function(function)
                 declarationStorage.withScope(symbol) {
@@ -147,8 +147,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                     }
                     declareParameters(
                         function, irParent,
-                        dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent),
-                        isStatic = simpleFunction?.isStatic == true,
+                        dispatchReceiverType = computeDispatchReceiverType(this, namedFunction, irParent),
+                        isStatic = namedFunction?.isStatic == true,
                         forSetter = false,
                     )
                     convertAnnotationsForNonDeclaredMembers(function, origin)

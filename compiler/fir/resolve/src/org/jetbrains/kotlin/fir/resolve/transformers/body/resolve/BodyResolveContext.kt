@@ -783,18 +783,18 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> withSimpleFunction(
-        simpleFunction: FirNamedFunction,
+    inline fun <T> withNamedFunction(
+        namedFunction: FirNamedFunction,
         session: FirSession,
         f: () -> T
     ): T {
         if (containerIfAny !is FirClass) {
-            storeFunction(simpleFunction, session)
+            storeFunction(namedFunction, session)
         }
 
-        return withTypeParametersOf(simpleFunction) {
-            withInlineFunctionIfApplicable(simpleFunction) {
-                withContainer(simpleFunction, f)
+        return withTypeParametersOf(namedFunction) {
+            withInlineFunctionIfApplicable(namedFunction) {
+                withContainer(namedFunction, f)
             }
         }
     }

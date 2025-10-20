@@ -502,7 +502,7 @@ class Fir2IrVisitor(
                 irFunction, namedFunction, containingClass = conversionScope.containerFirClass()
             )
         }.also {
-            cleaner.cleanSimpleFunction(namedFunction)
+            cleaner.cleanNamedFunction(namedFunction)
         }
     }
 

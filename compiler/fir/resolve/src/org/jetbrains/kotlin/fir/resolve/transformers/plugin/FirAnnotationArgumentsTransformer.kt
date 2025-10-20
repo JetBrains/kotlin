@@ -226,7 +226,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
         namedFunction: FirNamedFunction,
         data: ResolutionMode
     ): FirNamedFunction {
-        context.withSimpleFunction(namedFunction, session) {
+        context.withNamedFunction(namedFunction, session) {
             namedFunction
                 .transformTypeParameters(transformer, data)
                 .transformReturnTypeRef(transformer, data)

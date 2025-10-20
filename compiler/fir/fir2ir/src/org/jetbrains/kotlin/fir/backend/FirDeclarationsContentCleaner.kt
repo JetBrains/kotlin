@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.serialization.constant.hasConstantValue
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -22,7 +21,7 @@ sealed class FirDeclarationsContentCleaner {
     abstract fun cleanClass(regularClass: FirRegularClass)
     abstract fun cleanAnonymousObject(anonymousObject: FirAnonymousObject)
     abstract fun cleanConstructor(constructor: FirConstructor)
-    abstract fun cleanSimpleFunction(simpleFunction: FirNamedFunction)
+    abstract fun cleanNamedFunction(namedFunction: FirNamedFunction)
     abstract fun cleanAnonymousFunction(anonymousFunction: FirAnonymousFunction)
     abstract fun cleanValueParameter(valueParameter: FirValueParameter)
     abstract fun cleanProperty(property: FirProperty)
@@ -51,7 +50,7 @@ sealed class FirDeclarationsContentCleaner {
         override fun cleanClass(regularClass: FirRegularClass) {}
         override fun cleanAnonymousObject(anonymousObject: FirAnonymousObject) {}
         override fun cleanConstructor(constructor: FirConstructor) {}
-        override fun cleanSimpleFunction(simpleFunction: FirNamedFunction) {}
+        override fun cleanNamedFunction(namedFunction: FirNamedFunction) {}
         override fun cleanAnonymousFunction(anonymousFunction: FirAnonymousFunction) {}
         override fun cleanValueParameter(valueParameter: FirValueParameter) {}
         override fun cleanProperty(property: FirProperty) {}
@@ -78,9 +77,9 @@ sealed class FirDeclarationsContentCleaner {
             constructor.replaceDelegatedConstructor(null)
         }
 
-        override fun cleanSimpleFunction(simpleFunction: FirNamedFunction) {
-            simpleFunction.replaceControlFlowGraphReference(null)
-            simpleFunction.replaceBody(null)
+        override fun cleanNamedFunction(namedFunction: FirNamedFunction) {
+            namedFunction.replaceControlFlowGraphReference(null)
+            namedFunction.replaceBody(null)
         }
 
         override fun cleanAnonymousFunction(anonymousFunction: FirAnonymousFunction) {

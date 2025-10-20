@@ -264,7 +264,7 @@ private class LLFirStatusTargetResolver(
             performResolveWithOverriddenCallables(
                 target,
                 { transformer.statusResolver.getOverriddenFunctions(it, transformer.containingClass) },
-                { element, overridden -> transformer.transformSimpleFunction(element, overridden) },
+                { element, overridden -> transformer.transformNamedFunction(element, overridden) },
             )
 
             true

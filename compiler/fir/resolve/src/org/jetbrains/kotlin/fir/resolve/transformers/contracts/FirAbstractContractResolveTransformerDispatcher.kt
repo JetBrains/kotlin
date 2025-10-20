@@ -84,7 +84,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         ): FirNamedFunction {
             if (!namedFunction.hasContractToResolve) return namedFunction
 
-            return context.withSimpleFunction(namedFunction, session) {
+            return context.withNamedFunction(namedFunction, session) {
                 context.forFunctionBody(namedFunction, components) {
                     transformContractDescriptionOwner(namedFunction)
                 }
