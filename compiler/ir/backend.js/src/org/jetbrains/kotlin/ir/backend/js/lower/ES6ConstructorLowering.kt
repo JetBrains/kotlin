@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -75,6 +76,7 @@ private fun IrCall.setFactoryFunctionArguments(dispatchReceiver: IrExpression, o
 /**
  * Lowers synthetic primary constructor declarations to support ES classes.
  */
+@PhasePrerequisites(ES6AddBoxParameterToConstructorsLowering::class)
 class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -149,6 +151,7 @@ class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : 
 /**
  * Lowers constructor declarations to support ES classes.
  */
+@PhasePrerequisites(ES6SyntheticPrimaryConstructorLowering::class)
 class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {

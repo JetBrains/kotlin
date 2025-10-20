@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 /**
  * Copies property accessors and initializers so that the [JsPropertyAccessorInlineLowering] may access them safely.
  */
+@PhasePrerequisites(JsPropertyAccessorInlineLowering::class)
 class CopyAccessorBodyLowerings(private val context: CommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrSimpleFunction && declaration.correspondingPropertySymbol != null) {

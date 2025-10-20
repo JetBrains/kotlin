@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.transformInPlace
 /**
  * Moves local declarations into nearest declaration container.
  */
+@PhasePrerequisites(LocalDeclarationsLowering::class)
 open class LocalDeclarationPopupLowering(
     val context: LoweringContext,
 ) : BodyLoweringPass {

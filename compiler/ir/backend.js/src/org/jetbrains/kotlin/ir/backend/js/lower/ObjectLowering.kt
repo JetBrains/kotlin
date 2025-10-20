@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 /**
  * Creates lazy object instance generator functions.
  */
+@PhasePrerequisites(EnumClassCreateInitializerLowering::class)
 class ObjectDeclarationLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
@@ -90,6 +92,7 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
 /**
  * Transforms [IrGetObjectValue] into an instance generator call.
  */
+@PhasePrerequisites(PrimaryConstructorLowering::class)
 class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val functionContainer = container.takeIf { it is IrConstructor && it.isPrimary }

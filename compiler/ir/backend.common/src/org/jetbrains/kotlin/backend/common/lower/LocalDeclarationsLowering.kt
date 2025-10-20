@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -110,6 +111,7 @@ val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
  * }
  * ```
  */
+@PhasePrerequisites(SharedVariablesLowering::class, LocalDelegatedPropertiesLowering::class)
 open class LocalDeclarationsLowering(
     open val context: LoweringContext,
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,

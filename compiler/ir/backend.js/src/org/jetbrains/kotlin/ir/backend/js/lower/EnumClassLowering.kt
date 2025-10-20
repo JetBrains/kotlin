@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -42,6 +43,7 @@ val ENUM_ENTRIES_INITIALIZER_ORIGIN by IrDeclarationOriginImpl.Regular
 /**
  * Replaces enum access with invocation of corresponding function.
  */
+@PhasePrerequisites(EnumEntryCreateGetInstancesFunsLowering::class)
 class EnumUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -292,6 +294,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
 /**
  * Creates instance variable for each enum entry initialized with `null`.
  */
+@PhasePrerequisites(EnumClassConstructorLowering::class)
 class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrEnumEntry) {
@@ -327,6 +330,7 @@ class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : Declarat
 /**
  * Inserts enum entry field initialization into corresponding class constructors.
  */
+@PhasePrerequisites(EnumEntryInstancesLowering::class)
 class EnumEntryInstancesBodyLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrConstructor && container.constructedClass.kind == ClassKind.ENUM_ENTRY) {
@@ -348,6 +352,7 @@ class EnumEntryInstancesBodyLowering(val context: JsCommonBackendContext) : Body
     }
 }
 
+@PhasePrerequisites(EnumClassConstructorLowering::class)
 class EnumClassCreateInitializerLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass && declaration.isInstantiableEnum) {
@@ -410,6 +415,7 @@ class EnumClassCreateInitializerLowering(val context: JsCommonBackendContext) : 
         }
 }
 
+@PhasePrerequisites(EnumClassConstructorLowering::class)
 class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrEnumEntry) {
@@ -455,6 +461,11 @@ private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
 /**
  * Implements `valueOf, `values` and `entries` for enum classes.
  */
+@PhasePrerequisites(
+    EnumClassConstructorLowering::class,
+    EnumClassCreateInitializerLowering::class,
+    EnumEntryCreateGetInstancesFunsLowering::class,
+)
 class EnumSyntheticFunctionsAndPropertiesLowering(
     val context: JsCommonBackendContext,
 ) : DeclarationTransformer {
@@ -567,6 +578,7 @@ private val IrClass.enumEntries: List<IrEnumEntry>
 /**
  * Replaces an enum entry with the corresponding class.
  */
+@PhasePrerequisites(EnumUsageLowering::class)
 class EnumClassRemoveEntriesLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         // Remove IrEnumEntry nodes from class declarations. Replace them with corresponding class declarations (if they have them).

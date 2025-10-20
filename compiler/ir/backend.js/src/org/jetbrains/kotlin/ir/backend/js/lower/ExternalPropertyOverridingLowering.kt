@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -75,6 +77,7 @@ val EXTERNAL_SUPER_ACCESSORS_ORIGIN by IrDeclarationOriginImpl.Regular
  * It helps all the following classes to be recompiled without knowledge if they are in a hierarchy with an external class or not,
  * so we can re-compile only a single class instead of the whole hierarchy.
  */
+@PhasePrerequisites(PrimaryConstructorLowering::class, InitializersLowering::class)
 class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.isInterface) return null

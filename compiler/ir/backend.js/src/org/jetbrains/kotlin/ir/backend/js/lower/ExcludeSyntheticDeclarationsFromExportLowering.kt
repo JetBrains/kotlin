@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 /**
  * Excludes synthetic declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`.
  */
+@PhasePrerequisites(ImplicitlyExportedDeclarationsMarkingLowering::class)
 class ExcludeSyntheticDeclarationsFromExportLowering(val context: JsIrBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration.shouldBeExcludedFromExport()) {
