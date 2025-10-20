@@ -287,6 +287,15 @@ class Fir2IrVisitor(
                                     statement.isUnnamedLocalVariable -> statement.initializer?.accept(this@Fir2IrVisitor, null)
                                     else -> null
                                 }
+
+                                if (convertedInitializer is IrStatement && statement.destructuringDeclarationContainerVariable != null) {
+                                    // In name-based destructuring, underscores don't produce variables,
+                                    // but the call to the initializer must be preserved.
+                                    val correspondingComposite = destructComposites[statement.destructuringDeclarationContainerVariable!!]!!
+                                    correspondingComposite.statements.add(convertedInitializer)
+                                    continue
+                                }
+
                                 convertedInitializer as? IrStatement ?: continue
                             }
                             is FirProperty if statement.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
