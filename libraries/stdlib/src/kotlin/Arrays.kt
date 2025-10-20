@@ -33,6 +33,14 @@ public constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET")
     public inline constructor(size: Int, init: (Int) -> Byte)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `Byte` elements. */
+        @ExperimentalStdlibApi
+        public operator fun of(vararg elements: Byte): ByteArray
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -94,6 +102,14 @@ public constructor(size: Int) {
      */
     @Suppress("WRONG_MODIFIER_TARGET")
     public inline constructor(size: Int, init: (Int) -> Char)
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `Char` elements. */
+        @ExperimentalStdlibApi
+        public operator fun of(vararg elements: Char): CharArray
+    }
 
     /**
      * Returns the array element at the given [index].
@@ -157,6 +173,14 @@ public constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET")
     public inline constructor(size: Int, init: (Int) -> Short)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `Short` elements. */
+        @ExperimentalStdlibApi
+        public operator fun of(vararg elements: Short): ShortArray
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -218,6 +242,14 @@ public constructor(size: Int) {
      */
     @Suppress("WRONG_MODIFIER_TARGET")
     public inline constructor(size: Int, init: (Int) -> Int)
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `Int` elements. */
+        @ExperimentalStdlibApi
+        public operator fun of(vararg elements: Int): IntArray
+    }
 
     /**
      * Returns the array element at the given [index].
@@ -281,6 +313,14 @@ public constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET")
     public inline constructor(size: Int, init: (Int) -> Long)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `Long` elements. */
+        @ExperimentalStdlibApi
+        public operator fun of(vararg elements: Long): LongArray
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -342,6 +382,14 @@ public constructor(size: Int) {
      */
     @Suppress("WRONG_MODIFIER_TARGET")
     public inline constructor(size: Int, init: (Int) -> Float)
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `Float` elements. */
+        @ExperimentalStdlibApi
+        public operator fun of(vararg elements: Float): FloatArray
+    }
 
     /**
      * Returns the array element at the given [index].
@@ -405,6 +453,14 @@ public constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET")
     public inline constructor(size: Int, init: (Int) -> Double)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `Double` elements. */
+        @ExperimentalStdlibApi
+        public operator fun of(vararg elements: Double): DoubleArray
+    }
+
     /**
      * Returns the array element at the given [index].
      *
@@ -466,6 +522,14 @@ public constructor(size: Int) {
      */
     @Suppress("WRONG_MODIFIER_TARGET")
     public inline constructor(size: Int, init: (Int) -> Boolean)
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER", "NOTHING_TO_INLINE")
+    @ExperimentalStdlibApi
+    public companion object {
+        /** Returns an array containing the specified `Boolean` elements. */
+        @ExperimentalStdlibApi
+        public operator fun of(vararg elements: Boolean): BooleanArray
+    }
 
     /**
      * Returns the array element at the given [index].

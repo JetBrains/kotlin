@@ -38,6 +38,15 @@ public actual class Array<T> {
         }
     }
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified elements. */
+        @ExperimentalStdlibApi
+        public actual inline operator fun <reified T> of(vararg elements: T): Array<T> =
+            arrayOf(*elements)
+    }
+
     @PublishedApi
     @ExportForCompiler
     internal constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
