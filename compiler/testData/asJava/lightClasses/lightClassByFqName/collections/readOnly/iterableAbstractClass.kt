@@ -3,4 +3,4 @@
 
 package test
 
-abstract class CIterable<Elem> : Iterable<Elem> by emptyList<Elem>()
+abstract class CIterable<Elem> : Iterable<Elem>
