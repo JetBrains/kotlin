@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.library.encodings
 
-import org.junit.Assert.*
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Test
 import java.lang.Character.MAX_CODE_POINT
 import java.lang.Character.MIN_CODE_POINT
 import java.lang.Character.MIN_SUPPLEMENTARY_CODE_POINT
