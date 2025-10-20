@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.fileNameForPluginGeneratedCallable
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -55,7 +55,7 @@ public class SimpleFunctionBuildingContext(
     }
 
     override fun build(): FirNamedFunction {
-        return buildSimpleFunction {
+        return buildNamedFunction {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = key.origin
@@ -85,7 +85,7 @@ public class SimpleFunctionBuildingContext(
                     symbol = FirReceiverParameterSymbol()
                     moduleData = session.moduleData
                     origin = key.origin
-                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                    containingDeclarationSymbol = this@buildNamedFunction.symbol
                 }
             }
         }.also {

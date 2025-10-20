@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
@@ -192,7 +192,7 @@ class JvmMappedScope(
     }
 
     private fun createHiddenFakeFunction(name: Name): FirNamedFunctionSymbol {
-        return buildSimpleFunction {
+        return buildNamedFunction {
             moduleData = firKotlinClass.moduleData
             origin = FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.OPEN, EffectiveVisibility.Public)

@@ -403,7 +403,7 @@ class FirSignatureEnhancement(
             }
             is FirNamedFunction -> {
                 isJavaRecordComponent = firMethod.isJavaRecordComponent == true
-                FirSimpleFunctionBuilder().apply {
+                FirNamedFunctionBuilder().apply {
                     source = firMethod.source
                     moduleData = this@FirSignatureEnhancement.moduleData
                     origin = declarationOrigin

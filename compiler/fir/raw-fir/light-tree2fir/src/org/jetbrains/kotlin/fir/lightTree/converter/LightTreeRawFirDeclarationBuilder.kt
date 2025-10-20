@@ -2010,7 +2010,7 @@ class LightTreeRawFirDeclarationBuilder(
                 val labelName =
                     context.getLastLabel(functionDeclaration)?.name ?: runIf(!functionName.isSpecial) { functionName.identifier }
                 target = FirFunctionTarget(labelName, isLambda = false)
-                FirSimpleFunctionBuilder().apply {
+                FirNamedFunctionBuilder().apply {
                     source = functionSource
                     receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
                     name = functionName
@@ -2064,7 +2064,7 @@ class LightTreeRawFirDeclarationBuilder(
                     this.body = bodyWithContractDescription.first
                     val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
                     contractDescription?.let {
-                        if (this is FirSimpleFunctionBuilder) {
+                        if (this is FirNamedFunctionBuilder) {
                             this.contractDescription = it
                         } else if (this is FirAnonymousFunctionBuilder) {
                             this.contractDescription = it

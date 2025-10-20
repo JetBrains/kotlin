@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.isEquals
@@ -144,7 +144,7 @@ class FirClassAnySynthesizedMemberScope(
         }.symbol
 
     private fun generateEqualsFunction(): FirNamedFunction =
-        buildSimpleFunction {
+        buildNamedFunction {
             generateSyntheticFunction(OperatorNameConventions.EQUALS, isOperator = true)
             returnTypeRef = FirImplicitBooleanTypeRef(source)
             this.valueParameters.add(
@@ -154,7 +154,7 @@ class FirClassAnySynthesizedMemberScope(
                     moduleData = baseModuleData
                     this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
                     this.symbol = FirValueParameterSymbol()
-                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                    containingDeclarationSymbol = this@buildNamedFunction.symbol
                     isCrossinline = false
                     isNoinline = false
                     isVararg = false
@@ -163,18 +163,18 @@ class FirClassAnySynthesizedMemberScope(
         }
 
     private fun generateHashCodeFunction(): FirNamedFunction =
-        buildSimpleFunction {
+        buildNamedFunction {
             generateSyntheticFunction(OperatorNameConventions.HASH_CODE)
             returnTypeRef = FirImplicitIntTypeRef(source)
         }
 
     private fun generateToStringFunction(): FirNamedFunction =
-        buildSimpleFunction {
+        buildNamedFunction {
             generateSyntheticFunction(OperatorNameConventions.TO_STRING)
             returnTypeRef = FirImplicitStringTypeRef(source)
         }
 
-    private fun FirSimpleFunctionBuilder.generateSyntheticFunction(
+    private fun FirNamedFunctionBuilder.generateSyntheticFunction(
         name: Name,
         isOperator: Boolean = false,
     ) {

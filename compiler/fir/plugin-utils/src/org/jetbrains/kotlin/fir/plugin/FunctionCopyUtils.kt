@@ -28,8 +28,8 @@ public fun copyFirFunctionWithResolvePhase(
     callableId: CallableId,
     key: GeneratedDeclarationKey,
     firResolvePhase: FirResolvePhase,
-    extraInit: FirSimpleFunctionBuilder.() -> Unit
-): FirNamedFunction = buildSimpleFunctionCopy(original) {
+    extraInit: FirNamedFunctionBuilder.() -> Unit
+): FirNamedFunction = buildNamedFunctionCopy(original) {
     symbol = FirNamedFunctionSymbol(callableId)
     origin = key.origin
     resolvePhase = firResolvePhase
@@ -38,7 +38,7 @@ public fun copyFirFunctionWithResolvePhase(
     receiverParameter = original.receiverParameter?.let { receiverParameter ->
         buildReceiverParameterCopy(receiverParameter) {
             symbol = FirReceiverParameterSymbol()
-            containingDeclarationSymbol = this@buildSimpleFunctionCopy.symbol
+            containingDeclarationSymbol = this@buildNamedFunctionCopy.symbol
             origin = key.origin
             resolvePhase = firResolvePhase
         }
@@ -53,7 +53,7 @@ public fun copyFirFunctionWithResolvePhase(
         originalParameters.mapTo(this) { parameter ->
             buildValueParameterCopy(parameter) {
                 symbol = FirValueParameterSymbol()
-                containingDeclarationSymbol = this@buildSimpleFunctionCopy.symbol
+                containingDeclarationSymbol = this@buildNamedFunctionCopy.symbol
                 origin = key.origin
                 resolvePhase = firResolvePhase
             }
@@ -71,7 +71,7 @@ public fun copyFirFunctionWithResolvePhase(
     original.typeParameters.mapTo(typeParameters) { typeParameter ->
         buildTypeParameterCopy(typeParameter) {
             symbol = FirTypeParameterSymbol()
-            containingDeclarationSymbol = this@buildSimpleFunctionCopy.symbol
+            containingDeclarationSymbol = this@buildNamedFunctionCopy.symbol
             origin = key.origin
             resolvePhase = firResolvePhase
         }

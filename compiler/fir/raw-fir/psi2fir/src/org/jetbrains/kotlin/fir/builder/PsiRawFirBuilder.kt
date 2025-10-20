@@ -2022,7 +2022,7 @@ open class PsiRawFirBuilder(
                         }
                     }
                 } else {
-                    FirSimpleFunctionBuilder().apply {
+                    FirNamedFunctionBuilder().apply {
                         receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
                         name = function.nameAsSafeName
                         labelName = context.getLastLabel(function)?.name ?: runIf(!name.isSpecial) { name.identifier }
@@ -2074,7 +2074,7 @@ open class PsiRawFirBuilder(
                         this.body = body
                         val contractDescription = outerContractDescription ?: innerContractDescription
                         contractDescription?.let {
-                            if (this is FirSimpleFunctionBuilder) {
+                            if (this is FirNamedFunctionBuilder) {
                                 this.contractDescription = it
                             } else if (this is FirAnonymousFunctionBuilder) {
                                 this.contractDescription = it

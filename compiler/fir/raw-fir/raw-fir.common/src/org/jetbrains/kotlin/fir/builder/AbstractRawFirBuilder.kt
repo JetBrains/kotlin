@@ -1131,7 +1131,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                 if (!firProperty.isVal && !firProperty.isVar) continue
                 val name = Name.identifier("component$componentIndex")
                 componentIndex++
-                val componentFunction = buildSimpleFunction {
+                val componentFunction = buildNamedFunction {
                     source = sourceNode.toFirSourceElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Synthetic.DataClassMember
@@ -1405,7 +1405,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
 
     val declarationOrigin = if (isFromLibrary) FirDeclarationOrigin.Library else FirDeclarationOrigin.Synthetic.DataClassMember
 
-    return buildSimpleFunction {
+    return buildNamedFunction {
         val classTypeRef = firConstructor.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
         this.source = toFirSource(sourceElement, KtFakeSourceElementKind.DataClassGeneratedMembers)
         moduleData = this@createDataClassCopyFunction.moduleData
@@ -1430,7 +1430,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
             valueParameters += buildValueParameter {
                 resolvePhase = this@createDataClassCopyFunction.resolvePhase
                 source = parameterSource
-                containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                containingDeclarationSymbol = this@buildNamedFunction.symbol
                 moduleData = this@createDataClassCopyFunction.moduleData
                 origin = declarationOrigin
                 returnTypeRef = propertyReturnTypeRef

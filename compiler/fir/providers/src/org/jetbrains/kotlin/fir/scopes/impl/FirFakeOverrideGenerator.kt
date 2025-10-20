@@ -122,7 +122,7 @@ object FirFakeOverrideGenerator {
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType? = null,
         newSource: KtSourceElement? = derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source,
         markAsOverride: Boolean,
-    ): FirNamedFunction = buildSimpleFunction {
+    ): FirNamedFunction = buildNamedFunction {
         source = newSource
         moduleData = session.nullableModuleData ?: baseFunction.moduleData
         this.origin = origin
@@ -306,7 +306,7 @@ object FirFakeOverrideGenerator {
             returnTypeRef = baseFunction.returnTypeRef.withReplacedReturnType(newReturnType)
         }
 
-        if (this is FirSimpleFunctionBuilder) {
+        if (this is FirNamedFunctionBuilder) {
             receiverParameter = baseFunction.receiverParameter?.let { receiverParameter ->
                 buildReceiverParameterCopy(receiverParameter) {
                     typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType)

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -719,8 +719,8 @@ class FirSyntheticCallGenerator(
 
     private fun generateMemberFunction(
         symbol: FirNamedFunctionSymbol, name: Name, returnType: FirTypeRef
-    ): FirSimpleFunctionBuilder {
-        return FirSimpleFunctionBuilder().apply {
+    ): FirNamedFunctionBuilder {
+        return FirNamedFunctionBuilder().apply {
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Synthetic.FakeFunction
             this.symbol = symbol

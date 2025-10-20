@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -255,7 +255,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
 
                     if (!kind.isReflectType) {
                         addDeclaration(
-                            buildSimpleFunction {
+                            buildNamedFunction {
                                 moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
                                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 origin = builtInOrigin
@@ -270,7 +270,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                                     val parameterName = Name.identifier("p${index + 1}")
                                     buildValueParameter {
                                         moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
-                                        containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                                        containingDeclarationSymbol = this@buildNamedFunction.symbol
                                         origin = builtInOrigin
                                         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                         returnTypeRef = typeArgument

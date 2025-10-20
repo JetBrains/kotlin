@@ -96,7 +96,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
 
     override fun registerFunctionAsMetadataVisible(irFunction: IrSimpleFunction) {
         if (irFunction.isLocal || irFunction.parentClassOrNull?.isLocal == true) return
-        val firFunction = buildSimpleFunction {
+        val firFunction = buildNamedFunction {
             moduleData = session.moduleData
             origin = GeneratedForMetadata.origin
             status = FirResolvedDeclarationStatusImpl(
@@ -126,7 +126,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     origin = GeneratedForMetadata.origin
                     name = it.name
                     symbol = FirTypeParameterSymbol()
-                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                    containingDeclarationSymbol = this@buildNamedFunction.symbol
                     variance = it.variance
                     isReified = it.isReified
                     resolvePhase = FirResolvePhase.BODY_RESOLVE

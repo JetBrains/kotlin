@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @FirBuilderDsl
-open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
+open class FirNamedFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var moduleData: FirModuleData
@@ -76,19 +76,19 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildSimpleFunction(init: FirSimpleFunctionBuilder.() -> Unit): FirNamedFunction {
+inline fun buildNamedFunction(init: FirNamedFunctionBuilder.() -> Unit): FirNamedFunction {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return FirSimpleFunctionBuilder().apply(init).build()
+    return FirNamedFunctionBuilder().apply(init).build()
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildSimpleFunctionCopy(original: FirNamedFunction, init: FirSimpleFunctionBuilder.() -> Unit): FirNamedFunction {
+inline fun buildNamedFunctionCopy(original: FirNamedFunction, init: FirNamedFunctionBuilder.() -> Unit): FirNamedFunction {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    val copyBuilder = FirSimpleFunctionBuilder()
+    val copyBuilder = FirNamedFunctionBuilder()
     copyBuilder.source = original.source
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.moduleData = original.moduleData

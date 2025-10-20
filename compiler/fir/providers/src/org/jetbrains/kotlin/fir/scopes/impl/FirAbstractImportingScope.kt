@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFieldCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -152,7 +152,7 @@ abstract class FirAbstractImportingScope(
 }
 
 internal fun FirNamedFunction.buildImportedVersion(importedClassId: ClassId): FirNamedFunction {
-    return buildSimpleFunctionCopy(this) {
+    return buildNamedFunctionCopy(this) {
         origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
         this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
     }.apply {

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getOrPut
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
@@ -184,7 +184,7 @@ class FirSamResolver(
 
         val fakeSource = firRegularClass.source?.fakeElement(KtFakeSourceElementKind.SamConstructor)
 
-        return buildSimpleFunction {
+        return buildNamedFunction {
             moduleData = session.moduleData
             source = fakeSource
             name = syntheticFunctionSymbol.name

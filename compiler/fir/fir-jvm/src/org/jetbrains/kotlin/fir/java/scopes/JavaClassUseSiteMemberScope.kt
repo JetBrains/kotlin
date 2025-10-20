@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -414,7 +414,7 @@ class JavaClassUseSiteMemberScope(
             ?: return this
         if (continuationParameterType.lookupTag.classId.asSingleFqName() != StandardNames.CONTINUATION_INTERFACE_FQ_NAME) return this
 
-        return buildSimpleFunctionCopy(fir) {
+        return buildNamedFunctionCopy(fir) {
             valueParameters.clear()
             valueParameters.addAll(fir.valueParameters.dropLast(1))
             returnTypeRef = buildResolvedTypeRef {
@@ -1057,7 +1057,7 @@ class JavaClassUseSiteMemberScope(
                     }
                 }
             } else {
-                buildSimpleFunctionCopy(original) {
+                buildNamedFunctionCopy(original) {
                     name = naturalName
                     symbol = newSymbol
                     dispatchReceiverType = klass.defaultType()
@@ -1111,7 +1111,7 @@ class JavaClassUseSiteMemberScope(
         ): FirNamedFunctionSymbol {
             val newSymbol = FirNamedFunctionSymbol(accidentalOverrideWithDeclaredFunction.callableId)
             val original = accidentalOverrideWithDeclaredFunction.fir
-            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildSimpleFunctionCopy(original) {
+            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildNamedFunctionCopy(original) {
                 this.name = name
                 symbol = newSymbol
                 dispatchReceiverType = klass.defaultType()
@@ -1128,7 +1128,7 @@ class JavaClassUseSiteMemberScope(
             klass: FirJavaClass
         ): FirNamedFunctionSymbol {
             val newSymbol = FirNamedFunctionSymbol(relevantFunctionFromSupertypes.callableId)
-            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildSimpleFunctionCopy(relevantFunctionFromSupertypes.fir) {
+            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildNamedFunctionCopy(relevantFunctionFromSupertypes.fir) {
                 this.name = name
                 symbol = newSymbol
                 dispatchReceiverType = klass.defaultType()
