@@ -39,15 +39,8 @@ internal class Instantiator(
 ) {
     val nullableSerClass = compilerContext.referenceProperties(SerialEntityNames.wrapIntoNullableCallableId).single()
 
-    init {
-        val hasNewCtxSerCtor = compilerContext.referenceConstructors(contextSerializerId)
-            .any { it.owner.hasShape(regularParameters = 3) }
-
-        val hasEnumFactories =
-            compilerContext.enumSerializerFactoryFunc != null && compilerContext.annotatedEnumSerializerFactoryFunc != null
-
-        assert(hasNewCtxSerCtor && hasEnumFactories) { "Your serialization runtime is pre-historical, bruh" }
-    }
+    val hasEnumFactories =
+        compilerContext.enumSerializerFactoryFunc != null && compilerContext.annotatedEnumSerializerFactoryFunc != null
 
     data class Args(
         val args: List<IrExpression>, val typeArgs: List<IrType>,
@@ -86,7 +79,7 @@ internal class Instantiator(
                 typeArgs = listOf(kType),
             )
             sealedSerializerId -> return instantiateSealedSerializer(serializerClass, kType)
-            enumSerializerId -> return instantiateEnumSerializer(kType)
+            enumSerializerId -> return instantiateEnumSerializer(serializerClass, kType)
             referenceArraySerializerId -> {
                 val (origArgs, origTypeArgs) = regularArgs(typeArgumentsAsTypes) ?: return null
                 val args = listOf(generator.wrapperClassReference(typeArgumentsAsTypes.single())) + origArgs
@@ -165,7 +158,8 @@ internal class Instantiator(
         return if (!needToCopyAnnotations) {
             constructors.single { it.owner.isPrimary }
         } else {
-            constructors.find { it.owner.lastArgumentIsAnnotationArray() } ?: error("Your serialization runtime is pre-historical, bruh")
+            constructors.find { it.owner.lastArgumentIsAnnotationArray() }
+                ?: error("Your serialization runtime is lower than minimal supported version (1.3.0). Please update your runtime.")
         }
     }
 
@@ -210,7 +204,7 @@ internal class Instantiator(
         return Args(args, typeArgs)
     }
 
-    context(irBuilder: IrBuilderWithScope) private fun instantiateEnumSerializer(kType: IrSimpleType): IrExpression {
+    context(irBuilder: IrBuilderWithScope) private fun instantiateEnumSerializer(serializerClass: IrClassSymbol, kType: IrSimpleType): IrExpression {
         val enumDescriptor = kType.classOrNull!!
         val typeArgs = listOf(kType)
         // instantiate serializer only inside enum Companion
@@ -223,6 +217,8 @@ internal class Instantiator(
             irBuilder.irString(kType.serialName()),
             irBuilder.irCall(enumDescriptor.owner.findEnumValuesMethod()),
         )
+
+        if (!hasEnumFactories) return instantiateLegacyEnumSerializer(serializerClass, enumArgs, typeArgs)
 
         // runtime contains enum serializer factory functions
         val factoryFunc: IrSimpleFunctionSymbol = if (enumDescriptor.owner.isEnumWithSerialInfoAnnotation()) {
@@ -258,6 +254,17 @@ internal class Instantiator(
 
         val factoryReturnType = factoryFunc.owner.returnType.substitute(factoryFunc.owner.typeParameters, typeArgs)
         return generator.irInvoke(factoryFunc, enumArgs, typeArgs, factoryReturnType)
+    }
+
+    context(irBuilder: IrBuilderWithScope)
+    private fun instantiateLegacyEnumSerializer(
+        serializerClass: IrClassSymbol,
+        enumArgs: List<IrExpression>,
+        typeArgs: List<IrSimpleType>,
+    ): IrExpression {
+        assert(serializerClass.owner.classId == enumSerializerId) { "Expected enum serializer, got $serializerClass" }
+        val ctor = findConstructorWithoutTypeParameters(serializerClass, needToCopyAnnotations = false).owner
+        return callConstructor(ctor, typeArgs, enumArgs)
     }
 
     context(irBuilder: IrBuilderWithScope)
