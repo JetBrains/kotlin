@@ -35,6 +35,15 @@ internal constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> T) : this(size)
 
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    @ExperimentalStdlibApi
+    public actual companion object {
+        /** Returns an array containing the specified elements. */
+        @ExperimentalStdlibApi
+        public actual inline operator fun <reified T> of(vararg elements: T): Array<T> =
+            arrayOf(*elements)
+    }
+
     internal val storage: WasmAnyArray
 
     init {
