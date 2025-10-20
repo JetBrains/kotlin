@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry
 
 @Serializable
 internal data class LookupEntryImpl(
-    @ProtoNumber(1) override val key: Long?,
+    @ProtoNumber(1) override val fqNameHashCode: Int?,
     @ProtoNumber(2) override val fileIds: List<Int>,
 ) : LookupEntry
 
