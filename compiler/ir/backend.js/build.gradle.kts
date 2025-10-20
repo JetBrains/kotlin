@@ -20,11 +20,14 @@ dependencies {
     api(project(":js:typescript-printer"))
 
     compileOnly(intellijCore())
+
+    testImplementation(kotlinTest("junit"))
+    testImplementation(testFixtures(project(":compiler:ir.backend.common")))
 }
 
 optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
 }
