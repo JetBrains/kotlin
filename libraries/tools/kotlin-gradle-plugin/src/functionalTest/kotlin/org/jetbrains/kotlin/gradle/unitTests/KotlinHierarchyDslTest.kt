@@ -13,12 +13,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.buildHierarchy
 import org.jetbrains.kotlin.gradle.util.*
-import kotlin.reflect.KFunction
-import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.full.starProjectedType
 import kotlin.test.*
 
 class KotlinHierarchyDslTest {
@@ -651,31 +647,6 @@ class KotlinHierarchyDslTest {
             }.map { it.name }.sorted()
 
         assertEquals(expectedAccessorNames, actualAccessorNames)
-    }
-
-    companion object {
-        private fun KotlinMultiplatformExtension.enableAllKotlinTargets(
-            excludedTargets: Set<String> = setOf(
-                // Disable Android because it requires that all projects have AGP,
-                // because Android is not relevant for the KMP default hierarchy,
-                // and adding AGP would be slow and complicates the tests.
-                "androidTarget",
-            ),
-        ) {
-            // Find all KotlinMultiplatformExtension functions
-            // that have no args, are not deprecated, and return a KotlinTarget.
-            // We assume these are KMP targets (but this assumption could change...)
-            KotlinMultiplatformExtension::class.members
-                .filterIsInstance<KFunction<*>>()
-                .filter { it.annotations.none { annotation -> annotation is Deprecated } }
-                .filter { it.parameters.size == 1 }
-                .filter { it.parameters.single().type.isSubtypeOf(KotlinMultiplatformExtension::class.starProjectedType) }
-                .filter { it.returnType.isSubtypeOf(KotlinTarget::class.starProjectedType) }
-                .filter { it.name !in excludedTargets }
-                .forEach {
-                    it.call(this)
-                }
-        }
     }
 }
 
