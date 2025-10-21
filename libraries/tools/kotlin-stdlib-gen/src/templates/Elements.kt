@@ -307,6 +307,10 @@ object Elements : TemplateGroupBase() {
             """
         }
 
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.elementAt")
+        }
+
         specialFor(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             inlineOnly()
             body { "return get(index)" }
