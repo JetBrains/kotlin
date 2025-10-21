@@ -17,6 +17,6 @@ fun PluginDataFrameSchema.createImpliedColumns(selector: List<String>): PluginDa
     val nullableAny = arguments.session.builtinTypes.nullableAnyType.coneType
     val topLevelColumns = columns().mapToSetOrEmpty { it.name }
     val assumedColumns = selector.filter { it !in topLevelColumns }
-        .map { arguments.simpleColumnOf(it, nullableAny) }
+        .map { simpleColumnOf(it, nullableAny) }
     return PluginDataFrameSchema(columns() + assumedColumns)
 }

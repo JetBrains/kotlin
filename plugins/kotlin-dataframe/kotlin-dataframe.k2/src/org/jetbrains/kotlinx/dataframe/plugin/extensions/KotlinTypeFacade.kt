@@ -7,29 +7,29 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-interface KotlinTypeFacade : SessionContext {
+interface KotlinTypeFacade : SessionHolder {
     val isTest: Boolean
-
-    fun ColumnType.changeNullability(map: (Boolean) -> Boolean): ColumnType {
-        return ColumnType(type = coneType.withNullability(map(coneType.isMarkedNullable), session.typeContext))
-    }
-
-    fun ColumnType.isList(): Boolean {
-        return coneType.isBuiltinType(List, isNullable = null)
-    }
-
-    fun ColumnType.typeArgument(): ColumnType {
-        val argument = when (val argument = coneType.typeArguments[0]) {
-            is ConeKotlinType -> argument
-            else -> error("${argument::class} $argument")
-        }
-        return ColumnType(argument)
-    }
 }
 
-typealias SessionContext = SessionHolder
+context(sessionHolder: SessionHolder)
+fun ColumnType.changeNullability(map: (Boolean) -> Boolean): ColumnType {
+    return ColumnType(type = coneType.withNullability(map(coneType.isMarkedNullable), sessionHolder.session.typeContext))
+}
 
-fun SessionContext(session: FirSession) = object : SessionContext {
+fun ColumnType.isList(): Boolean {
+    return coneType.isBuiltinType(List, isNullable = null)
+}
+
+context(sessionHolder: SessionHolder)
+fun ColumnType.typeArgument(): ColumnType {
+    val argument = when (val argument = coneType.typeArguments[0]) {
+        is ConeKotlinType -> argument
+        else -> error("${argument::class} $argument")
+    }
+    return ColumnType(argument)
+}
+
+fun SessionContext(session: FirSession) = object : SessionHolder {
     override val session: FirSession = session
 }
 
@@ -49,7 +49,7 @@ class KotlinTypeFacadeImpl(
 
 class ColumnType private constructor(internal val coneType: ConeKotlinType) {
     companion object {
-        context(context: SessionContext)
+        context(context: SessionHolder)
         operator fun invoke(type: ConeKotlinType): ColumnType {
             val type = if (type is ConeFlexibleType) {
                 type.lowerBound
@@ -80,7 +80,7 @@ class ColumnType private constructor(internal val coneType: ConeKotlinType) {
     }
 }
 
-context(context: SessionContext)
+context(context: SessionHolder)
 fun ConeKotlinType.wrap(): ColumnType = ColumnType(this)
 
 // The resulting type should not be materialized as a type of a property. Only for testing

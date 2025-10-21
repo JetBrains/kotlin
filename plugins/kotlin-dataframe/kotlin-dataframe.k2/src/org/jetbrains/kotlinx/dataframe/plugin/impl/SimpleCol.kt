@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.changeNullability
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.findSchemaArgument
 import org.jetbrains.kotlinx.dataframe.plugin.getSchema
@@ -31,7 +32,7 @@ data class PluginDataFrameSchema(
 }
 
 fun PluginDataFrameSchema.add(name: String, type: ConeKotlinType, context: KotlinTypeFacade): PluginDataFrameSchema {
-    return PluginDataFrameSchema(columns() + context.simpleColumnOf(name, type))
+    return PluginDataFrameSchema(columns() + context(context) { simpleColumnOf(name, type) })
 }
 
 private fun List<SimpleCol>.asString(indent: String = ""): String {
@@ -110,16 +111,17 @@ data class SimpleColumnGroup(
     }
 }
 
-fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
+context(facade: KotlinTypeFacade)
+fun simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
     fun extractSchema(): PluginDataFrameSchema {
-        val objectWithSchema =
-            context(session) { type.findSchemaArgument(isTest) } ?: error("Cannot extract DataFrame schema from type: $type")
+        val objectWithSchema = type.findSchemaArgument(facade.isTest) ?: error("Cannot extract DataFrame schema from type: $type")
         val schema = objectWithSchema.getSchema()
         return schema
     }
 
     val nullableDataRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = true)
-    return if (!type.isNullableNothing && type.isSubtypeOf(nullableDataRow, session)) {
+    val dataFrame = Names.DF_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection))
+    return if (!type.isNullableNothing && type.isSubtypeOf(nullableDataRow, facade.session)) {
         val schema = extractSchema()
         val group = SimpleColumnGroup(name, schema.columns())
         val column = if (type.isMarkedNullable) {
@@ -128,7 +130,7 @@ fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleC
             group
         }
         column
-    } else if (!type.isMarkedNullable && type.isSubtypeOf(Names.DF_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection)), session)) {
+    } else if (!type.isMarkedNullable && type.isSubtypeOf(dataFrame, facade.session)) {
         val schema = extractSchema()
         SimpleFrameColumn(name, schema.columns())
     } else {
@@ -136,7 +138,8 @@ fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleC
     }
 }
 
-internal fun KotlinTypeFacade.makeNullable(column: SimpleCol): SimpleCol {
+context(facade: KotlinTypeFacade)
+internal fun makeNullable(column: SimpleCol): SimpleCol {
     return when (column) {
         is SimpleColumnGroup -> {
             SimpleColumnGroup(column.name, column.columns().map { makeNullable(it) })
