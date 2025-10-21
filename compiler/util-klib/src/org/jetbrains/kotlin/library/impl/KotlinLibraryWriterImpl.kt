@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 
 const val KLIB_DEFAULT_COMPONENT_NAME = "default"
 
@@ -95,7 +96,7 @@ class BaseWriterImpl(
 /**
  * Requires non-null [target].
  */
-class KotlinLibraryWriterImpl(
+private class KotlinLibraryWriterImpl(
     moduleName: String,
     versions: KotlinLibraryVersioning,
     builtInsPlatform: BuiltInsPlatform,
@@ -104,9 +105,8 @@ class KotlinLibraryWriterImpl(
     shortName: String? = null,
     val layout: KotlinLibraryLayoutForWriter,
     val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
-    metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrWriterImpl(layout)
-) : BaseWriter by base, MetadataWriter by metadata, IrWriter by ir, KotlinLibraryWriter
+) : BaseWriter by base, IrWriter by ir, KotlinLibraryWriter
 
 fun buildKotlinLibrary(
     linkDependencies: List<KotlinLibrary>,
@@ -123,6 +123,7 @@ fun buildKotlinLibrary(
 
     val klibFile = File(output)
     val unzippedKlibDir = if (nopack) klibFile.also { it.isDirectory } else org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
+
     val layout = KotlinLibraryLayoutForWriter(klibFile, unzippedKlibDir)
     val irWriter = IrWriterImpl(layout)
     val library = KotlinLibraryWriterImpl(
@@ -135,8 +136,6 @@ fun buildKotlinLibrary(
         ir = irWriter
     )
 
-    library.addMetadata(metadata)
-
     if (ir != null) {
         library.addIr(ir)
     }
@@ -144,13 +143,16 @@ fun buildKotlinLibrary(
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
 
+    val metadataWriter = KlibMetadataWriterImpl(KlibMetadataComponentLayout(unzippedKlibDir))
+    metadataWriter.writeMetadata(metadata)
+
     library.commit()
     return library.layout
 }
 
 class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: KotlinLibraryVersioning, platform: BuiltInsPlatform, nativeTargets: List<String>) {
-    val outputDir = File(output)
-    val library = createLibrary(moduleName, versions, platform, nativeTargets, outputDir)
+    private val outputDir = File(output)
+    private val library = createLibrary(moduleName, versions, platform, nativeTargets, outputDir)
 
     private fun createLibrary(
         moduleName: String,

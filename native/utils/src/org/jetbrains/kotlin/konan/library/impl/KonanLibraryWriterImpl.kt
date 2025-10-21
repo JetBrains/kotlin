@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.impl.*
 
 class KonanLibraryLayoutForWriter(
@@ -23,7 +24,7 @@ class KonanLibraryLayoutForWriter(
 /**
  * Requires non-null [target].
  */
-class KonanLibraryWriterImpl(
+private class KonanLibraryWriterImpl(
     moduleName: String,
     versions: KotlinLibraryVersioning,
     nativeTargets: List<String>,
@@ -33,10 +34,8 @@ class KonanLibraryWriterImpl(
     val layout: KonanLibraryLayoutForWriter,
     base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
-    metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrWriterImpl(layout),
-
-    ) : BaseWriter by base, BitcodeWriter by bitcode, MetadataWriter by metadata, IrWriter by ir, KonanLibraryWriter
+) : BaseWriter by base, BitcodeWriter by bitcode, IrWriter by ir, KonanLibraryWriter
 
 fun buildLibrary(
     natives: List<String>,
@@ -59,6 +58,7 @@ fun buildLibrary(
 
     val libFile = File(output)
     val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir("klib")
+
     val layout = KonanLibraryLayoutForWriter(libFile, unzippedDir, target)
     val library = KonanLibraryWriterImpl(
         moduleName,
@@ -74,7 +74,6 @@ fun buildLibrary(
         File(layout.targetDir, "kotlin").mkdirs()
     }
 
-    library.addMetadata(metadata)
     if (ir != null) {
         library.addIr(ir)
     }
@@ -87,6 +86,9 @@ fun buildLibrary(
     }
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
+
+    val metadataWriter = KlibMetadataWriterImpl(KlibMetadataComponentLayout(unzippedDir))
+    metadataWriter.writeMetadata(metadata)
 
     library.commit()
     return library.layout

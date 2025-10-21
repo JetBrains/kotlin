@@ -13,6 +13,8 @@ import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
@@ -23,9 +25,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode.WithStaticCache
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
+import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.components.metadata
-import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
-import org.jetbrains.kotlin.library.impl.MetadataWriterImpl
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -68,25 +71,48 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
     }
 
     private fun spoilDeprecatedAnnotationsInLibrary(klib: TestCompilationArtifact.KLIB) {
-        // Make a backup.
-        val oldLibraryFile = KFile(with(klib.klibFile) { parentFile.newDir("__backup__").resolve(name).path })
-        val newLibraryFile = KFile(klib.klibFile.path)
-        newLibraryFile.renameTo(oldLibraryFile)
+        // Move the original library to a different location. The former location will be used for the patched library.
+        val originalLibraryFile = KFile(with(klib.klibFile) { parentFile.newDir("__backup__").resolve(name).path })
+        val patchedLibraryFile = KFile(klib.klibFile.path)
+        patchedLibraryFile.renameTo(originalLibraryFile)
 
-        // Unzip the new library.
-        val newLibraryTmpDir = KFile(newLibraryFile.path + ".tmp")
-        oldLibraryFile.unzipTo(newLibraryTmpDir)
+        // Read the original library.
+        val oldLibrary = KlibLoader { libraryPaths(originalLibraryFile.path) }.load().librariesStdlibFirst.single()
 
-        // Read the library.
-        val oldLibrary = resolveSingleFileKlib(oldLibraryFile, strategy = ToolingSingleFileKlibResolveStrategy)
-        val newLibraryLayout = KotlinLibraryLayoutForWriter(newLibraryFile, newLibraryTmpDir)
+        // Patch the metadata.
+        val patchedMetadata = spoilDeprecatedAnnotationsInMetadata(oldLibrary.metadata)
 
-        // Patch the library.
-        spoilDeprecatedAnnotationsInMetadata(oldLibrary, newLibraryLayout)
+        // Write the patched library.
+        val patchedLibraryTmpDir = KFile(patchedLibraryFile.path + "-tmp")
+        buildLibrary(
+            natives = emptyList(),
+            included = emptyList(),
+            linkDependencies = emptyList(),
+            metadata = patchedMetadata,
+            ir = null, // It will be copied from the original library anyway.
+            versions = oldLibrary.versions,
+            target = HostManager.host,
+            output = patchedLibraryTmpDir.path,
+            moduleName = oldLibrary.uniqueName,
+            nopack = true,
+            shortName = oldLibrary.shortName,
+            manifestProperties = oldLibrary.manifestProperties,
+        )
 
-        // Zip and clean-up.
-        newLibraryTmpDir.zipDirAs(newLibraryFile)
-        newLibraryTmpDir.deleteRecursively()
+        // Unzip the original library.
+        val originalLibraryTmpDir = KFile(originalLibraryFile.path + "-tmp")
+        originalLibraryFile.unzipTo(originalLibraryTmpDir)
+
+        // Drop the metadata from the original library.
+        val originalLibraryMetadataDir = KlibMetadataComponentLayout(originalLibraryTmpDir.path).metadataDir
+        originalLibraryMetadataDir.deleteRecursively()
+
+        // Copy the metadata from the patched library.
+        val patchedLibraryMetadataDir = KlibMetadataComponentLayout(patchedLibraryTmpDir.path).metadataDir
+        patchedLibraryMetadataDir.renameTo(originalLibraryMetadataDir)
+
+        // Zip the resulting library.
+        originalLibraryTmpDir.zipDirAs(patchedLibraryFile)
     }
 
     companion object {
@@ -100,18 +126,13 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
 
         private fun File.newDir(name: String): File = resolve(name).apply { mkdirs() }
 
-        private fun spoilDeprecatedAnnotationsInMetadata(
-            oldLibrary: KotlinLibrary,
-            newLibraryLayout: KotlinLibraryLayoutForWriter,
-        ) {
+        private fun spoilDeprecatedAnnotationsInMetadata(originalMetadata: KlibMetadataComponent): SerializedMetadata {
             // Read the metadata.
             val moduleMetadata = KlibModuleMetadata.read(
                 object : KlibModuleMetadata.MetadataLibraryProvider {
-                    private val metadata = oldLibrary.metadata
-
-                    override val moduleHeaderData get() = metadata.moduleHeaderData
-                    override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
-                    override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
+                    override val moduleHeaderData get() = originalMetadata.moduleHeaderData
+                    override fun packageMetadataParts(fqName: String) = originalMetadata.getPackageFragmentNames(fqName)
+                    override fun packageMetadata(fqName: String, partName: String) = originalMetadata.getPackageFragment(fqName, partName)
                 }
             )
 
@@ -122,12 +143,9 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
             }
 
             // Write back the metadata.
-            val serializedMetadata = with(moduleMetadata.write()) {
+            return with(moduleMetadata.write()) {
                 SerializedMetadata(module = header, fragments, fragmentNames)
             }
-
-            newLibraryLayout.metadataDir.deleteRecursively() // Drop old metadata.
-            MetadataWriterImpl(newLibraryLayout).addMetadata(serializedMetadata) // Write new metadata.
         }
 
         private fun spoilDeprecatedAnnotationsInMetadataContainer(container: KmDeclarationContainer) {
