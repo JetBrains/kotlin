@@ -37,7 +37,7 @@ class FE1FullPipelineModularizedTestPure(config: ModularizedTestConfig) : Abstra
         }
     }
 
-    fun testTotalKotlin() {
+    override fun testTotalKotlin() {
         pinCurrentThreadToIsolatedCpu()
         for (i in 0 until PASSES) {
             println("Pass $i")

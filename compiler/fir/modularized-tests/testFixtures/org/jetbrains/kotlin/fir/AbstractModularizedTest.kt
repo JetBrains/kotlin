@@ -100,5 +100,7 @@ abstract class AbstractModularizedTest(val config: ModularizedTestConfig) {
 
         afterPass(pass)
     }
+
+    abstract fun testTotalKotlin()
 }
 

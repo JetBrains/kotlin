@@ -148,7 +148,7 @@ class NonFirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig)
         totalTime = 0
     }
 
-    fun testTotalKotlin() {
+    override fun testTotalKotlin() {
 
         pinCurrentThreadToIsolatedCpu()
 

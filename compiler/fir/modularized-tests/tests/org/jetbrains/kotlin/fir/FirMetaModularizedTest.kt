@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.lang.management.ManagementFactory
@@ -28,8 +29,9 @@ class FirMetaModularizedTest {
         }
         val jvmCommand = System.getProperty("java.home") + javaExePath
 
-        val runCount = System.getProperty("fir.bench.multirun.count").toInt()
-
+        val runCount = System.getProperty("fir.bench.multirun.count")?.toInt() ?: run {
+            Assumptions.abort("Skipping modularized test: assuming it is not configured properly")
+        }
 
         val startTimestamp = System.currentTimeMillis()
         val file = FileUtil.createTempFile("classpath_container", ".jar")

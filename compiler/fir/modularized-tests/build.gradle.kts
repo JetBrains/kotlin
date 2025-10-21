@@ -56,7 +56,6 @@ sourceSets {
 optInToK1Deprecation()
 
 projectTests {
-    val modularizedTests = "org.jetbrains.kotlin.fir.*ModularizedTest"
     val generatedMtIsolatedTests = "org.jetbrains.kotlin.fir.*FullPipelineTestsGenerated"
 
     fun Test.setUpModularizedTests() {
@@ -74,7 +73,6 @@ projectTests {
     testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
         setUpModularizedTests()
         filter {
-            excludeTestsMatching(modularizedTests)
             excludeTestsMatching(generatedMtIsolatedTests)
         }
     }
@@ -88,14 +86,6 @@ projectTests {
         systemProperties["junit.jupiter.execution.parallel.enabled"] = true
         systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
         maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
-    }
-
-    testTask("modularizedTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-        dependsOn(":dist")
-        workingDir = rootDir
-        filter {
-            includeTestsMatching(modularizedTests)
-        }
     }
 
     testGenerator(
