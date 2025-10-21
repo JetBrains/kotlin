@@ -138,6 +138,11 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
         if (receiverParameter?.typeRef?.isInline(session) == true) return true
         if (contextParameters.any { it.returnTypeRef.isInline(session) }) return true
         if (this is FirFunction && valueParameters.any { it.returnTypeRef.isInline(session) }) return true
+        // Check dispatch receiver as well - we use `-impl` suffix for them
+        if (this !is FirConstructor) {
+            val containingClass = containingClassLookupTag()?.toRegularClassSymbol(session)
+            return containingClass?.isInlineOrValue == true
+        }
         return false
     }
 
