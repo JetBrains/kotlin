@@ -173,7 +173,7 @@ internal fun KotlinTypeFacade.toDataFrame(
         traverseConfiguration.preserveProperties.mapNotNullTo(mutableSetOf()) { it.calleeReference.toResolvedPropertySymbol() }
 
     fun convert(classLike: ConeKotlinType, depth: Int, makeNullable: Boolean): List<SimpleCol> {
-        val symbol = classLike.toRegularClassSymbol(session) ?: return emptyList()
+        val symbol = classLike.toRegularClassSymbol() ?: return emptyList()
         val scope = symbol.unsubstitutedScope(session, ScopeSession(), false, FirResolvePhase.STATUS)
         val declarations = if (symbol.fir is FirJavaClass) {
             scope

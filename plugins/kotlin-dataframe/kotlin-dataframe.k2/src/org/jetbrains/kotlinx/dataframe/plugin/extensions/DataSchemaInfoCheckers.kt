@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
@@ -96,9 +97,7 @@ private data object FunctionCallSchemaReporter : FirFunctionCallChecker(mppKind 
     override fun check(expression: FirFunctionCall) {
         if (expression.calleeReference.name in setOf(Name.identifier("let"), Name.identifier("run"))) return
         val initializer = expression.resolvedType
-        context.sessionContext {
-            reportSchema(reporter, expression.source, SchemaInfoDiagnostics.FUNCTION_CALL_SCHEMA, initializer, context)
-        }
+        reportSchema(reporter, expression.source, SchemaInfoDiagnostics.FUNCTION_CALL_SCHEMA, initializer, context)
     }
 }
 
@@ -106,9 +105,7 @@ private data object PropertyAccessSchemaReporter : FirPropertyAccessExpressionCh
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirPropertyAccessExpression) {
         val initializer = expression.resolvedType
-        context.sessionContext {
-            reportSchema(reporter, expression.source, SchemaInfoDiagnostics.PROPERTY_ACCESS_SCHEMA, initializer, context)
-        }
+        reportSchema(reporter, expression.source, SchemaInfoDiagnostics.PROPERTY_ACCESS_SCHEMA, initializer, context)
     }
 }
 
@@ -116,10 +113,8 @@ private data object PropertyAccessSchemaReporter : FirPropertyAccessExpressionCh
 private data object PropertySchemaReporter : FirPropertyChecker(mppKind = MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
-        context.sessionContext {
-            declaration.returnTypeRef.coneType.let { type ->
-                reportSchema(reporter, declaration.source, SchemaInfoDiagnostics.PROPERTY_SCHEMA, type, context)
-            }
+        declaration.returnTypeRef.coneType.let { type ->
+            reportSchema(reporter, declaration.source, SchemaInfoDiagnostics.PROPERTY_SCHEMA, type, context)
         }
     }
 }
@@ -128,9 +123,7 @@ private data object FunctionDeclarationSchemaReporter : FirSimpleFunctionChecker
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         val type = declaration.returnTypeRef.coneType
-        context.sessionContext {
-            reportSchema(reporter, declaration.source, SchemaInfoDiagnostics.FUNCTION_SCHEMA, type, context)
-        }
+        reportSchema(reporter, declaration.source, SchemaInfoDiagnostics.FUNCTION_SCHEMA, type, context)
     }
 }
 
@@ -140,44 +133,43 @@ private object ImportedSchemaInfoChecker : FirRegularClassChecker(mppKind = MppC
         val topLevelMetadata: Map<Name, ImportedSchemaMetadata> = context.session.importedSchemasService.topLevelMetadata
         if (declaration.hasAnnotation(Names.DATA_SCHEMA_SOURCE_CLASS_ID, context.session)) {
             val metadata = topLevelMetadata[declaration.classId.shortClassName]
-            context.sessionContext {
-                val schema: PluginDataFrameSchema = pluginDataFrameSchema(declaration.defaultType())
-                val message = buildString {
-                    appendLine()
-                    if (metadata != null) {
-                        appendLine(metadata.format)
-                    }
+            val schema: PluginDataFrameSchema = pluginDataFrameSchema(declaration.defaultType())
+            val message = buildString {
+                appendLine()
+                if (metadata != null) {
+                    appendLine(metadata.format)
                 }
-                reporter.reportOn(declaration.source, GENERATED_FROM_SOURCE_SCHEMA, message + schema.toString())
             }
+            reporter.reportOn(declaration.source, GENERATED_FROM_SOURCE_SCHEMA, message + schema.toString())
         }
     }
 }
 
 
-private fun SessionContext.reportSchema(
+context(sessionHolder: SessionHolder)
+private fun reportSchema(
     reporter: DiagnosticReporter,
     source: KtSourceElement?,
     factory: KtDiagnosticFactory1<String>,
     type: ConeKotlinType,
     context: CheckerContext,
 ) {
-    val expandedType = type.fullyExpandedType(session)
+    val expandedType = type.fullyExpandedType()
     var schema: PluginDataFrameSchema? = null
     when {
-        expandedType.isDataFrame(session) -> {
+        expandedType.isDataFrame(sessionHolder.session) -> {
             schema = expandedType.typeArguments.getOrNull(0)?.let {
                 pluginDataFrameSchema(it)
             }
         }
 
-        expandedType.isDataRow(session) -> {
+        expandedType.isDataRow(sessionHolder.session) -> {
             schema = expandedType.typeArguments.getOrNull(0)?.let {
                 pluginDataFrameSchema(it)
             }
         }
 
-        expandedType.isGroupBy(session) -> {
+        expandedType.isGroupBy(sessionHolder.session) -> {
             val keys = expandedType.typeArguments.getOrNull(0)
             val grouped = expandedType.typeArguments.getOrNull(1)
             if (keys != null && grouped != null) {
@@ -205,8 +197,4 @@ internal fun info1(positioningStrategy: AbstractSourceElementPositioningStrategy
         KtElement::class,
         container = container,
     )
-}
-
-fun CheckerContext.sessionContext(f: SessionContext.() -> Unit) {
-    SessionContext(session).f()
 }

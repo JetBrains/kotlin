@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrapUnsafe
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 
 sealed class ParseResult {
@@ -167,7 +168,7 @@ class PluginDataFrameSchemaParser {
             val typeApproximation = ClassId(
                 FqName(split.dropLast(1).joinToString(".")),
                 Name.identifier(typeName)
-            ).constructClassLikeType(isMarkedNullable = nullable).wrap()
+            ).constructClassLikeType(isMarkedNullable = nullable).wrapUnsafe()
 
             Result.success(typeApproximation)
         } catch (e: Exception) {
