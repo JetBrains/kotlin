@@ -104,7 +104,7 @@ class ImportedSchemasGenerator(
                 val tag = container.classId.createNestedClassId(Name.identifier(col.name))
                 Names.DATA_ROW_CLASS_ID.createConeType(session, arrayOf(tag.createConeType(session)))
             }
-            is SimpleDataColumn -> col.type.type
+            is SimpleDataColumn -> col.type.coneType
             is SimpleFrameColumn -> {
                 val tag = container.classId.createNestedClassId(Name.identifier(col.name))
                 Names.DF_CLASS_ID.createConeType(session, arrayOf(tag.createConeType(session)))
@@ -155,7 +155,7 @@ class ImportedSchemasGenerator(
             is SimpleColumnGroup -> {
                 Names.DATA_ROW_CLASS_ID.createConeType(session, arrayOf(marker.createConeType(session)))
             }
-            is SimpleDataColumn -> column.type.type
+            is SimpleDataColumn -> column.type.coneType
             is SimpleFrameColumn -> {
                 Names.DF_CLASS_ID.createConeType(session, arrayOf(marker.createConeType(session)))
             }

@@ -82,7 +82,7 @@ fun KotlinTypeFacade.fillNullsImpl(
     return columns.map {
         // else report?
         if (p + it.name() in paths && it is SimpleDataColumn) {
-            val coneType = it.type.type as? ConeSimpleKotlinType
+            val coneType = it.type.coneType as? ConeSimpleKotlinType
             if (coneType != null) {
                 val type = coneType.withNullability(nullable = false, session.typeContext)
                 it.changeType(Marker.invoke(type))

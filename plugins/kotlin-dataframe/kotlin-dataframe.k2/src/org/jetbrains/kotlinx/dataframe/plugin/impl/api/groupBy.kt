@@ -232,7 +232,7 @@ class GroupByAdd : AbstractInterpreter<GroupBy>() {
     val Arguments.type: TypeApproximation by type(name("expression"))
 
     override fun Arguments.interpret(): GroupBy {
-        return GroupBy(receiver.keys, receiver.groups.add(name, type.type, context = this))
+        return GroupBy(receiver.keys, receiver.groups.add(name, type.coneType, context = this))
     }
 }
 
@@ -284,7 +284,7 @@ private fun Arguments.interpretGroupByAggregatorOf(
     aggregator: Aggregator<*, *>,
     expressionReturnType: TypeApproximation,
 ): PluginDataFrameSchema {
-    val aggregatedCol = makeNullable(simpleColumnOf(name, expressionReturnType.type))
+    val aggregatedCol = makeNullable(simpleColumnOf(name, expressionReturnType.coneType))
     val typeAdjustedCol = generateStatisticResultColumn(aggregator, aggregatedCol as SimpleDataColumn)
     return PluginDataFrameSchema(receiver.keys.columns() + typeAdjustedCol)
 }
@@ -453,10 +453,10 @@ abstract class GroupByAggregator2(val defaultName: String, val aggregator: Aggre
         val selectedColumns = columns.resolve(receiver.groups)
         val newColumnName = name ?: selectedColumns.singleOrNull()?.column?.name ?: defaultName
         val selectedColumnTypes = selectedColumns.mapNotNull {
-            (it.column as? SimpleDataColumn)?.type?.type
+            (it.column as? SimpleDataColumn)?.type?.coneType
         }.toSet()
 
-        val returnType = typeArg1?.type
+        val returnType = typeArg1?.coneType
 
         // if all our columns are primitives, ask the aggregator what the return type will be given the selected columns
         // else, the type will always be the same as the return type of the selection dsl

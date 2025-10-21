@@ -84,7 +84,7 @@ class UpdateWith0 : AbstractSchemaModificationInterpreter() {
     val Arguments.target: TypeApproximation by type(ArgumentName.of("expression"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return updateWithImpl(receiver, target.type.isMarkedNullable, typeArg1.wrap())
+        return updateWithImpl(receiver, target.coneType.isMarkedNullable, typeArg1.wrap())
     }
 }
 
@@ -96,8 +96,8 @@ private fun Arguments.updateWithImpl(
     return when (val receiver = receiver) {
         is FillNullsApproximation -> receiver.schema.convertAsColumn(receiver.columns) { original ->
             val originalType = if (original is SimpleDataColumn) original.type else originalType
-            val nullable = originalType.type.isMarkedNullable && (targetMarkedNullable || receiver.where)
-            val updatedType = originalType.type.withNullability(
+            val nullable = originalType.coneType.isMarkedNullable && (targetMarkedNullable || receiver.where)
+            val updatedType = originalType.coneType.withNullability(
                 nullable = nullable,
                 session.typeContext
             )
@@ -105,8 +105,8 @@ private fun Arguments.updateWithImpl(
         }
         is UpdateApproximationImpl -> receiver.schema.convertAsColumn(receiver.columns) { original ->
             val originalType = if (original is SimpleDataColumn) original.type else originalType
-            val nullable = targetMarkedNullable || (receiver.where && originalType.type.isMarkedNullable)
-            val updatedType = originalType.type.withNullability(
+            val nullable = targetMarkedNullable || (receiver.where && originalType.coneType.isMarkedNullable)
+            val updatedType = originalType.coneType.withNullability(
                 nullable = nullable,
                 session.typeContext
             )
@@ -121,7 +121,7 @@ class UpdateNotNullWith : AbstractSchemaModificationInterpreter() {
     val Arguments.typeArg1: ConeKotlinType by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return updateWithImpl(receiver.withWhere(), target.type.isMarkedNullable, typeArg1.wrap())
+        return updateWithImpl(receiver.withWhere(), target.coneType.isMarkedNullable, typeArg1.wrap())
     }
 }
 
