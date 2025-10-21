@@ -1911,6 +1911,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("renderFunctionTypesNicely.kt")
+    public void testRenderFunctionTypesNicely() {
+      runTest("compiler/testData/diagnostics/tests/renderFunctionTypesNicely.kt");
+    }
+
+    @Test
     @TestMetadata("renderingOfTypesWithSameName.kt")
     public void testRenderingOfTypesWithSameName() {
       runTest("compiler/testData/diagnostics/tests/renderingOfTypesWithSameName.kt");
