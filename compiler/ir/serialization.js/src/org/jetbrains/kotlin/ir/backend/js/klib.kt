@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -90,7 +89,7 @@ fun generateKLib(
     icData: List<KotlinFileSerializedData>,
     moduleFragment: IrModuleFragment,
     irBuiltIns: IrBuiltIns,
-    diagnosticReporter: DiagnosticReporter,
+    diagnosticReporter: IrDiagnosticReporter,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     wasmTarget: WasmTarget? = null,
     performanceManager: PerformanceManager? = null
@@ -515,7 +514,7 @@ private fun String.parseSerializedIrFileFingerprints(): List<SerializedIrFileFin
 fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,
-    diagnosticReporter: DiagnosticReporter,
+    diagnosticReporter: IrDiagnosticReporter,
     metadataSerializer: KlibSingleFileMetadataSerializer<*>,
     klibPath: String,
     dependencies: List<KotlinLibrary>,
