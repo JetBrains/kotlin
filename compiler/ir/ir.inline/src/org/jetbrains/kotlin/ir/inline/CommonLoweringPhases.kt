@@ -84,7 +84,7 @@ private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
 )
 
 private fun createSyntheticAccessorGeneration(context: LoweringContext): SyntheticAccessorLowering {
-    return SyntheticAccessorLowering(context, isExecutedOnFirstPhase = false)
+    return SyntheticAccessorLowering(context, isExecutedOnFirstPhase = true)
 }
 
 private val syntheticAccessorGenerationPhase = makeIrModulePhase(
