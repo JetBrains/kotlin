@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.tasks.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.io.File
@@ -55,7 +56,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     /**
      * Configure name of the pod built from this project.
      */
-    var name: String = project.name.asValidFrameworkName()
+    var name: String = project.name.asValidFrameworkName
 
     /**
      * Configure license of the pod built from this project.
@@ -113,7 +114,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         anyFramework
     }
 
-    internal val podFrameworkName: Provider<String> = anyPodFramework.map { it.baseName.asValidFrameworkName() }
+    internal val podFrameworkName: Provider<String> = anyPodFramework.map { it.baseName.asValidFrameworkName }
     internal val podFrameworkIsStatic: Provider<Boolean> = anyPodFramework.map { it.isStatic }
 
     /**

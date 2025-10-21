@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
@@ -365,7 +364,7 @@ constructor(
             val filename = "$prefix${baseName}$suffix".let {
                 when {
                     outputKind == CompilerOutputKind.FRAMEWORK ->
-                        it.asValidFrameworkName()
+                        it.asValidFrameworkName
                     outputKind in listOf(CompilerOutputKind.STATIC, CompilerOutputKind.DYNAMIC) ->
                         it.replace('-', '_')
                     else -> it
@@ -495,3 +494,5 @@ constructor(
         return objectFactory.providerWithLazyConvention(lazyConventionValue)
     }
 }
+
+internal val String.asValidFrameworkName get() = replace('-', '_')
