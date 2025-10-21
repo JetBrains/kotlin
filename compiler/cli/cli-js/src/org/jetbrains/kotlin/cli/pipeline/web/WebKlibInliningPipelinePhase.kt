@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
@@ -33,18 +35,22 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsFir2IrPipelineArtifact {
         val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input
         processIncrementalCompilationRoundIfNeeded(configuration, moduleStructure, firOutput, fir2IrResult)
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticCollector.deduplicating(),
+            configuration.languageVersionSettings
+        )
 
         val transformedResult = if (configuration.wasmCompilation) {
             PhaseEngine(
                 configuration.phaseConfig!!,
                 PhaserState(),
-                WasmPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, diagnosticCollector),
+                WasmPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, irDiagnosticReporter),
             ).runPreSerializationLoweringPhases(fir2IrResult, wasmLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
         } else {
             PhaseEngine(
                 configuration.phaseConfig!!,
                 PhaserState(),
-                JsPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, diagnosticCollector),
+                JsPreSerializationLoweringContext(fir2IrResult.irBuiltIns, configuration, irDiagnosticReporter),
             ).runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
         }
 

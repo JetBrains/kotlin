@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
@@ -140,10 +141,14 @@ abstract class FirWasmAbstractInvalidationTest(
             throw AssertionError("The following errors occurred compiling test:\n$messages")
         }
 
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticsReporter,
+            configuration.languageVersionSettings
+        )
         val transformedResult = PhaseEngine(
             configuration.phaseConfig ?: PhaseConfig(),
             PhaserState(),
-            WasmPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration, diagnosticsReporter),
+            WasmPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration, irDiagnosticReporter),
         ).runPreSerializationLoweringPhases(fir2IrActualizedResult, wasmLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
 
         serializeFirKlib(

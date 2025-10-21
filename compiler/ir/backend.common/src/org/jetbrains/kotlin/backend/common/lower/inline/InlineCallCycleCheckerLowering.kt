@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -26,16 +23,11 @@ internal data class CallEdge(val call: IrCall?, val callNode: CallNode)
 
 class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(val context: Context) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
-        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            context.diagnosticReporter.deduplicating(),
-            context.configuration.languageVersionSettings
-        )
-
         val callsInInlineCycle = mutableSetOf<IrCall>()
         val callGraph = mutableMapOf<CallNode, MutableSet<CallEdge>>()
 
         irModule.accept(IrInlineCallGraphBuilder(callGraph), null)
-        traverseCallGraph(callGraph, irDiagnosticReporter, callsInInlineCycle)
+        traverseCallGraph(callGraph, context.diagnosticReporter, callsInInlineCycle)
     }
 
     private fun traverseCallGraph(
