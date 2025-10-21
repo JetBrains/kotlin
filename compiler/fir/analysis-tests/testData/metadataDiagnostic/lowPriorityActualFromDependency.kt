@@ -16,5 +16,5 @@ class Foo()
 
 // MODULE: app-common(lib-common, lib-intermediate)
 fun test() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>Foo<!>()
+    Foo()
 }
