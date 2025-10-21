@@ -15,14 +15,12 @@ import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_FILE_ENTR
 import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_SIGNATURES_FILE_NAME
 import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_STRINGS_FILE_NAME
 import org.jetbrains.kotlin.library.IrKotlinLibraryLayout.Companion.IR_TYPES_FILE_NAME
+import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
-import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_MODULE_METADATA_FILE_NAME
-import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX
-import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME
-import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.IrArrayWriter
 import org.jetbrains.kotlin.library.impl.KLIB_DEFAULT_COMPONENT_NAME
+import org.jetbrains.kotlin.library.impl.KlibMetadataWriterImpl
 import java.io.File
 import kotlin.collections.map
 import kotlin.random.Random
@@ -164,29 +162,10 @@ fun KlibMockDSL.resources(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_RE
 
 fun KlibMockDSL.metadata(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_METADATA_FOLDER_NAME, init)
 
-// TODO (KT-81411): rewrite it on the new metadata component layout
-fun KlibMockDSL.metadata(metadata: SerializedMetadata) = metadata {
-    file(KLIB_MODULE_METADATA_FILE_NAME, metadata.module)
-
-    metadata.fragmentNames.forEachIndexed { index, packageName ->
-        val fragmentDirName = if (packageName == "")
-            KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME
-        else
-            "$KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX$packageName"
-        val shortPackageName = packageName.substringAfterLast(".")
-
-        dir(fragmentDirName) {
-            val fragmentParts = metadata.fragments[index]
-
-            val padding = fragmentParts.size.toString().length
-            fun withPadding(fragmentPartIndex: Int) = String.format("%0${padding}d", fragmentPartIndex)
-
-            fragmentParts.forEachIndexed { fragmentPartIndex, fragmentPart ->
-                val fragmentPartFileName = "${withPadding(fragmentPartIndex)}_$shortPackageName.$KLIB_METADATA_FILE_EXTENSION"
-                file(fragmentPartFileName, fragmentPart)
-            }
-        }
-    }
+fun KlibMockDSL.metadata(metadata: SerializedMetadata) {
+    val layout = KlibMetadataComponentLayout(rootDir.path)
+    val writer = KlibMetadataWriterImpl(layout)
+    writer.writeMetadata(metadata)
 }
 
 fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER_NAME, init)

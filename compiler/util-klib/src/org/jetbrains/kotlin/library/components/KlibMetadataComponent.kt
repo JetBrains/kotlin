@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 
 /**
- * This component provides access to Klib metadata.
+ * This component provides read access to Klib metadata.
  */
 interface KlibMetadataComponent : KlibComponent {
     /** The metadata header in the raw form (bytes, yet to be deserialized to [KlibMetadataProtoBuf.Header]). */
@@ -37,6 +37,8 @@ inline val Klib.metadata: KlibMetadataComponent
     get() = getComponent(KlibMetadataComponent.ID)
 
 class KlibMetadataComponentLayout(root: KlibFile) : KlibComponent.Layout(root) {
+    constructor(root: String) : this(KlibFile(root))
+
     /** The metadata directory. */
     val metadataDir: KlibFile
         get() = root.child(KLIB_DEFAULT_COMPONENT_NAME).child(KLIB_METADATA_FOLDER_NAME)
