@@ -13,7 +13,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.isPrimitiveOrMixedNumber
 
-internal val defaultCumSumSkipNA: Boolean = true
+internal const val defaultCumSumSkipNA: Boolean = true
 
 /**
  * Handling `df.cumSum(skipNA) { cols }`

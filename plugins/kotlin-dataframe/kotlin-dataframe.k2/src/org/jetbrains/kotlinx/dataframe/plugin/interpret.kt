@@ -89,7 +89,7 @@ fun <T> KotlinTypeFacade.interpret(
                 appendLine("Implementation class: $processor")
                 appendLine("Not found in actual: ${expectedArgsMap.keys - actualValueArguments.keys}")
                 val diff = actualValueArguments.keys - expectedArgsMap.keys
-                appendLine("Passed, but not expected: ${diff}")
+                appendLine("Passed, but not expected: $diff")
                 appendLine("add arguments to an interpeter:")
                 appendLine(diff.map { actualValueArguments[it] })
             }
@@ -182,11 +182,11 @@ fun <T> KotlinTypeFacade.interpret(
             is Interpreter.Success -> res
             is Interpreter.Error -> {
                 reporter.reportInterpretationError(functionCall, res.message ?: "")
-                return null
+                null
             }
         }
     } else {
-        return null
+        null
     }
 }
 

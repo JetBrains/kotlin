@@ -222,7 +222,8 @@ class FunctionCallTransformer(
 
         @OptIn(SymbolInternals::class)
         override fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall? {
-            val callResult = analyzeRefinedCallShape<PluginDataFrameSchema>(call, dataSchemaLikeClassId, InterpretationErrorReporter.DEFAULT)
+            val callResult =
+                analyzeRefinedCallShape<PluginDataFrameSchema>(call, dataSchemaLikeClassId, InterpretationErrorReporter.DEFAULT)
             val (tokens, dataFrameSchema) = callResult ?: return null
             val token = tokens[0]
             val firstSchema = token.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!

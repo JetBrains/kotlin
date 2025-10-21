@@ -105,9 +105,9 @@ private fun Arguments.createColumnWithUpdatedType(
     return simpleColumnOf(column.name, updatedType)
 }
 
-internal val skipNaN = true
-internal val ddofDefault: Int = 1
-internal val percentileArg: Double = 30.0
+internal const val skipNaN = true
+internal const val ddofDefault: Int = 1
+internal const val percentileArg: Double = 30.0
 internal val sum = Aggregators.sum(skipNaN)
 internal val mean = Aggregators.mean(skipNaN)
 internal val std = Aggregators.std(skipNaN, ddofDefault)

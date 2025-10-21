@@ -6,7 +6,7 @@ import org.jetbrains.kotlinx.dataframe.columns.ColumnSet
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
-internal abstract class AbstractJoin() : AbstractInterpreter<PluginDataFrameSchema>() {
+internal abstract class AbstractJoin : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.other: PluginDataFrameSchema by dataFrame()
     val Arguments.selector: ColumnSet<*>? by arg(defaultValue = Present(null))
