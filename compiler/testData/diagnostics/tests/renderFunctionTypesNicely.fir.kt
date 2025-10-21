@@ -1,0 +1,12 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-74461
+// RENDER_DIAGNOSTICS_MESSAGES
+// LANGUAGE: +ContextParameters
+
+fun main() {
+    val a: (() -> Int) -> String <!INITIALIZER_TYPE_MISMATCH("Function1<Function0<Int>, String>; Int")!>=<!> 10
+    val b: Int.(String, Boolean) -> String <!INITIALIZER_TYPE_MISMATCH("Function3<Int, String, Boolean, String>; Int")!>=<!> 10
+    val c: context(Int) Int.(String) -> String <!INITIALIZER_TYPE_MISMATCH("Function3<Int, Int, String, String>; Int")!>=<!> 10
+}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, localProperty, propertyDeclaration */
