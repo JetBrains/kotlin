@@ -8,6 +8,8 @@ FILE: test_NestedClassAndMaterializeMember.kt
 
         public final fun materialize(): R|test/MyClassWithNested|
 
+        public final fun idWithDefault(x: R|kotlin/String| = Null(null)!!): R|kotlin/String|
+
         public final class Nested : R|kotlin/Any| {
             public constructor(): R|test/MyClassWithNested.Nested| {
                 super<R|kotlin/Any|>()

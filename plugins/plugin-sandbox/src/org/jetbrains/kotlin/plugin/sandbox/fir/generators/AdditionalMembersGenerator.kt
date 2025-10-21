@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
  */
 class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val MATERIALIZE_NAME = Name.identifier("materialize")
+        val MATERIALIZE_NAME = Name.identifier("materialize")
+        val ID_WITH_DEFAULT_NAME = Name.identifier("idWithDefault")
         private val NESTED_NAME = Name.identifier("Nested")
 
         /**
@@ -53,10 +54,25 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        if (callableId.callableName != MATERIALIZE_NAME) return emptyList()
         if (context == null) return emptyList()
-        val matchedClassSymbol = matchedClasses.firstOrNull { it == context.owner } ?: return emptyList()
-        val function = createMemberFunction(context.owner, Key, callableId.callableName, matchedClassSymbol.constructStarProjectedType())
+
+        val function = when (callableId.callableName) {
+            MATERIALIZE_NAME -> {
+                val matchedClassSymbol = matchedClasses.firstOrNull { it == context.owner } ?: return emptyList()
+                createMemberFunction(context.owner, Key, callableId.callableName, matchedClassSymbol.constructStarProjectedType())
+            }
+            ID_WITH_DEFAULT_NAME -> {
+                createMemberFunction(context.owner, Key, callableId.callableName, session.builtinTypes.stringType.coneType) {
+                    valueParameter(
+                        name = Name.identifier("x"),
+                        type = session.builtinTypes.stringType.coneType,
+                        hasDefaultValue = true,
+                    )
+                }
+            }
+            else -> return emptyList()
+        }
+
         return listOf(function.symbol)
     }
 
@@ -76,7 +92,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
-            classSymbol in matchedClasses -> setOf(MATERIALIZE_NAME)
+            classSymbol in matchedClasses -> setOf(MATERIALIZE_NAME, ID_WITH_DEFAULT_NAME)
             classSymbol.classId in nestedClassIds -> setOf(SpecialNames.INIT)
             else -> emptySet()
         }

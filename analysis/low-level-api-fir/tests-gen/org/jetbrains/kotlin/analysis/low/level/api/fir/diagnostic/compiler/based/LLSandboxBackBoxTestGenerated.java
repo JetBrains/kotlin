@@ -84,6 +84,12 @@ public class LLSandboxBackBoxTestGenerated extends AbstractLLSandboxBackBoxTest 
   }
 
   @Test
+  @TestMetadata("generatedFunctionWithDefaultParameter.kt")
+  public void testGeneratedFunctionWithDefaultParameter() {
+    runTest("plugins/plugin-sandbox/testData/box/generatedFunctionWithDefaultParameter.kt");
+  }
+
+  @Test
   @TestMetadata("inlineableFunction.kt")
   public void testInlineableFunction() {
     runTest("plugins/plugin-sandbox/testData/box/inlineableFunction.kt");

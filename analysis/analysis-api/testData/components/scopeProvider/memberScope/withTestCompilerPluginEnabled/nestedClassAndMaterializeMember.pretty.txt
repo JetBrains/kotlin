@@ -1,5 +1,7 @@
 fun materialize(): test.MyClass
 
+fun idWithDefault(x: kotlin.String): kotlin.String
+
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
 open fun hashCode(): kotlin.Int

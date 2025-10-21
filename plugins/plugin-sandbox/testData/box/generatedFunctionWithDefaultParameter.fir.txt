@@ -1,0 +1,30 @@
+FILE: generatedFunctionWithDefaultParameter.kt
+    package foo
+
+    public final annotation class MyAnnotation : R|kotlin/Annotation| {
+        public constructor(): R|foo/MyAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|foo/MyAnnotation|() public final class Foo : R|kotlin/Any| {
+        public constructor(): R|foo/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun materialize(): R|foo/Foo|
+
+        public final fun idWithDefault(x: R|kotlin/String| = STUB): R|kotlin/String|
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|foo/Foo.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval foo: R|foo/Foo| = R|foo/Foo.Foo|()
+        ^box R|<local>/foo|.R|foo/Foo.idWithDefault|()
+    }
