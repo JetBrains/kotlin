@@ -142,7 +142,7 @@ fun KotlinTypeFacade.aggregate(
     return PluginDataFrameSchema(groupBy.keys.columns() + aggregated)
 }
 
-fun KotlinTypeFacade.createPluginDataFrameSchema(
+fun createPluginDataFrameSchema(
     keys: List<ColumnWithPathApproximation>,
     moveToTop: Boolean,
 ): PluginDataFrameSchema {

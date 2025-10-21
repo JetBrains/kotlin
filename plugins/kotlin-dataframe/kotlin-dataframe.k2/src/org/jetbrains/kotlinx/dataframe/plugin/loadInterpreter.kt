@@ -294,6 +294,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypePattern
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypeZone
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TrimIndent
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateAt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColLambda
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdatePerColMap
@@ -324,7 +325,7 @@ private object Stdlib {
         register(Names.TO, Names.PAIR, PairToConstructor())
         register(Names.PAIR_CONSTRUCTOR, Names.PAIR, PairConstructor())
         register(Names.TRIM_MARGIN, StandardClassIds.String, TrimMargin())
-        register(Names.TRIM_INDENT, StandardClassIds.String, TrimMargin())
+        register(Names.TRIM_INDENT, StandardClassIds.String, TrimIndent())
     }
 
     @OptIn(UnresolvedExpressionTypeAccess::class)

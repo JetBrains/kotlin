@@ -122,7 +122,7 @@ class PluginDataFrameSchemaParser {
                         Result.parsingError("'$name' must have at least one nested column")
                     } else {
                         when {
-                            name.endsWith(": ColumnGroup") ->Result.success(
+                            name.endsWith(": ColumnGroup") -> Result.success(
                                 SimpleColumnGroup(name.removeSuffix(": ColumnGroup"), nestedColumns)
                             )
 

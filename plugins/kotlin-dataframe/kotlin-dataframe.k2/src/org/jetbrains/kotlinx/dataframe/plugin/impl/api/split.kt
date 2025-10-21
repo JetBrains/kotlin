@@ -47,7 +47,7 @@ class ByIterable : AbstractInterpreter<SplitWithTransformApproximation>() {
     }
 }
 
-class SplitDefault() : AbstractInterpreter<SplitWithTransformApproximation>() {
+class SplitDefault : AbstractInterpreter<SplitWithTransformApproximation>() {
     val Arguments.receiver: SplitApproximation by arg()
     val Arguments.typeArg2 by type()
     val Arguments.value by type()

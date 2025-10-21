@@ -110,9 +110,10 @@ data class SimpleColumnGroup(
     }
 }
 
-fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType ): SimpleCol {
+fun KotlinTypeFacade.simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
     fun extractSchema(): PluginDataFrameSchema {
-        val objectWithSchema = context(session) { type.findSchemaArgument(isTest) } ?: error("Cannot extract DataFrame schema from type: $type")
+        val objectWithSchema =
+            context(session) { type.findSchemaArgument(isTest) } ?: error("Cannot extract DataFrame schema from type: $type")
         val schema = objectWithSchema.getSchema()
         return schema
     }
