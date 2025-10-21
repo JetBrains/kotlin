@@ -1116,8 +1116,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT,
-            "The resolution result depends on the declaration order. This can lead to false-positive errors in the IDE. Specify the return type of ''{0}'' explicitly.",
-            SYMBOL,
+            "The resolution result depends on the declaration order. This can lead to false-positive errors in the IDE. Specify the return type of {0} explicitly.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
         )
         map.put(
             PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL,

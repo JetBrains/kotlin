@@ -1,0 +1,3 @@
+/NoWarningsInCaseOfNullExplicitReceiver.kt:44:16: error: type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly
+    fun f3() = f3()
+               ^^^^

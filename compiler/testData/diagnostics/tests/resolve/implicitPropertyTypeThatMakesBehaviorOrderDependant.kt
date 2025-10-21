@@ -2,6 +2,7 @@
 // ISSUE: KT-76240
 // IGNORE_REVERSED_RESOLVE
 // IGNORE_PARTIAL_BODY_ANALYSIS
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // Reason of diagnostics suppression: different diagnostics with normal and AA reversed/partial resolve
 
 // FILE: NewWarnings.kt
