@@ -17,5 +17,9 @@ kotlin {
         podfile = project.file("../ios-app/Podfile")
 
         ios.deploymentTarget = "15.0"
+        framework {
+            // KT-81727 Failing CocoaPodsXcodeIT test
+            freeCompilerArgs += "-Xbinary=bundleId=$group"
+        }
     }
 }
