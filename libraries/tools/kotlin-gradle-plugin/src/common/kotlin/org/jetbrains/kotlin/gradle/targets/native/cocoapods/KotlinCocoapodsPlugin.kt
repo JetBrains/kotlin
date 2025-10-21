@@ -72,8 +72,6 @@ internal class CocoapodsBuildDirs(private val layout: ProjectLayout) {
     private fun dir(pathFromRoot: String): Provider<Directory> = root.map { it.dir(pathFromRoot) }
 }
 
-internal fun String.asValidFrameworkName() = replace('-', '_')
-
 internal val Family.platformLiteral: String
     get() = when (this) {
         Family.OSX -> "macos"
@@ -144,7 +142,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension) {
         kotlinExtension.supportedAppleTargets().all { target ->
             target.binaries.framework(POD_FRAMEWORK_PREFIX) {
-                baseName = project.name.asValidFrameworkName()
+                baseName = project.name.asValidFrameworkName
             }
         }
     }
