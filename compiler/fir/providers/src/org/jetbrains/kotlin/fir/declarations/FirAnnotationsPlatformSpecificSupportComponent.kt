@@ -26,10 +26,6 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
         requiredAnnotations.mapTo(mutableSetOf()) { it.shortClassName }
     }
 
-    val requiredAnnotationsWithArgumentsShortClassNames: Set<Name> by lazy {
-        requiredAnnotationsWithArguments.mapTo(mutableSetOf()) { it.shortClassName }
-    }
-
     /**
      * Maps deprecation annotation ClassIds to the flag
      * which is true iff the corresponding annotation must
