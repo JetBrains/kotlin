@@ -6179,6 +6179,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("method.kt")
+        public void testMethod() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/jvmExposeBoxed/method.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/jvmExposeBoxed/simple.kt");
