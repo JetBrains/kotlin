@@ -206,6 +206,8 @@ abstract class KotlinJvmProjectExtension @Inject constructor(
     }
 
     override val publishing: KotlinPublishing = KotlinJvmPublishingDsl(project)
+
+    override val coverage: CoverageConfig = project.objects.newInstance(CoverageConfig::class.java).also { it.enabled.convention(false) }
 }
 
 private class KotlinJvmPublishingDsl(private val project: Project) : KotlinPublishing {

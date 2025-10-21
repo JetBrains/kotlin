@@ -275,6 +275,8 @@ internal constructor(
             .also {
                 syncCommonMultiplatformOptions(it)
             }
+
+    override val coverage: CoverageConfig = project.objects.newInstance(CoverageConfig::class.java).also { it.enabled.convention(false) }
 }
 
 private const val targetsExtensionDeprecationMessage =

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationSetupAction
+import org.jetbrains.kotlin.gradle.plugin.coverage.KotlinCoverageAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
@@ -71,6 +72,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         if (isAbiValidationEnabled) {
             register(project, AbiValidationSetupAction)
         }
+        register(project, KotlinCoverageAction)
 
         if (isJvm || isMultiplatform) {
             register(project, ScriptingGradleSubpluginSetupAction)

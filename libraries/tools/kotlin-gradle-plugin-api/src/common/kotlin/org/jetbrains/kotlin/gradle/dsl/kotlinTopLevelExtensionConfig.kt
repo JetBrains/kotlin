@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.provider.Property
+
 /**
  * A plugin DSL extension for configuring common options for the entire project.
  *
@@ -54,6 +56,17 @@ interface KotlinTopLevelExtensionConfig {
      * Sets [explicitApi] option to report issues as warnings.
      */
     fun explicitApiWarning()
+
+    fun coverage(block: CoverageConfig.() -> Unit) {
+        this.coverage.apply(block)
+    }
+
+    val coverage: CoverageConfig
+        get() = error("Not implemented yet")
+}
+
+interface CoverageConfig {
+    val enabled: Property<Boolean>
 }
 
 /**

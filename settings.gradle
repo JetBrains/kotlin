@@ -482,6 +482,11 @@ include ":kotlinx-serialization-compiler-plugin",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded"
 
+include ":coverage-compiler-plugin-embeddable",
+        ":coverage-compiler-plugin",
+        ":coverage-compiler-gradle",
+        ":coverage-runtime"
+
 include ":kotlin-dataframe-compiler-plugin",
         ":kotlin-dataframe-compiler-plugin.embeddable",
         ":kotlin-dataframe-compiler-plugin.common",
@@ -998,6 +1003,11 @@ project(':kotlinx-serialization-compiler-plugin.k2').projectDir = "$rootDir/plug
 project(':kotlinx-serialization-compiler-plugin.common').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.common" as File
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
+
+project(':coverage-compiler-plugin-embeddable').projectDir = "$rootDir/plugins/coverage/coverage-compiler-embeddable" as File
+project(':coverage-compiler-plugin').projectDir = "$rootDir/plugins/coverage/coverage-compiler-plugin" as File
+project(':coverage-compiler-gradle').projectDir = "$rootDir/libraries/tools/kotlin-coverage/kotlin-coverage-compiler-subplugin" as File
+project(':coverage-runtime').projectDir = "$rootDir/libraries/tools/kotlin-coverage/kotlin-coverage-runtime" as File
 
 project(':kotlin-atomicfu-compiler-plugin').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-compiler")
 project(':kotlin-atomicfu-compiler-plugin-embeddable').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-compiler-embeddable")
