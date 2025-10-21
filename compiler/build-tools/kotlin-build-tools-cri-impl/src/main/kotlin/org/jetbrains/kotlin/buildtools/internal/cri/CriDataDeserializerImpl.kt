@@ -24,6 +24,6 @@ public class CriDataDeserializerImpl {
     }
 
     public fun deserializeSubtypeData(data: ByteArray): Collection<SubtypeEntry> {
-        return ProtoBuf.decodeFromByteArray<Collection<SubtypeEntry>>(data)
+        return ProtoBuf.decodeFromByteArray<Collection<SubtypeEntryImpl>>(data)
     }
 }

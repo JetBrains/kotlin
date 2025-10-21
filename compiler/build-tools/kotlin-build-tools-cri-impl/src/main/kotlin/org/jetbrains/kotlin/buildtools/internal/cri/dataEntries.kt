@@ -14,12 +14,19 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.cri.FileIdToPathEntry
 import org.jetbrains.kotlin.buildtools.api.cri.LookupEntry
 import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry
+import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.name.FqName
 
 @Serializable
 internal data class LookupEntryImpl(
     @ProtoNumber(1) override val fqNameHashCode: Int?,
     @ProtoNumber(2) override val fileIds: List<Int>,
-) : LookupEntry
+) : LookupEntry {
+    companion object {
+        operator fun invoke(lookupSymbol: LookupSymbol, fileIds: List<Int>): LookupEntryImpl =
+            LookupEntryImpl("${lookupSymbol.scope}.${lookupSymbol.name}".hashCode(), fileIds)
+    }
+}
 
 @Serializable
 internal data class FileIdToPathEntryImpl(
@@ -31,4 +38,9 @@ internal data class FileIdToPathEntryImpl(
 internal data class SubtypeEntryImpl(
     @ProtoNumber(1) override val className: String?,
     @ProtoNumber(2) override val subtypes: List<String>,
-) : SubtypeEntry
+) : SubtypeEntry {
+    companion object {
+        operator fun invoke(className: FqName, subtypes: Collection<FqName>): SubtypeEntryImpl =
+            SubtypeEntryImpl(className.asString(), subtypes.map { it.asString() })
+    }
+}
