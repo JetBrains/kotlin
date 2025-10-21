@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: ANY
-// IGNORE_HMPP: ANY
 // DUMP_IR
 package foo
 

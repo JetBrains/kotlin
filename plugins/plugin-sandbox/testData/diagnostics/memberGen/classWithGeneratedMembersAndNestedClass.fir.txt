@@ -13,7 +13,7 @@ FILE: classWithGeneratedMembersAndNestedClass.kt
 
         public final fun materialize(): R|Foo|
 
-        public final fun idWithDefault(x: R|kotlin/String| = STUB): R|kotlin/String|
+        public final fun idWithDefault(x: R|kotlin/String| = Null(null)!!): R|kotlin/String|
 
         public final class Nested : R|kotlin/Any| {
             public constructor(): R|Foo.Nested| {

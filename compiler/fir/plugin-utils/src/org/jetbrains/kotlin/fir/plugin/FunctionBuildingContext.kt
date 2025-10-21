@@ -9,7 +9,13 @@ import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.buildArgumentListForErrorCall
+import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
+import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
+import org.jetbrains.kotlin.fir.expressions.builder.buildCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -18,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 public sealed class FunctionBuildingContext<T : FirFunction>(
     protected val callableId: CallableId,
@@ -87,8 +94,19 @@ public sealed class FunctionBuildingContext<T : FirFunction>(
             name = valueParameter.name
             symbol = FirValueParameterSymbol()
             if (valueParameter.hasDefaultValue) {
-                // TODO: check how it will actually work in fir2ir
-                defaultValue = buildExpressionStub { coneTypeOrNull = session.builtinTypes.nothingType.coneType }
+                defaultValue = buildCheckNotNullCall {
+                    coneTypeOrNull = session.builtinTypes.nothingType.coneType
+                    val argument = buildLiteralExpression(
+                        source = null,
+                        kind = ConstantValueKind.Null,
+                        value = null,
+                        setType = true,
+                    )
+                    argumentList = buildArgumentListForErrorCall(
+                        original = buildUnaryArgumentList(argument),
+                        mapping = LinkedHashMap<FirExpression, FirValueParameter?>().apply { put(argument, null) },
+                    )
+                }
             }
             this.containingDeclarationSymbol = containingFunctionSymbol
             isCrossinline = valueParameter.isCrossinline
