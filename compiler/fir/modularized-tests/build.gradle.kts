@@ -17,20 +17,20 @@ repositories {
 val composeCompilerPlugin by configurations.creating
 
 dependencies {
-    testImplementation(intellijCore())
+    testFixturesImplementation(intellijCore())
 
     testRuntimeOnly(libs.xerces)
     testRuntimeOnly(commonDependency("org.apache.commons:commons-lang3"))
 
-    testApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
-    testApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testFixturesApi(project(":compiler:fir:resolve"))
     testFixturesApi(project(":compiler:fir:providers"))
     testFixturesApi(project(":compiler:fir:semantics"))
     testFixturesApi(project(":compiler:fir:dump"))
-    testApi(platform(libs.junit.bom))
+    testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
@@ -50,6 +50,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 optInToK1Deprecation()
@@ -99,7 +100,7 @@ projectTests {
 
     testGenerator(
         "org.jetbrains.kotlin.fir.generators.tests.GenerateModularizedIsolatedTests",
-        doNotSetFixturesSourceSetDependency = true, generateTestsInBuildDirectory = true, skipCollectDataTask = true
+        generateTestsInBuildDirectory = true, skipCollectDataTask = true
     ) {
         fun String?.withModelDumpOrEmpty() = this?.let { "$it/test-project-model-dump" }.orEmpty()
         args = args!! + "--" +
