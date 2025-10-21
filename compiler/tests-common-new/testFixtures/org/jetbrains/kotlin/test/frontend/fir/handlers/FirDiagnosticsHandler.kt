@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_ONLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.SEPARATE_KMP_COMPILATION
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -589,7 +590,7 @@ fun KtDiagnostic.toMetaInfos(
         if (SEPARATE_KMP_COMPILATION in module.directives && kmpCompilationMode == KmpCompilationMode.PLATFORM) {
             metaInfo.attributes += FirDiagnosticCodeMetaRenderConfiguration.PLATFORM_TAG
         }
-        if (kmpCompilationMode == KmpCompilationMode.METADATA) {
+        if (METADATA_ONLY_COMPILATION !in module.directives && kmpCompilationMode == KmpCompilationMode.METADATA) {
             metaInfo.attributes += FirDiagnosticCodeMetaRenderConfiguration.METADATA_TAG
         }
         metaInfo
