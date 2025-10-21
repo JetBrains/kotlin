@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -59,9 +61,13 @@ class NativeKlibSerializerFacade(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticReporter.deduplicating(),
+            configuration.languageVersionSettings
+        )
         val outputFile = getKlibArtifactFile(testServices, module.name)
 
-        serializeBare(module, inputArtifact, outputFile, configuration, diagnosticReporter)
+        serializeBare(module, inputArtifact, outputFile, configuration, irDiagnosticReporter)
 
         val outputArtifact = BinaryArtifacts.KLib(outputFile, diagnosticReporter)
 
@@ -75,7 +81,7 @@ class NativeKlibSerializerFacade(
         inputArtifact: IrBackendInput,
         outputKlibArtifactFile: File,
         configuration: CompilerConfiguration,
-        diagnosticReporter: BaseDiagnosticsCollector
+        diagnosticReporter: IrDiagnosticReporter
     ) {
         require(inputArtifact is IrBackendInput.NativeAfterFrontendBackendInput) {
             "${this::class.java.simpleName} expects IrBackendInput.NativeAfterFrontendBackendInput as input"
@@ -109,7 +115,7 @@ class NativeKlibSerializerFacade(
         usedLibrariesForManifest: List<KotlinLibrary>,
         module: TestModule,
         inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
-        diagnosticReporter: BaseDiagnosticsCollector,
+        diagnosticReporter: IrDiagnosticReporter,
     ) = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
         serializeModuleIntoKlib(
             moduleName = inputArtifact.irModuleFragment.name.asString(),

@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
@@ -31,6 +34,10 @@ class FirWasmJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices
         }
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(compilerConfiguration.messageCollector)
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticReporter.deduplicating(),
+            compilerConfiguration.languageVersionSettings
+        )
         val outputFile = WasmEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         val configuration = compilerConfiguration.copy().apply {
@@ -42,7 +49,7 @@ class FirWasmJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices
         serializeModuleIntoKlib(
             moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
             configuration = configuration,
-            diagnosticReporter = diagnosticReporter,
+            diagnosticReporter = irDiagnosticReporter,
             metadataSerializer = inputArtifact.metadataSerializer,
             klibPath = outputFile.path,
             dependencies = emptyList(), // Does not matter.

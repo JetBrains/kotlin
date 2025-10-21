@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalJsCompilerRunner
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
@@ -460,7 +461,9 @@ class GenerateIrRuntime {
         files: List<KtFile>,
     ): String {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+        val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            DiagnosticReporterFactory.createPendingReporter(messageCollector).deduplicating(), configuration.languageVersionSettings
+        )
         val tmpKlibDir = createTempDirectory().also { it.toFile().deleteOnExit() }.toString()
         val metadataSerializer = KlibMetadataIncrementalSerializer(
             files,
