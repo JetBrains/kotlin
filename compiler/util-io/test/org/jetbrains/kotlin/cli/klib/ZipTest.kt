@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.file.createTempDir
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.konan.file.zipDirAsInternal
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -22,12 +23,18 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
 import java.nio.file.Files
 import java.nio.file.LinkOption
+import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.attribute.FileTime
+import java.util.Collections
 import java.util.TreeMap
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipInputStream
+import kotlin.collections.Iterable
+import kotlin.io.path.copyTo
+import kotlin.io.path.fileSize
+import kotlin.io.path.readBytes
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.measureTime
@@ -160,6 +167,64 @@ class ZipTest {
             doTestWithPayload {
                 symlink("link", "../${externalDir.name}")
             }
+        }
+    }
+
+    @Test
+    fun testStableFileTreeTraversal() {
+        val originalPayloadPath = Root(tmpDir).let {
+            it.directory("original") {
+                simulationOfKlibPayload()
+            }
+        }.javaPath
+
+        // Compress with stable traversal order.
+        val compressedWithStableTraversalPayloadPath = tmpDir.child("compressed-stable.zip").javaPath
+        zipDirAsInternal(
+            dirPath = originalPayloadPath,
+            zipFilePath = compressedWithStableTraversalPayloadPath
+        )
+
+        fun assertSameCompressedPayload(shuffledPayloadPath: Path) {
+            assertEquals(compressedWithStableTraversalPayloadPath.fileSize(), shuffledPayloadPath.fileSize())
+
+            val stablePayloadBytes = compressedWithStableTraversalPayloadPath.readBytes()
+            val shuffledPayloadBytes = shuffledPayloadPath.readBytes()
+
+            assertTrue(stablePayloadBytes.contentEquals(shuffledPayloadBytes))
+        }
+
+        repeat(5) { index ->
+            val compressedWithRandomTraversalPayloadPath = tmpDir.child("compressed-random-$index.zip").javaPath
+            zipDirAsInternal(
+                dirPath = originalPayloadPath,
+                zipFilePath = compressedWithRandomTraversalPayloadPath,
+                shuffle = Iterable<Path>::shuffled
+            )
+
+            assertSameCompressedPayload(compressedWithRandomTraversalPayloadPath)
+        }
+
+        repeat(5) { index ->
+            val compressedWithReverseTraversalPayloadPath = tmpDir.child("compressed-reverse-$index.zip").javaPath
+            zipDirAsInternal(
+                dirPath = originalPayloadPath,
+                zipFilePath = compressedWithReverseTraversalPayloadPath,
+                shuffle = Iterable<Path>::reversed
+            )
+
+            assertSameCompressedPayload(compressedWithReverseTraversalPayloadPath)
+        }
+
+        repeat(5) { index ->
+            val compressedWithRotatedTraversalPayloadPath = tmpDir.child("compressed-rotated-$index.zip").javaPath
+            zipDirAsInternal(
+                dirPath = originalPayloadPath,
+                zipFilePath = compressedWithRotatedTraversalPayloadPath,
+                shuffle = { Collections.rotate(it, it.size / 2 + index) }
+            )
+
+            assertSameCompressedPayload(compressedWithRotatedTraversalPayloadPath)
         }
     }
 
