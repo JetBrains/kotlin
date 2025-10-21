@@ -853,6 +853,27 @@ internal object KotlinToolingDiagnostics {
 
     object WasmWasiEnvironmentNotChosenExplicitly : JsLikeEnvironmentNotChosenExplicitly("WebAssembly WASI", "wasmWasi")
 
+    object ConfigurationOnDemandNotSupported : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            projectDisplayName: String,
+            namesOfUnsupportedTargets: Set<String>,
+        ) = build {
+            title("Kotlin targets do not support Configuration on Demand")
+                .description {
+                    """
+                    |Gradle Configuration on Demand is enabled, but $projectDisplayName has Kotlin targets that do not support this feature.
+                    |This may lead to unpredictable and inconsistent behaviour during a Gradle build.
+                    |
+                    |Unsupported targets: $namesOfUnsupportedTargets
+                    |
+                    |See https://youtrack.jetbrains.com/issue/KT-52074 for the status of Configuration on Demand support.
+                    """.trimMargin()
+                }
+                .solution { "Do not enable Configuration on Demand" }
+                .documentationLink(URI("https://docs.gradle.org/current/userguide/configuration_on_demand.html"))
+        }
+    }
+
     object PreHmppDependenciesUsedInBuild : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(dependencyName: String) = build {
             title("Deprecated Legacy Mode Dependency")
