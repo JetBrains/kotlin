@@ -196,7 +196,7 @@ class FunctionCallTransformer(
     }
 
     override fun restoreSymbol(call: FirFunctionCall, name: Name): FirRegularClassSymbol? {
-        val newType = (call.resolvedType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol(session)
+        val newType = (call.resolvedType.typeArguments.getOrNull(0) as? ConeClassLikeType)?.toRegularClassSymbol()
         return newType?.generatedClasses?.get(name)
     }
 
@@ -225,10 +225,10 @@ class FunctionCallTransformer(
             val callResult = analyzeRefinedCallShape<PluginDataFrameSchema>(call, dataSchemaLikeClassId, InterpretationErrorReporter.DEFAULT)
             val (tokens, dataFrameSchema) = callResult ?: return null
             val token = tokens[0]
-            val firstSchema = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
+            val firstSchema = token.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!
             val dataSchemaApis = materialize(dataFrameSchema ?: PluginDataFrameSchema.EMPTY, call, firstSchema)
 
-            val tokenFir = token.toRegularClassSymbol(session)!!.fir
+            val tokenFir = token.toRegularClassSymbol()!!.fir
             tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol })
 
             return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir)) { tokenFir.generatedClasses = it }
@@ -277,16 +277,16 @@ class FunctionCallTransformer(
                 PluginDataFrameSchema.EMPTY to PluginDataFrameSchema.EMPTY
             }
 
-            val firstSchema = keyMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
-            val firstSchema1 = groupMarker.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
+            val firstSchema = keyMarker.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!
+            val firstSchema1 = groupMarker.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!
 
             val keyApis = materialize(keySchema, call, firstSchema, "Key")
             val groupApis = materialize(groupSchema, call, firstSchema1, "Group", i = keyApis.size)
 
-            val groupToken = keyMarker.toRegularClassSymbol(session)!!.fir
+            val groupToken = keyMarker.toRegularClassSymbol()!!.fir
             groupToken.callShapeData = CallShapeData.RefinedType(keyApis.map { it.scope.symbol })
 
-            val keyToken = groupMarker.toRegularClassSymbol(session)!!.fir
+            val keyToken = groupMarker.toRegularClassSymbol()!!.fir
             keyToken.callShapeData = CallShapeData.RefinedType(groupApis.map { it.scope.symbol })
 
             return buildScopeFunctionCall(

@@ -155,14 +155,14 @@ private class Checker(
         }
         val targetProjection = expression.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance ?: return
         val targetType = targetProjection.typeRef.coneType as? ConeClassLikeType ?: return
-        val targetSymbol = targetType.toSymbol(session)
+        val targetSymbol = targetType.toSymbol()
         if (targetSymbol != null && !session.predicateBasedProvider.matches(VALID_CAST_TARGET_PREDICATE, targetSymbol)) {
             val text = "Annotate ${targetType.renderReadable()} with @DataSchema to use generated properties"
             reporter.reportOn(expression.source, CAST_TARGET_WARNING, text, context)
         }
         val coneType = expression.explicitReceiver?.resolvedType
         if (coneType != null) {
-            val sourceType = coneType.fullyExpandedType(session).typeArguments.getOrNull(0)?.type as? ConeClassLikeType
+            val sourceType = coneType.fullyExpandedType().typeArguments.getOrNull(0)?.type as? ConeClassLikeType
                 ?: return
             val source = pluginDataFrameSchema(sourceType)
             if (source.columns().isEmpty()) return

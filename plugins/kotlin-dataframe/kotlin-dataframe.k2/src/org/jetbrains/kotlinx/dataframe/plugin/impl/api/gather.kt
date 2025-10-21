@@ -19,6 +19,7 @@ import org.jetbrains.kotlinx.dataframe.api.addAll
 import org.jetbrains.kotlinx.dataframe.api.remove
 import org.jetbrains.kotlinx.dataframe.api.toPath
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.SessionContext
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
@@ -198,7 +199,7 @@ fun FirSession.intersect(schema: List<SimpleCol>, otherSchema: List<SimpleCol>):
         if (col1 is SimpleDataColumn && col2 is SimpleDataColumn) {
             val type = typeContext.commonSuperTypeOrNull(listOf(col1.type.type, col2.type.type))
             val realType = if (type is ConeIntersectionType) builtinTypes.nullableAnyType.coneType else type
-            realType?.let { SimpleDataColumn(name, it.wrap()) }
+            realType?.let { SimpleDataColumn(name, context(SessionContext(this)) { it.wrap() }) }
         } else if (col1 is SimpleColumnGroup && col2 is SimpleColumnGroup) {
             val res = intersect(col1.columns(), col2.columns())
             SimpleColumnGroup(name, res)

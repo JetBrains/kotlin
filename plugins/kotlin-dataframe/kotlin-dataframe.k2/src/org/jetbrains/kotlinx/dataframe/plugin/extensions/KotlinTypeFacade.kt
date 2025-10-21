@@ -1,6 +1,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -28,9 +29,7 @@ interface KotlinTypeFacade : SessionContext {
     }
 }
 
-interface SessionContext {
-    val session: FirSession
-}
+typealias SessionContext = SessionHolder
 
 fun SessionContext(session: FirSession) = object : SessionContext {
     override val session: FirSession = session
@@ -52,6 +51,7 @@ class KotlinTypeFacadeImpl(
 
 class Marker private constructor(internal val type: ConeKotlinType) {
     companion object {
+        context(context: SessionContext)
         operator fun invoke(type: ConeKotlinType): Marker {
             val type = if (type is ConeFlexibleType) {
                 type.lowerBound
@@ -60,6 +60,8 @@ class Marker private constructor(internal val type: ConeKotlinType) {
             }
             return Marker(type)
         }
+
+        fun convertUnsafe(type: ConeKotlinType) = Marker(type)
     }
 
     override fun toString(): String {
@@ -80,7 +82,11 @@ class Marker private constructor(internal val type: ConeKotlinType) {
     }
 }
 
+context(context: SessionContext)
 fun ConeKotlinType.wrap(): Marker = Marker(this)
+
+// The resulting type should not be materialized as a type of a property. Only for testing
+fun ConeKotlinType.wrapUnsafe(): Marker = Marker.convertUnsafe(type = this)
 
 
 
