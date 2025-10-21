@@ -137,14 +137,6 @@ class FunctionCallTransformer(
         // See org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyRegularClassChecker
         if (callInfo.containingDeclarations.lastOrNull() is FirPropertyAccessor) return null
         if (callInfo.containingDeclarations.any { it is FirFunction && it.isInline }) return null
-        if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
-            return null
-        }
-        val noRefineAnnotation =
-            symbol.resolvedAnnotationClassIds.none { it.shortClassName == Name.identifier("Refine") }
-        if (noRefineAnnotation) {
-            return null
-        }
 
         return transformers.firstNotNullOfOrNull { it.interceptOrNull(callInfo, symbol, callInfo.twoDigitHash()) }
     }
