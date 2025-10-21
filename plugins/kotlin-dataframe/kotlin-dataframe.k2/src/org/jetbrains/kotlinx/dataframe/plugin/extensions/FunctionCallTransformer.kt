@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
@@ -91,6 +90,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
+import org.jetbrains.kotlinx.dataframe.plugin.utils.hashToTwoCharString
+import org.jetbrains.kotlinx.dataframe.plugin.utils.twoDigitHash
 import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)
@@ -145,27 +146,7 @@ class FunctionCallTransformer(
             return null
         }
 
-        val hash = run {
-            val hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
-                when (it) {
-                    is FirLiteralExpression -> it.value.hashCode()
-                    else -> it.source?.text?.hashCode() ?: 42
-                }
-            }
-            hashToTwoCharString(abs(hash))
-        }
-
-        return transformers.firstNotNullOfOrNull { it.interceptOrNull(callInfo, symbol, hash) }
-    }
-
-    private fun hashToTwoCharString(hash: Int): String {
-        val baseChars = "0123456789"
-        val base = baseChars.length
-        val positiveHash = abs(hash)
-        val char1 = baseChars[positiveHash % base]
-        val char2 = baseChars[(positiveHash / base) % base]
-
-        return "$char1$char2"
+        return transformers.firstNotNullOfOrNull { it.interceptOrNull(callInfo, symbol, callInfo.twoDigitHash()) }
     }
 
     override fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall {
