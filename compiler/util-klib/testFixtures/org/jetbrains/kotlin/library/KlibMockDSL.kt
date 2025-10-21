@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
 /**
  * A DSL to mock a Klib on the file system. See the default endpoint [mockKlib].
  */
-class KlibMockDSL(val root: File) {
+class KlibMockDSL(val currentDir: File) {
     fun dir(name: String, init: KlibMockDSL.() -> Unit = {}) {
-        val dir = root.resolve(name).apply(File::mkdirs)
-        KlibMockDSL(dir).init()
+        val newDir = currentDir.resolve(name).apply(File::mkdirs)
+        KlibMockDSL(currentDir = newDir).init()
     }
 
-    fun file(name: String, content: String = ""): Unit = root.resolve(name).writeText(content)
-    fun file(name: String, content: ByteArray): Unit = root.resolve(name).writeBytes(content)
+    fun file(name: String, content: String = ""): Unit = currentDir.resolve(name).writeText(content)
+    fun file(name: String, content: ByteArray): Unit = currentDir.resolve(name).writeBytes(content)
 
     companion object {
         /**
@@ -151,7 +151,7 @@ fun KlibMockDSL.manifest(
     }
     properties.writeKonanLibraryVersioning(versioning)
     properties.other()
-    properties.saveToFile(KlibFile(root.resolve(KLIB_MANIFEST_FILE_NAME).path))
+    properties.saveToFile(KlibFile(currentDir.resolve(KLIB_MANIFEST_FILE_NAME).path))
 }
 
 fun KlibMockDSL.resources(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_RESOURCES_FOLDER_NAME, init)
@@ -197,7 +197,7 @@ fun KlibMockDSL.irInlinableFunctions(inlinableFunctionsFile: SerializedIrFile) =
 
 // TODO (KT-81411): rewrite it on the new ir component layout
 private fun KlibMockDSL.serializeIr(irFiles: Collection<SerializedIrFile>) {
-    fun pathOf(name: String): String = root.resolve(name).absolutePath
+    fun pathOf(name: String): String = currentDir.resolve(name).absolutePath
 
     with(irFiles.sortedBy { it.path }) {
         IrArrayWriter(map(SerializedIrFile::fileData)).writeIntoFile(pathOf(IR_FILES_FILE_NAME))
