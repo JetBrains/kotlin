@@ -115,6 +115,8 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
                 """
                     framework {
                         baseName = "kotlin-library"
+                        // KT-81727 Failing CocoaPodsXcodeIT test
+                        freeCompilerArgs += "-Xbinary=bundleId=kotlin.library"
                     }
                     name = "kotlin-library"
                     podfile = project.file("ios-app/Podfile")
