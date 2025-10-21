@@ -21,6 +21,7 @@ interface IrDiagnosticReporter {
     fun at(sourceElement: AbstractKtSourceElement?, irElement: IrElement, containingFile: IrFile): DiagnosticContextImpl
 
     fun report(factory: KtSourcelessDiagnosticFactory, message: String)
+    val hasErrors: Boolean
 }
 
 object IrDiagnosticRenderers {

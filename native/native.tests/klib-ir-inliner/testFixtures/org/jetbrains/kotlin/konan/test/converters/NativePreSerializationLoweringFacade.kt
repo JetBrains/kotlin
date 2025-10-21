@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.inline.konan.nativeLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -39,12 +42,16 @@ class NativePreSerializationLoweringFacade(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticReporter.deduplicating(),
+            configuration.languageVersionSettings
+        )
         val phaseConfig = PhaseConfig()
         val transformedModule = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
             PhaseEngine(
                 phaseConfig,
                 PhaserState(),
-                NativePreSerializationLoweringContext(inputArtifact.irBuiltIns, configuration, diagnosticReporter)
+                NativePreSerializationLoweringContext(inputArtifact.irBuiltIns, configuration, irDiagnosticReporter)
             ).runPreSerializationLoweringPhases(
                 nativeLoweringsOfTheFirstPhase(module.languageVersionSettings),
                 inputArtifact.irModuleFragment,

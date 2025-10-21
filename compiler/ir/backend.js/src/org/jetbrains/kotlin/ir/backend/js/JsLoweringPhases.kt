@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.diagnostics.impl.deduplicating
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
@@ -151,13 +148,8 @@ private val jsCodeOutliningPhaseOnSecondStage = makeIrModulePhase(
 
 private val jsCodeOutliningPhaseOnFirstStage = makeIrModulePhase(
     { context: JsPreSerializationLoweringContext ->
-        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            context.diagnosticReporter.deduplicating(),
-            context.configuration.languageVersionSettings
-        )
-
         JsCodeOutliningLowering(context) { jsCall, valueDeclaration, container ->
-            irDiagnosticReporter.at(jsCall, container)
+            context.diagnosticReporter.at(jsCall, container)
                 .report(JsKlibErrors.JS_CODE_CAPTURES_INLINABLE_FUNCTION, valueDeclaration)
         }
     },
