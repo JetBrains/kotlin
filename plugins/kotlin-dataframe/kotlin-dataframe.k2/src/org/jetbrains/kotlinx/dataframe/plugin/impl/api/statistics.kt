@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlinx.dataframe.api.single
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregators
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.isPrimitiveOrMixedNumber
 import org.jetbrains.kotlinx.dataframe.plugin.utils.isSelfComparable
@@ -120,7 +120,7 @@ internal val percentile = Aggregators.percentile(percentileArg, skipNaN)
 internal val Arguments.numericStatisticsDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         cols {
-            (it.single() as Marker).coneType.isPrimitiveOrMixedNumber(session)
+            (it.single() as ColumnType).coneType.isPrimitiveOrMixedNumber(session)
         }
     }
 
@@ -128,7 +128,7 @@ internal val Arguments.numericStatisticsDefaultColumns: ColumnsResolver
 internal val Arguments.comparableStatisticsDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         cols {
-            (it.single() as Marker).coneType.isSelfComparable(session)
+            (it.single() as ColumnType).coneType.isSelfComparable(session)
         }
     }
 

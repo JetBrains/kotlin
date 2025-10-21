@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withNullability
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.AbstractSchemaModificationInterpreter
@@ -81,7 +82,7 @@ class UpdatePerRowCol : UpdatePerCol("expression")
 class UpdateWith0 : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: UpdateApproximation by arg()
     val Arguments.typeArg1: ConeKotlinType by arg(lens = Interpreter.Id)
-    val Arguments.target: TypeApproximation by type(ArgumentName.of("expression"))
+    val Arguments.target: ColumnType by type(ArgumentName.of("expression"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return updateWithImpl(receiver, target.coneType.isMarkedNullable, typeArg1.wrap())
@@ -91,7 +92,7 @@ class UpdateWith0 : AbstractSchemaModificationInterpreter() {
 private fun Arguments.updateWithImpl(
     receiver: UpdateApproximation,
     targetMarkedNullable: Boolean,
-    originalType: TypeApproximation,
+    originalType: ColumnType,
 ): PluginDataFrameSchema {
     return when (val receiver = receiver) {
         is FillNullsApproximation -> receiver.schema.convertAsColumn(receiver.columns) { original ->
@@ -117,7 +118,7 @@ private fun Arguments.updateWithImpl(
 
 class UpdateNotNullWith : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: UpdateApproximation by arg()
-    val Arguments.target: TypeApproximation by type(ArgumentName.of("expression"))
+    val Arguments.target: ColumnType by type(ArgumentName.of("expression"))
     val Arguments.typeArg1: ConeKotlinType by arg(lens = Interpreter.Id)
 
     override fun Arguments.interpret(): PluginDataFrameSchema {

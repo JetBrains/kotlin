@@ -7,11 +7,11 @@ import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.renderReadable
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.findSchemaArgument
 import org.jetbrains.kotlinx.dataframe.plugin.getSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 data class PluginDataFrameSchema(
@@ -66,7 +66,7 @@ sealed interface SimpleCol {
 
 data class SimpleDataColumn(
     override val name: String,
-    val type: TypeApproximation,
+    val type: ColumnType,
 ) : SimpleCol {
 
     override fun name(): String {
@@ -77,7 +77,7 @@ data class SimpleDataColumn(
         return SimpleDataColumn(s, type)
     }
 
-    fun changeType(type: TypeApproximation): SimpleDataColumn {
+    fun changeType(type: ColumnType): SimpleDataColumn {
         return SimpleDataColumn(name, type)
     }
 

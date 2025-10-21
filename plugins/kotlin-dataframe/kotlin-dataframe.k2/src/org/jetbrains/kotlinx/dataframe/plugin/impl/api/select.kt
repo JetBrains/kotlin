@@ -9,6 +9,7 @@ import org.jetbrains.kotlinx.dataframe.api.asColumnGroup
 import org.jetbrains.kotlinx.dataframe.api.select
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnsList
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
@@ -40,7 +41,7 @@ internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.receiver by ignore()
     val Arguments.name: String by arg(defaultValue = Present("untitled"))
     val Arguments.infer by ignore()
-    val Arguments.expression: TypeApproximation by type()
+    val Arguments.expression: ColumnType by type()
 
     override fun Arguments.interpret(): ColumnsResolver {
         return SingleColumnApproximation(
@@ -198,7 +199,7 @@ internal class AllFrom2 : AbstractInterpreter<ColumnsResolver>() {
 
 internal class ColsOf0 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.receiver by ignore()
-    val Arguments.typeArg0: TypeApproximation by arg()
+    val Arguments.typeArg0: ColumnType by arg()
 
     override fun Arguments.interpret(): ColumnsResolver {
         return object : ColumnsResolver {
@@ -259,7 +260,7 @@ internal class ColsAtAnyDepth2 : AbstractInterpreter<ColumnsResolver>() {
 
 internal class ColsOf1 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.receiver: ColumnsResolver by arg()
-    val Arguments.typeArg0: TypeApproximation by arg()
+    val Arguments.typeArg0: ColumnType by arg()
 
     override fun Arguments.interpret(): ColumnsResolver {
         return object : ColumnsResolver {
@@ -272,7 +273,7 @@ internal class ColsOf1 : AbstractInterpreter<ColumnsResolver>() {
 
 internal class ColsOf2 : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.receiver: SingleColumnApproximation by arg()
-    val Arguments.typeArg0: TypeApproximation by arg()
+    val Arguments.typeArg0: ColumnType by arg()
 
     override fun Arguments.interpret(): ColumnsResolver {
         return columnsResolver {
