@@ -239,7 +239,7 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
         pinCurrentThreadToIsolatedCpu()
     }
 
-    fun testTotalKotlin() {
+    override fun testTotalKotlin() {
 
         beforeAllPasses()
 
