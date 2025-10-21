@@ -11,11 +11,15 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.file.createTempDir
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.zipDirAs
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestName
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.fail
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.attribute.BasicFileAttributes
@@ -25,26 +29,18 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipInputStream
 import kotlin.random.Random
-import kotlin.test.Ignore
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 import kotlin.time.Duration
 import kotlin.time.measureTime
 
 class ZipTest {
-    @Rule
-    @JvmField
-    val currentTestName = TestName()
-
     private lateinit var tmpDir: KFile
 
-    @Before
-    fun setUp() {
-        tmpDir = createTempDir(currentTestName.methodName)
+    @BeforeEach
+    fun setUp(testInfo: TestInfo) {
+        tmpDir = createTempDir(testInfo.testClass.get().simpleName + "_" + testInfo.testMethod.get().name)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         tmpDir.javaPath.toFile().deleteRecursively()
     }
@@ -55,7 +51,7 @@ class ZipTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     fun benchmarkKlibCompressionSimulation() {
         val uncompressed = Root(tmpDir).simulationOfKlibPayload()
         val compressed = tmpDir.child("compressed.zip")
@@ -123,39 +119,47 @@ class ZipTest {
         }
     }
 
-    @Test(expected = ZipException::class)
+    @Test
     fun testSymlinkToFileOutsideCompressedDirectory1() {
         val externalFile = tmpDir.child("externalFile").apply { writeBytes(Random(System.nanoTime()).nextBytes(100)) }
 
-        doTestWithPayload {
-            symlink("link", externalFile.absolutePath)
+        assertThrows<ZipException> {
+            doTestWithPayload {
+                symlink("link", externalFile.absolutePath)
+            }
         }
     }
 
-    @Test(expected = ZipException::class)
+    @Test
     fun testSymlinkToFileOutsideCompressedDirectory2() {
         val externalFile = tmpDir.child("externalFile").apply { writeBytes(Random(System.nanoTime()).nextBytes(100)) }
 
-        doTestWithPayload {
-            symlink("link", "../${externalFile.name}")
+        assertThrows<ZipException> {
+            doTestWithPayload {
+                symlink("link", "../${externalFile.name}")
+            }
         }
     }
 
-    @Test(expected = ZipException::class)
+    @Test
     fun testSymlinkToDirectoryOutsideCompressedDirectory1() {
         val externalDir = tmpDir.child("externalDir").apply { mkdirs() }
 
-        doTestWithPayload {
-            symlink("link", externalDir.absolutePath)
+        assertThrows<ZipException> {
+            doTestWithPayload {
+                symlink("link", externalDir.absolutePath)
+            }
         }
     }
 
-    @Test(expected = ZipException::class)
+    @Test
     fun testSymlinkToDirectoryOutsideCompressedDirectory2() {
         val externalDir = tmpDir.child("externalDir").apply { mkdirs() }
 
-        doTestWithPayload {
-            symlink("link", "../${externalDir.name}")
+        assertThrows<ZipException> {
+            doTestWithPayload {
+                symlink("link", "../${externalDir.name}")
+            }
         }
     }
 

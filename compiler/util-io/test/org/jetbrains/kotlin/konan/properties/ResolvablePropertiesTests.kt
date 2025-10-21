@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.konan.properties
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class ResolvablePropertiesTests {
 
@@ -19,13 +20,15 @@ class ResolvablePropertiesTests {
         assertEquals("value1", props.resolvablePropertyString("key2"))
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `trivial circular dependency`() {
         val props = propertiesOf(
             "key1" to "\$key2",
             "key2" to "\$key1"
         )
-        props.resolvablePropertyString("key2")
+        assertThrows<IllegalStateException> {
+            props.resolvablePropertyString("key2")
+        }
     }
 
     @Test
@@ -57,12 +60,14 @@ class ResolvablePropertiesTests {
         assertEquals(listOf("v1", "v2", "v1", "v2"), props.resolvablePropertyList("k2"))
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `self-reference`() {
         val props = propertiesOf(
             "k1" to "\$k1"
         )
-        props.resolvablePropertyString("k1")
+        assertThrows<IllegalStateException> {
+            props.resolvablePropertyString("k1")
+        }
     }
 
     @Test
@@ -93,13 +98,15 @@ class ResolvablePropertiesTests {
         assertEquals("/bin", props.resolvablePropertyString("k2"))
     }
 
-    @Test(expected = java.lang.IllegalStateException::class)
+    @Test
     fun `incorrect relative path`() {
         val props = propertiesOf(
             "k1" to "v1 v2",
             "k2" to "\$k1/sysroot"
         )
-        props.resolvablePropertyString("k2")
+        assertThrows<IllegalStateException> {
+            props.resolvablePropertyString("k2")
+        }
     }
 
     @Test

@@ -1,14 +1,15 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("project-tests-convention")
 }
 
 dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     implementation(kotlin("stdlib", coreDepsVersion))
     testImplementation(kotlin("stdlib", coreDepsVersion))
-    testImplementation(libs.junit4)
-    testImplementation(kotlin("test", coreDepsVersion))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
@@ -17,6 +18,10 @@ sourceSets {
 }
 
 configureKotlinCompileTasksGradleCompatibility()
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
+}
 
 publish()
 
