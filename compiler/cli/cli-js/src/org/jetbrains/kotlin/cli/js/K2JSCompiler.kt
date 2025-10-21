@@ -28,8 +28,11 @@ import org.jetbrains.kotlin.cli.pipeline.web.WebCliPipeline
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -272,6 +275,10 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val messageCollector = environmentForJS.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+            val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+                diagnosticsReporter.deduplicating(),
+                environmentForJS.configuration.languageVersionSettings
+            )
             generateKLib(
                 sourceModule,
                 outputKlibPath,
@@ -280,7 +287,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 icData = icData,
                 moduleFragment = moduleFragment,
                 irBuiltIns = irPluginContext.irBuiltIns,
-                diagnosticReporter = diagnosticsReporter,
+                diagnosticReporter = irDiagnosticReporter,
                 builtInsPlatform = if (arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
                 wasmTarget = if (!arguments.wasm) null else arguments.wasmTarget?.let(WasmTarget::fromName),
                 performanceManager = performanceManager,

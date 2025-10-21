@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.validation.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -95,7 +92,7 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     moduleName: String,
     irModuleFragment: IrModuleFragment?,
     configuration: CompilerConfiguration,
-    diagnosticReporter: DiagnosticReporter,
+    diagnosticReporter: IrDiagnosticReporter,
     cleanFiles: List<KotlinFileSerializedData>,
     dependencies: List<Dependency>,
     createModuleSerializer: (irDiagnosticReporter: IrDiagnosticReporter) -> IrModuleSerializer<*>,
@@ -111,11 +108,8 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
     }
 
     val serializedIr = irModuleFragment?.let {
-        val irDiagnosticReporter =
-            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
-
         it.runIrLevelCheckers(
-            irDiagnosticReporter,
+            diagnosticReporter,
             *platformKlibCheckers.toTypedArray(),
         )
 
@@ -123,13 +117,13 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
             // With IrIntraModuleInlinerBeforeKlibSerialization feature, this check happens after the first phase of KLIB inlining.
             // Without it, the check should happen here instead.
             it.runIrLevelCheckers(
-                irDiagnosticReporter,
+                diagnosticReporter,
                 ::IrInlineDeclarationChecker,
             )
         }
 
         createModuleSerializer(
-            irDiagnosticReporter,
+            diagnosticReporter,
         ).serializedIrModule(it)
     }
 

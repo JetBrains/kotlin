@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.cli.pipeline.web
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
@@ -26,6 +29,8 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsSerializedKlibPipelineArtifact? {
         val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input
+        val irDiagnosticReporter =
+            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticCollector.deduplicating(), configuration.languageVersionSettings)
 
         val outputKlibPath = configuration.computeOutputKlibPath()
         serializeFirKlib(
@@ -34,7 +39,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             fir2IrActualizedResult = fir2IrResult,
             outputKlibPath = outputKlibPath,
             nopack = configuration.produceKlibDir,
-            diagnosticsReporter = diagnosticCollector,
+            diagnosticsReporter = irDiagnosticReporter,
             jsOutputName = configuration.perModuleOutputName,
             useWasmPlatform = configuration.wasmCompilation,
             wasmTarget = configuration.wasmTarget,
@@ -52,7 +57,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
         fir2IrActualizedResult: Fir2IrActualizedResult,
         outputKlibPath: String,
         nopack: Boolean,
-        diagnosticsReporter: BaseDiagnosticsCollector,
+        diagnosticsReporter: IrDiagnosticReporter,
         jsOutputName: String?,
         useWasmPlatform: Boolean,
         wasmTarget: WasmTarget?,
