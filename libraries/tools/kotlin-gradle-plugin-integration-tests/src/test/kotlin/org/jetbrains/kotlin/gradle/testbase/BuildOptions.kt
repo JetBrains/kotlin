@@ -470,15 +470,18 @@ fun BuildOptions.suppressWarningForOldKotlinVersion(
 // Fixed in AGP 8.12-alpha06
 fun BuildOptions.suppressAgpWarningSinceGradle814(
     currentGradleVersion: GradleVersion,
+    currentAgpVersion: TestVersions.AgpCompatibilityMatrix,
     warningMode: WarningMode = WarningMode.Summary,
 ): BuildOptions {
     return when {
-        warningMode == WarningMode.Summary -> suppressDeprecationWarningsSinceGradleVersion(
+        warningMode == WarningMode.Summary &&
+                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812 -> suppressDeprecationWarningsSinceGradleVersion(
             gradleVersion = TestVersions.Gradle.G_8_14,
             currentGradleVersion = currentGradleVersion,
             reason = "AGP produces deprecation warning on resolve: https://issuetracker.google.com/issues/408334529"
         )
-        currentGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) -> copy(warningMode = warningMode)
+        currentGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) &&
+                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812-> copy(warningMode = warningMode)
         else -> this
     }
 }
