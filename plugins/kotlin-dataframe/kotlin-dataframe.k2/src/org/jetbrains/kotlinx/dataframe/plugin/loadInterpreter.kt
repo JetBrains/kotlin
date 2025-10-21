@@ -357,7 +357,8 @@ internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
         }
 }
 
-internal val KotlinTypeFacade.loadInterpreter: FirFunctionCall.() -> Interpreter<*>? get() = { this.loadInterpreter(session, isTest) }
+context(facade: KotlinTypeFacade)
+fun FirFunctionCall.loadInterpreter(): Interpreter<*>? = this.loadInterpreter(facade.session, facade.isTest)
 
 internal val FirGetClassCall.classId: ClassId?
     get() {
