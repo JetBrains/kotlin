@@ -175,7 +175,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
     override val bridges: List<SirBridge> by lazyWithSessions {
         listOfNotNull(sirSession.generateTypeBridge(
             ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
-            kotlinOptIns =  ktSymbol.allRequiredOptIns,
+            kotlinOptIns = ktSymbol.allRequiredOptIns,
             swiftFqName = swiftFqName,
             swiftSymbolName = objcClassSymbolName,
         ))

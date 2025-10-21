@@ -200,6 +200,12 @@ public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWith
   }
 
   @Test
+  @TestMetadata("spi")
+  public void testSpi() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/spi/");
+  }
+
+  @Test
   @TestMetadata("stdlibTypes")
   public void testStdlibTypes() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/stdlibTypes/");

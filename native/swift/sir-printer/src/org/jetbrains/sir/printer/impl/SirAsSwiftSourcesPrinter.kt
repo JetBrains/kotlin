@@ -305,6 +305,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                 null -> ""
             }
         )
+        print(spi.map { SirAttribute.SPI(it) }.render())
         println("import ${moduleName.swiftIdentifier}")
     }
 

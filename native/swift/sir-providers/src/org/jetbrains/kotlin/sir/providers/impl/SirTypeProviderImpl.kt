@@ -239,7 +239,9 @@ public class SirTypeProviderImpl(
                     val sirModule = with(sirSession) {
                         ktModule.sirModule()
                     }
-                    processTypeImports(listOf(SirImport(sirModule.name)))
+                    // We're being lazy here importing all spi's preventively
+                    val spi = this@extractImport.attributes.filterIsInstance<SirAttribute.SPI>().map { it.name }
+                    processTypeImports(listOf(SirImport(sirModule.name, spi = spi)))
                 }
                 is KotlinRuntimeElement -> {
                     processTypeImports(listOf(SirImport(KotlinRuntimeModule.name)))
@@ -250,9 +252,9 @@ public class SirTypeProviderImpl(
 
         when (this) {
             is SirNominalType -> {
-                generateSequence(this) { this.parent }.forEach { _ ->
-                    typeArguments.forEach { it.handleImports(processTypeImports) }
-                    typeDeclaration.extractImport()
+                generateSequence(this) { this.parent }.forEach { it ->
+                    it.typeArguments.forEach { it.handleImports(processTypeImports) }
+                    it.typeDeclaration.extractImport()
                 }
             }
             is SirExistentialType -> this.protocols.forEach { it.extractImport() }

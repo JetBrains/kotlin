@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir
 class SirImport(
     val moduleName: String,
     val mode: Mode? = null,
+    val spi: List<String> = emptyList(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
