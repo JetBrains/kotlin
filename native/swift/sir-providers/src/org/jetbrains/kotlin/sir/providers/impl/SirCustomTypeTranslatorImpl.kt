@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.components.isDoubleType
 import org.jetbrains.kotlin.analysis.api.components.isFloatType
 import org.jetbrains.kotlin.analysis.api.components.isIntType
 import org.jetbrains.kotlin.analysis.api.components.isLongType
+import org.jetbrains.kotlin.analysis.api.components.isPrimitive
 import org.jetbrains.kotlin.analysis.api.components.isShortType
 import org.jetbrains.kotlin.analysis.api.components.isStringType
 import org.jetbrains.kotlin.analysis.api.components.isUByteType
@@ -154,17 +155,21 @@ public class SirCustomTypeTranslatorImpl(
             }
 
             isClassType(ClassId.topLevel(openEndRangeFqName)) -> {
+                val typeArgument = typeArguments.single()
+                if (typeArgument is KaTypeArgumentWithVariance && !typeArgument.type.isPrimitive) return null
                 swiftType = SirNominalType(
                     SirSwiftModule.range,
-                    listOf(typeArguments.single().sirType(ctx))
+                    listOf(typeArgument.sirType(ctx))
                 )
                 Bridge.AsObject(swiftType, KotlinType.KotlinObject, CType.Object).wrapper()
             }
 
             isClassType(ClassId.topLevel(closedRangeFqName)) -> {
+                val typeArgument = typeArguments.single()
+                if (typeArgument is KaTypeArgumentWithVariance && !typeArgument.type.isPrimitive) return null
                 swiftType = SirNominalType(
                     SirSwiftModule.closedRange,
-                    listOf(typeArguments.single().sirType(ctx))
+                    listOf(typeArgument.sirType(ctx))
                 )
                 Bridge.AsObject(swiftType, KotlinType.KotlinObject, CType.Object).wrapper()
             }

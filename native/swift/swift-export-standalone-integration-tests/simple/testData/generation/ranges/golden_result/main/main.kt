@@ -10,12 +10,6 @@ public fun generation_ranges_ranges_bar(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("generation_ranges_ranges_baz")
-public fun generation_ranges_ranges_baz(): kotlin.native.internal.NativePtr {
-    val _result = generation.ranges.ranges.baz()
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
 @ExportedBridge("generation_ranges_ranges_foo")
 public fun generation_ranges_ranges_foo(): kotlin.native.internal.NativePtr {
     val _result = generation.ranges.ranges.foo()
