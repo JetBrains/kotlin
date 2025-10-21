@@ -876,6 +876,10 @@ class FirElementSerializer private constructor(
                     writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
                 )
             }
+
+            if (typeAlias.classId.isNestedClass) {
+                builder.addVersionRequirement(writeLanguageVersionRequirement(LanguageFeature.NestedTypeAliases, versionRequirementTable))
+            }
         }
 
         extension.serializeTypeAlias(typeAlias, builder)
