@@ -30,8 +30,7 @@ import kotlin.test.fail
 // to ensure AGP and MPP integration is not broken.
 // This integration allows AGP to configure android target in MPP.
 @AndroidTestVersions(
-    minVersion = TestVersions.AGP.AGP_82,
-    maxVersion = TestVersions.AGP.AGP_811,
+    maxVersion = TestVersions.AGP.AGP_813,
     additionalVersions = [
         TestVersions.AGP.AGP_83,
         TestVersions.AGP.AGP_84,
@@ -41,6 +40,8 @@ import kotlin.test.fail
         TestVersions.AGP.AGP_88,
         TestVersions.AGP.AGP_89,
         TestVersions.AGP.AGP_810,
+        TestVersions.AGP.AGP_811,
+        TestVersions.AGP.AGP_812,
     ],
 )
 @AndroidGradlePluginTests
@@ -111,7 +112,10 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
         ) {
             modifyProjectForAGPVersion(androidVersion)
             resolveIdeDependencies(
-                buildOptions = buildOptions.suppressAgpWarningSinceGradle814(gradleVersion)
+                buildOptions = buildOptions.suppressAgpWarningSinceGradle814(
+                    gradleVersion,
+                    TestVersions.AgpCompatibilityMatrix.fromVersion(androidVersion)
+                )
             ) { dependencies ->
                 dependencies["androidMain"].assertMatches(
                     kotlinStdlibDependencies,

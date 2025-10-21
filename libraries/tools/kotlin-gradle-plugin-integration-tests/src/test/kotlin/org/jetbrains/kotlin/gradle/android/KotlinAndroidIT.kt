@@ -182,9 +182,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningSinceGradle814(gradleVersion, WarningMode.None),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             buildGradle.modify {
