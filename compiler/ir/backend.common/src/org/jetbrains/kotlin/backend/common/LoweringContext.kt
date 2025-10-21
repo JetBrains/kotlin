@@ -38,13 +38,6 @@ interface LoweringContext : LoggingContext, ErrorReportingContext {
     val irFactory: IrFactory
     val sharedVariablesManager: SharedVariablesManager
 
-    /**
-     * Whether inlining of `external inline fun`s is allowed.
-     * By default, it is allowed everywhere.
-     */
-    val allowInliningOfExternalFunctions: Boolean
-        get() = true
-
     override val messageCollector: MessageCollector
         get() = configuration.messageCollector
 

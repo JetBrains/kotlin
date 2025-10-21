@@ -25,9 +25,6 @@ internal abstract class KonanBackendContext(config: KonanConfig) : BasicNativeBa
         KlibSharedVariablesManager(symbols)
     }
 
-    override val allowInliningOfExternalFunctions: Boolean
-        get() = false
-
     override val irFactory: IrFactory = IrFactoryImpl
 
     override val messageCollector: MessageCollector
