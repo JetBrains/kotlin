@@ -676,6 +676,17 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         }
     }
 
+    fun testUsageOfNestedTypeAliasesWhenTheyAreNotStable() {
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.LATEST_STABLE.versionString)
+        )
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library),
+            additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.KOTLIN_2_2.versionString)
+        )
+    }
+
     private fun doTestAnonymousObjectTypeMetadata(
         extraCommandLineArguments: List<String> = emptyList(),
         filterOutput: (String) -> String = { output -> output }
