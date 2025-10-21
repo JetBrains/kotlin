@@ -111,6 +111,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(init = init)
             testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(init = init)
+
+            testClass<AbstractMetadataDiagnosticTest> {
+                model("metadataDiagnostic")
+            }
         }
 
         testGroup(testRoot, "compiler/") {
