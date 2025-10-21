@@ -2352,6 +2352,18 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("deeplyGenericTypeCheckWithMaxTypeDepth.kt")
+      public void testDeeplyGenericTypeCheckWithMaxTypeDepth() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/deeplyGenericTypeCheckWithMaxTypeDepth.kt");
+      }
+
+      @Test
+      @TestMetadata("deeplyGenericTypeCheckWithoutMaxTypeDepth.kt")
+      public void testDeeplyGenericTypeCheckWithoutMaxTypeDepth() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/deeplyGenericTypeCheckWithoutMaxTypeDepth.kt");
+      }
+
+      @Test
       @TestMetadata("deeplyGenericTypeMismatch.kt")
       public void testDeeplyGenericTypeMismatch() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/deeplyGenericTypeMismatch.kt");
