@@ -30,7 +30,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.*
 
 /**
  * extensions inside scope classes are generated here:
- * @see TokenGenerator
+ * @see TokenContentGenerator
  */
 class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private companion object {

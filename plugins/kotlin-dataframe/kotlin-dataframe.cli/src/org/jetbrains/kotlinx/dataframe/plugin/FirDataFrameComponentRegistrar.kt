@@ -39,7 +39,7 @@ class FirDataFrameExtensionRegistrar(
         +{ it: FirSession ->
             FunctionCallTransformer(it, isTest)
         }
-        +::TokenGenerator
+        +::TokenContentGenerator
         +::DataRowSchemaSupertype
         +{ it: FirSession ->
             ExpressionAnalysisAdditionalChecker(it, isTest)
