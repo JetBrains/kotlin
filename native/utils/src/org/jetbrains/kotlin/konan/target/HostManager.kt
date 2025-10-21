@@ -173,12 +173,7 @@ open class HostManager() {
             hostMapping[os to arch]?.let {
                 return it
             }
-            // https://youtrack.jetbrains.com/issue/KT-48566.
-            // Workaround for unsupported host architectures.
-            // It is obviously incorrect, but makes Gradle plugin work.
-            hostMapping.entries.firstOrNull { (host, _) -> host.first == os }?.let {
-                return it.value
-            }
+
             throw TargetSupportException("Unknown host target: $os $arch")
         }
 
