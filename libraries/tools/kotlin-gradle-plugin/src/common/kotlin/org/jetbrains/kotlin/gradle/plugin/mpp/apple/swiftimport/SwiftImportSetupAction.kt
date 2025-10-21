@@ -5,329 +5,354 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticImportProjectAndFetchPackages.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
 internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val kotlinExtension = project.multiplatformExtension
-    val extensionName = "spmImport"
-    kotlinExtension.extensions.create<SwiftImportExtension>(
-        extensionName,
+    kotlinExtension.extensions.create(
+        SwiftImportExtension.EXTENSION_NAME,
         SwiftImportExtension::class.java
     )
-//    kotlinExtension.addExtension(
-//        extensionName,
-//        SwiftImportExtension::class,
-//    )
-    val swiftPMImportExtension = kotlinExtension.getExtension<SwiftImportExtension>(extensionName)!!
-    val swiftPMImportTask = tasks.register("swiftPMImport", SwiftPMImportTask::class.java) {
-        it.iosDeploymentVersion.set(swiftPMImportExtension.iosDeploymentVersion)
-    }
-    swiftPMImportExtension.spmDependencies.all { dep ->
-        swiftPMImportTask.configure {
-            it.importedSpmModules.add(dep)
+    val swiftPMImportExtension = kotlinExtension.getExtension<SwiftImportExtension>(
+        SwiftImportExtension.EXTENSION_NAME
+    )!!
+    swiftPMImportExtension.spmDependencies.all { swiftPMDependency ->
+        kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin = true
+        val syntheticImportProjectGenerationTask = project.locateOrRegisterTask<GenerateSyntheticImportProjectAndFetchPackages>(
+            GenerateSyntheticImportProjectAndFetchPackages.TASK_NAME,
+        ) {
+            it.iosDeploymentVersion.set(swiftPMImportExtension.iosDeploymentVersion)
+            it.macosDeploymentVersion.set(swiftPMImportExtension.macosDeploymentVersion)
+            it.watchosDeploymentVersion.set(swiftPMImportExtension.watchosDeploymentVersion)
+            it.tvosDeploymentVersion.set(swiftPMImportExtension.tvosDeploymentVersion)
         }
-    }
-
-    val defFilesProvider = swiftPMImportTask.flatMap {
-        it.defFiles
-    }
-
-    kotlinExtension.targets.matching {
-        it is KotlinNativeTarget
-    }.all { target ->
-        target as KotlinNativeTarget
-        swiftPMImportTask.configure {
-            it.konanTargets.add(target.konanTarget)
+        syntheticImportProjectGenerationTask.configure {
+            it.importedSpmModules.add(swiftPMDependency)
         }
-        target.compilations.getByName("main").cinterops.create("swiftPMImport").definitionFile.set(
-            defFilesProvider.map { directory ->
-                directory.file(("${target.konanTarget.name}.def"))
+
+        kotlinExtension.targets.matching {
+            val targetSupportsSwiftPMImport = it is KotlinNativeTarget && it.konanTarget.family.isAppleFamily
+            targetSupportsSwiftPMImport
+        }.all { target ->
+            target as KotlinNativeTarget
+            syntheticImportProjectGenerationTask.configure {
+                it.konanTargets.add(target.konanTarget)
             }
-        )
+            val mainCompilationCinterops = target.compilations.getByName("main").cinterops
+            val cinteropName = "swiftPMImport"
+            val targetPlatform = target.konanTarget.applePlatform
+            // use sdk for a more conventional name
+            val targetSdk = target.konanTarget.appleTarget.sdk
+            val defFilesGenerationTask = project.locateOrRegisterTask<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
+                lowerCamelCaseName(
+                    ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
+                    targetSdk,
+                )
+            ) {
+                // FIXME: Remove this and fix input/outputs
+                it.dependsOn(syntheticImportProjectGenerationTask)
+                it.xcodebuildPlatform.set(targetPlatform)
+                it.xcodebuildSdk.set(targetSdk)
+                it.swiftPMDependenciesCheckout.set(syntheticImportProjectGenerationTask.map { it.swiftPMDependenciesCheckout.get() })
+                it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTask.map { it.syntheticImportProjectRoot.get() })
+            }
+
+            defFilesGenerationTask.configure {
+                it.clangModules.addAll(swiftPMDependency.cinteropClangModules)
+            }
+
+            if (cinteropName !in mainCompilationCinterops.names) {
+                defFilesGenerationTask.configure {
+                    it.architectures.add(target.konanTarget.architecture)
+                }
+                mainCompilationCinterops.create(cinteropName).definitionFile.set(
+                    defFilesGenerationTask.map {
+                        it.defFilePath(target.konanTarget.architecture).get()
+                    }
+                )
+            }
+        }
     }
 }
 
 @DisableCachingByDefault(because = "...")
-internal abstract class SwiftPMImportTask : DefaultTask() {
+internal abstract class GenerateSyntheticImportProjectAndFetchPackages : DefaultTask() {
 
     @get:Input
     abstract val importedSpmModules: SetProperty<SwiftPMDependency>
 
-    @get:OutputDirectory
-    val defFiles: DirectoryProperty = project.objects.directoryProperty().convention(
-        project.layout.buildDirectory.dir("kotlin/swiftImportDefs")
+    @get:Internal
+    val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty().convention(
+        project.layout.buildDirectory.dir("kotlin/swiftImport")
+    )
+
+    // FIXME: Actually think about: "what do we want as a UTD check for the the packages checkout? The lock file?"
+    // FIXME: We probably want this cache to be global
+    @get:Internal
+    val swiftPMDependenciesCheckout: DirectoryProperty = project.objects.directoryProperty().convention(
+        project.layout.buildDirectory.dir("kotlin/swiftImport/swiftPMCheckout")
     )
 
     @get:Internal
-    val swiftPMTemporaries: DirectoryProperty = project.objects.directoryProperty().convention(
-        project.layout.buildDirectory.dir("kotlin/swiftImport")
+    protected val swiftPMDependenciesCheckoutLogs: DirectoryProperty = project.objects.directoryProperty().convention(
+        project.layout.buildDirectory.dir("kotlin/swiftImport/swiftPMCheckoutDD")
     )
+
+    @get:OutputFile
+    protected val syntheticImportProjectManifest
+        get() = syntheticImportProjectRoot.file("Package.swift")
+
+    // Force xcodebuild to call clang
+    @get:OutputFile
+    protected val syntheticImportProjectObjCSource
+        get() = syntheticImportProjectRoot.file("Sources/${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}/${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.m")
+
+    // Build system requires an include folder to be present and non-empty
+    @get:OutputFile
+    protected val syntheticImportProjectObjCHeaderFile
+        get() = syntheticImportProjectRoot.file("Sources/${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}/include/${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.h")
 
     @get:Input
     abstract val konanTargets: SetProperty<KonanTarget>
 
     @get:Input
     abstract val iosDeploymentVersion: Property<String>
+    @get:Input
+    abstract val macosDeploymentVersion: Property<String>
+    @get:Input
+    abstract val watchosDeploymentVersion: Property<String>
+    @get:Input
+    abstract val tvosDeploymentVersion: Property<String>
 
     @get:Inject
-    abstract val execOps: ExecOperations
-
-    @get:Inject
-    abstract val objects: ObjectFactory
+    protected abstract val execOps: ExecOperations
 
     @TaskAction
-    fun importSwiftPMDependencies() {
-        if (importedSpmModules.get().size == 0) {
-            konanTargets.get().forEach {
-                val defFilesRoot = defFiles.get().asFile
-                defFilesRoot.resolve("${it.name}.def").writeText(
-                    """
-                    language = Objective-C
-                    ---
-                """.trimIndent()
-                )
-            }
-            return
+    fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
+        syntheticImportProjectRoot.get().asFile.mkdirs()
+        generatePackageManifest(importedSpmModules.get())
+        checkoutSwiftPMDependencies()
+    }
+
+    private fun checkoutSwiftPMDependencies() {
+        execOps.exec {
+            it.workingDir(syntheticImportProjectRoot.get().asFile)
+            it.commandLine(
+                "xcodebuild", "-resolvePackageDependencies",
+                "-scheme", SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER, swiftPMDependenciesCheckout.get().asFile.path,
+                "-derivedDataPath", swiftPMDependenciesCheckoutLogs.get().asFile.path,
+            )
         }
-        val temporaries = swiftPMTemporaries.get().asFile
-        temporaries.mkdirs()
-        generatePackageManifest(temporaries, importedSpmModules.get())
+    }
 
-        val dd = temporaries.resolve("dd")
+    private fun generatePackageManifest(
+        dependencies: Set<SwiftPMDependency>,
+    ) {
+        val repoDependencies = dependencies.map {
+            ".package(url: \"${it.repository}\", from: \"${it.fromVersion}\"),"
+        }
+        val targetDependencies = dependencies.flatMap { dep -> dep.products.map { it to dep.packageName } }.map {
+            ".product(name: \"${it.first}\", package: \"${it.second}\"),"
+        }
 
-        val clangArgsDumpScript = temporaries.resolve("clangDump.sh")
+        val platforms = konanTargets.get().map { it.family }.toSet().map {
+            when (it) {
+                Family.OSX -> ".macOS(\"${macosDeploymentVersion.get()}\"),"
+                Family.IOS -> ".iOS(\"${iosDeploymentVersion.get()}\"),"
+                Family.TVOS -> ".tvOS(\"${tvosDeploymentVersion.get()}\"),"
+                Family.WATCHOS -> ".watchOS(\"${watchosDeploymentVersion.get()}\"),"
+                Family.LINUX,
+                Family.MINGW,
+                Family.ANDROID
+                    -> error("???")
+            }
+        }
+        syntheticImportProjectManifest.get().asFile.also {
+            it.parentFile.mkdirs()
+        }.writeText(
+            buildString {
+                appendLine("// swift-tools-version: 5.9")
+                appendLine("import PackageDescription")
+                appendLine("let package = Package(")
+                appendLine("  name: \"$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME\",")
+                appendLine("  platforms: [")
+                platforms.forEach { appendLine("    $it")}
+                appendLine("  ],")
+                appendLine(
+                    """
+                        products: [
+                            .library(
+                                name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
+                                targets: ["$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"],
+                            ),
+                        ],
+                    """.replaceIndent("  ")
+                )
+                appendLine("  dependencies: [")
+                repoDependencies.forEach { appendLine("    $it") }
+                appendLine("  ],")
+                appendLine("  targets: [")
+                appendLine("    .target(")
+                appendLine("      name: \"$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME\",")
+                appendLine("      dependencies: [")
+                targetDependencies.forEach { appendLine("        $it") }
+                appendLine("      ]")
+                appendLine("    ),")
+                appendLine("  ]")
+                appendLine(")")
+            }
+        )
+
+        // Generate ObjC sources specifically because the next CC-overriding step relies on passing a clang shim to dump compiler arguments
+        syntheticImportProjectObjCSource.get().asFile.also {
+            it.parentFile.mkdirs()
+        }.writeText("")
+
+        syntheticImportProjectObjCHeaderFile.get().asFile.also {
+            it.parentFile.mkdirs()
+        }.writeText("")
+    }
+
+    companion object {
+        const val TASK_NAME = "generateSyntheticSwiftPMImportProject"
+        const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "_internal_SwiftPMImport"
+    }
+}
+
+@DisableCachingByDefault(because = "...")
+internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : DefaultTask() {
+
+    @get:Input
+    abstract val xcodebuildPlatform: Property<String>
+    @get:Input
+    abstract val xcodebuildSdk: Property<String>
+
+    @get:Input
+    abstract val architectures: SetProperty<Architecture>
+
+    @get:Input
+    abstract val clangModules: SetProperty<String>
+
+    @get:OutputDirectory
+    protected val defFiles = xcodebuildSdk.flatMap { sdk ->
+        project.layout.buildDirectory.dir("kotlin/swiftImportDefs/${sdk}")
+    }
+
+    @get:Internal
+    abstract val swiftPMDependenciesCheckout: DirectoryProperty
+
+    @get:Internal
+    abstract val syntheticImportProjectRoot: DirectoryProperty
+
+    @get:Inject
+    protected abstract val execOps: ExecOperations
+
+    @get:Inject
+    protected abstract val objects: ObjectFactory
+
+    private val layout = project.layout
+
+    @TaskAction
+    fun generateDefFiles() {
+        val dumpIntermediates = xcodebuildSdk.flatMap { sdk ->
+            layout.buildDirectory.dir("kotlin/swiftImportClangDump/${sdk}")
+        }.get().asFile.also { it.mkdirs() }
+
+        val clangArgsDumpScript = dumpIntermediates.resolve("clangDump.sh")
         clangArgsDumpScript.writeText(searchPathsDumpScript())
         clangArgsDumpScript.setExecutable(true)
-        val clangArgsDump = temporaries.resolve("clang_args_dump")
+        val clangArgsDump = dumpIntermediates.resolve("clang_args_dump")
         if (clangArgsDump.exists()) {
             clangArgsDump.deleteRecursively()
         }
         clangArgsDump.mkdirs()
 
-        val target = konanTargets.get().first()
-        // FIXME: Do we need to actually build for all targets at this point? Check what happens with macros
-//        konanTargets.get().stream().limit(1).forEach { target ->
-//        }
-        val platform = target.appleTarget.applePlatform
+        val targetArchitectures = architectures.get().map {
+            clangArchitecture(it)
+        }
+
+        val projectRoot = syntheticImportProjectRoot.get().asFile
+        // FIXME: For some reason reusing dd in parallel xcodebuild calls explodes something in Xcode
+        val dd = projectRoot.resolve("dd_${xcodebuildSdk.get()}")
+        val forceClangToReexecute = dd.resolve("Build/Intermediates.noindex/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.build")
+        if (forceClangToReexecute.exists()) {
+            forceClangToReexecute.deleteRecursively()
+        }
+
         execOps.exec {
-            it.workingDir(temporaries)
+            it.workingDir(projectRoot)
             it.commandLine(
                 "xcodebuild", "build",
-                "-scheme", "_internal_SwiftPMImport",
-                "-destination", "generic/platform=${platform}",
+                "-scheme", SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                "-destination", "generic/platform=${xcodebuildPlatform.get()}",
                 "-derivedDataPath", dd.path,
-                "IPHONEOS_DEPLOYMENT_TARGET=${'$'}RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET",
-                "MACOSX_DEPLOYMENT_TARGET=${'$'}RECOMMENDED_MACOSX_DEPLOYMENT_TARGET",
-                "TVOS_DEPLOYMENT_TARGET=${'$'}RECOMMENDED_TVOS_DEPLOYMENT_TARGET",
-                "WATCHOS_DEPLOYMENT_TARGET=${'$'}RECOMMENDED_WATCHOS_DEPLOYMENT_TARGET",
+                XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER, swiftPMDependenciesCheckout.get().asFile.path,
                 "CC=${clangArgsDumpScript.path}",
-                // FIXME: ???
-                "ARCHS=arm64",
+                "ARCHS=${targetArchitectures.joinToString(" ")}",
+                // FIXME: Check how truly necessary this is
+                "CODE_SIGN_IDENTITY=",
             )
             it.environment(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV, clangArgsDump)
         }
 
-        val searchPathStrings = mutableSetOf<String>()
-        val frameworkSearchPaths = mutableSetOf<File>()
-        val moduleSearchPaths = mutableSetOf<File>()
-        val targetClangCall = clangArgsDump.listFiles().filter {
-            it.isFile
-        }.single {
-            val clangArgs = it.readLines().single()
-            "-fmodule-name=_internal_SwiftPMImport" in clangArgs
-        }
-        targetClangCall.readLines().single().split(";").forEach { arg ->
-            if (arg.startsWith("-F")) {
-                frameworkSearchPaths.add(
-                    File(arg.substring(2))
-                )
-                searchPathStrings.add(arg)
+        architectures.get().forEach { architecture ->
+            val clangArchitecture = clangArchitecture(architecture)
+            val architectureSpecificProductClangCalls = clangArgsDump.listFiles().filter {
+                it.isFile
+            }.filter {
+                val clangArgs = it.readLines().single()
+                "-fmodule-name=${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}" in clangArgs
+                        && "-target${CLANG_ARGS_SEPARATOR}${clangArchitecture}-apple" in clangArgs
             }
-            if (arg.startsWith("-I")) {
-                moduleSearchPaths.add(
-                    File(arg.substring(2))
-                )
-                searchPathStrings.add(arg)
-            }
-            if (arg.startsWith("-fmodule-map-file=")) {
-                searchPathStrings.add(arg)
-            }
-        }
-//        val searchPaths = clangArgsDump.useLines {
-//            // FIXME: Use an Xcode proj instead and override CC for this project only
-//            val finalClangCall = it.filter { it.isNotEmpty() && "-fmodule-name=_internal_SwiftPMImport" in it }.single()
-//            finalClangCall.split(";").forEach {
-//                if (it.startsWith("-F")) {}
-//                frameworkSearchPaths.add(
-//
-//                )
-//            }.filter { it.startsWith("-I") || it.startsWith("-F") }
-//            searchPaths
-//        }
-        fun extractModuleNames(moduleMap: File): List<String> {
-            val moduleNames = mutableListOf<String>()
-            moduleMap.readLines().forEach { line ->
-                if ("module " in line) {
-                    val moduleName = line.split(" ").dropWhile {
-                        it != "module"
-                    }.drop(1).take(1).single()
-                    moduleNames.add(moduleName)
-                }
-            }
-            return moduleNames
-        }
+            val architectureSpecificProductClangCall = architectureSpecificProductClangCalls.single()
+            val searchPathStrings = architectureSpecificProductClangCall.readLines().single().split(CLANG_ARGS_SEPARATOR).filter { arg ->
+                arg.startsWith("-F") || arg.startsWith("-I") || arg.startsWith("-fmodule-map-file=")
+            }.toSet()
 
-        val availableModuleNames = mutableListOf<String>()
-        moduleSearchPaths.forEach { searchPath ->
-            if (searchPath.exists()) {
-                searchPath.listFiles().filter {
-                    it.name == "module.modulemap"
-                }.forEach {
-                    availableModuleNames.addAll(extractModuleNames(it))
-                }
-            }
-        }
-        frameworkSearchPaths.forEach { searchPath ->
-            if (searchPath.exists()) {
-                searchPath.listFiles().filter {
-                    it.extension == "framework"
-                }.forEach {
-                    it.walk().forEach { file ->
-                        if (file.extension == "modulemap") {
-                            availableModuleNames.addAll(extractModuleNames(file))
-                        }
-                    }
-                }
-            }
-        }
+            val defFileSearchPaths = searchPathStrings.joinToString(" ") { "\"${it}\"" }
+            val modules = clangModules.get().joinToString(" ") { "\"${it}\"" }
 
-        // FIXME: Validate that in "modules" we have something that is actually an available module
-        // println(availableModuleNames)
-//        val sdkName = target.appleTarget.sdk
-//        val moduleMapsAndSwiftHeaders = dd.resolve("Build/Intermediates.noindex/GeneratedModuleMaps-${sdkName}")
-
-        // val moduleMaps = moduleMapsAndSwiftHeaders.listFiles().filter { it.extension == "modulemap" && "_internal_SwiftPMImport" !in it.name }
-        // FIXME: This is incorrect, look at modules inside the modulemap instead?
-//        val modules = moduleMaps.map {
-//            it.useLines { lines ->
-//                lines.first().split(" ")[1]
-//            }
-//        }
-
-//        val sps = hackImplicitSearchPath(
-//            temporaries = temporaries,
-//            modulemaps = moduleMapsAndSwiftHeaders,
-//        ).joinToString(" ") {
-//            "\"-I${it.path}\""
-//        }
-
-        val defFileSeachPaths = searchPathStrings.joinToString(" ") { "\"${it}\"" }
-        val modules = importedSpmModules.get().flatMap {
-            it.cinteropTargets
-        }
-
-        // Stop -Swift.h headers from pushing duplicate typedefs and exploding the cinterop
-        val workaroundKT81695 = "-DSWIFT_TYPEDEFS"
-
-        konanTargets.get().forEach {
-            val defFilesRoot = defFiles.get().asFile
-            defFilesRoot.resolve("${it.name}.def").writeText(
+            val workaroundKT81695 = "-DSWIFT_TYPEDEFS"
+            val defFilePath = defFilePath(architecture)
+            defFilePath.getFile().writeText(
                 """
                     language = Objective-C
-                    modules = ${modules.joinToString(" ")}
-                    compilerOpts = ${workaroundKT81695} -fmodules ${defFileSeachPaths}
+                    modules = $modules
+                    compilerOpts = $workaroundKT81695 -fmodules $defFileSearchPaths
                     package = swiftPMImport
                 """.trimIndent()
             )
         }
     }
 
-    private fun generatePackageManifest(
-        temporaries: File,
-        dependencies: Set<SwiftPMDependency>,
-    ) {
-        val repoDependencies = dependencies.joinToString("\n") {
-            ".package(url: \"${it.repository}\", exact: \"${it.version}\"),"
-        }
-        val targetDependencies = dependencies.flatMap { dep -> dep.products.map { it to dep.packageName } }.joinToString("\n") {
-            ".product(name: \"${it.first}\", package: \"${it.second}\"),"
-        }
-        // FIXME: Make the platform version configurable
-        temporaries.resolve("Package.swift").writeText(
-            """
-                // swift-tools-version: 5.9
-        
-        import PackageDescription
-        let package = Package(
-            name: "_internal_SwiftPMImport",
-            platforms: [
-                .iOS("${iosDeploymentVersion.get()}"),
-            ],
-            products: [
-                .library(
-                    name: "_internal_SwiftPMImport",
-                    targets: ["_internal_SwiftPMImport"]
-                ),
-            ],
-            dependencies: [
-                $repoDependencies
-            ],
-            targets: [
-                .target(
-                    name: "_internal_SwiftPMImport",
-                    dependencies: [
-                        $targetDependencies
-                    ]
-                )
-            ]
-        )
-            """.trimIndent()
-        )
+    fun defFilePath(architecture: Architecture) = defFiles.map { it.file("${architecture.name}.def") }
 
-        val emptySource = temporaries.resolve("Sources/_internal_SwiftPMImport/_internal_SwiftPMImport.m")
-        emptySource.parentFile.mkdirs()
-        emptySource.writeText("")
-
-        val emptyHeader = temporaries.resolve("Sources/_internal_SwiftPMImport/include/_internal_SwiftPMImport.h")
-        emptyHeader.parentFile.mkdirs()
-        emptyHeader.writeText("")
-    }
-
-    // Why does cinterop not accept explicit -fmodule-map-file=<File>?
-    private fun hackImplicitSearchPath(
-        temporaries: File,
-        modulemaps: File,
-    ): List<File> {
-        val implicitSearchPaths = temporaries.resolve("hackImplicitSearchPath")
-        implicitSearchPaths.mkdirs()
-        val outgoingImplicitPaths = mutableListOf<File>()
-
-        modulemaps.listFiles().filter { it.extension == "modulemap" && "_internal_SwiftPMImport" !in it.name }.forEach {
-            val spd = implicitSearchPaths.resolve("${it.nameWithoutExtension}")
-            spd.mkdirs()
-            it.copyTo(spd.resolve("module.modulemap"), true)
-            val swiftBridge =it.parentFile.resolve("${it.nameWithoutExtension}-Swift.h")
-            if (swiftBridge.exists()) {
-                swiftBridge.copyTo(spd.resolve(swiftBridge.name), true)
-            }
-            outgoingImplicitPaths.add(spd)
-        }
-        return outgoingImplicitPaths
+    // FIXME: Fix watchos and use some different mapping here
+    private fun clangArchitecture(architecture: Architecture) = when (architecture) {
+        Architecture.X64 -> "x86_64"
+        Architecture.ARM64 -> "arm64"
+        Architecture.X86,
+        Architecture.ARM32
+            -> error("???")
     }
 
     private fun searchPathsDumpScript() = """
@@ -337,7 +362,7 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
         for arg in "$@"
         do
            echo -n "${'$'}arg" >> "${'$'}{DUMP_FILE}"
-           echo -n ";" >> "${'$'}{DUMP_FILE}"
+           echo -n "$CLANG_ARGS_SEPARATOR" >> "${'$'}{DUMP_FILE}"
         done
 
         clang "$@"
@@ -345,5 +370,10 @@ internal abstract class SwiftPMImportTask : DefaultTask() {
 
     companion object {
         const val KOTLIN_CLANG_ARGS_DUMP_FILE_ENV = "KOTLIN_CLANG_ARGS_DUMP_FILE"
+        const val CLANG_ARGS_SEPARATOR = ";"
+        const val TASK_NAME = "convertSyntheticImportProjectIntoDefFile"
     }
+
 }
+
+const val XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER = "-clonedSourcePackagesDirPath"
