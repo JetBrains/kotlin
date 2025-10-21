@@ -31,14 +31,17 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
 /**
  * A DSL to mock a Klib on the file system. See the default endpoint [mockKlib].
  */
-class KlibMockDSL(val currentDir: File) {
+class KlibMockDSL(val currentDir: File, val parent: KlibMockDSL?) {
     fun dir(name: String, init: KlibMockDSL.() -> Unit = {}) {
         val newDir = currentDir.resolve(name).apply(File::mkdirs)
-        KlibMockDSL(currentDir = newDir).init()
+        KlibMockDSL(currentDir = newDir, parent = this).init()
     }
 
     fun file(name: String, content: String = ""): Unit = currentDir.resolve(name).writeText(content)
     fun file(name: String, content: ByteArray): Unit = currentDir.resolve(name).writeBytes(content)
+
+    val rootDir: File
+        get() = parent?.rootDir ?: currentDir
 
     companion object {
         /**
@@ -52,7 +55,10 @@ class KlibMockDSL(val currentDir: File) {
          * ```
          */
         fun mockKlib(klibDir: File, init: KlibMockDSL.() -> Unit): File {
-            KlibMockDSL(klibDir.resolve(KLIB_DEFAULT_COMPONENT_NAME).apply(File::mkdirs)).init()
+            klibDir.mkdirs()
+            KlibMockDSL(currentDir = klibDir, parent = null).apply {
+                dir(KLIB_DEFAULT_COMPONENT_NAME, init)
+            }
             return klibDir
         }
 
