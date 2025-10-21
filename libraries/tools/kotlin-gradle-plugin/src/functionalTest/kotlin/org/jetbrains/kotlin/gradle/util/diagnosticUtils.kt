@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.util
 
-import org.gradle.api.logging.Logger
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
@@ -105,18 +105,26 @@ internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ign
 
 private fun Any.withIndent() = this.toString().prependIndent("    ")
 
-internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(factory: ToolingDiagnosticFactory, idSuffix: String = "") {
-    if (!any { it.id == if (idSuffix.isNotBlank()) "${factory.id}_$idSuffix" else factory.id }) failDiagnosticNotFound(
-        "diagnostic with id ${factory.id} ",
-        this
-    )
+internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(
+    factory: ToolingDiagnosticFactory,
+    idSuffix: String = "",
+): ToolingDiagnostic {
+    val found = firstOrNull { it.id == if (idSuffix.isNotBlank()) "${factory.id}_$idSuffix" else factory.id }
+    if (found == null) {
+        failDiagnosticNotFound("diagnostic with id ${factory.id} ", this)
+    } else {
+        return found
+    }
 }
 
 internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(diagnostic: ToolingDiagnostic, ignoreThrowable: Boolean = false) {
     if (none { it.equals(diagnostic, ignoreThrowable) }) failDiagnosticNotFound("diagnostic $diagnostic\n", this)
 }
 
-private fun failDiagnosticNotFound(diagnosticDescription: String, notFoundInCollection: Collection<ToolingDiagnostic>) {
+private fun failDiagnosticNotFound(
+    diagnosticDescription: String,
+    notFoundInCollection: Collection<ToolingDiagnostic>,
+): Nothing {
     fail("Missing ${diagnosticDescription}in:\n${notFoundInCollection.render().withIndent()}")
 }
 
@@ -175,7 +183,7 @@ internal abstract class TestsProblemsReporter : ProblemsReporter {
 
     override fun reportProblemDiagnostic(
         diagnostic: ToolingDiagnostic,
-        options: ToolingDiagnosticRenderingOptions
+        options: ToolingDiagnosticRenderingOptions,
     ) {
         val renderedDiagnostic = diagnostic.renderReportedDiagnostic(logger, options) ?: return
         if (renderedDiagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
