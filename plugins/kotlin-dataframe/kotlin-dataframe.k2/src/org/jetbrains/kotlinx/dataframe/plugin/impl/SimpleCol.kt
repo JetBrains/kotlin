@@ -47,7 +47,7 @@ private fun List<SimpleCol>.asString(indent: String = ""): String {
             }
 
             is SimpleDataColumn -> {
-                "${it.name}: ${it.type.type.renderReadable()}"
+                "${it.name}: ${it.type.coneType.renderReadable()}"
             }
         }
         "$indent$col"

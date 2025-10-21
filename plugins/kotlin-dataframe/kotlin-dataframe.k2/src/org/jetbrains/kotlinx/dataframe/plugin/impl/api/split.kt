@@ -15,7 +15,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 data class SplitApproximation(
     val df: PluginDataFrameSchema,
@@ -123,8 +122,8 @@ abstract class SplitWithTransformAbstractOperation : AbstractSchemaModificationI
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.split(receiver.columns) {
             val default = receiver.default
-            val nullable = default == null || default.type.isMarkedNullable
-            val type = receiver.targetType.type.withNullability(nullable = nullable, session.typeContext).wrap()
+            val nullable = default == null || default.coneType.isMarkedNullable
+            val type = receiver.targetType.coneType.withNullability(nullable = nullable, session.typeContext).wrap()
             List(names.size) { type }
         }
             .operation(names)
@@ -161,7 +160,7 @@ class SplitInplace : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df
             .convert(receiver.columns) {
-                createListType(typeArg2.type).wrap()
+                createListType(typeArg2.coneType).wrap()
             }
     }
 }
@@ -173,7 +172,7 @@ class SplitWithTransformInplace : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df
             .convert(receiver.columns) {
-                createListType(typeArg2.type).wrap()
+                createListType(typeArg2.coneType).wrap()
             }
     }
 }
@@ -193,7 +192,7 @@ class SplitWithTransformIntoRows : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.convert(receiver.columns) {
-            val targetProjection = arrayOf(receiver.targetType.type.toTypeProjection(Variance.INVARIANT))
+            val targetProjection = arrayOf(receiver.targetType.coneType.toTypeProjection(Variance.INVARIANT))
             StandardClassIds.List.createConeType(session, targetProjection).wrap()
         }.explodeImpl(dropEmpty, receiver.columns.resolve(receiver.df))
     }
@@ -256,7 +255,7 @@ class SplitAnyFrameIntoColumns : AbstractSchemaModificationInterpreter() {
     val Arguments.typeArg1 by type()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val schemaArgument = typeArg1.type.typeArguments.getOrNull(0) ?: return PluginDataFrameSchema.EMPTY
+        val schemaArgument = typeArg1.coneType.typeArguments.getOrNull(0) ?: return PluginDataFrameSchema.EMPTY
         val columns = pluginDataFrameSchema(schemaArgument)
             .columns()
             .map { implode(it) }
@@ -281,7 +280,7 @@ abstract class SplitIterableAbstractOperation : AbstractSchemaModificationInterp
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         // any empty list introduces null to all "split" columns, so they must be nullable
-        val targetType = (typeArg1.type.typeArguments.getOrNull(0) as? ConeKotlinTypeProjection)?.type?.withNullability(
+        val targetType = (typeArg1.coneType.typeArguments.getOrNull(0) as? ConeKotlinTypeProjection)?.type?.withNullability(
             nullable = true,
             session.typeContext
         )?.wrap()

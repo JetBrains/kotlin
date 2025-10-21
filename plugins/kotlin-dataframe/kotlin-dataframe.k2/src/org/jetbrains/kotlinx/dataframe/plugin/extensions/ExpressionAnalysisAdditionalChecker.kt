@@ -178,12 +178,12 @@ private class Checker(
                     if (source !is SimpleDataColumn || target.column !is SimpleDataColumn) {
                         continue
                     }
-                    if (source.type.type().isSubtypeOf(target.column.type.type(), session)) {
+                    if (source.type.coneType.isSubtypeOf(target.column.type.coneType, session)) {
                         true
                     } else {
                         missingColumns += "${target.path.path} ${target.column.name}: ${
-                            source.type.type().renderReadable()
-                        } is not subtype of ${target.column.type.type()}"
+                            source.type.coneType.renderReadable()
+                        } is not subtype of ${target.column.type.coneType}"
                         false
                     }
                 } else {

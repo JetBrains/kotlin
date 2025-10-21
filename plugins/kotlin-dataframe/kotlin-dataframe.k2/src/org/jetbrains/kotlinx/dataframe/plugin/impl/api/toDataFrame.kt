@@ -77,7 +77,7 @@ class ToDataFrameColumn : AbstractSchemaModificationInterpreter() {
     val Arguments.columnName: String by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return PluginDataFrameSchema(listOf(simpleColumnOf(columnName, typeArg0.type)))
+        return PluginDataFrameSchema(listOf(simpleColumnOf(columnName, typeArg0.coneType)))
     }
 }
 
@@ -374,6 +374,6 @@ class ToDataFrameFrom : AbstractInterpreter<Unit>() {
     val Arguments.receiver: String by arg()
     val Arguments.expression: TypeApproximation by type()
     override fun Arguments.interpret() {
-        dsl.columns += simpleColumnOf(receiver, expression.type)
+        dsl.columns += simpleColumnOf(receiver, expression.coneType)
     }
 }

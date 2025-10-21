@@ -10,18 +10,16 @@ import org.jetbrains.kotlin.name.StandardClassIds
 interface KotlinTypeFacade : SessionContext {
     val isTest: Boolean
 
-    fun Marker.type() = type
-
     fun Marker.changeNullability(map: (Boolean) -> Boolean): Marker {
-        return Marker(type = type.withNullability(map(type.isMarkedNullable), session.typeContext))
+        return Marker(type = coneType.withNullability(map(coneType.isMarkedNullable), session.typeContext))
     }
 
     fun Marker.isList(): Boolean {
-        return type.isBuiltinType(List, isNullable = null)
+        return coneType.isBuiltinType(List, isNullable = null)
     }
 
     fun Marker.typeArgument(): Marker {
-        val argument = when (val argument = type.typeArguments[0]) {
+        val argument = when (val argument = coneType.typeArguments[0]) {
             is ConeKotlinType -> argument
             else -> error("${argument::class} $argument")
         }
@@ -49,7 +47,7 @@ class KotlinTypeFacadeImpl(
     override val isTest: Boolean,
 ) : KotlinTypeFacade
 
-class Marker private constructor(internal val type: ConeKotlinType) {
+class Marker private constructor(internal val coneType: ConeKotlinType) {
     companion object {
         context(context: SessionContext)
         operator fun invoke(type: ConeKotlinType): Marker {
@@ -65,7 +63,7 @@ class Marker private constructor(internal val type: ConeKotlinType) {
     }
 
     override fun toString(): String {
-        return "Marker(type=$type (${type::class}))"
+        return "Marker(type=$coneType (${coneType::class}))"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -74,11 +72,11 @@ class Marker private constructor(internal val type: ConeKotlinType) {
 
         other as Marker
 
-        return type == other.type
+        return coneType == other.coneType
     }
 
     override fun hashCode(): Int {
-        return type.hashCode()
+        return coneType.hashCode()
     }
 }
 

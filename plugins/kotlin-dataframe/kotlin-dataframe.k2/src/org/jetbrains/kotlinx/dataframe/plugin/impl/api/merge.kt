@@ -27,7 +27,7 @@ class MergeInto0 : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = receiver.columns.resolve(receiver.df).map { it.path.toPath() }
-        return merge(receiver.df, columns, pathOf(columnName), simpleColumnOf(columnName, typeArg2.type))
+        return merge(receiver.df, columns, pathOf(columnName), simpleColumnOf(columnName, typeArg2.coneType))
     }
 }
 

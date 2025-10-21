@@ -45,9 +45,9 @@ class ImplodeDefault : AbstractSchemaModificationInterpreter() {
 fun Arguments.implode(col: SimpleCol, dropNA: Boolean = false): SimpleCol = when (col) {
     is SimpleColumnGroup -> SimpleFrameColumn(col.name(), col.columns())
     is SimpleDataColumn -> {
-        val nullable = if (dropNA) false else col.type.type.isMarkedNullable
+        val nullable = if (dropNA) false else col.type.coneType.isMarkedNullable
         simpleColumnOf(
-            col.name, createListType(col.type.type.withNullability(nullable, session.typeContext))
+            col.name, createListType(col.type.coneType.withNullability(nullable, session.typeContext))
         )
     }
     is SimpleFrameColumn -> simpleColumnOf(

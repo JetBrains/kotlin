@@ -12,7 +12,7 @@ class Add : AbstractSchemaModificationInterpreter() {
     val Arguments.type: TypeApproximation by type(name("expression"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return PluginDataFrameSchema(receiver.columns() + simpleColumnOf(name, type.type))
+        return PluginDataFrameSchema(receiver.columns() + simpleColumnOf(name, type.coneType))
     }
 }
 
@@ -22,7 +22,7 @@ class From : AbstractInterpreter<Unit>() {
     val Arguments.type: TypeApproximation by type(name("expression"))
 
     override fun Arguments.interpret() {
-        dsl.columns += simpleColumnOf(receiver, type.type)
+        dsl.columns += simpleColumnOf(receiver, type.coneType)
     }
 }
 
@@ -32,7 +32,7 @@ class Into : AbstractInterpreter<Unit>() {
     val Arguments.name: String by arg()
 
     override fun Arguments.interpret() {
-        val valuesType = extractBaseColumnValuesType(receiver.type) ?: session.builtinTypes.nullableAnyType.coneType
+        val valuesType = extractBaseColumnValuesType(receiver.coneType) ?: session.builtinTypes.nullableAnyType.coneType
         dsl.columns += simpleColumnOf(name, valuesType)
     }
 }

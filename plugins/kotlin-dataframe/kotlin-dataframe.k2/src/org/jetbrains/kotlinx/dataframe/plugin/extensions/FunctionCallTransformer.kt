@@ -582,8 +582,8 @@ class FunctionCallTransformer(
                     is SimpleDataColumn -> SchemaProperty(
                         marker = schema.defaultType(),
                         propertyName = PropertyName.of(it.name),
-                        dataRowReturnType = it.type.type(),
-                        columnContainerReturnType = it.type.type().projectOverDataColumnType()
+                        dataRowReturnType = it.type.coneType,
+                        columnContainerReturnType = it.type.coneType.projectOverDataColumnType()
                     )
                 }
             }

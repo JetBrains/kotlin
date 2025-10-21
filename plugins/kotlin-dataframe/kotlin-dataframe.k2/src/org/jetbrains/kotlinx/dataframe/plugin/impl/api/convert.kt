@@ -56,7 +56,7 @@ internal class Convert6 : AbstractInterpreter<PluginDataFrameSchema>() {
         val topLevelNames = receiver.columns().mapToSetOrEmpty { it.name }
         val assumedColumns = columns
             .filter { it !in topLevelNames }
-            .map { simpleColumnOf(it, expression.type) }
+            .map { simpleColumnOf(it, expression.coneType) }
         val df = PluginDataFrameSchema(receiver.columns() + assumedColumns)
         return df.convert(columnsResolver { columns.map { pathOf(it) }.toColumnSet() }) {
             expression
@@ -83,9 +83,9 @@ class ConvertNotNull : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.schema.convertAsColumn(receiver.columns) {
             if (it is SimpleDataColumn) {
-                simpleColumnOf(it.name, type.type.withNullabilityOf(it.type.type, session.typeContext))
+                simpleColumnOf(it.name, type.coneType.withNullabilityOf(it.type.coneType, session.typeContext))
             } else {
-                simpleColumnOf(it.name, type.type)
+                simpleColumnOf(it.name, type.coneType)
             }
         }
     }
@@ -170,7 +170,7 @@ internal class ConvertAsColumn : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.schema.asDataFrame()
             .convert { receiver.columns }
-            .asColumn { simpleColumnOf("", typeArg2.type).asDataColumn() }
+            .asColumn { simpleColumnOf("", typeArg2.coneType).asDataColumn() }
             .toPluginDataFrameSchema()
     }
 }

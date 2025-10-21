@@ -91,7 +91,7 @@ private fun Arguments.createColumnWithUpdatedType(
     column: SimpleDataColumn,
     statisticAggregator: Aggregator<*, *>,
 ): SimpleCol {
-    val originalType = column.type.type
+    val originalType = column.type.coneType
     val inputKType = originalType.asPrimitiveToKTypeOrNull()
     // we can only get KTypes of primitives, keep the original type otherwise
         ?: return simpleColumnOf(column.name, originalType)
@@ -120,7 +120,7 @@ internal val percentile = Aggregators.percentile(percentileArg, skipNaN)
 internal val Arguments.numericStatisticsDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         cols {
-            (it.single() as Marker).type.isPrimitiveOrMixedNumber(session)
+            (it.single() as Marker).coneType.isPrimitiveOrMixedNumber(session)
         }
     }
 
@@ -128,12 +128,12 @@ internal val Arguments.numericStatisticsDefaultColumns: ColumnsResolver
 internal val Arguments.comparableStatisticsDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         cols {
-            (it.single() as Marker).type.isSelfComparable(session)
+            (it.single() as Marker).coneType.isSelfComparable(session)
         }
     }
 
 /** Returns `true` if this column is of type `DataColumn<T>` where `T : Comparable<T & Any>` */
-internal fun SimpleDataColumn.isIntraComparable(session: FirSession): Boolean = type.type.isSelfComparable(session)
+internal fun SimpleDataColumn.isIntraComparable(session: FirSession): Boolean = type.coneType.isSelfComparable(session)
 
 /** Adds to the schema only numerical columns. */
 abstract class Aggregator0(val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {

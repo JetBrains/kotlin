@@ -15,7 +15,7 @@ internal class Insert0 : AbstractInterpreter<InsertClauseApproximation>() {
     val Arguments.typeArg1 by type()
 
     override fun Arguments.interpret(): InsertClauseApproximation {
-        return InsertClauseApproximation(receiver, simpleColumnOf(name, typeArg1.type))
+        return InsertClauseApproximation(receiver, simpleColumnOf(name, typeArg1.coneType))
     }
 }
 
@@ -26,7 +26,7 @@ internal class Insert1 : AbstractInterpreter<InsertClauseApproximation>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
 
     override fun Arguments.interpret(): InsertClauseApproximation {
-        return InsertClauseApproximation(receiver, simpleColumnOf(name, expression.type))
+        return InsertClauseApproximation(receiver, simpleColumnOf(name, expression.coneType))
     }
 }
 

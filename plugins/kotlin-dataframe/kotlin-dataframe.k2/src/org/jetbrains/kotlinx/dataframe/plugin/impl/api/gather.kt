@@ -98,7 +98,7 @@ class GatherMap : AbstractInterpreter<GatherApproximation>() {
     override fun Arguments.interpret(): GatherApproximation {
         return when (functionCall.calleeReference.name) {
             Name.identifier("mapKeys") -> receiver
-            Name.identifier("mapValues") -> receiver.copy(mapValues = typeArg3.type)
+            Name.identifier("mapValues") -> receiver.copy(mapValues = typeArg3.coneType)
             else -> {
                 error("${functionCall.calleeReference.name} annotated with @Interpretable(\"${GatherMap::class.simpleName}\") is an error")
             }
@@ -116,8 +116,8 @@ class GatherInto : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return gatherIntoImpl(
             receiver,
-            keyColumn = TargetColumn(keyColumn, typeArg2.type),
-            valueColumn = TargetColumn(valueColumn, typeArg3.type)
+            keyColumn = TargetColumn(keyColumn, typeArg2.coneType),
+            valueColumn = TargetColumn(valueColumn, typeArg3.coneType)
         )
     }
 }
@@ -127,7 +127,7 @@ class GatherKeysInto : AbstractSchemaModificationInterpreter() {
     val Arguments.keyColumn: String by arg()
     val Arguments.typeArg2 by type()
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return gatherIntoImpl(receiver, keyColumn = TargetColumn(keyColumn, typeArg2.type))
+        return gatherIntoImpl(receiver, keyColumn = TargetColumn(keyColumn, typeArg2.coneType))
     }
 }
 
@@ -137,7 +137,7 @@ class GatherValuesInto : AbstractSchemaModificationInterpreter() {
     val Arguments.typeArg3 by type()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return gatherIntoImpl(receiver, valueColumn = TargetColumn(valueColumn, typeArg3.type))
+        return gatherIntoImpl(receiver, valueColumn = TargetColumn(valueColumn, typeArg3.coneType))
     }
 }
 
@@ -197,7 +197,7 @@ fun FirSession.intersect(schema: List<SimpleCol>, otherSchema: List<SimpleCol>):
         val col1 = cols[0]
         val col2 = cols[1]
         if (col1 is SimpleDataColumn && col2 is SimpleDataColumn) {
-            val type = typeContext.commonSuperTypeOrNull(listOf(col1.type.type, col2.type.type))
+            val type = typeContext.commonSuperTypeOrNull(listOf(col1.type.coneType, col2.type.coneType))
             val realType = if (type is ConeIntersectionType) builtinTypes.nullableAnyType.coneType else type
             realType?.let { SimpleDataColumn(name, context(SessionContext(this)) { it.wrap() }) }
         } else if (col1 is SimpleColumnGroup && col2 is SimpleColumnGroup) {
@@ -228,9 +228,9 @@ private fun Arguments.valuesType(
 private fun Arguments.explodeLists(column: SimpleCol): ConeKotlinType = when (column) {
     is SimpleDataColumn -> {
         if (column.type.isList()) {
-            column.type.typeArgument().type
+            column.type.typeArgument().coneType
         } else {
-            column.type.type
+            column.type.coneType
         }
     }
 

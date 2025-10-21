@@ -60,7 +60,7 @@ val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, sel
                             column.type.isList() -> column.type.typeArgument()
                             else -> column.type
                         }
-                        makeNullable(simpleColumnOf(s.column.name, newType.type))
+                        makeNullable(simpleColumnOf(s.column.name, newType.coneType))
                     } else {
                         column
                     }
