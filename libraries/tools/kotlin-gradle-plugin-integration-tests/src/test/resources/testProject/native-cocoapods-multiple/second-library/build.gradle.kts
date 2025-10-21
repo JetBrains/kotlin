@@ -20,5 +20,9 @@ kotlin {
     cocoapods {
         summary = "CocoaPods test library"
         homepage = "https://github.com/JetBrains/kotlin"
+        framework {
+            // KT-81727 Failing CocoaPodsXcodeIT test
+            freeCompilerArgs += "-Xbinary=bundleId=$group"
+        }
     }
 }
