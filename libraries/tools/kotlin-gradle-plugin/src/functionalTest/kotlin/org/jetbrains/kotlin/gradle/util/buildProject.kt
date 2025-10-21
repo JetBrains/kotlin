@@ -15,19 +15,15 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testing.base.TestingExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
-import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
-import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.XcodeVersion
 
@@ -65,6 +61,16 @@ fun buildProjectWithJvm(
     code()
 }
 
+fun buildProjectWithJs(
+    projectBuilder: ProjectBuilder.() -> Unit = {},
+    preApplyCode: Project.() -> Unit = {},
+    code: Project.() -> Unit = {},
+) = buildProject(projectBuilder) {
+    preApplyCode()
+    project.applyKotlinJsPlugin()
+    code()
+}
+
 fun buildProjectWithCocoapods(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Project.() -> Unit = {}) =
     buildProject(projectBuilder) {
         project.applyMultiplatformPlugin()
@@ -74,6 +80,10 @@ fun buildProjectWithCocoapods(projectBuilder: ProjectBuilder.() -> Unit = {}, co
 
 fun Project.applyKotlinJvmPlugin() {
     project.plugins.apply(KotlinPluginWrapper::class.java)
+}
+
+fun Project.applyKotlinJsPlugin() {
+    project.plugins.apply(KotlinJsPluginWrapper::class.java)
 }
 
 fun Project.applyKotlinAndroidPlugin() {
