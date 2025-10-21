@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 
@@ -42,11 +45,12 @@ internal fun PhaseContext.firSerializerBase(
     val irModuleFragment = fir2IrOutput?.fir2irActualizedResult?.irModuleFragment
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
     val serializerOutput = serializeModuleIntoKlib(
             moduleName = irModuleFragment?.name?.asString() ?: firResult.outputs.last().session.moduleData.name.asString(),
             irModuleFragment = irModuleFragment,
             configuration = configuration,
-            diagnosticReporter = diagnosticReporter,
+            diagnosticReporter = irDiagnosticReporter,
             metadataSerializer = Fir2KlibMetadataSerializer(
                     configuration,
                     firResult.outputs,

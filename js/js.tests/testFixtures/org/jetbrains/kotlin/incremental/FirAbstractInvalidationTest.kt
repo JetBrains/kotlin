@@ -161,7 +161,7 @@ abstract class FirAbstractInvalidationTest(
             fir2IrActualizedResult = transformedResult,
             outputKlibPath = outputKlibFile.absolutePath,
             nopack = false,
-            diagnosticsReporter = diagnosticsReporter,
+            diagnosticsReporter = irDiagnosticReporter,
             jsOutputName = moduleName,
             useWasmPlatform = false,
             wasmTarget = null,

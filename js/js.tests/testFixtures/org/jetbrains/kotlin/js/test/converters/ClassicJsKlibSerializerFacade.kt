@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
@@ -51,13 +53,15 @@ class ClassicJsKlibSerializerFacade(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+        val irDiagnosticReporter =
+            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
         val outputFile = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         if (firstTimeCompilation) {
             serializeModuleIntoKlib(
                 moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
                 configuration = configuration,
-                diagnosticReporter = diagnosticReporter,
+                diagnosticReporter = irDiagnosticReporter,
                 metadataSerializer = inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
                 dependencies = emptyList(), // Does not matter.
