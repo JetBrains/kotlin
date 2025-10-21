@@ -369,16 +369,11 @@ internal val FirGetClassCall.classId: ClassId?
         }
     }
 
-internal inline fun <reified T> ClassId.load(): T {
-    val constructor = Class.forName(asFqNameString())
-        .constructors
-        .firstOrNull { constructor -> constructor.parameterCount == 0 }
-        ?: error("Interpreter $this must have an empty constructor")
-
-    return constructor.newInstance() as T
+internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T? {
+    return loadImpl(isTest) as T?
 }
 
-internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T? {
+private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
     return when (this) {
         "Add" -> Add()
         "From" -> From()
@@ -662,5 +657,5 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "ConcatWithKeys" -> ConcatWithKeys()
         "DataFrameUnfold" -> DataFrameUnfold()
         else -> if (isTest) error(this) else null
-    } as T?
+    }
 }
