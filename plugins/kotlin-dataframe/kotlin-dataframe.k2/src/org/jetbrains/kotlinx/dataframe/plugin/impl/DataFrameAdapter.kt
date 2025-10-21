@@ -11,9 +11,8 @@ import org.jetbrains.kotlinx.dataframe.api.dataFrameOf
 import org.jetbrains.kotlinx.dataframe.api.perRowCol
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.columns.FrameColumn
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 
 fun PluginDataFrameSchema.asDataFrame(): DataFrame<ConeTypesAdapter> {
     val df = columns().map()
@@ -24,7 +23,7 @@ fun DataFrame<ConeTypesAdapter>.toPluginDataFrameSchema() = PluginDataFrameSchem
 
 interface ConeTypesAdapter
 
-fun PluginDataFrameSchema.convert(columns: ColumnsResolver, converter: (SimpleCol) -> Marker): PluginDataFrameSchema {
+fun PluginDataFrameSchema.convert(columns: ColumnsResolver, converter: (SimpleCol) -> ColumnType): PluginDataFrameSchema {
     return asDataFrame().convert { columns }.perRowCol { _, col ->
         converter(col.asSimpleColumn())
     }.toPluginDataFrameSchema()
@@ -65,7 +64,7 @@ fun AnyCol.asSimpleColumn(): SimpleCol {
         }
 
         else -> {
-            SimpleDataColumn(name(), this[0] as TypeApproximation)
+            SimpleDataColumn(name(), this[0] as ColumnType)
         }
     }
 }

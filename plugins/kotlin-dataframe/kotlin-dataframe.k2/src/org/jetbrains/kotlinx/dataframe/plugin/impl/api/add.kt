@@ -1,15 +1,13 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
-
-typealias TypeApproximation = Marker
 
 class Add : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.name: String by arg()
     val Arguments.infer by ignore()
-    val Arguments.type: TypeApproximation by type(name("expression"))
+    val Arguments.type: ColumnType by type(name("expression"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return PluginDataFrameSchema(receiver.columns() + simpleColumnOf(name, type.coneType))
@@ -19,7 +17,7 @@ class Add : AbstractSchemaModificationInterpreter() {
 class From : AbstractInterpreter<Unit>() {
     val Arguments.dsl: AddDslApproximation by arg()
     val Arguments.receiver: String by arg()
-    val Arguments.type: TypeApproximation by type(name("expression"))
+    val Arguments.type: ColumnType by type(name("expression"))
 
     override fun Arguments.interpret() {
         dsl.columns += simpleColumnOf(receiver, type.coneType)
@@ -28,7 +26,7 @@ class From : AbstractInterpreter<Unit>() {
 
 class Into : AbstractInterpreter<Unit>() {
     val Arguments.dsl: AddDslApproximation by arg()
-    val Arguments.receiver: TypeApproximation by type()
+    val Arguments.receiver: ColumnType by type()
     val Arguments.name: String by arg()
 
     override fun Arguments.interpret() {

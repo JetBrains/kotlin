@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.api.remove
 import org.jetbrains.kotlinx.dataframe.impl.aggregation.aggregators.Aggregator
 import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
@@ -229,7 +230,7 @@ class GroupByAdd : AbstractInterpreter<GroupBy>() {
     val Arguments.receiver: GroupBy by groupBy()
     val Arguments.name: String by arg()
     val Arguments.infer by ignore()
-    val Arguments.type: TypeApproximation by type(name("expression"))
+    val Arguments.type: ColumnType by type(name("expression"))
 
     override fun Arguments.interpret(): GroupBy {
         return GroupBy(receiver.keys, receiver.groups.add(name, type.coneType, context = this))
@@ -282,7 +283,7 @@ private fun Arguments.interpretGroupByAggregatorOf(
     receiver: GroupBy,
     name: String,
     aggregator: Aggregator<*, *>,
-    expressionReturnType: TypeApproximation,
+    expressionReturnType: ColumnType,
 ): PluginDataFrameSchema {
     val aggregatedCol = makeNullable(simpleColumnOf(name, expressionReturnType.coneType))
     val typeAdjustedCol = generateStatisticResultColumn(aggregator, aggregatedCol as SimpleDataColumn)
@@ -442,7 +443,7 @@ class GroupByMax1 : GroupByAggregatorComparable1(max)
 abstract class GroupByAggregator2(val defaultName: String, val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {
     // return type for `columns`
     // will be `null` when mixed number columns are provided
-    val Arguments.typeArg1: TypeApproximation? by arg(defaultValue = Present(null))
+    val Arguments.typeArg1: ColumnType? by arg(defaultValue = Present(null))
 
     val Arguments.receiver by groupBy()
     val Arguments.name: String? by arg(defaultValue = Present(null))

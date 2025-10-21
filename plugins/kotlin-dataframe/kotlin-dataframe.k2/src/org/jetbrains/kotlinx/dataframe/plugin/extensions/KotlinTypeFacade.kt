@@ -10,20 +10,20 @@ import org.jetbrains.kotlin.name.StandardClassIds
 interface KotlinTypeFacade : SessionContext {
     val isTest: Boolean
 
-    fun Marker.changeNullability(map: (Boolean) -> Boolean): Marker {
-        return Marker(type = coneType.withNullability(map(coneType.isMarkedNullable), session.typeContext))
+    fun ColumnType.changeNullability(map: (Boolean) -> Boolean): ColumnType {
+        return ColumnType(type = coneType.withNullability(map(coneType.isMarkedNullable), session.typeContext))
     }
 
-    fun Marker.isList(): Boolean {
+    fun ColumnType.isList(): Boolean {
         return coneType.isBuiltinType(List, isNullable = null)
     }
 
-    fun Marker.typeArgument(): Marker {
+    fun ColumnType.typeArgument(): ColumnType {
         val argument = when (val argument = coneType.typeArguments[0]) {
             is ConeKotlinType -> argument
             else -> error("${argument::class} $argument")
         }
-        return Marker(argument)
+        return ColumnType(argument)
     }
 }
 
@@ -47,19 +47,19 @@ class KotlinTypeFacadeImpl(
     override val isTest: Boolean,
 ) : KotlinTypeFacade
 
-class Marker private constructor(internal val coneType: ConeKotlinType) {
+class ColumnType private constructor(internal val coneType: ConeKotlinType) {
     companion object {
         context(context: SessionContext)
-        operator fun invoke(type: ConeKotlinType): Marker {
+        operator fun invoke(type: ConeKotlinType): ColumnType {
             val type = if (type is ConeFlexibleType) {
                 type.lowerBound
             } else {
                 type
             }
-            return Marker(type)
+            return ColumnType(type)
         }
 
-        fun convertUnsafe(type: ConeKotlinType) = Marker(type)
+        fun convertUnsafe(type: ConeKotlinType) = ColumnType(type)
     }
 
     override fun toString(): String {
@@ -70,7 +70,7 @@ class Marker private constructor(internal val coneType: ConeKotlinType) {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Marker
+        other as ColumnType
 
         return coneType == other.coneType
     }
@@ -81,10 +81,10 @@ class Marker private constructor(internal val coneType: ConeKotlinType) {
 }
 
 context(context: SessionContext)
-fun ConeKotlinType.wrap(): Marker = Marker(this)
+fun ConeKotlinType.wrap(): ColumnType = ColumnType(this)
 
 // The resulting type should not be materialized as a type of a property. Only for testing
-fun ConeKotlinType.wrapUnsafe(): Marker = Marker.convertUnsafe(type = this)
+fun ConeKotlinType.wrapUnsafe(): ColumnType = ColumnType.convertUnsafe(type = this)
 
 
 

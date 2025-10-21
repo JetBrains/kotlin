@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.List
 import org.jetbrains.kotlinx.dataframe.codeGen.FieldKind
 import org.jetbrains.kotlinx.dataframe.plugin.classId
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
@@ -238,7 +239,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                 if (keepSubtree || returnType.isValueType(session) || returnType.classId in preserveClasses || it in preserveProperties) {
                     SimpleDataColumn(
                         name,
-                        TypeApproximation(
+                        ColumnType(
                             returnType.withNullability(
                                 makeNullable,
                                 session.typeContext
@@ -372,7 +373,7 @@ class CreateDataFrameDslImplApproximation {
 class ToDataFrameFrom : AbstractInterpreter<Unit>() {
     val Arguments.dsl: CreateDataFrameDslImplApproximation by arg()
     val Arguments.receiver: String by arg()
-    val Arguments.expression: TypeApproximation by type()
+    val Arguments.expression: ColumnType by type()
     override fun Arguments.interpret() {
         dsl.columns += simpleColumnOf(receiver, expression.coneType)
     }

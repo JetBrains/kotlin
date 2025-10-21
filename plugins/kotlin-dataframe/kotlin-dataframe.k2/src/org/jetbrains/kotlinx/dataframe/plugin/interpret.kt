@@ -35,12 +35,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.annotations.HasSchema
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnApproximation
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.DataFrameCallableId
@@ -75,7 +74,7 @@ fun <T> KotlinTypeFacade.interpret(
             } else {
                 val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.coneType
                 if (type is ConeIntersectionType) return@forEachIndexed
-                Marker(type)
+                ColumnType(type)
             }
             put(key, Interpreter.Success(value))
         }
@@ -124,7 +123,7 @@ fun <T> KotlinTypeFacade.interpret(
                             type
                         }
                     }
-                    ?.let { returnType -> Interpreter.Success(Marker(returnType)) }
+                    ?.let { returnType -> Interpreter.Success(ColumnType(returnType)) }
             }
 
             is Interpreter.Dsl -> {
@@ -440,7 +439,7 @@ private fun columnOf(it: FirPropertySymbol, mapping: Map<FirTypeParameterSymbol,
                 else -> type
             }
             type?.let { type ->
-                SimpleDataColumn(name, TypeApproximation(type))
+                SimpleDataColumn(name, ColumnType(type))
             }
         }
     }

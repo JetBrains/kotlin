@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrapUnsafe
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 
 sealed class ParseResult {
     object Failure : ParseResult()
@@ -157,7 +156,7 @@ class PluginDataFrameSchemaParser {
         return Result.success(columns)
     }
 
-    private fun createTypeApproximation(typeString: String): Result<TypeApproximation> {
+    private fun createTypeApproximation(typeString: String): Result<ColumnType> {
         return try {
             val split = typeString.split(".")
 

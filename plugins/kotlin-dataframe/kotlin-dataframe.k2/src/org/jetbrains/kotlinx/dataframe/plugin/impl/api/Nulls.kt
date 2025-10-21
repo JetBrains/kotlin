@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class DropNulls0 : AbstractSchemaModificationInterpreter() {
@@ -85,7 +85,7 @@ fun KotlinTypeFacade.fillNullsImpl(
             val coneType = it.type.coneType as? ConeSimpleKotlinType
             if (coneType != null) {
                 val type = coneType.withNullability(nullable = false, session.typeContext)
-                it.changeType(Marker.invoke(type))
+                it.changeType(ColumnType(type))
             } else {
                 // report?
                 it
