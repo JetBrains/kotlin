@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNu
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeEquivalentCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -19,9 +20,22 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 /**
- * A scope that filters out `expect` callables that have matched `actual` callables.
+ * A scope that filters out `expect` callables that have matching `actual` callables.
+ *
+ * In principle, it's not necessary to do this during resolution.
+ * If we have multiple successful candidates, and they are matching expect and actual declarations, the expect ones will be filtered out by
+ * [ConeEquivalentCallConflictResolver].
+ *
+ * However, there are special situations when the actual declaration is annotated with `@Deprecated(HIDDEN)`,
+ * `@LowPriorityInOverloadResolution` or other annotations that influence resolution, and the expect declaration is not.
+ * In these situations, the expect declarations could be among the successful candidates while the actual one could not.
+ *
+ * That's why it's necessary to eliminate the redundant expect declarations during resolution, not during overload conflict resolution.
  */
-class FirActualizingScope(private val delegate: FirScope) : FirScope() {
+class FirActualizingScope(
+    private val delegate: FirScope,
+    private val session: FirSession,
+) : FirScope() {
     init {
         // Cases with `FirTypeScope` should be handled by `MemberScopeTowerLevel`
         require(delegate !is FirTypeScope)
@@ -52,7 +66,8 @@ class FirActualizingScope(private val delegate: FirScope) : FirScope() {
         processingFactory: FirScope.(Name, (S) -> Unit) -> Unit,
         processor: (S) -> Unit,
     ) {
-        val filteredSymbols = mutableSetOf<S>()
+        val expectSymbols = mutableSetOf<S>()
+        val notExpectSymbols = mutableSetOf<S>()
         // All matched `expect` callables should be preserved to make it possible to filter them out later if corresponding actuals are found
         val ignoredExpectSymbols = mutableSetOf<FirBasedSymbol<*>>()
 
@@ -60,23 +75,40 @@ class FirActualizingScope(private val delegate: FirScope) : FirScope() {
             if (symbol.isActual) {
                 val matchedExpectSymbol = symbol.getSingleMatchedExpectForActualOrNull()
                 if (matchedExpectSymbol != null) {
-                    filteredSymbols.remove(matchedExpectSymbol) // Filter out matched expects candidates
+                    expectSymbols.remove(matchedExpectSymbol) // Filter out matched expects candidates
                     ignoredExpectSymbols.add(matchedExpectSymbol)
                 }
             } else if (symbol.isExpect && symbol in ignoredExpectSymbols) {
                 // Skip the found `expect` because there is already a matched actual
                 return@processingFactory
             }
-            filteredSymbols.add(symbol)
+
+            val resultSet = if (symbol.isExpect) expectSymbols else notExpectSymbols
+            resultSet.add(symbol)
         }
 
-        for (symbol in filteredSymbols) {
-            processor(symbol)
+        // When the symbols come from binary dependencies, the `isActual` flag is not preserved
+        // (and getSingleMatchedExpectForActualOrNull wouldn't work anyway).
+        // Filter out expect declarations by manually matching them against non-expect ones.
+        expectSymbols.removeIf { expectSymbol ->
+            notExpectSymbols.any { notExpectSymbol -> areEquivalent(expectSymbol, notExpectSymbol) }
         }
+
+        expectSymbols.forEach(processor)
+        notExpectSymbols.forEach(processor)
+    }
+
+    private fun <S : FirCallableSymbol<*>> areEquivalent(symbol: S, s: S): Boolean {
+        return ConeEquivalentCallConflictResolver.areEquivalentTopLevelCallables(
+            symbol.fir,
+            s.fir,
+            session,
+            argumentMappingIsEqual = null
+        )
     }
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirActualizingScope? {
-        return delegate.withReplacedSessionOrNull(newSession, newScopeSession)?.let { FirActualizingScope(it) }
+        return delegate.withReplacedSessionOrNull(newSession, newScopeSession)?.let { FirActualizingScope(it, newSession) }
     }
 }
