@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallableReferenceInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.yieldDiagnostic
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -334,14 +337,14 @@ private fun varargParameterTypeByExpectedParameter(
 
     return when (varargMappingState) {
         VarargMappingState.UNMAPPED -> {
-            if (expectedParameterType.isPotentiallyArray()) {
+            if (expectedParameterType.isArrayOrPrimitiveArray() || expectedParameterType is ConeTypeVariableType) {
                 elementType.createOutArrayType() to VarargMappingState.MAPPED_WITH_ARRAY
             } else {
                 elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
             }
         }
         VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
-            if (expectedParameterType.isPotentiallyArray())
+            if (expectedParameterType.isArrayOrPrimitiveArray() || expectedParameterType is ConeTypeVariableType)
                 null to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
             else
                 elementType to VarargMappingState.MAPPED_WITH_PLAIN_ARGS
