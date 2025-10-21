@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.tasks.asValidFrameworkName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.readText
@@ -83,7 +84,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
                     assertTasksExecuted(":$subproject:podspec")
 
                     // Check that the podspec file is correctly generated.
-                    val podspecFileName = "$subproject/${subproject.normalizeCocoapadsFrameworkName}.podspec"
+                    val podspecFileName = "$subproject/${subproject.asValidFrameworkName}.podspec"
 
                     assertFileInProjectExists(podspecFileName)
                     val actualPodspecContentWithoutBlankLines = projectPath.resolve(podspecFileName).readText()

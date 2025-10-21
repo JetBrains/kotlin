@@ -16,7 +16,6 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
@@ -192,7 +191,7 @@ internal constructor(
 
     @get:Internal
     internal val xcFrameworkName: Provider<String>
-        get() = baseName.map { it.asValidFrameworkName() }
+        get() = baseName.map { it.asValidFrameworkName }
 
     /**
      * A build type of the XCFramework.
@@ -431,7 +430,7 @@ internal constructor(
             buildType: NativeBuildType,
             appleTarget: AppleTarget? = null,
         ): Provider<Directory> = buildDir.map {
-            it.dir(xcFrameworkName.asValidFrameworkName() + "XCFrameworkTemp")
+            it.dir(xcFrameworkName.asValidFrameworkName + "XCFrameworkTemp")
                 .dir("fatframework")
                 .dir(buildType.getName())
                 .dirIfNotNull(appleTarget?.targetName)

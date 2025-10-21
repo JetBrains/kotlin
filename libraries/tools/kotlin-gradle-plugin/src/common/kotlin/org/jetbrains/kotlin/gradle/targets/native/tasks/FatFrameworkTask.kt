@@ -14,7 +14,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -177,7 +176,7 @@ internal constructor(
 
     @get:Internal
     val fatFrameworkName: String
-        get() = baseName.asValidFrameworkName()
+        get() = baseName.asValidFrameworkName
 
     @get:Internal
     val fatFramework: File
