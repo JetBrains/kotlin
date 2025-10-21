@@ -654,9 +654,7 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleComposeApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningSinceGradle814(gradleVersion, WarningMode.None),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
