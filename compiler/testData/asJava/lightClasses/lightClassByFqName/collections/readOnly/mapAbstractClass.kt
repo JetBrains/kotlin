@@ -3,4 +3,4 @@
 
 package test
 
-abstract class CMap<KElem, VElem> : Map<KElem, VElem> by emptyMap<KElem, VElem>()
+abstract class CMap<KElem, VElem> : Map<KElem, VElem>
