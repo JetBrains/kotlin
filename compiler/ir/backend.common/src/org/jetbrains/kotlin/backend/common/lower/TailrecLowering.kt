@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -155,10 +156,12 @@ private class BodyTransformer(
     }
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
-        if (lowering.followRichFunctionReference(expression)) {
-            expression.invokeFunction.body?.transformChildrenVoid(this)
+        return if (lowering.followRichFunctionReference(expression)) {
+            super.visitRichFunctionReference(expression)
+        } else {
+            expression.boundValues.transformInPlace(this, null)
+            expression
         }
-        return super.visitRichFunctionReference(expression)
     }
 
     private fun IrBuilderWithScope.genTailCall(expression: IrCall) = this.irBlock(expression) {
