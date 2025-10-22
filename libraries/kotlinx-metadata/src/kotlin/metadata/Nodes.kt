@@ -111,6 +111,10 @@ public class KmClass : KmDeclarationContainer {
 
     /**
      * Type of the underlying property, if this class is `inline`.
+     *
+     * As an optimization for metadata produced by the Kotlin compiler, this field is absent if the underlying property is public or
+     * protected. In that case, the intended way to load the underlying type of inline class is to find the property in [KmClass.properties]
+     * with the name [inlineClassUnderlyingPropertyName] that has no extension receiver or context parameters, and get its type.
      */
     public var inlineClassUnderlyingType: KmType? = null
 
