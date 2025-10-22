@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinAndroidExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -35,16 +36,27 @@ internal object AgpWithBuiltInKotlinAppliedCheck {
         }
         // it's important to have strict ordering between those 2 checks.
         // IncompatibleWithTheNewAgpDsl must not hide AgpWithBuiltInKotlinIsAlreadyApplied
-        checkIfNewDslIsUsed()
+        checkIfNewDslIsUsed(agpVersionProvider)
     }
 
-    private fun Project.checkIfNewDslIsUsed() {
+    private fun Project.checkIfNewDslIsUsed(agpVersionProvider: AndroidGradlePluginVersionProvider) {
         val wasChecked = AtomicBoolean(false)
         androidPluginIds.forEach { agpPluginId ->
             plugins.withId(agpPluginId) {
                 if (!wasChecked.getAndSet(true)) {
                     try {
                         project.extensions.getByName("android") as BaseExtension
+                        val androidVersion = agpVersionProvider.get()
+                        if (androidVersion != null && androidVersion >= minimalBuiltInKotlinSupportedAgpVersion) {
+                            // Report deprecation with AGP 9.+ when Android deprecated Variants API is enabled
+                            // and built-in Kotlin support is disabled. Other cases related to AGP 9.+ change are covered
+                            // by other diagnostics like 'KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl' or
+                            // 'KotlinToolingDiagnostics.AgpWithBuiltInKotlinIsAlreadyApplied'.
+                            // This diagnostic should be fired at the end of related diagnostics checks and only if the checks are passed.
+                            project.reportDiagnosticOncePerProject(
+                                KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin(path)
+                            )
+                        }
                     } catch (e: ClassCastException) {
                         project.reportDiagnostic(
                             KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl(e)
