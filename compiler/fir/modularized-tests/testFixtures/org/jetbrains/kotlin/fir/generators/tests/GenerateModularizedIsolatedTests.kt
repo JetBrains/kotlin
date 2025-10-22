@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.fir.generators.tests
 import org.jetbrains.kotlin.fir.AbstractIsolatedFulPipelineTestRunner
 import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.test.HeavyTest
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 
 internal fun TestGroupSuite.generateModularizedTests(
@@ -16,7 +20,13 @@ internal fun TestGroupSuite.generateModularizedTests(
     testDataModelPath: String,
 ) {
     testGroup(baseGenPath, testDataModelPath, testRunnerMethodName = "runTest") {
-        testClass<AbstractIsolatedFulPipelineTestRunner>("${testDataProjectName}FullPipelineTestsGenerated") {
+        testClass<AbstractIsolatedFulPipelineTestRunner>(
+            "${testDataProjectName}FullPipelineTestsGenerated",
+            annotations =
+                listOf(
+                    annotation(Execution::class.java, ExecutionMode.CONCURRENT)
+                )
+        ) {
             model(pattern = "^model-(.+)\\.xml$")
         }
     }

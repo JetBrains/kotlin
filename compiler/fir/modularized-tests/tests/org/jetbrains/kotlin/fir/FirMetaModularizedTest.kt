@@ -9,6 +9,9 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
+import org.junit.jupiter.api.parallel.Isolated
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.util.jar.Attributes
@@ -16,6 +19,8 @@ import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.test.assertEquals
 
+@Isolated
+@Execution(ExecutionMode.SAME_THREAD)
 class FirMetaModularizedTest {
 
     private fun List<String>.filterArguments() = filterNot { it.startsWith("-Djava.security.manager") }

@@ -56,36 +56,17 @@ sourceSets {
 optInToK1Deprecation()
 
 projectTests {
-    val generatedMtIsolatedTests = "org.jetbrains.kotlin.fir.*FullPipelineTestsGenerated"
-
-    fun Test.setUpModularizedTests() {
+    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
-        systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
-        workingDir = rootDir
+        systemProperties(this.project.properties.filterKeys<String, Any?> { it.startsWith("fir.") })
+        this.workingDir = rootDir
         systemProperty("fir.bench.compose.plugin.classpath", composeCompilerPlugin.asPath)
-        val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
+        val argsExt = this.project.findProperty("fir.modularized.jvm.args") as? String
         if (argsExt != null) {
             val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
-            jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
-        }
-    }
-
-    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
-        setUpModularizedTests()
-        filter {
-            excludeTestsMatching(generatedMtIsolatedTests)
-        }
-    }
-
-    testTask(taskName = "parallelMtIsolatedTests", minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-        setUpModularizedTests()
-
-        filter {
-            includeTestsMatching(generatedMtIsolatedTests)
+            this.jvmArgs(paramRegex.findAll(argsExt).map<MatchResult, String> { it.groupValues[1] }.toList<String>())
         }
         systemProperties["junit.jupiter.execution.parallel.enabled"] = true
-        systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
-        maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
     }
 
     testGenerator(
