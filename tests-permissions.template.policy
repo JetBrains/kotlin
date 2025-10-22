@@ -51,6 +51,9 @@ grant {
     permission java.io.FilePermission "../non-existing-library3", "read";
     permission java.io.FilePermission "./non-existing-library4", "read";
 
+    // org.jetbrains.kotlin.cli.klib.ZipTest
+    permission java.nio.file.LinkPermission "symbolic";
+
     {{native}}
 
     {{wasm}}
