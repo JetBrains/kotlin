@@ -10,14 +10,29 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 
+/**
+ * Kotlin Wasm target configuration options.
+ * The specific Wasm target is specified by [wasmTargetType].
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
 interface KotlinWasmTargetDsl : KotlinTarget, HasBinaries<KotlinJsBinaryContainer> {
+
+    /**
+     * Specifies the Wasm target (Wasi or JS) these options configure.
+     */
     val wasmTargetType: KotlinWasmTargetType?
 
-    @Suppress("DEPRECATION_ERROR")
+    override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
+
+    override val binaries: KotlinJsBinaryContainer
+
+    //region deprecated options
+    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
     @Deprecated(
         "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
@@ -30,7 +45,7 @@ interface KotlinWasmTargetDsl : KotlinTarget, HasBinaries<KotlinJsBinaryContaine
     )
     fun applyBinaryen(body: BinaryenExec.() -> Unit)
 
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
     @Deprecated(
         "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR
@@ -40,8 +55,5 @@ interface KotlinWasmTargetDsl : KotlinTarget, HasBinaries<KotlinJsBinaryContaine
             fn.execute(this)
         }
     }
-
-    override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
-
-    override val binaries: KotlinJsBinaryContainer
+    //endregion
 }
