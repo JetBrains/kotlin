@@ -1,6 +1,5 @@
 // TARGET_BACKEND: WASM
 // WITH_STDLIB
-// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 fun assertTrue(x: Boolean): Unit = check(x)
 fun assertNull(x: Any?): Unit = check(x === null)

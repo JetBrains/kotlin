@@ -176,6 +176,12 @@ public class JsCodegenWasmJsInteropWithInlinedFunInKlibTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("externalCast.kt")
+  public void testExternalCast() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/externalCast.kt");
+  }
+
+  @Test
   @TestMetadata("externalTypeOperators.kt")
   public void testExternalTypeOperators() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/externalTypeOperators.kt");

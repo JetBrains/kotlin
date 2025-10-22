@@ -120,7 +120,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val jsFunction = context.irFactory.buildFun {
             origin = JS_CALL_INTEROP_FUNCTION
             name = function.name
-            visibility = DescriptorVisibilities.PRIVATE
+            visibility = DescriptorVisibilities.PUBLIC
             returnType = resultAdapter?.fromType ?: function.returnType
             modality = Modality.FINAL
             isExternal = true
