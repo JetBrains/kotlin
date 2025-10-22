@@ -100,10 +100,34 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ErrorTypeRef : KtFakeSourceElementKind()
 
     /**
-     * for properties without accessors default getter & setter are generated
-     * they have a fake source which refers to property
+     * For properties without accessors, FIR generates default getters and setters, as well as default backing fields.
+     *
+     * The fake element kinds must be kept in sync with [ALL_DEFAULT_ACCESSORS].
      */
-    object DefaultAccessor : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+    sealed class DefaultAccessor : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true) {
+        /**
+         * A default backing field. Its source refers to the property.
+         *
+         * The backing field is a default "accessor" for historical reasons: The same `DefaultAccessor` fake element kind was applied not
+         * only to default getters and setters, but also to default backing fields.
+         */
+        object DefaultBackingField : DefaultAccessor()
+
+        /**
+         * A default getter. Its source refers to the property.
+         */
+        object DefaultGetter : DefaultAccessor()
+
+        /**
+         * A default setter. Its source refers to the property.
+         */
+        object DefaultSetter : DefaultAccessor()
+
+        /**
+         * The value parameter of a default setter. Its source refers to the property.
+         */
+        object DefaultSetterValueParameter : DefaultAccessor()
+    }
 
     /**
      * for delegated properties, getter & setter calls to the delegate
@@ -712,6 +736,13 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // Moving these properties to the companion objects of their respective classes such as `DataClassGeneratedMembers` is not an option
     // because then the sealed class can be used as an object (e.g. as a `when` subject), which can lead to programming errors.
     companion object {
+        val ALL_DEFAULT_ACCESSORS: Set<DefaultAccessor> = setOf(
+            DefaultAccessor.DefaultBackingField,
+            DefaultAccessor.DefaultGetter,
+            DefaultAccessor.DefaultSetter,
+            DefaultAccessor.DefaultSetterValueParameter,
+        )
+
         val ALL_ENUM_GENERATED_DECLARATIONS: Set<EnumGeneratedDeclaration> = setOf(
             EnumGeneratedDeclaration.EnumValuesFunction,
             EnumGeneratedDeclaration.EnumValuesFunctionReturnType,

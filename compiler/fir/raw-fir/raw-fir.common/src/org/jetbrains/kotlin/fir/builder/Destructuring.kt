@@ -128,7 +128,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             if (!localEntries) {
                 dispatchReceiverType = currentDispatchReceiverType()
                 getter = FirDefaultPropertyGetter(
-                    source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                    source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultGetter),
                     moduleData = moduleData,
                     origin = FirDeclarationOrigin.Source,
                     propertyTypeRef = returnTypeRef,
@@ -138,7 +138,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
                 )
                 if (entry.isVar) {
                     setter = FirDefaultPropertySetter(
-                        source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                        source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultSetter),
                         moduleData = moduleData,
                         origin = FirDeclarationOrigin.Source,
                         propertyTypeRef = returnTypeRef,

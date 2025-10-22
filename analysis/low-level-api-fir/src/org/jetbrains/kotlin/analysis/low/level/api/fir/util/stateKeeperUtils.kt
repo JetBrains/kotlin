@@ -50,10 +50,10 @@ private fun isLazyStatement(fir: FirStatement): Boolean {
 }
 
 private val SPECIAL_BODY_CALLABLE_SOURCE_KINDS: Set<KtFakeSourceElementKind> = setOf(
-    KtFakeSourceElementKind.DefaultAccessor,
     KtFakeSourceElementKind.ImplicitConstructor,
     KtFakeSourceElementKind.PropertyFromParameter,
-) + KtFakeSourceElementKind.ALL_ENUM_GENERATED_DECLARATIONS +
+) + KtFakeSourceElementKind.ALL_DEFAULT_ACCESSORS +
+        KtFakeSourceElementKind.ALL_ENUM_GENERATED_DECLARATIONS +
         KtFakeSourceElementKind.ALL_DATA_CLASS_GENERATED_MEMBERS
 
 @OptIn(SuspiciousFakeSourceCheck::class)

@@ -166,15 +166,15 @@ class ValueParameter(
             }
             isLocal = context.inLocalContext
 
-            val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+            val defaultBackingFieldSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultBackingField)
             backingField = FirDefaultPropertyBackingField(
                 moduleData = moduleData,
                 origin = FirDeclarationOrigin.Source,
-                source = defaultAccessorSource,
+                source = defaultBackingFieldSource,
                 annotations = remappedAnnotations.filter {
                     it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
                 }.toMutableList(),
-                returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultBackingField),
                 isVar = isVar,
                 propertySymbol = symbol,
                 status = status.copy(isLateInit = false),
@@ -182,11 +182,12 @@ class ValueParameter(
 
             annotations += remappedAnnotations.filterConstructorPropertyRelevantAnnotations(this.isVar)
 
+            val defaultGetterSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultGetter)
             getter = FirDefaultPropertyGetter(
-                source = defaultAccessorSource,
+                source = defaultGetterSource,
                 moduleData = moduleData,
                 origin = FirDeclarationOrigin.Source,
-                propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultGetter),
                 visibility = status.visibility,
                 propertySymbol = symbol,
                 modality = status.modality,
@@ -196,11 +197,12 @@ class ValueParameter(
                 it.replaceAnnotations(remappedAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
             }
 
+            val defaultSetterSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultSetter)
             setter = if (this.isVar) FirDefaultPropertySetter(
-                source = defaultAccessorSource,
+                source = defaultSetterSource,
                 moduleData = moduleData,
                 origin = FirDeclarationOrigin.Source,
-                propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                propertyTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultSetter),
                 visibility = status.visibility,
                 propertySymbol = symbol,
                 modality = status.modality,

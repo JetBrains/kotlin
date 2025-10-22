@@ -250,10 +250,10 @@ internal class StubBasedFirMemberDeserializer(
         } else {
             @OptIn(FirImplementationDetail::class)
             FirDefaultPropertyGetter(
-                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultGetter),
                 moduleData = c.moduleData,
                 origin = initialOrigin,
-                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultGetter),
                 propertySymbol = propertySymbol,
                 status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                     visibility = propertyStatus.visibility,
@@ -319,10 +319,10 @@ internal class StubBasedFirMemberDeserializer(
         } else {
             @OptIn(FirImplementationDetail::class)
             FirDefaultPropertySetter(
-                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                source = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.DefaultSetter),
                 moduleData = c.moduleData,
                 origin = initialOrigin,
-                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultSetter),
                 propertySymbol = propertySymbol,
                 status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                     visibility = propertyStatus.visibility,
@@ -401,9 +401,9 @@ internal class StubBasedFirMemberDeserializer(
             backingField = FirDefaultPropertyBackingField(
                 c.moduleData,
                 initialOrigin,
-                source = property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor),
+                source = property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor.DefaultBackingField),
                 backingFieldAnnotations.toMutableList(),
-                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.DefaultBackingField),
                 isVar,
                 symbol,
                 status,

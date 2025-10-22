@@ -103,7 +103,10 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
             }
 
             if (declaration is FirProperty) {
-                declaration.setter?.takeUnless { it.source?.kind == KtFakeSourceElementKind.DefaultAccessor }?.valueParameters?.let { addAll(it) }
+                declaration.setter
+                    ?.takeUnless { it.source?.kind is KtFakeSourceElementKind.DefaultAccessor }
+                    ?.valueParameters
+                    ?.let { addAll(it) }
             }
         }
     }

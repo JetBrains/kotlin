@@ -104,7 +104,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         fun FirPropertyAccessor.isDefault(): Boolean {
             val source = source
             check(source != null) { "expect-actual matching is only possible for code with sources" }
-            return source.kind == KtFakeSourceElementKind.DefaultAccessor
+            return source.kind is KtFakeSourceElementKind.DefaultAccessor
         }
 
         if (!accessor.isDefault()) {
