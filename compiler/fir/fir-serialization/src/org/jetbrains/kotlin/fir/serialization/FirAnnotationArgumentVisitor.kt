@@ -42,7 +42,7 @@ internal object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, F
 
     override fun visitDoubleValue(value: DoubleValue, data: FirAnnotationArgumentVisitorData) {
         data.builder.type = ProtoBuf.Annotation.Argument.Value.Type.DOUBLE
-        data.builder.doubleValue = value.value
+        data.builder.doubleValue = value.value.toBits()
     }
 
     override fun visitEnumValue(value: EnumValue, data: FirAnnotationArgumentVisitorData) {
@@ -57,7 +57,7 @@ internal object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, F
 
     override fun visitFloatValue(value: FloatValue, data: FirAnnotationArgumentVisitorData) {
         data.builder.type = ProtoBuf.Annotation.Argument.Value.Type.FLOAT
-        data.builder.floatValue = value.value
+        data.builder.floatValue = value.value.toBits()
     }
 
     override fun visitIntValue(value: IntValue, data: FirAnnotationArgumentVisitorData) {

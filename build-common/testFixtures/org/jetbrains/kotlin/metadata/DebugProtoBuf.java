@@ -2645,22 +2645,22 @@ public final class DebugProtoBuf {
         long getIntValue();
 
         /**
-         * <code>optional float float_value = 3;</code>
+         * <code>optional fixed32 float_value = 3;</code>
          */
         boolean hasFloatValue();
         /**
-         * <code>optional float float_value = 3;</code>
+         * <code>optional fixed32 float_value = 3;</code>
          */
-        float getFloatValue();
+        int getFloatValue();
 
         /**
-         * <code>optional double double_value = 4;</code>
+         * <code>optional fixed64 double_value = 4;</code>
          */
         boolean hasDoubleValue();
         /**
-         * <code>optional double double_value = 4;</code>
+         * <code>optional fixed64 double_value = 4;</code>
          */
-        double getDoubleValue();
+        long getDoubleValue();
 
         /**
          * <code>optional int32 string_value = 5;</code>
@@ -2854,12 +2854,12 @@ public final class DebugProtoBuf {
                 }
                 case 29: {
                   bitField0_ |= 0x00000004;
-                  floatValue_ = input.readFloat();
+                  floatValue_ = input.readFixed32();
                   break;
                 }
                 case 33: {
                   bitField0_ |= 0x00000008;
-                  doubleValue_ = input.readDouble();
+                  doubleValue_ = input.readFixed64();
                   break;
                 }
                 case 40: {
@@ -3175,32 +3175,32 @@ public final class DebugProtoBuf {
         }
 
         public static final int FLOAT_VALUE_FIELD_NUMBER = 3;
-        private float floatValue_;
+        private int floatValue_;
         /**
-         * <code>optional float float_value = 3;</code>
+         * <code>optional fixed32 float_value = 3;</code>
          */
         public boolean hasFloatValue() {
           return ((bitField0_ & 0x00000004) == 0x00000004);
         }
         /**
-         * <code>optional float float_value = 3;</code>
+         * <code>optional fixed32 float_value = 3;</code>
          */
-        public float getFloatValue() {
+        public int getFloatValue() {
           return floatValue_;
         }
 
         public static final int DOUBLE_VALUE_FIELD_NUMBER = 4;
-        private double doubleValue_;
+        private long doubleValue_;
         /**
-         * <code>optional double double_value = 4;</code>
+         * <code>optional fixed64 double_value = 4;</code>
          */
         public boolean hasDoubleValue() {
           return ((bitField0_ & 0x00000008) == 0x00000008);
         }
         /**
-         * <code>optional double double_value = 4;</code>
+         * <code>optional fixed64 double_value = 4;</code>
          */
-        public double getDoubleValue() {
+        public long getDoubleValue() {
           return doubleValue_;
         }
 
@@ -3378,8 +3378,8 @@ public final class DebugProtoBuf {
         private void initFields() {
           type_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.Type.BYTE;
           intValue_ = 0L;
-          floatValue_ = 0F;
-          doubleValue_ = 0D;
+          floatValue_ = 0;
+          doubleValue_ = 0L;
           stringValue_ = 0;
           classId_ = 0;
           enumValueId_ = 0;
@@ -3420,10 +3420,10 @@ public final class DebugProtoBuf {
             output.writeSInt64(2, intValue_);
           }
           if (((bitField0_ & 0x00000004) == 0x00000004)) {
-            output.writeFloat(3, floatValue_);
+            output.writeFixed32(3, floatValue_);
           }
           if (((bitField0_ & 0x00000008) == 0x00000008)) {
-            output.writeDouble(4, doubleValue_);
+            output.writeFixed64(4, doubleValue_);
           }
           if (((bitField0_ & 0x00000010) == 0x00000010)) {
             output.writeInt32(5, stringValue_);
@@ -3465,11 +3465,11 @@ public final class DebugProtoBuf {
           }
           if (((bitField0_ & 0x00000004) == 0x00000004)) {
             size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-              .computeFloatSize(3, floatValue_);
+              .computeFixed32Size(3, floatValue_);
           }
           if (((bitField0_ & 0x00000008) == 0x00000008)) {
             size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-              .computeDoubleSize(4, doubleValue_);
+              .computeFixed64Size(4, doubleValue_);
           }
           if (((bitField0_ & 0x00000010) == 0x00000010)) {
             size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -3622,9 +3622,9 @@ public final class DebugProtoBuf {
             bitField0_ = (bitField0_ & ~0x00000001);
             intValue_ = 0L;
             bitField0_ = (bitField0_ & ~0x00000002);
-            floatValue_ = 0F;
+            floatValue_ = 0;
             bitField0_ = (bitField0_ & ~0x00000004);
-            doubleValue_ = 0D;
+            doubleValue_ = 0L;
             bitField0_ = (bitField0_ & ~0x00000008);
             stringValue_ = 0;
             bitField0_ = (bitField0_ & ~0x00000010);
@@ -3931,66 +3931,66 @@ public final class DebugProtoBuf {
             return this;
           }
 
-          private float floatValue_ ;
+          private int floatValue_ ;
           /**
-           * <code>optional float float_value = 3;</code>
+           * <code>optional fixed32 float_value = 3;</code>
            */
           public boolean hasFloatValue() {
             return ((bitField0_ & 0x00000004) == 0x00000004);
           }
           /**
-           * <code>optional float float_value = 3;</code>
+           * <code>optional fixed32 float_value = 3;</code>
            */
-          public float getFloatValue() {
+          public int getFloatValue() {
             return floatValue_;
           }
           /**
-           * <code>optional float float_value = 3;</code>
+           * <code>optional fixed32 float_value = 3;</code>
            */
-          public Builder setFloatValue(float value) {
+          public Builder setFloatValue(int value) {
             bitField0_ |= 0x00000004;
             floatValue_ = value;
             onChanged();
             return this;
           }
           /**
-           * <code>optional float float_value = 3;</code>
+           * <code>optional fixed32 float_value = 3;</code>
            */
           public Builder clearFloatValue() {
             bitField0_ = (bitField0_ & ~0x00000004);
-            floatValue_ = 0F;
+            floatValue_ = 0;
             onChanged();
             return this;
           }
 
-          private double doubleValue_ ;
+          private long doubleValue_ ;
           /**
-           * <code>optional double double_value = 4;</code>
+           * <code>optional fixed64 double_value = 4;</code>
            */
           public boolean hasDoubleValue() {
             return ((bitField0_ & 0x00000008) == 0x00000008);
           }
           /**
-           * <code>optional double double_value = 4;</code>
+           * <code>optional fixed64 double_value = 4;</code>
            */
-          public double getDoubleValue() {
+          public long getDoubleValue() {
             return doubleValue_;
           }
           /**
-           * <code>optional double double_value = 4;</code>
+           * <code>optional fixed64 double_value = 4;</code>
            */
-          public Builder setDoubleValue(double value) {
+          public Builder setDoubleValue(long value) {
             bitField0_ |= 0x00000008;
             doubleValue_ = value;
             onChanged();
             return this;
           }
           /**
-           * <code>optional double double_value = 4;</code>
+           * <code>optional fixed64 double_value = 4;</code>
            */
           public Builder clearDoubleValue() {
             bitField0_ = (bitField0_ & ~0x00000008);
-            doubleValue_ = 0D;
+            doubleValue_ = 0L;
             onChanged();
             return this;
           }
@@ -45547,7 +45547,7 @@ public final class DebugProtoBuf {
       "ment.Value\032\302\004\n\005Value\022K\n\004type\030\001 \001(\0162=.org" +
       ".jetbrains.kotlin.metadata.Annotation.Ar" +
       "gument.Value.Type\022\021\n\tint_value\030\002 \001(\022\022\023\n\013",
-      "float_value\030\003 \001(\002\022\024\n\014double_value\030\004 \001(\001\022" +
+      "float_value\030\003 \001(\007\022\024\n\014double_value\030\004 \001(\006\022" +
       "\032\n\014string_value\030\005 \001(\005B\004\230\265\030\001\022\026\n\010class_id\030" +
       "\006 \001(\005B\004\220\265\030\001\022\033\n\renum_value_id\030\007 \001(\005B\004\210\265\030\001" +
       "\022=\n\nannotation\030\010 \001(\0132).org.jetbrains.kot" +

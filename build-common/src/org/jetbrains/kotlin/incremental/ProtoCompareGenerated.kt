@@ -2886,7 +2886,7 @@ fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: (Int) -> Int, fqN
     }
 
     if (hasFloatValue()) {
-        hashCode = 31 * hashCode + floatValue.hashCode()
+        hashCode = 31 * hashCode + floatValue
     }
 
     if (hasDoubleValue()) {

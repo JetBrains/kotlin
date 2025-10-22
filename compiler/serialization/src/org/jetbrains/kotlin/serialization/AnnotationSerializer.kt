@@ -83,7 +83,7 @@ open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTa
 
             override fun visitDoubleValue(value: DoubleValue, data: Unit) {
                 type = Type.DOUBLE
-                doubleValue = value.value
+                doubleValue = value.value.toBits()
             }
 
             override fun visitEnumValue(value: EnumValue, data: Unit) {
@@ -98,7 +98,7 @@ open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTa
 
             override fun visitFloatValue(value: FloatValue, data: Unit) {
                 type = Type.FLOAT
-                floatValue = value.value
+                floatValue = value.value.toBits()
             }
 
             override fun visitIntValue(value: IntValue, data: Unit) {

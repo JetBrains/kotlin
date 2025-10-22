@@ -78,8 +78,8 @@ message Annotation {
       // Only one of the following values should be present
 
       optional sint64 int_value = 2;
-      optional float float_value = 3;
-      optional double double_value = 4;
+      optional fixed32 float_value = 3;
+      optional fixed64 double_value = 4;
 
       optional int32 string_value = 5 [(string_id_in_table) = true];
 

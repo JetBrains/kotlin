@@ -46,11 +46,11 @@ public fun KmAnnotationArgument.writeAnnotationArgument(strings: StringTable): P
             }
             is KmAnnotationArgument.FloatValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.FLOAT
-                this.floatValue = value
+                this.floatValue = value.toBits()
             }
             is KmAnnotationArgument.DoubleValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.DOUBLE
-                this.doubleValue = value
+                this.doubleValue = value.toBits()
             }
             is KmAnnotationArgument.BooleanValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.BOOLEAN

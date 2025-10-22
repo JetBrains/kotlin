@@ -145,8 +145,8 @@ private fun resolveValue(session: FirSession, value: ProtoBuf.Annotation.Argumen
         }
 
         CHAR -> const(ConstantValueKind.Char, value.intValue.toInt().toChar(), session.builtinTypes.charType)
-        FLOAT -> const(ConstantValueKind.Float, value.floatValue, session.builtinTypes.floatType)
-        DOUBLE -> const(ConstantValueKind.Double, value.doubleValue, session.builtinTypes.doubleType)
+        FLOAT -> const(ConstantValueKind.Float, Float.fromBits(value.floatValue), session.builtinTypes.floatType)
+        DOUBLE -> const(ConstantValueKind.Double, Double.fromBits(value.doubleValue), session.builtinTypes.doubleType)
         BOOLEAN -> const(ConstantValueKind.Boolean, (value.intValue != 0L), session.builtinTypes.booleanType)
         STRING -> const(ConstantValueKind.String, nameResolver.getString(value.stringValue), session.builtinTypes.stringType)
         ANNOTATION -> deserializeAnnotation(session, value.annotation, nameResolver)

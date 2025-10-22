@@ -40,8 +40,8 @@ public fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: Na
         SHORT -> KmAnnotationArgument.ShortValue(intValue.toShort())
         INT -> KmAnnotationArgument.IntValue(intValue.toInt())
         LONG -> KmAnnotationArgument.LongValue(intValue)
-        FLOAT -> KmAnnotationArgument.FloatValue(floatValue)
-        DOUBLE -> KmAnnotationArgument.DoubleValue(doubleValue)
+        FLOAT -> KmAnnotationArgument.FloatValue(Float.fromBits(floatValue))
+        DOUBLE -> KmAnnotationArgument.DoubleValue(Double.fromBits(doubleValue))
         BOOLEAN -> KmAnnotationArgument.BooleanValue(intValue != 0L)
         STRING -> KmAnnotationArgument.StringValue(strings.getString(stringValue))
         CLASS -> strings.getClassName(classId).let { className ->

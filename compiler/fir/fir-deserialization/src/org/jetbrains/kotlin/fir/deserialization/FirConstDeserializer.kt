@@ -63,10 +63,10 @@ fun buildFirConstant(
             null, ConstantValueKind.Char, ((protoValue?.intValue ?: sourceValue) as Number).toInt().toChar(), setType = true
         )
         "FLOAT", "F" -> buildLiteralExpression(
-            null, ConstantValueKind.Float, protoValue?.floatValue ?: sourceValue as Float, setType = true
+            null, ConstantValueKind.Float, protoValue?.floatValue?.let { Float.fromBits(it) } ?: sourceValue as Float, setType = true
         )
         "DOUBLE", "D" -> buildLiteralExpression(
-            null, ConstantValueKind.Double, protoValue?.doubleValue ?: sourceValue as Double, setType = true
+            null, ConstantValueKind.Double, protoValue?.doubleValue?.let { Double.fromBits(it) } ?: sourceValue as Double, setType = true
         )
         "BOOLEAN", "Z" -> buildLiteralExpression(
             null, ConstantValueKind.Boolean, (protoValue?.intValue?.toInt() ?: sourceValue) != 0, setType = true
