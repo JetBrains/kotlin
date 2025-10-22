@@ -126,6 +126,11 @@ class CasesPublicAPITest {
     }
 
     @Test
+    fun repeatable() {
+        snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.repeatable.RepeatableAnnotation.Container"))
+    }
+
+    @Test
     fun included() {
         snapshotAPIAndCompare(testName.methodName, includedClasses = setOf("cases.included.subpackage.*"))
     }

@@ -49,4 +49,8 @@ runtimeJarWithRelocation {
     relocate("org.jetbrains.org.objectweb.asm", "org.jetbrains.kotlin.abi.tools.org.objectweb.asm")
 }
 
+tasks.compileTestKotlin {
+    compilerOptions.freeCompilerArgs.add("-jvm-default=enable")
+}
+
 // we create ABI dump only for `mainSourceSet.output` because in `libs.intellij.asm` is not a part of ABI, and we will exclude it in any way

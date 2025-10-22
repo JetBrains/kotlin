@@ -177,9 +177,7 @@ private fun ClassNode.qualifiedClassName(metadata: KotlinClassMetadata?): Pair<S
         metadata is KotlinClassMetadata.Class -> metadata.kmClass.name.metadataNameToQualified()
         metadata is KotlinClassMetadata.FileFacade -> name.jvmInternalToCanonical()
         isDefaultImpls(metadata) && outerClassName != null -> outerClassName!!.metadataNameToQualified()
-        // if metadata is not null - it's Kotlin symbol without qualified name, like File facade etc, so we clear class name
-        metadata != null -> name.jvmInternalToCanonical().first to ""
-        // it's Java class
+        // it's Java or synthetic class
         else -> name.jvmInternalToCanonical()
     }
 }
