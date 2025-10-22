@@ -17,11 +17,9 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 import java.lang.reflect.Constructor
@@ -91,7 +89,7 @@ internal class DescriptorKFunction private constructor(
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
             }
             else -> throw KotlinReflectionInternalError("Could not compute caller for function: $descriptor (member = $member)")
-        }.createValueClassAwareCallerIfNeeded(descriptor)
+        }.createValueClassAwareCallerIfNeeded(this, isDefault = false)
     }
 
     override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
@@ -136,7 +134,7 @@ internal class DescriptorKFunction private constructor(
                 }
             }
             else -> null
-        }?.createValueClassAwareCallerIfNeeded(descriptor, isDefault = true)
+        }?.createValueClassAwareCallerIfNeeded(this, isDefault = true)
     }
 
     private fun getFunctionWithDefaultParametersForValueClassOverride(descriptor: FunctionDescriptor): FunctionDescriptor? {
@@ -154,7 +152,7 @@ internal class DescriptorKFunction private constructor(
     }
 
     private val boundReceiver: Any?
-        get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
+        get() = rawBoundReceiver.coerceToExpectedReceiverType(this, descriptor)
 
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,
