@@ -1,16 +1,4 @@
 public abstract class CMap /* test.CMap*/<KElem, VElem>  implements java.util.Map<KElem, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
-  @org.jetbrains.annotations.NotNull()
-  public java.util.Collection<VElem> getValues();//  getValues()
-
-  @org.jetbrains.annotations.NotNull()
-  public java.util.Set<KElem> getKeys();//  getKeys()
-
-  @org.jetbrains.annotations.NotNull()
-  public java.util.Set<java.util.Map.Entry<KElem, VElem>> getEntries();//  getEntries()
-
-  @org.jetbrains.annotations.Nullable()
-  public VElem get(java.lang.Object);//  get(java.lang.Object)
-
   public  CMap();//  .ctor()
 
   public VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
@@ -29,11 +17,13 @@ public abstract class CMap /* test.CMap*/<KElem, VElem>  implements java.util.Ma
 
   public VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
-  public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+  public abstract int getSize();//  getSize()
 
-  public boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+  public abstract java.util.Collection<VElem> getValues();//  getValues()
 
-  public boolean isEmpty();//  isEmpty()
+  public abstract java.util.Set<KElem> getKeys();//  getKeys()
+
+  public abstract java.util.Set<java.util.Map.Entry<KElem, VElem>> getEntries();//  getEntries()
 
   public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
 
@@ -46,8 +36,6 @@ public abstract class CMap /* test.CMap*/<KElem, VElem>  implements java.util.Ma
   public final java.util.Set<KElem> keySet();//  keySet()
 
   public final java.util.Set<java.util.Map.Entry<KElem, VElem>> entrySet();//  entrySet()
-
-  public int getSize();//  getSize()
 
   public void clear();//  clear()
 
