@@ -6,7 +6,7 @@
 kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
     abiValidation {
-        filters.excluded.annotatedWith.addAll(
+        filters.exclude.annotatedWith.addAll(
             "annotations.HiddenClass",
             "annotations.HiddenCtor",
             "annotations.HiddenProperty",

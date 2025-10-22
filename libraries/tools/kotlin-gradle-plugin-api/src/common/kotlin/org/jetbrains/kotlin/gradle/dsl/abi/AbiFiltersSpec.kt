@@ -17,25 +17,25 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
  *
  * ```kotlin
  * filters {
- *     excluded {
+ *     exclude {
  *         byNames.add("foo.Bar")
  *         annotatedWith.add("foo.ExcludeAbi")
  *     }
  *
- *     included {
+ *     include {
  *         byNames.add("foo.api.**")
  *         annotatedWith.add("foo.PublicApi")
  *     }
  * }
  * ```
  *
- * In order for a declaration (class, field, property or function) to be included in the dump, it must pass **all** inclusion and exclusion filters.
+ * In order for a declaration (class, field, property, or function) to be included in the dump, it must pass **all** inclusion and exclusion filters.
  *
  * A declaration successfully passes the exclusion filter if it does not match any of the class name (see [AbiFilterSetSpec.byNames]) or annotation  (see [AbiFilterSetSpec.annotatedWith]) filter rules.
  *
  * A declaration successfully passes the inclusion filter if no inclusion rules exist, if it matches any inclusion rule, or if at least one of its members (relevant for class declaration) matches any inclusion rule.
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 @KotlinGradlePluginDsl
 @ExperimentalAbiValidation
@@ -48,16 +48,28 @@ interface AbiFiltersSpec {
      *
      * ```kotlin
      * filters {
-     *     excluded {
-     *         classes.add("foo.Bar")
+     *     exclude {
+     *         byNames.add("foo.Bar")
      *         annotatedWith.add("foo.ExcludeAbi")
      *     }
      * }
      * ```
      *
-     * In order for a declaration (class, field, property or function) to be included in the dump, it must pass **all** inclusion and exclusion filters.
+     * In order for a declaration (class, field, property, or function) to be included in the dump, it must pass **all** inclusion and exclusion filters.
+     *
+     * @since 2.3.20
      */
+    val exclude: AbiFilterSetSpec
+
+    /**
+     * A set of filtering rules that restrict ABI declarations from being included in a dump.
+     *
+     * See [exclude] for details.
+     * @deprecated Use [exclude] instead.
+     */
+    @Deprecated("Use 'exclude' instead", ReplaceWith("exclude"), DeprecationLevel.ERROR)
     val excluded: AbiFilterSetSpec
+        get() = exclude
 
     /**
      * A set of filtering rules that restrict ABI declarations from being included in a dump.
@@ -67,44 +79,96 @@ interface AbiFiltersSpec {
      *
      * ```kotlin
      * filters {
-     *     included {
+     *     include {
      *         byNames.add("foo.api.**")
      *         annotatedWith.add("foo.PublicApi")
      *     }
      * }
      * ```
      *
-     * In order for a declaration (class, field, property or function) to be included in the dump, it must pass the inclusion filter. A declaration successfully passes the inclusion filter if no inclusion rules exist, if it matches any inclusion rule, or if at least one of its members (relevant for class declaration) matches any inclusion rule.
+     * In order for a declaration (class, field, property, or function) to be included in the dump, it must pass the inclusion filter. A declaration successfully passes the inclusion filter if no inclusion rules exist, if it matches any inclusion rule, or if at least one of its members (relevant for class declaration) matches any inclusion rule.
+     *
+     * @since 2.3.20
      */
+    val include: AbiFilterSetSpec
+
+    /**
+     * A set of filtering rules that restrict ABI declarations from being included in a dump.
+     *
+     * See [include] for details.
+     * @deprecated Use [include] instead.
+     */
+    @Deprecated("Use 'include' instead", ReplaceWith("include"), DeprecationLevel.ERROR)
     val included: AbiFilterSetSpec
+        get() = include
 
     /**
-     * Configures the [excluded] variable with the provided configuration.
+     * Configures the [exclude] variable with the provided configuration.
+     *
+     * @since 2.3.20
      */
-    fun excluded(action: Action<AbiFilterSetSpec>) {
-        action.execute(excluded)
+    fun exclude(action: Action<AbiFilterSetSpec>) {
+        action.execute(exclude)
     }
 
     /**
-     * Configures the [excluded] variable with the provided configuration.
+     * Configures the [exclude] variable with the provided configuration.
+     *
+     * @since 2.3.20
      */
-    fun excluded(action: AbiFilterSetSpec.() -> Unit) {
-        action(excluded)
+    fun exclude(action: AbiFilterSetSpec.() -> Unit) {
+        action(exclude)
+    }
+
+    /**
+     * Configures the [exclude] variable with the provided configuration.
+     *
+     * @deprecated Use 'exclude' instead.
+     */
+    @Deprecated("Use 'exclude' instead", ReplaceWith("exclude"), DeprecationLevel.ERROR)
+    fun excluded(action: Action<AbiFilterSetSpec>) = exclude(action)
+
+    /**
+     * Configures the [exclude] variable with the provided configuration.
+     *
+     * @deprecated Use 'exclude' instead.
+     */
+    @Deprecated("Use 'exclude' instead", ReplaceWith("exclude"), DeprecationLevel.ERROR)
+    fun excluded(action: AbiFilterSetSpec.() -> Unit) = exclude(action)
+
+    /**
+     * Configures the [include] variable with the provided configuration.
+     *
+     * @since 2.3.20
+     */
+    fun include(action: Action<AbiFilterSetSpec>) {
+        action.execute(include)
     }
 
     /**
      * Configures the [included] variable with the provided configuration.
+     *
+     * @since 2.3.20
      */
-    fun included(action: Action<AbiFilterSetSpec>) {
-        action.execute(included)
+    fun include(action: AbiFilterSetSpec.() -> Unit) {
+        action(include)
     }
 
     /**
-     * Configures the [included] variable with the provided configuration.
+     * Configures the [include] variable with the provided configuration.
+     *
+     * @deprecated Use 'include' instead.
      */
-    fun included(action: AbiFilterSetSpec.() -> Unit) {
-        action(included)
-    }
+    @Deprecated("Use 'include' instead", ReplaceWith("include"), DeprecationLevel.ERROR)
+    fun included(action: AbiFilterSetSpec.() -> Unit) = include(action)
+
+    /**
+     * Configures the [include] variable with the provided configuration.
+     *
+     * @deprecated Use 'include' instead.
+     */
+    @Deprecated("Use 'include' instead", ReplaceWith("include"), DeprecationLevel.ERROR)
+    fun included(action: Action<AbiFilterSetSpec>) = include(action)
 }
 
 /**
@@ -114,7 +178,7 @@ interface AbiFiltersSpec {
  *
  * ```kotlin
  * filters {
- *     included {
+ *     include {
  *         byNames.add("foo.api.**")
  *         annotatedWith.add("foo.PublicApi")
  *     }
@@ -124,14 +188,14 @@ interface AbiFiltersSpec {
  *
  * ```kotlin
  * filters {
- *     excluded {
+ *     exclude {
  *         byNames.add("foo.Bar")
  *         annotatedWith.add("foo.ExcludeAbi")
  *     }
  * }
  * ```
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 @KotlinGradlePluginDsl
 @ExperimentalAbiValidation
@@ -143,7 +207,7 @@ interface AbiFilterSetSpec {
      *
      * ```kotlin
      * filters {
-     *     excluded {
+     *     exclude {
      *         byNames.add("foo.Bar") // name filter, excludes class with name `foo.Bar` from dump
      *     }
      * }
@@ -168,7 +232,7 @@ interface AbiFilterSetSpec {
      *
      * ```kotlin
      * filters {
-     *     excluded {
+     *     exclude {
      *         byNames.add("**.My*") //  A name filter that excludes classes in any non-root package with a name starting with `My`.
      *     }
      * }
@@ -195,7 +259,7 @@ interface AbiFilterSetSpec {
      *
      * ```kotlin
      * filters {
-     *     excluded {
+     *     exclude {
      *         annotatedWith.add("foo.ExcludeAbi") // exclude any class property or function annotated with 'foo.ExcludeAbi'
      *     }
      * }

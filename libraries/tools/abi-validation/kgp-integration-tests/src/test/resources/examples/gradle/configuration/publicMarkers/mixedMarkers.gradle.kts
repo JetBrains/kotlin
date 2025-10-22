@@ -7,8 +7,8 @@ kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
     abiValidation {
         filters {
-            excluded.annotatedWith.addAll("mixed.PrivateApi")
-            included.annotatedWith.addAll("mixed.PublicApi")
+            exclude.annotatedWith.addAll("mixed.PrivateApi")
+            include.annotatedWith.addAll("mixed.PublicApi")
         }
     }
 }

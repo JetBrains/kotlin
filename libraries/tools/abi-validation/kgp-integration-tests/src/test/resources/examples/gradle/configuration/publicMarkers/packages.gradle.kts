@@ -7,7 +7,7 @@ kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
     abiValidation {
         filters {
-            included.annotatedWith.addAll("annotated.PackageAnnotation")
+            include.annotatedWith.addAll("annotated.PackageAnnotation")
         }
     }
 }

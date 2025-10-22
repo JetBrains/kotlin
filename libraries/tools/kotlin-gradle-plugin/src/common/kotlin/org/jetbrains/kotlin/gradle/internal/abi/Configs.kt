@@ -111,10 +111,10 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
 
             it.klib.convention(it.klibInput.map { targets -> if (it.klibIsEnabled.get()) targets else emptyList() })
 
-            it.includedClasses.convention(filters.included.byNames)
-            it.includedAnnotatedWith.convention(filters.included.annotatedWith)
-            it.excludedClasses.convention(filters.excluded.byNames)
-            it.excludedAnnotatedWith.convention(filters.excluded.annotatedWith)
+            it.includedClasses.convention(filters.include.byNames)
+            it.includedAnnotatedWith.convention(filters.include.annotatedWith)
+            it.excludedClasses.convention(filters.exclude.byNames)
+            it.excludedAnnotatedWith.convention(filters.exclude.annotatedWith)
 
             it.description = "Dumps the public Application Binary Interface (ABI) into files in the build directory " +
                     "for the '$variantName' variant."

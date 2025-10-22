@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
  *
  * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 /*
 We can't mark top level extensions with @ExperimentalAbiValidation because
@@ -139,7 +139,7 @@ interface AbiValidationExtension : AbiValidationVariantSpec {
  *
  * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 /*
 We can't mark top level extensions with @ExperimentalAbiValidation because
@@ -159,12 +159,12 @@ interface AbiValidationVariantSpec : Named {
      * ```kotlin
      * abiValidation {
      *     filters {
-     *         excluded {
+     *         exclude {
      *             byNames.add("foo.Bar")
      *             annotatedWith.add("foo.ExcludeAbi")
      *         }
      *
-     *         included {
+     *         include {
      *             byNames.add("foo.api.**")
      *             annotatedWith.add("foo.PublicApi")
      *         }
