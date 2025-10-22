@@ -24,7 +24,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionContextReceiver3.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(Q|kotlin/String|)
+        <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(Q|kotlin/String|)
         [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
             [ResolvedTo(BODY_RESOLVE)] lval d: R|kotlin/Double| = Double(1.0)
         }

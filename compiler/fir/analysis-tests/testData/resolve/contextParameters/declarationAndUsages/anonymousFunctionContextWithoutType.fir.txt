@@ -2,7 +2,7 @@ FILE: anonymousFunctionContextWithoutType.kt
     public final fun foo(f: R|@ContextFunctionTypeParams(1) context(kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test(c: R|kotlin/String|): R|kotlin/Unit| {
-        R|/foo<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /foo>#|(<Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(R|<local>/c|), fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        R|/foo<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /foo>#|(<Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(R|<local>/c|), fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         }
         )
     }
