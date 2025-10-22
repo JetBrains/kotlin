@@ -87,6 +87,7 @@ class WasmCompiledFileFragment(
     val objectInstanceFieldInitializers: MutableList<IdSignature> = mutableListOf(),
     val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
 
+    var associatedObjectGetter: WasmSymbol<WasmFunction>? = null,
     val moduleIdMaskGlobal: WasmSymbol<WasmGlobal> = WasmSymbol(),
     val tableFunctions: MutableSet<WasmSymbol<WasmFunction>> = identityHashSetOf(),
 ) : IrICProgramFragment()
@@ -107,6 +108,8 @@ class WasmCompiledModuleFragment(
     var declarativeFuncElements: List<WasmElement> = mutableListOf()
     var functionsTableValues: List<WasmTable.Value.Function> = mutableListOf()
     val tableFunctionIndicesMap: MutableMap<WasmSymbol<WasmFunction>, Int> = mutableMapOf()
+
+    val associatedObjectGetter: WasmFunction.Defined? = createAssociatedObjectGetterFunction()
 
     private val importedModuleIdGlobal : WasmGlobal = WasmGlobal(
         name = "moduleInstanceId",
@@ -185,6 +188,7 @@ class WasmCompiledModuleFragment(
                 }
             }
         }
+        associatedObjectGetter?.let { definedFunctions.add(it) }
         return definedFunctions to importedFunctions
     }
 
@@ -202,11 +206,7 @@ class WasmCompiledModuleFragment(
         val fieldInitializerFunction =
             createFieldInitializerFunction(stringPoolSize, stringAddressesAndLengthsGlobal, wasmLongArrayDeclaration)
         definedFunctions.add(fieldInitializerFunction)
-
-        val associatedObjectGetter = createAssociatedObjectGetterFunction(additionalTypes)
-        if (associatedObjectGetter != null) {
-            definedFunctions.add(associatedObjectGetter)
-        }
+        associatedObjectGetter?.let { definedFunctions.add(it) }
 
         val masterInitFunction = createAndExportMasterInitFunction(fieldInitializerFunction, associatedObjectGetter, initializeUnit)
         exports.add(WasmExport.Function("_initialize", masterInitFunction))
@@ -274,6 +274,7 @@ class WasmCompiledModuleFragment(
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
+        associatedObjectGetter?.let { additionalTypes.add(it.type.owner) }
 
         createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, initializeUnit, exports, globals)
 
@@ -595,13 +596,7 @@ class WasmCompiledModuleFragment(
                 // we do not register descriptor while no need in it
                 val registerModuleDescriptor = tryFindBuiltInFunction { it.registerModuleDescriptor }
                     ?: compilationException("kotlin.registerModuleDescriptor is not file in fragments", null)
-                if (useSharedObjects) {
-                    val funcTableIdx : Int = tableFunctionIndicesMap[WasmSymbol(tryGetAssociatedObject)]
-                        ?: error("Missing table index for 'getAssociatedObject'")
-                    buildConstI32(funcTableIdx, location = serviceCodeLocation)
-                } else {
-                    buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(tryGetAssociatedObject)))
-                }
+                buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(tryGetAssociatedObject)))
                 buildInstr(WasmOp.CALL, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(registerModuleDescriptor)))
             }
 
@@ -625,9 +620,7 @@ class WasmCompiledModuleFragment(
         buildSetGlobal(WasmSymbol(moduleIdMaskGlobal), serviceCodeLocation)
     }
 
-    private fun createAssociatedObjectGetterFunction(
-        additionalTypes: MutableList<WasmTypeDeclaration>
-    ): WasmFunction.Defined? {
+    private fun createAssociatedObjectGetterFunction(): WasmFunction.Defined? {
         // If AO accessor removed by DCE - we do not need it then
         if (tryFindBuiltInFunction { it.tryGetAssociatedObject } == null) return null
 
@@ -636,7 +629,6 @@ class WasmCompiledModuleFragment(
 
         val nullableAnyWasmType = WasmRefNullType(WasmHeapType.Type(WasmSymbol(kotlinAny)))
         val associatedObjectGetterType = WasmFunctionType(listOf(WasmI64, WasmI64), listOf(nullableAnyWasmType))
-        additionalTypes.add(associatedObjectGetterType)
 
         val associatedObjectGetter = WasmFunction.Defined("_associatedObjectGetter", WasmSymbol(associatedObjectGetterType))
         val associatedObjectGetterSym = WasmSymbol(associatedObjectGetter)
@@ -965,6 +957,11 @@ class WasmCompiledModuleFragment(
         bindUniqueJsFunNames()
         for (fragment in wasmCompiledFileFragments) {
             fragment.moduleIdMaskGlobal.bind(moduleIdMaskGlobal)
+        }
+        associatedObjectGetter?.let {
+            for (fragment in wasmCompiledFileFragments) {
+                fragment.associatedObjectGetter?.bind(it)
+            }
         }
     }
 

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationWasmSymbols
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 class WasmModuleFragmentGenerator(
     private val backendContext: WasmBackendContext,
@@ -114,7 +117,9 @@ private fun compileIrFile(
         skipCommentInstructions,
         inlineUnitGetter,
     )
-    for (irDeclaration in irFile.declarations) {
+    val useSharedObjects = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
+    val irDeclarations = irFile.declarations.filterNot { useSharedObjects && it.isIncompatibleWithSharedMode(backendContext.wasmSymbols) }
+    for (irDeclaration in irDeclarations) {
         irDeclaration.acceptVoid(generator)
     }
 
@@ -160,6 +165,24 @@ private fun compileIrFile(
     }
 
     backendContext.defineBuiltinSignatures(irFile, wasmFileCodegenContext)
+}
+
+// Some declarations that use funcref types (e.g. wasmModule.kt/WasmModuleDescriptor) are incompatible with "shared" mode.
+// Normally, they are removed by DCE, but some tests currently run in 'dev', thus the known incompatible types/globals/functions
+// need to be removed manually
+private fun IrDeclaration.isIncompatibleWithSharedMode(wasmSymbols: WasmSymbols): Boolean {
+    val parentFile = this.fileOrNull ?: return false
+    if (parentFile.packageFqName != PreSerializationWasmSymbols.Impl.wasmInternalFqName) return false
+
+    when (this) {
+        is IrClass if name.asString() == "WasmModuleDescriptor" -> return true
+        is IrField if name.asString() == "moduleDescriptors" -> return true
+        is IrSimpleFunction if correspondingPropertySymbol?.owner?.name?.asString() == "moduleDescriptors" -> return true
+        is IrSimpleFunction if symbol == wasmSymbols.tryGetAssociatedObjectSingleModuleImpl -> return true
+        is IrSimpleFunction if name.asString() == "registerModuleDescriptor" -> return true
+        is IrSimpleFunction if name.asString() == "<init properties wasmModule.kt>" -> return true
+        else -> return false
+    }
 }
 
 private fun WasmBackendContext.defineBuiltinSignatures(irFile: IrFile, wasmFileCodegenContext: WasmFileCodegenContext) {

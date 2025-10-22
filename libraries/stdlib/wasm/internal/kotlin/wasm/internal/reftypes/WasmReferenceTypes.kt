@@ -24,6 +24,3 @@ internal interface eqref : anyref
 internal interface structref : eqref
 internal interface i31ref : eqref
 internal interface funcref : anyref
-
-// compiles as `funcref` in normal mode, and as `i32` with `-Xwasm-use-shared-objects`
-internal interface SmartShareableFuncRef : anyref

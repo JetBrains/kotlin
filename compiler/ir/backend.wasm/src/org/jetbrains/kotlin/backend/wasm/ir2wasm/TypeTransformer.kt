@@ -119,8 +119,7 @@ class WasmTypeTransformer(
                     "structref" ->
                         WasmRefNullType(WasmHeapType.Simple.Struct)
                     "i31ref" -> WasmI31Ref
-                    "SmartShareableFuncRef" if useSharedObjects -> WasmI32
-                    "funcref", "SmartShareableFuncRef" -> WasmRefNullType(WasmHeapType.Simple.Func)
+                    "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
                     else -> error("Unknown reference type $name")
                 }
             )

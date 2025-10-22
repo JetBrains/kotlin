@@ -52,6 +52,7 @@ class BodyGenerator(
     private val unitInstanceField by lazy { backendContext.findUnitInstanceField() }
 
     private val useSharedObjects = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
+    private val singleModuleMode = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)
 
     fun WasmExpressionBuilder.buildGetUnit() {
         if (inlineUnitGetter) {
@@ -1293,8 +1294,16 @@ class BodyGenerator(
 
             wasmSymbols.callAssociatedObjectGetter -> {
                 val tryGetAssociatedObjectType =
-                    wasmFileCodegenContext.referenceFunctionType(backendContext.wasmSymbols.tryGetAssociatedObject)
+                    wasmFileCodegenContext.referenceFunctionType(backendContext.wasmSymbols.tryGetAssociatedObjectSingleModuleImpl)
                 body.buildInstrCallRefWithCastOrIndirect(tryGetAssociatedObjectType, location)
+            }
+
+            wasmSymbols.tryGetAssociatedObject -> {
+                val implFunctionSymbol = if (singleModuleMode)
+                    wasmFileCodegenContext.referenceFunction(backendContext.wasmSymbols.tryGetAssociatedObjectSingleModuleImpl)
+                else
+                    wasmFileCodegenContext.referenceGetAssociatedObjectFunction()
+                body.buildCall(implFunctionSymbol, location)
             }
 
             else -> {

@@ -72,6 +72,7 @@ class WasmSymbols(
     )
 
     val tryGetAssociatedObject = getInternalWasmFunction("tryGetAssociatedObject")
+    val tryGetAssociatedObjectSingleModuleImpl = getInternalWasmFunction("tryGetAssociatedObject_singleModuleImpl")
     internal val callAssociatedObjectGetter = getInternalWasmFunction("callAssociatedObjectGetter")
     val registerModuleDescriptor = getInternalWasmFunction("registerModuleDescriptor")
 
