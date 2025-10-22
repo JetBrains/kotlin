@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
@@ -298,9 +299,9 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             forceClangToReexecute.deleteRecursively()
         }
 
-        execOps.exec {
-            it.workingDir(projectRoot)
-            it.commandLine(
+        execOps.exec { exec ->
+            exec.workingDir(projectRoot)
+            exec.commandLine(
                 "xcodebuild", "build",
                 "-scheme", SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
                 "-destination", "generic/platform=${xcodebuildPlatform.get()}",
@@ -311,7 +312,22 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 // FIXME: Check how truly necessary this is
                 "CODE_SIGN_IDENTITY=",
             )
-            it.environment(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV, clangArgsDump)
+            exec.environment(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV, clangArgsDump)
+
+            val environmentToFilter = listOf(
+                "EMBED_PACKAGE_RESOURCE_BUNDLE_NAMES",
+            ) + AppleSdk.xcodeEnvironmentDebugDylibVars
+            environmentToFilter.forEach {
+                if (exec.environment.containsKey(it)) {
+                    exec.environment.remove(it)
+                }
+            }
+            // FIXME: Xcodebuild passes these from env to somewhere
+            exec.environment.keys.filter {
+                it.startsWith("OTHER_")
+            }.forEach {
+                exec.environment.remove(it)
+            }
         }
 
         architectures.get().forEach { architecture ->

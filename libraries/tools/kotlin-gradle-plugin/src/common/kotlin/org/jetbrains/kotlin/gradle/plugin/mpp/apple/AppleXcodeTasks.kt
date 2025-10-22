@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
+import com.google.gson.Gson
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -12,6 +13,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
@@ -25,6 +27,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsym
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticImportProjectAndFetchPackages.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.property
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -204,6 +208,7 @@ internal fun Project.registerEmbedSwiftExportTask(
     }
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
+    val syntheticImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
 
     val swiftExportTask = registerSwiftExportTask(
         swiftExportExtension,
@@ -213,6 +218,7 @@ internal fun Project.registerEmbedSwiftExportTask(
     )
 
     swiftExportTask.dependsOn(sandBoxTask)
+    swiftExportTask.dependsOn(syntheticImportProjectCheck)
 
     val embedAndSignTask = locateOrRegisterTask<DefaultTask>(binaryTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
@@ -239,6 +245,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     }
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
+    val syntheticImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
     val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
 
     val builtProductsDir = builtProductsDir(frameworkTaskName, environment)
@@ -266,6 +273,9 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
 
     assembleTask.taskProvider.dependsOn(sandBoxTask)
     framework.linkTaskProvider.dependsOn(sandBoxTask)
+
+    assembleTask.taskProvider.dependsOn(syntheticImportProjectCheck)
+    framework.linkTaskProvider.dependsOn(syntheticImportProjectCheck)
 
     val embedAndSignTask = registerEmbedTask(framework, frameworkTaskName, environment) { !framework.isStatic } ?: return
     embedAndSignTask.dependsOn(assembleTask.taskProvider)
@@ -362,6 +372,42 @@ private fun Project.registerEmbedTask(
     return embedAndSignTask
 }
 
+fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
+    execOperations: ExecOperations,
+) {
+    val projectThatCalledEmbedAndSign = File(System.getenv("PROJECT_FILE_PATH")!!).resolve("project.pbxproj")
+    val temporaries = File(System.getenv("TEMP_FILES_DIR")!!)
+    val jsonProjectIntermediate = temporaries.resolve("projectCheck.json")
+    execOperations.exec {
+        it.commandLine(
+            "/usr/bin/plutil",
+            "-convert", "json",
+            projectThatCalledEmbedAndSign,
+            "-o", jsonProjectIntermediate
+        )
+    }
+
+    val json = jsonProjectIntermediate.bufferedReader().use {
+        Gson().fromJson(it, Map::class.java) as Map<String, Any>
+    }
+    val objects = json.property<Map<String, Any>>("objects")
+    // FIXME: Check if the product is correctly integrated into the build phase
+    val hasSyntheticImportProjectReference = objects.values.any { pbxObject ->
+        @Suppress("UNCHECKED_CAST")
+        pbxObject as Map<String, Any>
+        val type = pbxObject.property<String>("isa")
+        if (type == "XCSwiftPackageProductDependency") {
+            val packageProductName = pbxObject.property<String>("productName")
+            packageProductName == SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+        } else false
+    }
+    if (!hasSyntheticImportProjectReference) {
+        val message = "You have SwiftPM dependencies and are using embedAndSign integration. Please integrate with synthetic import project at path TODO/(call gradlew TODO to update your project)"
+        println("error: $message")
+        error(message)
+    }
+}
+
 private fun Project.checkSandboxAndWriteProtectionTask(
     environment: XcodeEnvironment,
     userScriptSandboxingEnabled: Boolean,
@@ -372,6 +418,16 @@ private fun Project.checkSandboxAndWriteProtectionTask(
 
         task.builtProductsDir.set(environment.builtProductsDir)
         task.userScriptSandboxingEnabled.set(userScriptSandboxingEnabled)
+    }
+
+private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated() =
+    locateOrRegisterTask<DefaultTask>("checkSyntheticImportProjectIsCorrectlyIntegrated") { task ->
+        task.group = BasePlugin.BUILD_GROUP
+        task.description = "Check embedAndSign is integrated correctly into the project"
+        val execOps = project.serviceOf<ExecOperations>()
+        task.doFirst {
+            checkIfTheLinkageProjectIsConnectedToTheXcodeProject(execOps)
+        }
     }
 
 private fun Project.shouldRegisterEmbedTask(environment: XcodeEnvironment, frameworkTaskName: String): Boolean {
