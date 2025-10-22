@@ -307,6 +307,10 @@ open class NativeInteropPlugin : Plugin<Project> {
                     if (HostManager.hostIsMac) {
                         // Set install_name to a non-absolute path.
                         add("-Wl,-install_name,@rpath/$library")
+                        // Unlike -ffile-prefix-map for clang, it's only possible to add a single directory for -oso_prefix:
+                        // see https://github.com/apple-opensource/ld64/blob/e28c028b20af187a16a7161d89e91868a450cadc/src/ld/Options.cpp#L4069
+                        // Currently, we only need it for dependencies from inside the repo, so strip the root project's absolute path.
+                        add("-Wl,-oso_prefix,${isolated.rootProject.projectDirectory.asFile}")
                     }
                     if (HostManager.hostIsMingw) {
                         // Use binary hash as the timestamp in COFF headers.
