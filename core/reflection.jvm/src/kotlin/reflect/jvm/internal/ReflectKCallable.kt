@@ -25,7 +25,10 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
 
     val rawBoundReceiver: Any?
 
-    val receiverParameters: List<KParameter>
+    /**
+     * In contrast to [parameters], includes instance/extension/context parameters, even if the callable is bound.
+     */
+    val allParameters: List<KParameter>
 
     /**
      * Instance which is used to perform a positional call, i.e. `call`.

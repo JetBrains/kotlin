@@ -28,34 +28,35 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
 
     override val annotations: List<Annotation> get() = _annotations()
 
-    private val _receiverParameters = ReflectProperties.lazySoft {
-        val result = ArrayList<KParameter>()
-        val instanceReceiver = descriptor.instanceReceiverParameter
-        if (instanceReceiver != null) {
-            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.INSTANCE) { instanceReceiver })
-        }
+    private val _allParameters = ReflectProperties.lazySoft { computeParameters(includeReceivers = true) }
 
-        val contextParameters = descriptor.computeContextParameters()
-        for (i in contextParameters.indices) {
-            @OptIn(ExperimentalContextParameters::class)
-            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.CONTEXT) { contextParameters[i] })
-        }
-
-        val extensionReceiver = descriptor.extensionReceiverParameter
-        if (extensionReceiver != null) {
-            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.EXTENSION_RECEIVER) { extensionReceiver })
-        }
-        result
-    }
-
-    override val receiverParameters: List<KParameter> get() = _receiverParameters()
+    override val allParameters: List<KParameter> get() = _allParameters()
 
     private val _parameters = ReflectProperties.lazySoft {
+        if (isBound) computeParameters(includeReceivers = false) else allParameters
+    }
+
+    override val parameters: List<KParameter> get() = _parameters()
+
+    private fun computeParameters(includeReceivers: Boolean): List<KParameter> {
         val descriptor = descriptor
         val result = ArrayList<KParameter>()
+        if (includeReceivers) {
+            val instanceReceiver = descriptor.instanceReceiverParameter
+            if (instanceReceiver != null) {
+                result.add(DescriptorKParameter(this, result.size, KParameter.Kind.INSTANCE) { instanceReceiver })
+            }
 
-        if (!isBound) {
-            result.addAll(receiverParameters)
+            val contextParameters = descriptor.computeContextParameters()
+            for (i in contextParameters.indices) {
+                @OptIn(ExperimentalContextParameters::class)
+                result.add(DescriptorKParameter(this, result.size, KParameter.Kind.CONTEXT) { contextParameters[i] })
+            }
+
+            val extensionReceiver = descriptor.extensionReceiverParameter
+            if (extensionReceiver != null) {
+                result.add(DescriptorKParameter(this, result.size, KParameter.Kind.EXTENSION_RECEIVER) { extensionReceiver })
+            }
         }
 
         for (i in descriptor.valueParameters.indices) {
@@ -70,7 +71,7 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         }
 
         result.trimToSize()
-        result
+        return result
     }
 
     private fun CallableMemberDescriptor.computeContextParameters(): List<ValueParameterDescriptor> {
@@ -96,9 +97,6 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
             )
         }
     }
-
-    override val parameters: List<KParameter>
-        get() = _parameters()
 
     private val _returnType = ReflectProperties.lazySoft {
         DescriptorKType(descriptor.returnType!!) {

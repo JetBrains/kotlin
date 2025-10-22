@@ -11,7 +11,6 @@ import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.ThrowingCaller
 
 internal abstract class KotlinKCallable<out R> : ReflectKCallable<R> {
-    abstract val allParameters: List<KParameter>
     abstract val modality: Modality
     abstract override val rawBoundReceiver: Any?
 
@@ -31,15 +30,6 @@ internal abstract class KotlinKCallable<out R> : ReflectKCallable<R> {
                 "Local delegated properties and their accessors can only have value parameters"
             }
             return allParameters
-        }
-
-    override val receiverParameters: List<KParameter>
-        get() {
-            checkLocalDelegatedPropertyOrAccessor()
-            require(allParameters.all { it.kind == KParameter.Kind.VALUE }) {
-                "Local delegated properties and their accessors can only have value parameters"
-            }
-            return emptyList()
         }
 
     abstract override val annotations: List<Annotation>
