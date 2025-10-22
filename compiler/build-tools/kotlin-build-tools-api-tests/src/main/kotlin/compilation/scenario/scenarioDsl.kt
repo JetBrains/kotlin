@@ -165,7 +165,7 @@ private class ScenarioDsl(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
         icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
@@ -180,7 +180,7 @@ private class ScenarioDsl(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        compilationConfigAction: ((JvmCompilationOperation) -> Unit),
+        compilationConfigAction: ((JvmCompilationOperation.Builder) -> Unit),
         icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }

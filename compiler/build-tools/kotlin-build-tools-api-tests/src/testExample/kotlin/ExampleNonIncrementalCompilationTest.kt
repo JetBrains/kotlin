@@ -26,10 +26,10 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
             // this is not the scenario DSL, so the modules are not built at this moment
 
             // you should handle the right order of compilation between modules yourself
-            module1.compile { module ->
+            module1.compile(compilationAction = {}) { module ->
                 assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
             }
-            module2.compile { module ->
+            module2.compile(compilationAction = {}) { module ->
                 assertOutputs(module, "AKt.class", "BKt.class")
             }
         }
@@ -58,7 +58,7 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
                 """.trimIndent()
             )
 
-            module1.compile { module ->
+            module1.compile(compilationAction = {}) { module ->
                 assertOutputs(module, "UsageKt.class", "org/example/packages/SeriousClass.class")
             }
         }
@@ -72,7 +72,7 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
 
             module1.sourcesDirectory.resolve("bar.kt").writeText("aaaa")
 
-            module1.compile {
+            module1.compile(compilationAction = {}) {
                 expectFail()
                 assertLogContainsPatterns(LogLevel.ERROR, ".*bar\\.kt:1:1 Syntax error: Expecting a top level declaration.*".toRegex())
 

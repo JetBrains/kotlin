@@ -23,10 +23,10 @@ class ExampleCompatibilityCompilationTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
-            module1.compile { module ->
+            module1.compile(compilationAction = {}) { module ->
                 assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
             }
-            module2.compile { module ->
+            module2.compile(compilationAction = {}) { module ->
                 assertOutputs(module, "AKt.class", "BKt.class")
             }
         }

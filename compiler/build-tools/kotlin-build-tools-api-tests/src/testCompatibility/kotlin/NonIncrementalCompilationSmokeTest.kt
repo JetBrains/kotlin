@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.buildtools.api.tests
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
@@ -28,10 +27,10 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
-            module1.compile { module ->
+            module1.compile(compilationAction = {}) { module ->
                 assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
             }
-            module2.compile { module ->
+            module2.compile(compilationAction = {}) { module ->
                 assertOutputs(module, "AKt.class", "BKt.class")
             }
         }
@@ -44,7 +43,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
         project(strategyConfig) {
             val module1 = module("kotlin-java-mixed")
 
-            module1.compile { module ->
+            module1.compile(compilationAction = {}) { module ->
                 assertOutputs(module, "bpkg/MainKt.class", "bpkg/BClass.class")
                 if (strategyConfig.first::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
                     assertLogContainsSubstringExactlyTimes(LogLevel.DEBUG, "AClass.java", 1) // no duplication of java sources
@@ -59,14 +58,14 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("jvm-module-1")
     fun removedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
-            val module1 = module("jvm-module-1") { it: JvmCompilationOperation ->
+            val module1 = module("jvm-module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_USE_K2_KAPT] = true
             }
             if (kotlinToolchain.getCompilerVersion().startsWith("2.3") || kotlinToolchain.getCompilerVersion().startsWith("2.0")) {
-                val exception = assertThrows<IllegalStateException> { module1.compile {} }
+                val exception = assertThrows<IllegalStateException> { module1.compile(compilationAction = {}) }
                 assert(exception.message?.contains("Compiler parameter not recognized: X_USE_K2_KAPT") == true) { "Expected exception message to contain 'Compiler parameter not recognized: X_USE_K2_KAPT'" }
             } else {
-                module1.compile { module ->
+                module1.compile(compilationAction = {}) { module ->
                     assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
                 }
             }
@@ -79,14 +78,14 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("jvm-module-1")
     fun addedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
-            val module1 = module("jvm-module-1") { it: JvmCompilationOperation ->
+            val module1 = module("jvm-module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_ANNOTATIONS_IN_METADATA] = true
             }
             if (kotlinToolchain.getCompilerVersion().startsWith("2.0") || kotlinToolchain.getCompilerVersion().startsWith("2.1")) {
-                val exception = assertThrows<IllegalStateException> { module1.compile {} }
+                val exception = assertThrows<IllegalStateException> { module1.compile(compilationAction = {}) }
                 assert(exception.message?.contains("Compiler parameter not recognized: X_ANNOTATIONS_IN_METADATA") == true) { "Expected exception message to contain 'Compiler parameter not recognized: X_ANNOTATIONS_IN_METADATA'" }
             } else {
-                module1.compile { module ->
+                module1.compile(compilationAction = {}) { module ->
                     assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
                 }
             }

@@ -23,6 +23,12 @@ import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
  */
 @ExperimentalBuildToolsApi
 public interface BuildOperation<R> {
+
+    public interface Builder {
+        public operator fun <V> get(key: Option<V>): V
+        public operator fun <V> set(key: Option<V>, value: V)
+    }
+
     /**
      * Base class for [JvmCompilationOperation] options.
      *
@@ -42,6 +48,7 @@ public interface BuildOperation<R> {
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
+    @Deprecated("Use Builder") // TODO
     public operator fun <V> set(key: Option<V>, value: V)
 
     public companion object {

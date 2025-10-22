@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.jvm.operations
 
+import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
@@ -34,6 +35,16 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
  */
 @ExperimentalBuildToolsApi
 public interface JvmCompilationOperation : CancellableBuildOperation<CompilationResult> {
+
+    public interface Builder : BuildOperation.Builder {
+        public val compilerArguments: JvmCompilerArguments
+        public operator fun <V> get(key: Option<V>): V
+        public operator fun <V> set(key: Option<V>, value: V)
+        public fun build(): JvmCompilationOperation
+    }
+
+    public fun toBuilder(): Builder
+
     /**
      * Base class for [JvmCompilationOperation] options.
      *
@@ -53,6 +64,7 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
+    @Deprecated("Use JvmCompilationOperation.Builder.set instead")
     public operator fun <V> set(key: Option<V>, value: V)
 
     /**
@@ -78,6 +90,7 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
      * ```
      * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
      */
+    @Deprecated("Use JvmToolchains.createSnapshotBasedIcOptions() instead")
     public fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
 
     public companion object {

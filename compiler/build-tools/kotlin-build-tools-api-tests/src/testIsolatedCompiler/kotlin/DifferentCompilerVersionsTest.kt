@@ -28,7 +28,7 @@ class DifferentCompilerVersionsTest : BaseCompilationTest() {
         val toolchain = KotlinToolchains.loadImplementation(compilerClassloader)
         project(toolchain, toolchain.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1", stdlibClasspath = stdlibClasspath)
-            module1.compile { module ->
+            module1.compile(compilationAction = {}) { module ->
                 assertOutputs(module, "FooKt.class", "Bar.class", "BazKt.class")
             }
         }

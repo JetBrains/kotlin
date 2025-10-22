@@ -29,7 +29,7 @@ interface Scenario {
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-        compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
         icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit) = {},
     ): ScenarioModule
 
@@ -53,7 +53,7 @@ interface Scenario {
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-        compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
         icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit) = {},
     ): ScenarioModule
 }

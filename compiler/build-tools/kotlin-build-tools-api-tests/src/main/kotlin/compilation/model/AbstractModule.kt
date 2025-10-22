@@ -52,7 +52,7 @@ private class CompilationOutcomeImpl(
 data class AbstractModuleCacheKey(
     val moduleName: String,
     val dependencies: List<DependencyScenarioDslCacheKey>,
-    val compilationArguments: (JvmCompilationOperation) -> Unit,
+    val compilationArguments: (JvmCompilationOperation.Builder) -> Unit,
 ) : DependencyScenarioDslCacheKey
 
 abstract class AbstractModule(
@@ -61,7 +61,7 @@ abstract class AbstractModule(
     val moduleDirectory: Path,
     val dependencies: List<Dependency>,
     override val defaultStrategyConfig: ExecutionPolicy,
-    final override val moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit,
+    final override val moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
 ) : Module {
     override val sourcesDirectory: Path
         get() = moduleDirectory.resolve("src")
@@ -87,11 +87,12 @@ abstract class AbstractModule(
     override fun compile(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
         assertions: CompilationOutcome.(Module) -> Unit,
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
-        val result = compileImpl(strategyConfig, compilationConfigAction, kotlinLogger)
+        val result = compileImpl(strategyConfig, compilationConfigAction, compilationAction, kotlinLogger)
         val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel, result)
         try {
             assertions(outcome, this)
@@ -115,7 +116,8 @@ abstract class AbstractModule(
 
     protected abstract fun compileImpl(
         strategyConfig: ExecutionPolicy,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger,
     ): CompilationResult
 

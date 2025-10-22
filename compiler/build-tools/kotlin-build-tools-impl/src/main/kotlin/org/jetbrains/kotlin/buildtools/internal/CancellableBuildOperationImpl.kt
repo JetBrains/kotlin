@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
 import org.jetbrains.kotlin.daemon.common.makeAutodeletingFlagFile
 import org.jetbrains.kotlin.progress.CompilationCanceledException
@@ -14,7 +15,8 @@ import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
-internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>(), CancellableBuildOperation<R> {
+internal abstract class CancellableBuildOperationImpl<R>() :
+    BuildOperationImpl<R>(), CancellableBuildOperation<R> {
     private val isCancelled: AtomicBoolean = AtomicBoolean(false)
     private val compilationAliveFile: File = makeAutodeletingFlagFile(keyword = "compilation")
 

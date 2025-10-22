@@ -41,7 +41,41 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
      * @param destinationDirectory where to put the output of the compilation
      * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession.executeOperation
      */
+    @Deprecated("Use newJvmCompilationOperation instead", ReplaceWith("newJvmCompilationOperation(sources, destinationDirectory)"))
     public fun createJvmCompilationOperation(sources: List<Path>, destinationDirectory: Path): JvmCompilationOperation
+
+    /**
+     * Creates a builder for an operation for compiling Kotlin sources into class files.
+     *
+     * Note that [sources] should include .java files from the same module (as defined in https://kotl.in/spec-modules),
+     * so that Kotlin compiler can properly resolve references to Java code and track changes in them.
+     * However, Kotlin compiler will not compile the .java files.
+     *
+     * @param sources all sources of the compilation unit. This includes Java source files.
+     * @param destinationDirectory where to put the output of the compilation
+     * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession.executeOperation
+     */
+    public fun jvmCompilationOperationBuilder(sources: List<Path>, destinationDirectory: Path): JvmCompilationOperation.Builder
+
+    /**
+     * Creates an options set for snapshot-based incremental compilation (IC) in JVM projects.
+     * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
+     * ```
+     * val icOptions = kotlinToolchains.jvm.createSnapshotBasedIcOptions()
+     *
+     * icOptions[JvmIncrementalCompilationOptions.BACKUP_CLASSES] = true
+     *
+     * compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = JvmIncrementalCompilationConfiguration(
+     *     workingDirectory = Paths.get("build/kotlin"),
+     *     sourcesChanges = SourcesChanges.ToBeCalculated,
+     *     dependenciesSnapshotFiles = snapshots,
+     *     shrunkClasspathSnapshot = shrunkSnapshot,
+     *     options = icOptions,
+     * )
+     * ```
+     * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+     */
+    public fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
 
     /**
      * Creates a build operation for calculating classpath snapshots used for detecting changes in incremental compilation.

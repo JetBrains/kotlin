@@ -27,7 +27,6 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.pathString
-import kotlin.io.path.toPath
 import kotlin.io.path.walk
 
 class JvmModule(
@@ -39,7 +38,7 @@ class JvmModule(
     dependencies: List<Dependency>,
     defaultStrategyConfig: ExecutionPolicy,
     private val snapshotConfig: SnapshotConfig,
-    moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+    moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
     private val stdlibLocation: List<Path>,
 ) : AbstractModule(
     project,
@@ -62,12 +61,13 @@ class JvmModule(
 
     override fun compileImpl(
         strategyConfig: ExecutionPolicy,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger
     ): CompilationResult {
         val allowedExtensions = setOf("kt", "kts", "java")
 
-        val compilationOperation = kotlinToolchain.jvm.createJvmCompilationOperation(
+        val compilationOperation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(
             sourcesDirectory.walk()
                 .filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
                 .toList(),
@@ -80,7 +80,10 @@ class JvmModule(
         compilationOperation.compilerArguments[CLASSPATH] = compileClasspath
         compilationOperation.compilerArguments[MODULE_NAME] = moduleName
 
-        return buildSession.executeOperation(compilationOperation, strategyConfig, kotlinLogger)
+        return compilationOperation.build().let {
+            compilationAction(it)
+            buildSession.executeOperation(it, strategyConfig, kotlinLogger)
+        }
     }
 
     private fun generateClasspathSnapshot(dependency: Dependency): Path {
@@ -106,7 +109,7 @@ class JvmModule(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
         forceNonIncrementalCompilation: Boolean,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
         icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationOptions) -> Unit,
         assertions: CompilationOutcome.(Module) -> Unit,
     ): CompilationResult {
@@ -115,7 +118,7 @@ class JvmModule(
                 generateClasspathSnapshot(it).toFile()
             }
 
-            val snapshotIcOptions = compilationOperation.createSnapshotBasedIcOptions()
+            val snapshotIcOptions = kotlinToolchain.jvm.createSnapshotBasedIcOptions()
             snapshotIcOptions[MODULE_BUILD_DIR] = buildDirectory
             snapshotIcOptions[ROOT_PROJECT_DIR] = project.projectDirectory
             snapshotIcOptions[FORCE_RECOMPILATION] = forceNonIncrementalCompilation
@@ -132,7 +135,7 @@ class JvmModule(
 
             compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = incrementalConfiguration
             compilationConfigAction(compilationOperation)
-        }, assertions)
+        }, {}, assertions)
     }
 
     override fun prepareExecutionProcessBuilder(

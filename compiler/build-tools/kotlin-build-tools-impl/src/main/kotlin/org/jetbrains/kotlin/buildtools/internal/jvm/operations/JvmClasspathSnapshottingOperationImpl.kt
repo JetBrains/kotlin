@@ -20,8 +20,6 @@ internal class JvmClasspathSnapshottingOperationImpl(
     private val classpathEntry: Path,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
 
-    private val options: Options = Options(JvmClasspathSnapshottingOperation::class)
-
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
 
@@ -29,6 +27,8 @@ internal class JvmClasspathSnapshottingOperationImpl(
     override fun <V> set(key: JvmClasspathSnapshottingOperation.Option<V>, value: V) {
         options[key] = value
     }
+
+    override val options: Options = Options(JvmClasspathSnapshottingOperation::class)
 
     override fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
         val granularity: ClassSnapshotGranularity = options["GRANULARITY"]

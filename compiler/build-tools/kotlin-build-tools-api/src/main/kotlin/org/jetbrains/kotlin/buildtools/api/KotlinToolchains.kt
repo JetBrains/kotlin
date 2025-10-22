@@ -5,9 +5,20 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Toolchain
+import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.PreKotlin220Wrapper
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.PreKotlin230Wrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * The main entry point to the Build Tools API.
@@ -136,14 +147,24 @@ public interface KotlinToolchains {
          * If executing operations using [ExecutionPolicy.WithDaemon], a [java.net.URLClassLoader] must be used here.
          */
         @JvmStatic
-        public fun loadImplementation(classLoader: ClassLoader): KotlinToolchains =
-            try {
-                loadImplementation(KotlinToolchains::class, classLoader)
-            } catch (_: NoImplementationFoundException) {
-                @Suppress("DEPRECATION")
-                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter").constructors.first()
-                    .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchains
+        public fun loadImplementation(classLoader: ClassLoader): KotlinToolchains = try {
+            val baseImplementation = loadImplementation(KotlinToolchains::class, classLoader)
+            val kotlinCompilerVersion = KotlinCompilerVersion(baseImplementation.getCompilerVersion())
+            when {
+                kotlinCompilerVersion <= KotlinCompilerVersion(2, 3, 0, null) -> {
+                    PreKotlin230Wrapper(baseImplementation)
+                }
+                else -> baseImplementation
             }
+        } catch (_: NoImplementationFoundException) {
+            try {
+                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter")
+                    .constructors.first()
+                    .newInstance(@Suppress("DEPRECATION") CompilationService.loadImplementation(classLoader)) as KotlinToolchains
+            } catch (e: ClassNotFoundException) {
+                throw NoImplementationFoundException(KotlinToolchains::class).initCause(e)
+            }
+        }
     }
 }
 
@@ -157,4 +178,39 @@ public interface KotlinToolchains {
 @ExperimentalBuildToolsApi
 public inline fun <reified T : Toolchain> KotlinToolchains.getToolchain(): T {
     return getToolchain(T::class.java)
+}
+
+
+// coroutines helpers
+
+public object KotlinToolchainsDispatcherProvider {
+    public var dispatcher: CoroutineDispatcher = Dispatchers.IO
+        set(value) {
+            field = value
+            executor = dispatcher.asExecutor()
+        }
+
+    internal var executor: Executor = dispatcher.asExecutor()
+}
+
+@ExperimentalBuildToolsApi
+public suspend fun <R> KotlinToolchains.BuildSession.executeCancellable(
+    operation: CancellableBuildOperation<R>,
+    executionPolicy: ExecutionPolicy,
+    logger: KotlinLogger?,
+): R = suspendCancellableCoroutine { continuation ->
+    continuation.invokeOnCancellation {
+        operation.cancel()
+    }
+    CompletableFuture.runAsync(
+        {
+            try {
+                val result = executeOperation(operation, executionPolicy, logger)
+                continuation.resume(result)
+            } catch (t: Throwable) {
+                continuation.resumeWithException(t)
+            }
+        },
+        KotlinToolchainsDispatcherProvider.executor,
+    )
 }

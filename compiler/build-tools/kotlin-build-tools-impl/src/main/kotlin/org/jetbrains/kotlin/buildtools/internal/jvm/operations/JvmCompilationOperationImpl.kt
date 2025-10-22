@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -60,13 +61,42 @@ import java.nio.file.Path
 import java.rmi.RemoteException
 import kotlin.io.path.absolutePathString
 
-internal class JvmCompilationOperationImpl(
+internal class JvmCompilationOperationImpl private constructor(
+    override val options: Options = Options(JvmCompilationOperation::class),
     private val kotlinSources: List<Path>,
     private val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
-) : CancellableBuildOperationImpl<CompilationResult>(), JvmCompilationOperation {
-    private val options: Options = Options(JvmCompilationOperation::class)
+) : CancellableBuildOperationImpl<CompilationResult>(),
+    JvmCompilationOperation,
+    JvmCompilationOperation.Builder,
+    DeepCopyable<JvmCompilationOperationImpl> {
+    constructor(
+        kotlinSources: List<Path>,
+        destinationDirectory: Path,
+        compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
+        buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+    ) : this(
+        Options(JvmCompilationOperation::class),
+        kotlinSources,
+        destinationDirectory,
+        compilerArguments,
+        buildIdToSessionFlagFile
+    )
+
+    override fun toBuilder(): JvmCompilationOperation.Builder {
+        return deepCopy()
+    }
+
+    override fun deepCopy(): JvmCompilationOperationImpl {
+        return JvmCompilationOperationImpl(
+            options.deepCopy(),
+            kotlinSources,
+            destinationDirectory,
+            JvmCompilerArgumentsImpl().also { newArgs -> newArgs.applyArgumentStrings(compilerArguments.toArgumentStrings()) },
+            buildIdToSessionFlagFile
+        )
+    }
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmCompilationOperation.Option<V>): V = options[key]
@@ -74,6 +104,10 @@ internal class JvmCompilationOperationImpl(
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
         options[key] = value
+    }
+
+    override fun build(): JvmCompilationOperation {
+        return deepCopy()
     }
 
     private operator fun <V> get(key: Option<V>): V = options[key]
@@ -88,6 +122,7 @@ internal class JvmCompilationOperationImpl(
         constructor(id: String, default: V) : super(id, default = default)
     }
 
+    @Deprecated("Use JvmToolchains.createSnapshotBasedIcOptions() instead")
     override fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions {
         return JvmSnapshotBasedIncrementalCompilationOptionsImpl()
     }
@@ -164,7 +199,6 @@ internal class JvmCompilationOperationImpl(
             )
         }
     }
-
 
     private fun compileWithDaemon(
         projectId: ProjectId,
@@ -412,7 +446,6 @@ internal class JvmCompilationOperationImpl(
             }
         }
     }
-
 
     companion object {
         val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)

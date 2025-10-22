@@ -12,12 +12,13 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 
 internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
-    private val options: Options = Options(BuildOperation::class)
+    abstract val options: Options
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
 
     @UseFromImplModuleRestricted
+    @Deprecated("TODO") // TODO
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
         options[key] = value
     }

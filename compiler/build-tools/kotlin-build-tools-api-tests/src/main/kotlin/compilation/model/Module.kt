@@ -20,7 +20,7 @@ interface Module : Dependency {
     /**
      * Hook for any additional configuration for the compilation operations within this module.
      */
-    val moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit
+    val moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit
 
     /**
      * Directory containing all the source (.kt) files of the module
@@ -52,7 +52,8 @@ interface Module : Dependency {
     fun compile(
         strategyConfig: ExecutionPolicy = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
+        compilationAction: (JvmCompilationOperation) -> Unit,
         assertions: CompilationOutcome.(Module) -> Unit = {},
     ): CompilationResult
 
@@ -61,7 +62,7 @@ interface Module : Dependency {
         strategyConfig: ExecutionPolicy = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
         forceNonIncrementalCompilation: Boolean = false,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
         icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationOptions) -> Unit = {},
         assertions: CompilationOutcome.(module: Module) -> Unit = {},
     ): CompilationResult
