@@ -215,10 +215,16 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
         val kotlinNames = kotlinCollectionSymbol.memberScope.callables
             .filter { it is KaNamedFunctionSymbol }
+            // default methods in Java collection (ex. toArray() overload from Java 11, which blocks generation of 2 other overloads)
+            .filter { it.origin != KaSymbolOrigin.JAVA_SOURCE && it.origin != KaSymbolOrigin.JAVA_LIBRARY }
             .mapNotNull { it.name }
             .toSet()
 
-        return javaBaseClass.methods.flatMap { method -> methodWrappers(method, javaBaseClass, kotlinNames, substitutor) }
+        val javaMethods = javaBaseClass.methods
+            // seems like there is no need to override default methods
+            .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) }
+
+        return javaMethods.flatMap { method -> methodWrappers(method, javaBaseClass, kotlinNames, substitutor) }
     }
 
     private val javaGetterNameToKotlinGetterName: Map<String, String> =
