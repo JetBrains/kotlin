@@ -141,8 +141,9 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val name: String get() = "<get-${property.name}>"
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
-            // TODO: default getter created this way won't have any source information
-            property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY)
+            property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY).apply {
+                initialize(property.descriptor.type)
+            }
         }
 
         override val caller: Caller<*> by lazy(PUBLICATION) {
@@ -162,7 +163,6 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val name: String get() = "<set-${property.name}>"
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
-            // TODO: default setter created this way won't have any source information
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)
         }
 
