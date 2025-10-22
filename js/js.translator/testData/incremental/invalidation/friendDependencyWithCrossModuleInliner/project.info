@@ -1,9 +1,4 @@
 IGNORE_PER_FILE: true
-IGNORE_BACKEND: WASM
-// Mismatched file stats for module [kotlin_main] at step 5
-// Expected :[modified ir=[test.kt]]
-// Actual   :[modified ir=[test.kt], updated imports=[publicClass.kt]]
-
 MODULES: lib1, main
 
 STEP 0:
