@@ -1,0 +1,27 @@
+diff --git a/build.gradle b/build.gradle
+index 35e2455..568c3ed 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -2,7 +2,6 @@
+ import static de.fayard.refreshVersions.core.Versions.versionFor
+ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+-import com.google.devtools.ksp.gradle.KspTaskJvm
+
+ buildscript {
+
+@@ -80,14 +79,6 @@ afterEvaluate {
+                 setProgressiveMode(false)
+                 logger.debug("Setting -api-version=1.9 and -language-version=1.9 in ${task}")
+             }
+-
+-         if (task instanceof KspTaskJvm) {
+-            compilerOptions {
+-                languageVersion.set(KotlinVersion.KOTLIN_1_9)
+-                apiVersion.set(KotlinVersion.KOTLIN_1_9)
+-                setProgressiveMode(false)
+-            }
+-         }
+         }
+     }
+
