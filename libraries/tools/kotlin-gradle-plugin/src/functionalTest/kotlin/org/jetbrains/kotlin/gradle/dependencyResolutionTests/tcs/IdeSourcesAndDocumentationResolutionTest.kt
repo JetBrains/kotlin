@@ -49,7 +49,7 @@ class IdeSourcesAndDocumentationResolutionTest {
         kotlin.applyDefaultHierarchyTemplate()
         kotlin.jvm()
         kotlin.linuxX64()
-        kotlin.linuxArm64()
+        kotlin.iosX64()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
