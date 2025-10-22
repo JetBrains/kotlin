@@ -51,13 +51,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  *         println(x.element)
  *     }
  */
-open class SharedVariablesLowering(val context: LoweringContext) : BodyLoweringPass {
+open class SharedVariablesLowering(val context: LoweringContext, val skipRichCallables: Boolean = true) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         SharedVariablesTransformer(irBody, container).lowerSharedVariables()
     }
-
-    open val skipRichCallables: Boolean
-        get() = true
 
     private inner class SharedVariablesTransformer(val irBody: IrBody, val irDeclaration: IrDeclaration) {
         private val sharedVariables = HashSet<IrVariable>()

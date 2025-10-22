@@ -8,7 +8,4 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 
-class JvmSharedVariablesLowering(context: JvmBackendContext) : SharedVariablesLowering(context) {
-    override val skipRichCallables: Boolean
-        get() = false
-}
+class JvmSharedVariablesLowering(context: JvmBackendContext) : SharedVariablesLowering(context, skipRichCallables = false)
