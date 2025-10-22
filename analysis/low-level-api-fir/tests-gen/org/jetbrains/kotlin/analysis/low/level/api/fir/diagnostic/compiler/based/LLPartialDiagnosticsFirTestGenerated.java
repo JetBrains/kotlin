@@ -6190,24 +6190,6 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
-      @TestMetadata("callableReferenceOnInstance.kt")
-      public void testCallableReferenceOnInstance() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferenceOnInstance.kt");
-      }
-
-      @Test
-      @TestMetadata("callableReferenceToLocalClass.kt")
-      public void testCallableReferenceToLocalClass() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferenceToLocalClass.kt");
-      }
-
-      @Test
-      @TestMetadata("callableReferencesAndDefaultParameters.kt")
-      public void testCallableReferencesAndDefaultParameters() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferencesAndDefaultParameters.kt");
-      }
-
-      @Test
       @TestMetadata("capturedTypeForJavaTypeParameter.kt")
       public void testCapturedTypeForJavaTypeParameter() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypeForJavaTypeParameter.kt");
@@ -6463,6 +6445,34 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       @TestMetadata("unitUpperBound.kt")
       public void testUnitUpperBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/unitUpperBound.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences")
+      @TestDataPath("$PROJECT_ROOT")
+      public class CallableReferences {
+        @Test
+        public void testAllFilesPresentInCallableReferences() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("callableReferenceOnInstance.kt")
+        public void testCallableReferenceOnInstance() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/callableReferenceOnInstance.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceToLocalClass.kt")
+        public void testCallableReferenceToLocalClass() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/callableReferenceToLocalClass.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferencesAndDefaultParameters.kt")
+        public void testCallableReferencesAndDefaultParameters() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/callableReferences/callableReferencesAndDefaultParameters.kt");
+        }
       }
 
       @Nested
