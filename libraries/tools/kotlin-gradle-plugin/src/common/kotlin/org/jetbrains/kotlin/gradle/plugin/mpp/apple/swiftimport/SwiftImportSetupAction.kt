@@ -1,11 +1,15 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
+import com.google.gson.Gson
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.options.Option
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -17,14 +21,20 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticImportProjectAndFetchPackages.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.property
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
+import java.security.MessageDigest
+import java.util.UUID
+import java.io.File
+
 
 internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val kotlinExtension = project.multiplatformExtension
@@ -35,18 +45,58 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     val swiftPMImportExtension = kotlinExtension.getExtension<SwiftImportExtension>(
         SwiftImportExtension.EXTENSION_NAME
     )!!
+
+    val syntheticImportProjectGenerationTaskForEmbedAndSignLinkage = regenerateLinkageImportProjectTask()
+    syntheticImportProjectGenerationTaskForEmbedAndSignLinkage.configure {
+        it.configureWithExtension(swiftPMImportExtension)
+    }
+
+    val projectPathProvider = project.providers.environmentVariable(IntegrateLinkagePackageIntoXcodeProject.PROJECT_PATH_ENV)
+
+    val syntheticImportProjectGenerationTaskForLinkageForCli = locateOrRegisterTask<GenerateSyntheticImportProject>(
+        lowerCamelCaseName(
+            GenerateSyntheticImportProject.TASK_NAME,
+            "forLinkageForCli",
+        ),
+    ) {
+        it.configureWithExtension(swiftPMImportExtension)
+        it.syntheticImportProjectRoot.set(
+            projectPathProvider.flatMap {
+                project.layout.dir(
+                    project.provider { File(it).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) }
+                )
+            }
+        )
+    }
+
+    project.locateOrRegisterTask<IntegrateLinkagePackageIntoXcodeProject>(IntegrateLinkagePackageIntoXcodeProject.TASK_NAME) {
+        it.dependsOn(syntheticImportProjectGenerationTaskForLinkageForCli)
+        it.xcodeprojPath.set(projectPathProvider)
+    }
+
     swiftPMImportExtension.spmDependencies.all { swiftPMDependency ->
         kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin = true
-        val syntheticImportProjectGenerationTask = project.locateOrRegisterTask<GenerateSyntheticImportProjectAndFetchPackages>(
-            GenerateSyntheticImportProjectAndFetchPackages.TASK_NAME,
+        val syntheticImportProjectGenerationTaskForCinterops = project.locateOrRegisterTask<GenerateSyntheticImportProject>(
+            lowerCamelCaseName(
+                GenerateSyntheticImportProject.TASK_NAME,
+                "forCinterops",
+            ),
         ) {
-            it.iosDeploymentVersion.set(swiftPMImportExtension.iosDeploymentVersion)
-            it.macosDeploymentVersion.set(swiftPMImportExtension.macosDeploymentVersion)
-            it.watchosDeploymentVersion.set(swiftPMImportExtension.watchosDeploymentVersion)
-            it.tvosDeploymentVersion.set(swiftPMImportExtension.tvosDeploymentVersion)
+            it.configureWithExtension(swiftPMImportExtension)
         }
-        syntheticImportProjectGenerationTask.configure {
-            it.importedSpmModules.add(swiftPMDependency)
+
+        val syntheticImportTasks = listOf(
+            syntheticImportProjectGenerationTaskForCinterops,
+            syntheticImportProjectGenerationTaskForLinkageForCli,
+            syntheticImportProjectGenerationTaskForEmbedAndSignLinkage,
+        )
+        syntheticImportTasks.forEach { it.configure { it.importedSpmModules.add(swiftPMDependency) } }
+
+        val packageFetchTask = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
+            FetchSyntheticImportProjectPackages.TASK_NAME,
+        ) {
+            it.dependsOn(syntheticImportProjectGenerationTaskForCinterops)
+            it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinterops.map { it.syntheticImportProjectRoot.get() })
         }
 
         kotlinExtension.targets.matching {
@@ -54,8 +104,10 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             targetSupportsSwiftPMImport
         }.all { target ->
             target as KotlinNativeTarget
-            syntheticImportProjectGenerationTask.configure {
-                it.konanTargets.add(target.konanTarget)
+            syntheticImportTasks.forEach {
+                it.configure {
+                    it.konanTargets.add(target.konanTarget)
+                }
             }
             val mainCompilationCinterops = target.compilations.getByName("main").cinterops
             val cinteropName = "swiftPMImport"
@@ -69,11 +121,11 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 )
             ) {
                 // FIXME: Remove this and fix input/outputs
-                it.dependsOn(syntheticImportProjectGenerationTask)
+                it.dependsOn(packageFetchTask)
                 it.xcodebuildPlatform.set(targetPlatform)
                 it.xcodebuildSdk.set(targetSdk)
-                it.swiftPMDependenciesCheckout.set(syntheticImportProjectGenerationTask.map { it.swiftPMDependenciesCheckout.get() })
-                it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTask.map { it.syntheticImportProjectRoot.get() })
+                it.swiftPMDependenciesCheckout.set(packageFetchTask.map { it.swiftPMDependenciesCheckout.get() })
+                it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinterops.map { it.syntheticImportProjectRoot.get() })
             }
 
             defFilesGenerationTask.configure {
@@ -94,27 +146,27 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     }
 }
 
+/**
+ * FIXME: This is incorrect, the linkage package should:
+ * - collect dependencies from all the entire classpath
+ * - should emit the linkage structure at specific sites, e.g. for embedAndSign, for internal linkage, etc
+ */
+internal fun Project.regenerateLinkageImportProjectTask(): TaskProvider<GenerateSyntheticImportProject> = locateOrRegisterTask<GenerateSyntheticImportProject>(
+    lowerCamelCaseName(
+        GenerateSyntheticImportProject.TASK_NAME,
+        "forLinkage",
+    ),
+)
+
 @DisableCachingByDefault(because = "...")
-internal abstract class GenerateSyntheticImportProjectAndFetchPackages : DefaultTask() {
+internal abstract class GenerateSyntheticImportProject : DefaultTask() {
 
     @get:Input
     abstract val importedSpmModules: SetProperty<SwiftPMDependency>
 
     @get:Internal
-    val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty().convention(
+    open val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty().convention(
         project.layout.buildDirectory.dir("kotlin/swiftImport")
-    )
-
-    // FIXME: Actually think about: "what do we want as a UTD check for the the packages checkout? The lock file?"
-    // FIXME: We probably want this cache to be global
-    @get:Internal
-    val swiftPMDependenciesCheckout: DirectoryProperty = project.objects.directoryProperty().convention(
-        project.layout.buildDirectory.dir("kotlin/swiftImport/swiftPMCheckout")
-    )
-
-    @get:Internal
-    protected val swiftPMDependenciesCheckoutLogs: DirectoryProperty = project.objects.directoryProperty().convention(
-        project.layout.buildDirectory.dir("kotlin/swiftImport/swiftPMCheckoutDD")
     )
 
     @get:OutputFile
@@ -146,23 +198,17 @@ internal abstract class GenerateSyntheticImportProjectAndFetchPackages : Default
     @get:Inject
     protected abstract val execOps: ExecOperations
 
+    fun configureWithExtension(swiftPMImportExtension: SwiftImportExtension) {
+        iosDeploymentVersion.set(swiftPMImportExtension.iosDeploymentVersion)
+        macosDeploymentVersion.set(swiftPMImportExtension.macosDeploymentVersion)
+        watchosDeploymentVersion.set(swiftPMImportExtension.watchosDeploymentVersion)
+        tvosDeploymentVersion.set(swiftPMImportExtension.tvosDeploymentVersion)
+    }
+
     @TaskAction
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
         syntheticImportProjectRoot.get().asFile.mkdirs()
         generatePackageManifest(importedSpmModules.get())
-        checkoutSwiftPMDependencies()
-    }
-
-    private fun checkoutSwiftPMDependencies() {
-        execOps.exec {
-            it.workingDir(syntheticImportProjectRoot.get().asFile)
-            it.commandLine(
-                "xcodebuild", "-resolvePackageDependencies",
-                "-scheme", SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-                XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER, swiftPMDependenciesCheckout.get().asFile.path,
-                "-derivedDataPath", swiftPMDependenciesCheckoutLogs.get().asFile.path,
-            )
-        }
     }
 
     private fun generatePackageManifest(
@@ -236,6 +282,52 @@ internal abstract class GenerateSyntheticImportProjectAndFetchPackages : Default
     companion object {
         const val TASK_NAME = "generateSyntheticSwiftPMImportProject"
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "_internal_SwiftPMImport"
+    }
+}
+
+@DisableCachingByDefault(because = "...")
+internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
+
+    @get:Internal
+    val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty()
+
+    // FIXME: Actually think about: "what do we want as a UTD check for the the packages checkout? The lock file?"
+    // FIXME: We probably want this cache to be global
+    @get:Internal
+    val swiftPMDependenciesCheckout: DirectoryProperty = project.objects.directoryProperty().convention(
+        project.layout.buildDirectory.dir("kotlin/swiftImport/swiftPMCheckout")
+    )
+
+    @get:OutputFile
+    protected val swiftPMDependenciesCheckoutWorkspaceFile = swiftPMDependenciesCheckout.file("workspace-state.json")
+
+    @get:Internal
+    protected val swiftPMDependenciesCheckoutLogs: DirectoryProperty = project.objects.directoryProperty().convention(
+        project.layout.buildDirectory.dir("kotlin/swiftImport/swiftPMCheckoutDD")
+    )
+
+    @get:Inject
+    protected abstract val execOps: ExecOperations
+
+    @TaskAction
+    fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
+        checkoutSwiftPMDependencies()
+    }
+
+    private fun checkoutSwiftPMDependencies() {
+        execOps.exec {
+            it.workingDir(syntheticImportProjectRoot.get().asFile)
+            it.commandLine(
+                "xcodebuild", "-resolvePackageDependencies",
+                "-scheme", SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER, swiftPMDependenciesCheckout.get().asFile.path,
+                "-derivedDataPath", swiftPMDependenciesCheckoutLogs.get().asFile.path,
+            )
+        }
+    }
+
+    companion object {
+        const val TASK_NAME = "fetchSyntheticImportProjectPackages"
     }
 }
 
@@ -390,6 +482,143 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         const val TASK_NAME = "convertSyntheticImportProjectIntoDefFile"
     }
 
+}
+
+@DisableCachingByDefault(because = "...")
+internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() {
+
+    @get:Input
+    abstract val xcodeprojPath: Property<String>
+
+    @get:Inject
+    protected abstract val execOps: ExecOperations
+
+    @Suppress("UNCHECKED_CAST")
+    @TaskAction
+    fun integrate() {
+        val projectPath = File(xcodeprojPath.get())
+        val pbxprojPath = projectPath.resolve("project.pbxproj")
+        val output = ByteArrayOutputStream()
+        execOps.exec {
+            it.standardOutput = output
+            it.commandLine(
+                "/usr/bin/plutil",
+                "-convert", "json",
+                pbxprojPath,
+                "-o", "-"
+            )
+        }
+
+        val projectJson = Gson().fromJson(
+            output.toString(), Map::class.java
+        ) as Map<String, Any>
+        if (isLinkageProductReferencedInPBXObjects(projectJson)) {
+            println("Product already referenced, nothing to do")
+            return
+        }
+
+        val rootProjectId = projectJson.property<String>("rootObject")
+
+        val objects = projectJson.property<Map<String, Any>>("objects").toMutableMap()
+        val rootProject = objects.entries.single { it.key == rootProjectId }
+
+        val productDependencyReference = generateRandomPBXObjectReference()
+        objects[productDependencyReference] = mapOf(
+            "isa" to "XCSwiftPackageProductDependency",
+            "productName" to SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+        )
+
+        val buildFileDependencyReference = generateRandomPBXObjectReference()
+        objects[buildFileDependencyReference] = mapOf(
+            "isa" to "PBXBuildFile",
+            "productRef" to productDependencyReference,
+        )
+
+        val localPackageReference = generateRandomPBXObjectReference()
+        objects[localPackageReference] = mapOf(
+            "isa" to "XCLocalSwiftPackageReference",
+            "relativePath" to SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+        )
+
+        val embedAndSignShellScriptPhaseReference = objects.entries.first { (_, pbxObject) ->
+            if (pbxObject is Map<*, *>) {
+                pbxObject as Map<String, Any>
+                val shellContent = pbxObject["shellScript"]
+                if (shellContent is String) {
+                    "gradle" in shellContent
+                } else false
+            } else false
+        }.key
+
+        val embedAndSignTargets = objects.entries.filter { (_, pbxObject) ->
+            if (pbxObject is Map<*, *>) {
+                pbxObject as Map<String, Any>
+                val phases = pbxObject["buildPhases"]
+                if (phases is List<*>) {
+                    phases as List<String>
+                    embedAndSignShellScriptPhaseReference in phases
+                } else false
+            } else false
+        }
+
+        val updatedProject = (rootProject.value as Map<String, Any>).toMutableMap()
+        val existingPackages = updatedProject["packageReferences"] as? List<String> ?: listOf()
+        updatedProject["packageReferences"] = existingPackages + localPackageReference
+        objects[rootProject.key] = updatedProject
+
+        embedAndSignTargets.forEach { (uuid, target) ->
+            val updatedTarget = (target as Map<String, Any>).toMutableMap()
+            val existingPackageProductDependencies = updatedProject["packageProductDependencies"] as? List<String> ?: listOf()
+            updatedTarget["packageProductDependencies"] = existingPackageProductDependencies + productDependencyReference
+            objects[uuid] = updatedTarget
+        }
+
+        embedAndSignTargets.mapNotNull { (_, target) ->
+            target as Map<String, Any>
+            target.property<List<String>>("buildPhases")
+        }.flatten().forEach { buildPhaseReference ->
+            val buildPhase = objects.property<Map<String, Any>>(buildPhaseReference)
+            if (buildPhase.property<String>("isa") == "PBXFrameworksBuildPhase") {
+                val updatedBuildPhase = buildPhase.toMutableMap()
+                val existingFiles = updatedBuildPhase["files"] as? List<String> ?: listOf()
+                updatedBuildPhase["files"] = existingFiles + buildFileDependencyReference
+                objects[buildPhaseReference] = updatedBuildPhase
+            }
+        }
+
+        val updatedProjectJson = projectJson.toMutableMap()
+        updatedProjectJson["objects"] = objects
+
+        val resultingJson = Gson().toJson(updatedProjectJson)
+        pbxprojPath.writeText(resultingJson)
+    }
+
+    private fun generateRandomPBXObjectReference(): String {
+        val messageDigest = MessageDigest.getInstance("MD5")
+        return messageDigest.digest(
+            UUID.randomUUID().toString().toByteArray()
+        ).joinToString(separator = "") { byte -> "%02x".format(byte) }.uppercase().subSequence(0, 24).toString()
+    }
+
+    companion object {
+        const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"
+        const val TASK_NAME = "integrateLinkagePackage"
+    }
+}
+
+fun isLinkageProductReferencedInPBXObjects(projectJson: Map<String, Any>): Boolean {
+    val objects = projectJson.property<Map<String, Any>>("objects")
+    // FIXME: Check if the product is correctly integrated into the build phase
+    val hasSyntheticImportProjectReference = objects.values.any { pbxObject ->
+        @Suppress("UNCHECKED_CAST")
+        pbxObject as Map<String, Any>
+        val type = pbxObject.property<String>("isa")
+        if (type == "XCSwiftPackageProductDependency") {
+            val packageProductName = pbxObject.property<String>("productName")
+            packageProductName == SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+        } else false
+    }
+    return hasSyntheticImportProjectReference
 }
 
 const val XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER = "-clonedSourcePackagesDirPath"

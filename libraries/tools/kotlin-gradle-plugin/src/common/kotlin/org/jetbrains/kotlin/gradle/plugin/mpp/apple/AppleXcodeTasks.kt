@@ -17,18 +17,14 @@ import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticImportProjectAndFetchPackages.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.property
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -36,6 +32,9 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -245,7 +244,18 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     }
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
-    val syntheticImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
+    val regenerateSyntheticLinkageProject = regenerateLinkageImportProjectTask()
+    regenerateSyntheticLinkageProject.configure {
+        it.syntheticImportProjectRoot.set(
+            project.providers.environmentVariable("PROJECT_FILE_PATH").flatMap {
+                project.layout.dir(
+                    project.provider { File(it).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) }
+                )
+            }
+        )
+    }
+    val syntheticLinkageImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
+    syntheticLinkageImportProjectCheck.dependsOn(regenerateSyntheticLinkageProject)
     val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
 
     val builtProductsDir = builtProductsDir(frameworkTaskName, environment)
@@ -274,8 +284,8 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     assembleTask.taskProvider.dependsOn(sandBoxTask)
     framework.linkTaskProvider.dependsOn(sandBoxTask)
 
-    assembleTask.taskProvider.dependsOn(syntheticImportProjectCheck)
-    framework.linkTaskProvider.dependsOn(syntheticImportProjectCheck)
+    assembleTask.taskProvider.dependsOn(syntheticLinkageImportProjectCheck)
+    framework.linkTaskProvider.dependsOn(syntheticLinkageImportProjectCheck)
 
     val embedAndSignTask = registerEmbedTask(framework, frameworkTaskName, environment) { !framework.isStatic } ?: return
     embedAndSignTask.dependsOn(assembleTask.taskProvider)
@@ -374,37 +384,46 @@ private fun Project.registerEmbedTask(
 
 fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
     execOperations: ExecOperations,
+    gradleProjectPath: String,
+    rootProjectDir: File,
 ) {
-    val projectThatCalledEmbedAndSign = File(System.getenv("PROJECT_FILE_PATH")!!).resolve("project.pbxproj")
-    val temporaries = File(System.getenv("TEMP_FILES_DIR")!!)
-    val jsonProjectIntermediate = temporaries.resolve("projectCheck.json")
+    val projectThatCalledEmbedAndSign = File(System.getenv("PROJECT_FILE_PATH")!!)
+    val pbxprojPath = projectThatCalledEmbedAndSign.resolve("project.pbxproj")
+    val output = ByteArrayOutputStream()
     execOperations.exec {
+        it.standardOutput = output
         it.commandLine(
             "/usr/bin/plutil",
             "-convert", "json",
-            projectThatCalledEmbedAndSign,
-            "-o", jsonProjectIntermediate
+            pbxprojPath,
+            "-o", "-"
         )
     }
 
-    val json = jsonProjectIntermediate.bufferedReader().use {
-        Gson().fromJson(it, Map::class.java) as Map<String, Any>
-    }
-    val objects = json.property<Map<String, Any>>("objects")
-    // FIXME: Check if the product is correctly integrated into the build phase
-    val hasSyntheticImportProjectReference = objects.values.any { pbxObject ->
-        @Suppress("UNCHECKED_CAST")
-        pbxObject as Map<String, Any>
-        val type = pbxObject.property<String>("isa")
-        if (type == "XCSwiftPackageProductDependency") {
-            val packageProductName = pbxObject.property<String>("productName")
-            packageProductName == SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
-        } else false
-    }
+    val json = Gson().fromJson(output.toString(), Map::class.java) as Map<String, Any>
+    val hasSyntheticImportProjectReference = isLinkageProductReferencedInPBXObjects(json)
     if (!hasSyntheticImportProjectReference) {
-        val message = "You have SwiftPM dependencies and are using embedAndSign integration. Please integrate with synthetic import project at path TODO/(call gradlew TODO to update your project)"
-        println("error: $message")
-        error(message)
+        // FIXME: Find a proper way to get to wrapper
+        fun searchForGradlew(path: File): File? {
+            path.listFiles().firstOrNull { it.name == "gradlew" }?.let { return it }
+            return searchForGradlew(path.parentFile)
+        }
+
+        val taskCall = if (gradleProjectPath == ":") {
+            ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
+        } else "${gradleProjectPath}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
+
+        val gradlew = searchForGradlew(projectThatCalledEmbedAndSign)
+        val messageLines = listOf(
+            "You have SwiftPM dependencies with embedAndSign integration.",
+            "Please integrate with synthetic import linkage project by",
+            "running the following command:",
+            "${IntegrateLinkagePackageIntoXcodeProject.PROJECT_PATH_ENV}='${projectThatCalledEmbedAndSign.path}' '${gradlew?.path}' -p '${rootProjectDir}' '${taskCall}' -i"
+        )
+        messageLines.forEach {
+            println("error: $it")
+        }
+        error(messageLines.joinToString("\n"))
     }
 }
 
@@ -420,13 +439,20 @@ private fun Project.checkSandboxAndWriteProtectionTask(
         task.userScriptSandboxingEnabled.set(userScriptSandboxingEnabled)
     }
 
+// FIXME: Add a check that synthetic import project is up-to-date in respect to currently declared SwiftPM dependencies
 private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated() =
     locateOrRegisterTask<DefaultTask>("checkSyntheticImportProjectIsCorrectlyIntegrated") { task ->
         task.group = BasePlugin.BUILD_GROUP
-        task.description = "Check embedAndSign is integrated correctly into the project"
+        task.description = "Check linkage project for embedAndSign is integrated correctly into the project"
         val execOps = project.serviceOf<ExecOperations>()
+        val projectPath = project.path
+        val rootProjectDir = rootProject.projectDir
         task.doFirst {
-            checkIfTheLinkageProjectIsConnectedToTheXcodeProject(execOps)
+            checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
+                execOps,
+                projectPath,
+                rootProjectDir
+            )
         }
     }
 
