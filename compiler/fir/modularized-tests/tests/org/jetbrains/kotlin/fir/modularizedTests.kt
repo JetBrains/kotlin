@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir
 
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 
+@Isolated
 class FullPipelineModularizedTest : AbstractModularizedJUnit5Test<FullPipelineModularizedTestPure>(
     FullPipelineModularizedTestPure(modularizedTestConfigFromSystemProperties())
 ) {
@@ -15,6 +17,7 @@ class FullPipelineModularizedTest : AbstractModularizedJUnit5Test<FullPipelineMo
     fun testTotalKotlin() = test.testTotalKotlinIfConfigured()
 }
 
+@Isolated
 class FE1FullPipelineModularizedTest : AbstractModularizedJUnit5Test<FE1FullPipelineModularizedTestPure>(
     FE1FullPipelineModularizedTestPure(modularizedTestConfigFromSystemProperties())
 ) {
@@ -22,6 +25,7 @@ class FE1FullPipelineModularizedTest : AbstractModularizedJUnit5Test<FE1FullPipe
     fun testTotalKotlin() = test.testTotalKotlinIfConfigured()
 }
 
+@Isolated
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit5Test<FirResolveModularizedTotalKotlinTestPure>(
     @Test
     FirResolveModularizedTotalKotlinTestPure(modularizedTestConfigFromSystemProperties())
@@ -29,6 +33,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit5Test<FirRe
     fun testTotalKotlin() = test.testTotalKotlinIfConfigured()
 }
 
+@Isolated
 class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit5Test<NonFirResolveModularizedTotalKotlinTestPure>(
     NonFirResolveModularizedTotalKotlinTestPure(modularizedTestConfigFromSystemProperties())
 ) {
