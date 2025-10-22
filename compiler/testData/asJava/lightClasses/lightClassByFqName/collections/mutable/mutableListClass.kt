@@ -3,4 +3,4 @@
 
 package test
 
-abstract class CMutableList<Elem> : MutableList<Elem> by mutableListOf<Elem>()
+abstract class CMutableList<Elem> : MutableList<Elem>
