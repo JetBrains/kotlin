@@ -23,9 +23,9 @@ import kotlin.system.exitProcess
 //       make install
 // * macOS:
 //     FORMULA_TAP="$(brew --repository)/Library/Taps/udalov/homebrew-protobuf/Formula"
-//     mkdir -p "FORMULA_TAP"
+//     mkdir -p "$FORMULA_TAP"
 //     curl -L https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb > "$FORMULA_TAP/protobuf261.rb"
-//     brew install protobuf261.rb
+//     brew install protobuf261
 //
 // You may need to provide custom path to protoc executable, just modify this constant:
 private const val PROTOC_EXE = "protoc"
