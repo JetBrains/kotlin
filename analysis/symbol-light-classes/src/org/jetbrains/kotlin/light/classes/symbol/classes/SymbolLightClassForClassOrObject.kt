@@ -259,10 +259,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             return listOf(method.openBridge(substitutor))
         }
 
-        return emptyList()
-
         // TODO
-        //   return methodsWithSpecializedSignature(method, javaBaseClass, substitutor)
+        return methodsWithSpecializedSignature(method, javaBaseClass, substitutor)
     }
 
     private fun PsiMethod.isInKotlinInterface(javaBaseClass: PsiClass, kotlinNames: Set<Name>): Boolean {
@@ -281,11 +279,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
         if (methodName !in membersWithSpecializedSignature) return emptyList()
 
-        if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
-            val abstractKotlinVariantWithGeneric = javaUtilMapMethodWithSpecialSignature(method, substitutor) ?: return emptyList()
-            val finalBridgeWithObject = method.finalBridge(substitutor)
-            return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
-        }
+//        if (javaBaseClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
+//            val abstractKotlinVariantWithGeneric = javaUtilMapMethodWithSpecialSignature(method, substitutor) ?: return emptyList()
+//            val finalBridgeWithObject = method.finalBridge(substitutor)
+//            return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
+//        }
 
         if (methodName in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES) {
             return emptyList()
@@ -296,13 +294,15 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             return listOf(method.finalBridge(substitutor), createRemoveAt(method, substitutor))
         }
 
-        if (methodName == "contains") {
-            return emptyList()
-        }
+//        if (methodName == "contains") {
+//            return emptyList()
+//        }
 
-        val finalBridgeWithObject = method.finalBridge(substitutor)
-        val abstractKotlinVariantWithGeneric = method.wrap(substitutor, substituteObjectWith = singleTypeParameterAsType())
-        return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
+        return emptyList()
+
+//        val finalBridgeWithObject = method.finalBridge(substitutor)
+//        val abstractKotlinVariantWithGeneric = method.wrap(substitutor, substituteObjectWith = singleTypeParameterAsType())
+//        return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
     }
 
     private fun javaUtilMapMethodWithSpecialSignature(method: PsiMethod, substitutor: PsiSubstitutor): KtLightMethodWrapper? {
