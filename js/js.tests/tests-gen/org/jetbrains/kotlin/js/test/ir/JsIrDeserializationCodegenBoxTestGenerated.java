@@ -54989,6 +54989,12 @@ public class JsIrDeserializationCodegenBoxTestGenerated extends AbstractJsIrDese
           }
 
           @Test
+          @TestMetadata("javaFieldAccessors.kt")
+          public void testJavaFieldAccessors() {
+            runTest("compiler/testData/codegen/box/reflection/properties/accessors/javaFieldAccessors.kt");
+          }
+
+          @Test
           @TestMetadata("memberExtensions.kt")
           public void testMemberExtensions() {
             runTest("compiler/testData/codegen/box/reflection/properties/accessors/memberExtensions.kt");
