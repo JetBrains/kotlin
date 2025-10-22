@@ -20,7 +20,13 @@ internal fun findAssociatedObject(klass: KClass<*>, key: KClass<*>): Any? {
     return tryGetAssociatedObject(klassId, keyId)
 }
 
-internal fun tryGetAssociatedObject(klassId: Long, keyId: Long): Any? {
+// the calls of this method are replaced to others depending on the compilation mode:
+// - for "single-module", to calls of `tryGetAssociatedObject_singleModuleImpl()`
+// - otherwise, to calls of the dynamically created module-local `_associatedObjectGetter()`
+@ExcludedFromCodegen
+internal fun tryGetAssociatedObject(klassId: Long, keyId: Long): Any? = implementedAsIntrinsic
+
+internal fun tryGetAssociatedObject_singleModuleImpl(klassId: Long, keyId: Long): Any? {
     return moduleDescriptors.firstNotNullOfOrNull { moduleDescriptor ->
         callAssociatedObjectGetter(klassId, keyId, moduleDescriptor.associatedObjectGetter)
     }
