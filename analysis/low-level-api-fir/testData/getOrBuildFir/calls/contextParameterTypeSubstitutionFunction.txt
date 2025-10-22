@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     context([ResolvedTo(CONTRACTS)] a: R|A|)
     public final [ResolvedTo(CONTRACTS)] fun usage1(): R|A| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun context1(): R|A| {
-        ^context1 R|/myContext|<R|B|, R|A|>(R|/B.B|(), <L> = context([ResolvedTo(BODY_RESOLVE)] [UnnamedContextParameterNameKey=$context-B] <unused var>: R|B|) [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ContextFunctionTypeParams(1) kotlin/Function1<TypeVariable(T), TypeVariable(R)>] myContext@fun <anonymous>(): R|A| <inline=Inline, kind=UNKNOWN>  {
+        ^context1 R|/myContext|<R|B|, R|A|>(R|/B.B|(), <L> = context([ResolvedTo(BODY_RESOLVE)] [UnnamedContextParameterNameKey=$context-B] <unused var>: R|B|) [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=context(TypeVariable(T)) () -> TypeVariable(R)] myContext@fun <anonymous>(): R|A| <inline=Inline, kind=UNKNOWN>  {
             ^ context(R|<local>/<unused var>|) R|/usage1|()
         }
         )

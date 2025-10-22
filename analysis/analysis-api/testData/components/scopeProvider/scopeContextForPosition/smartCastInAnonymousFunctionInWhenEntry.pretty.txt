@@ -4,7 +4,7 @@ implicit values:
     scopeIndexInTower = 4
     type = A
     ownerSymbol = KaNamedFunctionSymbol:
-      /test(<extension receiver>: kotlin.Any): kotlin.Function0<kotlin.Int>
+      /test(<extension receiver>: kotlin.Any): () -> kotlin.Int
 
 scopes:
   LocalScope, index = 0

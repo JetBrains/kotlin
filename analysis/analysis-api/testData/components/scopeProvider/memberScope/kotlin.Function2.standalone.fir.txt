@@ -103,7 +103,7 @@ KaNamedFunctionSymbol:
         annotations: []
         type: R
     ]
-    type: kotlin/Function2<P1, P2, R>
+    type: (P1, P2) -> R
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Function2
   canBeOperator: true

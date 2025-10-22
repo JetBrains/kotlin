@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideFunctionLiteralScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideFunctionLiteralScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideFunctionLiteralScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|one/ClassWithParameter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                super<R|one/ClassWithParameter|>([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                     local final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|): R|kotlin/Unit| {
                     }
 

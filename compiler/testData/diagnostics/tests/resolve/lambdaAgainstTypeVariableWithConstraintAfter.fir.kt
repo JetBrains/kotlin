@@ -153,7 +153,7 @@ fun testSam() {
 fun <T> noOverloads(box: Inv<T>, value: T) {}
 
 fun testError(box: Inv<String>) {
-    noOverloads(box) <!ARGUMENT_TYPE_MISMATCH("Function0<String>; String")!>{ "hello" }<!>
+    noOverloads(box) <!ARGUMENT_TYPE_MISMATCH("() -> String; String")!>{ "hello" }<!>
 }
 
 fun testOk(box1: Inv<Any>, box2: Inv<() -> Any?>) {

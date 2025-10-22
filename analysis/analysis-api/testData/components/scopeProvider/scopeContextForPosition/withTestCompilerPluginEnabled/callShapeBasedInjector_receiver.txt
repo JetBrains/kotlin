@@ -567,7 +567,7 @@ scopes:
                   annotations: []
                   type: R
               ]
-              type: kotlin/Function0<R>
+              type: () -> R
             visibility: PUBLIC
         ]
         visibility: PUBLIC

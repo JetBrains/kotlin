@@ -18,7 +18,7 @@ digraph plusAssignWithLambdaInRhs_kt {
             3 [label="Enter block"];
             4 [label="Const: Null(null)"];
             5 [label="Check not null: Null(null)!!" style="filled" fillcolor=yellow];
-            6 [label="Variable declaration: lval list: R|kotlin/collections/MutableList<kotlin/Function1<kotlin/String, kotlin/String>>|"];
+            6 [label="Variable declaration: lval list: R|kotlin/collections/MutableList<(kotlin/String) -> kotlin/String>|"];
             7 [label="Access variable R|<local>/list|"];
             8 [label="Anonymous function capture"];
             9 [label="Postponed enter to lambda"];
@@ -100,7 +100,7 @@ digraph plusAssignWithLambdaInRhs_kt {
             }
             32 [label="Function call enter: R|kotlin/collections/mutableListOf|<R|() -> kotlin/Unit|>()"];
             33 [label="Function call exit: R|kotlin/collections/mutableListOf|<R|() -> kotlin/Unit|>()" style="filled" fillcolor=yellow];
-            34 [label="Variable declaration: lval queue: R|kotlin/collections/MutableList<kotlin/Function0<kotlin/Unit>>|"];
+            34 [label="Variable declaration: lval queue: R|kotlin/collections/MutableList<() -> kotlin/Unit>|"];
             subgraph cluster_11 {
                 color=blue
                 35 [label="Function call arguments enter"];

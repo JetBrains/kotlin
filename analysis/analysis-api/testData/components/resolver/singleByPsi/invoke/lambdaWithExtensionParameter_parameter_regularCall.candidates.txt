@@ -9,8 +9,8 @@ KtNameReferenceExpression(79,85): 'action'
         signature = KaVariableSignature:
           name = action
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
-          symbol = action: @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
+          returnType = test.Foo.() -> kotlin.Unit
+          symbol = action: test.Foo.() -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read

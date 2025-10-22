@@ -856,7 +856,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
                     String()
                 }
                 else ->  {
-                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/collections/joinToString|<R|kotlin/reflect/KTypeProjection|>(String(, ), String(<), String(>), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<TypeVariable(T), kotlin/CharSequence>?] joinToString@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/reflect/KTypeProjection|): R|kotlin/CharSequence| <inline=NoInline>  {
+                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/collections/joinToString|<R|kotlin/reflect/KTypeProjection|>(String(, ), String(<), String(>), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=((TypeVariable(T)) -> kotlin/CharSequence)?] joinToString@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/reflect/KTypeProjection|): R|kotlin/CharSequence| <inline=NoInline>  {
                         ^ (this@R|kotlin/jvm/internal/TypeReference|, R|<local>/it|).R|kotlin/jvm/internal/TypeReference.asString|()
                     }
                     )

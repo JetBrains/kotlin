@@ -4,9 +4,9 @@
 // LANGUAGE: +ContextParameters
 
 fun main() {
-    val a: (() -> Int) -> String <!INITIALIZER_TYPE_MISMATCH("Function1<Function0<Int>, String>; Int")!>=<!> 10
-    val b: Int.(String, Boolean) -> String <!INITIALIZER_TYPE_MISMATCH("Function3<Int, String, Boolean, String>; Int")!>=<!> 10
-    val c: context(Int) Int.(String) -> String <!INITIALIZER_TYPE_MISMATCH("Function3<Int, Int, String, String>; Int")!>=<!> 10
+    val a: (() -> Int) -> String <!INITIALIZER_TYPE_MISMATCH("(() -> Int) -> String; Int")!>=<!> 10
+    val b: Int.(String, Boolean) -> String <!INITIALIZER_TYPE_MISMATCH("Int.(String, Boolean) -> String; Int")!>=<!> 10
+    val c: context(Int) Int.(String) -> String <!INITIALIZER_TYPE_MISMATCH("context(Int) Int.(String) -> String; Int")!>=<!> 10
     val d: suspend Int.(String) -> String <!INITIALIZER_TYPE_MISMATCH("SuspendFunction2<Int, String, String>; Int")!>=<!> 10
 }
 

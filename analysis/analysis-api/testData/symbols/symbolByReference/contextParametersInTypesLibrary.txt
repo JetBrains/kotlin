@@ -155,7 +155,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ContextFunctionTypeParams(2) @ExtensionFunctionType kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
+        type: context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
@@ -210,7 +210,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ContextFunctionTypeParams(2) @ExtensionFunctionType @R|lib/MyAnnotation|()  kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>
+        type: context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
@@ -262,7 +262,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: @ContextFunctionTypeParams(2) @ExtensionFunctionType kotlin/Function4<lib/A, lib/B, kotlin/Int, kotlin/Int, kotlin/Int>?
+        type: (context(lib/A, lib/B) kotlin/Int.(kotlin/Int) -> kotlin/Int)?
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
@@ -352,7 +352,7 @@ KaNamedFunctionSymbol:
             annotations: []
             type: R
         ]
-        type: @ContextFunctionTypeParams(1) kotlin/Function1<T2, R>
+        type: context(T2) () -> R
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt

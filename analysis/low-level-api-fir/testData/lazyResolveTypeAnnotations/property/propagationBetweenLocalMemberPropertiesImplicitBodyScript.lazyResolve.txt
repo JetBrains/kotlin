@@ -238,7 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
-            ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                         super<R|kotlin/Any|>()
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         }
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
-            ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                         super<R|kotlin/Any|>()
@@ -338,7 +338,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
-            ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                         super<R|kotlin/Any|>()
@@ -388,7 +388,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
-            ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                         super<R|kotlin/Any|>()
@@ -438,7 +438,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationBetweenLocalMemberPropertiesImplicit
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
-            ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                         super<R|kotlin/Any|>()

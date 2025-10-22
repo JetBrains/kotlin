@@ -1352,8 +1352,8 @@ KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
         (({ _ -> 5})) -> (KaVariableSignature:
           name = lambda
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>
-          symbol = lambda: kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>
+          returnType = (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int
+          symbol = lambda: (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int
           contextParameters = []
           callableId = null)
       }
@@ -1365,13 +1365,13 @@ KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /fooLambda(lambda: kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>): kotlin.Unit
+          symbol = /fooLambda(lambda: (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = lambda
               receiverType = null
-              returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>
-              symbol = lambda: kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>
+              returnType = (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int
+              symbol = lambda: (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int
               contextParameters = []
               callableId = null
           ]
@@ -1386,8 +1386,8 @@ KtNameReferenceExpression(499,508): 'fooLambda'
         (({ _ -> 5})) -> (KaVariableSignature:
           name = lambda
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>
-          symbol = lambda: kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>
+          returnType = (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int
+          symbol = lambda: (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int
           contextParameters = []
           callableId = null)
       }
@@ -1399,13 +1399,13 @@ KtNameReferenceExpression(499,508): 'fooLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /fooLambda(lambda: kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>): kotlin.Unit
+          symbol = /fooLambda(lambda: (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = lambda
               receiverType = null
-              returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>
-              symbol = lambda: kotlin.Function1<@R|kotlin.ParameterName|(name = String(x))  kotlin.Int, kotlin.Int>
+              returnType = (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int
+              symbol = lambda: (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int
               contextParameters = []
               callableId = null
           ]
@@ -1533,8 +1533,8 @@ KtCallExpression(539,550): 'MySam { 5 }'
         { 5 } -> (KaVariableSignature:
           name = function
           receiverType = null
-          returnType = kotlin.Function0<kotlin.Int>
-          symbol = function: kotlin.Function0<kotlin.Int>
+          returnType = () -> kotlin.Int
+          symbol = function: () -> kotlin.Int
           contextParameters = []
           callableId = null)
       }
@@ -1546,13 +1546,13 @@ KtCallExpression(539,550): 'MySam { 5 }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySam
-          symbol = /MySam(function: kotlin.Function0<kotlin.Int>): MySam
+          symbol = /MySam(function: () -> kotlin.Int): MySam
           valueParameters = [
             KaVariableSignature:
               name = function
               receiverType = null
-              returnType = kotlin.Function0<kotlin.Int>
-              symbol = function: kotlin.Function0<kotlin.Int>
+              returnType = () -> kotlin.Int
+              symbol = function: () -> kotlin.Int
               contextParameters = []
               callableId = null
           ]
@@ -1567,8 +1567,8 @@ KtNameReferenceExpression(539,544): 'MySam'
         { 5 } -> (KaVariableSignature:
           name = function
           receiverType = null
-          returnType = kotlin.Function0<kotlin.Int>
-          symbol = function: kotlin.Function0<kotlin.Int>
+          returnType = () -> kotlin.Int
+          symbol = function: () -> kotlin.Int
           contextParameters = []
           callableId = null)
       }
@@ -1580,13 +1580,13 @@ KtNameReferenceExpression(539,544): 'MySam'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySam
-          symbol = /MySam(function: kotlin.Function0<kotlin.Int>): MySam
+          symbol = /MySam(function: () -> kotlin.Int): MySam
           valueParameters = [
             KaVariableSignature:
               name = function
               receiverType = null
-              returnType = kotlin.Function0<kotlin.Int>
-              symbol = function: kotlin.Function0<kotlin.Int>
+              returnType = () -> kotlin.Int
+              symbol = function: () -> kotlin.Int
               contextParameters = []
               callableId = null
           ]

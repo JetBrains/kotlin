@@ -1,6 +1,6 @@
 public abstract interface InheritedOverriddenAdapter : R|kotlin/Any| {
     public open class Sub : R|test/InheritedOverriddenAdapter.Super| {
-        public open fun foo(r: R|kotlin/Function0<kotlin/Unit!>!|): R|kotlin/Unit|
+        public open fun foo(r: R|(() -> kotlin/Unit!)!|): R|kotlin/Unit|
 
         public open fun foo(r: R|java/lang/Runnable!|): R|kotlin/Unit|
 

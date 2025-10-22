@@ -14,8 +14,8 @@ FILE: safeCallsWithImplicitInvoke.kt
         public final val identityProperty: R|() -> Foo| = R|kotlin/TODO|()
             public get(): R|() -> Foo|
 
-        public final val nestedIdentityProperty: R|() -> kotlin/Function0<Foo>| = R|kotlin/TODO|()
-            public get(): R|() -> kotlin/Function0<Foo>|
+        public final val nestedIdentityProperty: R|() -> () -> Foo| = R|kotlin/TODO|()
+            public get(): R|() -> () -> Foo|
 
         public final operator fun get(index: R|kotlin/Int|): R|Foo| {
             ^get this@R|/Foo|

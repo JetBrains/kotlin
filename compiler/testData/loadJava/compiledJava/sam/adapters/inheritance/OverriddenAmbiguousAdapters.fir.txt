@@ -1,6 +1,6 @@
 public abstract interface OverriddenAmbiguousAdapters : R|kotlin/Any| {
     public abstract interface Sub : R|test/OverriddenAmbiguousAdapters.Super| {
-        public abstract fun foo(r: R|kotlin/Function0<kotlin/Unit!>!|): R|kotlin/Unit|
+        public abstract fun foo(r: R|(() -> kotlin/Unit!)!|): R|kotlin/Unit|
 
         public abstract fun foo(r: R|java/lang/Runnable!|): R|kotlin/Unit|
 

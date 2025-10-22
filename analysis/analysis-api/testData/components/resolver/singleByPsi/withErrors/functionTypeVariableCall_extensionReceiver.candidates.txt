@@ -8,7 +8,7 @@ KtCallExpression(38,41): 'f()'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = f
           isSafeNavigation = false
-          type = @ExtensionFunctionType kotlin.Function1<kotlin.String, kotlin.Unit>
+          type = kotlin.String.() -> kotlin.Unit
         extensionReceiver = KaExplicitReceiverValue:
           expression = ""
           isSafeNavigation = false
@@ -16,7 +16,7 @@ KtCallExpression(38,41): 'f()'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = p1

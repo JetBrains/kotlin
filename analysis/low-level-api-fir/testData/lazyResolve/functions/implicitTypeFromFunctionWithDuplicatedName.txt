@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] dependency.kt
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage(): R|kotlin/Int| {
-        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(R)>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(R)] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|usage/implicitType|()
             ^ R|usage/implicitTypeFromAnotherModule|()
         }
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] dependency.kt
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage(): R|kotlin/Int| {
-        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(R)>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(R)] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|usage/implicitType|()
             ^ R|usage/implicitTypeFromAnotherModule|()
         }
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] dependency.kt
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage(): R|kotlin/Int| {
-        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(R)>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(R)] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|usage/implicitType|()
             ^ R|usage/implicitTypeFromAnotherModule|()
         }
@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] dependency.kt
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Int| {
-        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(R)>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(R)] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|usage/implicitType|()
             ^ R|usage/implicitTypeFromAnotherModule|()
         }
@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] usage.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Int| {
-        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(R)>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(R)] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|usage/implicitType|()
             ^ R|usage/implicitTypeFromAnotherModule|()
         }

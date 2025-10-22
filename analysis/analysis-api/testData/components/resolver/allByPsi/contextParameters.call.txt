@@ -722,8 +722,8 @@ KtCallExpression(441,542): 'with(Base()) {'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<Base, kotlin.String>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = Base.() -> kotlin.String
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -735,7 +735,7 @@ KtCallExpression(441,542): 'with(Base()) {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.String
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -747,8 +747,8 @@ KtCallExpression(441,542): 'with(Base()) {'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<Base, kotlin.String>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = Base.() -> kotlin.String
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]
@@ -778,8 +778,8 @@ KtNameReferenceExpression(441,445): 'with'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<Base, kotlin.String>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = Base.() -> kotlin.String
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -791,7 +791,7 @@ KtNameReferenceExpression(441,445): 'with'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.String
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -803,8 +803,8 @@ KtNameReferenceExpression(441,445): 'with'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<Base, kotlin.String>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = Base.() -> kotlin.String
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]
@@ -889,8 +889,8 @@ KtCallExpression(464,536): 'with(A()) {'
                 } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<A, kotlin.String>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = A.() -> kotlin.String
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -902,7 +902,7 @@ KtCallExpression(464,536): 'with(A()) {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.String
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -914,8 +914,8 @@ KtCallExpression(464,536): 'with(A()) {'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<A, kotlin.String>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = A.() -> kotlin.String
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]
@@ -943,8 +943,8 @@ KtNameReferenceExpression(464,468): 'with'
                 } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<A, kotlin.String>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = A.() -> kotlin.String
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -956,7 +956,7 @@ KtNameReferenceExpression(464,468): 'with'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.String
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -968,8 +968,8 @@ KtNameReferenceExpression(464,468): 'with'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<A, kotlin.String>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = A.() -> kotlin.String
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]

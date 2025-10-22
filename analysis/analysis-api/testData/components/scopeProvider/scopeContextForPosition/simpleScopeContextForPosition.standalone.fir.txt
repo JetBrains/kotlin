@@ -1127,7 +1127,7 @@ scopes:
                   typeArguments: []
                   type: kotlin/Unit
               ]
-              type: @ExtensionFunctionType kotlin/Function1<A, kotlin/Unit>
+              type: A.() -> kotlin/Unit
             visibility: PUBLIC
         ]
         visibility: PUBLIC
@@ -1195,7 +1195,7 @@ scopes:
                   typeArguments: []
                   type: kotlin/Unit
               ]
-              type: @ExtensionFunctionType kotlin/Function1<B, kotlin/Unit>
+              type: B.() -> kotlin/Unit
             visibility: PUBLIC
         ]
         visibility: PUBLIC
@@ -1263,7 +1263,7 @@ scopes:
                   typeArguments: []
                   type: kotlin/Unit
               ]
-              type: @ExtensionFunctionType kotlin/Function1<JavaClass, kotlin/Unit>
+              type: JavaClass.() -> kotlin/Unit
             visibility: PUBLIC
         ]
         visibility: PUBLIC

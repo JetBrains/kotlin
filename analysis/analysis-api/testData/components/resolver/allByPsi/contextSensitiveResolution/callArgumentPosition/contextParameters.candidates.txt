@@ -166,8 +166,8 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<MyEnum, kotlin.Unit>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = MyEnum.() -> kotlin.Unit
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -179,7 +179,7 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -191,8 +191,8 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<MyEnum, kotlin.Unit>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = MyEnum.() -> kotlin.Unit
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]
@@ -220,8 +220,8 @@ KtNameReferenceExpression(299,303): 'with'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<MyEnum, kotlin.Unit>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = MyEnum.() -> kotlin.Unit
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -233,7 +233,7 @@ KtNameReferenceExpression(299,303): 'with'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -245,8 +245,8 @@ KtNameReferenceExpression(299,303): 'with'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<MyEnum, kotlin.Unit>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = MyEnum.() -> kotlin.Unit
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]
@@ -498,8 +498,8 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<MySealed, kotlin.Unit>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = MySealed.() -> kotlin.Unit
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -511,7 +511,7 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -523,8 +523,8 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<MySealed, kotlin.Unit>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = MySealed.() -> kotlin.Unit
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]
@@ -552,8 +552,8 @@ KtNameReferenceExpression(356,360): 'with'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<MySealed, kotlin.Unit>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = MySealed.() -> kotlin.Unit
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -565,7 +565,7 @@ KtNameReferenceExpression(356,360): 'with'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -577,8 +577,8 @@ KtNameReferenceExpression(356,360): 'with'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<MySealed, kotlin.Unit>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = MySealed.() -> kotlin.Unit
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]
@@ -885,8 +885,8 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<MyEnum, kotlin.Unit>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = MyEnum.() -> kotlin.Unit
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -898,7 +898,7 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -910,8 +910,8 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<MyEnum, kotlin.Unit>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = MyEnum.() -> kotlin.Unit
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]
@@ -939,8 +939,8 @@ KtNameReferenceExpression(507,511): 'with'
             } -> (KaVariableSignature:
           name = block
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function1<MyEnum, kotlin.Unit>
-          symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+          returnType = MyEnum.() -> kotlin.Unit
+          symbol = block: T.() -> R
           contextParameters = []
           callableId = null)
       }
@@ -952,7 +952,7 @@ KtNameReferenceExpression(507,511): 'with'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/with(receiver: T, block: @ExtensionFunctionType kotlin.Function1<T, R>): R
+          symbol = kotlin/with(receiver: T, block: T.() -> R): R
           valueParameters = [
             KaVariableSignature:
               name = receiver
@@ -964,8 +964,8 @@ KtNameReferenceExpression(507,511): 'with'
             KaVariableSignature:
               name = block
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function1<MyEnum, kotlin.Unit>
-              symbol = block: @ExtensionFunctionType kotlin.Function1<T, R>
+              returnType = MyEnum.() -> kotlin.Unit
+              symbol = block: T.() -> R
               contextParameters = []
               callableId = null
           ]

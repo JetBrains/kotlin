@@ -128,12 +128,12 @@ KtCallExpression(276,293): 'lEnum(EnumValue1)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = lEnum
           isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = arg
@@ -159,8 +159,8 @@ KtNameReferenceExpression(276,281): 'lEnum'
         signature = KaVariableSignature:
           name = lEnum
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
-          symbol = lEnum: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
+          symbol = lEnum: (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -213,12 +213,12 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = lEnum
           isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = arg
@@ -244,8 +244,8 @@ KtNameReferenceExpression(298,303): 'lEnum'
         signature = KaVariableSignature:
           name = lEnum
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
-          symbol = lEnum: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
+          symbol = lEnum: (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -332,8 +332,8 @@ KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
         { EnumValue1 } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -345,13 +345,13 @@ KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -369,8 +369,8 @@ KtNameReferenceExpression(387,400): 'receiveLambda'
         { EnumValue1 } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -382,13 +382,13 @@ KtNameReferenceExpression(387,400): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -455,8 +455,8 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
         { EnumValue3 } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -468,13 +468,13 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -492,8 +492,8 @@ KtNameReferenceExpression(428,441): 'receiveLambda'
         { EnumValue3 } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -505,13 +505,13 @@ KtNameReferenceExpression(428,441): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -578,8 +578,8 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
         { prop } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -591,13 +591,13 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -616,8 +616,8 @@ KtNameReferenceExpression(469,482): 'receiveLambda'
         { prop } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -629,13 +629,13 @@ KtNameReferenceExpression(469,482): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]

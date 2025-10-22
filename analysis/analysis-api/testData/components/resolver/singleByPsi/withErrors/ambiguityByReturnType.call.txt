@@ -9,8 +9,8 @@ KtCallExpression(208,319): 'sumOf { c ->'
                       } -> (KaVariableSignature:
             name = selector
             receiverType = null
-            returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
-            symbol = selector: kotlin.Function1<T, kotlin.Int>
+            returnType = (kotlin.Int) -> kotlin.Int
+            symbol = selector: (T) -> kotlin.Int
             contextParameters = []
             callableId = null)
         }
@@ -25,13 +25,13 @@ KtCallExpression(208,319): 'sumOf { c ->'
           signature = KaFunctionSignature:
             receiverType = kotlin.collections.Iterable<kotlin.Int>
             returnType = kotlin.Int
-            symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, kotlin.Int>): kotlin.Int
+            symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Int): kotlin.Int
             valueParameters = [
               KaVariableSignature:
                 name = selector
                 receiverType = null
-                returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
-                symbol = selector: kotlin.Function1<T, kotlin.Int>
+                returnType = (kotlin.Int) -> kotlin.Int
+                symbol = selector: (T) -> kotlin.Int
                 contextParameters = []
                 callableId = null
             ]
@@ -48,8 +48,8 @@ KtCallExpression(208,319): 'sumOf { c ->'
                       } -> (KaVariableSignature:
             name = selector
             receiverType = null
-            returnType = kotlin.Function1<kotlin.Int, kotlin.UInt>
-            symbol = selector: kotlin.Function1<T, kotlin.UInt>
+            returnType = (kotlin.Int) -> kotlin.UInt
+            symbol = selector: (T) -> kotlin.UInt
             contextParameters = []
             callableId = null)
         }
@@ -64,13 +64,13 @@ KtCallExpression(208,319): 'sumOf { c ->'
           signature = KaFunctionSignature:
             receiverType = kotlin.collections.Iterable<kotlin.Int>
             returnType = kotlin.UInt
-            symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, kotlin.UInt>): kotlin.UInt
+            symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.UInt): kotlin.UInt
             valueParameters = [
               KaVariableSignature:
                 name = selector
                 receiverType = null
-                returnType = kotlin.Function1<kotlin.Int, kotlin.UInt>
-                symbol = selector: kotlin.Function1<T, kotlin.UInt>
+                returnType = (kotlin.Int) -> kotlin.UInt
+                symbol = selector: (T) -> kotlin.UInt
                 contextParameters = []
                 callableId = null
             ]

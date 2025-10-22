@@ -4,7 +4,7 @@ public abstract interface InheritedAdapterAndDeclaration : R|kotlin/Any| {
     public abstract interface Super : R|kotlin/Any| {
         public abstract fun foo(r: R|java/lang/Runnable!|): R|kotlin/Unit|
 
-        public abstract fun foo(r: R|kotlin/Function0<kotlin/Unit!>!|): R|kotlin/Unit|
+        public abstract fun foo(r: R|(() -> kotlin/Unit!)!|): R|kotlin/Unit|
 
     }
 }

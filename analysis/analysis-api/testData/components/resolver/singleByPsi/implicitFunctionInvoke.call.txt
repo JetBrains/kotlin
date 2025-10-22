@@ -9,8 +9,8 @@ KtNameReferenceExpression(29,30): 'a'
         signature = KaVariableSignature:
           name = a
           receiverType = null
-          returnType = kotlin.Function0<kotlin.Unit>
-          symbol = a: kotlin.Function0<kotlin.Unit>
+          returnType = () -> kotlin.Unit
+          symbol = a: () -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read

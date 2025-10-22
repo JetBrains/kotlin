@@ -31,7 +31,7 @@ FILE: setWithTrailingLambda.kt
     }
     public abstract interface EditorDataKey<T : R|kotlin/Any|> : R|Key<T, EditorData>| {
     }
-    public final object SomeKey : R|EditorDataKey<kotlin/Function2<kotlin/String, @R|kotlin/ParameterName|(name = String(bar))  kotlin/Any, kotlin/Unit>>| {
+    public final object SomeKey : R|EditorDataKey<(kotlin/String, @R|kotlin/ParameterName|(name = String(bar))  kotlin/Any) -> kotlin/Unit>| {
         private constructor(): R|SomeKey| {
             super<R|kotlin/Any|>()
         }

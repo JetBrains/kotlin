@@ -278,15 +278,15 @@ fun case_23(a: ((Float) -> Int), b: Float) {
  */
 fun case_24(a: ((() -> Unit) -> Unit), b: (() -> Unit)) {
     if (false || false || <!SENSELESS_COMPARISON!>a == null<!> && <!SENSELESS_COMPARISON!>b === null<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit>")!>a<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.Unit) -> kotlin.Unit")!>a<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>b<!>
     }
 }
 
 // TESTCASE NUMBER: 25
 fun case_25(a: (() -> Unit) -> Unit, b: (() -> Unit) -> Unit = if (<!SENSELESS_COMPARISON!>a == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> else {{}}) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit>")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit>")!>b<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.Unit) -> kotlin.Unit")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.Unit) -> kotlin.Unit")!>b<!>
 }
 
 // TESTCASE NUMBER: 26

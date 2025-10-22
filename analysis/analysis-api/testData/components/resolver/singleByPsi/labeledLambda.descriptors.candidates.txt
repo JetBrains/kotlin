@@ -1,0 +1,34 @@
+KtCallExpression(49,62): 'foo label@ {}'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        label@ {} -> (KaVariableSignature:
+          name = l1
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(l1: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l1
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

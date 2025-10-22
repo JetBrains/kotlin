@@ -47,12 +47,12 @@ KtCallExpression(34,42): 'action()'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = action
           isSafeNavigation = false
-          type = kotlin.Function0<kotlin.Unit>
+          type = () -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+          symbol = kotlin/Function0.invoke(<dispatch receiver>: () -> R): R
           valueParameters = []
           contextParameters = []
           callableId = kotlin/Function0.invoke
@@ -69,8 +69,8 @@ KtNameReferenceExpression(34,40): 'action'
         signature = KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function0<kotlin.Unit>
-          symbol = action: kotlin.Function0<kotlin.Unit>
+          returnType = () -> kotlin.Unit
+          symbol = action: () -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -97,8 +97,8 @@ KtCallExpression(64,102): 'foo label@{'
             } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function0<kotlin.Unit>
-          symbol = action: kotlin.Function0<kotlin.Unit>
+          returnType = () -> kotlin.Unit
+          symbol = action: () -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -110,13 +110,13 @@ KtCallExpression(64,102): 'foo label@{'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+          symbol = /foo(action: () -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function0<kotlin.Unit>
-              symbol = action: kotlin.Function0<kotlin.Unit>
+              returnType = () -> kotlin.Unit
+              symbol = action: () -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -133,8 +133,8 @@ KtNameReferenceExpression(64,67): 'foo'
             } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function0<kotlin.Unit>
-          symbol = action: kotlin.Function0<kotlin.Unit>
+          returnType = () -> kotlin.Unit
+          symbol = action: () -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -146,13 +146,13 @@ KtNameReferenceExpression(64,67): 'foo'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+          symbol = /foo(action: () -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function0<kotlin.Unit>
-              symbol = action: kotlin.Function0<kotlin.Unit>
+              returnType = () -> kotlin.Unit
+              symbol = action: () -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
