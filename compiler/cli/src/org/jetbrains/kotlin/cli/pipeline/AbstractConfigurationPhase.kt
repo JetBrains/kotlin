@@ -81,9 +81,8 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         val pluginOptions = arguments.pluginOptions.orEmpty().toMutableList()
         val pluginConfigurations = arguments.pluginConfigurations?.asList().orEmpty()
         val pluginOrderConstraints = arguments.pluginOrderConstraints?.asList().orEmpty()
-        val messageCollector = configuration.messageCollector
 
-        if (!checkPluginsArguments(messageCollector, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
+        if (!checkPluginsArguments(configuration, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
             return
         }
 
@@ -106,7 +105,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
                 if (missingJars.isEmpty()) {
                     scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })
                 } else {
-                    messageCollector.report(
+                    configuration.messageCollector.report(
                         LOGGING,
                         "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"
                     )

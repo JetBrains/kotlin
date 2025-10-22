@@ -323,7 +323,7 @@ private fun createInitialCompilerConfiguration(
         val pluginConfigurations = baseArguments.pluginConfigurations?.asList().orEmpty()
         val pluginOrderConstraints = baseArguments.pluginOrderConstraints?.asList().orEmpty()
 
-        checkPluginsArguments(messageCollector, false, pluginClasspaths, pluginOptions, pluginConfigurations)
+        checkPluginsArguments(this, false, pluginClasspaths, pluginOptions, pluginConfigurations)
         if (pluginClasspaths.isNotEmpty() || pluginConfigurations.isNotEmpty()) {
             PluginCliParser.loadPluginsSafe(
                 pluginClasspaths,

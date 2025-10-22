@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.fir.cli.CliDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.progress.CompilationCanceledException
@@ -208,11 +209,10 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         val pluginOptions = arguments.pluginOptions.orEmpty().toMutableList()
         val pluginConfigurations = arguments.pluginConfigurations?.asList().orEmpty()
         val pluginOrderConstraints = arguments.pluginOrderConstraints?.asList().orEmpty()
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         val useK2 = configuration.get(CommonConfigurationKeys.USE_FIR) == true
 
-        if (!checkPluginsArguments(messageCollector, useK2, pluginClasspaths, pluginOptions, pluginConfigurations)) {
+        if (!checkPluginsArguments(configuration, useK2, pluginClasspaths, pluginOptions, pluginConfigurations)) {
             return INTERNAL_ERROR
         }
 
@@ -235,7 +235,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                 if (missingJars.isEmpty()) {
                     scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })
                 } else {
-                    messageCollector.report(
+                    configuration.messageCollector.report(
                         LOGGING,
                         "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"
                     )
@@ -444,13 +444,15 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 }
 
 fun checkPluginsArguments(
-    messageCollector: MessageCollector,
+    configuration: CompilerConfiguration,
     useK2: Boolean,
     pluginClasspaths: List<String>,
     pluginOptions: List<String>,
     pluginConfigurations: List<String>
 ): Boolean {
     var hasErrors = false
+
+    val messageCollector = configuration.messageCollector
 
     for (classpath in pluginClasspaths) {
         if (!File(classpath).exists()) {
@@ -459,7 +461,8 @@ fun checkPluginsArguments(
     }
 
     if (pluginConfigurations.isNotEmpty()) {
-        messageCollector.report(WARNING, "Argument -Xcompiler-plugin is experimental")
+        configuration.reportIfNeeded(CliDiagnostics.CLI_COMPILER_PLUGIN_IS_EXPERIMENTAL, "Argument -Xcompiler-plugin is experimental")
+
         if (!useK2) {
             hasErrors = true
             messageCollector.report(

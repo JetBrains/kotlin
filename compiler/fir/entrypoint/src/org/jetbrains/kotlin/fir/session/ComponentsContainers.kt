@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirPrimaryConstructorSuperType
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTrackerImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirGenericArrayClassLiteralSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirComposedDiagnosticRendererFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJavaNullabilityWarningUpperBoundsProvider
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmAnnotationsPlatformSpecificSupportComponent
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmInlineCheckerCompone
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
+import org.jetbrains.kotlin.fir.cli.CliDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
@@ -109,8 +111,13 @@ val firCachesFactoryForCliMode: FirCachesFactory
     get() = FirThreadUnsafeCachesFactory
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCliCompilerOnlyComponents(languageVersionSettings: LanguageVersionSettings) {
+fun FirSession.registerCliCompilerAndCommonComponents(languageVersionSettings: LanguageVersionSettings) {
     register(FirCachesFactory::class, firCachesFactoryForCliMode)
+
+    registerCommonComponents(languageVersionSettings)
+
+    diagnosticRendererFactory.registerFactories(listOf(CliDiagnostics.getRendererFactory()))
+
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
     register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
     register(FirExceptionHandler::class, FirCliExceptionHandler)

@@ -89,8 +89,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         extensionRegistrars: List<FirExtensionRegistrar>
     ): FirSession {
         return FirCliSession(FirSession.Kind.Library).apply session@{
-            registerCliCompilerOnlyComponents(languageVersionSettings)
-            registerCommonComponents(languageVersionSettings)
+            registerCliCompilerAndCommonComponents(languageVersionSettings)
             registerLibrarySessionComponents(context)
 
             val kotlinScopeProvider = createKotlinScopeProviderForLibrarySession()
@@ -157,8 +156,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                 it.bindSession(this)
             }
 
-            registerCliCompilerOnlyComponents(languageVersionSettings)
-            registerCommonComponents(languageVersionSettings)
+            registerCliCompilerAndCommonComponents(languageVersionSettings)
             registerLibrarySessionComponents(context)
             register(FirBuiltinSyntheticFunctionInterfaceProvider::class, sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider)
 
@@ -237,9 +235,8 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         return FirCliSession(FirSession.Kind.Source).apply session@{
             moduleData.bindSession(this@session)
             registerModuleData(moduleData)
-            registerCliCompilerOnlyComponents(languageVersionSettings)
             if (configuration.dumpInferenceLogs) register(FirInferenceLogger::class, FirInferenceLogger())
-            registerCommonComponents(languageVersionSettings)
+            registerCliCompilerAndCommonComponents(languageVersionSettings)
             registerResolveComponents(
                 configuration.lookupTracker,
                 configuration.enumWhenTracker,
@@ -247,6 +244,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                 configuration.fileMappingTracker,
             )
             registerCliCompilerOnlyResolveComponents()
+
             registerSourceSessionComponents(context)
 
             val kotlinScopeProvider = createKotlinScopeProviderForSourceSession(moduleData, languageVersionSettings)

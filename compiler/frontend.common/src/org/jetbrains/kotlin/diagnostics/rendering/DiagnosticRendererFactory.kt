@@ -22,3 +22,9 @@ abstract class BaseDiagnosticRendererFactory : DiagnosticRendererFactory {
 
     abstract val MAP: KtDiagnosticFactoryToRendererMap
 }
+
+abstract class BaseSourcelessDiagnosticFactory : BaseDiagnosticRendererFactory() {
+    companion object {
+        const val MESSAGE_PLACEHOLDER: String = "{0}"
+    }
+}
