@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import javax.inject.Inject
 
 @DisableCachingByDefault
@@ -113,7 +112,7 @@ internal constructor(
 
     @Input
     val nodeJsArgs: MutableList<String> =
-        if (compilation.wasmTarget == WasmTarget.WASI) mutableListOf("--experimental-wasm-exnref") else mutableListOf()
+        mutableListOf()
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
