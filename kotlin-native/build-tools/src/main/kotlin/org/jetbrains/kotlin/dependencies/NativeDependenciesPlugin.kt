@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.dependencies
 
+import kotlinBuildProperties
 import org.gradle.api.Buildable
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -14,6 +15,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
 import java.nio.file.Paths
 import javax.inject.Inject
@@ -27,32 +29,6 @@ private fun File.matchesDependency(dependency: String): Boolean {
         this.name == dependency
     }
 }
-
-private val Iterable<File>.commonAncestor: File
-    get() = map { it.canonicalFile.normalize() }.reduce { acc, file ->
-        // Both `file` and `acc` are fully normalized. If `file` and `acc` share the root (which we assume they do), then
-        // the path of `file` relative to `acc` will start with a sequence of `..` until the common ancestor is reached, and
-        // after that there will be no `..` in the rest of the path.
-        val relativePath = file.toRelativeString(acc)
-        val goUpPrefix = ".."
-        var startIndex = 0
-        var count = 0
-        while (true) {
-            val index = relativePath.indexOf(goUpPrefix, startIndex)
-            if (index == -1) {
-                break
-            }
-            startIndex = index + goUpPrefix.length
-            count++
-        }
-        // `count` contains the number of times one must go up from `acc` to get to the common ancestor of `file` and `acc`.
-        var result = acc
-        repeat(count) {
-            result = result.parentFile
-        }
-        // Doing `parentFile` from a normalized canonical path keeps the path normalized.
-        result
-    }
 
 /**
  * Consuming native dependencies.
@@ -91,8 +67,13 @@ abstract class NativeDependenciesExtension @Inject constructor(private val proje
      * The assumption is made, that the paths of each dependency relative to this root is stable across different machines.
      * Note: this will not cause the dependencies to actually download.
      */
+    // Keep this directory in sync with `:kotlin-native:dependencies`
     val nativeDependenciesRoot: File
-        get() = nativeDependencies.incoming.artifacts.artifactFiles.commonAncestor
+        get() {
+            // Can't use `BuildPropertiesExt` from `native-build-tools`
+            val konanDataDir = project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?
+            return DependencyDirectories.getDependenciesRoot(konanDataDir)
+        }
 
     private val llvmFileCollection: FileCollection = nativeDependencies.incoming.artifacts.artifactFiles.filter {
         it.matchesDependency(platformManager.hostPlatform.llvmHome!!)
