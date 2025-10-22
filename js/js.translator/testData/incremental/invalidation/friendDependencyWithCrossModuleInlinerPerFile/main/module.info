@@ -1,0 +1,39 @@
+STEP 0:
+    dependencies: lib1
+    friends: lib1
+    modifications:
+        U : publicClass.0.kt -> publicClass.kt
+        U : test.0.kt -> test.kt
+    added file: m.kt, test.kt, publicClass.kt
+STEP 1:
+    dependencies: lib1
+    friends: lib1
+STEP 2:
+    dependencies: lib1
+    friends: lib1
+    updated imports <wasm>: test.kt, publicClass.kt
+STEP 3:
+    dependencies: lib1
+    friends: lib1
+    modifications:
+        U : test.3.kt -> test.kt
+    modified ir: test.kt
+STEP 4:
+    dependencies: lib1
+    friends: lib1
+    modifications:
+        U : test.4.kt -> test.kt
+    modified ir: test.kt
+STEP 5..6:
+    dependencies: lib1
+    friends: lib1
+    modified ir: test.kt
+STEP 7:
+    dependencies: lib1
+    friends: lib1
+    modifications:
+        U : test.7.kt -> test.kt
+    modified ir: test.kt
+STEP 8..9:
+    dependencies: lib1
+    friends: lib1

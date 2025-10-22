@@ -378,6 +378,12 @@ public class JsInvalidationPerFileTestGenerated extends AbstractJsInvalidationPe
   }
 
   @Test
+  @TestMetadata("friendDependencyWithCrossModuleInlinerPerFile")
+  public void testFriendDependencyWithCrossModuleInlinerPerFile() {
+    runTest("js/js.translator/testData/incremental/invalidation/friendDependencyWithCrossModuleInlinerPerFile/");
+  }
+
+  @Test
   @TestMetadata("functionDefaultParams")
   public void testFunctionDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/functionDefaultParams/");

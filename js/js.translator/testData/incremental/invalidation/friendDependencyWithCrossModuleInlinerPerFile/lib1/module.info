@@ -1,0 +1,35 @@
+STEP 0:
+    modifications:
+        U : l1.0.kt -> l1.kt
+    added file: l1.kt
+STEP 1:
+    modifications:
+        U : l1.1.kt -> l1.kt
+    modified ir: l1.kt
+STEP 2:
+    modifications:
+        U : l1.2.kt -> l1.kt
+    modified ir: l1.kt
+    updated exports <wasm>: l1.kt
+STEP 3:
+    updated exports <js>: l1.kt
+STEP 4:
+    updated exports: l1.kt
+STEP 5:
+    modifications:
+        U : l1.5.kt -> l1.kt
+    modified ir: l1.kt
+STEP 6:
+    modifications:
+        U : l1.6.kt -> l1.kt
+    modified ir: l1.kt
+STEP 7:
+    updated exports: l1.kt
+STEP 8:
+    modifications:
+        U : l1.8.kt -> l1.kt
+    modified ir: l1.kt
+STEP 9:
+    modifications:
+        U : l1.9.kt -> l1.kt
+    modified ir: l1.kt
