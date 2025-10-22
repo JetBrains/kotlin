@@ -3,4 +3,4 @@
 
 package test
 
-abstract class CMapEntry<KElem, VElem> : Map.Entry<KElem, VElem> by emptyMap<KElem, VElem>().entries.first()
+abstract class CMapEntry<KElem, VElem> : Map.Entry<KElem, VElem>
