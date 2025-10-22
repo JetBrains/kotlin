@@ -90,7 +90,7 @@ MODULE_FRAGMENT name:<stdlibReferences>
                           GET_VAR 'val tmp0: kotlin.time.TimeSource.Monotonic [val] declared in test.main' type=kotlin.time.TimeSource.Monotonic origin=null
                         VAR name:mark type:kotlin.time.TimeSource.Monotonic.ValueTimeMark [val]
                           CALL 'kotlin.time/TimeSource.Monotonic.markNow|markNow(){}[0]' type=kotlin.time.TimeSource.Monotonic.ValueTimeMark origin=null
-                            ARG 1: GET_VAR 'val this: kotlin.time.TimeSource.Monotonic [val] declared in test.main' type=kotlin.time.TimeSource.Monotonic origin=null
+                            ARG 1: GET_VAR 'val this: kotlin.time.TimeSource.Monotonic [val] declared in test.main' type=kotlin.time.TimeSource.Monotonic origin=IMPLICIT_ARGUMENT
                         RETURNABLE_BLOCK type=kotlin.Unit origin=null
                           INLINED_BLOCK type=kotlin.Unit origin=null
                             inlinedFunctionFileEntry: FILE_ENTRY path:stdlibReferences.kt
