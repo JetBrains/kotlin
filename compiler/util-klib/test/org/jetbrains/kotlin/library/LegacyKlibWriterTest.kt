@@ -34,9 +34,11 @@ class LegacyKlibWriterTest : AbstractKlibWriterTest<LegacyKlibWriterParameters>(
         }
     }
 
-    override fun Properties.customizeManifestForMockKlib(parameters: LegacyKlibWriterParameters) {
+    context(properties: org.jetbrains.kotlin.konan.properties.Properties)
+    override fun customizeManifestForMockKlib(parameters: LegacyKlibWriterParameters) {
+        super.customizeManifestForMockKlib(parameters)
         if (parameters.nativeTargets.isNotEmpty() && parameters.builtInsPlatform == BuiltInsPlatform.NATIVE) {
-            this[KLIB_PROPERTY_NATIVE_TARGETS] = parameters.nativeTargets.joinToString(" ")
+            properties[KLIB_PROPERTY_NATIVE_TARGETS] = parameters.nativeTargets.joinToString(" ")
         }
     }
 

@@ -24,15 +24,15 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
 abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters: () -> P) {
     open class Parameters {
         var uniqueName: String = "foo"
-        var builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.COMMON
-        var compilerVersion: String? = null
-        var metadataVersion: MetadataVersion? = null
-        var abiVersion: KotlinAbiVersion? = null
+        open var builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.COMMON
+        open var compilerVersion: String? = null
+        open var metadataVersion: MetadataVersion? = null
+        open var abiVersion: KotlinAbiVersion? = null
         var customManifestProperties: List<Pair<String, String>> = emptyList()
         var nopack: Boolean = true
         var dependencies: List<KlibDependency> = emptyList()
-        var ir: Collection<SerializedIrFile>? = null
-        var irOfInlinableFunctions: SerializedIrFile? = null
+        open var ir: Collection<SerializedIrFile>? = null
+        open var irOfInlinableFunctions: SerializedIrFile? = null
 
         // Note: There is always some randomly generated metadata. Because there is no way to generate a klib without metadata.
         val metadata: SerializedMetadata = KlibMockDSL.generateRandomMetadata()
@@ -40,7 +40,7 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         class KlibDependency(val uniqueName: String, val path: String)
     }
 
-    private lateinit var tmpDir: File
+    protected lateinit var tmpDir: File
 
     @BeforeEach
     fun setup(info: TestInfo) {
@@ -150,6 +150,7 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
                     customizeManifestForMockKlib(parameters)
                 }
             )
+            customizeMockKlib(parameters)
         }
 
         val result = KlibFileSystemDiff(mockKlib, writtenKlib).recursiveDiff()
@@ -166,7 +167,11 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         return createNewKlibDir().also { unzippedDir -> this.unzipTo(unzippedDir) }
     }
 
-    protected open fun Properties.customizeManifestForMockKlib(parameters: P) = Unit
+    context(dsl: KlibMockDSL)
+    protected open fun customizeMockKlib(parameters: P) = Unit
+
+    context(properties: Properties)
+    protected open fun customizeManifestForMockKlib(parameters: P) = Unit
 
     protected fun createNewKlibDir(): File = tmpDir.resolve(UUID.randomUUID().toString()).apply(File::mkdirs)
 
