@@ -8,7 +8,7 @@ val antlrTool by configurations.creating
 
 dependencies {
     antlrTool(libs.antlr)
-    runtimeOnly(libs.antlr.runtime)
+    api(libs.antlr.runtime)
 
     api(kotlinStdlib())
     api(project(":js:js.ast"))
