@@ -3,4 +3,4 @@
 
 package test
 
-abstract class CMutableSet<Elem> : MutableSet<Elem> by mutableSetOf<Elem>()
+abstract class CMutableSet<Elem> : MutableSet<Elem>
