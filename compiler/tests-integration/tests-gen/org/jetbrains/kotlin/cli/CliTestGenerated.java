@@ -84,6 +84,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/plugins/firAllOpenPlugin_modern.args");
     }
 
+    @TestMetadata("lombok.args")
+    public void testLombok() {
+      runTest("compiler/testData/cli/jvm/plugins/lombok.args");
+    }
+
+    @TestMetadata("lombokDisabledExpFeatureWarnings.args")
+    public void testLombokDisabledExpFeatureWarnings() {
+      runTest("compiler/testData/cli/jvm/plugins/lombokDisabledExpFeatureWarnings.args");
+    }
+
     @TestMetadata("mixingModernAndLegacyArgs.args")
     public void testMixingModernAndLegacyArgs() {
       runTest("compiler/testData/cli/jvm/plugins/mixingModernAndLegacyArgs.args");
