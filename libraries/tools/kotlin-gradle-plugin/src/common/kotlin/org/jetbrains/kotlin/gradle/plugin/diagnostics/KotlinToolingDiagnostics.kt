@@ -1962,7 +1962,7 @@ internal object KotlinToolingDiagnostics {
             buildFile: File,
             trace: Throwable,
         ) = build(throwable = trace) {
-            title("Failed to apply plugin 'com.jetbrains.kotlin.android'")
+            title("Failed to apply plugin 'org.jetbrains.kotlin.android'")
                 .description("The 'org.jetbrains.kotlin.android' plugin is no longer required for Kotlin support since AGP 9.0.")
                 .solution("Remove the 'org.jetbrains.kotlin.android' plugin from this project's build file: ${buildFile}.")
                 .documentationLink(URI("https://kotl.in/gradle/agp-built-in-kotlin"))
@@ -1974,8 +1974,8 @@ internal object KotlinToolingDiagnostics {
         operator fun invoke(
             trace: Throwable,
         ) = build(throwable = trace) {
-            title("Failed to apply plugin 'com.jetbrains.kotlin.android'")
-                .description("The 'org.jetbrains.kotlin.android' plugin is not compatible with AGP's new DSL (`android.newDsl=true`).")
+            title("Failed to apply plugin 'org.jetbrains.kotlin.android'")
+                .description("The 'org.jetbrains.kotlin.android' plugin is not compatible with AGP's 9.0 new DSL (`android.newDsl=true`).")
                 .solution("Set `android.builtInKotlin=true` in `gradle.properties` and migrate to built-in Kotlin (see https://kotl.in/gradle/agp-built-in-kotlin for guidance), or set `android.newDsl=false` in `gradle.properties` to temporarily bypass this issue.")
                 .documentationLink(URI("https://kotl.in/gradle/agp-new-dsl"))
         }
@@ -1995,6 +1995,17 @@ internal object KotlinToolingDiagnostics {
                 )
                 .solution("Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp")
                 .documentationLink(URI("https://kotl.in/gradle/agp-new-kmp"))
+        }
+    }
+
+    internal object DeprecatedKotlinAndroidPlugin : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+        operator fun invoke(
+            projectPath: String
+        ) = build {
+            title("Deprecated 'org.jetbrains.kotlin.android' plugin usage")
+                .description("The 'org.jetbrains.kotlin.android' plugin in project '$projectPath' is no longer required for Kotlin support since AGP 9.0.")
+                .solution("Set `android.builtInKotlin=true` and remove `android.newDsl=false` from `gradle.properties`, then migrate to built-in Kotlin. For more information, see https://kotl.in/gradle/agp-built-in-kotlin.")
+                .documentationLink(URI("https://kotl.in/gradle/agp-built-in-kotlin"))
         }
     }
 

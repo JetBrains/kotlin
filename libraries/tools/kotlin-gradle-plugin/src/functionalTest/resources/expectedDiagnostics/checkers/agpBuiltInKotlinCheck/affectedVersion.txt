@@ -1,4 +1,4 @@
-[AgpWithBuiltInKotlinIsAlreadyApplied | FATAL] Failed to apply plugin 'com.jetbrains.kotlin.android'
+[AgpWithBuiltInKotlinIsAlreadyApplied | FATAL] Failed to apply plugin 'org.jetbrains.kotlin.android'
 The 'org.jetbrains.kotlin.android' plugin is no longer required for Kotlin support since AGP 9.0.
 Remove the 'org.jetbrains.kotlin.android' plugin from this project's build file: build.gradle.
 See https://kotl.in/gradle/agp-built-in-kotlin for more details.
