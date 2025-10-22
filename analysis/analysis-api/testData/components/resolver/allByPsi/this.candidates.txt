@@ -1663,8 +1663,8 @@ KtCallExpression(857,1107): 'myWith { t ->'
                         } -> (KaVariableSignature:
           name = body
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-          symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+          symbol = body: T.(T) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -1678,13 +1678,13 @@ KtCallExpression(857,1107): 'myWith { t ->'
         signature = KaFunctionSignature:
           receiverType = one.MyClass.InnerOuter.InnerNested
           returnType = kotlin.Unit
-          symbol = one/myWith(<extension receiver>: T, body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = body
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-              symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+              symbol = body: T.(T) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -1709,8 +1709,8 @@ KtNameReferenceExpression(857,863): 'myWith'
                         } -> (KaVariableSignature:
           name = body
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-          symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+          symbol = body: T.(T) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -1724,13 +1724,13 @@ KtNameReferenceExpression(857,863): 'myWith'
         signature = KaFunctionSignature:
           receiverType = one.MyClass.InnerOuter.InnerNested
           returnType = kotlin.Unit
-          symbol = one/myWith(<extension receiver>: T, body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = body
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-              symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+              symbol = body: T.(T) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -2330,8 +2330,8 @@ KtCallExpression(1125,1194): 'myWith label@{'
                         } -> (KaVariableSignature:
           name = body
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-          symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+          symbol = body: T.(T) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -2345,13 +2345,13 @@ KtCallExpression(1125,1194): 'myWith label@{'
         signature = KaFunctionSignature:
           receiverType = one.MyClass.InnerOuter.InnerNested
           returnType = kotlin.Unit
-          symbol = one/myWith(<extension receiver>: T, body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = body
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-              symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+              symbol = body: T.(T) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -2371,8 +2371,8 @@ KtNameReferenceExpression(1125,1131): 'myWith'
                         } -> (KaVariableSignature:
           name = body
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-          symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+          symbol = body: T.(T) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -2386,13 +2386,13 @@ KtNameReferenceExpression(1125,1131): 'myWith'
         signature = KaFunctionSignature:
           receiverType = one.MyClass.InnerOuter.InnerNested
           returnType = kotlin.Unit
-          symbol = one/myWith(<extension receiver>: T, body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>): kotlin.Unit
+          symbol = one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = body
               receiverType = null
-              returnType = @ExtensionFunctionType kotlin.Function2<one.MyClass.InnerOuter.InnerNested, one.MyClass.InnerOuter.InnerNested, kotlin.Unit>
-              symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+              returnType = one.MyClass.InnerOuter.InnerNested.(one.MyClass.InnerOuter.InnerNested) -> kotlin.Unit
+              symbol = body: T.(T) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -2592,7 +2592,7 @@ KtCallExpression(1272,1282): 'body(this)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = body
           isSafeNavigation = false
-          type = @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          type = T.(T) -> kotlin.Unit
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
@@ -2617,7 +2617,7 @@ KtCallExpression(1272,1282): 'body(this)'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function2.invoke(<dispatch receiver>: kotlin.Function2<P1, P2, R>, p1: P1, p2: P2): R
+          symbol = kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
           valueParameters = [
             KaVariableSignature:
               name = p1
@@ -2650,8 +2650,8 @@ KtNameReferenceExpression(1272,1276): 'body'
         signature = KaVariableSignature:
           name = body
           receiverType = null
-          returnType = @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
-          symbol = body: @ExtensionFunctionType kotlin.Function2<T, T, kotlin.Unit>
+          returnType = T.(T) -> kotlin.Unit
+          symbol = body: T.(T) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read

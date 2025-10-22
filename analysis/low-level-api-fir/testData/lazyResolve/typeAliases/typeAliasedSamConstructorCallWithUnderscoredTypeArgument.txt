@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
     }
     public final [ResolvedTo(SUPER_TYPES)] typealias Alias<[ResolvedTo(CONTRACTS)] TT> = R|test/Box<TT>|
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
-        R|test/Alias|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(TT)>] Alias@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        R|test/Alias|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(TT)] Alias@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String(OK)
         }
         )
@@ -128,7 +128,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasedSamConstructorCallWithUnderscoredTyp
     }
     public final [ResolvedTo(BODY_RESOLVE)] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TT> = R|test/Box<TT>|
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
-        R|test/Alias|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(TT)>] Alias@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        R|test/Alias|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(TT)] Alias@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String(OK)
         }
         )

@@ -1,13 +1,13 @@
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(329,330): error: Initializer type mismatch: expected 'String', actual 'Function0<String>'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(329,330): error: Initializer type mismatch: expected 'String', actual '() -> String'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(349,448): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(349,448): error: Return type mismatch: expected 'String', actual '() -> String'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(349,448): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(349,448): error: Return type mismatch: expected 'String', actual '() -> String'.
 
 /returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(394,416): error: Return type mismatch: expected 'String', actual 'String?'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(463,464): error: Assignment type mismatch: actual type is 'Function0<String>', but 'String' was expected.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(463,464): error: Assignment type mismatch: actual type is '() -> String', but 'String' was expected.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(483,574): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(483,574): error: Return type mismatch: expected 'String', actual '() -> String'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(483,574): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(483,574): error: Return type mismatch: expected 'String', actual '() -> String'.

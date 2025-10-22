@@ -5,7 +5,7 @@ FIR source kind: KtRealSourceElementKind
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
     public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
-        ^ Q|JavaClass|.R|/JavaClass.function|().R|kotlin/let|<R|@R|Anno|(value = String(outer))  List!|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<TypeVariable(T), TypeVariable(R)>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(value = String(outer))  List!|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^ Q|JavaClass|.R|/JavaClass.function|().R|kotlin/let|<R|@R|Anno|(value = String(outer))  List!|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(value = String(outer))  List!|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ <strcat>(String( (), R|<local>/it|, String()))
         }
         )
@@ -15,7 +15,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
-            ^ Q|JavaClass|.R|/JavaClass.function|().R|kotlin/let|<R|@R|Anno|(value = String(outer))  List!|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<TypeVariable(T), TypeVariable(R)>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(value = String(outer))  List!|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ Q|JavaClass|.R|/JavaClass.function|().R|kotlin/let|<R|@R|Anno|(value = String(outer))  List!|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(value = String(outer))  List!|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                 ^ <strcat>(String( (), R|<local>/it|, String()))
             }
             )

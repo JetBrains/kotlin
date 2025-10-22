@@ -1,0 +1,65 @@
+KtCallExpression(66,80): 'x(1, "", true)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = fun
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(fun))  kotlin.Int
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null),
+        "" -> (KaVariableSignature:
+          name = p2
+          receiverType = null
+          returnType = kotlin.String
+          symbol = p2: P2
+          contextParameters = []
+          callableId = null),
+        true -> (KaVariableSignature:
+          name = class
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(class))  kotlin.Boolean
+          symbol = p3: P3
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.Function3<@R|kotlin.ParameterName|(name = String(fun))  kotlin.Int, kotlin.String, @R|kotlin.ParameterName|(name = String(class))  kotlin.Boolean, kotlin.Unit>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function3.invoke(<dispatch receiver>: kotlin.Function3<P1, P2, P3, R>, p1: P1, p2: P2, p3: P3): R
+          valueParameters = [
+            KaVariableSignature:
+              name = fun
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(fun))  kotlin.Int
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = p2
+              receiverType = null
+              returnType = kotlin.String
+              symbol = p2: P2
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = class
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(class))  kotlin.Boolean
+              symbol = p3: P3
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function3.invoke
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

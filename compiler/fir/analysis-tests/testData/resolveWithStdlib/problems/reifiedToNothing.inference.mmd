@@ -74,7 +74,7 @@ flowchart TD
     constraint11["<tt>Boolean &lt;: Boolean</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument R|&lt;local>/flag|</tt></pre></i>"]
     class constraint11 nowrapClass;
     stage10 ~~~ constraint11
-    constraint12["<tt>Function0&lt;TypeVariable(T)?> &lt;: Function0&lt;TypeVariable(T)?></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument &lt;L> = ifTrue &lt;implicit>.&lt;anonymous>(): &lt;implicit> &lt;inline=Unknown>  {
+    constraint12["<tt>() -> TypeVariable(T)? &lt;: () -> TypeVariable(T)?</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument &lt;L> = ifTrue &lt;implicit>.&lt;anonymous>(): &lt;implicit> &lt;inline=Unknown>  {
     try {
         parse#(decode#(token#))
     }

@@ -28,7 +28,7 @@ FILE: lambdaArgInScopeFunction.kt
 
         }
         ) }
-        R|<local>/lambda|.R|/checkType|<R|(() -> KotlinClass)?|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function0<KotlinClass>?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/lambda|.R|/checkType|<R|(() -> KotlinClass)?|>(<L> = checkType@fun R|CheckTypeInv<(() -> KotlinClass)?>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|(kotlin/Unit) -> KotlinClass?|>()
         }
         )
@@ -49,7 +49,7 @@ FILE: lambdaArgInScopeFunction.kt
 
         }
         )
-        R|<local>/lambda|.R|/checkType|<R|() -> KotlinClass|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function0<KotlinClass>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/lambda|.R|/checkType|<R|() -> KotlinClass|>(<L> = checkType@fun R|CheckTypeInv<() -> KotlinClass>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/_<None of the following candidates is applicable because of receiver type mismatch: [/_]>#|<R|(kotlin/Unit) -> KotlinClass?|>()
         }
         )

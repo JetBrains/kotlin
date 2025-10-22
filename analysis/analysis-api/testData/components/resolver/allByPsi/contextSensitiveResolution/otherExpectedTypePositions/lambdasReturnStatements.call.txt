@@ -305,8 +305,8 @@ KtCallExpression(291,364): 'myRunWithMyEnum {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<MyEnum>
+          returnType = () -> MyEnum
+          symbol = b: () -> MyEnum
           contextParameters = []
           callableId = null)
       }
@@ -318,13 +318,13 @@ KtCallExpression(291,364): 'myRunWithMyEnum {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+          symbol = /myRunWithMyEnum(b: () -> MyEnum): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<MyEnum>
+              returnType = () -> MyEnum
+              symbol = b: () -> MyEnum
               contextParameters = []
               callableId = null
           ]
@@ -342,8 +342,8 @@ KtNameReferenceExpression(291,306): 'myRunWithMyEnum'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<MyEnum>
+          returnType = () -> MyEnum
+          symbol = b: () -> MyEnum
           contextParameters = []
           callableId = null)
       }
@@ -355,13 +355,13 @@ KtNameReferenceExpression(291,306): 'myRunWithMyEnum'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+          symbol = /myRunWithMyEnum(b: () -> MyEnum): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<MyEnum>
+              returnType = () -> MyEnum
+              symbol = b: () -> MyEnum
               contextParameters = []
               callableId = null
           ]
@@ -469,8 +469,8 @@ KtCallExpression(370,451): 'myRunWithMyEnum {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<MyEnum>
+          returnType = () -> MyEnum
+          symbol = b: () -> MyEnum
           contextParameters = []
           callableId = null)
       }
@@ -482,13 +482,13 @@ KtCallExpression(370,451): 'myRunWithMyEnum {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+          symbol = /myRunWithMyEnum(b: () -> MyEnum): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<MyEnum>
+              returnType = () -> MyEnum
+              symbol = b: () -> MyEnum
               contextParameters = []
               callableId = null
           ]
@@ -506,8 +506,8 @@ KtNameReferenceExpression(370,385): 'myRunWithMyEnum'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<MyEnum>
+          returnType = () -> MyEnum
+          symbol = b: () -> MyEnum
           contextParameters = []
           callableId = null)
       }
@@ -519,13 +519,13 @@ KtNameReferenceExpression(370,385): 'myRunWithMyEnum'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+          symbol = /myRunWithMyEnum(b: () -> MyEnum): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<MyEnum>
+              returnType = () -> MyEnum
+              symbol = b: () -> MyEnum
               contextParameters = []
               callableId = null
           ]
@@ -789,8 +789,8 @@ KtCallExpression(457,518): 'myRun<MyEnum> {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -802,13 +802,13 @@ KtCallExpression(457,518): 'myRun<MyEnum> {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -828,8 +828,8 @@ KtNameReferenceExpression(457,462): 'myRun'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -841,13 +841,13 @@ KtNameReferenceExpression(457,462): 'myRun'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1052,8 +1052,8 @@ KtCallExpression(536,601): 'myRun {'
                 } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1065,13 +1065,13 @@ KtCallExpression(536,601): 'myRun {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1091,8 +1091,8 @@ KtNameReferenceExpression(536,541): 'myRun'
                 } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1104,13 +1104,13 @@ KtNameReferenceExpression(536,541): 'myRun'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1232,8 +1232,8 @@ KtCallExpression(629,682): 'myRun {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1245,13 +1245,13 @@ KtCallExpression(629,682): 'myRun {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1271,8 +1271,8 @@ KtNameReferenceExpression(629,634): 'myRun'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1284,13 +1284,13 @@ KtNameReferenceExpression(629,634): 'myRun'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1401,8 +1401,8 @@ KtCallExpression(688,741): 'myRun {'
               } -> (KaVariableSignature:
             name = b
             receiverType = null
-            returnType = kotlin.Function0<ERROR CLASS: Cannot infer argument for type parameter T>
-            symbol = b: kotlin.Function0<T>
+            returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = b: () -> T
             contextParameters = []
             callableId = null)
         }
@@ -1414,13 +1414,13 @@ KtCallExpression(688,741): 'myRun {'
           signature = KaFunctionSignature:
             receiverType = null
             returnType = ERROR CLASS: Cannot infer argument for type parameter T
-            symbol = /myRun(b: kotlin.Function0<T>): T
+            symbol = /myRun(b: () -> T): T
             valueParameters = [
               KaVariableSignature:
                 name = b
                 receiverType = null
-                returnType = kotlin.Function0<ERROR CLASS: Cannot infer argument for type parameter T>
-                symbol = b: kotlin.Function0<T>
+                returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+                symbol = b: () -> T
                 contextParameters = []
                 callableId = null
             ]
@@ -1443,8 +1443,8 @@ KtNameReferenceExpression(688,693): 'myRun'
               } -> (KaVariableSignature:
             name = b
             receiverType = null
-            returnType = kotlin.Function0<ERROR CLASS: Cannot infer argument for type parameter T>
-            symbol = b: kotlin.Function0<T>
+            returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = b: () -> T
             contextParameters = []
             callableId = null)
         }
@@ -1456,13 +1456,13 @@ KtNameReferenceExpression(688,693): 'myRun'
           signature = KaFunctionSignature:
             receiverType = null
             returnType = ERROR CLASS: Cannot infer argument for type parameter T
-            symbol = /myRun(b: kotlin.Function0<T>): T
+            symbol = /myRun(b: () -> T): T
             valueParameters = [
               KaVariableSignature:
                 name = b
                 receiverType = null
-                returnType = kotlin.Function0<ERROR CLASS: Cannot infer argument for type parameter T>
-                symbol = b: kotlin.Function0<T>
+                returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+                symbol = b: () -> T
                 contextParameters = []
                 callableId = null
             ]
@@ -1542,8 +1542,8 @@ KtCallExpression(746,806): 'myRun {'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1555,13 +1555,13 @@ KtCallExpression(746,806): 'myRun {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1581,8 +1581,8 @@ KtNameReferenceExpression(746,751): 'myRun'
             } -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
+          returnType = () -> MyEnum
+          symbol = b: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1594,13 +1594,13 @@ KtNameReferenceExpression(746,751): 'myRun'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
-          symbol = /myRun(b: kotlin.Function0<T>): T
+          symbol = /myRun(b: () -> T): T
           valueParameters = [
             KaVariableSignature:
               name = b
               receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<T>
+              returnType = () -> MyEnum
+              symbol = b: () -> T
               contextParameters = []
               callableId = null
           ]

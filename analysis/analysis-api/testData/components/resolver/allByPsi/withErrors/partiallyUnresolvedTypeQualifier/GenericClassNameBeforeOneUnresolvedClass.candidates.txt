@@ -127,8 +127,8 @@ KtCallExpression(145,181): 'take {'
         } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
-          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
+          symbol = action: (T) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -140,13 +140,13 @@ KtCallExpression(145,181): 'take {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          symbol = /take(action: (T) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
-              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
+              symbol = action: (T) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -155,7 +155,7 @@ KtCallExpression(145,181): 'take {'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<??? (Unresolved qualified name: Foo.Bar), Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(145,149): 'take'
@@ -167,8 +167,8 @@ KtNameReferenceExpression(145,149): 'take'
         } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
-          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
+          symbol = action: (T) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -180,13 +180,13 @@ KtNameReferenceExpression(145,149): 'take'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          symbol = /take(action: (T) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<ERROR CLASS: Cannot infer argument for type parameter T, kotlin.Unit>
-              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
+              symbol = action: (T) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -195,7 +195,7 @@ KtNameReferenceExpression(145,149): 'take'
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<??? (Unresolved qualified name: Foo.Bar), Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
     isInBestCandidates = true
 
 KtLambdaArgument(150,181): '{'

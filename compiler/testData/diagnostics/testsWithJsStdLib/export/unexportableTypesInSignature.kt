@@ -51,7 +51,7 @@ fun foo4(x: () -> Unit) {
 }
 
 @JsExport
-fun foo5(<!NON_EXPORTABLE_TYPE("parameter; Function1<Unit, Unit>")!>x: (Unit) -> Unit<!>) {
+fun foo5(<!NON_EXPORTABLE_TYPE("parameter; (Unit) -> Unit")!>x: (Unit) -> Unit<!>) {
 }
 
 @JsExport

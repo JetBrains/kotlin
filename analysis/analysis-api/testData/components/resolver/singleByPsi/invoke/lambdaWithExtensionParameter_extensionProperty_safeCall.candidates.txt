@@ -12,8 +12,8 @@ KtNameReferenceExpression(96,102): 'action'
         signature = KaVariableSignature:
           name = action
           receiverType = test.Foo
-          returnType = kotlin.Function0<kotlin.Unit>
-          symbol = val action: kotlin.Function0<kotlin.Unit>
+          returnType = () -> kotlin.Unit
+          symbol = val action: () -> kotlin.Unit
           contextParameters = []
           callableId = test/action
       simpleAccess = Read

@@ -185,8 +185,8 @@ KtCallExpression(180,749): 'foo1 {'
             } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (kotlin.Int) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -198,13 +198,13 @@ KtCallExpression(180,749): 'foo1 {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              returnType = (kotlin.Int) -> kotlin.Unit
+              symbol = action: (kotlin.Int) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -226,7 +226,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -234,7 +234,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -243,8 +243,8 @@ KtNameReferenceExpression(180,184): 'foo1'
             } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (kotlin.Int) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -256,13 +256,13 @@ KtNameReferenceExpression(180,184): 'foo1'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              returnType = (kotlin.Int) -> kotlin.Unit
+              symbol = action: (kotlin.Int) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -295,7 +295,7 @@ KtCallExpression(195,743): 'foo2 {'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -303,7 +303,7 @@ KtCallExpression(195,743): 'foo2 {'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -311,8 +311,8 @@ KtCallExpression(195,743): 'foo2 {'
                 } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          returnType = (kotlin.String) -> kotlin.Unit
+          symbol = action: (kotlin.String) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -324,13 +324,13 @@ KtCallExpression(195,743): 'foo2 {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              returnType = (kotlin.String) -> kotlin.Unit
+              symbol = action: (kotlin.String) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -351,7 +351,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -359,7 +359,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
@@ -367,8 +367,8 @@ KtNameReferenceExpression(195,199): 'foo2'
                 } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          returnType = (kotlin.String) -> kotlin.Unit
+          symbol = action: (kotlin.String) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -380,13 +380,13 @@ KtNameReferenceExpression(195,199): 'foo2'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              returnType = (kotlin.String) -> kotlin.Unit
+              symbol = action: (kotlin.String) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -418,7 +418,7 @@ KtCallExpression(214,733): 'foo3 {'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -426,15 +426,15 @@ KtCallExpression(214,733): 'foo3 {'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
                     } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          returnType = (kotlin.Boolean) -> kotlin.Unit
+          symbol = action: (kotlin.Boolean) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -446,13 +446,13 @@ KtCallExpression(214,733): 'foo3 {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo3(action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo3(action: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              returnType = (kotlin.Boolean) -> kotlin.Unit
+              symbol = action: (kotlin.Boolean) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -472,7 +472,7 @@ KtNameReferenceExpression(214,218): 'foo3'
                                 return@foo1
                             },
                         )
-        
+
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -480,15 +480,15 @@ KtNameReferenceExpression(214,218): 'foo3'
                             return@foo2
                             return@foo1
                         })
-        
+
                         return@foo3
                         return@foo2
                         return@foo1
                     } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          returnType = (kotlin.Boolean) -> kotlin.Unit
+          symbol = action: (kotlin.Boolean) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -500,13 +500,13 @@ KtNameReferenceExpression(214,218): 'foo3'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo3(action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo3(action: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              returnType = (kotlin.Boolean) -> kotlin.Unit
+              symbol = action: (kotlin.Boolean) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -537,8 +537,8 @@ KtCallExpression(237,413): 'foo1('
                             } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (kotlin.Int) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -550,13 +550,13 @@ KtCallExpression(237,413): 'foo1('
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              returnType = (kotlin.Int) -> kotlin.Unit
+              symbol = action: (kotlin.Int) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -575,8 +575,8 @@ KtNameReferenceExpression(237,241): 'foo1'
                             } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          returnType = (kotlin.Int) -> kotlin.Unit
+          symbol = action: (kotlin.Int) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -588,13 +588,13 @@ KtNameReferenceExpression(237,241): 'foo1'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              returnType = (kotlin.Int) -> kotlin.Unit
+              symbol = action: (kotlin.Int) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -657,8 +657,8 @@ KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
                         } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          returnType = (kotlin.String) -> kotlin.Unit
+          symbol = action: (kotlin.String) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -670,13 +670,13 @@ KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              returnType = (kotlin.String) -> kotlin.Unit
+              symbol = action: (kotlin.String) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]
@@ -697,8 +697,8 @@ KtNameReferenceExpression(431,435): 'foo2'
                         } -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
-          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          returnType = (kotlin.String) -> kotlin.Unit
+          symbol = action: (kotlin.String) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
@@ -710,13 +710,13 @@ KtNameReferenceExpression(431,435): 'foo2'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = action
               receiverType = null
-              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
-              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              returnType = (kotlin.String) -> kotlin.Unit
+              symbol = action: (kotlin.String) -> kotlin.Unit
               contextParameters = []
               callableId = null
           ]

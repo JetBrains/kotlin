@@ -93,6 +93,7 @@ object StandardClassIds {
     val Number = "Number".baseId()
 
     val Function = "Function".baseId()
+    val SuspendFunction = "SuspendFunction".coroutinesId()
 
     fun byName(name: String) = name.baseId()
     fun reflectByName(name: String) = name.reflectId()

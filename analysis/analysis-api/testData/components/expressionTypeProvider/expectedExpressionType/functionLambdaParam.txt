@@ -11,4 +11,4 @@ expected type: KaFunctionType:
       typeArguments: []
       type: kotlin/String
   ]
-  type: kotlin/Function1<kotlin/Int, kotlin/String>
+  type: (kotlin/Int) -> kotlin/String

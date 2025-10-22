@@ -428,8 +428,8 @@ KtCallExpression(676,685): 'lazy {""}'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -441,13 +441,13 @@ KtCallExpression(676,685): 'lazy {""}'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -464,8 +464,8 @@ KtNameReferenceExpression(676,680): 'lazy'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -477,13 +477,13 @@ KtNameReferenceExpression(676,680): 'lazy'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -637,12 +637,12 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = lMyClass
           isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = arg
@@ -667,8 +667,8 @@ KtNameReferenceExpression(830,838): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -701,12 +701,12 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = lMyClass
           isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = arg
@@ -731,8 +731,8 @@ KtNameReferenceExpression(860,868): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -783,12 +783,12 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = lMyClass
           isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = arg
@@ -813,8 +813,8 @@ KtNameReferenceExpression(886,894): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -865,12 +865,12 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = lMyClass
           isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = arg
@@ -895,8 +895,8 @@ KtNameReferenceExpression(919,927): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -948,12 +948,12 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
           dispatchReceiver = KaExplicitReceiverValue:
             expression = lMyClass
             isSafeNavigation = false
-            type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           extensionReceiver = null
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
             valueParameters = [
               KaVariableSignature:
                 name = arg
@@ -980,8 +980,8 @@ KtNameReferenceExpression(954,962): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -1015,12 +1015,12 @@ KtCallExpression(981,995): 'lMyClass(prop)'
           dispatchReceiver = KaExplicitReceiverValue:
             expression = lMyClass
             isSafeNavigation = false
-            type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           extensionReceiver = null
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
             valueParameters = [
               KaVariableSignature:
                 name = arg
@@ -1047,8 +1047,8 @@ KtNameReferenceExpression(981,989): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -1100,12 +1100,12 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
           dispatchReceiver = KaExplicitReceiverValue:
             expression = lMyClass
             isSafeNavigation = false
-            type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           extensionReceiver = null
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
             valueParameters = [
               KaVariableSignature:
                 name = arg
@@ -1132,8 +1132,8 @@ KtNameReferenceExpression(1000,1008): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -1185,12 +1185,12 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
           dispatchReceiver = KaExplicitReceiverValue:
             expression = lMyClass
             isSafeNavigation = false
-            type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           extensionReceiver = null
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
             valueParameters = [
               KaVariableSignature:
                 name = arg
@@ -1217,8 +1217,8 @@ KtNameReferenceExpression(1024,1032): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -1270,12 +1270,12 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
           dispatchReceiver = KaExplicitReceiverValue:
             expression = lMyClass
             isSafeNavigation = false
-            type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           extensionReceiver = null
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
             valueParameters = [
               KaVariableSignature:
                 name = arg
@@ -1302,8 +1302,8 @@ KtNameReferenceExpression(1048,1056): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -1355,12 +1355,12 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
           dispatchReceiver = KaExplicitReceiverValue:
             expression = lMyClass
             isSafeNavigation = false
-            type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           extensionReceiver = null
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
             valueParameters = [
               KaVariableSignature:
                 name = arg
@@ -1374,7 +1374,7 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
             callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function0<MyClass.InheritorObject>', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1071,1079): 'lMyClass'
   KaSuccessCallInfo:
@@ -1387,8 +1387,8 @@ KtNameReferenceExpression(1071,1079): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -1414,8 +1414,8 @@ KtNameReferenceExpression(1080,1090): 'lambdaProp'
         signature = KaVariableSignature:
           name = lambdaProp
           receiverType = null
-          returnType = kotlin.Function0<MyClass.InheritorObject>
-          symbol = val lambdaProp: kotlin.Function0<MyClass.InheritorObject>
+          returnType = () -> MyClass.InheritorObject
+          symbol = val lambdaProp: () -> MyClass.InheritorObject
           contextParameters = []
           callableId = /MyClass.Companion.lambdaProp
       simpleAccess = Read
@@ -1439,12 +1439,12 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = lMyClass
           isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = arg
@@ -1469,8 +1469,8 @@ KtNameReferenceExpression(1097,1105): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -1513,12 +1513,12 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = lMyClass
           isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = arg
@@ -1543,8 +1543,8 @@ KtNameReferenceExpression(1128,1136): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read
@@ -1587,12 +1587,12 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
         dispatchReceiver = KaExplicitReceiverValue:
           expression = lMyClass
           isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
           valueParameters = [
             KaVariableSignature:
               name = arg
@@ -1617,8 +1617,8 @@ KtNameReferenceExpression(1149,1157): 'lMyClass'
         signature = KaVariableSignature:
           name = lMyClass
           receiverType = null
-          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-          symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
           contextParameters = []
           callableId = null
       simpleAccess = Read

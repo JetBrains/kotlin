@@ -5,8 +5,8 @@ KtNameReferenceExpression(166,171): 'check'
         emptyList() -> (KaVariableSignature:
           name = list
           receiverType = null
-          returnType = {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
-          symbol = list: {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+          returnType = {dependency2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>
+          symbol = list: {dependency2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>
           contextParameters = []
           callableId = null)
       }
@@ -21,13 +21,13 @@ KtNameReferenceExpression(166,171): 'check'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = dependency3/MyInterface.check(<dispatch receiver>: dependency3.MyInterface, list: {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>): kotlin.Unit
+          symbol = dependency3/MyInterface.check(<dispatch receiver>: dependency3.MyInterface, list: {dependency2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = list
               receiverType = null
-              returnType = {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
-              symbol = list: {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+              returnType = {dependency2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>
+              symbol = list: {dependency2.ListAlias<(kotlin.String) -> kotlin.Int>=} kotlin.collections.List<(kotlin.String) -> kotlin.Int>
               contextParameters = []
               callableId = null
           ]

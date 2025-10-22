@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(2).R|kotlin/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<TypeVariable(T), TypeVariable(R)>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(2).R|kotlin/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
         ^ R|<local>/it|.R|kotlin/Int.plus|(Int(1))
     }
     )
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(2).R|kotlin/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<TypeVariable(T), TypeVariable(R)>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(2).R|kotlin/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
         ^ R|<local>/it|.R|kotlin/Int.plus|(Int(1))
     }
     )
@@ -269,12 +269,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(2).R|kotlin/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<TypeVariable(T), TypeVariable(R)>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final [ResolvedTo(BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(2).R|kotlin/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
         ^ R|<local>/it|.R|kotlin/Int.plus|(Int(1))
     }
     )
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(2).R|kotlin/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<TypeVariable(T), TypeVariable(R)>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final [ResolvedTo(BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(2).R|kotlin/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
         ^ R|<local>/it|.R|kotlin/Int.plus|(Int(1))
     }
     )

@@ -87,7 +87,7 @@ KtNameReferenceExpression(202,210): 'IntArray'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.IntArray
-          symbol = <constructor>(size: kotlin.Int, init: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.IntArray
+          symbol = <constructor>(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Int): kotlin.IntArray
           valueParameters = [
             KaVariableSignature:
               name = size
@@ -99,8 +99,8 @@ KtNameReferenceExpression(202,210): 'IntArray'
             KaVariableSignature:
               name = init
               receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
-              symbol = init: kotlin.Function1<kotlin.Int, kotlin.Int>
+              returnType = (kotlin.Int) -> kotlin.Int
+              symbol = init: (kotlin.Int) -> kotlin.Int
               contextParameters = []
               callableId = null
           ]

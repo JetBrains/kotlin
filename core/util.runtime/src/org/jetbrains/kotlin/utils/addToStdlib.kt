@@ -54,6 +54,18 @@ inline fun <reified T> Iterable<*>.filterIsInstanceWithChecker(additionalChecker
     return result
 }
 
+fun <T> Iterator<T>.nextOrNull(): T? = if (hasNext()) next() else null
+
+class CountingIterator<T>(val delegate: Iterator<T>) : Iterator<T> {
+    var numberOfElementsSeen: Int = 0
+        private set
+
+    override fun hasNext() = delegate.hasNext()
+    override fun next() = delegate.next().also { numberOfElementsSeen++ }
+}
+
+fun <T> Iterator<T>.withSeenElementsCounting(): CountingIterator<T> = CountingIterator(this)
+
 
 inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
     when (this) {

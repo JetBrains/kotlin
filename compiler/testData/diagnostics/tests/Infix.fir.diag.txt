@@ -10,4 +10,4 @@
 
 /Infix.kt:(1135,1161): error: 'infix' modifier is required on 'fun Example.toExtNonInfixDefaultValues(other: Example? = ..., blah: Int = ...): Pair<Example, Example?>'.
 
-/Infix.kt:(1171,1181): error: 'infix' modifier is required on 'fun Example.withLambda(f: () -> Unit): Pair<Example, Function0<Unit>>'.
+/Infix.kt:(1171,1181): error: 'infix' modifier is required on 'fun Example.withLambda(f: () -> Unit): Pair<Example, () -> Unit>'.

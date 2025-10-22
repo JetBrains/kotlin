@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.fir.renderer
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.addToStdlib.nextOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.withSeenElementsCounting
 
 open class ConeTypeRenderer(
     private val attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString,
@@ -90,8 +94,8 @@ open class ConeTypeRenderer(
         type: ConeKotlinType,
         nullabilityMarker: String = if (type !is ConeFlexibleType && type.isMarkedNullable) "?" else "",
     ) {
-        if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType) {
-            // We don't render attributes for flexible/definitely not null types here,
+        if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType && type.classId?.isFunctionType() != true) {
+            // We don't render attributes for flexible/definitely not null/extension function types here,
             // because bounds duplicate these attributes often
             type.renderAttributes()
         }
@@ -112,18 +116,91 @@ open class ConeTypeRenderer(
                 render(type)
             }
 
-            is ConeSimpleKotlinType -> {
-                val hasTypeArguments = type is ConeClassLikeType && type.typeArguments.isNotEmpty()
-                renderConstructor(type.getConstructor(), nullabilityMarker = nullabilityMarker.takeIf { !hasTypeArguments } ?: "")
-                if (hasTypeArguments) {
-                    type.renderTypeArguments()
-                    builder.append(nullabilityMarker)
+            is ConeSimpleKotlinType -> when {
+                type is ConeClassLikeType && type.classId?.isFunctionType() == true -> {
+                    renderFunctionType(type, nullabilityMarker)
+                    return
                 }
-                return
+
+                else -> {
+                    val hasTypeArguments = type is ConeClassLikeType && type.typeArguments.isNotEmpty()
+                    renderConstructor(type.getConstructor(), nullabilityMarker = nullabilityMarker.takeIf { !hasTypeArguments } ?: "")
+                    if (hasTypeArguments) {
+                        type.renderTypeArguments()
+                        builder.append(nullabilityMarker)
+                    }
+                    return
+                }
             }
         }
         builder.append(nullabilityMarker)
     }
+
+    private fun renderFunctionType(type: ConeClassLikeType, nullabilityMarker: String = "") {
+        if (nullabilityMarker != "") {
+            builder.append('(')
+        }
+        if (type.classId?.isSuspendFunctionType() == true) {
+            builder.append("suspend ")
+        }
+        val arguments = type.typeArguments.iterator().withSeenElementsCounting()
+
+        if (type.hasContextParameters) {
+            builder.append("context(")
+            repeat(type.contextParameterNumberForFunctionType - 1) {
+                arguments.nextOrNull()?.render()
+                builder.append(", ")
+            }
+            arguments.nextOrNull()?.render()
+            builder.append(") ")
+        }
+
+        if (type.isExtensionFunctionType) {
+            arguments.nextOrNull()?.let { next ->
+                if (couldBenefitFromParenthesizing(next)) {
+                    builder.append('(')
+                }
+                next.render()
+                if (couldBenefitFromParenthesizing(next)) {
+                    builder.append(')')
+                }
+            }
+            builder.append(".")
+        }
+
+        builder.append('(')
+        while (arguments.numberOfElementsSeen < type.typeArguments.size - 2) {
+            arguments.nextOrNull()?.render()
+            builder.append(", ")
+        }
+        if (arguments.numberOfElementsSeen == type.typeArguments.size - 2) {
+            arguments.nextOrNull()?.render()
+        }
+        builder.append(") -> ")
+        arguments.nextOrNull()?.render()
+
+        if (nullabilityMarker != "") {
+            builder.append(')')
+            builder.append(nullabilityMarker)
+        }
+        return
+    }
+
+    protected open fun couldBenefitFromParenthesizing(projection: ConeTypeProjection): Boolean =
+        // For non-invariant projections, e.g., `(in T).() -> Unit`
+        projection !is ConeKotlinType
+                // For `(T & Any).() -> Unit`
+                || projection is ConeDefinitelyNotNullType
+                // For `(() -> Unit)?.() -> Unit` and `(() -> Unit).() -> Unit`
+                || projection.classId?.isFunctionType() == true && !projection.isMarkedNullable
+
+    private fun ClassId.isFunctionType(): Boolean = isNonSuspendFunctionType() || isSuspendFunctionType()
+
+    private fun ClassId.isNonSuspendFunctionType(): Boolean =
+        this.asString().removePrefix(StandardClassIds.Function.asString()).toIntOrNull() != null
+
+    private fun ClassId.isSuspendFunctionType(): Boolean =
+        this.asString().removePrefix(StandardClassIds.SuspendFunction.asString()).toIntOrNull() != null
 
     open fun renderConstructor(constructor: TypeConstructorMarker, nullabilityMarker: String = "") {
         require(constructor is ConeTypeConstructorMarker)

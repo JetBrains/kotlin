@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val myProp: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val myProp: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^ Unit
         }
 
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statementTransformation.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val myProp: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val myProp: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^ Unit
         }
 

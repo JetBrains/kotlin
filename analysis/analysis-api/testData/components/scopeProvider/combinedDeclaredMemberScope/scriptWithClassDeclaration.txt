@@ -58,7 +58,7 @@ KaNamedFunctionSymbol:
             typeArguments: []
             type: kotlin/Int
         ]
-        type: kotlin/Function0<kotlin/Int>
+        type: () -> kotlin/Int
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
       getContainingJvmClassName: null

@@ -562,8 +562,8 @@ KtCallExpression(584,593): 'lazy {""}'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -575,13 +575,13 @@ KtCallExpression(584,593): 'lazy {""}'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -598,8 +598,8 @@ KtCallExpression(584,593): 'lazy {""}'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -611,7 +611,7 @@ KtCallExpression(584,593): 'lazy {""}'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(lock: kotlin.Any?, initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(lock: kotlin.Any?, initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = lock
@@ -623,8 +623,8 @@ KtCallExpression(584,593): 'lazy {""}'
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -642,8 +642,8 @@ KtCallExpression(584,593): 'lazy {""}'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -655,7 +655,7 @@ KtCallExpression(584,593): 'lazy {""}'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(mode: kotlin.LazyThreadSafetyMode, initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(mode: kotlin.LazyThreadSafetyMode, initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = mode
@@ -667,8 +667,8 @@ KtCallExpression(584,593): 'lazy {""}'
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -687,8 +687,8 @@ KtNameReferenceExpression(584,588): 'lazy'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -700,13 +700,13 @@ KtNameReferenceExpression(584,588): 'lazy'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -723,8 +723,8 @@ KtNameReferenceExpression(584,588): 'lazy'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -736,7 +736,7 @@ KtNameReferenceExpression(584,588): 'lazy'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(lock: kotlin.Any?, initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(lock: kotlin.Any?, initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = lock
@@ -748,8 +748,8 @@ KtNameReferenceExpression(584,588): 'lazy'
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -767,8 +767,8 @@ KtNameReferenceExpression(584,588): 'lazy'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -780,7 +780,7 @@ KtNameReferenceExpression(584,588): 'lazy'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(mode: kotlin.LazyThreadSafetyMode, initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(mode: kotlin.LazyThreadSafetyMode, initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = mode
@@ -792,8 +792,8 @@ KtNameReferenceExpression(584,588): 'lazy'
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -2483,7 +2483,7 @@ KtCallExpression(1067,1083): 'test(lambdaProp)'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function0<MyClass.InheritorObject>', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1067,1071): 'test'
@@ -2521,7 +2521,7 @@ KtNameReferenceExpression(1067,1071): 'test'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function0<MyClass.InheritorObject>', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1071,1083): '(lambdaProp)'
@@ -2544,8 +2544,8 @@ KtNameReferenceExpression(1072,1082): 'lambdaProp'
         signature = KaVariableSignature:
           name = lambdaProp
           receiverType = null
-          returnType = kotlin.Function0<MyClass.InheritorObject>
-          symbol = val lambdaProp: kotlin.Function0<MyClass.InheritorObject>
+          returnType = () -> MyClass.InheritorObject
+          symbol = val lambdaProp: () -> MyClass.InheritorObject
           contextParameters = []
           callableId = /MyClass.Companion.lambdaProp
       simpleAccess = Read

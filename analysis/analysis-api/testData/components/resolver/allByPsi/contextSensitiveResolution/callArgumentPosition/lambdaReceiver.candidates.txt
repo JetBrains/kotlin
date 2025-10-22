@@ -509,8 +509,8 @@ KtCallExpression(679,688): 'lazy {""}'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -522,13 +522,13 @@ KtCallExpression(679,688): 'lazy {""}'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -545,8 +545,8 @@ KtCallExpression(679,688): 'lazy {""}'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -558,7 +558,7 @@ KtCallExpression(679,688): 'lazy {""}'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(lock: kotlin.Any?, initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(lock: kotlin.Any?, initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = lock
@@ -570,8 +570,8 @@ KtCallExpression(679,688): 'lazy {""}'
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -589,8 +589,8 @@ KtCallExpression(679,688): 'lazy {""}'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -602,7 +602,7 @@ KtCallExpression(679,688): 'lazy {""}'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(mode: kotlin.LazyThreadSafetyMode, initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(mode: kotlin.LazyThreadSafetyMode, initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = mode
@@ -614,8 +614,8 @@ KtCallExpression(679,688): 'lazy {""}'
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -634,8 +634,8 @@ KtNameReferenceExpression(679,683): 'lazy'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -647,13 +647,13 @@ KtNameReferenceExpression(679,683): 'lazy'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -670,8 +670,8 @@ KtNameReferenceExpression(679,683): 'lazy'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -683,7 +683,7 @@ KtNameReferenceExpression(679,683): 'lazy'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(lock: kotlin.Any?, initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(lock: kotlin.Any?, initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = lock
@@ -695,8 +695,8 @@ KtNameReferenceExpression(679,683): 'lazy'
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -714,8 +714,8 @@ KtNameReferenceExpression(679,683): 'lazy'
         {""} -> (KaVariableSignature:
           name = initializer
           receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -727,7 +727,7 @@ KtNameReferenceExpression(679,683): 'lazy'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(mode: kotlin.LazyThreadSafetyMode, initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+          symbol = kotlin/lazy(mode: kotlin.LazyThreadSafetyMode, initializer: () -> T): kotlin.Lazy<T>
           valueParameters = [
             KaVariableSignature:
               name = mode
@@ -739,8 +739,8 @@ KtNameReferenceExpression(679,683): 'lazy'
             KaVariableSignature:
               name = initializer
               receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
+              returnType = () -> kotlin.String
+              symbol = initializer: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -961,8 +961,8 @@ KtCallExpression(847,889): 'receiveLambda<MyClass> { InheritorObject }'
         { InheritorObject } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -974,13 +974,13 @@ KtCallExpression(847,889): 'receiveLambda<MyClass> { InheritorObject }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -998,8 +998,8 @@ KtNameReferenceExpression(847,860): 'receiveLambda'
         { InheritorObject } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1011,13 +1011,13 @@ KtNameReferenceExpression(847,860): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1082,8 +1082,8 @@ KtCallExpression(894,932): 'receiveLambda<MyClass> { propMyClass }'
         { propMyClass } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1095,13 +1095,13 @@ KtCallExpression(894,932): 'receiveLambda<MyClass> { propMyClass }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1119,8 +1119,8 @@ KtNameReferenceExpression(894,907): 'receiveLambda'
         { propMyClass } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1132,13 +1132,13 @@ KtNameReferenceExpression(894,907): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1205,8 +1205,8 @@ KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
         { propInheritorClass } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1218,13 +1218,13 @@ KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1242,8 +1242,8 @@ KtNameReferenceExpression(937,950): 'receiveLambda'
         { propInheritorClass } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1255,13 +1255,13 @@ KtNameReferenceExpression(937,950): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1328,8 +1328,8 @@ KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
         { propInheritorObject } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1341,13 +1341,13 @@ KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1365,8 +1365,8 @@ KtNameReferenceExpression(987,1000): 'receiveLambda'
         { propInheritorObject } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1378,13 +1378,13 @@ KtNameReferenceExpression(987,1000): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1451,8 +1451,8 @@ KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
         { prop } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1464,13 +1464,13 @@ KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1489,8 +1489,8 @@ KtNameReferenceExpression(1039,1052): 'receiveLambda'
         { prop } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1502,13 +1502,13 @@ KtNameReferenceExpression(1039,1052): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1576,8 +1576,8 @@ KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
         { superProp } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1589,13 +1589,13 @@ KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1614,8 +1614,8 @@ KtNameReferenceExpression(1075,1088): 'receiveLambda'
         { superProp } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1627,13 +1627,13 @@ KtNameReferenceExpression(1075,1088): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1701,8 +1701,8 @@ KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
         { constProp } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1714,13 +1714,13 @@ KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1739,8 +1739,8 @@ KtNameReferenceExpression(1116,1129): 'receiveLambda'
         { constProp } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1752,13 +1752,13 @@ KtNameReferenceExpression(1116,1129): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1826,8 +1826,8 @@ KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
         { lambdaProp } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1839,13 +1839,13 @@ KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1864,8 +1864,8 @@ KtNameReferenceExpression(1157,1170): 'receiveLambda'
         { lambdaProp } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1877,13 +1877,13 @@ KtNameReferenceExpression(1157,1170): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1936,8 +1936,8 @@ KtNameReferenceExpression(1182,1192): 'lambdaProp'
         signature = KaVariableSignature:
           name = lambdaProp
           receiverType = null
-          returnType = kotlin.Function0<MyClass.InheritorObject>
-          symbol = val lambdaProp: kotlin.Function0<MyClass.InheritorObject>
+          returnType = () -> MyClass.InheritorObject
+          symbol = val lambdaProp: () -> MyClass.InheritorObject
           contextParameters = []
           callableId = /MyClass.Companion.lambdaProp
       simpleAccess = Read
@@ -1951,8 +1951,8 @@ KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
         { lazyProp } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -1964,13 +1964,13 @@ KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -1989,8 +1989,8 @@ KtNameReferenceExpression(1199,1212): 'receiveLambda'
         { lazyProp } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -2002,13 +2002,13 @@ KtNameReferenceExpression(1199,1212): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -2076,8 +2076,8 @@ KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
         { NestedObject} -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -2089,13 +2089,13 @@ KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -2114,8 +2114,8 @@ KtNameReferenceExpression(1239,1252): 'receiveLambda'
         { NestedObject} -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -2127,13 +2127,13 @@ KtNameReferenceExpression(1239,1252): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -2199,8 +2199,8 @@ KtCallExpression(1283,1316): 'receiveLambda<MyClass> { func() }'
         { func() } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -2212,13 +2212,13 @@ KtCallExpression(1283,1316): 'receiveLambda<MyClass> { func() }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -2237,8 +2237,8 @@ KtNameReferenceExpression(1283,1296): 'receiveLambda'
         { func() } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -2250,13 +2250,13 @@ KtNameReferenceExpression(1283,1296): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -2311,8 +2311,8 @@ KtCallExpression(1321,1364): 'receiveLambda<MyClass> { InheritorClass() }'
         { InheritorClass() } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -2324,13 +2324,13 @@ KtCallExpression(1321,1364): 'receiveLambda<MyClass> { InheritorClass() }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -2349,8 +2349,8 @@ KtNameReferenceExpression(1321,1334): 'receiveLambda'
         { InheritorClass() } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -2362,13 +2362,13 @@ KtNameReferenceExpression(1321,1334): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -2423,8 +2423,8 @@ KtCallExpression(1369,1407): 'receiveLambda<MyClass> { superFunc() }'
         { superFunc() } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -2436,13 +2436,13 @@ KtCallExpression(1369,1407): 'receiveLambda<MyClass> { superFunc() }'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]
@@ -2461,8 +2461,8 @@ KtNameReferenceExpression(1369,1382): 'receiveLambda'
         { superFunc() } -> (KaVariableSignature:
           name = l
           receiverType = null
-          returnType = kotlin.Function0<MyClass>
-          symbol = l: kotlin.Function0<T>
+          returnType = () -> MyClass
+          symbol = l: () -> T
           contextParameters = []
           callableId = null)
       }
@@ -2474,13 +2474,13 @@ KtNameReferenceExpression(1369,1382): 'receiveLambda'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          symbol = /receiveLambda(l: () -> T): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = l
               receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = l: kotlin.Function0<T>
+              returnType = () -> MyClass
+              symbol = l: () -> T
               contextParameters = []
               callableId = null
           ]

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.renderer.renderFlexibleMutabilityOrArrayElementVarianceType
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
@@ -74,6 +76,15 @@ open class ConeTypeRendererForReadability(
         }
 
         super.renderConstructor(constructor, nullabilityMarker)
+    }
+
+    override fun couldBenefitFromParenthesizing(projection: ConeTypeProjection): Boolean {
+        val constructor = (projection as? ConeKotlinType)?.lookupTagIfAny
+
+        return when {
+            constructor != null && preRenderedConstructors?.get(constructor)?.contains(" ") == true -> true
+            else -> super.couldBenefitFromParenthesizing(projection)
+        }
     }
 
     override fun renderDiagnostic(diagnostic: ConeDiagnostic, prefix: String, suffix: String): String {
