@@ -169,8 +169,8 @@ private fun makeKotlinParameterTypes(descriptor: CallableMemberDescriptor, membe
                 result.add(containingDeclaration.defaultType)
             }
         }
-        descriptor.extensionReceiverParameter?.type?.let(result::add)
         descriptor.contextReceiverParameters.mapTo(result) { it.type }
+        descriptor.extensionReceiverParameter?.type?.let(result::add)
     }
 
     descriptor.valueParameters.mapTo(result, ValueParameterDescriptor::getType)
