@@ -55124,12 +55124,6 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
-        @TestMetadata("boundInnerClassConstructor.kt")
-        public void testBoundInnerClassConstructor() {
-          runTest("compiler/testData/codegen/box/reflection/parameters/boundInnerClassConstructor.kt");
-        }
-
-        @Test
         @TestMetadata("boundObjectMemberReferences.kt")
         public void testBoundObjectMemberReferences() {
           runTest("compiler/testData/codegen/box/reflection/parameters/boundObjectMemberReferences.kt");
@@ -55157,6 +55151,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         @TestMetadata("functionParameterNameAndIndex.kt")
         public void testFunctionParameterNameAndIndex() {
           runTest("compiler/testData/codegen/box/reflection/parameters/functionParameterNameAndIndex.kt");
+        }
+
+        @Test
+        @TestMetadata("innerClassConstructor.kt")
+        public void testInnerClassConstructor() {
+          runTest("compiler/testData/codegen/box/reflection/parameters/innerClassConstructor.kt");
         }
 
         @Test
