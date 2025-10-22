@@ -23,7 +23,7 @@ import org.junit.Test
 class IdeTransformedMetadataDependencyResolverTest {
 
     @Test
-    fun `test - MVIKotlin`() {
+    fun `test - MVIKotlin - with unavailable linuxArm64 target`() {
         val project = buildProject {
             enableDefaultStdlibDependency(false)
             enableDependencyVerification(false)
@@ -42,6 +42,14 @@ class IdeTransformedMetadataDependencyResolverTest {
         val commonTest = kotlin.sourceSets.getByName("commonTest")
         val linuxMain = kotlin.sourceSets.getByName("linuxMain")
 
+        // odd source set structure: linuxX64Main + jvmMain -> linuxX64AndJvmMain
+        val linuxX64Main = kotlin.sourceSets.getByName("linuxX64Main")
+        val jvmMain = kotlin.sourceSets.getByName("jvmMain")
+        val linuxX64AndJvmMain = kotlin.sourceSets.create("linuxX64AndJvmMain")
+        linuxX64AndJvmMain.dependsOn(commonMain)
+        linuxX64Main.dependsOn(linuxX64AndJvmMain)
+        jvmMain.dependsOn(linuxX64AndJvmMain)
+
         commonMain.dependencies {
             implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
         }
@@ -50,12 +58,64 @@ class IdeTransformedMetadataDependencyResolverTest {
 
         val unresolvedDependenciesDiagnosticMatcher = unresolvedDependenciesDiagnosticMatcher("com.arkivanov.mvikotlin:mvikotlin")
 
+        // Expected to be unresolved in all intermediate main & test source sets
+        IdeTransformedMetadataDependencyResolver.resolve(commonMain)
+            .assertMatches(
+                unresolvedDependenciesDiagnosticMatcher,
+            )
+
+        IdeTransformedMetadataDependencyResolver.resolve(commonTest)
+            .assertMatches(
+                unresolvedDependenciesDiagnosticMatcher,
+            )
+
+        IdeTransformedMetadataDependencyResolver.resolve(linuxMain)
+            .assertMatches(
+                unresolvedDependenciesDiagnosticMatcher
+            )
+
+        // And only linuxX64AndJvmMain can see symbols from mvi
+        IdeTransformedMetadataDependencyResolver.resolve(linuxX64AndJvmMain)
+            .assertMatches(
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+            )
+
+    }
+
+    @Test
+    fun `test - MVIKotlin - with supported targets`() {
+        val project = buildProject {
+            enableDefaultStdlibDependency(false)
+            enableDependencyVerification(false)
+            applyMultiplatformPlugin()
+            repositories.mavenCentralCacheRedirector()
+        }
+
+        val kotlin = project.multiplatformExtension
+        kotlin.applyDefaultHierarchyTemplate()
+
+        kotlin.jvm()
+        kotlin.linuxX64()
+        kotlin.iosX64()
+        kotlin.iosArm64()
+
+        val commonMain = kotlin.sourceSets.getByName("commonMain")
+        val commonTest = kotlin.sourceSets.getByName("commonTest")
+        val iosMain = kotlin.sourceSets.getByName("iosMain")
+
+        commonMain.dependencies {
+            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+        }
+
+        project.evaluate()
+
         IdeTransformedMetadataDependencyResolver.resolve(commonMain)
             .assertMatches(
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
                 binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
-                unresolvedDependenciesDiagnosticMatcher,
             )
 
         IdeTransformedMetadataDependencyResolver.resolve(commonTest)
@@ -63,16 +123,14 @@ class IdeTransformedMetadataDependencyResolverTest {
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
                 binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
-                unresolvedDependenciesDiagnosticMatcher,
             )
 
-        IdeTransformedMetadataDependencyResolver.resolve(linuxMain)
+        IdeTransformedMetadataDependencyResolver.resolve(iosMain)
             .assertMatches(
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:jsNativeMain:3.0.2"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
                 binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
-                unresolvedDependenciesDiagnosticMatcher
             )
     }
 

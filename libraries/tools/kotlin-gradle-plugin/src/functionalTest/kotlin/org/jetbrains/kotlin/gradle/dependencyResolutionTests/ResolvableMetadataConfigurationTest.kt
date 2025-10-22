@@ -43,8 +43,8 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
 
         /* Define simple targets */
         kotlin.jvm()
-        kotlin.linuxArm64()
         kotlin.linuxX64()
+        kotlin.iosX64()
 
         kotlin.applyDefaultHierarchyTemplate()
 
@@ -78,16 +78,11 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
                 }
         }
 
-        val unresolvedOkioDependencyDiagnosticMatcher = unresolvedDependenciesDiagnosticMatcher("com.squareup.okio:okio")
-        val unresolvedMVIKotlinDependencyDiagnosticMatcher = unresolvedDependenciesDiagnosticMatcher("com.arkivanov.mvikotlin:mvikotlin")
-
         /* Check IDE resolution for commonMain */
         project.kotlinIdeMultiplatformImport.resolveDependencies("commonMain")
             .assertMatches(
                 binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:.*:3.3.0")),
                 binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:commonMain:${project.kotlinToolingVersion}"),
-                unresolvedOkioDependencyDiagnosticMatcher,
-                unresolvedMVIKotlinDependencyDiagnosticMatcher,
             )
 
         /* Check IDE resolution for nativeMain */
@@ -97,8 +92,6 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
             .assertMatches(
                 binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:.*:3.3.0")),
                 binaryCoordinates(Regex("com.arkivanov.mvikotlin:mvikotlin(-*)?:.*:3.0.2")),
-                unresolvedOkioDependencyDiagnosticMatcher,
-                unresolvedMVIKotlinDependencyDiagnosticMatcher,
             )
     }
 
