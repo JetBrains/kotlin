@@ -52594,6 +52594,12 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/simpleConstructorWithInlineClassParameter.kt");
           }
 
+          @Test
+          @TestMetadata("unboxBothContextAndExtensionParameter.kt")
+          public void testUnboxBothContextAndExtensionParameter() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/unboxBothContextAndExtensionParameter.kt");
+          }
+
           @Nested
           @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject")
           @TestDataPath("$PROJECT_ROOT")
