@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.checkers.registerWasmCheckers
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.resolve.WasmJsDefaultImportsProvider
@@ -46,6 +47,7 @@ object FirWasmSessionFactory : AbstractFirKlibSessionFactory<FirWasmSessionFacto
 
     @OptIn(SessionConfiguration::class)
     fun FirSession.registerWasmComponents(wasmTarget: WasmTarget) {
+        register(FirEnumEntriesSupport(this))
         val defaultImportsProvider = when (wasmTarget) {
             WasmTarget.JS -> WasmJsDefaultImportsProvider
             WasmTarget.WASI -> WasmWasiDefaultImportsProvider

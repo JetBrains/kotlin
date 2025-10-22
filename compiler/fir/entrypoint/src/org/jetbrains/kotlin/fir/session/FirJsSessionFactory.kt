@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.declarations.FirTypeSpecificityComparatorProvider
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -64,6 +65,7 @@ object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.C
     }
 
     fun FirSession.registerJsComponents(moduleKind: ModuleKind?) {
+        register(FirEnumEntriesSupport(this))
         register(FirTypeSpecificityComparatorProvider.of(JsTypeSpecificityComparatorWithoutDelegate(typeContext)))
         register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
         register(FirIdentityLessPlatformDeterminer::class, FirJsIdentityLessPlatformDeterminer)

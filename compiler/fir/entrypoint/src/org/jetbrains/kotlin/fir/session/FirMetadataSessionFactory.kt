@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvide
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -106,7 +107,9 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
         return FirKotlinScopeProvider()
     }
 
-    override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {}
+    override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {
+        register(FirEnumEntriesSupport(this))
+    }
 
     // ==================================== Platform session ====================================
 
@@ -179,6 +182,7 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
 
     override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
         register(FirDefaultImportsProviderHolder.of(CommonDefaultImportsProvider))
+        register(FirEnumEntriesSupport(this))
     }
 
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean

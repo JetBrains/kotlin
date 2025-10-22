@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
@@ -121,6 +122,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
 
     private fun LLFirSession.registerCommonComponents() {
         register(FirDefaultImportsProviderHolder.of(CommonDefaultImportsProvider))
+        register(FirEnumEntriesSupport(this))
     }
 
     private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KaModule) {
