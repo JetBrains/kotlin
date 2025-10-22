@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  * In the future, this interface is supposed to replace [KotlinLibrary].
  *
  * The [Klib] consists of multiple components, each responsible for a certain aspect of the library.
- * There are the following "built-in" components that are always present:
- * - [KlibMetadataComponent], which provides access to the metadata stored inside the library.
+ * There are the following "mandatory" components that are always present:
+ * - [KlibMetadataComponent], which provides read access to the metadata stored inside the library.
  * - TODO(KT-81411): add more
  *
  * The component can be obtained by calling [getComponent]. For some components there exist
@@ -38,7 +38,7 @@ interface Klib {
 }
 
 /**
- * A representation of a certain slice of the Klib library.
+ * A representation of a certain slice of the Klib library that can be read.
  */
 interface KlibComponent {
     /**
