@@ -290,7 +290,7 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
 }
 
 internal val KType.isInlineClassType: Boolean
-    get() = (classifier as? KClassImpl<*>)?.isInline == true
+    get() = (classifier as? KClassImpl<*>)?.isValue == true
 
 internal fun defaultPrimitiveValue(type: Type): Any? =
     if (type is Class<*> && type.isPrimitive) {

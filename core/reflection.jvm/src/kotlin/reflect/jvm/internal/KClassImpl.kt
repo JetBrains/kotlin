@@ -298,6 +298,24 @@ internal class KClassImpl<T : Any>(
             result as List<KClass<out T>>
         }
 
+        internal val inlineClassUnderlyingType: KType? by lazy(PUBLICATION) {
+            val kmClass = kmClass
+            when {
+                kmClass == null || !kmClass.isValue ->
+                    null
+                kmClass.inlineClassUnderlyingType != null ->
+                    kmClass.inlineClassUnderlyingType?.toKType(jClass.classLoader, typeParameterTable)
+                else -> {
+                    @OptIn(ExperimentalContextParameters::class)
+                    val underlyingProperty = kmClass.properties.single {
+                        it.name == kmClass.inlineClassUnderlyingPropertyName &&
+                                it.contextParameters.isEmpty() && it.receiverParameterType == null
+                    }
+                    underlyingProperty.returnType.toKType(jClass.classLoader, typeParameterTable)
+                }
+            }
+        }
+
         val declaredNonStaticMembers: Collection<DescriptorKCallable<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
         private val declaredStaticMembers: Collection<DescriptorKCallable<*>>
@@ -465,8 +483,11 @@ internal class KClassImpl<T : Any>(
     override val isValue: Boolean
         get() = kmClass?.isValue == true
 
-    internal val isInline: Boolean
-        get() = kmClass?.inlineClassUnderlyingType != null
+    internal val inlineClassUnderlyingPropertyName: String?
+        get() = kmClass?.inlineClassUnderlyingPropertyName
+
+    internal val inlineClassUnderlyingType: KType?
+        get() = data.value.inlineClassUnderlyingType
 
     override fun equals(other: Any?): Boolean =
         other is KClassImpl<*> && javaObjectType == other.javaObjectType

@@ -26,8 +26,8 @@ import kotlin.reflect.jvm.internal.DescriptorKCallable
 import kotlin.reflect.jvm.internal.DescriptorKFunction
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
-import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 /**
  * Returns the primary constructor of this class, or `null` if this class has no primary constructor.
@@ -70,7 +70,10 @@ val KClass<*>.companionObjectInstance: Any?
 )
 @SinceKotlin("1.1")
 val KClass<*>.defaultType: KType
-    get() = createType(typeParameters.map { typeParameter ->
+    get() = createDefaultType()
+
+internal fun KClass<*>.createDefaultType(): KType =
+    createType(typeParameters.map { typeParameter ->
         KTypeProjection(KVariance.INVARIANT, typeParameter.createType())
     })
 

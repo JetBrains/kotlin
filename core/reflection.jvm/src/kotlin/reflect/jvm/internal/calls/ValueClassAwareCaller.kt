@@ -8,27 +8,30 @@ package kotlin.reflect.jvm.internal.calls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
+import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
-import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
-import kotlin.reflect.jvm.internal.defaultPrimitiveValue
-import kotlin.reflect.jvm.internal.toJavaClass
+import kotlin.reflect.*
+import kotlin.reflect.full.createDefaultType
+import kotlin.reflect.full.withNullability
+import kotlin.reflect.jvm.internal.*
+import kotlin.reflect.jvm.internal.types.AbstractKType
 
 /**
  * A caller that is used whenever the declaration has value classes in its parameter types or inline class in return type.
  * Each argument of a value class type is unboxed, and the return value (if it's of an inline class type) is boxed.
  */
 internal class ValueClassAwareCaller<out M : Member?>(
-    descriptor: CallableMemberDescriptor,
+    callable: ReflectKCallable<*>,
     private val caller: Caller<M>,
-    private val isDefault: Boolean
+    private val isDefault: Boolean,
 ) : Caller<M> {
     override val member: M
         get() = caller.member
@@ -45,18 +48,17 @@ internal class ValueClassAwareCaller<out M : Member?>(
     private class BoxUnboxData(val argumentRange: IntRange, val unboxParameters: Array<Method?>, val box: Method?)
 
     private val data: BoxUnboxData = run {
-        val returnType = descriptor.returnType!!
-        val box = if (
-            descriptor is FunctionDescriptor && descriptor.isSuspend &&
-            returnType.unsubstitutedUnderlyingType()?.let { KotlinBuiltIns.isPrimitiveType(it) } == true
+        val returnType = callable.returnType
+        val box = if (callable is ReflectKFunction && callable.isSuspend &&
+            returnType.unsubstitutedUnderlyingType()?.isPrimitiveType() == true
         ) {
             // Suspend functions always return java.lang.Object, and value classes over primitives are already boxed there.
             null
         } else {
-            returnType.toInlineClass()?.getBoxMethod(descriptor)
+            returnType.toInlineClass()?.getBoxMethod(callable)
         }
 
-        if (descriptor.isGetterOfUnderlyingPropertyOfValueClass()) {
+        if (callable.isGetterOfUnderlyingPropertyOfValueClass()) {
             // Getter of the underlying val of a value class is always called on a boxed receiver,
             // no argument unboxing is required.
             return@run BoxUnboxData(IntRange.EMPTY, emptyArray(), box)
@@ -69,13 +71,13 @@ internal class ValueClassAwareCaller<out M : Member?>(
                 -1
             }
 
-            descriptor is ConstructorDescriptor ->
+            callable.isConstructor ->
                 if (caller is BoundCaller) -1 else 0
 
-            descriptor.dispatchReceiverParameter != null && caller !is BoundCaller -> {
+            callable.parameters.any { it.kind == KParameter.Kind.INSTANCE } -> {
                 // If we have an unbound reference to the value class member,
                 // its receiver (which is passed as argument 0) should also be unboxed.
-                if (descriptor.containingDeclaration.isValueClass())
+                if ((callable.container as? KClassImpl<*>)?.isValue == true)
                     0
                 else
                     1
@@ -84,15 +86,15 @@ internal class ValueClassAwareCaller<out M : Member?>(
             else -> 0
         }
 
-        val kotlinParameterTypes = makeKotlinParameterTypes(descriptor, caller.member)
+        val kotlinParameterTypes = makeKotlinParameterTypes(callable, caller.member)
 
         // If the default argument is set,
         // (kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
         val extraArgumentsTail =
             (if (isDefault) ((kotlinParameterTypes.size + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
-                    (if (descriptor is FunctionDescriptor && descriptor.isSuspend) 1 else 0)
+                    (if (callable is ReflectKFunction && callable.isSuspend) 1 else 0)
         val expectedArgsSize = kotlinParameterTypes.size + shift + extraArgumentsTail
-        checkParametersSize(expectedArgsSize, descriptor, isDefault)
+        checkParametersSize(expectedArgsSize, callable, isDefault)
 
         // maxOf is needed because in case of a bound top level extension, shift can be -1 (see above). But in that case, we need not unbox
         // the extension receiver argument, since it has already been unboxed at compile time and generated into the reference
@@ -100,7 +102,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val unbox = Array(expectedArgsSize) { i ->
             if (i in argumentRange)
-                kotlinParameterTypes[i - shift].toInlineClass()?.getInlineClassUnboxMethod(descriptor)
+                kotlinParameterTypes[i - shift].toInlineClass()?.getInlineClassUnboxMethod(callable)
             else null
         }
 
@@ -134,46 +136,40 @@ internal class ValueClassAwareCaller<out M : Member?>(
     }
 }
 
-private fun Caller<*>.checkParametersSize(
-    expectedArgsSize: Int,
-    descriptor: CallableMemberDescriptor,
-    isDefault: Boolean,
-) {
+private fun Caller<*>.checkParametersSize(expectedArgsSize: Int, callable: ReflectKCallable<*>, isDefault: Boolean) {
     if (arity != expectedArgsSize) {
         throw KotlinReflectionInternalError(
             "Inconsistent number of parameters in the descriptor and Java reflection object: $arity != $expectedArgsSize\n" +
-                    "Calling: $descriptor\n" +
+                    "Calling: $callable\n" +
                     "Parameter types: ${this.parameterTypes})\n" +
                     "Default: $isDefault"
         )
     }
 }
 
-private fun makeKotlinParameterTypes(descriptor: CallableMemberDescriptor, member: Member?): List<KotlinType> {
-    val result = mutableListOf<KotlinType>()
-    if (descriptor is ConstructorDescriptor) {
-        val constructedClass = descriptor.constructedClass
-        if (constructedClass.isInner) {
-            result.add((constructedClass.containingDeclaration as ClassDescriptor).defaultType)
+private fun makeKotlinParameterTypes(callable: ReflectKCallable<*>, member: Member?): List<KType> {
+    val result = mutableListOf<KType>()
+    val container = callable.container
+    if (!callable.isConstructor && container is KClass<*> && container.isValue) {
+        val containerType = container.createDefaultType()
+        if (member?.acceptsBoxedReceiverParameter() == true) {
+            // Hack to forbid unboxing dispatchReceiver if it is used upcasted.
+            // `kotlinParameterTypes` are used to determine shifts and calls according to whether type is an inline class or not.
+            // If it is an inline class, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
+            // it accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
+            result.add(containerType.withNullability(nullable = true))
+        } else {
+            result.add(containerType)
         }
-    } else {
-        val containingDeclaration = descriptor.containingDeclaration
-        if (containingDeclaration is ClassDescriptor && containingDeclaration.isValueClass()) {
-            if (member?.acceptsBoxedReceiverParameter() == true) {
-                // Hack to forbid unboxing dispatchReceiver if it is used upcasted.
-                // `kotlinParameterTypes` are used to determine shifts and calls according to whether type is an inline class or not.
-                // If it is an inline class, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
-                // it accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
-                result.add(containingDeclaration.defaultType.makeNullable())
-            } else {
-                result.add(containingDeclaration.defaultType)
-            }
-        }
-        descriptor.contextReceiverParameters.mapTo(result) { it.type }
-        descriptor.extensionReceiverParameter?.type?.let(result::add)
     }
 
-    descriptor.valueParameters.mapTo(result, ValueParameterDescriptor::getType)
+    val isInnerClassConstructor = callable.isConstructor && (container as? KClass<*>)?.isInner == true
+
+    for (parameter in callable.allParameters) {
+        if (parameter.kind != KParameter.Kind.INSTANCE || isInnerClassConstructor) {
+            result.add(parameter.type)
+        }
+    }
 
     return result
 }
@@ -189,32 +185,23 @@ private fun Member.acceptsBoxedReceiverParameter(): Boolean {
     return !clazz.kotlin.isValue
 }
 
-internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(
-    descriptor: CallableMemberDescriptor,
-    isDefault: Boolean = false,
-): Caller<M> {
-    val needsValueClassAwareCaller: Boolean =
-        descriptor.dispatchReceiverParameter?.type?.isValueClassType() == true ||
-                descriptor.extensionReceiverParameter?.type?.isValueClassType() == true ||
-                descriptor.contextReceiverParameters.any { it.type.isValueClassType() } ||
-                descriptor.valueParameters.any { it.type.isValueClassType() } ||
-                descriptor.returnType?.isInlineClassType() == true
+internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(callable: ReflectKCallable<*>, isDefault: Boolean): Caller<M> =
+    if (callable.parameters.any { it.type.isInlineClassType } || callable.returnType.isInlineClassType)
+        ValueClassAwareCaller(callable, this, isDefault)
+    else this
 
-    return if (needsValueClassAwareCaller) ValueClassAwareCaller(descriptor, this, isDefault) else this
-}
-
-internal fun Class<*>.getInlineClassUnboxMethod(descriptor: CallableMemberDescriptor): Method =
+internal fun Class<*>.getInlineClassUnboxMethod(callable: ReflectKCallable<*>): Method =
     try {
         getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
     } catch (e: NoSuchMethodException) {
-        throw KotlinReflectionInternalError("No unbox method found in inline class: $this (calling $descriptor)")
+        throw KotlinReflectionInternalError("No unbox method found in inline class: $this (calling $callable)")
     }
 
-private fun Class<*>.getBoxMethod(descriptor: CallableMemberDescriptor): Method =
+private fun Class<*>.getBoxMethod(callable: ReflectKCallable<*>): Method =
     try {
-        getDeclaredMethod("box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS, getInlineClassUnboxMethod(descriptor).returnType)
+        getDeclaredMethod("box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS, getInlineClassUnboxMethod(callable).returnType)
     } catch (e: NoSuchMethodException) {
-        throw KotlinReflectionInternalError("No box method found in inline class: $this (calling $descriptor)")
+        throw KotlinReflectionInternalError("No box method found in inline class: $this (calling $callable)")
     }
 
 private fun KotlinType.toInlineClass(): Class<*>? {
@@ -228,6 +215,30 @@ private fun KotlinType.toInlineClass(): Class<*>? {
     if (!TypeUtils.isNullableType(expandedUnderlyingType) && !KotlinBuiltIns.isPrimitiveType(expandedUnderlyingType)) return klass
 
     return null
+}
+
+internal fun KType?.toInlineClass(): Class<*>? {
+    // See computeExpandedTypeForInlineClass.
+    val klass = this?.classifier as? KClass<*> ?: return null
+    if (!klass.isValue) return null
+    if (!isNullableType()) return klass.java
+
+    val expandedUnderlyingType = unsubstitutedUnderlyingType() ?: return null
+    if (!expandedUnderlyingType.isNullableType() && !expandedUnderlyingType.isPrimitiveType()) return klass.java
+
+    return null
+}
+
+private fun KType.isNullableType(): Boolean {
+    if (isMarkedNullable) return true
+
+    val upperBound = (this as AbstractKType).upperBoundIfFlexible()
+    if (upperBound != null && upperBound.isNullableType()) return true
+
+    if (isDefinitelyNotNullType) return false
+
+    val classifier = classifier
+    return classifier is KTypeParameter && classifier.upperBounds.any { it.isNullableType() }
 }
 
 internal fun DeclarationDescriptor?.toInlineClass(): Class<*>? =
@@ -248,18 +259,27 @@ private val CallableMemberDescriptor.expectedReceiverType: KotlinType?
         }
     }
 
-internal fun Any?.coerceToExpectedReceiverType(descriptor: CallableMemberDescriptor): Any? {
+internal fun Any?.coerceToExpectedReceiverType(callable: ReflectKCallable<*>, descriptor: CallableMemberDescriptor): Any? {
     if (descriptor is PropertyDescriptor && descriptor.isUnderlyingPropertyOfInlineClass()) return this
 
     val expectedReceiverType = descriptor.expectedReceiverType
-    val unboxMethod = expectedReceiverType?.toInlineClass()?.getInlineClassUnboxMethod(descriptor) ?: return this
+    val unboxMethod = expectedReceiverType?.toInlineClass()?.getInlineClassUnboxMethod(callable) ?: return this
 
     return unboxMethod.invoke(this)
 }
 
-private fun CallableDescriptor.isGetterOfUnderlyingPropertyOfValueClass() =
-    this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfValueClass()
+private fun ReflectKCallable<*>.isGetterOfUnderlyingPropertyOfValueClass(): Boolean =
+    this is KProperty.Getter<*> && (property as ReflectKProperty<*>).isUnderlyingPropertyOfValueClass()
 
-private fun VariableDescriptor.isUnderlyingPropertyOfValueClass(): Boolean =
-    extensionReceiverParameter == null && contextReceiverParameters.isEmpty() &&
-            (containingDeclaration as? ClassDescriptor)?.valueClassRepresentation?.containsPropertyWithName(this.name) == true
+private fun ReflectKProperty<*>.isUnderlyingPropertyOfValueClass(): Boolean =
+    allParameters.all { it.kind == KParameter.Kind.INSTANCE } &&
+            name == (container as? KClassImpl<*>)?.inlineClassUnderlyingPropertyName
+
+private fun KType.isPrimitiveType(): Boolean {
+    if (isMarkedNullable) return false
+    val klass = (classifier as? KClass<*>)?.javaPrimitiveType
+    return klass != null && klass != Void.TYPE
+}
+
+private fun KType.unsubstitutedUnderlyingType(): KType? =
+    (classifier as? KClassImpl<*>)?.inlineClassUnderlyingType

@@ -177,5 +177,8 @@ private fun defaultEmptyArray(type: KType): Any =
         )
     }
 
+internal val ReflectKCallable<*>.isConstructor: Boolean
+    get() = name == "<init>"
+
 internal val ReflectKCallable<*>.isAnnotationConstructor: Boolean
-    get() = name == "<init>" && container.jClass.isAnnotation
+    get() = isConstructor && container.jClass.isAnnotation
