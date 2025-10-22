@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_K1: WASM
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
-
 class Foo(val s: String)
 fun foo(): Foo? = Foo("OK")
 

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_IMPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
-import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.capitalize
@@ -54,7 +53,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
 
     private val defaultPodRepo = "https://github.com/ekscrypto/Base64"
     private val defaultPodName = "Base64"
-    private val defaultTarget = "IOS"
+    private val defaultTarget = "IosArm64"
     private val defaultFamily = "ios"
     private val defaultAppleTarget = "iosSimulator"
     private val privateSpecGitRepo = "privateSpec.git"
@@ -168,9 +167,9 @@ class CocoaPodsGitIT : KGPBaseTest() {
                 buildOptions = defaultBuildOptions.copy(
                     nativeOptions = defaultBuildOptions.nativeOptions.copy(
                         cocoapodsGenerateWrapper = true,
-                        cocoapodsArchs = "x86_64",
+                        cocoapodsArchs = "arm64",
                         cocoapodsConfiguration = "Debug",
-                        cocoapodsPlatform = "iphonesimulator",
+                        cocoapodsPlatform = "iphoneos",
                     )
                 )
             ) {
@@ -337,8 +336,8 @@ class CocoaPodsGitIT : KGPBaseTest() {
             buildGradleKts.addPod(defaultPodName, produceGitBlock())
             buildGradleKts.addFrameworkBlock("isStatic = false")
 
-            build("linkPodDebugFrameworkIOS") {
-                val framework = projectPath.resolve("build/bin/iOS/podDebugFramework/cocoapods.framework/cocoapods")
+            build("linkPodDebugFrameworkIosArm64") {
+                val framework = projectPath.resolve("build/bin/iosArm64/podDebugFramework/cocoapods.framework/cocoapods")
                 val processRunResult = runProcess(
                     listOf("file", framework.absolutePathString()),
                     workingDir = projectPath.toFile(),
@@ -359,8 +358,8 @@ class CocoaPodsGitIT : KGPBaseTest() {
             buildGradleKts.addPod(defaultPodName, produceGitBlock())
             buildGradleKts.addFrameworkBlock("isStatic = true")
 
-            build("linkPodDebugFrameworkIOS") {
-                val framework = projectPath.resolve("build/bin/iOS/podDebugFramework/cocoapods.framework/cocoapods")
+            build("linkPodDebugFrameworkIosArm64") {
+                val framework = projectPath.resolve("build/bin/iosArm64/podDebugFramework/cocoapods.framework/cocoapods")
                 val processRunResult = runProcess(
                     listOf("file", framework.absolutePathString()),
                     workingDir = projectPath.toFile(),

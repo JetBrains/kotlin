@@ -5,21 +5,35 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.hasEnumEntries
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.name.StandardClassIds
 
-open class FirEnumEntriesSupport(val session: FirSession) : FirSessionComponent {
+open class FirEnumEntriesSupport(val session: FirSession) : FirComposableSessionComponent<FirEnumEntriesSupport> {
     protected val isEnumEntriesAvailable: Boolean by lazy {
         session.getRegularClassSymbolByClassId(StandardClassIds.EnumEntries) != null
     }
 
     open fun canSynthesizeEnumEntriesFor(klass: FirClass): Boolean {
         return klass.hasEnumEntries && isEnumEntriesAvailable
+    }
+
+    class Composed(
+        session: FirSession,
+        override val components: List<FirEnumEntriesSupport>
+    ) : FirEnumEntriesSupport(session), FirComposableSessionComponent.Composed<FirEnumEntriesSupport> {
+        override fun canSynthesizeEnumEntriesFor(klass: FirClass): Boolean {
+            return components.all { it.canSynthesizeEnumEntriesFor(klass) }
+        }
+    }
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirEnumEntriesSupport>): Composed {
+        return Composed(session, components)
     }
 }
 

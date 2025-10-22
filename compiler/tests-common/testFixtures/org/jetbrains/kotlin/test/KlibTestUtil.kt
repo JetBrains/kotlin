@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
-import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -47,12 +45,12 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.util.toKlibMetadataVersion
 import java.io.File
 import java.nio.file.Path
-import org.jetbrains.kotlin.konan.file.File as KFile
 
 object KlibTestUtil {
     fun compileCommonSourcesToKlib(
@@ -135,25 +133,21 @@ object KlibTestUtil {
 
         val serializedMetadata = serializer.serializeModule(module)
 
-        val unzippedDir = org.jetbrains.kotlin.konan.file.createTempDir(libraryName)
-        val layout = KotlinLibraryLayoutForWriter(KFile(klibFile.path), unzippedDir)
-
-        val library = KotlinLibraryWriterImpl(
-            moduleName = libraryName,
+        buildKotlinLibrary(
+            linkDependencies = emptyList(),
+            metadata = serializedMetadata,
+            ir = null,
             versions = KotlinLibraryVersioning(
                 compilerVersion = null,
                 abiVersion = null,
                 metadataVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion.toKlibMetadataVersion(),
             ),
-            builtInsPlatform = BuiltInsPlatform.COMMON,
-            nativeTargets = emptyList(),
+            output = klibFile.path,
+            moduleName = libraryName,
             nopack = false,
-            shortName = libraryName,
-            layout = layout
+            manifestProperties = null,
+            builtInsPlatform = BuiltInsPlatform.COMMON,
         )
-
-        library.addMetadata(serializedMetadata)
-        library.commit()
     }
 
     fun deserializeKlibToCommonModule(klibFile: File): ModuleDescriptorImpl {

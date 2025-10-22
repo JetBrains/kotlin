@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.ClassId
 
-abstract class FirPlatformClassMapper : FirSessionComponent {
+abstract class FirPlatformClassMapper : FirComposableSessionComponent<FirPlatformClassMapper> {
     @NoMutableState
     object Default : FirPlatformClassMapper() {
         override fun getCorrespondingPlatformClass(declaration: FirClassLikeDeclaration): FirRegularClass? {
@@ -30,6 +31,35 @@ abstract class FirPlatformClassMapper : FirSessionComponent {
         override val classTypealiasesThatDontCauseAmbiguity: Map<ClassId, ClassId> = emptyMap()
     }
 
+    class Composed(
+        override val components: List<FirPlatformClassMapper>
+    ) : FirPlatformClassMapper(), FirComposableSessionComponent.Composed<FirPlatformClassMapper> {
+        override fun getCorrespondingPlatformClass(declaration: FirClassLikeDeclaration): FirRegularClass? {
+            return components.firstNotNullOfOrNull { it.getCorrespondingPlatformClass(declaration) }
+        }
+
+        override fun getCorrespondingPlatformClass(classId: ClassId?): ClassId? {
+            return components.firstNotNullOfOrNull { it.getCorrespondingPlatformClass(classId) }
+        }
+
+        override fun getCorrespondingKotlinClass(classId: ClassId?): ClassId? {
+            return components.firstNotNullOfOrNull { it.getCorrespondingKotlinClass(classId) }
+        }
+
+        override val classTypealiasesThatDontCauseAmbiguity: Map<ClassId, ClassId> by lazy {
+            buildMap {
+                components.forEach { component ->
+                    putAll(component.classTypealiasesThatDontCauseAmbiguity)
+                }
+            }
+        }
+    }
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirPlatformClassMapper>): Composed {
+        return Composed(components)
+    }
+
     abstract fun getCorrespondingPlatformClass(declaration: FirClassLikeDeclaration): FirRegularClass?
 
     abstract fun getCorrespondingPlatformClass(classId: ClassId?): ClassId?
@@ -43,4 +73,5 @@ abstract class FirPlatformClassMapper : FirSessionComponent {
     abstract val classTypealiasesThatDontCauseAmbiguity: Map<ClassId, ClassId>
 }
 
-val FirSession.platformClassMapper: FirPlatformClassMapper by FirSession.sessionComponentAccessor()
+val FirSession.platformClassMapper: FirPlatformClassMapper
+        by FirSession.sessionComponentAccessorWithDefault(FirPlatformClassMapper.Default)

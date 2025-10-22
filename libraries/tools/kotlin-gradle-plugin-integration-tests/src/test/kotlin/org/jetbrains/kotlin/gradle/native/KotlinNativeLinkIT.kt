@@ -74,7 +74,6 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
                 buildCacheEnabled = true,
                 freeArgs = defaultBuildOptions.freeArgs + "--rerun-tasks",
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    cacheKind = NativeCacheKind.STATIC,
                     // Required as this only reproduces from CacheBuilder.
                     cacheOrchestration = "gradle"
                 )

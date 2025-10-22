@@ -223,6 +223,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -483,6 +484,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: sample.baz
 
 KaKotlinPropertySymbol:

@@ -164,6 +164,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
                 namespace = "foo"
             }
             project.applyMultiplatform {
+                @Suppress("DEPRECATION")
                 androidTarget {
                     publishLibraryVariants("debug", "release")
                 }

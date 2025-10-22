@@ -867,6 +867,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val deprecationInfo: FirDeprecationInfo
     }
 
+    interface ExtendingAnAnnotationClassError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ExtendingAnAnnotationClassError::class
+        val annotationSymbol: KaClassLikeSymbol
+    }
+
+    interface ExtendingAnAnnotationClassWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ExtendingAnAnnotationClassWarning::class
+        val annotationSymbol: KaClassLikeSymbol
+    }
+
     interface TypealiasExpansionDeprecationError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = TypealiasExpansionDeprecationError::class
         val alias: KaSymbol

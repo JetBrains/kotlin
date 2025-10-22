@@ -57,6 +57,21 @@ the Kotlin IntelliJ IDEA plugin:
         is derived from Rhino, (C) 1997-1999 Netscape Communications Corporation, distributed under the
         Netscape Public License.
 
+ - Path: js/js.parser/src/main/antlr
+      - License: MIT ([license/third_party/antlr_js_grammar_license.txt][antlr_js_grammar])
+      - Origin: Derived from ANTLR grammars examples repository, Copyright (c) 2014 Bart Kiers, Alexandre Vitorelli,
+        Copyright (c) 2017-2020 Ivan Kochurkin, Copyright (c) 2018 Juan Alvarez, Copyright (c) 2019 Student Main.
+
+ - Path: js/js.parser/src/org/jetbrains/kotlin/js/parser/antlr/JavaScriptLexerBase.kt
+      - License: MIT ([license/third_party/antlr_js_grammar_license.txt][antlr_js_grammar])
+      - Origin: Derived from ANTLR grammars examples repository, Copyright (c) 2014 Bart Kiers, Alexandre Vitorelli,
+        Copyright (c) 2017-2020 Ivan Kochurkin, Copyright (c) 2018 Juan Alvarez, Copyright (c) 2019 Student Main.
+
+ - Path: js/js.parser/src/org/jetbrains/kotlin/js/parser/antlr/JavaScriptParserBase.kt
+      - License: MIT ([license/third_party/antlr_js_grammar_license.txt][antlr_js_grammar])
+      - Origin: Derived from ANTLR grammars examples repository, Copyright (c) 2014 Bart Kiers, Alexandre Vitorelli,
+        Copyright (c) 2017-2020 Ivan Kochurkin, Copyright (c) 2018 Juan Alvarez, Copyright (c) 2019 Student Main.
+
  - Path: libraries/stdlib/src/kotlin/collections
       - License: Apache 2 ([license/third_party/gwt_license.txt][gwt])
       - Origin: Derived from GWT, (C) 2007-08 Google Inc.
@@ -287,6 +302,7 @@ any distributions of the compiler, libraries or plugin:
 [asm]: third_party/asm_license.txt
 [asmble]: third_party/asmble_license.txt
 [assemblyscript]: third_party/assemblyscript_license.txt
+[antlr_js_grammar]: third_party/antlr_js_grammar_license.txt
 [boost]: third_party/boost_LICENSE.txt
 [closure-compiler]: third_party/closure-compiler_LICENSE.txt
 [compose]: third_party/compose_license.txt

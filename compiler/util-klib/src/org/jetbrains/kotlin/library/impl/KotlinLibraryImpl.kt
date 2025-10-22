@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
@@ -50,38 +51,6 @@ class BaseKotlinLibraryImpl(
     override val versions: KotlinLibraryVersioning by lazy {
         manifestProperties.readKonanLibraryVersioning()
     }
-}
-
-class MetadataLibraryImpl(
-    val access: MetadataLibraryAccess<MetadataKotlinLibraryLayout>
-) : MetadataLibrary {
-
-    override val moduleHeaderData: ByteArray by lazy {
-        access.inPlace {
-            it.moduleHeaderFile.readBytes()
-        }
-    }
-
-    override fun packageMetadata(fqName: String, partName: String): ByteArray =
-        access.inPlace {
-            it.packageFragmentFile(fqName, partName).readBytes()
-        }
-
-    override fun packageMetadataParts(fqName: String): Set<String> =
-        access.inPlace { inPlaceaccess ->
-            val fileList =
-                inPlaceaccess.packageFragmentsDir(fqName)
-                    .listFiles
-                    .mapNotNull {
-                        it.name
-                            .substringBeforeLast(KLIB_METADATA_FILE_EXTENSION_WITH_DOT, missingDelimiterValue = "")
-                            .takeIf { it.isNotEmpty() }
-                    }
-
-            fileList.toSortedSet().also {
-                require(it.size == fileList.size) { "Duplicated names: ${fileList.groupingBy { it }.eachCount().filter { (_, count) -> count > 1 }}" }
-            }
-        }
 }
 
 class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibrary {
@@ -186,13 +155,24 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
 }
 
 class KotlinLibraryImpl(
+    override val location: File,
     val base: BaseKotlinLibraryImpl,
-    val metadata: MetadataLibraryImpl,
     val ir: IrLibraryImpl
 ) : KotlinLibrary,
     BaseKotlinLibrary by base,
-    MetadataLibrary by metadata,
     IrLibrary by ir {
+
+    private val components: Map<KlibComponent.ID<*>, KlibComponent> = run {
+        val layoutReaderFactory = KlibLayoutReaderFactory(location, ir.access.klibZipAccessor)
+        mapOf(KlibMetadataComponent.ID to KlibMetadataComponentImpl(layoutReaderFactory))
+    }
+
+    override fun <KC : KlibComponent> getComponent(id: KlibComponent.ID<KC>): KC {
+        @Suppress("UNCHECKED_CAST")
+        val component = components[id] as KC?
+        return component ?: error("Unknown component $id")
+    }
+
     override fun toString(): String = buildString {
         append("name ")
         append(base.libraryName)
@@ -216,14 +196,12 @@ fun createKotlinLibrary(
     zipAccessor: ZipFileSystemAccessor? = null,
 ): KotlinLibrary {
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, zipAccessor)
-    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component, zipAccessor)
     val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component, zipAccessor)
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
-    val metadata = MetadataLibraryImpl(metadataAccess)
     val ir = IrLibraryImpl(irAccess)
 
-    return KotlinLibraryImpl(base, metadata, ir)
+    return KotlinLibraryImpl(libraryFile, base, ir)
 }
 
 fun createKotlinLibraryComponents(

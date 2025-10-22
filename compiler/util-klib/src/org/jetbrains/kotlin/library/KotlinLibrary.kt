@@ -93,12 +93,6 @@ interface BaseKotlinLibrary {
     val manifestProperties: Properties
 }
 
-interface MetadataLibrary {
-    val moduleHeaderData: ByteArray
-    fun packageMetadataParts(fqName: String): Set<String>
-    fun packageMetadata(fqName: String, partName: String): ByteArray
-}
-
 interface IrLibrary {
     val hasMainIr: Boolean
     val mainIr: IrDirectory
@@ -167,7 +161,7 @@ fun BaseKotlinLibrary.unresolvedDependencies(lenient: Boolean = false): List<Unr
 val BaseKotlinLibrary.hasDependencies: Boolean
     get() = !manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS).isNullOrBlank()
 
-interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
+interface KotlinLibrary : Klib, BaseKotlinLibrary, IrLibrary
 
 val BaseKotlinLibrary.interopFlag: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP)

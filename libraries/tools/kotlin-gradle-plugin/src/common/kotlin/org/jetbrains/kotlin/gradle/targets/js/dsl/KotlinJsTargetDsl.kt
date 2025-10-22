@@ -24,26 +24,84 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.utils.withType
 
+/**
+ * Represents the Kotlin/JS target platform.
+ *
+ * Used for JS and Wasm compilation.
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
 interface KotlinJsSubTargetContainerDsl : KotlinTarget {
+
+    /**
+     * Returns the configuration options for Node.js execution environment
+     * used for this [KotlinTarget].
+     *
+     * For more information about execution environments, see
+     * https://kotl.in/kotlin-js-execution-environments
+     * For more information about the Node.js execution environments, see
+     * https://kotl.in/js-project-setup-node-js
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+     */
     val nodejs: KotlinJsNodeDsl
 
+    /**
+     * Returns the configuration options for browser execution environment
+     * used for this [KotlinTarget].
+     *
+     * For more information about execution environments, see
+     * https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+     */
     val browser: KotlinJsBrowserDsl
 
+    /**
+     * Container for all execution environments enabled for this target.
+     * Currently, the only supported environments are Node.js and browser.
+     */
     @InternalKotlinGradlePluginApi
     val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary>
 
+    /**
+     * Internal property. It is not intended to be used by build script or plugin authors.
+     *
+     * Legacy method of detecting if a Node.js execution environment is enabled.
+     */
     val isNodejsConfigured: Boolean
         get() = subTargets.withType<KotlinNodeJsIr>().isNotEmpty()
 
+    /**
+     * Internal property. It is not intended to be used by build script or plugin authors.
+     *
+     * Legacy method of detecting if a browser execution environment is enabled.
+     */
     val isBrowserConfigured: Boolean
         get() = subTargets.withType<KotlinBrowserJsIr>().isNotEmpty()
 
+    /**
+     * Applies configuration to all Node.js execution environments used by this target.
+     *
+     * If Node.js is not enabled for this target, [body] will not be used.
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.ir.KotlinNodeJsIr
+     */
+    // note: this is a legacy function from before KGP fully migrated to the Provider API.
     fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit) {
         subTargets
             .withType<KotlinNodeJsIr>()
             .configureEach(body)
     }
 
+    /**
+     * Applies configuration to all browser execution environments used by this target.
+     *
+     * If browser is not enabled for this target, [body] will not be used.
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+     */
+    // note: this is a legacy function from before KGP fully migrated to the Provider API.
     fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
         subTargets
             .withType<KotlinBrowserJsIr>()

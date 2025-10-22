@@ -12,10 +12,11 @@ val d8RootEnvSpec = rootProject.the<D8EnvSpec>()
 
 val d8KotlinBuild = extensions.create<D8Extension>(
     "d8KotlinBuild",
+    project,
     d8EnvSpec,
 )
 
 with(d8KotlinBuild) {
-    d8RootEnvSpec.version.set(project.v8Version)
-    d8EnvSpec.version.set(project.v8Version)
+    d8RootEnvSpec.version.set(v8Version)
+    d8EnvSpec.version.set(v8Version)
 }

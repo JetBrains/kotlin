@@ -9,31 +9,26 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempDir
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.use
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestName
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.assertThrows
 import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.outputStream
-import kotlin.test.assertFailsWith
 
 class UnzipTest {
-    @Rule
-    @JvmField
-    val currentTestName = TestName()
-
     private lateinit var tmpDir: File
 
-    @Before
-    fun setUp() {
-        tmpDir = createTempDir(currentTestName.methodName)
+    @BeforeEach
+    fun setUp(testInfo: TestInfo) {
+        tmpDir = createTempDir(testInfo.testClass.get().simpleName + "_" + testInfo.testMethod.get().name)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         tmpDir.deleteRecursively()
     }
@@ -60,7 +55,7 @@ class UnzipTest {
 
         createMaliciousArchive(zipArchive)
 
-        assertFailsWith<ZipException> {
+        assertThrows<ZipException> {
             zipArchive.unzipTo(tmpDir.child("unpacked"))
         }
     }

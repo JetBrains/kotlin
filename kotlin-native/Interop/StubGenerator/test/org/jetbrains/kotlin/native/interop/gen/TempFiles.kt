@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
+import org.junit.jupiter.api.TestInfo
 import java.io.File
 
 class TempFiles(name: String) {
@@ -22,15 +21,9 @@ class TempFiles(name: String) {
     }
 }
 
-class TestFilesFactory : TestWatcher() {
-    private lateinit var description: Description
+class TestFilesFactory(testInfo: TestInfo) {
+    private val baseName = testInfo.testClass.get().name + "/" + testInfo.testMethod.get().name
     private var count = 0 // Just in case there are multiple calls of `tempFiles` in a test.
 
-    fun tempFiles(): TempFiles = TempFiles("${description.className}/${description.methodName}/${count++}")
-
-    override fun starting(description: Description) {
-        this.description = description
-        this.count = 0
-        super.starting(description)
-    }
+    fun tempFiles(): TempFiles = TempFiles("$baseName/${count++}")
 }

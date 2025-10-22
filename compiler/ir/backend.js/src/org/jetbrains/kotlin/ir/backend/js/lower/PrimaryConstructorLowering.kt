@@ -43,7 +43,7 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
     }
 
     companion object {
-        val SYNTHETIC_PRIMARY_CONSTRUCTOR by IrDeclarationOriginImpl
+        val SYNTHETIC_PRIMARY_CONSTRUCTOR by IrDeclarationOriginImpl.Regular
     }
 
     private val unitType = context.irBuiltIns.unitType

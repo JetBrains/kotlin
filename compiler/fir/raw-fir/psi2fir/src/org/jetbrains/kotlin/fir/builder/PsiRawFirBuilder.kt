@@ -312,10 +312,6 @@ open class PsiRawFirBuilder(
                 this@toFirOrErrorType?.extractAnnotationsTo(this)
             }
 
-        // Here we accept lambda as a receiver to prevent expression calculation in stub mode
-        private fun (() -> KtExpression?).toFirExpression(errorReason: String, sourceWhenInvalidExpression: KtElement): FirExpression =
-            this().toFirExpression(errorReason, sourceWhenInvalidExpression = sourceWhenInvalidExpression)
-
         private fun KtElement?.toFirExpression(
             errorReason: String,
             sourceWhenInvalidExpression: KtElement,
@@ -473,7 +469,7 @@ open class PsiRawFirBuilder(
             // No block body -> expression body and no contract
             !hasBlockBody() -> {
                 val block = buildOrLazyBlock {
-                    val result = { bodyExpression }.toFirExpression("Function has no body (but should)", this)
+                    val result = bodyExpression.toFirExpression("Function has no body (but should)", this)
                     FirSingleExpressionBlock(result.toReturn(baseSource = result.source))
                 }
 
@@ -521,7 +517,7 @@ open class PsiRawFirBuilder(
                 }
 
                 else -> {
-                    { expression }.toFirExpression("Argument is absent", sourceWhenInvalidExpression = this.asElement())
+                    expression.toFirExpression("Argument is absent", sourceWhenInvalidExpression = this.asElement())
                 }
             }
 
@@ -756,7 +752,7 @@ open class PsiRawFirBuilder(
                         }
                     } else {
                         buildOrLazyExpression(null) {
-                            { this@toFirValueParameter.defaultValue }.toFirExpression(
+                            this@toFirValueParameter.defaultValue.toFirExpression(
                                 "Should have default value",
                                 sourceWhenInvalidExpression = this@toFirValueParameter
                             )
@@ -1040,8 +1036,7 @@ open class PsiRawFirBuilder(
                 returnTypeRef = type
                 withContainerSymbol(symbol) {
                     initializer = buildOrLazyExpression(delegateSource) {
-                        { entry.delegateExpression }
-                            .toFirExpression("Should have delegate", sourceWhenInvalidExpression = entry)
+                        entry.delegateExpression.toFirExpression("Should have delegate", sourceWhenInvalidExpression = entry)
                     }
                 }
 
@@ -1764,12 +1759,7 @@ open class PsiRawFirBuilder(
                     val firTypeParameters = classOrObject.convertTypeParameters(classSymbol)
 
                     withCapturedTypeParameters(
-                        // Transferring phantom type parameters to objects is cursed as they are
-                        // accessible by qualifier `MyObject`, which is an expression and must have
-                        // some single type.
-                        // Letting their types contain no type arguments while the class itself
-                        // expects some sounds fragile.
-                        status = status.isInner || isLocal && !classKind.isObject,
+                        status = status.isInner || isLocal,
                         declarationSource = sourceElement,
                         currentFirTypeParameters = firTypeParameters,
                     ) {

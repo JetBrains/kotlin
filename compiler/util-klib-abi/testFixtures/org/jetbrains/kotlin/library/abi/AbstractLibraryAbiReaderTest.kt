@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.library.abi
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.js.test.converters.*
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -23,9 +26,6 @@ import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -36,20 +36,19 @@ import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentC
 /**
  * This test class can potentially be re-used in the future for other backends.
  */
-abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
+abstract class AbstractLibraryAbiReaderTest(
     private val targetPlatform: TargetPlatform,
     targetBackend: TargetBackend,
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
-
-    abstract val frontend: FrontendKind<*>
-    abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
-    abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
+    abstract val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+    abstract val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
     abstract val preserializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
     abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        configureFirParser(FirParser.LightTree)
         globalDefaults {
-            frontend = this@AbstractLibraryAbiReaderTest.frontend
+            frontend = FrontendKinds.FIR
             targetPlatform = this@AbstractLibraryAbiReaderTest.targetPlatform
             artifactKind = ArtifactKind.NoArtifact
             targetBackend = this@AbstractLibraryAbiReaderTest.targetBackend
@@ -87,11 +86,18 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
     }
 }
 
-abstract class AbstractJsLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
-    AbstractLibraryAbiReaderTest<FrontendOutput>(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
+abstract class AbstractJsLibraryAbiReaderTest : AbstractLibraryAbiReaderTest(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
+    final override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirCliWebFacade
+
+    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrCliWebFacade
 
     override val preserializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
         get() = ::JsIrPreSerializationLoweringFacade
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+        get() = ::FirKlibSerializerCliWebFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(
@@ -102,26 +108,7 @@ abstract class AbstractJsLibraryAbiReaderTest<FrontendOutput : ResultingArtifact
     }
 }
 
-open class AbstractFirJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<FirOutputArtifact>() {
-    final override val frontend: FrontendKind<*>
-        get() = FrontendKinds.FIR
-
-    final override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirCliWebFacade
-
-    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrCliWebFacade
-
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirKlibSerializerCliWebFacade
-
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        configureFirParser(FirParser.LightTree)
-        super.configure(builder)
-    }
-}
-
-open class AbstractFirJsLibraryAbiReaderWithInlinedFunInKlibTest : AbstractFirJsLibraryAbiReaderTest() {
+open class AbstractJsLibraryAbiReaderWithInlinedFunInKlibTest : AbstractJsLibraryAbiReaderTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             LANGUAGE with listOf(
@@ -131,18 +118,4 @@ open class AbstractFirJsLibraryAbiReaderWithInlinedFunInKlibTest : AbstractFirJs
         }
         super.configure(builder)
     }
-}
-
-open class AbstractClassicJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<ClassicFrontendOutputArtifact>() {
-    final override val frontend: FrontendKind<*>
-        get() = FrontendKinds.ClassicFrontend
-
-    final override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
-
-    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
-        get() = ::ClassicFrontend2IrConverter
-
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::ClassicJsKlibSerializerFacade
 }

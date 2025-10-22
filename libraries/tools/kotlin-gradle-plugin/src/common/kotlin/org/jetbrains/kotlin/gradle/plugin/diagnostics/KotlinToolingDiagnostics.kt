@@ -351,6 +351,27 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object NativeCacheDisabledDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            kotlinVersion: KotlinToolingVersion,
+            target: KonanTarget,
+            reason: String,
+            issueUrl: URI?
+        ) = build {
+            title("Kotlin/Native cache is disabled for Kotlin $kotlinVersion")
+                .description {
+                    "The Kotlin/Native cache has been disabled for target '${target.visibleName}' " +
+                            "due to a configured workaround: $reason"
+                }
+                .solution {
+                    "Caching was disabled intentionally to prevent potential issues with this Kotlin version. " +
+                            "Build times for the '${target.visibleName}' target may be slower as a result. " +
+                            "To re-enable caching and improve performance, investigate whether this issue is resolved in newer versions of Kotlin or relevant third-party libraries."
+                }
+                .documentationLink(issueUrl ?: URI("https://kotl.in/disable-native-cache"))
+        }
+    }
+
     object OldNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(nativeVersion: KotlinToolingVersion?, kotlinVersion: KotlinToolingVersion) = build {
             title("Kotlin/Native and Kotlin Versions Incompatible")
@@ -1936,6 +1957,23 @@ internal object KotlinToolingDiagnostics {
                 .description("The 'org.jetbrains.kotlin.android' plugin is not compatible with AGP's new DSL (`android.newDsl=true`).")
                 .solution("Set `android.builtInKotlin=true` in `gradle.properties` and migrate to built-in Kotlin (see https://kotl.in/gradle/agp-built-in-kotlin for guidance), or set `android.newDsl=false` in `gradle.properties` to temporarily bypass this issue.")
                 .documentationLink(URI("https://kotl.in/gradle/agp-new-dsl"))
+        }
+    }
+
+    internal object NonKmpAgpIsDeprecated : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(androidPluginId: String) = build {
+            title("The 'org.jetbrains.kotlin.multiplatform' plugin deprecated compatibility with Android Gradle plugin: '$androidPluginId'")
+                .description(
+                    """
+                    |The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins since Android Gradle Plugin version 9.0.0. 
+                    |
+                    |Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+                    |
+                    |The change may require changing the structure of the your project. Read more: https://kotl.in/kmp-project-structure-migration
+                    """.trimMargin()
+                )
+                .solution("Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp")
+                .documentationLink(URI("https://kotl.in/gradle/agp-new-kmp"))
         }
     }
 

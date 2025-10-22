@@ -115,6 +115,8 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
                 """
                     framework {
                         baseName = "kotlin-library"
+                        // KT-81727 Failing CocoaPodsXcodeIT test
+                        freeCompilerArgs += "-Xbinary=bundleId=kotlin.library"
                     }
                     name = "kotlin-library"
                     podfile = project.file("ios-app/Podfile")
@@ -190,7 +192,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mode: ImportMode,
         iosAppLocation: String?,
         subprojectsToFrameworkNamesMap: Map<String, String?>,
-        arch: String = "x86_64",
+        arch: String = "arm64",
         podInstall: (taskPrefix: String, iosAppPath: Path) -> Unit = ::gradlePodInstall,
     ) {
 

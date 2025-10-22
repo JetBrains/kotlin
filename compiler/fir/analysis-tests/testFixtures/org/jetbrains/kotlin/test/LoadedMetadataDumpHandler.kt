@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
@@ -315,6 +316,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
             isJvm() -> ".jvm"
             isJs() -> ".klib"
             isWasm() -> ".klib"
+            isNative() -> ".klib"
             else -> error("Unsupported platform: $this")
         }
 
@@ -323,6 +325,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
             isJvm() -> ".klib"
             isJs() -> ".jvm"
             isWasm() -> ".jvm"
+            isNative() -> ".jvm"
             else -> error("Unsupported platform: $this")
         }
 

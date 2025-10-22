@@ -9,14 +9,11 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.DelegatedWrapperData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -271,7 +268,7 @@ fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boole
 
 private val PUBLIC_METHOD_NAMES_IN_ANY = setOf("equals", "hashCode", "toString")
 
-abstract class FirDelegatedMembersFilter : FirSessionComponent {
+abstract class FirDelegatedMembersFilter : FirComposableSessionComponent<FirDelegatedMembersFilter> {
     abstract fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean
 
     object Default : FirDelegatedMembersFilter() {
@@ -279,6 +276,20 @@ abstract class FirDelegatedMembersFilter : FirSessionComponent {
             return false
         }
     }
+
+    class Composed(
+        override val components: List<FirDelegatedMembersFilter>
+    ) : FirDelegatedMembersFilter(), FirComposableSessionComponent.Composed<FirDelegatedMembersFilter> {
+        override fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean {
+            return components.any { it.shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface) }
+        }
+    }
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirDelegatedMembersFilter>): Composed {
+        return Composed(components)
+    }
 }
 
-private val FirSession.delegatedMembersFilter: FirDelegatedMembersFilter by FirSession.sessionComponentAccessor()
+private val FirSession.delegatedMembersFilter: FirDelegatedMembersFilter
+        by FirSession.sessionComponentAccessorWithDefault(FirDelegatedMembersFilter.Default)

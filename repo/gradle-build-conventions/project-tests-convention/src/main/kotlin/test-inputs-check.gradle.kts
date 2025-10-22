@@ -39,6 +39,21 @@ tasks.withType<Test>().configureEach {
                 ?: System.getenv("KONAN_DATA_DIR")
                 ?: (System.getProperty("user.home") + File.separator + ".konan")
 
+        @Suppress("UNCHECKED_CAST")
+        val d8Executable = if (project.extra.has("javascript.engine.path.V8")) {
+            project.extra["javascript.engine.path.V8"] as Provider<String>
+        } else null
+
+        @Suppress("UNCHECKED_CAST")
+        val nodeJsExecutable = if (project.extra.has("javascript.engine.path.NodeJs")) {
+            project.extra["javascript.engine.path.NodeJs"] as Provider<String>
+        } else null
+
+        @Suppress("UNCHECKED_CAST")
+        val binaryenExecutable = if (project.extra.has("binaryen.path")) {
+            project.extra["binaryen.path"] as Provider<String>
+        } else null
+
         doFirst {
             if (!permissionsTemplateFile.exists()) {
                 throw GradleException("Security policy template file not found at: ${permissionsTemplateFile.absolutePath}")
@@ -228,6 +243,21 @@ tasks.withType<Test>().configureEach {
                             "{{debugger_agent_jar}}",
                             debuggerAgentPath?.let { """permission java.io.FilePermission "$it/-", "read";""" } ?: "")
                         .replace("{{inputs}}", inputPermissions.sorted().joinToString("\n    "))
+                        .replace(
+                            "{{wasm}}",
+                            buildString {
+                                d8Executable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                                nodeJsExecutable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                                binaryenExecutable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                            }
+                        )
+
                 )
             } catch (e: IOException) {
                 logger.error("Failed to generate security policy file", e)

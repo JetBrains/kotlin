@@ -26075,6 +26075,18 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
           }
 
           @Test
+          @TestMetadata("kt66359a.kt")
+          public void testKt66359a() {
+            runTest("compiler/testData/codegen/box/inference/pcla/issues/kt66359a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt66359b.kt")
+          public void testKt66359b() {
+            runTest("compiler/testData/codegen/box/inference/pcla/issues/kt66359b.kt");
+          }
+
+          @Test
           @TestMetadata("kt67993.kt")
           public void testKt67993() {
             runTest("compiler/testData/codegen/box/inference/pcla/issues/kt67993.kt");
@@ -53017,6 +53029,12 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
           }
 
           @Test
+          @TestMetadata("contextPropertyWithSameNameAsPrimary.kt")
+          public void testContextPropertyWithSameNameAsPrimary() {
+            runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/contextPropertyWithSameNameAsPrimary.kt");
+          }
+
+          @Test
           @TestMetadata("inlineClassConstructor.kt")
           public void testInlineClassConstructor() {
             runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/inlineClassConstructor.kt");
@@ -53065,6 +53083,12 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
             @TestMetadata("constructorWithInlineClassParameters.kt")
             public void testConstructorWithInlineClassParameters() {
               runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/constructorWithInlineClassParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("contextParameters.kt")
+            public void testContextParameters() {
+              runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject/contextParameters.kt");
             }
 
             @Test
@@ -53144,6 +53168,12 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
             }
 
             @Test
+            @TestMetadata("contextParameters.kt")
+            public void testContextParameters() {
+              runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/contextParameters.kt");
+            }
+
+            @Test
             @TestMetadata("fieldAccessors.kt")
             public void testFieldAccessors() {
               runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject/fieldAccessors.kt");
@@ -53220,6 +53250,12 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
             }
 
             @Test
+            @TestMetadata("contextParameters.kt")
+            public void testContextParameters() {
+              runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/contextParameters.kt");
+            }
+
+            @Test
             @TestMetadata("fieldAccessors.kt")
             public void testFieldAccessors() {
               runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive/fieldAccessors.kt");
@@ -53286,106 +53322,6 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
             }
           }
         }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/reflection/call/valueClasses")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ValueClasses {
-          @Test
-          public void testAllFilesPresentInValueClasses() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/valueClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
-          }
-
-          @Test
-          @TestMetadata("constructorWithMfvcParameters.kt")
-          public void testConstructorWithMfvcParameters() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/constructorWithMfvcParameters.kt");
-          }
-
-          @Test
-          @TestMetadata("fieldAccessors.kt")
-          public void testFieldAccessors() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/fieldAccessors.kt");
-          }
-
-          @Test
-          @TestMetadata("functionsWithMfvcParameters.kt")
-          public void testFunctionsWithMfvcParameters() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/functionsWithMfvcParameters.kt");
-          }
-
-          @Test
-          @TestMetadata("internalPrimaryValOfMfvc.kt")
-          public void testInternalPrimaryValOfMfvc() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/internalPrimaryValOfMfvc.kt");
-          }
-
-          @Test
-          @TestMetadata("jvmStaticFieldInObject.kt")
-          public void testJvmStaticFieldInObject() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/jvmStaticFieldInObject.kt");
-          }
-
-          @Test
-          @TestMetadata("jvmStaticFunction.kt")
-          public void testJvmStaticFunction() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/jvmStaticFunction.kt");
-          }
-
-          @Test
-          @TestMetadata("mfvcConstructor.kt")
-          public void testMfvcConstructor() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/mfvcConstructor.kt");
-          }
-
-          @Test
-          @TestMetadata("nonOverridingFunOfMfvc.kt")
-          public void testNonOverridingFunOfMfvc() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/nonOverridingFunOfMfvc.kt");
-          }
-
-          @Test
-          @TestMetadata("nonOverridingVarOfMfvc.kt")
-          public void testNonOverridingVarOfMfvc() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/nonOverridingVarOfMfvc.kt");
-          }
-
-          @Test
-          @TestMetadata("overridingFunOfMfvc.kt")
-          public void testOverridingFunOfMfvc() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/overridingFunOfMfvc.kt");
-          }
-
-          @Test
-          @TestMetadata("overridingVarOfMfvc.kt")
-          public void testOverridingVarOfMfvc() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/overridingVarOfMfvc.kt");
-          }
-
-          @Test
-          @TestMetadata("primaryValOfMfvc.kt")
-          public void testPrimaryValOfMfvc() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/primaryValOfMfvc.kt");
-          }
-
-          @Test
-          @TestMetadata("properties.kt")
-          public void testProperties() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/properties.kt");
-          }
-
-          @Test
-          @TestMetadata("secondaryConstructorVisibilies.kt")
-          public void testSecondaryConstructorVisibilies() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/secondaryConstructorVisibilies.kt");
-          }
-
-          @Test
-          @TestMetadata("suspendFunction.kt")
-          public void testSuspendFunction() {
-            runTest("compiler/testData/codegen/box/reflection/call/valueClasses/suspendFunction.kt");
-          }
-        }
       }
 
       @Nested
@@ -53413,18 +53349,6 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
         @TestMetadata("boundJvmStaticInObject.kt")
         public void testBoundJvmStaticInObject() {
           runTest("compiler/testData/codegen/box/reflection/callBy/boundJvmStaticInObject.kt");
-        }
-
-        @Test
-        @TestMetadata("brokenDefaultParametersFromDifferentFunctions.kt")
-        public void testBrokenDefaultParametersFromDifferentFunctions() {
-          runTest("compiler/testData/codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt");
-        }
-
-        @Test
-        @TestMetadata("brokenDefaultParametersFromDifferentFunctionsJvmDefault.kt")
-        public void testBrokenDefaultParametersFromDifferentFunctionsJvmDefault() {
-          runTest("compiler/testData/codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctionsJvmDefault.kt");
         }
 
         @Test
@@ -53557,42 +53481,6 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
         @TestMetadata("manyMaskArguments.kt")
         public void testManyMaskArguments() {
           runTest("compiler/testData/codegen/box/reflection/callBy/manyMaskArguments.kt");
-        }
-
-        @Test
-        @TestMetadata("mfvcDefaultArguments.kt")
-        public void testMfvcDefaultArguments() {
-          runTest("compiler/testData/codegen/box/reflection/callBy/mfvcDefaultArguments.kt");
-        }
-
-        @Test
-        @TestMetadata("mfvcFunctionsAndConstructors.kt")
-        public void testMfvcFunctionsAndConstructors() {
-          runTest("compiler/testData/codegen/box/reflection/callBy/mfvcFunctionsAndConstructors.kt");
-        }
-
-        @Test
-        @TestMetadata("mfvcInterface.kt")
-        public void testMfvcInterface() {
-          runTest("compiler/testData/codegen/box/reflection/callBy/mfvcInterface.kt");
-        }
-
-        @Test
-        @TestMetadata("mfvcInterfaceJvmDefault.kt")
-        public void testMfvcInterfaceJvmDefault() {
-          runTest("compiler/testData/codegen/box/reflection/callBy/mfvcInterfaceJvmDefault.kt");
-        }
-
-        @Test
-        @TestMetadata("mfvcKt61304.kt")
-        public void testMfvcKt61304() {
-          runTest("compiler/testData/codegen/box/reflection/callBy/mfvcKt61304.kt");
-        }
-
-        @Test
-        @TestMetadata("mfvcMembers.kt")
-        public void testMfvcMembers() {
-          runTest("compiler/testData/codegen/box/reflection/callBy/mfvcMembers.kt");
         }
 
         @Test
@@ -54436,12 +54324,6 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
         }
 
         @Test
-        @TestMetadata("reflectOnDefaultWithMfvcArgument.kt")
-        public void testReflectOnDefaultWithMfvcArgument() {
-          runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnDefaultWithMfvcArgument.kt");
-        }
-
-        @Test
         @TestMetadata("reflectOnLambdaInArrayConstructor.kt")
         public void testReflectOnLambdaInArrayConstructor() {
           runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnLambdaInArrayConstructor.kt");
@@ -54537,12 +54419,6 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
         @TestMetadata("constructorWithInlineClassParameters.kt")
         public void testConstructorWithInlineClassParameters() {
           runTest("compiler/testData/codegen/box/reflection/mapping/constructorWithInlineClassParameters.kt");
-        }
-
-        @Test
-        @TestMetadata("constructorWithMfvcParameters.kt")
-        public void testConstructorWithMfvcParameters() {
-          runTest("compiler/testData/codegen/box/reflection/mapping/constructorWithMfvcParameters.kt");
         }
 
         @Test
@@ -54813,18 +54689,6 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
           }
 
           @Test
-          @TestMetadata("mfvcInSignature.kt")
-          public void testMfvcInSignature() {
-            runTest("compiler/testData/codegen/box/reflection/mapping/types/mfvcInSignature.kt");
-          }
-
-          @Test
-          @TestMetadata("mfvcPrimaryVal.kt")
-          public void testMfvcPrimaryVal() {
-            runTest("compiler/testData/codegen/box/reflection/mapping/types/mfvcPrimaryVal.kt");
-          }
-
-          @Test
           @TestMetadata("overrideAnyWithPrimitive.kt")
           public void testOverrideAnyWithPrimitive() {
             runTest("compiler/testData/codegen/box/reflection/mapping/types/overrideAnyWithPrimitive.kt");
@@ -54888,28 +54752,6 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
           @TestMetadata("withNullability.kt")
           public void testWithNullability() {
             runTest("compiler/testData/codegen/box/reflection/mapping/types/withNullability.kt");
-          }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/reflection/mapping/valueClasses")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ValueClasses {
-          @Test
-          public void testAllFilesPresentInValueClasses() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/valueClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
-          }
-
-          @Test
-          @TestMetadata("mfvcPrimaryVal.kt")
-          public void testMfvcPrimaryVal() {
-            runTest("compiler/testData/codegen/box/reflection/mapping/valueClasses/mfvcPrimaryVal.kt");
-          }
-
-          @Test
-          @TestMetadata("suspendFunctionWithMfvcInSignature.kt")
-          public void testSuspendFunctionWithMfvcInSignature() {
-            runTest("compiler/testData/codegen/box/reflection/mapping/valueClasses/suspendFunctionWithMfvcInSignature.kt");
           }
         }
       }
@@ -68238,6 +68080,12 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
       @Test
       public void testAllFilesPresentInMultiModule() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("notInlinedFunFromKlib.kt")
+      public void testNotInlinedFunFromKlib() {
+        runTest("compiler/testData/codegen/boxInline/multiModule/notInlinedFunFromKlib.kt");
       }
 
       @Test

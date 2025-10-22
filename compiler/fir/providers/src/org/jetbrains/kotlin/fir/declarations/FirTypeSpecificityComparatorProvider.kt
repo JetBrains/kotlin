@@ -5,10 +5,33 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
-class FirTypeSpecificityComparatorProvider(val typeSpecificityComparator: TypeSpecificityComparator) : FirSessionComponent
+sealed class FirTypeSpecificityComparatorProvider : FirComposableSessionComponent<FirTypeSpecificityComparatorProvider> {
+    abstract val typeSpecificityComparator: TypeSpecificityComparator
+
+    class Simple(override val typeSpecificityComparator: TypeSpecificityComparator) : FirTypeSpecificityComparatorProvider()
+
+    class Composed(
+        override val components: List<FirTypeSpecificityComparatorProvider>,
+    ) : FirTypeSpecificityComparatorProvider(), FirComposableSessionComponent.Composed<FirTypeSpecificityComparatorProvider> {
+        override val typeSpecificityComparator: TypeSpecificityComparator =
+            TypeSpecificityComparator.Composed(components.map { it.typeSpecificityComparator })
+    }
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirTypeSpecificityComparatorProvider>): Composed {
+        return Composed(components)
+    }
+
+    companion object {
+        fun of(typeSpecificityComparator: TypeSpecificityComparator): FirTypeSpecificityComparatorProvider {
+            return Simple(typeSpecificityComparator)
+        }
+    }
+}
 
 val FirSession.typeSpecificityComparatorProvider: FirTypeSpecificityComparatorProvider? by FirSession.nullableSessionComponentAccessor()

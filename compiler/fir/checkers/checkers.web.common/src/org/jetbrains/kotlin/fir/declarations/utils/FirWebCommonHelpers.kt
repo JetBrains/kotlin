@@ -8,6 +8,8 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotatedClass
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 private val FirBasedSymbol<*>.isExternal
     get() = when (this) {
@@ -42,4 +45,21 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
     }
 
     return getContainingClassSymbol()?.isEffectivelyExternal(session) == true
+}
+
+fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
+    if (hasAnnotationOrInsideAnnotatedClass(WebCommonStandardClassIds.Annotations.JsNative, session) || isEffectivelyExternal(session)) {
+        return true
+    }
+
+    if (this is FirPropertyAccessorSymbol) {
+        val property = propertySymbol
+        return property.hasAnnotationOrInsideAnnotatedClass(WebCommonStandardClassIds.Annotations.JsNative, session)
+    }
+
+    return false
+}
+
+fun FirBasedSymbol<*>.isNativeInterface(session: FirSession): Boolean {
+    return isNativeObject(session) && (fir as? FirClass)?.isInterface == true
 }

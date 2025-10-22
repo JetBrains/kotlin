@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.checkDiagnosticsWithMppProject
@@ -98,13 +99,12 @@ class MultipleSourceSetRootsInCompilationTest {
 
             kotlin {
                 linuxX64()
-                androidTarget {
-
-                }
+                @Suppress("DEPRECATION")
+                androidTarget()
             }
         }
 
         project.evaluate()
-        project.assertNoDiagnostics()
+        project.checkDiagnostics("multipleSourceRoots-androidWithMultipleVariants")
     }
 }

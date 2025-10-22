@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: WASM
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 // JVM_ABI_K1_K2_DIFF: KT-63984, KT-76258
 
 // KT-2202 Wrong instruction for invoke private setter

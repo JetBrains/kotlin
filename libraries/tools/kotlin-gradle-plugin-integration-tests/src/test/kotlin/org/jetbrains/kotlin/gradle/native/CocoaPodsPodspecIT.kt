@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.tasks.asValidFrameworkName
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.readText
@@ -83,7 +84,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
                     assertTasksExecuted(":$subproject:podspec")
 
                     // Check that the podspec file is correctly generated.
-                    val podspecFileName = "$subproject/${subproject.normalizeCocoapadsFrameworkName}.podspec"
+                    val podspecFileName = "$subproject/${subproject.asValidFrameworkName}.podspec"
 
                     assertFileInProjectExists(podspecFileName)
                     val actualPodspecContentWithoutBlankLines = projectPath.resolve(podspecFileName).readText()
@@ -104,7 +105,7 @@ class CocoaPodsPodspecIT : KGPBaseTest() {
             |    spec.summary                  = 'CocoaPods test library'
             |    spec.vendored_frameworks      = 'build/cocoapods/framework/$frameworkName.framework'
             |    spec.libraries                = 'c++'
-            |    spec.ios.deployment_target    = '11.0'
+            |    spec.ios.deployment_target    = '15.0'
             |    spec.dependency 'pod_dependency', '1.0'
             |    spec.dependency 'subspec_dependency/Core', '1.0'
             |    if !Dir.exist?('build/cocoapods/framework/$frameworkName.framework') || Dir.empty?('build/cocoapods/framework/$frameworkName.framework')

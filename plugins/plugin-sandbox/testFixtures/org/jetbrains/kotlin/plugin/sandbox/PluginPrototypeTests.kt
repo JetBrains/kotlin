@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.plugin.sandbox
 
 import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
-import org.jetbrains.kotlin.js.test.fir.AbstractFirLoadK2CompiledJsKotlinTest
+import org.jetbrains.kotlin.js.test.fir.AbstractLoadK2CompiledJsKotlinTest
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase
 import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
@@ -51,9 +51,9 @@ open class AbstractFirJvmLightTreePluginBlackBoxCodegenWithSeparateKmpCompilatio
     }
 }
 
-open class AbstractFirJsLightTreePluginBlackBoxCodegenTest : AbstractFirJsTest(
+open class AbstractJsLightTreePluginBlackBoxCodegenTest : AbstractFirJsTest(
     pathToTestDir = "plugins/plugin-sandbox/testData/box",
-    testGroupOutputDirPrefix = "firPluginSandboxBox/",
+    testGroupOutputDirPrefix = "pluginSandboxBox/",
     parser = FirParser.LightTree
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -65,10 +65,10 @@ open class AbstractFirJsLightTreePluginBlackBoxCodegenTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest :
+open class AbstractJsLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest :
     AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
         pathToTestDir = "plugins/plugin-sandbox/testData/box",
-        testGroupOutputDirPrefix = "firPluginSandboxBox/",
+        testGroupOutputDirPrefix = "pluginSandboxBoxWithSeparateKmpCompilation/",
         parser = FirParser.LightTree
     ) {
 
@@ -106,7 +106,7 @@ open class AbstractFirLoadK2CompiledWithPluginJvmKotlinTest : AbstractFirLoadK2C
     }
 }
 
-open class AbstractFirLoadK2CompiledWithPluginJsKotlinTest : AbstractFirLoadK2CompiledJsKotlinTest() {
+open class AbstractLoadK2CompiledWithPluginJsKotlinTest : AbstractLoadK2CompiledJsKotlinTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

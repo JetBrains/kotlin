@@ -40,6 +40,20 @@ import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Generates webpack configuration, then runs webpack.
+ *
+ * The configuration is created from the options set in
+ * [org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig].
+ *
+ * The task either bundles the browser application
+ * or hosts the browser application using the webpack dev server.
+ *
+ * For more information about how Kotlin JS and Wasm use Webpack, see
+ * https://kotl.in/js-project-setup/webpack-bundling
+ *
+ * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+ */
 @CacheableTask
 abstract class KotlinWebpack
 @Inject
@@ -258,6 +272,17 @@ internal constructor(
     @Internal
     var generateConfigOnly: Boolean = false
 
+    /**
+     * Temporary value holder used to capture specific information
+     * set by users in
+     * [org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl.commonWebpackConfig].
+     *
+     * Specifically created to handle changes to
+     * [org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.outputFileName]
+     * to support a request from Compose (KT-79921).
+     *
+     * KT-77145 Workaround because [KotlinWebpackConfig] doesn't use Provider API.
+     */
     private val fakeWebpackConfig: KotlinWebpackConfig = KotlinWebpackConfig(
         rules = project.objects.webpackRulesContainer()
     )

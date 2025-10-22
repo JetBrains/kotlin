@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-72740
-// COMPARE_WITH_LIGHT_TREE
+
 annotation class Anno(val s: String)
 
 @Deprecated("Use 'AAA' instead"

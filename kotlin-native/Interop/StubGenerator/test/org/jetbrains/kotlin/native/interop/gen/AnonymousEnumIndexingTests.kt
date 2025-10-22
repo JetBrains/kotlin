@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

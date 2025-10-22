@@ -133,6 +133,9 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     @get:Internal
     internal abstract val runViaBuildToolsApi: Property<Boolean>
 
+    @get:Internal
+    internal abstract val generateCompilerRefIndex: Property<Boolean>
+
     protected fun validateCompilerClasspath() {
         // Note that the check triggers configuration resolution
         require(!defaultCompilerClasspath.isEmpty) {

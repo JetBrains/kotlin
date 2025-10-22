@@ -44,6 +44,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
     outputDirs: Collection<File>?,
     kotlinSourceFilesExtensions: Set<String>,
     icFeatures: IncrementalCompilationFeatures,
+    private val generateCompilerRefIndex: Boolean = false,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",

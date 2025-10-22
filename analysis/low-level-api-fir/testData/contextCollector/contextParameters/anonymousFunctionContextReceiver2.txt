@@ -18,7 +18,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionContextReceiver2.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun foo(): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval x: <ERROR TYPE REF: Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]> = <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(Q|kotlin/String|)
+        [ResolvedTo(BODY_RESOLVE)] lval x: <ERROR TYPE REF: Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]> = <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(Q|kotlin/String|)
         [ResolvedTo(RAW_FIR)] fun <anonymous>([ResolvedTo(RAW_FIR)] p: Int): R|kotlin/Unit| <inline=Unknown>  {
             [ResolvedTo(RAW_FIR)] lval d: Double = Double(1.0)
         }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.abi.*
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.hasAbi
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -85,7 +86,9 @@ internal sealed class KlibToolCommand(
 internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
         val library = resolveKlib(args.libraryPath)
-        val metadataHeader = parseModuleHeader(library.moduleHeaderData)
+        val metadata = library.metadata
+
+        val metadataHeader = parseModuleHeader(metadata.moduleHeaderData)
 
         val nonEmptyPackageFQNs = buildSet {
             addAll(metadataHeader.packageFragmentNameList)
@@ -93,8 +96,8 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
 
             // Sometimes `emptyPackageList` is empty, so it's necessary to explicitly filter out empty packages:
             val stillRemainingEmptyPackageFQNs = filterTo(hashSetOf()) { packageName ->
-                library.packageMetadataParts(packageName).all { partName ->
-                    parsePackageFragment(library.packageMetadata(packageName, partName)).isEmpty()
+                metadata.getPackageFragmentNames(packageName).all { partName ->
+                    parsePackageFragment(metadata.getPackageFragment(packageName, partName)).isEmpty()
                 }
             }
 

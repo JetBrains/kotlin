@@ -10,19 +10,31 @@ package org.jetbrains.kotlin.build.d8
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
 
 abstract class D8Extension(
+    private val project: Project,
     private val d8envSpec: D8EnvSpec,
 ) {
-    val Project.v8Version: String get() = property("versions.v8") as String
+    val v8Version: String
+        get() = project.property("versions.v8") as String
+
+    val v8ExecutablePath: Provider<String> = d8envSpec.executable.also {
+        project.extra["javascript.engine.path.V8"] = it
+    }
 
     fun Test.setupV8() {
         with(d8envSpec) {
             dependsOn(project.d8SetupTaskProvider)
         }
-        val v8ExecutablePath: Provider<String> = d8envSpec.executable
+
+        val v8ExecutablePath = v8ExecutablePath
+
+        inputs.property("propertyName", "javascript.engine.path.V8")
+        inputs.property("destinationPath", v8ExecutablePath)
+
         doFirst {
             systemProperty("javascript.engine.path.V8", v8ExecutablePath.get())
         }

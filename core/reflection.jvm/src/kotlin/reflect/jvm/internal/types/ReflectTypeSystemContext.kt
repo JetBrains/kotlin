@@ -306,7 +306,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
-        return this == Nothing::class
+        return this == NothingKClass
     }
 
     override fun TypeConstructorMarker.isArrayConstructor(): Boolean {

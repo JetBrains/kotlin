@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
 import org.jetbrains.kotlin.native.interop.indexer.ObjCClassOrProtocol
 import org.jetbrains.kotlin.native.interop.indexer.StructDecl
-import org.junit.Assume
+import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Test
 import kotlin.test.*
 
 class ForwardDeclarationsTests : InteropTestsBase() {
@@ -39,7 +40,7 @@ class ForwardDeclarationsTests : InteropTestsBase() {
 
     @Test
     fun `objc forward declarations`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
+        assumeTrue(HostManager.hostIsMac)
 
         fun Collection<ObjCClassOrProtocol>.assertHasOnlyForward(vararg names: String) {
             this.forEach {
@@ -87,7 +88,7 @@ class ForwardDeclarationsTests : InteropTestsBase() {
 
     @Test
     fun `objc forward declarations with definitions`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
+        assumeTrue(HostManager.hostIsMac)
 
         fun Collection<ObjCClassOrProtocol>.assertHasOnlyNonForward(vararg names: String) {
             this.forEach {
@@ -105,7 +106,7 @@ class ForwardDeclarationsTests : InteropTestsBase() {
 
     @Test
     fun `KT-71435 objcnames classes Protocol`() {
-        Assume.assumeTrue(HostManager.hostIsMac)
+        assumeTrue(HostManager.hostIsMac)
 
         val files = testFiles()
 

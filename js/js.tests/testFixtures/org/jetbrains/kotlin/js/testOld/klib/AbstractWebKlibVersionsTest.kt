@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.testOld.klib
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.BeforeEach
@@ -26,7 +27,7 @@ abstract class AbstractWebKlibVersionsTest {
 
     @Test
     fun testABIVersionCLIFlag() {
-        val testDataDir = File("compiler/testData/klib/resolve/mismatched-abi-version")
+        val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/mismatched-abi-version")
         val klibDir = createKlibDir("lib1")
 
         val correctVersions = arrayOf(
@@ -70,7 +71,7 @@ abstract class AbstractWebKlibVersionsTest {
 
     @Test
     fun testMetadataVersionCLIFlag() {
-        val testDataDir = File("compiler/testData/klib/resolve/mismatched-abi-version")
+        val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/mismatched-abi-version")
         val klibDir = createKlibDir("lib1")
 
         val correctVersions = arrayOf(

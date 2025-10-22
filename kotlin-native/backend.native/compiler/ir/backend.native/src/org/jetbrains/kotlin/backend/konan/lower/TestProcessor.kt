@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.name.Name
 
 internal class TestProcessor(private val context: Context) : FileLoweringPass {
     companion object {
-        val TEST_SUITE_CLASS by IrDeclarationOriginImpl
-        val TEST_SUITE_GENERATED_MEMBER by IrDeclarationOriginImpl
+        val TEST_SUITE_CLASS by IrDeclarationOriginImpl.Regular
+        val TEST_SUITE_GENERATED_MEMBER by IrDeclarationOriginImpl.Regular
 
         val COMPANION_GETTER_NAME = Name.identifier("getCompanion")
         val INSTANCE_GETTER_NAME = Name.identifier("createInstance")

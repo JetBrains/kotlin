@@ -248,6 +248,12 @@ public class FirWasmJsCodegenSingleModuleInteropTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("jsDelayedRuntimeQualifierOnDeclaration.kt")
+  public void testJsDelayedRuntimeQualifierOnDeclaration() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsDelayedRuntimeQualifierOnDeclaration.kt");
+  }
+
+  @Test
   @TestMetadata("jsException.kt")
   public void testJsException() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsException.kt");
@@ -437,6 +443,12 @@ public class FirWasmJsCodegenSingleModuleInteropTestGenerated extends AbstractFi
   @TestMetadata("nameClash.kt")
   public void testNameClash() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/nameClash.kt");
+  }
+
+  @Test
+  @TestMetadata("nativeInvoke.kt")
+  public void testNativeInvoke() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nativeInvoke.kt");
   }
 
   @Test

@@ -120,6 +120,7 @@ internal class JvmCompilationOperationImpl(
         } else {
             ReportSeverity.INFO.code
         }
+        val generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX)
         val aggregatedIcConfiguration: JvmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)
         return when (aggregatedIcConfiguration) {
             is JvmSnapshotBasedIncrementalCompilationConfiguration -> {
@@ -148,6 +149,7 @@ internal class JvmCompilationOperationImpl(
                     kotlinScriptExtensions = ktsExtensionsAsArray,
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = aggregatedIcConfigurationOptions[USE_FIR_RUNNER],
+                    generateCompilerRefIndex = generateCompilerRefIndex,
                 )
             }
             // no IC configuration -> non-incremental compilation
@@ -158,6 +160,7 @@ internal class JvmCompilationOperationImpl(
                 reportSeverity = reportSeverity,
                 requestedCompilationResults = emptyArray(),
                 kotlinScriptExtensions = ktsExtensionsAsArray,
+                generateCompilerRefIndex = generateCompilerRefIndex,
             )
             else -> error(
                 "Unexpected incremental compilation configuration: $aggregatedIcConfiguration. In this version, it must be an instance of JvmIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
@@ -360,7 +363,8 @@ internal class JvmCompilationOperationImpl(
             outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
             classpathChanges = classpathChanges,
             kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-            icFeatures = icFeatures
+            icFeatures = icFeatures,
+            generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
         ) {
             override fun getLookupTrackerDelegate(): LookupTracker {
                 return LookupTrackerAdapter(tracker)
@@ -372,7 +376,8 @@ internal class JvmCompilationOperationImpl(
         outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
         classpathChanges = classpathChanges,
         kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-        icFeatures = icFeatures
+        icFeatures = icFeatures,
+        generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
     )
 
     private fun JvmCompilationOperationImpl.getFirRunner(
@@ -389,7 +394,8 @@ internal class JvmCompilationOperationImpl(
             outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
             classpathChanges = classpathChanges,
             kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-            icFeatures = icFeatures
+            icFeatures = icFeatures,
+            generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
         ) {
             override fun getLookupTrackerDelegate(): LookupTracker {
                 return LookupTrackerAdapter(tracker)
@@ -401,7 +407,8 @@ internal class JvmCompilationOperationImpl(
         outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
         classpathChanges = classpathChanges,
         kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-        icFeatures = icFeatures
+        icFeatures = icFeatures,
+        generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
     )
 
     private fun logCompilerArguments(
@@ -429,6 +436,8 @@ internal class JvmCompilationOperationImpl(
 
         val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> =
             Option("COMPILER_ARGUMENTS_LOG_LEVEL", default = CompilerArgumentsLogLevel.DEBUG)
+
+        val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", false)
     }
 }
 

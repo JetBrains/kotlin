@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.metadata.getIncompatibility
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -37,6 +38,7 @@ class KlibBasedSymbolProvider(
     kotlinScopeProvider,
     flexibleTypeFactory,
     defaultDeserializationOrigin,
+    metadataProvider = { it.metadata },
 ) {
     private val ownMetadataVersion: MetadataVersion = session.languageVersionSettings.languageVersion.toKlibMetadataVersion()
 
@@ -48,7 +50,7 @@ class KlibBasedSymbolProvider(
 
 
     private val moduleHeaders by lazy {
-        resolvedLibraries.associate { it to parseModuleHeader(it.moduleHeaderData) }
+        resolvedLibraries.associateWith { parseModuleHeader(metadataProvider(it).moduleHeaderData) }
     }
 
     override val fragmentNamesInLibraries: Map<String, List<KotlinLibrary>> by lazy {

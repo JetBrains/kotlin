@@ -5,7 +5,6 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.types.asSimpleType
 import kotlin.coroutines.Continuation
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KCallable
@@ -13,8 +12,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.calls.Caller
-import kotlin.reflect.jvm.internal.calls.getMfvcUnboxMethods
-import kotlin.reflect.jvm.internal.types.DescriptorKType
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 import java.lang.reflect.Array as ReflectArray
@@ -47,12 +44,6 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
      */
     fun getAbsentArguments(): Array<Any?>
 
-    /**
-     * True if any parameter of this callable has a multi-field value class (MFVC) type and thus is expanded to multiple parameters in the
-     * JVM bytecode. This value should be cached in implementations, because computing it is not cheap, and it's queried on every `callBy`.
-     */
-    val parametersNeedMFVCFlattening: Lazy<Boolean>
-
     @Suppress("UNCHECKED_CAST")
     override fun call(vararg args: Any?): R = reflectionCall {
         return caller.call(args) as R
@@ -73,15 +64,8 @@ internal val ReflectKCallable<*>.isBound: Boolean
 internal fun ReflectKCallable<*>.computeAbsentArguments(): Array<Any?> {
     val parameters = parameters
     val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
-    val flattenedParametersSize =
-        if (parametersNeedMFVCFlattening.value) {
-            parameters.sumOf {
-                if (it.kind == KParameter.Kind.VALUE) it.getMultiFieldValueClassParameterTypeSize() else 0
-            }
-        } else {
-            parameters.count { it.kind == KParameter.Kind.VALUE }
-        }
-    val maskSize = (flattenedParametersSize + Integer.SIZE - 1) / Integer.SIZE
+    val valueParameterCount = parameters.count { it.kind == KParameter.Kind.VALUE }
+    val maskSize = (valueParameterCount + Integer.SIZE - 1) / Integer.SIZE
 
     // Array containing the actual function arguments, masks, and +1 for DefaultConstructorMarker or MethodHandle.
     val arguments = arrayOfNulls<Any?>(parameterSize + maskSize + 1)
@@ -126,23 +110,14 @@ internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any
     var valueParameterIndex = 0
     var anyOptional = false
 
-    val hasMfvcParameters = parametersNeedMFVCFlattening.value
     for (parameter in parameters) {
-        val parameterTypeSize = if (hasMfvcParameters) parameter.getMultiFieldValueClassParameterTypeSize() else 1
         when {
             args.containsKey(parameter) -> {
                 arguments[parameter.index] = args[parameter]
             }
             parameter.isOptional -> {
-                if (hasMfvcParameters) {
-                    for (valueSubParameterIndex in valueParameterIndex until (valueParameterIndex + parameterTypeSize)) {
-                        val maskIndex = parameterSize + (valueSubParameterIndex / Integer.SIZE)
-                        arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueSubParameterIndex % Integer.SIZE))
-                    }
-                } else {
-                    val maskIndex = parameterSize + (valueParameterIndex / Integer.SIZE)
-                    arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueParameterIndex % Integer.SIZE))
-                }
+                val maskIndex = parameterSize + (valueParameterIndex / Integer.SIZE)
+                arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueParameterIndex % Integer.SIZE))
                 anyOptional = true
             }
             parameter.isVararg -> {}
@@ -152,7 +127,7 @@ internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any
         }
 
         if (parameter.kind == KParameter.Kind.VALUE) {
-            valueParameterIndex += parameterTypeSize
+            valueParameterIndex++
         }
     }
 
@@ -170,18 +145,6 @@ internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any
         caller.call(arguments) as R
     }
 }
-
-/**
- * If this is a parameter of a multi-field value class, returns the number of JVM parameters this parameter is expanded to.
- * Otherwise, returns 1.
- */
-internal fun KParameter.getMultiFieldValueClassParameterTypeSize(): Int =
-    if (type.needsMultiFieldValueClassFlattening) {
-        val type = (type as DescriptorKType).type.asSimpleType()
-        getMfvcUnboxMethods(type)!!.size
-    } else {
-        1
-    }
 
 internal fun <R> ReflectKCallable<R>.callAnnotationConstructor(args: Map<KParameter, Any?>): R {
     val arguments = parameters.map { parameter ->

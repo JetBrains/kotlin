@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.AndroidGradlePluginIsMissing
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
@@ -31,7 +32,12 @@ internal abstract class KotlinAndroidTargetPreset @Inject constructor(
             > Could not generate a decorated class for type KotlinAndroidTarget.
             > com/android/build/gradle/api/BaseVariant
          */
-        project.findAppliedAndroidPluginIdOrNull() ?: project.reportDiagnostic(AndroidGradlePluginIsMissing(Throwable()))
+        val androidPluginId = project.findAppliedAndroidPluginIdOrNull()
+        if (androidPluginId == null) {
+            project.reportDiagnostic(AndroidGradlePluginIsMissing(Throwable()))
+        } else {
+            project.reportDiagnostic(KotlinToolingDiagnostics.NonKmpAgpIsDeprecated(androidPluginId))
+        }
 
         return project.objects.KotlinAndroidTarget(project, name, true).apply {
             targetPreset = this@KotlinAndroidTargetPreset

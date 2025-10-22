@@ -81,6 +81,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleCollectDiagnosticsTestGenerat
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/noRuntime")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NoRuntime {
+    @Test
+    public void testAllFilesPresentInNoRuntime() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/noRuntime"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration")
   @TestDataPath("$PROJECT_ROOT")
   public class Redeclaration {

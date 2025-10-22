@@ -14,12 +14,15 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analyzer.common.CommonDefaultImportsProvider
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
@@ -42,6 +45,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                 )
             )
 
+            registerCommonComponents()
             registerPlatformSpecificComponentsIfAny(module)
         }
     }
@@ -59,12 +63,14 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                 )
             )
 
+            registerCommonComponents()
             registerPlatformSpecificComponentsIfAny(module)
         }
     }
 
     override fun createBinaryLibrarySession(module: KaModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
+            registerCommonComponents()
             registerPlatformSpecificComponentsIfAny(module)
         }
     }
@@ -82,6 +88,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                 )
             )
 
+            registerCommonComponents()
             registerPlatformSpecificComponentsIfAny(module)
         }
     }
@@ -111,6 +118,11 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                 )
             )
         }
+    }
+
+    private fun LLFirSession.registerCommonComponents() {
+        register(FirDefaultImportsProviderHolder.of(CommonDefaultImportsProvider))
+        register(FirEnumEntriesSupport(this))
     }
 
     private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KaModule) {

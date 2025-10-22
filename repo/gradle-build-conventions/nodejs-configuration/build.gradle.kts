@@ -19,7 +19,7 @@ repositories {
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
-    jvmToolchain(11)
+    jvmToolchain(17)
 
     compilerOptions {
         allWarningsAsErrors.set(true)
@@ -28,6 +28,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":utilities"))
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 }

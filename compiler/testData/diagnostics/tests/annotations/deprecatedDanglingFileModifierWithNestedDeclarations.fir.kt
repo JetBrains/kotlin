@@ -1,10 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-72740
-// COMPARE_WITH_LIGHT_TREE
+
 annotation class Anno(val s: String)
 
 @Deprecated("Use 'AAA' instead"
-<!UNRESOLVED_REFERENCE!>open<!> <!EXPRESSION_EXPECTED{PSI}!>class MyClass : Any() {
+<!UNRESOLVED_REFERENCE!>open<!> <!EXPRESSION_EXPECTED!>class MyClass : Any() {
     val foo = 24
 
     @Anno("str")
@@ -12,7 +12,7 @@ annotation class Anno(val s: String)
 
     }
 
-    <!WRONG_MODIFIER_CONTAINING_DECLARATION{PSI}!>companion<!> object {
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {
         @Anno("something")
         fun getSomething(a: Int = 24) {
 

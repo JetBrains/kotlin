@@ -1,0 +1,387 @@
+Module: lib
+FILE fqName:kotlin fileName:/arrayAsserts.kt
+  FUN name:arraysEqual visibility:private modality:FINAL returnType:kotlin.Boolean
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:first index:0 type:kotlin.Array<out T of kotlin.arraysEqual>
+    VALUE_PARAMETER kind:Regular name:second index:1 type:kotlin.Array<out T of kotlin.arraysEqual>
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+            ARG arg0: GET_VAR 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+            ARG arg1: GET_VAR 'second: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+          then: RETURN type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
+            CONST Boolean type=kotlin.Boolean value=true
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
+                ARG <this>: GET_VAR 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+              ARG arg1: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
+                ARG <this>: GET_VAR 'second: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+          then: RETURN type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
+            CONST Boolean type=kotlin.Boolean value=false
+      BLOCK type=kotlin.Unit origin=FOR_LOOP
+        VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.IntIterator [val]
+          CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+            ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
+              ARG <this>: CONST Int type=kotlin.Int value=0
+              ARG other: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
+                ARG <this>: CALL 'public final fun <get-size> (): kotlin.Int declared in kotlin.Array' type=kotlin.Int origin=GET_PROPERTY
+                  ARG <this>: GET_VAR 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+                ARG other: CONST Int type=kotlin.Int value=1
+        WHILE label=null origin=FOR_LOOP_INNER_WHILE
+          condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.IntIterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+            ARG <this>: GET_VAR 'val tmp_0: kotlin.collections.IntIterator declared in kotlin.arraysEqual' type=kotlin.collections.IntIterator origin=null
+          body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
+            VAR FOR_LOOP_VARIABLE name:index type:kotlin.Int [val]
+              CALL 'public final fun next (): kotlin.Int declared in kotlin.collections.IntIterator' type=kotlin.Int origin=FOR_LOOP_NEXT
+                ARG <this>: GET_VAR 'val tmp_0: kotlin.collections.IntIterator declared in kotlin.arraysEqual' type=kotlin.collections.IntIterator origin=null
+            BLOCK type=kotlin.Unit origin=null
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                    ARG <this>: CALL 'private final fun equal (first: kotlin.Any?, second: kotlin.Any?): kotlin.Boolean declared in kotlin' type=kotlin.Boolean origin=null
+                      ARG first: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=T of kotlin.arraysEqual origin=GET_ARRAY_ELEMENT
+                        ARG <this>: GET_VAR 'first: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+                        ARG index: GET_VAR 'val index: kotlin.Int declared in kotlin.arraysEqual' type=kotlin.Int origin=null
+                      ARG second: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=T of kotlin.arraysEqual origin=GET_ARRAY_ELEMENT
+                        ARG <this>: GET_VAR 'second: kotlin.Array<out T of kotlin.arraysEqual> declared in kotlin.arraysEqual' type=kotlin.Array<out T of kotlin.arraysEqual> origin=null
+                        ARG index: GET_VAR 'val index: kotlin.Int declared in kotlin.arraysEqual' type=kotlin.Int origin=null
+                  then: RETURN type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
+                    CONST Boolean type=kotlin.Boolean value=false
+      RETURN type=kotlin.Nothing from='private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin'
+        CONST Boolean type=kotlin.Boolean value=true
+  FUN name:assertArrayEquals visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:expected index:0 type:kotlin.Array<out T of kotlin.assertArrayEquals>
+    VALUE_PARAMETER kind:Regular name:actual index:1 type:kotlin.Array<out T of kotlin.assertArrayEquals>
+    VALUE_PARAMETER kind:Regular name:message index:2 type:kotlin.String?
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin' type=kotlin.Boolean origin=null
+              TYPE_ARG T: T of kotlin.assertArrayEquals
+              ARG first: GET_VAR 'expected: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
+              ARG second: GET_VAR 'actual: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+            VAR name:msg type:kotlin.String [val]
+              WHEN type=kotlin.String origin=IF
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR 'message: kotlin.String? declared in kotlin.assertArrayEquals' type=kotlin.String? origin=null
+                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST String type=kotlin.String value=""
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value=", message = '"
+                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR 'message: kotlin.String? declared in kotlin.assertArrayEquals' type=kotlin.String? origin=null
+                    CONST String type=kotlin.String value="'"
+            CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+              ARG message: STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="Unexpected array: expected = '"
+                GET_VAR 'expected: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
+                CONST String type=kotlin.String value="', actual = '"
+                GET_VAR 'actual: kotlin.Array<out T of kotlin.assertArrayEquals> declared in kotlin.assertArrayEquals' type=kotlin.Array<out T of kotlin.assertArrayEquals> origin=null
+                CONST String type=kotlin.String value="'"
+                GET_VAR 'val msg: kotlin.String declared in kotlin.assertArrayEquals' type=kotlin.String origin=null
+  FUN name:equal visibility:private modality:FINAL returnType:kotlin.Boolean
+    VALUE_PARAMETER kind:Regular name:first index:0 type:kotlin.Any?
+    VALUE_PARAMETER kind:Regular name:second index:1 type:kotlin.Any?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun equal (first: kotlin.Any?, second: kotlin.Any?): kotlin.Boolean declared in kotlin'
+        WHEN type=kotlin.Boolean origin=IF
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
+                  GET_VAR 'first: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+                then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
+                  GET_VAR 'second: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: BLOCK type=kotlin.Boolean origin=null
+              CALL 'private final fun arraysEqual <T> (first: kotlin.Array<out T of kotlin.arraysEqual>, second: kotlin.Array<out T of kotlin.arraysEqual>): kotlin.Boolean declared in kotlin' type=kotlin.Boolean origin=null
+                TYPE_ARG T: kotlin.Any?
+                ARG first: TYPE_OP type=kotlin.Array<*> origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
+                  GET_VAR 'first: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+                ARG second: TYPE_OP type=kotlin.Array<*> origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
+                  GET_VAR 'second: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: BLOCK type=kotlin.Boolean origin=null
+              CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_VAR 'first: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+                ARG arg1: GET_VAR 'second: kotlin.Any? declared in kotlin.equal' type=kotlin.Any? origin=null
+FILE fqName:kotlin fileName:/asserts.kt
+  FUN name:assertEquals visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:expected index:0 type:T of kotlin.assertEquals
+    VALUE_PARAMETER kind:Regular name:actual index:1 type:T of kotlin.assertEquals
+    VALUE_PARAMETER kind:Regular name:message index:2 type:kotlin.String?
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: GET_VAR 'expected: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
+              ARG arg1: GET_VAR 'actual: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+            VAR name:msg type:kotlin.String [val]
+              WHEN type=kotlin.String origin=IF
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR 'message: kotlin.String? declared in kotlin.assertEquals' type=kotlin.String? origin=null
+                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST String type=kotlin.String value=""
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value=", message = '"
+                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR 'message: kotlin.String? declared in kotlin.assertEquals' type=kotlin.String? origin=null
+                    CONST String type=kotlin.String value="'"
+            CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+              ARG message: STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="Unexpected value: expected = '"
+                GET_VAR 'expected: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
+                CONST String type=kotlin.String value="', actual = '"
+                GET_VAR 'actual: T of kotlin.assertEquals declared in kotlin.assertEquals' type=T of kotlin.assertEquals origin=null
+                CONST String type=kotlin.String value="'"
+                GET_VAR 'val msg: kotlin.String declared in kotlin.assertEquals' type=kotlin.String origin=null
+  FUN name:assertFails visibility:public modality:FINAL returnType:kotlin.Throwable
+    VALUE_PARAMETER kind:Regular name:block index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
+      TRY type=kotlin.Unit
+        try: BLOCK type=kotlin.Unit origin=null
+          CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+            ARG <this>: GET_VAR 'block: kotlin.Function0<kotlin.Unit> declared in kotlin.assertFails' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+        CATCH parameter=val t: kotlin.Throwable declared in kotlin.assertFails
+          VAR CATCH_PARAMETER name:t type:kotlin.Throwable [val]
+          BLOCK type=kotlin.Nothing origin=null
+            RETURN type=kotlin.Nothing from='public final fun assertFails (block: kotlin.Function0<kotlin.Unit>): kotlin.Throwable declared in kotlin'
+              GET_VAR 'val t: kotlin.Throwable declared in kotlin.assertFails' type=kotlin.Throwable origin=null
+      CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+        ARG message: CONST String type=kotlin.String value="Expected an exception to be thrown, but was completed successfully."
+  FUN name:assertFalse visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:actual index:0 type:kotlin.Boolean
+    VALUE_PARAMETER kind:Regular name:message index:1 type:kotlin.String?
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin'
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.assertEquals, actual: T of kotlin.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Boolean
+          ARG expected: CONST Boolean type=kotlin.Boolean value=false
+          ARG actual: GET_VAR 'actual: kotlin.Boolean declared in kotlin.assertFalse' type=kotlin.Boolean origin=null
+          ARG message: GET_VAR 'message: kotlin.String? declared in kotlin.assertFalse' type=kotlin.String? origin=null
+  FUN name:assertNotEquals visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:illegal index:0 type:T of kotlin.assertNotEquals
+    VALUE_PARAMETER kind:Regular name:actual index:1 type:T of kotlin.assertNotEquals
+    VALUE_PARAMETER kind:Regular name:message index:2 type:kotlin.String?
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: GET_VAR 'illegal: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
+            ARG arg1: GET_VAR 'actual: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+            VAR name:msg type:kotlin.String [val]
+              WHEN type=kotlin.String origin=IF
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR 'message: kotlin.String? declared in kotlin.assertNotEquals' type=kotlin.String? origin=null
+                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST String type=kotlin.String value=""
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value=", message = '"
+                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR 'message: kotlin.String? declared in kotlin.assertNotEquals' type=kotlin.String? origin=null
+                    CONST String type=kotlin.String value="'"
+            CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+              ARG message: STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="Illegal value: illegal = '"
+                GET_VAR 'illegal: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
+                CONST String type=kotlin.String value="', actual = '"
+                GET_VAR 'actual: T of kotlin.assertNotEquals declared in kotlin.assertNotEquals' type=T of kotlin.assertNotEquals origin=null
+                CONST String type=kotlin.String value="'"
+                GET_VAR 'val msg: kotlin.String declared in kotlin.assertNotEquals' type=kotlin.String origin=null
+  FUN name:assertSame visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:expected index:0 type:T of kotlin.assertSame
+    VALUE_PARAMETER kind:Regular name:actual index:1 type:T of kotlin.assertSame
+    VALUE_PARAMETER kind:Regular name:message index:2 type:kotlin.String?
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQEQ
+            ARG <this>: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQEQ
+              ARG arg0: GET_VAR 'expected: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
+              ARG arg1: GET_VAR 'actual: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+            VAR name:msg type:kotlin.String [val]
+              WHEN type=kotlin.String origin=IF
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR 'message: kotlin.String? declared in kotlin.assertSame' type=kotlin.String? origin=null
+                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST String type=kotlin.String value=""
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value=", message = '"
+                    TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR 'message: kotlin.String? declared in kotlin.assertSame' type=kotlin.String? origin=null
+                    CONST String type=kotlin.String value="'"
+            CALL 'public final fun fail (message: kotlin.String?): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+              ARG message: STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="Expected same instances: expected = '"
+                GET_VAR 'expected: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
+                CONST String type=kotlin.String value="', actual = '"
+                GET_VAR 'actual: T of kotlin.assertSame declared in kotlin.assertSame' type=T of kotlin.assertSame origin=null
+                CONST String type=kotlin.String value="'"
+                GET_VAR 'val msg: kotlin.String declared in kotlin.assertSame' type=kotlin.String origin=null
+  FUN name:assertTrue visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:actual index:0 type:kotlin.Boolean
+    VALUE_PARAMETER kind:Regular name:message index:1 type:kotlin.String?
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin'
+        CALL 'public final fun assertEquals <T> (expected: T of kotlin.assertEquals, actual: T of kotlin.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
+          TYPE_ARG T: kotlin.Boolean
+          ARG expected: CONST Boolean type=kotlin.Boolean value=true
+          ARG actual: GET_VAR 'actual: kotlin.Boolean declared in kotlin.assertTrue' type=kotlin.Boolean origin=null
+          ARG message: GET_VAR 'message: kotlin.String? declared in kotlin.assertTrue' type=kotlin.String? origin=null
+  FUN name:testFalse visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:f index:0 type:kotlin.Function0<kotlin.Boolean>
+    BLOCK_BODY
+      CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
+        ARG actual: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Boolean origin=INVOKE
+          ARG <this>: GET_VAR 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testFalse' type=kotlin.Function0<kotlin.Boolean> origin=VARIABLE_AS_FUNCTION
+        ARG message: CALL 'public open fun toString (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
+          ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            GET_VAR 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testFalse' type=kotlin.Function0<kotlin.Boolean> origin=null
+  FUN name:testTrue visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:f index:0 type:kotlin.Function0<kotlin.Boolean>
+    BLOCK_BODY
+      CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
+        ARG actual: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Boolean origin=INVOKE
+          ARG <this>: GET_VAR 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testTrue' type=kotlin.Function0<kotlin.Boolean> origin=VARIABLE_AS_FUNCTION
+        ARG message: CALL 'public open fun toString (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
+          ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+            GET_VAR 'f: kotlin.Function0<kotlin.Boolean> declared in kotlin.testTrue' type=kotlin.Function0<kotlin.Boolean> origin=null
+FILE fqName:kotlin fileName:/fail.kt
+  FUN name:fail visibility:public modality:FINAL returnType:kotlin.Nothing
+    VALUE_PARAMETER kind:Regular name:message index:0 type:kotlin.String?
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    BLOCK_BODY
+      THROW type=kotlin.Nothing
+        CONSTRUCTOR_CALL 'public constructor <init> (message: kotlin.String?) declared in kotlin.Throwable' type=kotlin.Throwable origin=null
+          ARG message: GET_VAR 'message: kotlin.String? declared in kotlin.fail' type=kotlin.String? origin=null
+FILE fqName:<root> fileName:/lib.kt
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:arg index:0 type:T of <root>.foo
+    VALUE_PARAMETER kind:Regular name:block index:1 type:kotlin.Function1<T of <root>.foo, kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+        ARG <this>: GET_VAR 'block: kotlin.Function1<T of <root>.foo, kotlin.Unit> declared in <root>.foo' type=kotlin.Function1<T of <root>.foo, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+        ARG p1: GET_VAR 'arg: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
+Module: main
+FILE fqName:<root> fileName:/main.kt
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:x type:kotlin.String [var]
+        CONST String type=kotlin.String value="fail"
+      BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
+          TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+            CONST String type=kotlin.String value="OK"
+        RETURNABLE_BLOCK type=kotlin.Unit origin=null
+          INLINED_BLOCK type=kotlin.Unit origin=null
+            inlinedFunctionSymbol: public final fun wrap <T> (arg: T of <root>.wrap, block: kotlin.Function1<T of <root>.wrap, kotlin.Unit>): kotlin.Unit declared in <root>
+            inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
+            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:arg type:kotlin.Any? [val]
+              GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+            BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+              VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
+                TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                  GET_VAR 'val arg: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+              RETURNABLE_BLOCK type=kotlin.Unit origin=null
+                INLINED_BLOCK type=kotlin.Unit origin=null
+                  inlinedFunctionSymbol: public final fun inner <T> (arg: T of <root>.inner, block: kotlin.Function1<T of <root>.inner, kotlin.Unit>): kotlin.Unit declared in <root>
+                  inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
+                  VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:arg type:kotlin.Any? [val]
+                    GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+                  CALL 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                    TYPE_ARG T: kotlin.Any?
+                    ARG arg: GET_VAR 'val arg: kotlin.Any? declared in <root>.box' type=kotlin.Any? origin=null
+                    ARG block: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
+                      overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+                      invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
+                        BLOCK_BODY
+                          CALL 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                            TYPE_ARG T: kotlin.String
+                            ARG arg: GET_VAR 'it: kotlin.String declared in <root>.box.<anonymous>' type=kotlin.String origin=null
+                            ARG block: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
+                              overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
+                              invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                                VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.String
+                                BLOCK_BODY
+                                  SET_VAR 'var x: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
+                                    GET_VAR 'it: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=null
+                  RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+            RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        GET_VAR 'var x: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+  FUN name:inner visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:arg index:0 type:T of <root>.inner
+    VALUE_PARAMETER kind:Regular name:block index:1 type:kotlin.Function1<T of <root>.inner, kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        TYPE_ARG T: T of <root>.inner
+        ARG arg: GET_VAR 'arg: T of <root>.inner declared in <root>.inner' type=T of <root>.inner origin=null
+        ARG block: GET_VAR 'block: kotlin.Function1<T of <root>.inner, kotlin.Unit> declared in <root>.inner' type=kotlin.Function1<T of <root>.inner, kotlin.Unit> origin=null
+  FUN name:wrap visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:arg index:0 type:T of <root>.wrap
+    VALUE_PARAMETER kind:Regular name:block index:1 type:kotlin.Function1<T of <root>.wrap, kotlin.Unit>
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+        VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any? [val]
+          TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+            GET_VAR 'arg: T of <root>.wrap declared in <root>.wrap' type=T of <root>.wrap origin=null
+        RETURNABLE_BLOCK type=kotlin.Unit origin=null
+          INLINED_BLOCK type=kotlin.Unit origin=null
+            inlinedFunctionSymbol: public final fun inner <T> (arg: T of <root>.inner, block: kotlin.Function1<T of <root>.inner, kotlin.Unit>): kotlin.Unit declared in <root>
+            inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
+            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:arg type:kotlin.Any? [val]
+              GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.wrap' type=kotlin.Any? origin=null
+            CALL 'public final fun foo <T> (arg: T of <root>.foo, block: kotlin.Function1<T of <root>.foo, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+              TYPE_ARG T: kotlin.Any?
+              ARG arg: GET_VAR 'val arg: kotlin.Any? declared in <root>.wrap' type=kotlin.Any? origin=null
+              ARG block: GET_VAR 'block: kotlin.Function1<T of <root>.wrap, kotlin.Unit> declared in <root>.wrap' type=kotlin.Function1<T of <root>.wrap, kotlin.Unit> origin=null
+            RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

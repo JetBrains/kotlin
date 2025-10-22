@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitut
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 
-class FirJavaNullabilityWarningUpperBoundsProvider(session: FirSession) : FirPlatformUpperBoundsProvider {
+class FirJavaNullabilityWarningUpperBoundsProvider(session: FirSession) : FirPlatformUpperBoundsProvider() {
     private val substitutor: EnhancedForWarningConeSubstitutor = EnhancedForWarningConeSubstitutor(
         session.typeContext,
     )

@@ -72,6 +72,12 @@ public class FirLightTreeBlackBoxCodegenTestForLombokGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("builderOnMethods.kt")
+  public void testBuilderOnMethods() {
+    runTest("plugins/lombok/testData/box/builderOnMethods.kt");
+  }
+
+  @Test
   @TestMetadata("builderRawSingular.kt")
   public void testBuilderRawSingular() {
     runTest("plugins/lombok/testData/box/builderRawSingular.kt");

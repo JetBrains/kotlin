@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -SUPERTYPES_FOR_ANNOTATION_CLASS -VIRTUAL_MEMBER_HIDDEN -FINAL_SUPERTYPE -MISSING_DEPENDENCY_SUPERCLASS
 // These errors need to be suppressed to cause light class generation
+// LANGUAGE: +ProhibitExtendingAnnotationClasses
 // FILE: test.kt
 
 annotation class Ann : Target()

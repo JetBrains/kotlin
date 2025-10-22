@@ -121,6 +121,12 @@ public class LLReversedScriptBlackBoxTestGenerated extends AbstractLLReversedScr
   }
 
   @Test
+  @TestMetadata("nameBasedDestructuring.kts")
+  public void testNameBasedDestructuring() {
+    runTest("compiler/testData/codegen/script/nameBasedDestructuring.kts");
+  }
+
+  @Test
   @TestMetadata("outerCapture.kts")
   public void testOuterCapture() {
     runTest("compiler/testData/codegen/script/outerCapture.kts");

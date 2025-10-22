@@ -20,13 +20,16 @@ import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
+import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.attributeOf
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
+import java.net.URI
 
 /**
  * A base class representing a final binary produced by the Kotlin/Native compiler
@@ -48,6 +51,8 @@ sealed class NativeBinary(
 
     internal val konanTarget: KonanTarget
         get() = compilation.konanTarget
+
+    internal val disableCacheSettings = mutableListOf<DisableNativeCacheSettings>()
 
     val target: KotlinNativeTarget
         get() = compilation.target
@@ -72,6 +77,21 @@ sealed class NativeBinary(
     /** Additional options passed to the linker by the Kotlin/Native compiler. */
     fun linkerOpts(options: Iterable<String>) {
         linkerOpts.addAll(options)
+    }
+
+    /**
+     * Disables the Kotlin/Native compiler caches for a specific Kotlin version and provides a reason for the action.
+     * Optionally, a related issue tracker URL can be specified to provide more context.
+     *
+     * @param version The Kotlin version for which the compiler caches should be disabled.
+     *                Only predefined versions available in `DisableCacheInKotlinVersion` are supported.
+     * @param reason A descriptive explanation clarifying why the compiler caches are being disabled.
+     * @param issueUrl An optional issue tracker URL that provides additional context or links to a documented issue.
+     */
+    @Suppress("unused")
+    @KotlinNativeCacheApi
+    fun disableNativeCache(version: KotlinToolingVersion, reason: String, issueUrl: URI? = null) {
+        disableCacheSettings.add(DisableNativeCacheSettings(version, reason, issueUrl))
     }
 
     var binaryOptions: MutableMap<String, String> = mutableMapOf()

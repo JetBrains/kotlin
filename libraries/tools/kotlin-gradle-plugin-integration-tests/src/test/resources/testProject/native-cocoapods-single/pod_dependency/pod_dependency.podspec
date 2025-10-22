@@ -9,5 +9,5 @@ Pod::Spec.new do |spec|
     spec.source_files             = 'src/*'
     spec.public_header_files      = 'src/*.h'
 
-    spec.ios.deployment_target = '11.0'
+    spec.ios.deployment_target = '15.0'
 end

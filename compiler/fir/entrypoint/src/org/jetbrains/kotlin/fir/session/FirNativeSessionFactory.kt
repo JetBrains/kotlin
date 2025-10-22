@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.resolve.konan.platform.NativeDefaultImportsProvider
@@ -87,17 +88,17 @@ abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?,
     // ==================================== Common parts ====================================
 
     private fun FirSession.registerComponents() {
-        registerDefaultComponents()
         registerNativeComponents()
     }
 
     // ==================================== Utilities ====================================
 
     fun FirSession.registerNativeComponents() {
+        register(FirEnumEntriesSupport(this))
         register(FirPlatformClassMapper::class, FirNativeClassMapper())
         register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
         register(PlatformConflictDeclarationsDiagnosticDispatcher::class, NativeConflictDeclarationsDiagnosticDispatcher)
         register(FirOverrideChecker::class, FirNativeOverrideChecker(this))
-        register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(NativeDefaultImportsProvider))
+        register(FirDefaultImportsProviderHolder.of(NativeDefaultImportsProvider))
     }
 }

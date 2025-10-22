@@ -23,6 +23,10 @@ kotlin {
         pod("pod_dependency", "1.0", project.file("../pod_dependency"))
         pod("subspec_dependency/Core", "1.0", project.file("../subspec_dependency"))
 
-        ios.deploymentTarget = "11.0"
+        ios.deploymentTarget = "15.0"
+        framework {
+            // KT-81727 Failing CocoaPodsXcodeIT test
+            freeCompilerArgs += "-Xbinary=bundleId=$group"
+        }
     }
 }

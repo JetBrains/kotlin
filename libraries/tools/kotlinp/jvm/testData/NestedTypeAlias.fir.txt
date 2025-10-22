@@ -5,6 +5,7 @@ public final class C<T#0 /* X */> : kotlin/Any {
   // signature: <init>()V
   public constructor()
 
+  // requires language version 2.3.0 (level=ERROR)
   public typealias Nested<T#1 /* Y */> = C<T#1> /* = C<T#1> */
 
   // module name: test-module

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.analyzer.common.CommonDefaultImportsProvider
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -19,7 +20,9 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -105,7 +108,7 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
     }
 
     override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {
-        registerDefaultComponents()
+        register(FirEnumEntriesSupport(this))
     }
 
     // ==================================== Platform session ====================================
@@ -178,7 +181,8 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
     override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Nothing?) {}
 
     override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
-        registerDefaultComponents()
+        register(FirDefaultImportsProviderHolder.of(CommonDefaultImportsProvider))
+        register(FirEnumEntriesSupport(this))
     }
 
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean

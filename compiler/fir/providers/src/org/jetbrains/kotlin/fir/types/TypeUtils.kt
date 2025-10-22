@@ -806,8 +806,8 @@ private fun ConeKotlinType.hasSubtypesAboveNothingAccordingToK1(session: FirSess
         return true
     }
 
-    classSymbol.typeParameterSymbols.forEachIndexed { idx, typeParameterSymbol ->
-        val typeProjection = expandedType.typeArguments[idx]
+    expandedType.typeArguments.forEachIndexed { idx, typeProjection ->
+        val typeParameterSymbol = classSymbol.typeParameterSymbols[idx]
 
         if (typeProjection.isStarProjection) {
             return true

@@ -58,7 +58,7 @@ private class ExportedCollectionsInfo(context: JsIrBackendContext) {
 // TODO: Remove the lowering and move annotations into stdlib after solving problem with tests on KLIB
 class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private companion object {
-        private val FACTORY_FOR_KOTLIN_COLLECTIONS by IrDeclarationOriginImpl
+        private val FACTORY_FOR_KOTLIN_COLLECTIONS by IrDeclarationOriginImpl.Regular
     }
 
     private val exportedCollectionsInfo = ExportedCollectionsInfo(context)

@@ -44,7 +44,7 @@ abstract class AbstractFirLoadCompiledJsKotlinTestBase<F : ResultingArtifact.Fro
     }
 }
 
-open class AbstractFirLoadK2CompiledJsKotlinTest : AbstractFirLoadCompiledJsKotlinTestBase<FirOutputArtifact>() {
+open class AbstractLoadK2CompiledJsKotlinTest : AbstractFirLoadCompiledJsKotlinTestBase<FirOutputArtifact>() {
     override val frontendKind: FrontendKind<FirOutputArtifact>
         get() = FrontendKinds.FIR
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>

@@ -48,6 +48,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
+    testFixturesApi(testFixtures(project(":kotlin-util-klib")))
 
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
@@ -303,3 +304,10 @@ val npmInstall by tasks.getting(NpmTask::class) {
     npmCommand.set(listOf("ci"))
 }
 
+tasks.processTestFixturesResources.configure {
+    from(project.layout.projectDirectory.dir("_additionalFilesForTests"))
+    from(project(":compiler").layout.projectDirectory.dir("testData/debug")) {
+        into("debugTestHelpers")
+        include("jsTestHelpers/")
+    }
+}

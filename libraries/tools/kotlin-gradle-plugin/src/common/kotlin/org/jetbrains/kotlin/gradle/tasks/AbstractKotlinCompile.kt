@@ -193,9 +193,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                     taskProvider,
                                     toolsJar,
                                     CompilerExecutionSettings(
-                                        normalizedKotlinDaemonJvmArguments.orNull,
-                                        params.second,
-                                        useDaemonFallbackStrategy.get()
+                                        daemonJvmArgs = normalizedKotlinDaemonJvmArguments.orNull,
+                                        strategy = params.second,
+                                        useDaemonFallbackStrategy = useDaemonFallbackStrategy.get(),
+                                        // TODO KT-81846 Add FUS for CRI usage in Gradle / Maven
+                                        generateCompilerRefIndex = generateCompilerRefIndex.get(),
                                     ),
                                     params.first,
                                     workerExecutor,
@@ -239,6 +241,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     compilerOptions,
                     separateKmpCompilation.get(),
                     firRunnerEnabled = (this as? KotlinCompile)?.useFirRunner?.get() == true,
+                    executionPolicy = compilerExecutionStrategy.get(),
                     it
                 )
             }

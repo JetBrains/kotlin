@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -16,17 +17,13 @@ import org.jetbrains.kotlin.name.StandardClassIds
 /**
  * @see org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox.Companion
  */
-abstract class FirAnnotationsPlatformSpecificSupportComponent : FirSessionComponent {
+abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSessionComponent<FirAnnotationsPlatformSpecificSupportComponent> {
     abstract val requiredAnnotationsWithArguments: Set<ClassId>
     abstract val requiredAnnotations: Set<ClassId>
     abstract val volatileAnnotations: Set<ClassId>
 
     val requiredAnnotationsShortClassNames: Set<Name> by lazy {
         requiredAnnotations.mapTo(mutableSetOf()) { it.shortClassName }
-    }
-
-    val requiredAnnotationsWithArgumentsShortClassNames: Set<Name> by lazy {
-        requiredAnnotationsWithArguments.mapTo(mutableSetOf()) { it.shortClassName }
     }
 
     /**
@@ -52,6 +49,43 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirSessionCompon
         propertyAnnotations: List<FirAnnotation> = property.annotations,
         backingFieldAnnotations: List<FirAnnotation> = property.backingField?.annotations.orEmpty(),
     ): AnnotationsPosition?
+
+    class Composed(
+        override val components: List<FirAnnotationsPlatformSpecificSupportComponent>
+    ) : FirAnnotationsPlatformSpecificSupportComponent(), FirComposableSessionComponent.Composed<FirAnnotationsPlatformSpecificSupportComponent> {
+        override val requiredAnnotationsWithArguments: Set<ClassId> =
+            components.flatMapTo(mutableSetOf()) { it.requiredAnnotationsWithArguments }
+        override val requiredAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.requiredAnnotations }
+        override val volatileAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.volatileAnnotations }
+        override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = buildMap {
+            components.forEach { component ->
+                putAll(component.deprecationAnnotationsWithOverridesPropagation)
+            }
+        }
+
+        override fun symbolContainsRepeatableAnnotation(
+            symbol: FirClassLikeSymbol<*>,
+            session: FirSession,
+        ): Boolean {
+            return components.any { it.symbolContainsRepeatableAnnotation(symbol, session) }
+        }
+
+        override fun extractBackingFieldAnnotationsFromProperty(
+            property: FirProperty,
+            session: FirSession,
+            propertyAnnotations: List<FirAnnotation>,
+            backingFieldAnnotations: List<FirAnnotation>,
+        ): AnnotationsPosition? {
+            return components.firstNotNullOfOrNull {
+                it.extractBackingFieldAnnotationsFromProperty(property, session, propertyAnnotations, backingFieldAnnotations)
+            }
+        }
+    }
+
+    @SessionConfiguration
+    override fun createComposed(components: List<FirAnnotationsPlatformSpecificSupportComponent>): Composed {
+        return Composed(components)
+    }
 
     object Default : FirAnnotationsPlatformSpecificSupportComponent() {
         override val requiredAnnotationsWithArguments: Set<ClassId> = setOf(

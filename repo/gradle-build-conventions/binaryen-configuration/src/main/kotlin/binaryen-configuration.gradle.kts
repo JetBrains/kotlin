@@ -14,5 +14,5 @@ val binaryenKotlinBuild = extensions.create<BinaryenExtension>(
 )
 
 with(binaryenKotlinBuild) {
-    binaryenEnvSpec.version.set(project.binaryenVersion)
+    binaryenEnvSpec.version.set(binaryenVersion)
 }

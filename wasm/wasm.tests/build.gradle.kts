@@ -13,6 +13,7 @@ plugins {
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 node {
@@ -195,6 +196,11 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
+    implicitDependencies("org.nodejs:node:$nodejsVersion:win-x64@zip")
+    implicitDependencies("org.nodejs:node:$nodejsVersion:linux-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsVersion:darwin-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsVersion:darwin-arm64@tar.gz")
+
     jsShell("org.mozilla:jsshell:${jsShellVersion.get()}:$jsShellSuffix@zip")
 
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:win64@zip")
@@ -224,16 +230,6 @@ sourceSets {
     }
     "testFixtures" { projectDefault() }
 }
-
-fun Test.setupWasmStdlib(target: String) {
-    @Suppress("LocalVariableName")
-    val Target = target.capitalize()
-    dependsOn(":kotlin-stdlib:compileKotlinWasm$Target")
-    systemProperty("kotlin.wasm-$target.stdlib.path", "libraries/stdlib/build/classes/kotlin/wasm$Target/main")
-    dependsOn(":kotlin-test:compileKotlinWasm$Target")
-    systemProperty("kotlin.wasm-$target.kotlin.test.path", "libraries/kotlin.test/build/classes/kotlin/wasm$Target/main")
-}
-
 fun Test.setupGradlePropertiesForwarding() {
     val rootLocalProperties = Properties().apply {
         rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
@@ -416,15 +412,6 @@ fun Test.setupJsc() {
 testsJar {}
 
 projectTests {
-    testData(project(":compiler").isolated, "testData/debug")
-    testData(project(":compiler").isolated, "testData/diagnostics")
-    testData(project(":compiler").isolated, "testData/codegen")
-    testData(project(":compiler").isolated, "testData/ir")
-    testData(project(":compiler").isolated, "testData/klib")
-    testData(project(":js:js.translator").isolated, "testData/box")
-    testData(project(":js:js.translator").isolated, "testData/incremental")
-    testData(project(":js:js.translator").isolated, "testData/typescript-export")
-
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt")
 
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
@@ -433,11 +420,10 @@ projectTests {
             jUnitMode = JUnitMode.JUnit5,
             skipInLocalBuild = skipInLocalBuild,
         ) {
-            workingDir = rootDir
             with(d8KotlinBuild) {
                 setupV8()
             }
-            with(nodeJsKotlinBuild) {
+            with(wasmNodeJsKotlinBuild) {
                 setupNodeJs(nodejsVersion)
             }
             with(binaryenKotlinBuild) {
@@ -447,8 +433,6 @@ projectTests {
             setupWasmEdge()
             setupJsc()
             useJUnitPlatform()
-            setupWasmStdlib("js")
-            setupWasmStdlib("wasi")
             setupGradlePropertiesForwarding()
             val buildDirectory = layout.buildDirectory.map { "${it.asFile}/" }
             jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
@@ -467,5 +451,29 @@ projectTests {
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
         include("**/Diagnostics*.class")
+    }
+
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/debug/stepping")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/klib/partial-linkage")
+    testData(project(":compiler").isolated, "testData/klib/resolve")
+    testData(project(":compiler").isolated, "testData/klib/syntheticAccessors")
+    testData(project(":compiler").isolated, "testData/klib/__utils__")
+
+    testData(project(":js:js.translator").isolated, "testData/incremental")
+    testData(project(":js:js.translator").isolated, "testData/box")
+    testData(project(":js:js.translator").isolated, "testData/typescript-export/wasm/")
+
+    withWasmRuntime()
+}
+
+tasks.processTestFixturesResources.configure {
+    from(project.layout.projectDirectory.dir("_additionalFilesForTests"))
+    from(project(":compiler").layout.projectDirectory.dir("testData/debug")) {
+        into("debugTestHelpers")
+        include("wasmTestHelpers/")
     }
 }

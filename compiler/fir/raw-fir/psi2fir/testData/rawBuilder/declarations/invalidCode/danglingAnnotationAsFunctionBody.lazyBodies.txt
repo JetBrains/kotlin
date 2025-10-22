@@ -1,0 +1,8 @@
+FILE: danglingAnnotationAsFunctionBody.kt
+    public final? annotation class Anno : R|kotlin/Annotation| {
+        public? constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? fun foo(): <implicit> { LAZY_BLOCK }

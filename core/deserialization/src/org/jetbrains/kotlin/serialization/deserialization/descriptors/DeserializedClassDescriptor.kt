@@ -220,7 +220,7 @@ class DeserializedClassDescriptor(
 
     private fun getValueClassPropertyType(propertyName: Name): SimpleType? =
         memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_DESERIALIZATION)
-            .singleOrNull { it.extensionReceiverParameter == null }?.type as SimpleType?
+            .singleOrNull { it.extensionReceiverParameter == null && it.contextReceiverParameters.isEmpty() }?.type as SimpleType?
 
     override fun toString() =
         "deserialized ${if (isExpect) "expect " else ""}class $name" // not using descriptor renderer to preserve laziness

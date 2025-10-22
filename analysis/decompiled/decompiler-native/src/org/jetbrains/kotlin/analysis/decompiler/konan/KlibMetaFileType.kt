@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.decompiler.konan
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinLabelProviderService
-import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
 
 object KlibMetaFileType : FileType {
     override fun getName() = "KNM"

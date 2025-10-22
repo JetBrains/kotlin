@@ -504,6 +504,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: null
 
 KaKotlinPropertySymbol:
@@ -952,6 +953,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library main"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: null
 
 KaConstructorSymbol:

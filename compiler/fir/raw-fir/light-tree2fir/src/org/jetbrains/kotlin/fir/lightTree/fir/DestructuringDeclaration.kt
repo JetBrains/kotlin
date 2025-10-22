@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.builder.addDestructuringVariables
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
@@ -37,7 +38,7 @@ data class DestructuringDeclaration(
         builder: AbstractRawFirBuilder<*>,
         moduleData: FirModuleData,
         tmpVariable: Boolean = true,
-    ): FirExpression {
+    ): FirBlock {
         val baseVariable = generateTemporaryVariable(
             moduleData,
             source,

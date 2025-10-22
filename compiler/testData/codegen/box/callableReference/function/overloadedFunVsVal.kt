@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_K1: WASM
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
-
 import kotlin.reflect.*
 
 class A {

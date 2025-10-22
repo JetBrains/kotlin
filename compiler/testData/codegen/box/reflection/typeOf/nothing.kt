@@ -19,6 +19,8 @@ fun check(expected: String, actual: KType) {
     assertEquals(expected, actual.toString())
 }
 
+private fun cNothing(): C<Nothing> = null!!
+
 fun box(): String {
     check("test.C<kotlin.Nothing>", typeOf<C<Nothing>>())
     check("test.C<kotlin.Nothing?>", typeOf<C<Nothing?>>())
@@ -31,6 +33,8 @@ fun box(): String {
     assertEquals(Void::class, typeOf<C<Nothing>>().arguments.single().type!!.classifier)
 
     assertNotEquals(typeOf<C<Nothing>>(), typeOf<C<Void>>())
+
+    assertEquals(::cNothing.returnType, typeOf<C<Nothing>>())
 
     return "OK"
 }

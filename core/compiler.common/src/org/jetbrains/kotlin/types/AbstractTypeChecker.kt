@@ -583,8 +583,8 @@ object AbstractTypeChecker {
 
             return AbstractStrictEqualityTypeChecker.strictEqualTypes(
                 c,
-                subType.withNullability(false),
-                superType.withNullability(false)
+                if (subType.isError()) subType else subType.withNullability(false),
+                if (superType.isError()) superType else superType.withNullability(false)
             )
         }
 

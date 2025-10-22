@@ -515,6 +515,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("returnValueStatusCheck.kt")
+  public void testReturnValueStatusCheck() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/returnValueStatusCheck.kt");
+  }
+
+  @Test
+  @TestMetadata("returnValueStatusFull.kt")
+  public void testReturnValueStatusFull() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/returnValueStatusFull.kt");
+  }
+
+  @Test
   @TestMetadata("similarGenericSignature.kt")
   public void testSimilarGenericSignature() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/similarGenericSignature.kt");

@@ -91,6 +91,18 @@ class Strings {
     }
 
     @Sample
+    fun elementAt() {
+        val string = "kotlin"
+        assertPrints(string.elementAt(0), "k")
+        assertPrints(string.elementAt(5), "n")
+        assertFailsWith<IndexOutOfBoundsException> { string.elementAt(-1) }
+        assertFailsWith<IndexOutOfBoundsException> { string.elementAt(6) }
+
+        val empty = ""
+        assertFailsWith<IndexOutOfBoundsException> { empty.elementAt(0) }
+    }
+
+    @Sample
     fun filter() {
         val text = "a1b2c3d4e5"
 

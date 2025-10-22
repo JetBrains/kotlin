@@ -35,6 +35,7 @@ KaNamedFunctionSymbol:
   canBeOperator: false
   getContainingModule: KaScriptModule "Script simpleScript.kts"
   deprecationStatus: null
+  returnValueStatus: Unspecified
   importableFqName: test.testFunction
 
 KaKotlinPropertySymbol:

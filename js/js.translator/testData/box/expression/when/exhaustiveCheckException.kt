@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ISSUE: KT-64652
 fun <T> checkThrown(x: T, block: (T) -> Any?): Unit? {
     return try {

@@ -214,6 +214,7 @@ object ConeLombokAnnotations {
         val requiresToBuilder: Boolean,
         val visibility: AccessLevel,
         val setterPrefix: String?,
+        val hasSpecifiedBuilderClassName: Boolean,
     ) {
         companion object {
             private const val DEFAULT_BUILD_METHOD_NAME = "build"
@@ -244,19 +245,30 @@ object ConeLombokAnnotations {
         builderMethodName: String,
         requiresToBuilder: Boolean,
         visibility: AccessLevel,
-        setterPrefix: String?
-    ) : AbstractBuilder(builderClassName, buildMethodName, builderMethodName, requiresToBuilder, visibility, setterPrefix) {
+        setterPrefix: String?,
+        hasSpecifiedBuilderClassName: Boolean,
+    ) : AbstractBuilder(
+        builderClassName,
+        buildMethodName,
+        builderMethodName,
+        requiresToBuilder,
+        visibility,
+        setterPrefix,
+        hasSpecifiedBuilderClassName
+    ) {
         companion object : BuilderConeAnnotationAndConfigCompanion<Builder>(LombokNames.BUILDER_ID) {
             override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): Builder {
+                val specifiedBuilderClassName = annotation?.getStringArgument(BUILDER_CLASS_NAME, session)
                 return Builder(
-                    builderClassName = annotation?.getStringArgument(BUILDER_CLASS_NAME, session)
+                    builderClassName = specifiedBuilderClassName
                         ?: config.getString(BUILDER_CLASS_NAME_CONFIG)
                         ?: DEFAULT_BUILDER_CLASS_NAME,
                     buildMethodName = getBuildMethodName(annotation, session),
                     builderMethodName = getBuilderMethodName(annotation, session),
                     requiresToBuilder = getRequiresToBuilder(annotation, session),
                     visibility = annotation?.getAccessLevel(ACCESS, session) ?: AccessLevel.PUBLIC,
-                    setterPrefix = getSetterPrefix(annotation, session)
+                    setterPrefix = getSetterPrefix(annotation, session),
+                    hasSpecifiedBuilderClassName = specifiedBuilderClassName != null,
                 )
             }
         }
@@ -267,8 +279,17 @@ object ConeLombokAnnotations {
         buildMethodName: String,
         builderMethodName: String,
         requiresToBuilder: Boolean,
-        setterPrefix: String?
-    ) : AbstractBuilder(builderClassName, buildMethodName, builderMethodName, requiresToBuilder, AccessLevel.PUBLIC, setterPrefix) {
+        setterPrefix: String?,
+        hasSpecifiedBuilderClassName: Boolean,
+    ) : AbstractBuilder(
+        builderClassName,
+        buildMethodName,
+        builderMethodName,
+        requiresToBuilder,
+        AccessLevel.PUBLIC,
+        setterPrefix,
+        hasSpecifiedBuilderClassName,
+    ) {
         companion object : BuilderConeAnnotationAndConfigCompanion<SuperBuilder>(LombokNames.SUPER_BUILDER_ID) {
             override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): SuperBuilder {
                 return SuperBuilder(
@@ -276,7 +297,8 @@ object ConeLombokAnnotations {
                     buildMethodName = getBuildMethodName(annotation, session),
                     builderMethodName = getBuilderMethodName(annotation, session),
                     requiresToBuilder = getRequiresToBuilder(annotation, session),
-                    setterPrefix = getSetterPrefix(annotation, session)
+                    setterPrefix = getSetterPrefix(annotation, session),
+                    hasSpecifiedBuilderClassName = false, // SuperBuilder annotation doesn't have an arg for specifying builder class name
                 )
             }
         }

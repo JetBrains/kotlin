@@ -18,6 +18,8 @@ internal class LLFirDiagnosticReporter : DiagnosticReporter() {
     private val _committedDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
 
     val committedDiagnostics get() = _committedDiagnostics.ifEmpty { emptyMap() }
+    override val hasErrors: Boolean
+        get() = committedDiagnostics.any { it.value.any { it.severity == Severity.ERROR } }
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return

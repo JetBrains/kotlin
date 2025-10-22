@@ -1,8 +1,3 @@
-// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
-// K1 reports a name clash error between top-level declarations and constructors. It seems relevant for legacy JS BE;
-// however, this is not applicable to JS IR BE because in the generated JS code, there is no name clash.
-// K2 doesn't report anything and works correctly with JS IR BE.
-
 // RUN_PLAIN_BOX_FUNCTION
 // MODULE: lib
 // FILE: lib.kt

@@ -36,17 +36,17 @@ import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
 
-abstract class AbstractJsFirInvalidationPerFileTest :
+abstract class AbstractJsInvalidationPerFileTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFir/perFile")
-abstract class AbstractJsFirInvalidationPerModuleTest :
+abstract class AbstractJsInvalidationPerModuleTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFir/perModule")
-abstract class AbstractJsFirES6InvalidationPerFileTest :
+abstract class AbstractJsES6InvalidationPerFileTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirES6/perFile")
-abstract class AbstractJsFirES6InvalidationPerModuleTest :
+abstract class AbstractJsES6InvalidationPerModuleTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirES6/perModule")
-abstract class AbstractJsFirInvalidationPerFileWithPLTest :
+abstract class AbstractJsInvalidationPerFileWithPLTest :
     AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirWithPL/perFile")
-abstract class AbstractJsFirInvalidationPerModuleWithPLTest :
+abstract class AbstractJsInvalidationPerModuleWithPLTest :
     AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirWithPL/perModule")
 
 abstract class AbstractJsFirInvalidationWithPLTest(granularity: JsGenerationGranularity, workingDirPath: String) :

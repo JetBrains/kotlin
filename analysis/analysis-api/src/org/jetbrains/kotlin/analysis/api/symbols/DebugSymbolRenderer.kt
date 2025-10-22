@@ -95,6 +95,10 @@ public class DebugSymbolRenderer(
 
                 renderComputedValue("deprecationStatus", printer, currentSymbolStack) { symbol.deprecationStatus }
 
+                if (symbol is KaNamedFunctionSymbol) {
+                    renderComputedValue("returnValueStatus", printer, currentSymbolStack) { symbol.returnValueStatus }
+                }
+
                 if (symbol is KaPropertySymbol) {
                     renderComputedValue("getterDeprecationStatus", printer, currentSymbolStack) { symbol.getterDeprecationStatus }
                     renderComputedValue("javaGetterName", printer, currentSymbolStack) { symbol.javaGetterName }
