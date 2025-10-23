@@ -52,8 +52,9 @@ internal fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val brid
         -> AsObjCBridged(bridge.swiftType, CType.id)
     is AsBlock,
     is AsObjCBridged,
+    is CustomBridgeWithAdditionalConversions,
     AsOutError,
-    AsVoid
+    AsVoid,
         -> bridge
 }
 
@@ -576,7 +577,7 @@ internal sealed class Bridge(
                 return when (wrappedObject) {
                     is AsObjCBridged ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsBlock, is AsAnyBridgeable ->
+                    is AsObject, is AsExistential, is AsBlock, is AsAnyBridgeable, is CustomBridgeWithAdditionalConversions ->
                         "{ switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
@@ -723,6 +724,57 @@ internal sealed class Bridge(
                     return "nil"
                 }
             }
+    }
+
+    /**
+     * A bridge to be used in custom implementations inside [org.jetbrains.kotlin.sir.providers.impl.SirCustomTypeTranslatorImpl].
+     *
+     * Normally, this bridge should be focused on conversions of some custom types in Kotlin.
+     * We expect from these types that they are class-based, so the conversion is based on the one used in [AsObject].
+     * E.g., a default conversion in [kotlinToObjC] simply creates a native pointer for a Kotlin result.
+     */
+    abstract class CustomBridgeWithAdditionalConversions(
+        swiftType: SirNominalType,
+    ) : Bridge(swiftType, KotlinType.KotlinObject, CType.Object) {
+        abstract fun swiftToObjC(typeNamer: SirTypeNamer, valueExpression: String): String
+
+        abstract fun objCToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String
+
+        open fun kotlinToObjC(typeNamer: SirTypeNamer, valueExpression: String): String =
+            "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+
+        abstract fun objCToSwift(typeNamer: SirTypeNamer, valueExpression: String): String
+
+        open val additionalObjCConversionsNumber: Int get() = 0
+
+        /**
+         * @param index expected to be in 0 ..< [additionalObjCConversionsNumber]
+         */
+        abstract fun additionalObjCConversionFunctionBridge(index: Int): SirFunctionBridge
+
+        open val representsParameterAsPair: Boolean get() = false
+
+        open val pairedParameterKotlinType: KotlinType? get() = null
+
+        open val pairedParameterCType: CType? get() = null
+
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                objCToKotlin(typeNamer, valueExpression)
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                kotlinToObjC(typeNamer, valueExpression)
+        }
+
+        override val inSwiftSources = object : InSwiftSourcesConversion {
+            override fun renderNil(): String = "nil"
+
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                swiftToObjC(typeNamer, valueExpression)
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                objCToSwift(typeNamer, valueExpression)
+        }
     }
 
     /**

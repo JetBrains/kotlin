@@ -88,4 +88,4 @@ private fun collectBridges(container: SirDeclarationContainer): List<SirBridge> 
             .filterIsInstance<SirDeclarationContainer>()
             .flatMap { collectBridges(it) }
     )
-}
+}.distinct()

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-private const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
+internal const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
 private const val cinterop = "kotlinx.cinterop.*"
 private const val convertBlockPtrToKotlinFunction = "kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction"
 private const val stdintHeader = "stdint.h"
@@ -193,7 +193,17 @@ private class BridgeFunctionDescriptor(
                     CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
                 )
             )
-        }
+            val allBridges = parameters.mapTo(mutableListOf()) { it.bridge }
+            selfParameter?.let { allBridges.add(it.bridge) }
+            extensionReceiverParameter?.let { allBridges.add(it.bridge) }
+            allBridges.add(returnType)
+            allBridges.forEach {
+                if (it !is Bridge.CustomBridgeWithAdditionalConversions) return@forEach
+                for (i in 0..<it.additionalObjCConversionsNumber) {
+                    add(it.additionalObjCConversionFunctionBridge(i))
+                }
+            }
+        }.distinct()
     }
 
     override fun createSwiftInvocation(resultTransformer: ((String) -> String)?): List<String> = buildList {
@@ -239,7 +249,17 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cBridgeName}\")")
     add(
         "public fun $kotlinBridgeName(${
-            allParameters.filter { it.isRenderable }.joinToString { "${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}" }
+            allParameters.filter { it.isRenderable }.joinToString {
+                val bridge = it.bridge
+                val identifier = it.name.kotlinIdentifier
+                if (bridge is Bridge.CustomBridgeWithAdditionalConversions && bridge.representsParameterAsPair) {
+                    val typeRepresentation = bridge.pairedParameterKotlinType!!.repr
+                    "${identifier}_1: $typeRepresentation, ${identifier}_2: $typeRepresentation"
+                } else {
+                    val typeRepresentation = bridge.kotlinType.repr
+                    "$identifier: $typeRepresentation"
+                }
+            }
         }): ${(returnType.kotlinType.takeIf { !isAsync } ?: KotlinType.Unit).repr} {"
     )
     val indent = "    "
@@ -316,7 +336,15 @@ private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
         returnType.cType.render(buildString {
             append(cBridgeName)
             append("(")
-            allParameters.filter { it.isRenderable }.joinTo(this) { it.bridge.cType.render(it.name.cIdentifier) }
+            allParameters.filter { it.isRenderable }.joinTo(this) {
+                val bridge = it.bridge
+                if (bridge is Bridge.CustomBridgeWithAdditionalConversions && bridge.representsParameterAsPair) {
+                    val cType = bridge.pairedParameterCType!!
+                    cType.render("${it.name.cIdentifier}_1") + ", " + cType.render("${it.name.cIdentifier}_2")
+                } else {
+                    bridge.cType.render(it.name.cIdentifier)
+                }
+            }
             append(')')
         })
     )

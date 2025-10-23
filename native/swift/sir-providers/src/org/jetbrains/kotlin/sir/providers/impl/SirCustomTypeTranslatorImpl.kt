@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.BYTE
+import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.INT
+import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.LONG
+import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.SHORT
 import org.jetbrains.kotlin.analysis.api.components.isBooleanType
 import org.jetbrains.kotlin.analysis.api.components.isByteType
 import org.jetbrains.kotlin.analysis.api.components.isCharType
@@ -21,19 +25,28 @@ import org.jetbrains.kotlin.analysis.api.components.isUIntType
 import org.jetbrains.kotlin.analysis.api.components.isULongType
 import org.jetbrains.kotlin.analysis.api.components.isUShortType
 import org.jetbrains.kotlin.analysis.api.components.isUnitType
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.builtins.StandardNames.RANGES_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.sir.CFunctionBridge
+import org.jetbrains.kotlin.sir.KotlinFunctionBridge
 import org.jetbrains.kotlin.sir.SirArrayType
 import org.jetbrains.kotlin.sir.SirDictionaryType
+import org.jetbrains.kotlin.sir.SirFunctionBridge
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.SirCustomTypeTranslator
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSArray
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSDictionary
@@ -42,12 +55,17 @@ import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsObjCBridg
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.CType
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.KotlinType
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.bridgeAsNSCollectionElement
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.exportAnnotationFqName
 import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 public class SirCustomTypeTranslatorImpl(
     private val session: SirSession
 ) : SirCustomTypeTranslator {
+    private val openEndRangeFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier("OpenEndRange"))
+
+    private val closedRangeFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier("ClosedRange"))
+
     // These classes already have ObjC counterparts assigned statically in ObjC Export.
     private val supportedFqNames: List<FqName> =
         listOf(
@@ -55,6 +73,13 @@ public class SirCustomTypeTranslatorImpl(
             FqNames.map,
             FqNames.list,
             FqNames.string.toSafe(),
+            openEndRangeFqName,
+            closedRangeFqName,
+            FqNames.intRange.toSafe(),
+            FqNames.longRange.toSafe(),
+//            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("UIntRange")),
+//            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("ULongRange")),
+//            RANGES_PACKAGE_FQ_NAME.child(Name.identifier("CharRange")),
             FqNames._char.toSafe(),
             FqNames._byte.toSafe(),
             FqNames._short.toSafe(),
@@ -137,13 +162,58 @@ public class SirCustomTypeTranslatorImpl(
                     ).wrapper()
                 }
 
-
-                else -> return null
-            }.also {
-                typeToWrapperMap[swiftType] = it
+            isClassType(ClassId.topLevel(openEndRangeFqName)) || isClassType(ClassId.topLevel(closedRangeFqName)) -> {
+                val argumentType = typeArguments.single()
+                if (argumentType is KaTypeArgumentWithVariance && !argumentType.type.isNumber) return null
+                val swiftArgumentType = argumentType.sirType(ctx)
+                val inclusive = !isClassType(ClassId.topLevel(openEndRangeFqName))
+                swiftType = SirNominalType(
+                    typeDeclaration = if (inclusive) SirSwiftModule.closedRange else SirSwiftModule.range,
+                    typeArguments = listOf(swiftArgumentType)
+                )
+                RangeBridge(
+                    swiftType,
+                    kotlinRangeTypeName = classId.shortClassName.asString(),
+                    kotlinRangeElementTypeName = (argumentType.type as KaClassType).classId.shortClassName.asString(),
+                    inclusive
+                ).wrapper()
             }
+
+            isClassType(StandardClassIds.IntRange) -> {
+                val swiftArgumentType = SirNominalType(SirSwiftModule.int32)
+                swiftType = SirNominalType(
+                    SirSwiftModule.closedRange,
+                    listOf(swiftArgumentType)
+                )
+                RangeBridge(
+                    swiftType,
+                    kotlinRangeTypeName = "IntRange",
+                    kotlinRangeElementTypeName = "Int",
+                    inclusive = true
+                ).wrapper()
+            }
+
+            isClassType(StandardClassIds.LongRange) -> {
+                val swiftArgumentType = SirNominalType(SirSwiftModule.int64)
+                swiftType = SirNominalType(
+                    SirSwiftModule.closedRange,
+                    listOf(swiftArgumentType)
+                )
+                RangeBridge(
+                    swiftType,
+                    kotlinRangeTypeName = "LongRange",
+                    kotlinRangeElementTypeName = "Long",
+                    inclusive = true
+                ).wrapper()
+            }
+            else -> return null
+        }.also {
+            typeToWrapperMap[swiftType] = it}
         }
     }
+
+    private val KaType.isNumber: Boolean
+        get() = this is KaUsualClassType && this.classId in NUMBERS
 
     private fun Bridge.wrapper(): SirCustomTypeTranslator.BridgeWrapper = SirCustomTypeTranslator.BridgeWrapper(this)
 
@@ -190,5 +260,90 @@ public class SirCustomTypeTranslatorImpl(
 
     override fun SirNominalType.toBridge(): SirCustomTypeTranslator.BridgeWrapper? {
         return typeToWrapperMap[this]
+    }
+
+    private class RangeBridge(
+        swiftType: SirNominalType,
+        val kotlinRangeTypeName: String,
+        val kotlinRangeElementTypeName: String,
+        val inclusive: Boolean,
+    ) : Bridge.CustomBridgeWithAdditionalConversions(swiftType) {
+        override val additionalObjCConversionsNumber: Int
+            get() = 2
+
+        override val representsParameterAsPair: Boolean
+            get() = true
+
+        override val pairedParameterKotlinType: KotlinType?
+            get() = if (kotlinRangeElementTypeName == "Int") KotlinType.Int else KotlinType.Long
+
+        override val pairedParameterCType: CType?
+            get() = if (kotlinRangeElementTypeName == "Int") CType.Int32 else CType.Int64
+
+        override fun swiftToObjC(typeNamer: SirTypeNamer, valueExpression: String): String {
+            return "$valueExpression.lowerBound, $valueExpression.upperBound"
+        }
+
+        override fun objCToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+            val operator = if (inclusive) ".." else "..<"
+            return "${valueExpression}_1$operator${valueExpression}_2"
+        }
+
+        override fun objCToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+            val startBridge = additionalObjCConversionFunctionBridge(0)
+            val endBridge = additionalObjCConversionFunctionBridge(1)
+            val operator = if (inclusive) "..." else "..<"
+            return "${startBridge.name}($valueExpression)$operator${endBridge.name}($valueExpression)"
+        }
+
+        override fun additionalObjCConversionFunctionBridge(index: Int): SirFunctionBridge {
+            when (index) {
+                0, 1 -> {
+                    val propertyName = if (index == 0) "start" else "end${if (inclusive) "Inclusive" else "Exclusive"}"
+                    val propertyNameCapitalized = propertyName.replaceFirstChar(Char::uppercase)
+                    val kotlinRangeNameDecapitalized = kotlinRangeTypeName.replaceFirstChar(Char::lowercase)
+                    val kotlinRangeElementNameDecapitalized = kotlinRangeElementTypeName.replaceFirstChar(Char::lowercase)
+                    val cRangeElementName = if (kotlinRangeElementTypeName == "Int") "int32_t" else "int64_t"
+                    val name = "kotlin_ranges_${kotlinRangeNameDecapitalized}_get${propertyNameCapitalized}_$kotlinRangeElementNameDecapitalized"
+                    val kotlinRangeTypeDescription = when (kotlinRangeTypeName) {
+                        "IntRange", "LongRange" -> kotlinRangeTypeName
+                        else -> "$kotlinRangeTypeName<$kotlinRangeElementTypeName>"
+                    }
+
+                    return SirFunctionBridge(
+                        name,
+                        KotlinFunctionBridge(
+                            lines = listOf(
+                                "@${exportAnnotationFqName.substringAfterLast('.')}(\"$name\")",
+                                "fun $name(nativePtr: kotlin.native.internal.NativePtr): $kotlinRangeElementTypeName {",
+                                "    val $kotlinRangeNameDecapitalized = interpretObjCPointer<${kotlinRangeTypeDescription}>(nativePtr)",
+                                "    return $kotlinRangeNameDecapitalized.$propertyName",
+                                "}",
+                            ),
+                            packageDependencies = listOf()
+                        ),
+                        CFunctionBridge(
+                            listOf("$cRangeElementName $name(void * nativePtr);"),
+                            listOf()
+                        )
+                    )
+                }
+
+                else -> throw NoSuchElementException()
+            }
+        }
+    }
+
+    public companion object {
+        private val NUMBERS = hashSetOf(
+            LONG,
+            INT,
+            SHORT,
+            BYTE,
+            ClassId.fromString("kotlin/ULong"),
+            ClassId.fromString("kotlin/UInt"),
+            ClassId.fromString("kotlin/UShort"),
+            ClassId.fromString("kotlin/UByte"),
+        )
     }
 }

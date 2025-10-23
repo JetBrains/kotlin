@@ -19,7 +19,18 @@ public class SirFunctionBridge(
     name: String,
     public val kotlinFunctionBridge: KotlinFunctionBridge,
     public val cDeclarationBridge: CFunctionBridge,
-) : SirBridge(name)
+) : SirBridge(name) {
+    override fun equals(other: Any?): Boolean {
+        return other is SirFunctionBridge && name == other.name &&
+                kotlinFunctionBridge.lines.firstOrNull() == other.kotlinFunctionBridge.lines.firstOrNull()
+    }
+
+    override fun hashCode(): Int {
+        var result = kotlinFunctionBridge.hashCode()
+        result = 31 * result + cDeclarationBridge.hashCode()
+        return result
+    }
+}
 
 /**
  * C part of [FunctionBridgeImpl].
