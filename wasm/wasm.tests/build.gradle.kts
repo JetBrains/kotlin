@@ -434,10 +434,9 @@ projectTests {
             setupJsc()
             useJUnitPlatform()
             setupGradlePropertiesForwarding()
-            val buildDirectory = layout.buildDirectory.map { "${it.asFile}/" }
-            jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-                classpath.from(buildDirectory)
+            jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
                 property.set("kotlin.wasm.test.root.out.dir")
+                buildDirectory.set(layout.buildDirectory)
             }
             body()
         }
