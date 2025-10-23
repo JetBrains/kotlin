@@ -33,7 +33,10 @@ abstract class AbstractIsolatedFulPipelineTestRunner {
     fun runTest(modelPath: String) {
         val config = modularizedTestConfigFromSingleModelFile(File(modelPath))
         val test = AbstractIsolatedFullPipelineModularizedTest(config)
-        val (result, messageCollector) = test.runSingleModelCompilation(modelPath, tempPath)
+        val (result, messageCollector) = test.runSingleModelCompilation(modelPath, tempPath) { args ->
+            args.languageVersion = LANGUAGE_VERSION_K2
+            configureCompatibleApiVersion(args)
+        }
         assertEquals(ExitCode.OK, result) { messageCollector.toString() }
     }
 }

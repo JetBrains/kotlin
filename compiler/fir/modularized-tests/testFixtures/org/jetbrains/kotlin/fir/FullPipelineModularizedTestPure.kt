@@ -37,14 +37,7 @@ class FullPipelineModularizedTestPure(config: ModularizedTestConfig) : AbstractF
             args.noReflect = true
         }
 
-        val apiVersion = LanguageVersion.fromVersionString(args.apiVersion)
-        if (apiVersion != null && apiVersion.isUnsupported) {
-            args.apiVersion = LanguageVersion.FIRST_SUPPORTED.versionString
-        }
-
-        require(LanguageVersion.fromVersionString(args.languageVersion)!! >= LanguageVersion.KOTLIN_2_0) {
-            "Language version misconfiguration for K2 FP: ${args.languageVersion} < 2.0"
-        }
+        configureCompatibleApiVersion(args)
     }
 
     override fun testTotalKotlin() {
@@ -53,5 +46,16 @@ class FullPipelineModularizedTestPure(config: ModularizedTestConfig) : AbstractF
             println("Pass $i")
             runTestOnce(i)
         }
+    }
+}
+
+internal fun configureCompatibleApiVersion(args: K2JVMCompilerArguments) {
+    val apiVersion = LanguageVersion.fromVersionString(args.apiVersion)
+    if (apiVersion != null && apiVersion.isUnsupported) {
+        args.apiVersion = LanguageVersion.FIRST_SUPPORTED.versionString
+    }
+
+    require(LanguageVersion.fromVersionString(args.languageVersion)!! >= LanguageVersion.KOTLIN_2_0) {
+        "Language version misconfiguration for K2 FP: ${args.languageVersion} < 2.0"
     }
 }
