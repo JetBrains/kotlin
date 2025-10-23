@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.AbstractKotlinSuppressCache
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
@@ -33,6 +36,11 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     diagnosticReporter: BaseDiagnosticsCollector,
     languageVersionSettings: LanguageVersionSettings
 ) : KtDiagnosticReporterWithContext(diagnosticReporter, languageVersionSettings), IrDiagnosticReporter {
+
+    constructor(configuration: CompilerConfiguration) : this(
+        DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
+        configuration.languageVersionSettings
+    )
 
     private val suppressCache = IrBasedSuppressCache()
 

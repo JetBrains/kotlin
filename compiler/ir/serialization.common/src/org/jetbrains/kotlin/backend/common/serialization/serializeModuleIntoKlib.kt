@@ -113,7 +113,7 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
 
     val serializedIr = irModuleFragment?.let {
         val irDiagnosticReporter =
-            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
 
         it.runIrLevelCheckers(
             irDiagnosticReporter,

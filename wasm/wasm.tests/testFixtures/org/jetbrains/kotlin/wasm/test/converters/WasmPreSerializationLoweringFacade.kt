@@ -43,7 +43,6 @@ class WasmPreSerializationLoweringFacade(
         require(module.languageVersionSettings.languageVersion.usesK2)
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
 
         when (inputArtifact) {
             is Fir2IrCliBasedOutputArtifact<*> -> {
@@ -52,6 +51,7 @@ class WasmPreSerializationLoweringFacade(
                 require(cliArtifact is JsFir2IrPipelineArtifact) {
                     "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
                 }
+                val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
                 val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
 
                 if (diagnosticReporter.hasErrors) {
@@ -68,14 +68,13 @@ class WasmPreSerializationLoweringFacade(
             }
             is IrBackendInput.WasmAfterFrontendBackendInput -> {
                 // TODO: When KT-74671 would be implemented, the following code would be never used and is subject to be deleted
-                val irDiagnosticReporter =
-                    KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+                val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(configuration)
                 runKlibCheckers(irDiagnosticReporter, configuration, inputArtifact.irModuleFragment)
                 val phaseConfig = createJsTestPhaseConfig(testServices, module)
-                if (diagnosticReporter.hasErrors) {
+                if (irDiagnosticReporter.hasErrors) {
                     // Should errors be found by checkers, there's a chance that some lowering will throw an exception on unparseable code.
                     // In test pipeline, it's unwanted, so let's avoid crashes. Already found errors would already be enough for diagnostic tests.
-                    return inputArtifact.copy(diagnosticReporter = diagnosticReporter)
+                    return inputArtifact.copy(diagnosticReporter = irDiagnosticReporter.diagnosticReporter)
                 }
 
                 val transformedModule = PhaseEngine(
@@ -93,7 +92,7 @@ class WasmPreSerializationLoweringFacade(
 
                 // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
                 // Later, third artifact of class `WasmDeserializedFromKlibBackendInput` might replace it again during some test pipelines.
-                return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = diagnosticReporter)
+                return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = irDiagnosticReporter.diagnosticReporter)
             }
             else -> {
                 throw IllegalArgumentException("Unexpected inputArtifact type: ${inputArtifact.javaClass.simpleName}")

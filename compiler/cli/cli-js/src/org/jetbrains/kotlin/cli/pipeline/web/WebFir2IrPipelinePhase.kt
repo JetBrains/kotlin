@@ -118,7 +118,7 @@ private fun runJsKlibCallCheckers(
     fir2IrActualizedResult: Fir2IrActualizedResult,
 ) {
     val irDiagnosticReporter =
-        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
 
     val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
         configuration,

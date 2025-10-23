@@ -37,11 +37,7 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsFir2IrPipelineArtifact {
         val (fir2IrResult, firOutput, configuration, _, moduleStructure) = input
         processIncrementalCompilationRoundIfNeeded(configuration, moduleStructure, firOutput, fir2IrResult)
-        val diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
-        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            diagnosticCollector.deduplicating(),
-            configuration.languageVersionSettings
-        )
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(configuration)
 
         val transformedResult = if (configuration.wasmCompilation) {
             PhaseEngine(
@@ -57,7 +53,7 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
             ).runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
         }
 
-        return input.copy(result = transformedResult, diagnosticCollector = diagnosticCollector)
+        return input.copy(result = transformedResult, diagnosticCollector = irDiagnosticReporter.diagnosticReporter)
     }
 
     private fun processIncrementalCompilationRoundIfNeeded(

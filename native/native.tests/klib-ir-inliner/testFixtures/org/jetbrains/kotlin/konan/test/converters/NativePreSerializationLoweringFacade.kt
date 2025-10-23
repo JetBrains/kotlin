@@ -41,11 +41,7 @@ class NativePreSerializationLoweringFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
-        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            diagnosticReporter.deduplicating(),
-            configuration.languageVersionSettings
-        )
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(configuration)
         val phaseConfig = PhaseConfig()
         val transformedModule = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
             PhaseEngine(
@@ -58,7 +54,7 @@ class NativePreSerializationLoweringFacade(
             )
         }
 
-        return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = diagnosticReporter)
+        return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = irDiagnosticReporter.diagnosticReporter)
     }
 }
 
