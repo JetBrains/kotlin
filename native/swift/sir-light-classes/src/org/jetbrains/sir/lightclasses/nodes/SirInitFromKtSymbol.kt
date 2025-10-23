@@ -128,44 +128,51 @@ internal class SirRegularInitFromKtSymbol(
             parent as? SirScopeDefiningDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
         )
 
-        listOfNotNull(
-            bridgeAllocProxy?.createSirBridge {
-                val args = argNames
-                "kotlin.native.internal.createUninitializedInstance<${
-                    typeNamer.kotlinFqName(
-                        producingType,
-                        SirTypeNamer.KotlinNameType.PARAMETRIZED
-                    )
-                }>(${args.joinToString()})"
-            },
-            if (origin is InnerInitSource) {
-                bridgeInitProxy?.createSirBridge {
-                    val args = this.argNames
-                    require(!kotlinFqName.parent().isRoot) {
-                        "Expected qualified name with a dot, but were ${kotlinFqName.asString()} instead"
-                    }
-                    require(args.size >= 2) {
-                        "Expected >=2 inner constructor arguments, but were ${args.size}: ${args.joinToString(",")}"
-                    }
-                    val outerClassName = kotlinFqName.parent()
-                    val innerClassName = kotlinFqName.shortName()
-                    val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
-                    val innerConstructorCall = "(${args.last()} as $outerClassName).$innerClassName($innerConstructorArgs)"
-
-                    "kotlin.native.internal.initInstance(${args.first()}, $innerConstructorCall)"
-                }
-            } else {
-                bridgeInitProxy?.createSirBridge {
+        buildList {
+            addAll(
+                bridgeAllocProxy?.createSirBridges {
                     val args = argNames
-                    "kotlin.native.internal.initInstance(${args.first()}, ${
+                    "kotlin.native.internal.createUninitializedInstance<${
                         typeNamer.kotlinFqName(
                             producingType,
                             SirTypeNamer.KotlinNameType.PARAMETRIZED
                         )
-                    }(${args.drop(1).joinToString()}))"
-                }
-            },
-        )
+                    }>(${args.joinToString()})"
+                }.orEmpty()
+            )
+            if (origin is InnerInitSource) {
+                addAll(
+                    bridgeInitProxy?.createSirBridges {
+                        val args = this.argNames
+
+                        require(!kotlinFqName.parent().isRoot) {
+                            "Expected qualified name with a dot, but were ${kotlinFqName.asString()} instead"
+                        }
+                        require(args.size >= 2) {
+                            "Expected >=2 inner constructor arguments, but were ${args.size}: ${args.joinToString(",")}"
+                        }
+                        val outerClassName = kotlinFqName.parent()
+                        val innerClassName = kotlinFqName.shortName()
+                        val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
+                        val innerConstructorCall = "(${args.last()} as $outerClassName).$innerClassName($innerConstructorArgs)"
+
+                        "kotlin.native.internal.initInstance(${args.first()}, $innerConstructorCall)"
+                    }.orEmpty()
+                )
+            } else {
+                addAll(
+                    bridgeInitProxy?.createSirBridges {
+                        val args = argNames
+                        "kotlin.native.internal.initInstance(${args.first()}, ${
+                            typeNamer.kotlinFqName(
+                                producingType,
+                                SirTypeNamer.KotlinNameType.PARAMETRIZED
+                            )
+                        }(${args.drop(1).joinToString()}))"
+                    }.orEmpty()
+                )
+            }
+        }
     }
 
     override var body: SirFunctionBody?
