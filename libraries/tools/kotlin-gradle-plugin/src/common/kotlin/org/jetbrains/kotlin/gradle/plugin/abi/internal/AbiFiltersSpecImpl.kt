@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.internal.abi
+package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiFilterSetSpec

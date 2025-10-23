@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.gradle.tasks.abi
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
-import org.jetbrains.kotlin.gradle.tasks.abi.AbiToolsTask.Companion.composeTaskName
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 
 @DisableCachingByDefault(because = "File copy should not be cacheable")
 internal abstract class KotlinAbiUpdateTask : DefaultTask() {
@@ -22,9 +20,6 @@ internal abstract class KotlinAbiUpdateTask : DefaultTask() {
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val actualDir: DirectoryProperty
-
-    @get:Input
-    abstract val variantName: Property<String>
 
     @get:Input
     val projectName: String = project.name
@@ -56,8 +51,6 @@ internal abstract class KotlinAbiUpdateTask : DefaultTask() {
     }
 
     companion object {
-        fun nameForVariant(variantName: String): String {
-            return composeTaskName("updateKotlinAbi", variantName)
-        }
+        const val NAME = "updateKotlinAbi"
     }
 }

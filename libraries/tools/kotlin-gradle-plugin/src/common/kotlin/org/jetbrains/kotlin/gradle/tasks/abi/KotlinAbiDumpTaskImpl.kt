@@ -15,8 +15,8 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.abi.tools.AbiFilters
 import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.abi.tools.KlibTarget
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
@@ -70,9 +70,6 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), KotlinLegacyAbiD
     @get:Input
     @get:Optional
     abstract val excludedAnnotatedWith: SetProperty<String>
-
-    @get:Input
-    abstract val variantName: Property<String>
 
     @get:Input
     val projectName: String = project.name
@@ -182,8 +179,6 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), KotlinLegacyAbiD
     )
 
     companion object {
-        fun nameForVariant(variantName: String): String {
-            return composeTaskName("internalDumpKotlinAbi", variantName)
-        }
+        const val NAME = "internalDumpKotlinAbi"
     }
 }

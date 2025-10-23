@@ -762,7 +762,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatfor
 	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec;Lorg/gradle/api/Action;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec : org/gradle/api/Named {
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$Companion;
 	public static final field MAIN_VARIANT_NAME Ljava/lang/String;
 	public abstract fun filters (Lorg/gradle/api/Action;)V

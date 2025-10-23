@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.abi
+package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.gradle.utils.named
  *
  * All these tasks belong to the same report variant.
  */
-internal class AbiValidationTaskSet(project: Project, variantName: String) {
+internal class AbiValidationTaskSet(project: Project) {
     private val legacyDumpTaskProvider =
-        project.tasks.named<KotlinAbiDumpTaskImpl>(KotlinAbiDumpTaskImpl.nameForVariant(variantName))
+        project.tasks.named<KotlinAbiDumpTaskImpl>(KotlinAbiDumpTaskImpl.NAME)
     private val legacyCheckDumpTaskProvider =
-        project.tasks.named<KotlinAbiCheckTaskImpl>(KotlinAbiCheckTaskImpl.nameForVariant(variantName))
+        project.tasks.named<KotlinAbiCheckTaskImpl>(KotlinAbiCheckTaskImpl.NAME)
 
     /**
      * Add declarations for the JVM target when no other JVM targets are present.

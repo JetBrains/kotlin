@@ -53,51 +53,9 @@ interface AbiValidationMultiplatformExtension : AbiValidationMultiplatformVarian
     val enabled: Property<Boolean>
 
     /**
-     * All ABI validation report variants that are available in this project.
-     *
-     * See [AbiValidationMultiplatformVariantSpec] for more details about report variants.
-     *
-     * By default, each project always has one variant, called the main variant. It is named [AbiValidationVariantSpec.MAIN_VARIANT_NAME] and is configured in the `kotlin {}` block:
-     *
-     * ```kotlin
-     * kotlin {
-     *     abiValidation {
-     *         // main variant configuration
-     *     }
-     * }
-     * ```
-     *
-     * This is a live mutable collection. New custom variants can be created using special functions such as [NamedDomainObjectContainer.create] or [NamedDomainObjectContainer.register].
-     * Variants can also be configured at the time of their creation:
-     *
-     * ```kotlin
-     * kotlin {
-     *     abiValidation {
-     *         variants.register("my") {
-     *             // 'my' variant configuration, not main
-     *         }
-     *     }
-     * }
-     * ```
-     * Or later:
-     *
-     * ```kotlin
-     * kotlin {
-     *     abiValidation {
-     *         variants.register("my")
-     *     }
-     * }
-     * //
-     * kotlin {
-     *     abiValidation {
-     *         variants.getByName("my").filters {
-     *             // configure filters for 'my' variant
-     *         }
-     *     }
-     * }
-     * ```
+     * @deprecated Variants DSL was removed and is no longer supported.
      */
-    @ExperimentalAbiValidation
+    @Deprecated("Variants DSL was removed and is no longer supported.", level = DeprecationLevel.ERROR)
     val variants: NamedDomainObjectContainer<AbiValidationMultiplatformVariantSpec>
 }
 

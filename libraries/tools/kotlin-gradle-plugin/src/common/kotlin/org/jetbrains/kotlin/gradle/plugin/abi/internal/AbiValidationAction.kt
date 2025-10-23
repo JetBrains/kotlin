@@ -3,10 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.abi
+package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.abi.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.await
@@ -39,35 +38,25 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
     when {
         kotlinJvmExtensionOrNull != null -> {
             val extension = kotlinJvmExtension
-            val abiValidation = extension.findExtension<AbiValidationExtensionImpl>(ABI_VALIDATION_EXTENSION_NAME)
-                ?: throw IllegalStateException("Kotlin extension not found: $ABI_VALIDATION_EXTENSION_NAME")
             val target = extension.target
 
-            abiValidation.variants.configureEach { variant ->
-                variant.finalizeJvmVariant(this, abiClasspath, target)
-            }
+            finalizeJvmVariant(this, abiClasspath, target)
         }
 
         kotlinAndroidExtensionOrNull != null -> {
             val extension = kotlinAndroidExtension
-            val abiValidation = extension.findExtension<AbiValidationExtensionImpl>(ABI_VALIDATION_EXTENSION_NAME)
-                ?: throw IllegalStateException("Kotlin extension not found: $ABI_VALIDATION_EXTENSION_NAME")
             val target = extension.target
 
-            abiValidation.variants.configureEach { variant ->
-                variant.finalizeAndroidVariant(this, abiClasspath, target)
-            }
+            finalizeAndroidVariant(this, abiClasspath, target)
         }
+
         multiplatformExtensionOrNull != null -> {
             val extension = multiplatformExtension
             val abiValidation = extension.findExtension<AbiValidationMultiplatformExtensionImpl>(ABI_VALIDATION_EXTENSION_NAME)
                 ?: throw IllegalStateException("Kotlin extension not found: $ABI_VALIDATION_EXTENSION_NAME")
 
             val targets = extension.awaitTargets()
-
-            abiValidation.variants.configureEach { variant ->
-                variant.finalizeMultiplatformVariant(this, abiClasspath, targets)
-            }
+            abiValidation.finalizeMultiplatformVariant(this, abiClasspath, targets)
         }
     }
 }

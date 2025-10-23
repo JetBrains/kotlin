@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.gradle.tasks.abi
 
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.abi.tools.AbiTools
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 
 @DisableCachingByDefault(because = "No output")
 internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask(), KotlinLegacyAbiCheckTask {
@@ -22,9 +21,6 @@ internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask(), KotlinLegacyAbi
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract override val actualDir: DirectoryProperty
-
-    @get:Input
-    abstract val variantName: Property<String>
 
     @get:Input
     val projectName: String = project.name
@@ -76,15 +72,13 @@ internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask(), KotlinLegacyAbi
         }
 
         if (errorBuilder.isNotEmpty()) {
-            errorBuilder.append("You can run '$pathPrefix${KotlinAbiUpdateTask.nameForVariant(variantName.get())}' task to create or overwrite reference ABI declarations")
+            errorBuilder.append("You can run '$pathPrefix${KotlinAbiUpdateTask.NAME}' task to create or overwrite reference ABI declarations")
 
             error("ABI check failed for project $projectName\n\n$errorBuilder")
         }
     }
 
     companion object {
-        fun nameForVariant(variantName: String): String {
-            return composeTaskName("checkKotlinAbi", variantName)
-        }
+        const val NAME: String = "checkKotlinAbi"
     }
 }

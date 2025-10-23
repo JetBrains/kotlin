@@ -25,16 +25,14 @@ class AbiValidationOldNamesIT : KGPBaseTest() {
         androidProject(gradleVersion, agpVersion, jdkVersion) {
             abiValidation<AbiValidationExtension> {
                 enabled.set(true)
-
-                variants.create("custom") {}
             }
 
-            build("updateLegacyAbi", "updateLegacyAbiCustom") {
-                assertTasksExecuted(":updateKotlinAbi", ":updateKotlinAbiCustom")
+            build("updateLegacyAbi") {
+                assertTasksExecuted(":updateKotlinAbi")
             }
 
-            build("checkLegacyAbi", "checkLegacyAbiCustom") {
-                assertTasksExecuted(":checkKotlinAbi", ":checkKotlinAbiCustom")
+            build("checkLegacyAbi") {
+                assertTasksExecuted(":checkKotlinAbi")
             }
         }
     }
