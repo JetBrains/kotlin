@@ -304,8 +304,8 @@ private class SirEnumCaseFromKtSymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(bridgeProxy?.createSirBridge {
+        bridgeProxy?.createSirBridges {
             buildCall("")
-        })
+        }.orEmpty()
     }
 }
