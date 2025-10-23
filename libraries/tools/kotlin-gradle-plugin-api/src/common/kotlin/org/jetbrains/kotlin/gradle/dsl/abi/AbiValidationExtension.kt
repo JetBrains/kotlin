@@ -52,54 +52,6 @@ interface AbiValidationExtension : AbiValidationVariantSpec {
      */
     @ExperimentalAbiValidation
     val enabled: Property<Boolean>
-
-    /**
-     * All ABI validation report variants that are available in this project.
-     *
-     * See [AbiValidationVariantSpec] for more details about report variants.
-     *
-     * By default, each project always has one variant, called the main variant. It is named [AbiValidationVariantSpec.MAIN_VARIANT_NAME] and is configured in the `kotlin {}` block:
-     *
-     * ```kotlin
-     * kotlin {
-     *     abiValidation {
-     *         // main variant configuration
-     *     }
-     * }
-     * ```
-     *
-     * This is a live mutable collection. New custom variants can be created using special functions such as [NamedDomainObjectContainer.create] or [NamedDomainObjectContainer.register].
-     * Variants can also be configured at the time of their creation:
-     *
-     * ```kotlin
-     * kotlin {
-     *     abiValidation {
-     *         variants.register("my") {
-     *             // 'my' variant configuration, not main
-     *         }
-     *     }
-     * }
-     * ```
-     * Or later:
-     *
-     * ```kotlin
-     * kotlin {
-     *     abiValidation {
-     *         variants.register("my")
-     *     }
-     * }
-     * //
-     * kotlin {
-     *     abiValidation {
-     *         variants.getByName("my").filters {
-     *             // configure filters for 'my' variant
-     *         }
-     *     }
-     * }
-     * ```
-     */
-    @ExperimentalAbiValidation
-    val variants: NamedDomainObjectContainer<AbiValidationVariantSpec>
 }
 
 /**
