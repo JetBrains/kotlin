@@ -36,11 +36,11 @@ internal data class FileIdToPathEntryImpl(
 
 @Serializable
 internal data class SubtypeEntryImpl(
-    @ProtoNumber(1) override val className: String?,
+    @ProtoNumber(1) override val fqNameHashCode: Int?,
     @ProtoNumber(2) override val subtypes: List<String>,
 ) : SubtypeEntry {
     companion object {
         operator fun invoke(className: FqName, subtypes: Collection<FqName>): SubtypeEntryImpl =
-            SubtypeEntryImpl(className.asString(), subtypes.map { it.asString() })
+            SubtypeEntryImpl(className.hashCode(), subtypes.map { it.asString() })
     }
 }
