@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
@@ -162,10 +163,16 @@ class KotlinLibraryImpl(
     BaseKotlinLibrary by base,
     IrLibrary by ir {
 
-    private val components: Map<KlibComponent.ID<*>, KlibComponent> = run {
-        val layoutReaderFactory = KlibLayoutReaderFactory(location, ir.access.klibZipAccessor)
-        mapOf(KlibMetadataComponent.ID to KlibMetadataComponentImpl(layoutReaderFactory))
-    }
+    private val components: Map<KlibComponent.ID<*>, KlibComponent> = KlibComponentsBuilder(
+        layoutReaderFactory = KlibLayoutReaderFactory(
+            klibFile = location,
+            zipFileSystemAccessor = ir.access.klibZipAccessor
+        )
+    )
+        .withMandatory(KlibMetadataComponent.ID, ::KlibMetadataComponentImpl)
+        .withOptional(KlibIrComponent.IDMain, KlibIrComponentImpl::createForMainIr)
+        .withOptional(KlibIrComponent.IDInlinableFunctions, KlibIrComponentImpl::createForInlinableFunctionsIr)
+        .build()
 
     override fun <KC : KlibComponent> getComponent(id: KlibComponent.ID<KC>): KC {
         @Suppress("UNCHECKED_CAST")
