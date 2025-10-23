@@ -72,9 +72,6 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
     abstract val excludedAnnotatedWith: SetProperty<String>
 
     @get:Input
-    abstract val variantName: Property<String>
-
-    @get:Input
     val projectName: String = project.name
 
 
@@ -182,8 +179,6 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
     )
 
     companion object {
-        fun nameForVariant(variantName: String): String {
-            return composeTaskName("dumpLegacyAbi", variantName)
-        }
+        const val NAME = "dumpLegacyAbi"
     }
 }

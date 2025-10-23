@@ -25,7 +25,7 @@ internal fun AbiValidationMultiplatformVariantSpec.finalizeMultiplatformVariant(
     abiClasspath: Configuration,
     targets: NamedDomainObjectCollection<KotlinTarget>,
 ) {
-    val taskSet = AbiValidationTaskSet(project, name)
+    val taskSet = AbiValidationTaskSet(project)
     taskSet.setClasspath(abiClasspath)
     taskSet.keepUnsupportedTargets(klib.keepUnsupportedTargets)
     taskSet.klibEnabled(klib.enabled)

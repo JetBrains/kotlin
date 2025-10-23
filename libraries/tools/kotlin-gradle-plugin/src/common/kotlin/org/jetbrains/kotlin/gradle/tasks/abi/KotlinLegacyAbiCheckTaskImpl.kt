@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.tasks.abi
 
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.abi.tools.api.AbiToolsInterface
@@ -22,9 +21,6 @@ internal abstract class KotlinLegacyAbiCheckTaskImpl : AbiToolsTask(), KotlinLeg
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract override val actualDir: DirectoryProperty
-
-    @get:Input
-    abstract val variantName: Property<String>
 
     @get:Input
     val projectName: String = project.name
@@ -76,15 +72,13 @@ internal abstract class KotlinLegacyAbiCheckTaskImpl : AbiToolsTask(), KotlinLeg
         }
 
         if (errorBuilder.isNotEmpty()) {
-            errorBuilder.append("You can run '$pathPrefix${KotlinLegacyAbiUpdateTask.nameForVariant(variantName.get())}' task to create or overwrite reference ABI declarations")
+            errorBuilder.append("You can run '$pathPrefix${KotlinLegacyAbiUpdateTask.NAME}' task to create or overwrite reference ABI declarations")
 
             error("ABI check failed for project $projectName\n\n$errorBuilder")
         }
     }
 
     companion object {
-        fun nameForVariant(variantName: String): String {
-            return composeTaskName("checkLegacyAbi", variantName)
-        }
+        const val NAME: String = "checkLegacyAbi"
     }
 }

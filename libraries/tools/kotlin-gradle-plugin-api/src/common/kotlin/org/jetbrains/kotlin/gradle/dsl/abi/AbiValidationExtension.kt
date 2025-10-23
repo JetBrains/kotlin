@@ -149,7 +149,7 @@ which cannot be suppressed.
 See Gradle issue https://github.com/gradle/gradle/issues/32019
  */
 @KotlinGradlePluginDsl
-interface AbiValidationVariantSpec : Named {
+interface AbiValidationVariantSpec {
     /**
      * A set of filtering rules that restrict Application Binary Interface (ABI) declarations from being included in a dump.
      *
@@ -203,30 +203,5 @@ interface AbiValidationVariantSpec : Named {
     @ExperimentalAbiValidation
     fun legacyDump(action: Action<AbiValidationLegacyDumpExtension>) {
         action.execute(legacyDump)
-    }
-
-    /**
-     * The constants for ABI validation variants.
-     */
-    @ExperimentalAbiValidation
-    companion object {
-        /**
-         * The report variant name for the variant configured in the `kotlin {}` block:
-         *
-         * ```kotlin
-         * kotlin {
-         *     abiValidation {
-         *         // main variant
-         *     }
-         * }
-         * ```
-
-         *
-         * This variant is also called the "main variant".
-         *
-         * See [AbiValidationVariantSpec] for more details about report variants.
-         */
-        @ExperimentalAbiValidation
-        const val MAIN_VARIANT_NAME = "main"
     }
 }
