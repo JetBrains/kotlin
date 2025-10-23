@@ -48,6 +48,12 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
+  @TestMetadata("property_type_anonymous_object.kts")
+  public void testProperty_type_anonymous_object() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/property_type_anonymous_object.kts");
+  }
+
+  @Test
   @TestMetadata("property_visibility.kts")
   public void testProperty_visibility() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/property_visibility.kts");

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentParent
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
@@ -1364,7 +1365,7 @@ abstract class FirDataFlowAnalyzer(
         if (isAssignment) {
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
         }
-        var needToAddInitializerStatement = isAssignment
+        var needToAddInitializerStatement = isAssignment || (!hasExplicitType && property.isReplSnippetDeclaration == true)
 
         val stability = propertyVariable.getStability(flow, components.session)
         if (stability == SmartcastStability.STABLE_VALUE || stability == SmartcastStability.CAPTURED_VARIABLE) {

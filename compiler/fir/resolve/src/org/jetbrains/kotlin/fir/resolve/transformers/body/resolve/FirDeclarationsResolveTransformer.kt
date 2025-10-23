@@ -21,11 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -1609,7 +1605,12 @@ open class FirDeclarationsResolveTransformer(
 
             val newTypeRef: FirResolvedTypeRef = resultType?.let {
                 val expectedType = it.toExpectedTypeRef(fallbackSource = variable.source)
-                expectedType.approximateDeclarationType(session, variable.visibilityForApproximation(), variable.isLocalVariableOrParameter)
+                expectedType.approximateDeclarationType(
+                    session = session,
+                    containingCallableVisibility = variable.visibilityForApproximation(),
+                    isLocal = variable.isLocalVariableOrParameter,
+                    approximateLocalTypes = variable.isReplSnippetDeclaration == true
+                )
             } ?: buildErrorTypeRef {
                 diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
                 source = variable.source
