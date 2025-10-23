@@ -24,10 +24,9 @@ public class CriDataSerializerImpl {
 
     public fun serializeLookups(lookups: Map<LookupSymbol, Collection<String>>): SerializedLookupData {
         val filePathToId = mutableMapOf<String, Int>()
-        val idToFilePath = mutableMapOf<Int, String>()
 
         fun addFilePathIfNeeded(filePath: String): Int = filePathToId.getOrPut(filePath) {
-            (filePathToId.size + 1).also { idToFilePath[it] = filePath }
+            (filePathToId.size + 1)
         }
 
         fun Map.Entry<LookupSymbol, Collection<String>>.toLookupEntry(): LookupEntryImpl = LookupEntryImpl(
@@ -36,7 +35,7 @@ public class CriDataSerializerImpl {
         )
 
         val lookups = lookups.entries.map { it.toLookupEntry() }
-        val fileIdsToPaths = idToFilePath.map { (fileId, filePath) -> FileIdToPathEntryImpl(fileId, filePath) }
+        val fileIdsToPaths = filePathToId.map { (filePath, fileId) -> FileIdToPathEntryImpl(fileId, filePath) }
 
         return SerializedLookupData(
             lookups = ProtoBuf.encodeToByteArray(lookups),
