@@ -1,18 +1,16 @@
-// FIR_IDENTICAL
 // ISSUE: KT-67699
-// LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND_K2: ANY
-// TARGET_BACKEND: JVM_IR
+// LANGUAGE: +ContextParameters
+// IGNORE_BACKEND_K1: ANY
 
 class Controller<E>(val e: E)
 
 fun <E, A> either(a: Any?, block: Controller<E>.() -> A): A = Controller(a as E).block()
 
-context(Controller<String>)
-fun findUser(): String = e
+context(c: Controller<String>)
+fun findUser(): String = c.e
 
-context(Controller<String>)
-val prop: String get() = e
+context(c: Controller<String>)
+val prop: String get() = c.e
 
 fun box(): String {
     val x1 = either("O") {

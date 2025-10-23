@@ -1,21 +1,20 @@
-// LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND_K2: ANY
-// IGNORE_IR_DESERIALIZATION_TEST: ANY
+// LANGUAGE: +ContextParameters
+// IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-75016
 
 interface I {
-    context(String)
+    context(s: String)
     var myProp: String
 }
 
 class C : I {
     var x = ""
 
-    context(String)
+    context(s: String)
     override var myProp: String
         get() = x
         set(value) {
-            x = this@String + value
+            x = s + value
         }
 }
 
