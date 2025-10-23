@@ -34,6 +34,7 @@ sealed class ClangArgs(
     // TODO: Should be dropped in favor of real MSVC target.
     private val argsForWindowsJni = forJni && target == KonanTarget.MINGW_X64
 
+    @Deprecated("args for building runtime moved to runtime building code")
     val clangArgsSpecificForKonanSources: List<String>
         get() {
             val konanOptions = listOfNotNull(
@@ -179,12 +180,18 @@ sealed class ClangArgs(
     }
 
     // Kept for compatibility, remove later.
+    @Deprecated("args for building runtime moved to runtime building code")
+    @Suppress("DEPRECATION")
     val clangArgsForKonanSources =
             clangXXArgs + clangArgsSpecificForKonanSources
 
+    @Deprecated("args for building runtime moved to runtime building code")
+    @Suppress("DEPRECATION")
     val clangArgsForKonanCxxSources =
             (clangXXArgs + clangArgsSpecificForKonanSources).asList()
 
+    @Deprecated("args for building runtime moved to runtime building code")
+    @Suppress("DEPRECATION")
     val clangArgsForKonanCSources =
             (clangArgs + clangArgsSpecificForKonanSources).asList()
 

@@ -59,6 +59,72 @@ val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 // NOTE: the list of modules is duplicated in `RuntimeModule.kt`
 bitcode {
     allTargets {
+        val fixBrokenMacroExpansionInXcode15_3: List<String> = when (target) {
+            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
+                "TARGET_OS_OSX" to "1",
+            )
+            KonanTarget.IOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_IOS" to "1",
+            )
+            KonanTarget.TVOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_TV" to "1",
+            )
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_WATCH" to "1",
+            )
+            else -> emptyMap()
+            }.map { "-D${it.key}=${it.value}" }
+
+        val clangArgsSpecificForKonanSources: List<String> = run {
+            val konanOptions = listOfNotNull(
+                    target.architecture.name.takeIf { target != KonanTarget.WATCHOS_ARM64 },
+                    "ARM32".takeIf { target == KonanTarget.WATCHOS_ARM64 },
+                    target.family.name.takeIf { target.family != Family.MINGW },
+                    "WINDOWS".takeIf { target.family == Family.MINGW },
+                    "MACOSX".takeIf { target.family == Family.OSX },
+                    "APPLE".takeIf { target.family.isAppleFamily },
+
+                    "NO_64BIT_ATOMIC".takeUnless { target.supports64BitAtomics() },
+                    "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },
+                    "FORBID_BUILTIN_MUL_OVERFLOW".takeUnless { target.supports64BitMulOverflow() },
+
+                    "OBJC_INTEROP".takeIf { target.supportsObjcInterop() },
+                    "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
+                    "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
+                    "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
+                    "SUPPORTS_GRAND_CENTRAL_DISPATCH".takeIf { target.supportsGrandCentralDispatch },
+                    "SUPPORTS_SIGNPOSTS".takeIf { target.supportsSignposts },
+            ).map { "KONAN_$it=1" }
+            val otherOptions = listOfNotNull(
+                    "USE_ELF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.ELF },
+                    "ELFSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.ELF },
+                    "MACHSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.MACH_O },
+                    "__ANDROID__".takeIf { target.family == Family.ANDROID },
+                    "USE_PE_COFF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.PE_COFF },
+                    "UNICODE".takeIf { target.family == Family.MINGW },
+                    "USE_WINAPI_UNWIND=1".takeIf { target.supportsWinAPIUnwind() },
+                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() }
+            )
+            (konanOptions + otherOptions).map { "-D$it" } + fixBrokenMacroExpansionInXcode15_3
+        }
+
+        defaultCompilerArgs.addAll(listOfNotNull(
+                "-gdwarf-2".takeIf { kotlinBuildProperties.isNativeRuntimeDebugInfoEnabled },
+                "-std=c++17",
+                "-Werror",
+                "-O2",
+                "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
+                "-Wall",
+                "-Wextra",
+                "-Wno-unused-parameter",  // False positives with polymorphic functions.
+        ) + clangArgsSpecificForKonanSources)
+
         module("main") {
             headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", "src/crashHandler/common/cpp", "src/utfcpp/cpp")
             sourceSets {

@@ -18,7 +18,6 @@ import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.execLlvmUtility
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
@@ -77,8 +76,6 @@ private abstract class CompileToExecutableJob : WorkAction<CompileToExecutableJo
 
     private fun compile() {
         with(parameters) {
-            val execClang = ExecClang.create(objects, platformManager.get())
-
             val args = clangFlags.get() + listOf(llvmLinkOutputFile.asFile.get().absolutePath, "-o", compilerOutputFile.asFile.get().absolutePath)
 
             compilerOutputFile.asFile.get().parentFile.mkdirs()
