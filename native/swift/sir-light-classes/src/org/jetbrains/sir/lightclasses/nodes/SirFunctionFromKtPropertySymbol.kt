@@ -138,7 +138,7 @@ internal class SirFunctionFromKtPropertySymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(bridgeProxy?.createSirBridge {
+        bridgeProxy?.createSirBridges {
             val args = argNames
             when(ktSymbol) {
                 is KaPropertyGetterSymbol -> {
@@ -152,7 +152,7 @@ internal class SirFunctionFromKtPropertySymbol(
                     buildCall(" = ${args.last()}")
                 }
             }
-        })
+        }.orEmpty()
     }
 
     override var body: SirFunctionBody?

@@ -152,12 +152,12 @@ internal abstract class SirAbstractGetter(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(bridgeProxy?.createSirBridge {
+        bridgeProxy?.createSirBridges {
             val args = argNames
             val expectedParameters = if (extensionReceiverParameter != null) 1 else 0
             require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
             buildCall("")
-        })
+        }.orEmpty()
     }
 
     override var body: SirFunctionBody?
@@ -219,12 +219,12 @@ internal abstract class SirAbstractSetter(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(bridgeProxy?.createSirBridge {
+        bridgeProxy?.createSirBridges {
             val args = argNames
             val expectedParameters = if (extensionReceiverParameter != null) 2 else 1
             require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
             buildCall(" = ${args.last()}")
-        })
+        }.orEmpty()
     }
 
     override var body: SirFunctionBody?

@@ -117,7 +117,7 @@ public interface BridgeFunctionBuilder {
 }
 
 public interface BridgeFunctionProxy {
-    public fun createSirBridge(kotlinCall: BridgeFunctionBuilder.() -> String): SirBridge
+    public fun createSirBridges(kotlinCall: BridgeFunctionBuilder.() -> String): List<SirBridge>
     public fun createSwiftInvocation(resultTransformer: ((String) -> String)?): List<String>
 }
 
@@ -181,15 +181,20 @@ private class BridgeFunctionDescriptor(
         }
     }
 
-    override fun createSirBridge(kotlinCall: BridgeFunctionBuilder.() -> String) =
-        SirFunctionBridge(
-            name = baseBridgeName,
-            KotlinFunctionBridge(
-                createKotlinBridge(typeNamer, kotlinCall),
-                listOf(exportAnnotationFqName, cinterop, convertBlockPtrToKotlinFunction) + additionalImports()
-            ),
-            CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
-        )
+    override fun createSirBridges(kotlinCall: BridgeFunctionBuilder.() -> String): List<SirBridge> {
+        return buildList {
+            add(
+                SirFunctionBridge(
+                    name = baseBridgeName,
+                    KotlinFunctionBridge(
+                        createKotlinBridge(typeNamer, kotlinCall),
+                        listOf(exportAnnotationFqName, cinterop, convertBlockPtrToKotlinFunction) + additionalImports()
+                    ),
+                    CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
+                )
+            )
+        }
+    }
 
     override fun createSwiftInvocation(resultTransformer: ((String) -> String)?): List<String> = buildList {
         val descriptor = this@BridgeFunctionDescriptor

@@ -128,19 +128,23 @@ internal class SirRegularInitFromKtSymbol(
             parent as? SirScopeDefiningDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
         )
 
-        listOfNotNull(
-            bridgeAllocProxy?.createSirBridge {
-                val args = argNames
-                "kotlin.native.internal.createUninitializedInstance<${
-                    typeNamer.kotlinFqName(
-                        producingType,
-                        SirTypeNamer.KotlinNameType.PARAMETRIZED
-                    )
-                }>(${args.joinToString()})"
-            },
+        buildList {
+            addAll(
+                bridgeAllocProxy?.createSirBridges {
+                    val args = argNames
+                    "kotlin.native.internal.createUninitializedInstance<${
+                        typeNamer.kotlinFqName(
+                            producingType,
+                            SirTypeNamer.KotlinNameType.PARAMETRIZED
+                        )
+                    }>(${args.joinToString()})"
+                }.orEmpty()
+            )
             if (origin is InnerInitSource) {
-                bridgeInitProxy?.createSirBridge {
+                addAll(
+                    bridgeInitProxy?.createSirBridges {
                     val args = this.argNames
+
                     require(!kotlinFqName.parent().isRoot) {
                         "Expected qualified name with a dot, but were ${kotlinFqName.asString()} instead"
                     }
@@ -152,20 +156,23 @@ internal class SirRegularInitFromKtSymbol(
                     val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
                     val innerConstructorCall = "(${args.last()} as $outerClassName).$innerClassName($innerConstructorArgs)"
 
-                    "kotlin.native.internal.initInstance(${args.first()}, $innerConstructorCall)"
-                }
+                        "kotlin.native.internal.initInstance(${args.first()}, $innerConstructorCall)"
+                    }.orEmpty()
+                )
             } else {
-                bridgeInitProxy?.createSirBridge {
-                    val args = argNames
-                    "kotlin.native.internal.initInstance(${args.first()}, ${
-                        typeNamer.kotlinFqName(
-                            producingType,
-                            SirTypeNamer.KotlinNameType.PARAMETRIZED
-                        )
-                    }(${args.drop(1).joinToString()}))"
-                }
-            },
-        )
+                addAll(
+                    bridgeInitProxy?.createSirBridges {
+                        val args = argNames
+                        "kotlin.native.internal.initInstance(${args.first()}, ${
+                            typeNamer.kotlinFqName(
+                                producingType,
+                                SirTypeNamer.KotlinNameType.PARAMETRIZED
+                            )
+                        }(${args.drop(1).joinToString()}))"
+                    }.orEmpty()
+                )
+            }
+        }
     }
 
     override var body: SirFunctionBody?

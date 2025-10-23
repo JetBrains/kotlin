@@ -102,12 +102,10 @@ internal open class SirFunctionFromKtSymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(
-            bridgeProxy?.createSirBridge {
-                val actualArgs = if (extensionReceiverParameter != null) argNames.drop(1) else argNames
-                buildCall("(${actualArgs.joinToString()})")
-            }
-        )
+        bridgeProxy?.createSirBridges {
+            val actualArgs = if (extensionReceiverParameter != null) argNames.drop(1) else argNames
+            buildCall("(${actualArgs.joinToString()})")
+        }.orEmpty()
     }
 
     override var body: SirFunctionBody?
