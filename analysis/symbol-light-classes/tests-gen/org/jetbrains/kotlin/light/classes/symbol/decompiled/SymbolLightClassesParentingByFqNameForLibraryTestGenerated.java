@@ -785,6 +785,12 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
       }
 
       @Test
+      @TestMetadata("collectionAbstractClassWithDelegation.kt")
+      public void testCollectionAbstractClassWithDelegation() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/collections/readOnly/collectionAbstractClassWithDelegation.kt");
+      }
+
+      @Test
       @TestMetadata("collectionInterface.kt")
       public void testCollectionInterface() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/collections/readOnly/collectionInterface.kt");
