@@ -52,7 +52,13 @@ private const val KOTLIN_CODE_ANALYSIS_EVENT_CATEGORY = "Kotlin Code Analysis"
 
 @KaImplementationDetail
 object LLFlightRecorder {
+    private val includePhaseTraces: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        System.getProperty("kotlin.analysis.jfr.includePhaseTraces") == "true"
+                || System.getenv("KOTLIN_ANALYSIS_JFR_INCLUDE_PHASE_TRACES") == "true"
+    }
+
     private val phaseEventType = EventType.getEventType(LLPhaseEvent::class.java)
+    private val phaseWithTraceEventType = EventType.getEventType(LLPhaseWithTraceEvent::class.java)
 
     /**
      * Notify that the [target] declaration was successfully analyzed up to the given [phase] (possibly partially).
@@ -66,17 +72,32 @@ object LLFlightRecorder {
         containingDeclarations: List<FirDeclaration>,
         requestedPhase: FirResolvePhase
     ): LLPhaseEventCompleter? {
-        if (!phaseEventType.isEnabled) {
-            return null
-        }
+        if (includePhaseTraces) {
+            if (!phaseWithTraceEventType.isEnabled) {
+                return null
+            }
 
-        return LLPhaseEvent(
-            path = path(containingDeclarations, target),
-            hash = System.identityHashCode(target),
-            phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal],
-            moduleKind = computeModuleKind(target)
-        ).apply {
-            begin()
+            return LLPhaseWithTraceEvent(
+                path = path(containingDeclarations, target),
+                hash = System.identityHashCode(target),
+                phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal],
+                moduleKind = computeModuleKind(target)
+            ).apply {
+                begin()
+            }
+        } else {
+            if (!phaseEventType.isEnabled) {
+                return null
+            }
+
+            return LLPhaseEvent(
+                path = path(containingDeclarations, target),
+                hash = System.identityHashCode(target),
+                phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal],
+                moduleKind = computeModuleKind(target)
+            ).apply {
+                begin()
+            }
         }
     }
 
@@ -315,10 +336,38 @@ private class LLPhaseEvent(
 
     @Label("Module Kind")
     private val moduleKind: Byte
-) : Event(), LLPhaseEventCompleter {
+) : LLAbstractPhaseEvent() {
     @Label("Execution Result")
     @Description("0 - Success, 1 - Cancellation, 2 - Exception")
-    private var result: Byte = -1
+    override var result: Byte = -1
+}
+
+@Suppress("unused")
+@Name("org.jetbrains.kotlin.LLPhaseWithTrace")
+@Category(KOTLIN_CODE_ANALYSIS_EVENT_CATEGORY)
+@Label("Kotlin Declaration Phase Execution")
+@Description("A Kotlin declaration is analyzed to the specified FIR resolution phase (either successfully or with an error)")
+@StackTrace(true)
+private class LLPhaseWithTraceEvent(
+    @Label("Designation Path")
+    private val path: String,
+
+    @Label("Declaration Hash")
+    private val hash: Int,
+
+    @Label("Phase")
+    private val phase: Byte,
+
+    @Label("Module Kind")
+    private val moduleKind: Byte
+) : LLAbstractPhaseEvent() {
+    @Label("Execution Result")
+    @Description("0 - Success, 1 - Cancellation, 2 - Exception")
+    override var result: Byte = -1
+}
+
+private abstract class LLAbstractPhaseEvent : Event(), LLPhaseEventCompleter {
+    protected abstract var result: Byte
 
     override fun notifyCompleted() {
         result = 0
