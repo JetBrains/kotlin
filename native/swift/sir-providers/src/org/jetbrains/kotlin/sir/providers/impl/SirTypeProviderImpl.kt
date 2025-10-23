@@ -77,11 +77,14 @@ public class SirTypeProviderImpl(
                         kaType.isNothingType -> SirNominalType(SirSwiftModule.never)
                         kaType.isAnyType -> ctx.anyRepresentativeType()
 
-                        sirSession.customTypeTranslator.isClassIdSupported(kaType.classId) -> {
-                            with(sirSession.customTypeTranslator) { kaType.toSirTypeBridge(ctx)?.bridge?.swiftType }
-                        }
-
                         else -> {
+                            if (sirSession.customTypeTranslator.isClassIdSupported(kaType.classId)) {
+                                val customBridge = with(sirSession.customTypeTranslator) {
+                                    kaType.toSirTypeBridge(ctx)?.bridge?.swiftType
+                                }
+                                if (customBridge != null) return@withSessions customBridge.optionalIfNeeded(kaType)
+                            }
+
                             val classSymbol = kaType.symbol
                             when (classSymbol.sirAvailability()) {
                                 is SirAvailability.Available, is SirAvailability.Hidden ->

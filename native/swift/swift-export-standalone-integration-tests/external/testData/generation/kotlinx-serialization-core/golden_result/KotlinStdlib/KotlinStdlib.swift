@@ -586,43 +586,43 @@ extension ExportedKotlinPackages.kotlin {
         }
         public func rangeTo(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
         }
         @available(*, deprecated, message: "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.. Replacement: this.toInt().toChar()")
         public override func toChar() -> Swift.Unicode.UTF16.CodeUnit {
@@ -741,43 +741,43 @@ extension ExportedKotlinPackages.kotlin {
         }
         public func rangeTo(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Short_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Short_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Short_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Short_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Short_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Short_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Short_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Short_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
         }
         public override func toByte() -> Swift.Int8 {
             return kotlin_Short_toByte(self.__externalRCRef())
@@ -967,43 +967,43 @@ extension ExportedKotlinPackages.kotlin {
         }
         public func rangeTo(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Int_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Int_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Int_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Int_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Int_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Int_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Int_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Int_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.IntRange {
-            return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int32> {
+            return kotlin_ranges_intRange_getStart_int(kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))...kotlin_ranges_intRange_getEndInclusive_int(kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
         }
         public func shl(
             bitCount: Swift.Int32
@@ -1217,43 +1217,43 @@ extension ExportedKotlinPackages.kotlin {
         }
         public func rangeTo(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Long_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Long_rangeTo__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Long_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Long_rangeTo__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Long_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Long_rangeTo__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
         }
         public func rangeTo(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Long_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Long_rangeTo__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int8
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int16
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int32
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
         }
         public func rangeUntil(
             other: Swift.Int64
-        ) -> ExportedKotlinPackages.kotlin.ranges.LongRange {
-            return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
+        ) -> Swift.ClosedRange<Swift.Int64> {
+            return kotlin_ranges_longRange_getStart_long(kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))...kotlin_ranges_longRange_getEndInclusive_long(kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), other))
         }
         public func shl(
             bitCount: Swift.Int32
@@ -2389,23 +2389,6 @@ extension ExportedKotlinPackages.kotlin.collections {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class LongIterator: KotlinRuntime.KotlinBase {
-        public final func next() -> Swift.Int64 {
-            return kotlin_collections_LongIterator_next(self.__externalRCRef())
-        }
-        open func nextLong() -> Swift.Int64 {
-            return kotlin_collections_LongIterator_nextLong(self.__externalRCRef())
-        }
-        package init() {
-            fatalError()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-    }
 }
 extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
@@ -2508,176 +2491,6 @@ extension ExportedKotlinPackages.kotlin.ranges {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public final class IntRange: ExportedKotlinPackages.kotlin.ranges.IntProgression {
-        public final class Companion: KotlinRuntime.KotlinBase {
-            public var EMPTY: ExportedKotlinPackages.kotlin.ranges.IntRange {
-                get {
-                    return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_ranges_IntRange_Companion_EMPTY_get(self.__externalRCRef()))
-                }
-            }
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.IntRange.Companion {
-                get {
-                    return ExportedKotlinPackages.kotlin.ranges.IntRange.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_IntRange_Companion_get())
-                }
-            }
-            package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-                options: KotlinRuntime.KotlinBaseConstructionOptions
-            ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-            }
-            private init() {
-                fatalError()
-            }
-        }
-        public var start: Swift.Int32 {
-            get {
-                return kotlin_ranges_IntRange_start_get(self.__externalRCRef())
-            }
-        }
-        public var endInclusive: Swift.Int32 {
-            get {
-                return kotlin_ranges_IntRange_endInclusive_get(self.__externalRCRef())
-            }
-        }
-        @available(*, deprecated, message: "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
-        public var endExclusive: Swift.Int32 {
-            get {
-                return kotlin_ranges_IntRange_endExclusive_get(self.__externalRCRef())
-            }
-        }
-        public func contains(
-            value: Swift.Int32
-        ) -> Swift.Bool {
-            return kotlin_ranges_IntRange_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), value)
-        }
-        public static func ~=(
-            this: ExportedKotlinPackages.kotlin.ranges.IntRange,
-            value: Swift.Int32
-        ) -> Swift.Bool {
-            this.contains(value: value)
-        }
-        public override func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_IntRange_isEmpty(self.__externalRCRef())
-        }
-        public override func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return kotlin_ranges_IntRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.IntRange,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
-        public override func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_IntRange_hashCode(self.__externalRCRef())
-        }
-        public override func toString() -> Swift.String {
-            return kotlin_ranges_IntRange_toString(self.__externalRCRef())
-        }
-        public init(
-            start: Swift.Int32,
-            endInclusive: Swift.Int32
-        ) {
-            if Self.self != ExportedKotlinPackages.kotlin.ranges.IntRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.IntRange ") }
-            let __kt = kotlin_ranges_IntRange_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_ranges_IntRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Int32__(__kt, start, endInclusive)
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-    }
-    public final class LongRange: ExportedKotlinPackages.kotlin.ranges.LongProgression {
-        public final class Companion: KotlinRuntime.KotlinBase {
-            public var EMPTY: ExportedKotlinPackages.kotlin.ranges.LongRange {
-                get {
-                    return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_ranges_LongRange_Companion_EMPTY_get(self.__externalRCRef()))
-                }
-            }
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.LongRange.Companion {
-                get {
-                    return ExportedKotlinPackages.kotlin.ranges.LongRange.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_LongRange_Companion_get())
-                }
-            }
-            package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-                options: KotlinRuntime.KotlinBaseConstructionOptions
-            ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-            }
-            private init() {
-                fatalError()
-            }
-        }
-        public var start: Swift.Int64 {
-            get {
-                return kotlin_ranges_LongRange_start_get(self.__externalRCRef())
-            }
-        }
-        public var endInclusive: Swift.Int64 {
-            get {
-                return kotlin_ranges_LongRange_endInclusive_get(self.__externalRCRef())
-            }
-        }
-        @available(*, deprecated, message: "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
-        public var endExclusive: Swift.Int64 {
-            get {
-                return kotlin_ranges_LongRange_endExclusive_get(self.__externalRCRef())
-            }
-        }
-        public func contains(
-            value: Swift.Int64
-        ) -> Swift.Bool {
-            return kotlin_ranges_LongRange_contains__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), value)
-        }
-        public static func ~=(
-            this: ExportedKotlinPackages.kotlin.ranges.LongRange,
-            value: Swift.Int64
-        ) -> Swift.Bool {
-            this.contains(value: value)
-        }
-        public override func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_LongRange_isEmpty(self.__externalRCRef())
-        }
-        public override func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return kotlin_ranges_LongRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.LongRange,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
-        public override func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_LongRange_hashCode(self.__externalRCRef())
-        }
-        public override func toString() -> Swift.String {
-            return kotlin_ranges_LongRange_toString(self.__externalRCRef())
-        }
-        public init(
-            start: Swift.Int64,
-            endInclusive: Swift.Int64
-        ) {
-            if Self.self != ExportedKotlinPackages.kotlin.ranges.LongRange.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.ranges.LongRange ") }
-            let __kt = kotlin_ranges_LongRange_init_allocate()
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-            kotlin_ranges_LongRange_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int64__(__kt, start, endInclusive)
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-    }
     open class CharProgression: KotlinRuntime.KotlinBase {
         public final class Companion: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.kotlin.ranges.CharProgression.Companion {
@@ -2739,144 +2552,6 @@ extension ExportedKotlinPackages.kotlin.ranges {
         }
         open func toString() -> Swift.String {
             return kotlin_ranges_CharProgression_toString(self.__externalRCRef())
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-    }
-    open class IntProgression: KotlinRuntime.KotlinBase {
-        public final class Companion: KotlinRuntime.KotlinBase {
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.IntProgression.Companion {
-                get {
-                    return ExportedKotlinPackages.kotlin.ranges.IntProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_IntProgression_Companion_get())
-                }
-            }
-            public func fromClosedRange(
-                rangeStart: Swift.Int32,
-                rangeEnd: Swift.Int32,
-                step: Swift.Int32
-            ) -> ExportedKotlinPackages.kotlin.ranges.IntProgression {
-                return ExportedKotlinPackages.kotlin.ranges.IntProgression.__createClassWrapper(externalRCRef: kotlin_ranges_IntProgression_Companion_fromClosedRange__TypesOfArguments__Swift_Int32_Swift_Int32_Swift_Int32__(self.__externalRCRef(), rangeStart, rangeEnd, step))
-            }
-            package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-                options: KotlinRuntime.KotlinBaseConstructionOptions
-            ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-            }
-            private init() {
-                fatalError()
-            }
-        }
-        public final var first: Swift.Int32 {
-            get {
-                return kotlin_ranges_IntProgression_first_get(self.__externalRCRef())
-            }
-        }
-        public final var last: Swift.Int32 {
-            get {
-                return kotlin_ranges_IntProgression_last_get(self.__externalRCRef())
-            }
-        }
-        public final var step: Swift.Int32 {
-            get {
-                return kotlin_ranges_IntProgression_step_get(self.__externalRCRef())
-            }
-        }
-        open func iterator() -> ExportedKotlinPackages.kotlin.collections.IntIterator {
-            return ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: kotlin_ranges_IntProgression_iterator(self.__externalRCRef()))
-        }
-        open func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_IntProgression_isEmpty(self.__externalRCRef())
-        }
-        open func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return kotlin_ranges_IntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.IntProgression,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
-        open func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_IntProgression_hashCode(self.__externalRCRef())
-        }
-        open func toString() -> Swift.String {
-            return kotlin_ranges_IntProgression_toString(self.__externalRCRef())
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-    }
-    open class LongProgression: KotlinRuntime.KotlinBase {
-        public final class Companion: KotlinRuntime.KotlinBase {
-            public static var shared: ExportedKotlinPackages.kotlin.ranges.LongProgression.Companion {
-                get {
-                    return ExportedKotlinPackages.kotlin.ranges.LongProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_LongProgression_Companion_get())
-                }
-            }
-            public func fromClosedRange(
-                rangeStart: Swift.Int64,
-                rangeEnd: Swift.Int64,
-                step: Swift.Int64
-            ) -> ExportedKotlinPackages.kotlin.ranges.LongProgression {
-                return ExportedKotlinPackages.kotlin.ranges.LongProgression.__createClassWrapper(externalRCRef: kotlin_ranges_LongProgression_Companion_fromClosedRange__TypesOfArguments__Swift_Int64_Swift_Int64_Swift_Int64__(self.__externalRCRef(), rangeStart, rangeEnd, step))
-            }
-            package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-                options: KotlinRuntime.KotlinBaseConstructionOptions
-            ) {
-                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-            }
-            private init() {
-                fatalError()
-            }
-        }
-        public final var first: Swift.Int64 {
-            get {
-                return kotlin_ranges_LongProgression_first_get(self.__externalRCRef())
-            }
-        }
-        public final var last: Swift.Int64 {
-            get {
-                return kotlin_ranges_LongProgression_last_get(self.__externalRCRef())
-            }
-        }
-        public final var step: Swift.Int64 {
-            get {
-                return kotlin_ranges_LongProgression_step_get(self.__externalRCRef())
-            }
-        }
-        open func iterator() -> ExportedKotlinPackages.kotlin.collections.LongIterator {
-            return ExportedKotlinPackages.kotlin.collections.LongIterator.__createClassWrapper(externalRCRef: kotlin_ranges_LongProgression_iterator(self.__externalRCRef()))
-        }
-        open func isEmpty() -> Swift.Bool {
-            return kotlin_ranges_LongProgression_isEmpty(self.__externalRCRef())
-        }
-        open func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return kotlin_ranges_LongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public static func ==(
-            this: ExportedKotlinPackages.kotlin.ranges.LongProgression,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
-        open func hashCode() -> Swift.Int32 {
-            return kotlin_ranges_LongProgression_hashCode(self.__externalRCRef())
-        }
-        open func toString() -> Swift.String {
-            return kotlin_ranges_LongProgression_toString(self.__externalRCRef())
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
