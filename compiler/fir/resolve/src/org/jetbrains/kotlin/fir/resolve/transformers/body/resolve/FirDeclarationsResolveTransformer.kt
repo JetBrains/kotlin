@@ -371,7 +371,7 @@ open class FirDeclarationsResolveTransformer(
         val delegate = property.delegate
         if (delegate is FirFunctionCall &&
             delegate.calleeReference.name == OperatorNameConventions.PROVIDE_DELEGATE &&
-            delegate.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+            delegate.source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor
         ) {
             delegate.replacePropertyReferenceTypeInDelegateAccessors(property)
         }

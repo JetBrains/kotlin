@@ -88,7 +88,7 @@ class CallAndReferenceGenerator(
         //   val `x$delegate` = y
         //   val x get() = `x$delegate`.getValue(this, ::x)
         // The reference here (like the rest of the accessor) has DefaultAccessor source kind.
-        val isForDelegate = callableReferenceAccess.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+        val isForDelegate = callableReferenceAccess.source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor
         val origin = if (isForDelegate) IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE else null
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
 

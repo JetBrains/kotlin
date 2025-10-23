@@ -32,9 +32,11 @@ fun KtModifierKeywordToken.toVisibilityOrNull(): Visibility? {
 
 context(context: CheckerContext)
 internal fun KtSourceElement.delegatedPropertySourceOrThis(): KtSourceElement {
-    if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
+    if (kind is KtFakeSourceElementKind.DelegatedPropertyAccessor) {
         val property = context.containingDeclarations.lastIsInstanceOrNull<FirPropertySymbol>()
-        property?.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor)?.let { return it }
+        property?.delegate?.source
+            ?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor.DelegatedPropertyDelegateExpression)
+            ?.let { return it }
     }
 
     return this

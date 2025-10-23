@@ -77,7 +77,7 @@ internal object LLContainingClassCalculator {
                         }
                     }
 
-                    if (kind == DelegatedPropertyAccessor) {
+                    if (kind is DelegatedPropertyAccessor) {
                         val containingProperty = source.psi as? KtProperty
                         return computeContainingClass(symbol, containingProperty?.containingClassOrObject)
                     }

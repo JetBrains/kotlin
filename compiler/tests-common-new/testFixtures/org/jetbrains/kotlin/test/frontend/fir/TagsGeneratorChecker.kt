@@ -308,7 +308,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         if (property.delegateFieldSymbol != null) tags += FirTags.PROPERTY_DELEGATE
         if (property.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) tags += FirTags.DESTRUCTURING_DECLARATION
         if (property.receiverParameter != null) tags += FirTags.PROPERTY_WITH_EXTENSION_RECEIVER
-        if (property.getter?.symbol?.isDefault == false && property.getter?.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor)
+        if (property.getter?.symbol?.isDefault == false && property.getter?.source?.kind !is KtFakeSourceElementKind.DelegatedPropertyAccessor)
             tags += FirTags.GETTER
         if (property.setter?.symbol?.isDefault == false) tags += FirTags.SETTER
         if (property.contextParameters.isNotEmpty()) tags += FirTags.PROPERTY_WITH_CONTEXT

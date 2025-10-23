@@ -212,7 +212,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             }
 
             // Will be handled by [FirDelegatedPropertyChecker]
-            if (source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor &&
+            if (source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor &&
                 (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError || diagnostic is ConeInapplicableWrongReceiver || diagnostic is ConeInapplicableCandidateError)
             ) {
                 return

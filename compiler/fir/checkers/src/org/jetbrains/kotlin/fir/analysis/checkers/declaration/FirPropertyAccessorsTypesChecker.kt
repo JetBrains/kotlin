@@ -131,7 +131,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
      * @see FirPropertyAccessor.hasGeneratedDelegateBody
      */
     private fun FirPropertyAccessor.isImplicitDelegateAccessor(): Boolean =
-        source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+        source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor
 
     context(context: CheckerContext)
     private fun isLegallyAbstract(property: FirProperty): Boolean {
