@@ -16713,6 +16713,12 @@ public class JsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractJsCod
       }
 
       @Test
+      @TestMetadata("contextParams.kt")
+      public void testContextParams() {
+        runTest("compiler/testData/codegen/box/defaultArguments/contextParams.kt");
+      }
+
+      @Test
       @TestMetadata("implementedByFake.kt")
       public void testImplementedByFake() {
         runTest("compiler/testData/codegen/box/defaultArguments/implementedByFake.kt");

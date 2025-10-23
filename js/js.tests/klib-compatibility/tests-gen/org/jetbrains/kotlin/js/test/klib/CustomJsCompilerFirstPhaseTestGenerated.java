@@ -16856,6 +16856,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
       }
 
       @Test
+      @TestMetadata("contextParams.kt")
+      public void testContextParams() {
+        runTest("compiler/testData/codegen/box/defaultArguments/contextParams.kt");
+      }
+
+      @Test
       @TestMetadata("implementedByFake.kt")
       public void testImplementedByFake() {
         runTest("compiler/testData/codegen/box/defaultArguments/implementedByFake.kt");

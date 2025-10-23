@@ -17730,6 +17730,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("contextParams.kt")
+    public void testContextParams() {
+      runTest("compiler/testData/codegen/box/defaultArguments/contextParams.kt");
+    }
+
+    @Test
     @TestMetadata("implementedByFake.kt")
     public void testImplementedByFake() {
       runTest("compiler/testData/codegen/box/defaultArguments/implementedByFake.kt");
