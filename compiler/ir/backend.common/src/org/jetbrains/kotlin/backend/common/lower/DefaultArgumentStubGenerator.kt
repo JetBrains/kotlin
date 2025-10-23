@@ -438,7 +438,8 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 
-    protected fun IrValueParameter.canHaveDefaultValue() = canHaveDefaultValueImpl()
+    protected fun IrValueParameter.canHaveDefaultValue() =
+        canHaveDefaultValueImpl() && this.kind != IrParameterKind.Context && this.origin != IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
 }
 
 /**
@@ -521,5 +522,5 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
 }
 
 private fun IrValueParameter.canHaveDefaultValue() =
-    kind != IrParameterKind.DispatchReceiver && kind != IrParameterKind.ExtensionReceiver &&
-    origin != IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER && origin != IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+    kind != IrParameterKind.DispatchReceiver && kind != IrParameterKind.ExtensionReceiver && kind != IrParameterKind.Context &&
+    origin != IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER && origin != IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER && origin != IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
