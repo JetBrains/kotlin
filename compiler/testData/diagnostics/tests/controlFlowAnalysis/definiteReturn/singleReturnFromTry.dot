@@ -390,35 +390,36 @@ digraph singleReturnFromTry_kt {
                 subgraph cluster_44 {
                     color=blue
                     128 [label="Catch enter"];
-                    129 [label="Variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
+                    129 [label="Enter variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
+                    130 [label="Exit variable declaration: e: R|{kotlin/Exception=} java/lang/Exception|"];
                     subgraph cluster_45 {
                         color=blue
-                        130 [label="Enter block"];
-                        131 [label="Const: String(hello)"];
-                        132 [label="Exit block"];
+                        131 [label="Enter block"];
+                        132 [label="Const: String(hello)"];
+                        133 [label="Exit block"];
                     }
-                    133 [label="Catch exit"];
+                    134 [label="Catch exit"];
                 }
                 subgraph cluster_46 {
                     color=blue
-                    134 [label="Enter finally"];
+                    135 [label="Enter finally"];
                     subgraph cluster_47 {
                         color=blue
-                        135 [label="Enter block"];
-                        136 [label="Exit block"];
+                        136 [label="Enter block"];
+                        137 [label="Exit block"];
                     }
-                    137 [label="Exit finally"];
+                    138 [label="Exit finally"];
                 }
-                138 [label="Try expression exit"];
+                139 [label="Try expression exit"];
             }
-            139 [label="Exit block"];
+            140 [label="Exit block"];
         }
-        140 [label="Exit function test_5" style="filled" fillcolor=red];
+        141 [label="Exit function test_5" style="filled" fillcolor=red];
     }
     106 -> {107};
     107 -> {108};
     108 -> {109 128};
-    108 -> {134} [label="onUncaughtException"];
+    108 -> {135} [label="onUncaughtException"];
     109 -> {110};
     110 -> {111};
     111 -> {112};
@@ -429,7 +430,7 @@ digraph singleReturnFromTry_kt {
     114 -> {115};
     115 -> {116};
     116 -> {117};
-    117 -> {134} [label="return@/test_5"];
+    117 -> {135} [label="return@/test_5"];
     117 -> {118} [style=dotted];
     118 -> {119} [style=dotted];
     119 -> {120} [style=dotted];
@@ -438,13 +439,13 @@ digraph singleReturnFromTry_kt {
     122 -> {124};
     123 -> {113} [color=green style=dashed];
     123 -> {124} [color=green];
-    123 -> {138} [color=red label="Postponed"];
+    123 -> {139} [color=red label="Postponed"];
     124 -> {125} [style=dotted];
     125 -> {126} [style=dotted];
     126 -> {127} [style=dotted];
-    127 -> {128 134} [style=dotted];
+    127 -> {128 135} [style=dotted];
     128 -> {129};
-    128 -> {134} [label="onUncaughtException"];
+    128 -> {135} [label="onUncaughtException"];
     129 -> {130};
     130 -> {131};
     131 -> {132};
@@ -454,8 +455,9 @@ digraph singleReturnFromTry_kt {
     135 -> {136};
     136 -> {137};
     137 -> {138};
-    137 -> {140} [label="return@/test_5"];
     138 -> {139};
+    138 -> {141} [label="return@/test_5"];
     139 -> {140};
+    140 -> {141};
 
 }

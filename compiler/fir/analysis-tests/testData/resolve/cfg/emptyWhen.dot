@@ -42,14 +42,15 @@ digraph emptyWhen_kt {
             subgraph cluster_6 {
                 color=blue
                 11 [label="Enter when"];
-                12 [label="Access variable R|<local>/x|"];
-                13 [label="Variable declaration: lval <when-subject>: R|kotlin/Int|"];
-                14 [label="Synthetic else branch"];
-                15 [label="Exit when"];
+                12 [label="Enter variable declaration: lval <when-subject>: R|kotlin/Int|"];
+                13 [label="Access variable R|<local>/x|"];
+                14 [label="Exit variable declaration: lval <when-subject>: R|kotlin/Int|"];
+                15 [label="Synthetic else branch"];
+                16 [label="Exit when"];
             }
-            16 [label="Exit block"];
+            17 [label="Exit block"];
         }
-        17 [label="Exit function test_2" style="filled" fillcolor=red];
+        18 [label="Exit function test_2" style="filled" fillcolor=red];
     }
     9 -> {10};
     10 -> {11};
@@ -59,26 +60,27 @@ digraph emptyWhen_kt {
     14 -> {15};
     15 -> {16};
     16 -> {17};
+    17 -> {18};
 
     subgraph cluster_7 {
         color=red
-        18 [label="Enter function test_3" style="filled" fillcolor=red];
+        19 [label="Enter function test_3" style="filled" fillcolor=red];
         subgraph cluster_8 {
             color=blue
-            19 [label="Enter block"];
+            20 [label="Enter block"];
             subgraph cluster_9 {
                 color=blue
-                20 [label="Enter when"];
-                21 [label="Access variable R|<local>/x|"];
-                22 [label="Variable declaration: lval y: R|kotlin/Int|"];
-                23 [label="Synthetic else branch"];
-                24 [label="Exit when"];
+                21 [label="Enter when"];
+                22 [label="Enter variable declaration: lval y: R|kotlin/Int|"];
+                23 [label="Access variable R|<local>/x|"];
+                24 [label="Exit variable declaration: lval y: R|kotlin/Int|"];
+                25 [label="Synthetic else branch"];
+                26 [label="Exit when"];
             }
-            25 [label="Exit block"];
+            27 [label="Exit block"];
         }
-        26 [label="Exit function test_3" style="filled" fillcolor=red];
+        28 [label="Exit function test_3" style="filled" fillcolor=red];
     }
-    18 -> {19};
     19 -> {20};
     20 -> {21};
     21 -> {22};
@@ -86,5 +88,7 @@ digraph emptyWhen_kt {
     23 -> {24};
     24 -> {25};
     25 -> {26};
+    26 -> {27};
+    27 -> {28};
 
 }
