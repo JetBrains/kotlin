@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -23,7 +22,7 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
         get() = listOf(DiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter as BaseDiagnosticsCollector
+        val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter
         reportKtDiagnostics(module, ktDiagnosticReporter)
     }
 

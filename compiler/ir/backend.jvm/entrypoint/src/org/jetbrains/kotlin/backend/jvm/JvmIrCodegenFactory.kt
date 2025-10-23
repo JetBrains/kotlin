@@ -162,7 +162,7 @@ class JvmIrCodegenFactory(
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
         module: ModuleDescriptor,
-        diagnosticReporter: DiagnosticReporter,
+        diagnosticReporter: BaseDiagnosticsCollector,
         bindingContext: BindingContext,
         languageVersionSettings: LanguageVersionSettings,
         ignoreErrors: Boolean,
@@ -391,7 +391,7 @@ class JvmIrCodegenFactory(
     fun invokeCodegen(input: CodegenInput) {
         val (state, context, module, allBuiltins, intrinsicExtensions) = input
 
-        fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
+        fun hasErrors() = state.diagnosticReporter.hasErrors
 
         if (hasErrors()) return
 

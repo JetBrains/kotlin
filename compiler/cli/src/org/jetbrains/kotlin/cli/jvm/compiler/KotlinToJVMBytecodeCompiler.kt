@@ -162,7 +162,7 @@ object KotlinToJVMBytecodeCompiler {
         environment: KotlinCoreEnvironment,
         compilerConfiguration: CompilerConfiguration,
         chunk: List<Module>,
-        diagnosticsReporter: DiagnosticReporter
+        diagnosticsReporter: BaseDiagnosticsCollector
     ): BackendInputForMultiModuleChunk? {
         // K1: Frontend
         val result = environment.configuration.perfManager.let {
@@ -274,7 +274,7 @@ object KotlinToJVMBytecodeCompiler {
     private fun convertToIr(
         environment: KotlinCoreEnvironment,
         result: AnalysisResult,
-        diagnosticsReporter: DiagnosticReporter
+        diagnosticsReporter: BaseDiagnosticsCollector
     ): Pair<JvmIrCodegenFactory, JvmIrCodegenFactory.BackendInput> {
         val configuration = environment.configuration
         val codegenFactory = JvmIrCodegenFactory(configuration)

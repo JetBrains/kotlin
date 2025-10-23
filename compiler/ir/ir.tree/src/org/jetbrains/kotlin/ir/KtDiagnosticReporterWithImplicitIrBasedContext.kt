@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
 class KtDiagnosticReporterWithImplicitIrBasedContext(
-    diagnosticReporter: DiagnosticReporter,
+    diagnosticReporter: BaseDiagnosticsCollector,
     languageVersionSettings: LanguageVersionSettings
 ) : KtDiagnosticReporterWithContext(diagnosticReporter, languageVersionSettings), IrDiagnosticReporter {
 

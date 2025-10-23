@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 
 interface DiagnosticContext {
     val containingFilePath: String?
@@ -26,7 +27,7 @@ abstract class DiagnosticReporter {
 }
 
 open class KtDiagnosticReporterWithContext(
-    val diagnosticReporter: DiagnosticReporter,
+    val diagnosticReporter: BaseDiagnosticsCollector,
     val languageVersionSettings: LanguageVersionSettings
 ) : DiagnosticReporter() {
     override val hasErrors: Boolean get() = diagnosticReporter.hasErrors

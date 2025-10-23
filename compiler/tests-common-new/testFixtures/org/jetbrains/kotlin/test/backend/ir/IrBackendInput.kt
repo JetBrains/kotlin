@@ -135,7 +135,7 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
             get() = backendInput.irBuiltIns
 
         override val diagnosticReporter: BaseDiagnosticsCollector
-            get() = state.diagnosticReporter as BaseDiagnosticsCollector
+            get() = state.diagnosticReporter
     }
 
     sealed class NativeBackendInput : IrBackendInput()

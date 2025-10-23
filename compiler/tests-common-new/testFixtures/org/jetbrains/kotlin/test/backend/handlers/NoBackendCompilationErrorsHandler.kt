@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
@@ -35,7 +34,7 @@ class NoBackendCompilationErrorsHandler(testServices: TestServices) : AnalysisHa
         get() = listOf(service(::FirDiagnosticCollectorService))
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter as BaseDiagnosticsCollector
+        val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter
         val diagnosticsService = testServices.diagnosticsService
 
         for ((_, ktDiagnostics) in ktDiagnosticReporter.diagnosticsByFilePath) {
