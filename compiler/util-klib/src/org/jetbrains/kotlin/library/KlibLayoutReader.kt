@@ -8,12 +8,20 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.file
+import java.io.IOException
 
 /**
  * A class that allows reading from a specific [KlibComponent] using the corresponding [KlibComponent.Layout].
  */
-sealed interface KlibLayoutReader<KCL : KlibComponent.Layout> {
-    fun <T> readInPlace(readAction: (KCL) -> T): T
+sealed class KlibLayoutReader<KCL : KlibComponent.Layout> {
+    abstract fun <T> readInPlace(readAction: (KCL) -> T): T
+
+    fun <T> readInPlaceOrFallback(fallbackValueInCaseOfException: T, readAction: (KCL) -> T): T =
+        try {
+            readInPlace(readAction)
+        } catch (_: IOException) {
+            fallbackValueInCaseOfException
+        }
 
     /**
      * Read from a directory on the file system.
@@ -22,7 +30,7 @@ sealed interface KlibLayoutReader<KCL : KlibComponent.Layout> {
      * @param klibDir The Klib directory.
      * @param layoutBuilder A function that builds the [KlibComponent.Layout].
      */
-    class FromDirectory<KCL : KlibComponent.Layout>(klibDir: KlibFile, layoutBuilder: (KlibFile) -> KCL) : KlibLayoutReader<KCL> {
+    class FromDirectory<KCL : KlibComponent.Layout>(klibDir: KlibFile, layoutBuilder: (KlibFile) -> KCL) : KlibLayoutReader<KCL>() {
         private val layout = layoutBuilder(klibDir)
         override fun <T> readInPlace(readAction: (KCL) -> T): T = readAction(layout)
     }
@@ -45,7 +53,7 @@ sealed interface KlibLayoutReader<KCL : KlibComponent.Layout> {
         private val klibArchive: KlibFile,
         private val zipFileSystemAccessor: ZipFileSystemAccessor,
         private val layoutBuilder: (KlibFile) -> KCL
-    ) : KlibLayoutReader<KCL> {
+    ) : KlibLayoutReader<KCL>() {
         override fun <T> readInPlace(readAction: (KCL) -> T): T =
             zipFileSystemAccessor.withZipFileSystem(klibArchive) { zipFileSystem ->
                 readAction(layoutBuilder(zipFileSystem.file("/")))
