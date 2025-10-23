@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
@@ -33,8 +35,9 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished),
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsFir2IrPipelineArtifact {
-        val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input
+        val (fir2IrResult, firOutput, configuration, _, moduleStructure) = input
         processIncrementalCompilationRoundIfNeeded(configuration, moduleStructure, firOutput, fir2IrResult)
+        val diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticCollector.deduplicating(),
             configuration.languageVersionSettings
