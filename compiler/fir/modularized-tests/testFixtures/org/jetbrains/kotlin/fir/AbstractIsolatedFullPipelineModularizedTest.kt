@@ -34,12 +34,15 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
     private val composePluginClasspath: List<String>? = config.composePluginClasspath?.split(File.pathSeparator)
     private val kotlinHome = config.kotlinHome?.let { KotlinPathsFromHomeDir(File(it)) } ?: PathUtil.kotlinPathsForDistDirectoryForTests
 
-    fun runSingleModelCompilation(modelPath: String, tempDir: File? = null): Pair<ExitCode, MessageCollectorImpl> {
+    fun runSingleModelCompilation(
+        modelPath: String, tempDir: File? = null,
+        configureArguments: (K2JVMCompilerArguments) -> Unit = {},
+    ): Pair<ExitCode, MessageCollectorImpl> {
         val outputDir = createTempDirectory(tempDir?.toPath(), "compile-output").toFile()
         if (tempDir == null) outputDir.deleteOnExit()
         val moduleData = loadModuleDumpFile(File(modelPath), config).single()
         val messageCollector = MessageCollectorImpl()
-        val result = processModule(moduleData, outputDir, messageCollector, null)
+        val result = processModule(moduleData, outputDir, messageCollector, null, configureArguments)
         return result to messageCollector
     }
 
