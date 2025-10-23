@@ -7,6 +7,10 @@ to identify build speed regressions with minimal user-project modifications.
 
 All scripts should run via related Gradle task which could be found in "Gradle Regression Benchmark tasks" task group.
 
+In order to provide more reliable results, we run each scenario twice:
+1. A single warmup build for retrieving everything required from the network, like dependencies
+2. A normal scenario run with additional `--offline` flag.
+
 ### Adding benchmark for new user-project
 
 _**Before adding a new project, consider checking existing one** - they possibly may cover the case you want to check. New project

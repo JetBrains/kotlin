@@ -76,7 +76,8 @@ abstract class BenchmarkTemplate(
                 repoApplyPatch(patchName, patch)
             }
         }
-        val results = runBenchmarksSplitByAsyncProfilerSupport(suite, asyncProfilerConfig)
+        val effectiveSuite = suite.setupOfflineMode()
+        val results = runBenchmarksSplitByAsyncProfilerSupport(effectiveSuite, asyncProfilerConfig)
         aggregateBenchmarkResults(results)
 
         printEndingMessage()
@@ -215,9 +216,8 @@ abstract class BenchmarkTemplate(
         /**
          * For some reason gradle-profiler doesn't allow async-profiling scenarios that have cleanup steps
          */
-        val scenariosWithAsyncProfilerSupport = scenarioSuite.scenarios.filter { it.cleanupTasks.isEmpty() }
-        val scenariosWithoutAsyncProfilerSupport = scenarioSuite.scenarios.filter { it.cleanupTasks.isNotEmpty() }
-
+        val scenariosWithAsyncProfilerSupport = scenarioSuite.scenarios.filter { !it.initRun && it.cleanupTasks.isEmpty() }
+        val scenariosWithoutAsyncProfilerSupport = scenarioSuite.scenarios.filter { it.initRun || it.cleanupTasks.isNotEmpty() }
         return listOf(
             runBenchmark(
                 scenarioSuite = ScenarioSuite(scenariosWithoutAsyncProfilerSupport.toMutableList()),
@@ -240,7 +240,7 @@ abstract class BenchmarkTemplate(
         asyncProfilerConfig: AsyncProfilerConfiguration?,
         @Suppress("UNUSED_PARAMETER") dryRun: Boolean,
     ): BenchmarkResult {
-        println("Staring benchmark $projectName $scenarioSuffix")
+        println("Starting benchmark $projectName $scenarioSuffix")
         val normalizedBenchmarkName = "${projectName}_${scenarioSuffix}".normalizeTitle
         if (!scenariosDir.exists()) scenariosDir.mkdirs()
         val scenarioFile = scenariosDir.resolve("$normalizedBenchmarkName.scenario")
@@ -315,6 +315,9 @@ abstract class BenchmarkTemplate(
         val results = benchmarkResults.map {
             DataFrame.readCsv(it.result, allowMissingColumns = true)
         }.reduce { acc, frame -> acc.fullJoin(frame) }
+            .remove {
+                nameContains("(init)")
+            }
             .drop {
                 // Removing unused rows
                 it["scenario"] in listOf("version", "tasks") ||
@@ -545,7 +548,7 @@ abstract class BenchmarkTemplate(
             }
             .flatten()
             .map { (scenario, version) ->
-                "${scenario.title} $version".normalizeTitle
+                "${scenario.configuredTitle} $version".normalizeTitle
             }
         output.writeText(
             """
@@ -561,8 +564,8 @@ abstract class BenchmarkTemplate(
             .plus("-PkotlinVersion=$kotlinVersion")
             .joinToString { "\"$it\"" }
         """
-        |${"$title $kotlinVersion".normalizeTitle} {
-        |    title = "$title $kotlinVersion"
+        |${"$configuredTitle $kotlinVersion".normalizeTitle} {
+        |    title = "$configuredTitle $kotlinVersion"
         |    warm-ups = $warmups
         |    iterations = $iterations
         |    tasks = [${tasks.joinToString { "\"$it\"" }}]
@@ -576,8 +579,23 @@ abstract class BenchmarkTemplate(
     }
 
     private val String.dropLeadingDir: String get() = substringAfter('/')
-    private val String.normalizeTitle: String get() = lowercase().replace(" ", "_").replace(".", "_")
+    private val String.normalizeTitle: String get() = lowercase()
+        .replace(" ", "_")
+        .replace(".", "_")
+        .replace("(", "_")
+        .replace(")", "_")
 
+    /**
+     * Flips columns with rows in the DataFrame by converting columns to rows and vice versa.
+     * Handles specific type conversions for different column names:
+     * - "scenario": Formats scenario names based on Kotlin versions
+     * - "version", "tasks", "value": Converts values to strings
+     * - "warm-up build": Converts values to doubles
+     * - "measured build": Converts values to nullable doubles
+     *
+     * @return A new DataFrame with flipped columns and rows
+     * @throws IllegalArgumentException if an unknown column name is encountered
+     */
     private fun DataFrame<*>.flipColumnsWithRows(): DataFrame<*> {
         val firstColumn = columns().first()
         return DataFrameBuilder(
