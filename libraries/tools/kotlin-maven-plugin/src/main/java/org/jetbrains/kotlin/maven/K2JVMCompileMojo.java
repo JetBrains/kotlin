@@ -265,14 +265,14 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     private KotlinToolchains getKotlinToolchains() throws MojoExecutionException {
         try {
-            Set<Artifact> artifacts =
-                    Stream.concat(
-                            kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-build-tools-impl", getMavenPluginVersion()).stream(),
-                            kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable", getMavenPluginVersion()).stream()
-                    ).collect(Collectors.toCollection(LinkedHashSet::new));
-            List<File> files = artifacts.stream().map(Artifact::getFile).collect(Collectors.toList());
-            ClassLoader btaClassLoader = getBtaClassLoader(files);
-            return KotlinToolchains.loadImplementation(btaClassLoader);
+            //Set<Artifact> artifacts =
+            //        Stream.concat(
+            //                kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-build-tools-impl", getMavenPluginVersion()).stream(),
+            //                kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable", getMavenPluginVersion()).stream()
+            //        ).collect(Collectors.toCollection(LinkedHashSet::new));
+            //List<File> files = artifacts.stream().map(Artifact::getFile).collect(Collectors.toList());
+            //ClassLoader btaClassLoader = getBtaClassLoader(files);
+            return KotlinToolchains.loadImplementation(getClass().getClassLoader());
         } catch (Throwable t) {
             throw new MojoExecutionException("Failed to load Kotlin Build Tools API implementation", t);
         }
@@ -295,7 +295,8 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                         throw new RuntimeException(e);
                     }
                 }).toArray(URL[]::new);
-                return new URLClassLoader(urls, cacheKey.getParentClassLoaderProvider().getClassLoader());
+                //return new URLClassLoader(urls, cacheKey.getParentClassLoaderProvider().getClassLoader());
+                return new URLClassLoader(urls, getClass().getClassLoader());
             });
         }
         catch (ExecutionException e) {
