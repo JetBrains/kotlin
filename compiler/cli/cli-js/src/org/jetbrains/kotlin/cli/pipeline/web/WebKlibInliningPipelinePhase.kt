@@ -57,7 +57,7 @@ object WebKlibInliningPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, Js
             ).runPreSerializationLoweringPhases(fir2IrResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
         }
 
-        return input.copy(result = transformedResult)
+        return input.copy(result = transformedResult, diagnosticCollector = diagnosticCollector)
     }
 
     private fun processIncrementalCompilationRoundIfNeeded(
