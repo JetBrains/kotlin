@@ -210,7 +210,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
     }
 
     protected abstract fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider
-    protected abstract fun FirSession.registerLibrarySessionComponents(c: CONTEXT)
+    abstract fun FirSession.registerLibrarySessionComponents(c: CONTEXT)
 
     // ==================================== Platform session ====================================
 
@@ -333,9 +333,9 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         moduleData: FirModuleData, languageVersionSettings: LanguageVersionSettings
     ): FirKotlinScopeProvider
 
-    protected abstract fun FirSessionConfigurator.registerPlatformCheckers()
-    protected abstract fun FirSessionConfigurator.registerExtraPlatformCheckers()
-    protected abstract fun FirSession.registerSourceSessionComponents(c: CONTEXT)
+    abstract fun FirSessionConfigurator.registerPlatformCheckers()
+    abstract fun FirSessionConfigurator.registerExtraPlatformCheckers()
+    abstract fun FirSession.registerSourceSessionComponents(c: CONTEXT)
 
     protected abstract val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
 

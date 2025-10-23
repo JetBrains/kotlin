@@ -182,12 +182,16 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         libraryPaths = configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file?.path },
                         configuration = configuration,
                     ).all
-
+                    val context = AbstractFirMetadataSessionFactory.Context(
+                        createJvmContext = { jvmSessionFactoryContext },
+                        createJsContext = { FirJsSessionFactory.Context(configuration) },
+                    )
                     val sessionFactory = FirMetadataSessionFactory(configuration.targetPlatform ?: CommonPlatforms.defaultCommonPlatform)
                     val sharedLibrarySession = sessionFactory.createSharedLibrarySession(
                         mainModuleName = moduleName,
                         languageVersionSettings = languageVersionSettings,
                         extensionRegistrars = extensionRegistrars,
+                        context = context,
                     )
 
                     sessionFactory.createLibrarySession(
@@ -201,6 +205,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         ),
                         resolvedKLibs = klibs,
                         languageVersionSettings = languageVersionSettings,
+                        context = context
                     ).also(::registerExtraComponents)
                 } else {
                     val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
@@ -346,6 +351,10 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     incrementalCompilationContext = null,
                     extensionRegistrars = extensionRegistrars,
                     configuration = configuration,
+                    context = AbstractFirMetadataSessionFactory.Context(
+                        createJvmContext = { jvmSessionFactoryContext },
+                        createJsContext = { FirJsSessionFactory.Context(configuration) }
+                    ),
                     isForLeafHmppModule = false,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
