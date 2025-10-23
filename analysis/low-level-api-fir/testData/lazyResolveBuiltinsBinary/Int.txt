@@ -3563,7 +3563,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ReplaceWith] get(): R|kotlin/Array<out kotlin/String>|
 
     }
-    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class RequiresOptIn : R|kotlin/Annotation|, R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/annotation/MustBeDocumented|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class RequiresOptIn : R|kotlin/Annotation|, R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=RequiresOptIn] constructor([ResolvedTo(BODY_RESOLVE)] message: R|kotlin/String| = <Unresolved name: COMPILED_CODE>#, [ResolvedTo(BODY_RESOLVE)] level: R|kotlin/RequiresOptIn.Level| = <Unresolved name: COMPILED_CODE>#): R|kotlin/RequiresOptIn| {
             super<R|kotlin/Any|>()
         }
@@ -3854,7 +3854,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class SubclassOptInRequired : R|kotlin/Annotation|, R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/annotation/MustBeDocumented|[Types]() @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class SubclassOptInRequired : R|kotlin/Annotation|, R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubclassOptInRequired] constructor([ResolvedTo(BODY_RESOLVE)] vararg markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|): R|kotlin/SubclassOptInRequired| {
             super<R|kotlin/Any|>()
         }

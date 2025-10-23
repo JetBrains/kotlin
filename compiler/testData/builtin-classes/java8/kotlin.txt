@@ -682,7 +682,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         public final fun `<get-imports>`(): kotlin.Array<out kotlin.String>
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.SinceKotlin(version = "1.3") public final annotation class RequiresOptIn : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.3") public final annotation class RequiresOptIn : kotlin.Annotation {
     /*primary*/ public constructor RequiresOptIn(/*0*/ message: kotlin.String = ..., /*1*/ level: kotlin.RequiresOptIn.Level = ...)
     public final val level: kotlin.RequiresOptIn.Level
         public final fun `<get-level>`(): kotlin.RequiresOptIn.Level
@@ -816,7 +816,7 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     }
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.SinceKotlin(version = "2.1") @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalSubclassOptIn::class}) public final annotation class SubclassOptInRequired : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "2.1") @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalSubclassOptIn::class}) public final annotation class SubclassOptInRequired : kotlin.Annotation {
     /*primary*/ public constructor SubclassOptInRequired(/*0*/ vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation> /*kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>*/)
     public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>
         public final fun `<get-markerClass>`(): kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>
