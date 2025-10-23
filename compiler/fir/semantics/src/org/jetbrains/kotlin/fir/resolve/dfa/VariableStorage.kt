@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.isContextParameter
@@ -80,7 +81,9 @@ class VariableStorage private constructor(
         }?.unwrapFakeOverridesIfNecessary() ?: return SyntheticVariable(unwrapped)
 
         val qualifiedAccess = unwrapped as? FirQualifiedAccessExpression
-        val dispatchReceiverVar = qualifiedAccess?.dispatchReceiver?.let {
+        val dispatchReceiverVar = qualifiedAccess?.dispatchReceiver
+            ?.takeIf { symbol.isReplSnippetDeclaration != true }
+            ?.let {
             (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return SyntheticVariable(unwrapped)
         }
         val extensionReceiverVar = qualifiedAccess?.extensionReceiver?.let {
