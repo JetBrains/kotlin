@@ -6373,6 +6373,22 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/multiplatform")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Multiplatform {
+      @Test
+      public void testAllFilesPresentInMultiplatform() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/multiplatform"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("redeclarationOfExpectActualFromDependency.kt")
+      public void testRedeclarationOfExpectActualFromDependency() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/multiplatform/redeclarationOfExpectActualFromDependency.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases")
     @TestDataPath("$PROJECT_ROOT")
     public class NestedTypeAliases {
