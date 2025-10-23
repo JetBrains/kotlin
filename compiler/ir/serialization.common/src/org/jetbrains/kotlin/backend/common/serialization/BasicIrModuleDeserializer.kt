@@ -220,8 +220,6 @@ abstract class BasicIrModuleDeserializer(
                 filesWithPendingTopLevels.remove(pendingFileDeserializationState)
             }
         }
-
-        override fun toString(): String = klib.toString()
     }
 }
 
