@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionComponent<FirInlineCheckerPlatformSpecificComponent> {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    open fun isGenerallyOk(declaration: FirDeclaration, ): Boolean = true
+    open fun isGenerallyOk(declaration: FirDeclaration): Boolean = true
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     open fun checkSuspendFunctionalParameterWithDefaultValue(
@@ -36,15 +36,18 @@ abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionC
         function: FirNamedFunction,
         overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
     ) {
-        val paramsWithDefaults = overriddenSymbols.flatMap {
-            if (it !is FirFunctionSymbol<*>) return@flatMap emptyList()
-            it.valueParameterSymbols.mapIndexedNotNull { idx, param ->
-                idx.takeIf { param.hasDefaultValue }
+        val paramHasDefault = BooleanArray(function.valueParameters.size)
+        overriddenSymbols.forEach {
+            if (it !is FirFunctionSymbol<*>) return@forEach
+            it.valueParameterSymbols.forEachIndexed { idx, param ->
+                if (param.hasDefaultValue && idx < paramHasDefault.size) {
+                    paramHasDefault[idx] = true
+                }
             }
-        }.toSet()
+        }
         val shouldReportError = shouldReportRegularOverridesWithDefaultParameters()
         function.valueParameters.forEachIndexed { idx, param ->
-            if (param.defaultValue == null && paramsWithDefaults.contains(idx)) {
+            if (param.defaultValue == null && paramHasDefault[idx]) {
                 if (shouldReportError) {
                     reporter.reportOn(
                         param.source,
