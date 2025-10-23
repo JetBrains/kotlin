@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.backend.common.toLogger
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.cli.common.*
@@ -222,23 +223,25 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             )
         }
 
-        private val cachedClasses = mutableListOf<IrClassSymbol>()
-        private val classesToCache = mutableListOf("Throwable", "Collection", "Iterable", "Map", "MutableMap")
+        private val mappedClassSymbols = mutableMapOf<FqName, IrClassSymbol>()
+
+        private fun FqName.isMappedType(): Boolean {
+            return (JavaToKotlinClassMap.mapJavaToKotlin(this) ?: JavaToKotlinClassMap.mapKotlinToJava(toUnsafe())) != null
+        }
 
         private fun withKotlinBuiltinsHack(idSig: IdSignature, f: () -> IrSymbol?): IrSymbol? {
             val symbol = f()
             if (idSig is IdSignature.CommonSignature) {
-                val className = idSig.nameSegments.first()
-                val funName = idSig.nameSegments.last()
+                val fqName = FqName("${idSig.packageFqName}.${idSig.declarationFqName}")
                 if (symbol != null) {
-                    if (symbol is IrClassSymbol && className in classesToCache) {
-                        cachedClasses.add(symbol)
-                        classesToCache.remove(className)
+                    if (symbol is IrClassSymbol && fqName.isMappedType() && fqName !in mappedClassSymbols) {
+                        mappedClassSymbols[fqName] = symbol
                     }
                     return symbol
                 }
 
-                for (declaration in cachedClasses.flatMap { it.owner.declarations }) {
+                val funName = idSig.nameSegments.last()
+                for (declaration in mappedClassSymbols.values.flatMap { it.owner.declarations }) {
                     if (declaration.getNameWithAssert().asString() == funName) {
                         return declaration.symbol
                     }
