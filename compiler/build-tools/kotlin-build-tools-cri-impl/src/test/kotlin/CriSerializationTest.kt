@@ -65,11 +65,11 @@ class CriSerializationTest {
 
         val serializedSubtypes = CriDataSerializerImpl().serializeSubtypes(input)
 
-        val subtypes = CriDataDeserializerImpl().deserializeSubtypeData(serializedSubtypes).map { it.className to it.subtypes }
+        val subtypes = CriDataDeserializerImpl().deserializeSubtypeData(serializedSubtypes).map { it.fqNameHashCode to it.subtypes }
 
         val expected = listOf(
-            fqName1 to listOf(fqName2, fqName3),
-            fqName4 to listOf(fqName5),
+            fqName1.hashCode() to listOf(fqName2, fqName3),
+            fqName4.hashCode() to listOf(fqName5),
         )
         assertEquals(expected, subtypes)
     }

@@ -61,7 +61,7 @@ class CriDeserializationTest {
 
             // serial name 'org.jetbrains.kotlin.buildtools.internal.cri.SubtypeEntryImpl'
             message SubtypeEntryImpl {
-              optional string className = 1;
+              optional int32 fqNameHashCode = 1;
               repeated string subtypes = 2;
             }
             

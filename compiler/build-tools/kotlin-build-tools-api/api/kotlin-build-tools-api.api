@@ -464,7 +464,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/LookupEn
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/SubtypeEntry {
-	public abstract fun getClassName ()Ljava/lang/String;
+	public abstract fun getFqNameHashCode ()Ljava/lang/Integer;
 	public abstract fun getSubtypes ()Ljava/util/Collection;
 }
 
