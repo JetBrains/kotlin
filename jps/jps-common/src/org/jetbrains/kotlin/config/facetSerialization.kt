@@ -437,7 +437,7 @@ fun TargetPlatform.serializeComponentPlatforms(): String {
     val componentPlatformNames = componentPlatforms.mapTo(ArrayList()) { it.serializeToString() }
 
     // workaround for old Kotlin IDE plugins, KT-38634
-    if (componentPlatforms.any { it is NativePlatform })
+    if (componentPlatforms.any { it is org.jetbrains.kotlin.platform.konan.NativePlatform })
         componentPlatformNames.add(NativePlatformUnspecifiedTarget.legacySerializeToString())
 
     return componentPlatformNames.sorted().joinToString("/")

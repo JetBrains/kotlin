@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 import javax.xml.stream.XMLOutputFactory
@@ -333,6 +334,12 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         return SessionConstructionUtils.prepareSessions(
             files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
             metadataCompilationMode = false, libraryList, extensionRegistrars, isCommonSource, isScript, fileBelongsToModule,
+            createMetadataSessionFactoryContextForHmppCommonLibrarySession = {
+                AbstractFirMetadataSessionFactory.Context(
+                    createJvmContext = { context },
+                    createJsContext = { shouldNotBeCalled() }
+                )
+            },
             createSharedLibrarySession = {
                 FirJvmSessionFactory.createSharedLibrarySession(
                     rootModuleName,

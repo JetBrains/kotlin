@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.toTargetPlatform
 
-sealed class NativePlatform : SimplePlatform("Native") {
+sealed class NativePlatform : org.jetbrains.kotlin.platform.NativePlatform("Native") {
     override val oldFashionedDescription: String
         get() = toString() + " "
 }
