@@ -89,13 +89,24 @@ class FirActualizingScope(
 
         // When the symbols come from binary dependencies, the `isActual` flag is not preserved
         // (and getSingleMatchedExpectForActualOrNull wouldn't work anyway).
-        // Filter out expect declarations by manually matching them against non-expect ones.
+        // Filter out expect declarations from binary dependencies by manually matching them against non-expect ones
+        // from binary dependencies.
+        // It's important not to touch expect declarations from sources because they could match declarations from dependencies on accident.
+        // See compiler/fir/analysis-tests/testData/resolve/multiplatform/redeclarationOfExpectActualFromDependency.kt
         expectSymbols.removeIf { expectSymbol ->
-            notExpectSymbols.any { notExpectSymbol -> areEquivalent(expectSymbol, notExpectSymbol) }
+            expectSymbol.isFromLibrary() && expectSymbol.hasEquivalentNotActualFromLibrary(notExpectSymbols)
         }
 
         expectSymbols.forEach(processor)
         notExpectSymbols.forEach(processor)
+    }
+
+    private fun FirCallableSymbol<*>.hasEquivalentNotActualFromLibrary(notExpectSymbols: Set<FirCallableSymbol<*>>): Boolean {
+        return notExpectSymbols.any { it.isFromLibrary() && areEquivalent(this, it) }
+    }
+
+    private fun FirCallableSymbol<*>.isFromLibrary(): Boolean {
+        return moduleData.session.kind == FirSession.Kind.Library
     }
 
     private fun <S : FirCallableSymbol<*>> areEquivalent(symbol: S, s: S): Boolean {
