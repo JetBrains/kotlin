@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.name.FqName
 
-class FirScriptSymbol(val fqName: FqName) : FirBasedSymbol<FirScript>() {
+class FirScriptSymbol(override val symbolId: FirSymbolId<FirScriptSymbol>, val fqName: FqName) : FirBasedSymbol<FirScript>(symbolId) {
     override fun toString(): String = "${this::class.simpleName} ${fqName.asString()}"
 }

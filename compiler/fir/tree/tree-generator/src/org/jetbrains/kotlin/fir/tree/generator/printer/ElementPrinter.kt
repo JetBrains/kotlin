@@ -98,6 +98,14 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 )
                 println()
             }
+
+            // TODO (marco): This is a HACK. We should generate these functions properly from the model.
+            if (element.name == "Declaration") {
+                println()
+                println("override fun equals(other: Any?): Boolean = this === other || other is FirDeclaration && symbol == other.symbol")
+                println()
+                println("override fun hashCode(): Int = symbol.hashCode()")
+            }
         }
     }
 }

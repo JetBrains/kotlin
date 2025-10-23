@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.symbols.impl
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -17,7 +18,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import kotlin.RequiresOptIn.Level.ERROR
 
-abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbol<D>(), CallableSymbolMarker {
+abstract class FirCallableSymbol<out D : FirCallableDeclaration>(
+    symbolId: FirSymbolId<FirCallableSymbol<D>>,
+) : FirBasedSymbol<D>(symbolId), CallableSymbolMarker {
+    abstract override val symbolId: FirSymbolId<FirCallableSymbol<D>>
+
     /**
      * Combination of a package name, a container class name (if any) and a callable name.
      *

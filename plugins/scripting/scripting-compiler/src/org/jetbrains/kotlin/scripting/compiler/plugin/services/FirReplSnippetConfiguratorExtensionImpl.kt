@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -212,6 +214,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
                 annotations = annotations,
                 returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar = isVar,
+                symbol = FirBackingFieldSymbol(),
                 propertySymbol = symbol,
                 status = status,
             )
@@ -222,6 +225,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
                 origin = origin,
                 propertyTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef),
                 visibility = status.visibility,
+                symbol = FirPropertyAccessorSymbol(),
                 propertySymbol = symbol,
                 modality = status.modality,
             )

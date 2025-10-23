@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.fir.symbols.impl
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 
-class FirFileSymbol : FirBasedSymbol<FirFile>() {
+class FirFileSymbol(override val symbolId: FirSymbolId<FirFileSymbol>) : FirBasedSymbol<FirFile>(symbolId) {
     override fun toString(): String = "${this::class.simpleName} ${fir.name}"
 
     val sourceFile: KtSourceFile? get() = fir.sourceFile

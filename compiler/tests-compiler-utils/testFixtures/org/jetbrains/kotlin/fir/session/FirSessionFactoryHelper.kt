@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolIdFactory
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolIdFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -120,6 +122,7 @@ object FirSessionFactoryHelper {
             )
 
             register(FirExtensionService::class, FirExtensionService(this))
+            register(FirSymbolIdFactory::class, FirUniqueSymbolIdFactory)
         }
     }
 }

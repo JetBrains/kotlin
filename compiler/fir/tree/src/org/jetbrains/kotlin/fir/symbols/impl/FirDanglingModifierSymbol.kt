@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 
-class FirDanglingModifierSymbol : FirBasedSymbol<FirDanglingModifierList>() {
+class FirDanglingModifierSymbol(override val symbolId: FirSymbolId<FirDanglingModifierSymbol>) : FirBasedSymbol<FirDanglingModifierList>(symbolId) {
     override fun toString(): String = "${this::class.simpleName}"
 }

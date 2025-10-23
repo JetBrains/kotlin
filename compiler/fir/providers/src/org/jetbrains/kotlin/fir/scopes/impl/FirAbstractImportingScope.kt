@@ -154,6 +154,8 @@ abstract class FirAbstractImportingScope(
 internal fun FirNamedFunction.buildImportedVersion(importedClassId: ClassId): FirNamedFunction {
     return buildNamedFunctionCopy(this) {
         origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
+        // TODO (marco): Is it OK to have a unique symbol here? The symbol is not cached at all but rather passed to the processor of the
+        //  scope.
         this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
     }.apply {
         importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
@@ -165,6 +167,8 @@ internal fun FirVariable.buildImportedVersion(importedClassId: ClassId): FirVari
         is FirProperty -> {
             buildPropertyCopy(this) {
                 origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
+                // TODO (marco): Is it OK to have a unique symbol here? The symbol is not cached at all but rather passed to the processor
+                //  of the scope.
                 this.symbol = FirRegularPropertySymbol(CallableId(importedClassId, name))
                 this.delegateFieldSymbol = null
             }.apply {
@@ -174,6 +178,8 @@ internal fun FirVariable.buildImportedVersion(importedClassId: ClassId): FirVari
         is FirField -> {
             buildFieldCopy(this) {
                 origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
+                // TODO (marco): Is it OK to have a unique symbol here? The symbol is not cached at all but rather passed to the processor
+                //  of the scope.
                 this.symbol = FirFieldSymbol(CallableId(importedClassId, name))
             }.apply {
                 importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)

@@ -23,10 +23,16 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor(
+    override val symbol: FirSyntheticPropertyAccessorSymbol,
     val delegate: FirNamedFunction,
     override val isGetter: Boolean,
     override val propertySymbol: FirPropertySymbol,
 ) : FirPropertyAccessor() {
+    init {
+        @OptIn(FirImplementationDetail::class)
+        symbol.bind(this)
+    }
+
     override val source: KtSourceElement?
         get() = delegate.source
 
@@ -68,11 +74,6 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
 
     override val attributes: FirDeclarationAttributes
         get() = delegate.attributes
-
-    override val symbol: FirSyntheticPropertyAccessorSymbol = FirSyntheticPropertyAccessorSymbol().apply {
-        @OptIn(FirImplementationDetail::class)
-        bind(this@FirSyntheticPropertyAccessor)
-    }
 
     override val contextParameters: List<FirValueParameter>
         get() = delegate.contextParameters

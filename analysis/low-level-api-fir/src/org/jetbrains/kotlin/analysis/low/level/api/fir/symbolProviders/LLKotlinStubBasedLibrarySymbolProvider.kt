@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsOnlyApi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.LLSymbolIdFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.llSymbolIdFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCacheInternals
@@ -71,6 +73,9 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
 
     private val module: KaModule
         get() = moduleData.ktModule
+
+    private val symbolIdFactory: LLSymbolIdFactory
+        get() = session.llSymbolIdFactory
 
     final override val declarationProvider = session.project.createDeclarationProvider(
         scope,
@@ -155,7 +160,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
 
         checkDeclarationAndContextConsistency(declaration, context)
 
-        val symbol = FirTypeAliasSymbol(classId)
+        val symbol = FirTypeAliasSymbol(symbolIdFactory.psiBased(declaration), classId)
         val postProcessor: DeserializedTypeAliasPostProcessor = {
             val rootContext = context ?: StubBasedFirDeserializationContext.createRootContext(
                 moduleData,
@@ -163,8 +168,10 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
                 classId.packageFqName,
                 classId.relativeClassName,
                 declaration,
-                null, null, symbol,
-                initialOrigin = getDeclarationOriginFor(declaration.containingKtFile)
+                containerSource = null,
+                outerClassSymbol = null,
+                symbol,
+                initialOrigin = getDeclarationOriginFor(declaration.containingKtFile),
             )
             rootContext.memberDeserializer.loadTypeAlias(declaration, symbol, kotlinScopeProvider)
         }
@@ -191,7 +198,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
 
         checkDeclarationAndContextConsistency(declaration, parentContext)
 
-        val symbol = FirRegularClassSymbol(classId)
+        val symbol = FirRegularClassSymbol(symbolIdFactory.psiBased(declaration), classId)
         deserializeClassToSymbol(
             classId,
             declaration,
@@ -495,7 +502,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
                 declarationOrigin = propertyOrigin,
             )
 
-            val symbol = FirRegularPropertySymbol(callableId)
+            val symbol = FirRegularPropertySymbol(session.llSymbolIdFactory.psiBased(property), callableId)
             val rootContext = StubBasedFirDeserializationContext.createRootContext(
                 session = session,
                 moduleData = session.moduleData,
@@ -527,7 +534,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
                 declarationOrigin = functionOrigin,
             )
 
-            val symbol = FirNamedFunctionSymbol(callableId)
+            val symbol = FirNamedFunctionSymbol(session.llSymbolIdFactory.psiBased(function), callableId)
             val rootContext = StubBasedFirDeserializationContext.createRootContext(
                 session = session,
                 moduleData = session.moduleData,

@@ -86,6 +86,7 @@ internal fun FirJavaFacade.createPsiClassSymbol(
     parentClassSymbol: FirRegularClassSymbol?,
 ): FirRegularClassSymbol {
     val classId = psiClass.classIdOrError()
+    // TODO (marco): Java symbol IDs.
     val symbol = FirRegularClassSymbol(classId)
     return convertJavaClassToFir(symbol, parentClassSymbol, javaClass ?: JavaClassImpl(psiClass)).symbol
 }

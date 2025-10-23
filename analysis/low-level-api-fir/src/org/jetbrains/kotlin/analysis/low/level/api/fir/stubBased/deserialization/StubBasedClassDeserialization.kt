@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeRigidType

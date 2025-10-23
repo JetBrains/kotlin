@@ -113,7 +113,9 @@ class JavaClassUseSiteMemberScope(
                 getterId = callableId,
                 propertyId = CallableId(klass.classId, property.name)
             )
+            this.getterSymbol = FirSyntheticPropertyAccessorSymbol()
             delegateGetter = getterSymbol.fir
+            this.setterSymbol = setterSymbol?.let { FirSyntheticPropertyAccessorSymbol() }
             delegateSetter = setterSymbol?.fir
             customStatus = if (takeModalityFromGetter) {
                 null
@@ -417,6 +419,8 @@ class JavaClassUseSiteMemberScope(
 
         val fir = fir
         val returnType = continuationParameterType.typeArguments[0].type ?: return this
+
+        // TODO (marco): This is not stored in a cache (as far as I can see). Is it still OK to have a unique symbol ID here?
         val symbol = FirNamedFunctionSymbol(callableId)
         return buildMaybeJavaFunctionCopy(fir, symbol) {
             valueParameters.clear()
@@ -953,6 +957,7 @@ class JavaClassUseSiteMemberScope(
             visibility = status.visibility,
             propertySymbol = symbol,
             modality = status.modality,
+            symbol = FirPropertyAccessorSymbol(),
         )
 
         return syntheticGetter.computeJvmDescriptor(customName, includeReturnType)
@@ -968,6 +973,7 @@ class JavaClassUseSiteMemberScope(
             visibility = status.visibility,
             propertySymbol = symbol,
             modality = status.modality,
+            propertyAccessorSymbol = FirPropertyAccessorSymbol(),
         )
 
         return syntheticSetter.computeJvmDescriptor(customName, includeReturnType)
