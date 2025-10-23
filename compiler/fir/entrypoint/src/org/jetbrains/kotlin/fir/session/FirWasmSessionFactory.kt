@@ -23,7 +23,7 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Not
         override val defaultImportsProvider: DefaultImportsProvider
             get() = WasmJsDefaultImportsProvider
 
-        override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
+        override fun FirSessionConfigurator.registerPlatformCheckers() {
             registerWasmJsCheckers()
         }
     }
@@ -32,7 +32,7 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Not
         override val defaultImportsProvider: DefaultImportsProvider
             get() = WasmWasiDefaultImportsProvider
 
-        override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
+        override fun FirSessionConfigurator.registerPlatformCheckers() {
             registerWasmWasiCheckers()
         }
     }
@@ -60,9 +60,9 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Not
 
     override fun createSourceContext(configuration: CompilerConfiguration): Nothing? = null
 
-    abstract override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?)
+    abstract override fun FirSessionConfigurator.registerPlatformCheckers()
 
-    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Nothing?) {}
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {}
 
     override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
         registerWasmComponents()

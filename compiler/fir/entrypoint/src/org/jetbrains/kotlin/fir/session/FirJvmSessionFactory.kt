@@ -201,12 +201,12 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         }
     }
 
-    override fun FirSessionConfigurator.registerPlatformCheckers(c: SourceContext) {
+    override fun FirSessionConfigurator.registerPlatformCheckers() {
         registerJvmCheckers()
     }
 
 
-    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: SourceContext) {
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {
     }
 
     override fun FirSession.registerSourceSessionComponents(c: SourceContext) {

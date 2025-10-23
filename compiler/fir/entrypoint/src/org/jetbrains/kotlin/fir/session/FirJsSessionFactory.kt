@@ -47,11 +47,11 @@ object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.C
         return Context(configuration)
     }
 
-    override fun FirSessionConfigurator.registerPlatformCheckers(c: Context) {
+    override fun FirSessionConfigurator.registerPlatformCheckers() {
         registerJsCheckers()
     }
 
-    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Context) {}
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {}
 
     override fun FirSession.registerSourceSessionComponents(c: Context) {
         registerComponents(c.configuration)

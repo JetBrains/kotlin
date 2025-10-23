@@ -176,9 +176,9 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
         }
     }
 
-    override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {}
+    override fun FirSessionConfigurator.registerPlatformCheckers() {}
 
-    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Nothing?) {}
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {}
 
     override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
         register(FirDefaultImportsProviderHolder.of(CommonDefaultImportsProvider))

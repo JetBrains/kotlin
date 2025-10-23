@@ -255,9 +255,9 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
 
             FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
-                registerPlatformCheckers(context)
+                registerPlatformCheckers()
                 if (configuration.useFirExtraCheckers) {
-                    registerExtraPlatformCheckers(context)
+                    registerExtraPlatformCheckers()
                 }
 
                 for (extensionRegistrar in extensionRegistrars) {
@@ -333,8 +333,8 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         moduleData: FirModuleData, languageVersionSettings: LanguageVersionSettings
     ): FirKotlinScopeProvider
 
-    protected abstract fun FirSessionConfigurator.registerPlatformCheckers(c: SOURCE_CONTEXT)
-    protected abstract fun FirSessionConfigurator.registerExtraPlatformCheckers(c: SOURCE_CONTEXT)
+    protected abstract fun FirSessionConfigurator.registerPlatformCheckers()
+    protected abstract fun FirSessionConfigurator.registerExtraPlatformCheckers()
     protected abstract fun FirSession.registerSourceSessionComponents(c: SOURCE_CONTEXT)
 
     protected abstract val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean

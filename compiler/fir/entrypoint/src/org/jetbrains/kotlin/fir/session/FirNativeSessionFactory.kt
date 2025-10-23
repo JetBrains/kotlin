@@ -69,11 +69,11 @@ abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?,
 
     // ==================================== Platform session ====================================
 
-    override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {
+    override fun FirSessionConfigurator.registerPlatformCheckers() {
         registerNativeCheckers()
     }
 
-    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Nothing?) {
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {
         registerExtraNativeCheckers()
     }
 
