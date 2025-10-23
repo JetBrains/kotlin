@@ -84,7 +84,12 @@ class KonanLibraryImpl(
     override fun <KC : KlibComponent> getComponent(id: KlibComponent.ID<KC>): KC {
         @Suppress("UNCHECKED_CAST")
         val component = components[id] as KC?
-        return component ?: error("Unknown component $id")
+        return component ?: error("Unknown component ${id::class.qualifiedName ?: id}")
+    }
+
+    override fun <KC : KlibOptionalComponent> getComponent(id: KlibComponent.ID<KC>): KC? {
+        @Suppress("UNCHECKED_CAST")
+        return components[id] as KC?
     }
 
     override val linkerOpts: List<String>

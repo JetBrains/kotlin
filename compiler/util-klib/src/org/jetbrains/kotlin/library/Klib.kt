@@ -35,6 +35,11 @@ interface Klib {
      * Get a specific [KlibComponent] by its [id]. Throw an error if the component is not found.
      */
     fun <KC : KlibComponent> getComponent(id: KlibComponent.ID<KC>): KC
+
+    /**
+     * Get a specific [KlibOptionalComponent] by its [id]. Return `null` if the component is not found.
+     */
+    fun <KC : KlibOptionalComponent> getComponent(id: KlibComponent.ID<KC>): KC?
 }
 
 /**
@@ -55,4 +60,13 @@ interface KlibComponent {
      * to the archive file itself. So, it is highly important to compute paths exactly based on [root].
      */
     abstract class Layout(val root: KlibFile)
+}
+
+/**
+ * A [KlibComponent] that is optional: This component is not available in the library if there is
+ * no data that it can read (see [isDataAvailable]).
+ */
+interface KlibOptionalComponent : KlibComponent {
+    /** Whether there is any data to be read by the component. */
+    val isDataAvailable: Boolean
 }

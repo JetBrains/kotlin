@@ -33,6 +33,12 @@ interface KlibMetadataComponent : KlibComponent {
     companion object ID : KlibComponent.ID<KlibMetadataComponent>
 }
 
+/**
+ * A shortcut for accessing the [KlibMetadataComponent] in the [Klib] instance.
+ *
+ * It is expected that every correct Klib has metadata files. So, the [metadata] property always returns
+ * a non-null component instance that can be used to read the Klib's metadata.
+ */
 inline val Klib.metadata: KlibMetadataComponent
     get() = getComponent(KlibMetadataComponent.ID)
 

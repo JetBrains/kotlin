@@ -173,6 +173,11 @@ class KotlinLibraryImpl(
         return component ?: error("Unknown component $id")
     }
 
+    override fun <KC : KlibOptionalComponent> getComponent(id: KlibComponent.ID<KC>): KC? {
+        @Suppress("UNCHECKED_CAST")
+        return components[id] as KC?
+    }
+
     override fun toString(): String = buildString {
         append("name ")
         append(base.libraryName)
